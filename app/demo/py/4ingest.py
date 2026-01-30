@@ -1,39 +1,42 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-4ingest.py (Polling edition)
-Ingest OSDU manifests using a refresh_token (no external CLI required).
-Now with Workflow run polling (Azure run-log equivalent) and verbose results.
+4ingest.py (STRICT .env mode)
 
-Behavior
---------
-- Auth: exchanges refresh_token -> access_token (AAD v2 first, v1 fallback).
-- Modes:
-  * workflow (default): POST /api/workflow/v1/workflow/Osdu_ingest/workflowRun
-    Then POLL runId until terminal state, fetch logs, and print an ingest summary.
-  * legacy: POST /api/osdu/v3/ingest/manifest (synchronous ingest).
-- Files:
-  * If you pass files on the CLI, they are ingested in order.
-  * If none provided, it tries reference_statistics_bundle.json first (if present),
-    then all "*manifest.json" in the current folder.
+Ingest OSDU manifests using a refresh_token (no external CLI required) with Workflow run polling
+(Azure run-log equivalent) and verbose results.
 
-Environment variables
----------------------
- refresh_token = <your refresh token> [REQUIRED]
+STRICT ENV BEHAVIOR
+- Configuration is loaded EXCLUSIVELY from .env file(s) provided via --env-file (repeatable).
+- No process environment variables are read.
+- Validation fails if required keys are missing.
 
-Optional overrides (defaults shown):
+Required .env keys (canonical names; compatible aliases in parentheses):
+  - refresh_token               (REFRESH_TOKEN)
+  - OSDU_TENANT_ID              (AZURE_TENANT_ID)
+  - OSDU_CLIENT_ID              (AZURE_CLIENT_ID)
+  - OSDU_SCOPE OR OSDU_RESOURCE (AZURE_SCOPE)
+  - OSDU_HOST                   (OSDU_BASE_URL; http(s) scheme added if omitted)
+  - OSDU_PARTITION              (DATA_PARTITION_ID)
 
+Optional:
+  - AAD_AUTHORITY (defaults to https://login.microsoftonline.com)
+  - OSDU_REDIRECT_URI (OIDC_REDIRECT_URI)  # NOTE: NOT sent for refresh_token grant
+  - INGEST_MODE ("workflow" | "legacy")    # default "workflow"
+  - WF_POLL_INTERVAL_SECONDS               # default 15
+  - WF_MAX_WAIT_SECONDS                    # default 30
+  - WF_VERBOSE_LOGS                        # default "1" (true)
 
-Notes
------
-- Refresh tokens are bound to a combination of user + client (app). Redeem with the same client_id that obtained it.  # see docs
-- Including redirect_uri in the v2 refresh request is optional but safe and can prevent edge cases.                 # see docs
+Usage examples:
+  python 4ingest.py --env-file .env -- files/*.manifest.json
+  python 4ingest.py --env-file .env.dev --env-file secrets.env --mode workflow
+
 """
 
 import argparse
 import base64
 import json
-import os
+import re
 import sys
 import time
 import uuid
@@ -43,15 +46,131 @@ from typing import Any, Dict, List, Optional, Tuple
 import requests
 
 
-# ------------------------------- helpers ------------------------------------
-def getenv(name: str, default: Optional[str] = None) -> Optional[str]:
-    v = os.environ.get(name)
-    if v is None:
-        return default
-    v = v.strip()
-    return v if v else default
+# =============================== .env handling =============================== #
+def _parse_dotenv_file(path: Path) -> Dict[str, str]:
+    """Parse KEY=VALUE pairs from a .env-style file into a dict (no external deps)."""
+    vals: Dict[str, str] = {}
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except Exception:
+        return vals
+    for raw_line in raw.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        k = k.strip()
+        v = v.strip()
+        if len(v) >= 2 and ((v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'"))):
+            v = v[1:-1]
+        vals[k] = v
+    return vals
 
 
+def _first(env: Dict[str, str], keys: List[str]) -> Optional[str]:
+    """Return the first non-empty value for any of the provided keys (exact match)."""
+    for k in keys:
+        v = env.get(k)
+        if v is not None:
+            v = v.strip()
+            if v:
+                return v
+    return None
+
+
+def _normalize_env(raw_chain: List[Dict[str, str]]) -> Dict[str, str]:
+    """
+    Normalize and merge multiple .env dicts (earlier -> later; later wins).
+    Map common aliases to canonical names and perform minimal value normalization.
+    """
+    merged: Dict[str, str] = {}
+    for kv in raw_chain:
+        merged.update(kv)
+
+    norm: Dict[str, str] = {}
+
+    # Canonical keys (with aliases)
+    norm["refresh_token"]     = _first(merged, ["refresh_token", "REFRESH_TOKEN"]) or ""
+    norm["OSDU_TENANT_ID"]    = _first(merged, ["OSDU_TENANT_ID", "AZURE_TENANT_ID"]) or ""
+    norm["OSDU_CLIENT_ID"]    = _first(merged, ["OSDU_CLIENT_ID", "AZURE_CLIENT_ID"]) or ""
+    norm["OSDU_SCOPE"]        = _first(merged, ["OSDU_SCOPE", "AZURE_SCOPE"]) or ""
+    norm["OSDU_RESOURCE"]     = _first(merged, ["OSDU_RESOURCE"]) or ""
+    norm["OSDU_REDIRECT_URI"] = _first(merged, ["OSDU_REDIRECT_URI", "OIDC_REDIRECT_URI"]) or ""
+    norm["OSDU_PARTITION"]    = _first(merged, ["OSDU_PARTITION", "DATA_PARTITION_ID"]) or ""
+
+    host = _first(merged, ["OSDU_HOST", "OSDU_BASE_URL"]) or ""
+    if host and not host.startswith("http"):
+        host = "https://" + host.lstrip("/")
+    norm["OSDU_HOST"] = host
+
+    # Optional with safe defaults (constants, not from OS env)
+    norm["AAD_AUTHORITY"] = _first(merged, ["AAD_AUTHORITY"]) or "https://login.microsoftonline.com"
+    norm["INGEST_MODE"]   = (_first(merged, ["INGEST_MODE"]) or "workflow").lower()
+
+    # Workflow polling controls
+    norm["WF_POLL_INTERVAL_SECONDS"] = _first(merged, ["WF_POLL_INTERVAL_SECONDS"]) or "15"
+    norm["WF_MAX_WAIT_SECONDS"]      = _first(merged, ["WF_MAX_WAIT_SECONDS"]) or "30"
+    norm["WF_VERBOSE_LOGS"]          = _first(merged, ["WF_VERBOSE_LOGS"]) or "1"
+
+    return norm
+
+
+def _validate_env(env: Dict[str, str]) -> None:
+    """Validate presence of required keys and either scope (v2) or resource (v1)."""
+    missing: List[str] = []
+    required = ["refresh_token", "OSDU_TENANT_ID", "OSDU_CLIENT_ID", "OSDU_HOST", "OSDU_PARTITION"]
+    for k in required:
+        if not env.get(k):
+            missing.append(k)
+    if not (env.get("OSDU_SCOPE") or env.get("OSDU_RESOURCE")):
+        missing.append("OSDU_SCOPE or OSDU_RESOURCE")
+    if missing:
+        raise SystemExit(
+            "Missing required configuration from .env:\n  - " + "\n  - ".join(missing) +
+            "\n\nEnsure your --env-file contains these keys (aliases allowed)."
+        )
+
+
+def load_env_chain(paths: List[str]) -> Tuple[Dict[str, str], List[str]]:
+    """
+    Load one or more .env files in order, returning (normalized_env, loaded_paths).
+    Later files override earlier ones. No OS environment is consulted.
+    """
+    loaded: List[str] = []
+    raw_chain: List[Dict[str, str]] = []
+    for p in paths:
+        fp = Path(p).expanduser().resolve()
+        if not fp.exists():
+            raise SystemExit(f"--env-file not found: {p}")
+        raw = _parse_dotenv_file(fp)
+        raw_chain.append(raw)
+        loaded.append(str(fp))
+    env = _normalize_env(raw_chain)
+    _validate_env(env)
+    return env, loaded
+
+
+# ================================ HTTP helpers =============================== #
+def _headers(partition: str, token: str) -> Dict[str, str]:
+    return {
+        "Authorization": f"Bearer {token}",
+        "data-partition-id": partition,
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
+
+
+def _requests_session() -> requests.Session:
+    """
+    Create a requests session.
+    Note: requests will honor HTTPS proxy vars if set in the OS, but this script does not read them.
+    """
+    s = requests.Session()
+    s.headers.update({"Accept": "application/json"})
+    return s
+
+
+# ================================ Auth helpers =============================== #
 def get_access_token_from_refresh_token(
     refresh_token: str,
     tenant_id: str,
@@ -59,13 +178,15 @@ def get_access_token_from_refresh_token(
     authority_base: str,
     scope_v2: Optional[str],
     resource_v1: Optional[str],
-    redirect_uri_v2: Optional[str] = None,
     timeout: int = 20,
 ) -> Tuple[str, int]:
     """
-    Try AAD v2 (oauth2/v2.0/token) with scope, then fall back to v1 (oauth2/token) with resource.
-    Returns: (access_token, expires_in_seconds)
-    Raises: RuntimeError on failure.
+    Auth flow:
+      - Try AAD v2 (scope) first.
+      - Fall back to AAD v1 (resource) only if resource_v1 is provided.
+
+    IMPORTANT: We do NOT send redirect_uri on the refresh_token grant to avoid AADSTS50011
+    mismatches when the registered redirect does not exactly match the request.
     """
     if not refresh_token:
         raise RuntimeError("Missing refresh_token")
@@ -73,39 +194,35 @@ def get_access_token_from_refresh_token(
     sess = requests.Session()
     sess.headers.update({"Content-Type": "application/x-www-form-urlencoded"})
 
-    # Attempt v2 first
+    # v2 (prefer)
     if scope_v2:
         v2_url = f"{authority_base.rstrip('/')}/{tenant_id}/oauth2/v2.0/token"
         v2_form = {
             "grant_type": "refresh_token",
             "client_id": client_id,
             "refresh_token": refresh_token,
-            "scope": scope_v2,  # e.g., "<API_APP_ID>/.default openid profile offline_access"
+            "scope": scope_v2,
         }
-        if redirect_uri_v2:
-            # Align with the redirect used to obtain the token (optional but safe)
-            v2_form["redirect_uri"] = redirect_uri_v2
         try:
             r = sess.post(v2_url, data=v2_form, timeout=timeout)
             if r.ok:
                 data = r.json()
                 if "access_token" in data:
                     return data["access_token"], int(data.get("expires_in", 3600))
-                else:
-                    print(f"[auth v2] {r.status_code}: {r.text[:800]}")
+                raise RuntimeError(f"[auth v2] token payload missing access_token: {data}")
             else:
-                print(f"[auth v2] {r.status_code}: {r.text[:800]}")
+                raise RuntimeError(f"[auth v2] {r.status_code}: {r.text[:800]}")
         except requests.RequestException as e:
-            print(f"[auth v2] request error: {e}")
+            raise RuntimeError(f"[auth v2] request error: {e}") from e
 
-    # Fallback to v1 only if a valid resource is provided
+    # v1 (fallback only if resource is provided)
     if resource_v1:
         v1_url = f"{authority_base.rstrip('/')}/{tenant_id}/oauth2/token"
         v1_form = {
             "grant_type": "refresh_token",
             "client_id": client_id,
             "refresh_token": refresh_token,
-            "resource": resource_v1,  # Must be the API App ID URI or GUID, NOT a redirect URI
+            "resource": resource_v1,
         }
         try:
             r = sess.post(v1_url, data=v1_form, timeout=timeout)
@@ -113,24 +230,26 @@ def get_access_token_from_refresh_token(
                 data = r.json()
                 if "access_token" in data:
                     return data["access_token"], int(data.get("expires_in", 3600))
-                raise RuntimeError(f"Token endpoint returned no access_token. Body: {data}")
-            raise RuntimeError(f"Token request failed: {r.status_code} {r.text}")
+                raise RuntimeError(f"[auth v1] token payload missing access_token: {data}")
+            raise RuntimeError(f"[auth v1] {r.status_code}: {r.text[:800]}")
         except requests.RequestException as e:
-            raise RuntimeError(f"Token request error: {e}") from e
+            raise RuntimeError(f"[auth v1] request error: {e}") from e
 
     raise RuntimeError(
-        "Unable to obtain access_token via v2 or v1 token endpoints. "
-        "Verify client/tenant and OSDU_SCOPE/OSDU_RESOURCE."
+        "Unable to obtain access_token via v2 (OSDU_SCOPE) or v1 (OSDU_RESOURCE). "
+        "Set OSDU_SCOPE to '<GUID>/.default openid offline_access' (v2), or "
+        "set OSDU_RESOURCE to a valid API resource (v1)."
     )
 
 
 def _peek_jwt(jwt_token: str) -> None:
-    """Print a minimal peek of JWT payload fields (aud, azp, exp) for debugging."""
+    """Minimal peek of JWT payload (aud, azp, exp) for debugging."""
     try:
         parts = jwt_token.split(".")
         if len(parts) >= 2:
+            import base64 as _b64
             payload = parts[1] + "==="
-            payload_json = json.loads(base64.urlsafe_b64decode(payload.encode()))
+            payload_json = json.loads(_b64.urlsafe_b64decode(payload.encode()))
             aud = payload_json.get("aud")
             azp = payload_json.get("azp")
             exp = payload_json.get("exp")
@@ -139,17 +258,7 @@ def _peek_jwt(jwt_token: str) -> None:
         pass
 
 
-def _requests_session() -> requests.Session:
-    """
-    Create a requests session. If HTTPS proxy is defined via env (HTTPS_PROXY/https_proxy),
-    requests will honor it automatically. No special proxy handling needed otherwise.
-    """
-    s = requests.Session()
-    s.headers.update({"Accept": "application/json"})
-    return s
-
-
-# ---------------------------- workflow helpers ------------------------------
+# ================================ Workflow API =============================== #
 def _wf_submit(
     sess: requests.Session,
     host: str,
@@ -158,9 +267,7 @@ def _wf_submit(
     manifest_json: Dict[str, Any],
     workflow_id: str = "Osdu_ingest",
 ) -> Tuple[str, Dict[str, Any]]:
-    """
-    Submit a workflow run. Returns (run_id, submit_response_json).
-    """
+    """Submit a workflow run. Returns (run_id, submit_response_json)."""
     cid = str(uuid.uuid4())
     headers = {
         "Authorization": f"Bearer {token}",
@@ -207,7 +314,6 @@ def _wf_get(sess: requests.Session, host: str, partition: str, token: str, url_p
         if r.ok:
             return r.json()
         else:
-            # print soft errors for diagnostics
             print(f"[GET {r.status_code}] {url_path} -> {r.text[:400]}")
             return None
     except requests.RequestException as e:
@@ -233,23 +339,19 @@ def _wf_poll_until_done(
     start = time.time()
     attempts = 0
     last_obj: Dict[str, Any] = {}
-
-    # Possible status endpoints (clusters vary)
     paths = [
-        f"/api/workflow/v1/workflow/{workflow_id}/workflowRun/{run_id}",          # full run object
-        f"/api/workflow/v1/workflowRun/{run_id}",                                 # alt root
-        f"/api/workflow/v1/workflow/{workflow_id}/workflowRun/{run_id}/status",   # status-only
+        f"/api/workflow/v1/workflow/{workflow_id}/workflowRun/{run_id}",
+        f"/api/workflow/v1/workflowRun/{run_id}",
+        f"/api/workflow/v1/workflow/{workflow_id}/workflowRun/{run_id}/status",
     ]
     terminal = {"completed", "succeeded", "failed", "error", "cancelled"}
     print(f"Polling workflow runId={run_id} ...")
-
     while True:
         attempts += 1
         for p in paths:
             obj = _wf_get(sess, host, partition, token, p)
             if obj:
                 last_obj = obj
-                # Try to read a status in a variety of shapes
                 status = str(
                     obj.get("status")
                     or obj.get("workflowRunStatus")
@@ -262,7 +364,6 @@ def _wf_poll_until_done(
                 else:
                     print(f"[{attempts}] status: <unavailable> (path {p})")
                 if status in terminal:
-                    # Optionally fetch logs
                     if verbose_logs:
                         logs_paths = [
                             f"/api/workflow/v1/workflow/{workflow_id}/workflowRun/{run_id}/logs",
@@ -278,7 +379,6 @@ def _wf_poll_until_done(
                                     print(str(logs)[:6000])
                                 break
                     return last_obj
-
         if time.time() - start > max_wait:
             print(f"Polling timed out after ~{int(max_wait)} seconds.")
             return last_obj
@@ -293,13 +393,6 @@ def _try_print_ingest_summary(run_obj: Dict[str, Any]) -> None:
     if not run_obj:
         return
 
-    # Heuristics over common fields
-    candidates: List[Any] = []
-    for k in ("outputs", "output", "result", "results", "payload", "data"):
-        v = run_obj.get(k)
-        if isinstance(v, (dict, list)):
-            candidates.append(v)
-
     def walk(x):
         if isinstance(x, dict):
             yield x
@@ -309,14 +402,17 @@ def _try_print_ingest_summary(run_obj: Dict[str, Any]) -> None:
             for it in x:
                 yield from walk(it)
 
-    # Scan for per-record entries
+    candidates: List[Any] = []
+    for k in ("outputs", "output", "result", "results", "payload", "data"):
+        v = run_obj.get(k)
+        if isinstance(v, (dict, list)):
+            candidates.append(v)
+
     rows = []
     for cand in candidates:
         for node in walk(cand):
             if not isinstance(node, dict):
                 continue
-            # Common shapes:
-            # { "id": "data:...", "status": "created\nupdated\nfailed", "message": "...", "error": "..." }
             rid = node.get("id") or node.get("recordId") or node.get("record_id")
             st = node.get("status") or node.get("result") or node.get("outcome")
             msg = node.get("message") or node.get("error") or node.get("reason") or node.get("details")
@@ -329,7 +425,7 @@ def _try_print_ingest_summary(run_obj: Dict[str, Any]) -> None:
         updated = sum(1 for _, s, _ in rows if s.lower().startswith("updat"))
         failed = sum(1 for _, s, _ in rows if s.lower().startswith("fail") or s.lower() == "error")
         print(f"Total: {len(rows)} created={created} updated={updated} failed={failed}")
-        for rid, st, msg in rows[:200]:  # truncate long lists
+        for rid, st, msg in rows[:200]:
             line = f" - {rid} -> {st}"
             if msg:
                 line += f" ({msg[:200]})"
@@ -338,7 +434,7 @@ def _try_print_ingest_summary(run_obj: Dict[str, Any]) -> None:
         print("\n(No per-record ingestion details were found in workflow outputs.)")
 
 
-# ------------------------------ legacy ingest -------------------------------
+# ================================ Legacy ingest ============================== #
 def _legacy_ingest(
     sess: requests.Session,
     host: str,
@@ -346,10 +442,7 @@ def _legacy_ingest(
     token: str,
     manifest_json: Dict[str, Any],
 ) -> Dict[str, Any]:
-    """
-    Direct manifest ingest (synchronous): POST /api/osdu/v3/ingest/manifest
-    Returns response JSON.
-    """
+    """Direct manifest ingest (synchronous): POST /api/osdu/v3/ingest/manifest"""
     cid = str(uuid.uuid4())
     headers = {
         "Authorization": f"Bearer {token}",
@@ -375,7 +468,7 @@ def _legacy_ingest(
     return body
 
 
-# ----------------------------- file collection ------------------------------
+# ================================= File set ================================= #
 def collect_files_from_args_or_glob(cli_files: List[str]) -> List[Path]:
     """
     If CLI files are provided, use them (in order).
@@ -393,67 +486,83 @@ def collect_files_from_args_or_glob(cli_files: List[str]) -> List[Path]:
     return files
 
 
-# --------------------------------- main -------------------------------------
+# =================================== main =================================== #
 def main():
-    parser = argparse.ArgumentParser(
+    # Bootstrap: capture --env-file early to load config before full parser
+    boot = argparse.ArgumentParser(add_help=False)
+    boot.add_argument(
+        "--env-file", action="append", metavar="PATH", required=True,
+        help="Path to a .env file (repeatable). Later files override earlier ones."
+    )
+    boot_args, _ = boot.parse_known_args()
+
+    # Load and validate .env chain (STRICT: .env only; no OS env)
+    ENV, loaded_paths = load_env_chain(boot_args.env_file)
+
+    # Full parser (include boot in help so --env-file is documented)
+    ap = argparse.ArgumentParser(
+        parents=[boot],
         description="Ingest OSDU manifests using a refresh_token (REST only, no osdu-cli). Now with Workflow polling."
     )
-    parser.add_argument(
+    ap.add_argument(
         "files",
         nargs="*",
-        help="Optional list of manifest files. If omitted, the tool ingests reference_statistics_bundle.json "
-             "first (if present) and then all *manifest.json in ./",
+        help="Optional list of manifest files. If omitted, ingests reference_statistics_bundle.json first (if present) and then all *manifest.json in ./",
     )
-    parser.add_argument(
+    ap.add_argument(
         "--sleep",
         type=float,
         default=0.5,
         help="Seconds to sleep between ingestions (default: 0.5)",
     )
-    parser.add_argument(
+    ap.add_argument(
         "--mode",
         choices=["workflow", "legacy"],
-        help="Override ingestion mode (default taken from env INGEST_MODE or 'workflow')",
+        help="Override ingestion mode (default taken from .env INGEST_MODE or 'workflow')",
     )
-    args = parser.parse_args()
+    args = ap.parse_args()
 
-# Required env
-    refresh_token = getenv("refresh_token")
-
-    # Corrected 
-    # Use plain authority base (no tenant segment here; tenant_id is added later)
-    authority_base = getenv("AAD_AUTHORITY", "https://login.microsoftonline.com")
-    tenant_id = getenv("OSDU_TENANT_ID", "3aa4a235-b6e2-48d5-9195-7fcf05b459b0")
-    client_id = getenv("OSDU_CLIENT_ID", "7a414874-4b27-4378-b34f-bc9e5a5faa4f")
-    scope_v2 = getenv("OSDU_SCOPE","7daee810-3f78-40c4-84c2-7a199428de18/.default openid offline_Access")
-    redirect_uri_v2 = getenv("OSDU_REDIRECT_URI", "https://oauth.pstmn.io/v1/callback")
-    resource_v1 = getenv("OSDU_RESOURCE", None)
-    host = getenv("OSDU_HOST", "https://equinorswedev.energy.azure.com")
-    partition = getenv("OSDU_PARTITION", "dev")
-    env_mode = getenv("INGEST_MODE", "workflow").lower()
+    # Resolve config strictly from ENV (with minimal CLI override for mode)
+    refresh_token = ENV["refresh_token"]
+    authority_base = ENV["AAD_AUTHORITY"]
+    tenant_id = ENV["OSDU_TENANT_ID"]
+    client_id = ENV["OSDU_CLIENT_ID"]
+    scope_v2 = ENV.get("OSDU_SCOPE") or ""
+    resource_v1 = ENV.get("OSDU_RESOURCE") or None
+    host = ENV["OSDU_HOST"]
+    partition = ENV["OSDU_PARTITION"]
+    env_mode = ENV["INGEST_MODE"]
     mode = (args.mode or env_mode).lower()
 
-    # Polling controls
-    poll_interval = float(getenv("WF_POLL_INTERVAL_SECONDS", "15"))
-    max_wait = float(getenv("WF_MAX_WAIT_SECONDS", "30"))
-    verbose_logs = getenv("WF_VERBOSE_LOGS", "1") not in ("0", "false", "no")
+    # Poll controls
+    try:
+        poll_interval = float(ENV.get("WF_POLL_INTERVAL_SECONDS", "15"))
+    except Exception:
+        poll_interval = 15.0
+    try:
+        max_wait = float(ENV.get("WF_MAX_WAIT_SECONDS", "30"))
+    except Exception:
+        max_wait = 30.0
+    verbose_logs = (ENV.get("WF_VERBOSE_LOGS", "1").lower() not in ("0", "false", "no"))
 
     files = collect_files_from_args_or_glob(args.files)
 
-    print("=== Config ===")
-    print(f"Authority : {authority_base}")
-    print(f"Tenant ID : {tenant_id}")
-    print(f"Client ID : {client_id}")
-    print(f"Host      : {host}")
-    print(f"Partition : {partition}")
-    print(f"Mode      : {mode}")
-    print(f"Files     : {[str(p) for p in files]}")
-    print("==============\n")
+    print("=== Config (strict .env mode) ===")
+    print(f".env files loaded : {', '.join(loaded_paths)}")
+    print("OS environment    : NOT USED")
+    print(f"Authority         : {authority_base}")
+    print(f"Tenant ID         : {tenant_id}")
+    print(f"Client ID         : {client_id}")
+    print(f"Host              : {host}")
+    print(f"Partition         : {partition}")
+    print(f"Mode              : {mode}")
+    print(f"Files             : {[str(p) for p in files]}")
+    print("=================================\n")
 
     if not files:
         raise SystemExit("No manifest files found (neither reference_statistics_bundle.json nor *manifest.json).")
     if not refresh_token:
-        raise SystemExit("Missing env var 'refresh_token'.")
+        raise SystemExit("Missing 'refresh_token' (put REFRESH_TOKEN=... into your --env-file).")
 
     print("Requesting access_token via refresh_token ...")
     access_token, expires_in = get_access_token_from_refresh_token(
@@ -462,10 +571,8 @@ def main():
         client_id=client_id,
         authority_base=authority_base,
         scope_v2=scope_v2,
-        resource_v1=(resource_v1 or None),  # skip v1 if empty
-        redirect_uri_v2=redirect_uri_v2,
+        resource_v1=resource_v1,
     )
-    
     exp_mins = round(expires_in / 60.0, 1)
     print(f"Got access_token (expires in ~{exp_mins} minutes).")
     _peek_jwt(access_token)
@@ -479,7 +586,6 @@ def main():
             print(f"[skip] File not found: {fp}")
             ok_all = False
             continue
-
         # Load manifest JSON upfront
         try:
             manifest_json = json.loads(fp.read_text(encoding="utf-8"))

@@ -1,51 +1,172 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-6query.py — ADME/OSDU manifest-aware validator & debugger
-Auth, partition, and defaults intentionally mirror your ingest scripts.
-What’s in here:
-- Robust KQL for Airflow logs (OEPAirFlowTask) scoped to your ADME resource:
-  * Matches CorrelationId OR RunId and falls back to search in Content/CodePath.
-  * Printed only when --run-id is provided.
-  * The script WON'T run a generic Search when you only want KQL.
-- Manifest-driven checks for ReferenceData and WPCs (CBT/GeoLabelSet), with:
-  * --index-diagnostics (surface index errors in Search results),
-  * --verify-storage (GET each expected id in Storage),
-  * --check-legal (validate all referenced LegalTags),
-  * --entitlements-check (verify typical service groups, flexible matching),
-  * --debug-manifests (show matched manifest files, harvested counts).
-- Optional Workflow Service status fetch for a run ( --workflow-status <name> ).
-Environment variables (kept identical to your other scripts):
-  refresh_token [REQUIRED]
-  AAD_AUTHORITY = https://login.microsoftonline.com
-  OSDU_TENANT_ID = 3aa4a235-b6e2-48d5-9195-7fcf05b459b0
-  OSDU_CLIENT_ID = ebd2bfee-ecba-47b7-a33c-017d0131879d
-  OSDU_SCOPE = 7daee810-3f78-40c4-84c2-7a199428de18/.default openid offline_Access
-  OSDU_REDIRECT_URI = https://oauth.pstmn.io/v1/callback
-  OSDU_RESOURCE = (unset/None by default; enables v1 fallback only if set)
-  OSDU_HOST = https://equinorswedev.energy.azure.com
-  OSDU_PARTITION = dev
+query.py — ADME/OSDU manifest-aware validator & debugger
+
+STRICT ENV MODE:
+- Configuration is loaded EXCLUSIVELY from .env file(s) provided via --env-file (repeatable).
+- No process environment variables are read.
+- No implicit defaults are taken from the OS environment.
+- Validation will fail if required keys are missing.
+
+Required .env keys (canonical names; compatible aliases in parentheses):
+  - refresh_token            (REFRESH_TOKEN)
+  - OSDU_TENANT_ID           (AZURE_TENANT_ID)
+  - OSDU_CLIENT_ID           (AZURE_CLIENT_ID)
+  - OSDU_SCOPE OR OSDU_RESOURCE   (AZURE_SCOPE)
+  - OSDU_HOST                (OSDU_BASE_URL; http(s) scheme added if omitted)
+  - OSDU_PARTITION           (DATA_PARTITION_ID)
+
+Optional:
+  - AAD_AUTHORITY (defaults to https://login.microsoftonline.com if omitted)
+  - OSDU_REDIRECT_URI        (OIDC_REDIRECT_URI)
 """
+
 import argparse
 import base64
 import glob
 import json
-import os
 import re
 from pathlib import Path
 from typing import Optional, Tuple, Dict, List, Any, Iterable
 
 import requests
 
-# ------------------------------- helpers ------------------------------- #
-def getenv(name: str, default: Optional[str] = None) -> Optional[str]:
-    v = os.environ.get(name)
-    if v is None:
-        return default
-    v = v.strip()
-    return v if v else default
+
+# =============================== .env handling =============================== #
+def _parse_dotenv_file(path: Path) -> Dict[str, str]:
+    """Parse KEY=VALUE pairs from a .env-style file into a dict (no deps)."""
+    vals: Dict[str, str] = {}
+    try:
+        raw = path.read_text(encoding="utf-8")
+    except Exception:
+        return vals
+    for raw_line in raw.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        k = k.strip()
+        v = v.strip()
+        if len(v) >= 2 and ((v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'"))):
+            v = v[1:-1]
+        vals[k] = v
+    return vals
 
 
+def _first(env: Dict[str, str], keys: List[str]) -> Optional[str]:
+    """Return the first non-empty value for any of the provided keys (exact match, case-sensitive)."""
+    for k in keys:
+        v = env.get(k)
+        if v is not None:
+            v = v.strip()
+            if v:
+                return v
+    return None
+
+
+def _normalize_env(raw_chain: List[Dict[str, str]]) -> Dict[str, str]:
+    """
+    Normalize and merge multiple .env dicts (earlier -> later; later wins).
+    Map common aliases to canonical names and perform minimal value normalization.
+    """
+    merged: Dict[str, str] = {}
+    for kv in raw_chain:
+        merged.update(kv)
+
+    norm: Dict[str, str] = {}
+
+    # Canonical keys (with aliases)
+    norm["refresh_token"]   = _first(merged, ["refresh_token", "REFRESH_TOKEN"]) or ""
+    norm["OSDU_TENANT_ID"]  = _first(merged, ["OSDU_TENANT_ID", "AZURE_TENANT_ID"]) or ""
+    norm["OSDU_CLIENT_ID"]  = _first(merged, ["OSDU_CLIENT_ID", "AZURE_CLIENT_ID"]) or ""
+    norm["OSDU_SCOPE"]      = _first(merged, ["OSDU_SCOPE", "AZURE_SCOPE"]) or ""
+    norm["OSDU_RESOURCE"]   = _first(merged, ["OSDU_RESOURCE"]) or ""  # optional alternative to SCOPE (v1 flow)
+    norm["OSDU_REDIRECT_URI"] = _first(merged, ["OSDU_REDIRECT_URI", "OIDC_REDIRECT_URI"]) or ""
+    norm["OSDU_PARTITION"]  = _first(merged, ["OSDU_PARTITION", "DATA_PARTITION_ID"]) or ""
+    host = _first(merged, ["OSDU_HOST", "OSDU_BASE_URL"]) or ""
+    if host and not host.startswith("http"):
+        host = "https://" + host.lstrip("/")
+    norm["OSDU_HOST"] = host
+
+    # Optional with safe default (constant, not from OS env)
+    norm["AAD_AUTHORITY"] = _first(merged, ["AAD_AUTHORITY"]) or "https://login.microsoftonline.com"
+
+    return norm
+
+
+def _validate_env(env: Dict[str, str]) -> None:
+    """Validate presence of required keys and either scope (v2) or resource (v1)."""
+    missing: List[str] = []
+    required = ["refresh_token", "OSDU_TENANT_ID", "OSDU_CLIENT_ID", "OSDU_HOST", "OSDU_PARTITION"]
+    for k in required:
+        if not env.get(k):
+            missing.append(k)
+    if not (env.get("OSDU_SCOPE") or env.get("OSDU_RESOURCE")):
+        missing.append("OSDU_SCOPE or OSDU_RESOURCE")
+    if missing:
+        raise SystemExit(
+            "Missing required configuration from .env:\n  - " + "\n  - ".join(missing) +
+            "\n\nEnsure your --env-file contains these keys (aliases allowed)."
+        )
+
+
+def load_env_chain(paths: List[str]) -> Tuple[Dict[str, str], List[str]]:
+    """
+    Load one or more .env files in order, returning (normalized_env, loaded_paths).
+    Later files override earlier ones. No OS environment is consulted.
+    """
+    loaded: List[str] = []
+    raw_chain: List[Dict[str, str]] = []
+    for p in paths:
+        fp = Path(p).expanduser().resolve()
+        if not fp.exists():
+            raise SystemExit(f"--env-file not found: {p}")
+        raw = _parse_dotenv_file(fp)
+        raw_chain.append(raw)
+        loaded.append(str(fp))
+    env = _normalize_env(raw_chain)
+    _validate_env(env)
+    return env, loaded
+
+
+# ================================ HTTP helpers =============================== #
+def _headers(partition: str, token: str) -> Dict[str, str]:
+    return {
+        "Authorization": f"Bearer {token}",
+        "data-partition-id": partition,
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
+
+
+def call_search(host: str, partition: str, token: str, payload: Dict, timeout: int = 60) -> requests.Response:
+    url = f"{host.rstrip('/')}/api/search/v2/query"
+    return requests.post(url, headers=_headers(partition, token), data=json.dumps(payload), timeout=timeout)
+
+
+def get_record_storage(host: str, partition: str, token: str, record_id: str, timeout: int = 30) -> requests.Response:
+    url = f"{host.rstrip('/')}/api/storage/v2/records/{record_id}"
+    return requests.get(url, headers=_headers(partition, token), timeout=timeout)
+
+
+def list_groups(host: str, partition: str, token: str) -> requests.Response:
+    url = f"{host.rstrip('/')}/api/entitlements/v2/groups"
+    return requests.get(url, headers=_headers(partition, token), timeout=60)
+
+
+def get_legal_tag(host: str, partition: str, token: str, tag_name: str) -> requests.Response:
+    url = f"{host.rstrip('/')}/api/legal/v1/legaltags/{tag_name}"
+    return requests.get(url, headers=_headers(partition, token), timeout=30)
+
+
+def get_workflow_run_status(host: str, partition: str, token: str,
+                            workflow_name: str, run_id: str, timeout: int = 30) -> requests.Response:
+    url = f"{host.rstrip('/')}/api/workflow/v1/workflow/{workflow_name}/workflowRun/{run_id}"
+    return requests.get(url, headers=_headers(partition, token), timeout=timeout)
+
+
+# ================================ Auth helpers =============================== #
 def get_access_token_from_refresh_token(
     refresh_token: str,
     tenant_id: str,
@@ -58,13 +179,15 @@ def get_access_token_from_refresh_token(
 ) -> Tuple[str, int]:
     """
     Auth flow:
-    - Try AAD v2 (scope) first.
-    - Fall back to AAD v1 (resource) only if resource_v1 is provided.
+      - Try AAD v2 (scope) first.
+      - Fall back to AAD v1 (resource) only if resource_v1 is provided.
     """
     if not refresh_token:
         raise RuntimeError("Missing refresh_token")
+
     sess = requests.Session()
     sess.headers.update({"Content-Type": "application/x-www-form-urlencoded"})
+
     # v2
     if scope_v2:
         v2_url = f"{authority_base.rstrip('/')}/{tenant_id}/oauth2/v2.0/token"
@@ -87,6 +210,7 @@ def get_access_token_from_refresh_token(
                 raise RuntimeError(f"[auth v2] {r.status_code}: {r.text[:800]}")
         except requests.RequestException as e:
             raise RuntimeError(f"[auth v2] request error: {e}") from e
+
     # v1
     if resource_v1:
         v1_url = f"{authority_base.rstrip('/')}/{tenant_id}/oauth2/token"
@@ -106,9 +230,10 @@ def get_access_token_from_refresh_token(
             raise RuntimeError(f"[auth v1] {r.status_code}: {r.text[:800]}")
         except requests.RequestException as e:
             raise RuntimeError(f"[auth v1] request error: {e}") from e
+
     raise RuntimeError(
         "Unable to obtain access_token via v2 (OSDU_SCOPE) or v1 (OSDU_RESOURCE). "
-        "Set OSDU_SCOPE to '<GUID>/.default openid offline_Access' (v2), or "
+        "Set OSDU_SCOPE to '<GUID>/.default openid offline_access' (v2), or "
         "set OSDU_RESOURCE to a valid API resource (v1)."
     )
 
@@ -128,41 +253,7 @@ def _peek_jwt(jwt_token: str) -> None:
         pass
 
 
-def headers(partition: str, token: str) -> Dict[str, str]:
-    return {
-        "Authorization": f"Bearer {token}",
-        "data-partition-id": partition,
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-    }
-
-# ------------------------------- service calls ------------------------------- #
-def call_search(host: str, partition: str, token: str, payload: Dict, timeout: int = 60) -> requests.Response:
-    url = f"{host.rstrip('/')}/api/search/v2/query"
-    return requests.post(url, headers=headers(partition, token), data=json.dumps(payload), timeout=timeout)
-
-
-def get_record_storage(host: str, partition: str, token: str, record_id: str, timeout: int = 30) -> requests.Response:
-    url = f"{host.rstrip('/')}/api/storage/v2/records/{record_id}"
-    return requests.get(url, headers=headers(partition, token), timeout=timeout)
-
-
-def list_groups(host: str, partition: str, token: str) -> requests.Response:
-    url = f"{host.rstrip('/')}/api/entitlements/v2/groups"
-    return requests.get(url, headers=headers(partition, token), timeout=60)
-
-
-def get_legal_tag(host: str, partition: str, token: str, tag_name: str) -> requests.Response:
-    url = f"{host.rstrip('/')}/api/legal/v1/legaltags/{tag_name}"
-    return requests.get(url, headers=headers(partition, token), timeout=30)
-
-
-def get_workflow_run_status(host: str, partition: str, token: str,
-                            workflow_name: str, run_id: str, timeout: int = 30) -> requests.Response:
-    url = f"{host.rstrip('/')}/api/workflow/v1/workflow/{workflow_name}/workflowRun/{run_id}"
-    return requests.get(url, headers=headers(partition, token), timeout=timeout)
-
-# ------------------------------- manifest parsing ------------------------------- #
+# ============================== Manifest parsing ============================= #
 def safe_get(d: Dict[str, Any], path: List[str]) -> Optional[Any]:
     cur: Any = d
     try:
@@ -198,11 +289,10 @@ def _iter_manifest_files(patterns: Iterable[str], debug: bool = False) -> List[P
     return matched
 
 
-# ---- NEW: fallback harvester for flattened "kind/id/legal/Name" files ---- #
+# ---- Fallback harvester for flattened "kind/id/legal/Name" files ---- #
 _FLAT_KIND_RE = re.compile(r"^\s*kind\s+(\S+)\s*$", re.IGNORECASE)
 _FLAT_ID_RE = re.compile(r"^\s*id\s+(\S+)\s*$", re.IGNORECASE)
 _FLAT_LEGAL_RE = re.compile(r"^\s*legal\s+legaltags\s+(\S+)\s*$", re.IGNORECASE)
-_FLAT_NAME_RE = re.compile(r"^\s*data\s+Name\s+(.+?)\s*$", re.IGNORECASE)
 
 def _harvest_flat_manifest_text(raw: str,
                                 created_kinds: set,
@@ -221,38 +311,27 @@ def _harvest_flat_manifest_text(raw: str,
         line = line.strip()
         if not line:
             continue
-
         m_kind = _FLAT_KIND_RE.match(line)
         if m_kind:
             k = m_kind.group(1)
-            # ignore the top-level manifest kind
             if k and k != "osdu:wks:Manifest:1.0.0":
                 current_kind = k
                 created_kinds.add(k)
             else:
                 current_kind = None
             continue
-
         m_id = _FLAT_ID_RE.match(line)
         if m_id:
             rid = m_id.group(1)
-            # associate with last seen non-Manifest kind
             if current_kind and rid:
                 add_ref(current_kind, rid)
             continue
-
         m_legal = _FLAT_LEGAL_RE.match(line)
         if m_legal:
             t = m_legal.group(1)
             if t:
                 legal_tags.add(t)
             continue
-
-        # Name not required for RefData; kept for potential WPC detection later
-        # m_name = _FLAT_NAME_RE.match(line)
-        # if m_name:
-        #     _ = m_name.group(1)
-        #     continue
 
 
 def build_queries_from_manifests(paths: List[str],
@@ -263,7 +342,7 @@ def build_queries_from_manifests(paths: List[str],
     """
     Return (qmap, created_kinds, legal_tags).
     qmap: dict keyed by kind (or kind-version),
-    value has 'query', 'limit', 'expect' (ids for ref-data, names for WPCs).
+          value has 'query', 'limit', 'expect' (ids for ref-data, names for WPCs).
     """
     cbt_names: set[str] = set()
     gls_names: set[str] = set()
@@ -398,15 +477,15 @@ def build_queries_from_manifests(paths: List[str],
         print("\n=== Harvest summary ===")
         print(f" created_kinds : {len(created_kinds)}")
         for k, s in list(ref_ids_by_kind.items())[:5]:
-            print(f"  - {k}: {len(s)} ids (showing up to 3) -> {list(sorted(s))[:3]}")
+            print(f" - {k}: {len(s)} ids (showing up to 3) -> {list(sorted(s))[:3]}")
         print(f" WPC CBT names : {len(cbt_names)}")
         print(f" WPC Geo names : {len(gls_names)}")
         print("=======================\n")
 
     return qmap, sorted(created_kinds), sorted(legal_tags)
 
-# ---------------------------- diagnostics helpers ---------------------------- #
-# Accept broader alternates; names vary across environments.
+
+# ============================== Diagnostics utils ============================ #
 REQUIRED_SERVICE_GROUPS = {
     "service.storage.access": (
         "service.storage.user", "service.storage.creator", "service.storage.viewer", "service.storage.viewers"
@@ -449,34 +528,46 @@ def summarize_index_errors(hits: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 def print_kql_for_runid(run_id: str, resource_name: Optional[str] = None) -> None:
     """
     Print a single, resource-scoped KQL block that returns ONLY relevant rows
-    for the given runId from OEPAirFlowTask:
-    - Filters by ResourceName if provided.
-    - Matches CorrelationId OR RunId, and falls back to search in Content/CodePath.
-    See: Microsoft OEPAirFlowTask sample queries and columns reference.
+    for the given runId from OEPAirFlowTask.
     """
     rn = resource_name or "<your-adme-resource-name>"
     print("\n=== Azure Monitor KQL (Airflow logs for this runId) ===")
     print(f"""let runId = "{run_id}";
 let adme = "{rn}";
 OEPAirFlowTask
-\
+\\
  extend ResourceName = tostring(split(_ResourceId, "/")[-1])
-\
+\\
  where ResourceName == adme
-\
+\\
  where CorrelationId == runId or RunId == runId
  or tostring(Content) has runId or tostring(CodePath) has runId
-\
+\\
  project TimeGenerated, DagName, LogLevel, DagTaskName, CodePath, Content
-\
+\\
  order by TimeGenerated desc
 ========================================
 """)
 
 
-# ----------------------------------- main ----------------------------------- #
+# =================================== main =================================== #
 def main():
-    ap = argparse.ArgumentParser(description="Query/validate ADME/OSDU by manifests and surface debug info (index, entitlements, legal, Airflow KQL).")
+    # Bootstrap: capture --env-file early to load config before full parser
+    boot = argparse.ArgumentParser(add_help=False)
+    boot.add_argument(
+        "--env-file", action="append", metavar="PATH", required=True,
+        help="Path to a .env file (repeatable). Later files override earlier ones."
+    )
+    boot_args, _ = boot.parse_known_args()
+
+    # Load and validate .env chain (STRICT: .env only; no OS env)
+    ENV, loaded_paths = load_env_chain(boot_args.env_file)
+
+    # Full parser (include boot in help so --env-file is documented)
+    ap = argparse.ArgumentParser(
+        parents=[boot],
+        description="Query/validate ADME/OSDU by manifests and surface debug info (index, entitlements, legal, Airflow KQL)."
+    )
     # diagnostics
     ap.add_argument("--print-token", action="store_true", help="Print token peek (aud/azp/exp).")
     ap.add_argument("--whoami", action="store_true", help="Show entitlements (first ~20 groups).")
@@ -484,57 +575,61 @@ def main():
     ap.add_argument("--index-diagnostics", action="store_true", help="Add 'index' to returnedFields and summarize indexer errors.")
     ap.add_argument("--check-legal", action="store_true", help="Validate referenced LegalTags via Legal v1.")
     ap.add_argument("--debug-manifests", action="store_true", help="Print matched files, load errors, and harvested counts.")
+
     # Airflow / KQL
     ap.add_argument("--run-id", default=None, help="Print resource-scoped KQL for this Workflow/Airflow runId.")
     ap.add_argument("--resource-name", default=None, help="ADME resource name to scope KQL (recommended).")
     ap.add_argument("--workflow-status", metavar="WORKFLOW_NAME",
                     help="Call Workflow service to fetch run status for --run-id (e.g., Osdu_ingest).")
-    # partition override (env default: dev)
-    ap.add_argument("--partition", default=getenv("OSDU_PARTITION", "dev"),
-                    help="SRN namespace / data-partition-id (default: dev)")
-    # generic search
+
+    # Partition override (optional CLI override over .env)
+    ap.add_argument("--partition", default=None, help="Override partition (data-partition-id) from .env.")
+
+    # Generic search
     ap.add_argument("--kind", default="osdu:*:*:*", help="Kind to search (generic mode).")
     ap.add_argument("--query", default=None, help="Free-text query string for generic mode.")
     ap.add_argument("--limit", type=int, default=50, help="Limit per search (default: 50).")
+
     # WPC schema versions
     ap.add_argument("--cbt-version", default="1.3.0", help="ColumnBasedTable version (default 1.3.0).")
     ap.add_argument("--geo-version", default="1.0.0", help="GeoLabelSet version (default 1.0.0).")
-    # manifest-driven mode
+
+    # Manifest-driven mode
     ap.add_argument("--from-manifests", nargs="+", help="Manifest file(s) or globs.")
     ap.add_argument("--show-created-kinds", action="store_true", help="List kinds discovered in manifests.")
-    # output
+
+    # Output
     ap.add_argument("--summary", action="store_true", help="Print summary with ids and names.")
     ap.add_argument("--export", default=None, help="Optional path to export raw JSON results.")
-    # storage verification
+
+    # Storage verification
     ap.add_argument("--verify-storage", action="store_true", help="GET each expected id via Storage v2 and report.")
 
     args = ap.parse_args()
 
-    # Required env
-    refresh_token = getenv("refresh_token")
-    if not refresh_token:
-        raise SystemExit("Missing env var 'refresh_token'.")
+    # Resolve config strictly from ENV (with minimal CLI override for partition)
+    refresh_token = ENV["refresh_token"]
+    authority_base = ENV["AAD_AUTHORITY"]
+    tenant_id = ENV["OSDU_TENANT_ID"]
+    client_id = ENV["OSDU_CLIENT_ID"]
+    scope_v2 = ENV.get("OSDU_SCOPE") or ""
+    redirect_uri_v2 = ENV.get("OSDU_REDIRECT_URI") or None
+    resource_v1 = ENV.get("OSDU_RESOURCE") or None
+    host = ENV["OSDU_HOST"]
+    partition = (args.partition or ENV["OSDU_PARTITION"]).strip()
 
-    # Env defaults
-    authority_base = getenv("AAD_AUTHORITY", "https://login.microsoftonline.com")
-    tenant_id = getenv("OSDU_TENANT_ID", "3aa4a235-b6e2-48d5-9195-7fcf05b459b0")
-    client_id = getenv("OSDU_CLIENT_ID", "ebd2bfee-ecba-47b7-a33c-017d0131879d")
-    scope_v2 = getenv("OSDU_SCOPE", "7daee810-3f78-40c4-84c2-7a199428de18/.default openid offline_Access")
-    redirect_uri_v2 = getenv("OSDU_REDIRECT_URI", "https://oauth.pstmn.io/v1/callback")
-    resource_v1 = getenv("OSDU_RESOURCE", None)  # v1 fallback only if provided
-    host = getenv("OSDU_HOST", "https://equinorswedev.energy.azure.com")
-    partition = (args.partition or getenv("OSDU_PARTITION", "dev")).strip() or "dev"
-
-    print("=== Config ===")
-    print(f"Authority : {authority_base}")
-    print(f"Tenant ID : {tenant_id}")
-    print(f"Client ID : {client_id}")
-    print(f"Host : {host}")
-    print(f"Partition : {partition}")
+    print("=== Config (strict .env mode) ===")
+    print(f".env files loaded : {', '.join(loaded_paths)}")
+    print("OS environment    : NOT USED")
+    print(f"Authority         : {authority_base}")
+    print(f"Tenant ID         : {tenant_id}")
+    print(f"Client ID         : {client_id}")
+    print(f"Host              : {host}")
+    print(f"Partition         : {partition}")
     if args.from_manifests:
-        print("Mode : manifest-driven (exact ids/names from files)")
+        print("Mode              : manifest-driven (exact ids/names from files)")
     else:
-        print("Mode : generic (use --from-manifests for exact checks)")
+        print("Mode              : generic (use --from-manifests for exact checks)")
 
     # Mint token
     print("Minting access_token from refresh_token ...")
@@ -547,10 +642,11 @@ def main():
         resource_v1=resource_v1,
         redirect_uri_v2=redirect_uri_v2,
     )
+
     if args.print_token:
         _peek_jwt(token)
 
-    # When --run-id is present, print ONLY relevant, resource-scoped KQL and optionally call Workflow status.
+    # KQL-only mode when --run-id is provided
     if args.run_id:
         print_kql_for_runid(args.run_id, resource_name=args.resource_name)
         if args.workflow_status:
@@ -560,8 +656,7 @@ def main():
                 print(json.dumps(r.json(), indent=2))
             except Exception:
                 print(r.text[:4000])
-        # Important: Return here so we DO NOT run generic Search afterwards.
-        return
+        return  # do not run generic Search afterwards
 
     returned_fields = ["id", "kind", "data.Name", "legal.legaltags", "meta.DataSource"]
     if args.index_diagnostics:
@@ -583,21 +678,23 @@ def main():
         except Exception:
             print(r.text[:4000])
         print()
-        if args.entitlements_check and entitlements_json:
-            missing = analyze_entitlements(entitlements_json)
-            if missing:
-                print(">>> Missing expected service entitlements for this partition:")
-                for label, alts in missing.items():
-                    print(f" - {label}: accepts any of {alts}")
-                print("(Adjust memberships and retry ingestion/search.)\n")
-            else:
-                print("Service entitlements: OK (required groups present)\n")
+
+    if args.entitlements_check and entitlements_json:
+        missing = analyze_entitlements(entitlements_json)
+        if missing:
+            print(">>> Missing expected service entitlements for this partition:")
+            for label, alts in missing.items():
+                print(f" - {label}: accepts any of {alts}")
+            print("(Adjust memberships and retry ingestion/search.)\n")
+        else:
+            print("Service entitlements: OK (required groups present)\n")
 
     # Manifest-driven mode
     if args.from_manifests:
         qmap, created_kinds, legal_tags = build_queries_from_manifests(
             args.from_manifests, args.cbt_version, args.geo_version, debug=args.debug_manifests
         )
+
         if args.show_created_kinds:
             print("=== Created kinds discovered in manifests ===")
             for k in created_kinds:
@@ -658,6 +755,7 @@ def main():
                     present_ids.add(rid)
                 if nm:
                     present_names.add(nm)
+
             if kind.startswith("osdu:wks:work-product-component--"):
                 matched = len(expect & present_names) if expect else len(hits)
                 totals[kind] = {"wanted": len(expect), "found": matched, "missing": sorted(expect - present_names)}
@@ -686,11 +784,11 @@ def main():
         for kind, info in totals.items():
             print(f"{kind} -> wanted={info['wanted']} found={info['found']}")
             if info["missing"]:
-                print(f"  missing ({len(info['missing'])}):")
+                print(f" missing ({len(info['missing'])}):")
                 for mid in info["missing"][:25]:
-                    print(f"   - {mid}")
+                    print(f"  - {mid}")
                 if len(info["missing"]) > 25:
-                    print(f"   ... and {len(info['missing']) - 25} more")
+                    print(f"  ... and {len(info['missing']) - 25} more")
         print("================================\n")
 
         if args.export:
@@ -716,10 +814,12 @@ def main():
     r = call_search(host, partition, token, payload)
     body = r.json() if r.headers.get("content-type", "").lower().startswith("application/json") else {"raw": r.text}
     print(f"[POST {r.status_code}] /search/v2/query kind={args.kind}\n{json.dumps(body, indent=2)[:8000]}\n")
+
     if args.export:
         with open(args.export, "w", encoding="utf-8") as f:
             json.dump(body, f, indent=2)
         print(f"Exported raw result to: {args.export}")
+
 
 if __name__ == "__main__":
     main()

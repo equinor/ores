@@ -14,6 +14,8 @@ $env:DEFAULT_ACL_VIEWER = "data.office.global.viewers@dev.dataservices.energy"
 # leave OSDU_RESOURCE unset unless you must use v1
 # generate for the current partition (defaults from $env:OSDU_PARTITION)
 
+pip install uvicorn fastapi authlib httpx starlette uuid dotenv python-multipart
+
 py .\5genreffacetrole.py
 py .\5genrefpropertytypes.py
 py .\5genrefgeolabelltypes.py
