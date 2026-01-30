@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+{% block title %}OsduUi — Home{% endblock %}
+
+
+{% block content %}
+
+<style>
+  /* Lightweight styling to keep things readable if your base has no CSS */
+  h1, h2 { margin: .25rem 0 .5rem; }
+  .muted { color: #666; }
+  .row { display: grid; grid-template-columns: 160px 1fr; gap: .5rem .75rem; align-items: center; margin-bottom: .5rem; }
+  .row > label { font-weight: 600; }
+  .row input[type="text"], .row textarea { width: 100%; padding: .45rem .6rem; border: 1px solid #ccc; border-radius: 4px; }
+  .btn { display: inline-block; padding: .35rem .65rem; border: 1px solid #0d6efd; color: #fff; background: #0d6efd; border-radius: 4px; cursor: pointer; user-select: none; }
+  .btn:hover { background: #0b5ed7; }
+  .btn.disabled { opacity: .6; pointer-events: none; }
+  ul#ds-list { list-style: none; padding-left: 0; }
+  ul#ds-list li { padding: .35rem 0; border-bottom: 1px dashed #eee; }
+  ul#ds-list code { background:#f6f6f6; padding:.05rem .35rem; border-radius:4px; }
+</style>
+
+<h1>RDDMS Admin</h1>
+
+{% if dataspaces %}
+  <h2>Dataspaces</h2>
+  <ul id="ds-list">
+    {% for ds_row in dataspaces %}
+      {% set path = ds_row.get('path') if ds_row is mapping else ds_row %}
+      <li data-path="{{ path }}">
+        <code>{{ path }}</code>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="muted">No dataspaces found.</p>
+{% endif %}
+
+<hr />
+<h2>Create a dataspace</h2>
+
+<div id="create-ds">
+  <div class="row">
+    <label for="path">Path</label>
+    <input id="path" name="path" type="text"
+           value="{{ ds_default or '' }}"
+           placeholder="e.g., maap/drogon" required>
+  </div>
+
+  <div class="row">
+    <label for="legal">Legal tag</label>
+    <input id="legal" name="legal" type="text"
+           value="{{ default_legal_tag or '' }}" required>
+  </div>
+
+  <div class="row">
+    <label for="owners">Owners (comma‑sep)</label>
+    <input id="owners" name="owners" type="text"
+           value="{{ default_owners or '' }}" required>
+  </div>
+
+  <div class="row">
+    <label for="viewers">Viewers (comma‑sep)</label>
+    <input id="viewers" name="viewers" type="text"
+           value="{{ default_viewers or '' }}" required>
+  </div>
+
+  <div class="row">
+    <label for="countries">Countries (comma‑sep)</label>
+    <input id="countries" name="countries" type="text"
+           value="{{ default_countries or '' }}" required>
+  </div>
+
+  <!-- Optional: free‑form metadata to merge into CustomData -->
+  <details style="margin:.35rem 0;">
+    <summary><strong>Advanced</strong> — Custom data (JSON)</summary>
+    <div class="row" style="margin-top:.35rem;">
+      <label for="custom_json">Custom JSON</label>
+      <textarea id="custom_json" name="custom_json" rows="6"
+        placeholder='{"description":"Context","tags":["Volve","Grid2d"]}'></textarea>
+    </div>
+    <div id="json_err" style="grid-column: 1 / -1; color:#842029; display:none;">Invalid JSON</div>
+    <p class="muted" style="grid-column: 1 / -1; margin:.25rem 0 0 0;">
+      Will be merged into <code>CustomData</code>. Reserved keys managed by this form:
+      <code>legaltags</code>, <code>otherRelevantDataCountries</code>, <code>viewers</code>, <code>owners</code>.
+    </p>
+  </details>
+
+<div class="row"> <button type="submit" id="create-ds-btn"
+    style="background-color:#0d6efd;color:#fff;padding:2px 8px;border-radius:4px;border:0;cursor:pointer">Create</button>
+</div>
+
+  <p id="create-msg" class="muted" style="display:none;"></p>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // ----- Build per-dataspace actions -----
+    const rows = document.querySelectorAll('#ds-list li[data-path]');
+    rows.forEach(li => {
+      const path = li.getAttribute('data-path') || '';
+      const msg  = document.getElementById('create-msg');
+
+      // Remove stray text nodes (defensive)
+      li.childNodes.forEach(n => { if (n.nodeType === Node.TEXT_NODE) n.textContent = ''; });
+
+      const mkBtn = (label, title, onClick, style = {}) => {
+        const s = document.createElement('span');
+        s.className = 'btn';
+        s.textContent = label;
+        s.title = title;
+        s.style.marginRight = '8px';
+        Object.assign(s.style, style);
+        s.addEventListener('click', onClick);
+        return s;
+      };
+
+      const codeNode = li.querySelector('code');
+
+      // Resources
+      const keysBtn = mkBtn('Resources', `Open Resources for ${path}`, () => {
+        window.location.assign('/keys?ds=' + encodeURIComponent(path));
+      });
+
+      // Lock
+      const lockBtn = mkBtn('Lock', `Lock ${path}`, async () => {
+        lockBtn.classList.add('disabled'); const old = lockBtn.textContent; lockBtn.textContent = 'Locking…';
+        try {
+          const fd = new FormData(); fd.append('path', path);
+          const res = await fetch('/dataspaces/lock', { method: 'POST', body: fd, credentials: 'same-origin' });
+          if (!res.ok) { let j={}; try{j=await res.json()}catch{}; throw new Error(j.detail || (j.reason||('HTTP '+res.status))); }
+          if (msg) { msg.style.display='block'; msg.textContent = `Locked "${path}".`; }
+        } catch (e) {
+          if (msg) { msg.style.display='block'; msg.textContent = `Lock failed: ${e?.message||e}`; }
+          console.error('[Lock] error', e);
+        } finally {
+          lockBtn.classList.remove('disabled'); lockBtn.textContent = old;
+        }
+      }, { backgroundColor:'#6c757d', color:'#fff', padding:'2px 8px', borderRadius:'4px' });
+
+      // Unlock
+      const unlockBtn = mkBtn('Unlock', `Unlock ${path}`, async () => {
+        unlockBtn.classList.add('disabled'); const old = unlockBtn.textContent; unlockBtn.textContent = 'Unlocking…';
+        try {
+          const fd = new FormData(); fd.append('path', path);
+          const res = await fetch('/dataspaces/unlock', { method: 'POST', body: fd, credentials: 'same-origin' });
+          if (!res.ok) { let j={}; try{j=await res.json()}catch{}; throw new Error(j.detail || (j.reason||('HTTP '+res.status))); }
+          if (msg) { msg.style.display='block'; msg.textContent = `Unlocked "${path}".`; }
+        } catch (e) {
+          if (msg) { msg.style.display='block'; msg.textContent = `Unlock failed: ${e?.message||e}`; }
+          console.error('[Unlock] error', e);
+        } finally {
+          unlockBtn.classList.remove('disabled'); unlockBtn.textContent = old;
+        }
+      }, { backgroundColor:'#198754', color:'#fff', padding:'2px 8px', borderRadius:'4px' });
+
+      // Manifest build
+      const manifestBtn = mkBtn('Manifest', `Build manifest for ${path}`, async () => {
+        manifestBtn.classList.add('disabled'); const old = manifestBtn.textContent; manifestBtn.textContent = 'Building…';
+        try {
+          const fd = new FormData();
+          fd.append('path', path);
+          // Let server use defaults for legal/acl/countries; you can add UI fields later if needed
+          fd.append('create_missing', 'true');
+
+          const res = await fetch('/dataspaces/manifest', { method: 'POST', body: fd, credentials: 'same-origin' });
+          if (!res.ok) { let j={}; try{j=await res.json()}catch{}; throw new Error(j.detail || (j.reason||('HTTP '+res.status))); }
+          const js = await res.json();
+          if (msg) {
+            const kind = js?.manifest?.kind || 'Manifest';
+            msg.style.display='block';
+            msg.textContent = `${kind} built for "${path}".`;
+          }
+        } catch (e) {
+          if (msg) { msg.style.display='block'; msg.textContent = `Manifest failed: ${e?.message||e}`; }
+          console.error('[Manifest] error', e);
+        } finally {
+          manifestBtn.classList.remove('disabled'); manifestBtn.textContent = old;
+        }
+      }, { backgroundColor:'#0d6efd', color:'#fff', padding:'2px 8px', borderRadius:'4px' });
+
+      // Delete
+      const delBtn = mkBtn('Delete', `Delete ${path}`, async () => {
+        if (!confirm(`Delete dataspace "${path}"? This cannot be undone.`)) return;
+        delBtn.classList.add('disabled'); const old = delBtn.textContent; delBtn.textContent = 'Deleting…';
+        try {
+          const fd = new FormData(); fd.append('path', path);
+          const res = await fetch('/dataspaces/delete', { method: 'POST', body: fd, credentials: 'same-origin' });
+          if (!res.ok) { let j={}; try{j=await res.json()}catch{}; throw new Error(j.detail || (j.reason||('HTTP '+res.status))); }
+          li.remove();
+          if (msg) { msg.style.display='block'; msg.textContent = `Deleted "${path}".`; }
+        } catch (e) {
+          if (msg) { msg.style.display='block'; msg.textContent = `Delete failed: ${e?.message||e}`; }
+          console.error('[Delete] error', e);
+        } finally {
+          delBtn.classList.remove('disabled'); delBtn.textContent = old;
+        }
+      }, { color: '#fff', backgroundColor: '#dc3545', padding: '2px 8px', borderRadius: '4px' });
+
+      // Insert in order: Lock · Unlock · Manifest · Delete · Resources · Open · <code>
+      li.insertBefore(lockBtn, codeNode);
+      li.insertBefore(unlockBtn, codeNode);
+      li.insertBefore(manifestBtn, codeNode);
+      li.insertBefore(delBtn, codeNode);
+      li.insertBefore(keysBtn, codeNode);
+      li.insertBefore(document.createTextNode(' '), codeNode);
+    });
+
+    // ----- Optional: lightweight JSON validation for custom_json -----
+    const ta  = document.getElementById('custom_json');
+    const err = document.getElementById('json_err');
+    function validateJSON() {
+      if (!ta) return true;
+      const v = ta.value.trim();
+      if (!v) { if (err) err.style.display = 'none'; return true; }
+      try {
+        const x = JSON.parse(v);
+        const ok = x && typeof x === 'object' && !Array.isArray(x);
+        if (err) { err.textContent = ok ? '' : 'Custom data must be a JSON object'; err.style.display = ok ? 'none' : 'block'; }
+        return ok;
+      } catch (e) {
+        if (err) { err.textContent = 'Invalid JSON: ' + (e.message || String(e)); err.style.display = 'block'; }
+        return false;
+      }
+    }
+    if (ta) ta.addEventListener('input', validateJSON);
+
+    // ----- Create dataspace (JS-driven, manual redirect handling) -----
+    const btn = document.getElementById('create-ds-btn');
+    const msg = document.getElementById('create-msg');
+    if (btn) {
+      btn.addEventListener('click', async function () {
+        const path      = document.getElementById('path').value.trim();
+        const legal     = document.getElementById('legal').value.trim();
+        const owners    = document.getElementById('owners').value.trim();
+        const viewers   = document.getElementById('viewers').value.trim();
+        const countries = document.getElementById('countries').value.trim();
+        const custom    = (document.getElementById('custom_json')?.value || '').trim();
+
+        msg.style.display = 'none';
+
+        // Required fields
+        if (!path || !legal || !owners || !viewers || !countries) {
+          msg.style.display = 'block';
+          msg.textContent = 'All fields are required.';
+          return;
+        }
+        // JSON valid?
+        if (!validateJSON()) {
+          msg.style.display = 'block';
+          msg.textContent = 'Fix custom JSON before creating.';
+          return;
+        }
+
+        const fd = new FormData();
+        fd.append('path', path);
+        fd.append('legal', legal);
+        fd.append('owners', owners);
+        fd.append('viewers', viewers);
+        fd.append('countries', countries);
+        if (custom) fd.append('custom_json', custom);
+
+        // Visual feedback
+        btn.classList.add('disabled');
+        const oldLabel = btn.textContent;
+        btn.textContent = 'Creating…';
+
+        try {
+          const res = await fetch('/dataspaces/create', {
+            method: 'POST',
+            body: fd,
+            credentials: 'same-origin',
+            redirect: 'manual'
+          });
+
+          // Some environments hide redirects from fetch; navigate manually.
+          if (res.type === 'opaqueredirect' || (res.status >= 300 && res.status < 400) || res.status === 0) {
+            window.location.assign('/d/' + encodeURIComponent(path));
+            return;
+          }
+          if (res.redirected) {
+            window.location.assign(res.url);
+            return;
+          }
+          if (!res.ok) {
+            // Try to capture content for troubleshooting (HTML or JSON)
+            let txt = '';
+            try { txt = await res.text(); } catch { /* ignore */ }
+            throw new Error('HTTP ' + res.status + (txt ? (': ' + txt.substring(0, 300)) : ''));
+          }
+
+          msg.style.display = 'block';
+          msg.textContent = 'Created. Opening…';
+          setTimeout(() => window.location.assign('/d/' + encodeURIComponent(path)), 400);
+        } catch (e) {
+          msg.style.display = 'block';
+          msg.textContent = 'Create failed: ' + (e?.message || e);
+          console.error('[Create] error', e);
+          // Restore label to allow retry
+          btn.classList.remove('disabled');
+          btn.textContent = oldLabel;
+        }
+      });
+    }
+  });
+</script>
+
+<hr />
+
+<style>
+  .manifest-compact { max-width: 32rem; margin-top: 0.75rem; }
+  .manifest-compact .row { display:flex; gap:0.5rem; align-items:center; margin:0.35rem 0; }
+  .manifest-compact select, .manifest-compact input[type="text"] { flex:1 1 auto; padding:0.25rem 0.4rem; }
+  .manifest-compact button { padding:0.25rem 0.6rem; }
+  .muted { color:#666; font-size:0.9em; }
+  .error { color:#b00020; font-size:0.9em; }
+</style>
+
+
+
+<div id="obj-manifest-ui" class="manifest-compact">
+  <h3>Manifest from selected objects incl. references</h3>
+
+  <!-- Dataspace dropdown (EML label, value=Path) -->
+
+<!-- Dataspace -->
+<div class="row">
+  <label for="ds-select" class="label">Dataspace</label>
+  <select id="ds-select" class="input">
+    {% if dataspaces %}
+      {% for ds_row in dataspaces %}
+        {% set path = ds_row.get('path') if ds_row is mapping else ds_row %}
+        {% set uri  = ds_row.get('uri')  if ds_row is mapping else '' %}
+        <option value="{{ path }}">{{ uri or ("eml:///dataspace('" ~ path ~ "')") }}</option>
+      {% endfor %}
+    {% else %}
+      <!-- client will fetch if empty -->
+    {% endif %}
+  </select>
+  <span id="ds-error" class="muted"></span>
+</div>
+
+
+  <!-- Type & name/UUID filters -->
+  <div class="row">
+    <label for="type-select"><strong>Type</strong></label>
+    <select id="type-select">
+      <option value="">(All types)</option>
+    </select>
+  </div>
+  <div class="row">
+    <label for="name-filter"><strong>Filter</strong></label>
+    <input id="name-filter" type="text" placeholder="name or uuid contains…">
+  </div>
+
+  <!-- Objects dropdown (from /keys/objects.json?ds=... & typ=...) -->
+  <div class="row">
+    <label for="obj-select" class="label">Objects</label>
+    <select id="obj-select" class="input" multiple size="8">
+      <option value="">— select dataspace/type —</option>
+    </select>
+    <span id="obj-error" class="muted"></span>
+  </div>
+
+
+  <!-- References preview (sources/targets + CRS) -->
+  <div class="row">
+    <button id="btn-load-refs">Load refs</button>
+    <label style="margin-left:auto;"><input type="checkbox" id="include-refs" checked> Include refs</label>
+  </div>
+  <div class="row"><span id="refs-summary" class="muted"></span></div>
+
+  <!-- Build & ingest -->
+  <div class="row">
+    <button id="btn-build">Build manifest</button>
+    <button id="btn-ingest" disabled>Ingest</button>
+  </div>
+  <div class="row"><span id="build-summary" class="muted"></span></div>
+
+  <!-- Manifest preview -->
+  <details class="row">
+    <summary>Preview manifest JSON</summary>
+    <pre id="manifest-json" style="max-height:16rem;overflow:auto;border:1px solid #ddd;padding:0.5rem;"></pre>
+  </details>
+</div>
+
+
+<style>
+  #manifest-section { max-width: 48rem; margin: 1rem 0; }
+  #manifest-section .row { display: flex; align-items: center; gap: .75rem; margin: .5rem 0; }
+  #manifest-section .label { flex: 0 0 8rem; color: #555; }
+  #manifest-section .label-right { margin-left: auto; color: #555; }
+  #manifest-section .input { flex: 1 1 auto; max-width: 32rem; }
+  #manifest-section .btn-row { display: flex; gap: .5rem; }
+  #manifest-section .btn-primary { background: #0d6efd; color: #fff; border: 0; padding: .4rem .75rem; border-radius: .25rem; }
+  #manifest-section .btn-secondary { background: #6c757d; color: #fff; border: 0; padding: .4rem .75rem; border-radius: .25rem; }
+  #manifest-section .muted { color: #888; }
+  #manifest-section .box { border: 1px solid #ddd; border-radius: .25rem; padding: .5rem; background: #fafafa; }
+  #manifest-section .box.small { max-height: 12rem; overflow: auto; }
+  #manifest-section .box.json { max-height: 18rem; overflow: auto; }
+</style>
+
+<!-- Ensure the client is loaded -->
+<script src=/static/app.js></script>
+
+
+{% endblock %}

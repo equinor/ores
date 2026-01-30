@@ -1,0 +1,46 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Silurian.Pridoli.Pridoli-Null:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Pridoli-Null",
+    "NameAlias": [
+      {
+        "AliasName": "Pridoli-Null",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:",
+        "DefinitionOrganisationID": "dev:reference-data--StandardsOrganisation:ICS:"
+      }
+    ],
+    "Description": "The Pridoli-Null Age [423.0-419.2]",
+    "Code": "Phanerozoic.Paleozoic.Silurian.Pridoli.Pridoli-Null",
+    "AttributionAuthority": "ICS https://stratigraphy.org",
+    "AttributionPublication": "https://github.com/CSIRO-enviro-informatics/interactive-geological-timescale/tree/master/src/assets",
+    "AttributionRevision": "ICS 2017/02",
+    "AgeBegin": 423.0,
+    "AgeEnd": 419.2,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChildCodes": [],
+    "Colour": "#E4F5EB",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Stage:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Silurian.Pridoli:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

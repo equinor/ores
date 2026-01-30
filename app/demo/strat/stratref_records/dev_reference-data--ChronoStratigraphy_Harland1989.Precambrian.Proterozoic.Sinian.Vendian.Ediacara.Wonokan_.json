@@ -1,0 +1,43 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Harland1989.Precambrian.Proterozoic.Sinian.Vendian.Ediacara.Wonokan:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Wonokan",
+    "NameAlias": [
+      {
+        "AliasName": "Wonokan",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Wonokan Stage [590.0-580.0]",
+    "Code": "Harland1989.Precambrian.Proterozoic.Sinian.Vendian.Ediacara.Wonokan",
+    "AttributionAuthority": "Harland",
+    "AttributionRevision": "Harland 1989",
+    "AgeBegin": 590.0,
+    "AgeEnd": 580.0,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:Harland1989:",
+    "ChildCodes": [],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Harland1989.Stage:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Harland1989.Precambrian.Proterozoic.Sinian.Vendian.Ediacara:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

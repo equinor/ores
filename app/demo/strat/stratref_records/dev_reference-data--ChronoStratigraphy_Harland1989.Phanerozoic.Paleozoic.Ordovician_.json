@@ -1,0 +1,69 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic.Ordovician:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Ordovician",
+    "NameAlias": [
+      {
+        "AliasName": "Ordovician",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Ordovician Period [510.0-439.0]",
+    "Code": "Harland1989.Phanerozoic.Paleozoic.Ordovician",
+    "AttributionAuthority": "Harland",
+    "AttributionRevision": "Harland 1989",
+    "AgeBegin": 510.0,
+    "AgeEnd": 439.0,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:Harland1989:",
+    "ChildCodes": [
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Caradoc.Actonian",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Canadian.Arenig",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Ashgill",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Canadian",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Caradoc",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Ashgill.Cautleyan",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Caradoc.Costonian",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llandeilo.EarlyLlandeilo",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llanvirn.EarlyLlanvirn",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Caradoc.Harnagian",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Ashgill.Hirnantian",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llandeilo.LateLlandeilo",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llanvirn.LateLlanvirn",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llandeilo",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llanvirn",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Caradoc.Longvillian",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Caradoc.Marshbrookian",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llandeilo.MiddleLlandeilo",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Caradoc.Onnian",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Ashgill.Pusgillian",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Ashgill.Rawtheyan",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Caradoc.Soudleyan",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Canadian.Tremadoc"
+    ],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Harland1989.System:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

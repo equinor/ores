@@ -1,0 +1,46 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Mesozoic.Triassic.MiddleTriassic:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Middle Triassic",
+    "NameAlias": [
+      {
+        "AliasName": "MiddleTriassic",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Middle Triassic Epoch [241.1-235.0]",
+    "Code": "Harland1989.Phanerozoic.Mesozoic.Triassic.MiddleTriassic",
+    "AttributionAuthority": "Harland",
+    "AttributionRevision": "Harland 1989",
+    "AgeBegin": 241.1,
+    "AgeEnd": 235.0,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:Harland1989:",
+    "ChildCodes": [
+      "Harland1989.Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Anisian",
+      "Harland1989.Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Ladinian"
+    ],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Harland1989.Series:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Mesozoic.Triassic:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

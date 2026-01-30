@@ -1,0 +1,44 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Cenozoic.Neogene.Miocene.Aquitanian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Aquitanian",
+    "NameAlias": [
+      {
+        "AliasName": "Aquitanian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Aquitanian Stage [23.0-20.4]",
+    "Code": "GTS2012.Phanerozoic.Cenozoic.Neogene.Miocene.Aquitanian",
+    "AttributionAuthority": "GTS https://timescalefoundation.org",
+    "AttributionRevision": "GTS 2012",
+    "AgeBegin": 23.03,
+    "AgeEnd": 20.44,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:GTS2012:",
+    "ChildCodes": [],
+    "Colour": "#ffff33",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2012.Stage:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Cenozoic.Neogene.Miocene:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

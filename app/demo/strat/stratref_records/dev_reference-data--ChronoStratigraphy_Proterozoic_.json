@@ -1,0 +1,48 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Proterozoic:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Proterozoic",
+    "NameAlias": [
+      {
+        "AliasName": "Proterozoic",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:",
+        "DefinitionOrganisationID": "dev:reference-data--StandardsOrganisation:ICS:"
+      }
+    ],
+    "Description": "The Proterozoic Eon [2500.0-541.0]",
+    "Code": "Proterozoic",
+    "AttributionAuthority": "ICS https://stratigraphy.org",
+    "AttributionPublication": "https://github.com/CSIRO-enviro-informatics/interactive-geological-timescale/tree/master/src/assets",
+    "AttributionRevision": "ICS 2017/02",
+    "AgeBegin": 2500.0,
+    "AgeEnd": 541.0,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChildCodes": [
+      "Proterozoic.Neoproterozoic",
+      "Proterozoic.Mesoproterozoic",
+      "Proterozoic.Paleoproterozoic"
+    ],
+    "Colour": "#EA5B70",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Eonothem:",
+    "ParentIDs": [],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

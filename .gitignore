@@ -1,0 +1,15 @@
+pycache/
+.pyc
+.pyo
+.pyd
+.python-version
+~$
+.tmp
+.lock
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+~$*
+*.tmp
+*.lock

@@ -1,0 +1,41 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Mesozoic.Cretaceous.EarlyCretaceous.Albian.LateAlbian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Late Albian",
+    "NameAlias": [
+      {
+        "AliasName": "Late Albian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Late Albian Sub Age [98.9 - 102.12]",
+    "Code": "Hardenbol1998.Phanerozoic.Mesozoic.Cretaceous.EarlyCretaceous.Albian.LateAlbian",
+    "AttributionAuthority": "Hardenbol",
+    "AttributionRevision": "Hardenbol 1998",
+    "AgeBegin": 102.12,
+    "AgeEnd": 98.9,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:Hardenbol1998:",
+    "ChildCodes": [],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Hardenbol1998.Erathem:",
+    "ParentIDs": [],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

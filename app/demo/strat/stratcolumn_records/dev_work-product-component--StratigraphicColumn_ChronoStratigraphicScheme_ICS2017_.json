@@ -1,0 +1,28 @@
+{
+  "id": "dev:work-product-component--StratigraphicColumn:ChronoStratigraphicScheme:ICS2017:",
+  "kind": "osdu:wks:work-product-component--StratigraphicColumn:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "ChronoStratigraphicScheme:ICS2017",
+    "StratigraphicColumnRankInterpretationSet": [
+      "dev:work-product-component--StratigraphicColumnRankInterpretation:ChronoStratigraphicScheme:ICS2017-Chrono-Unspecified:"
+    ],
+    "StratigraphicColumnValidityAreaType": "dev:reference-data--StratigraphicColumnValidityAreaType:field:",
+    "ValueChainStatusType": "dev:reference-data--ValueChainStatusType:Production:"
+  }
+}

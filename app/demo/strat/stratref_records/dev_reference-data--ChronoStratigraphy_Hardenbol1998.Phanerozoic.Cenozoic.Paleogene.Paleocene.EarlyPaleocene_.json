@@ -1,0 +1,43 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Paleocene.EarlyPaleocene:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Early Paleocene",
+    "NameAlias": [
+      {
+        "AliasName": "Early Paleocene",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Early Paleocene Sub Epoch [60.9 - 65]",
+    "Code": "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Paleocene.EarlyPaleocene",
+    "AttributionAuthority": "Hardenbol",
+    "AttributionRevision": "Hardenbol 1998",
+    "AgeBegin": 65.0,
+    "AgeEnd": 60.9,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:Hardenbol1998:",
+    "ChildCodes": [],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Hardenbol1998.SubSeries:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Paleocene:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:GTS2016.Precambrian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Precambrian",
+    "NameAlias": [
+      {
+        "AliasName": "Precambrian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Precambrian Supereon [4600.0-541.0]",
+    "Code": "GTS2016.Precambrian",
+    "AttributionAuthority": "GTS https://timescalefoundation.org",
+    "AttributionRevision": "GTS 2016",
+    "AgeBegin": 4600.0,
+    "AgeEnd": 541.0,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:GTS2016:",
+    "ChildCodes": [
+      "GTS2016.Precambrian.Proterozoic.Neoproterozoic.Cryogenian",
+      "GTS2016.Precambrian.Hadean",
+      "GTS2016.Precambrian.Proterozoic.Neoproterozoic.Tonian",
+      "GTS2016.Precambrian.Archean",
+      "GTS2016.Precambrian.Proterozoic.Mesoproterozoic.Calymmian",
+      "GTS2016.Precambrian.Proterozoic.Mesoproterozoic.Ectasian",
+      "GTS2016.Precambrian.Proterozoic.Neoproterozoic.Ediacaran",
+      "GTS2016.Precambrian.Archean.Eoarchean",
+      "GTS2016.Precambrian.Archean.Mesoarchean",
+      "GTS2016.Precambrian.Proterozoic.Mesoproterozoic",
+      "GTS2016.Precambrian.Archean.Neoarchean",
+      "GTS2016.Precambrian.Proterozoic.Neoproterozoic",
+      "GTS2016.Precambrian.Proterozoic.Paleoproterozoic.Orosirian",
+      "GTS2016.Precambrian.Archean.Paleoarchean",
+      "GTS2016.Precambrian.Proterozoic.Paleoproterozoic",
+      "GTS2016.Precambrian.Proterozoic",
+      "GTS2016.Precambrian.Proterozoic.Paleoproterozoic.Rhyacian",
+      "GTS2016.Precambrian.Proterozoic.Paleoproterozoic.Siderian",
+      "GTS2016.Precambrian.Proterozoic.Paleoproterozoic.Statherian",
+      "GTS2016.Precambrian.Proterozoic.Mesoproterozoic.Stenian"
+    ],
+    "Colour": "#f74370",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2016.SuperEonothem:",
+    "ParentIDs": [],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

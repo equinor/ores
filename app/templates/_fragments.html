@@ -1,0 +1,31 @@
+{# app/templates/_fragments.html #}
+{% if frag == "type_rows" %}
+  {% macro extract_uuid(r) -%}
+    {%- set uid = r.get('Uuid') or r.get('UUID') or r.get('uuid') -%}
+    {%- if not uid -%}
+      {%- set uri = r.get('uri') or '' -%}
+      {%- if '(' in uri and ')' in uri -%}
+        {{- uri.split('(')|last|replace(')', '') -}}
+      {%- else -%}
+        {{- uri -}}
+      {%- endif -%}
+    {%- else -%}
+      {{- uid -}}
+    {%- endif -%}
+  {%- endmacro %}
+
+  {% if rows and rows|length %}
+    <ul class="list">
+    {% for r in rows %}
+      {% set uid = extract_uuid(r) %}
+      {% set title = (r.get('Citation') or {}).get('Title') or r.get('name') or uid %}
+      <li style="padding:.35rem 0; border-bottom:1px dashed #eee;">
+        /d/{{ ds | urlencode }}/t/{{ typ }}/{{ uid }}{{ title }}</a>
+        <small style="color:#666; margin-left:.35rem;"><code>{{ uid }}</code></small>
+      </li>
+    {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">No resources of this type.</p>
+  {% endif %}
+{% endif %}

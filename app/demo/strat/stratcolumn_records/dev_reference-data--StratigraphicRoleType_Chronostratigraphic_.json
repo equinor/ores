@@ -1,0 +1,26 @@
+{
+  "id": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+  "kind": "osdu:wks:reference-data--StratigraphicRoleType:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Chronostratigraphic",
+    "ShortName": "Chronostratigraphic",
+    "Description": "Stratigraphic role type: Chronostratigraphic",
+    "Source": "OSDU-Generated for Column Manifest"
+  }
+}

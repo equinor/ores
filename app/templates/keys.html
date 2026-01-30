@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% block title %}RDDMS — Resources{% endblock %}
+
+{% block content %}
+  <h2>Resources</h2>
+
+  <div class="row">
+    <label>Dataspace</label>
+    <select id="ds"></select>
+  </div>
+
+  <div class="row">
+    <label>Type</label>
+    <select id="typ"></select>
+  </div>
+
+  <div class="row">
+    <label>Object</label>
+    <select id="obj"></select>
+  </div>
+
+  <div class="row">
+    <label></label>
+    <span class="btn" id="load-details">Load details</span>
+  </div>
+
+  <p class="muted" id="msg" style="display:none;"></p>
+
+  <hr/>
+
+  <h2>Summary</h2>
+  <div id="summary"></div>
+
+  <h2>Metadata</h2>
+  <pre id="meta" style="max-height: 420px; overflow:auto;"></pre>
+
+  <h2>Targets / Sources</h2>
+  <div id="edges"></div>
+
+  <h2>Arrays</h2>
+  <div id="arrays"></div>
+
+  <script>
+    // --- Server-side prefill (fallback if JSON fetch fails/returns empty)
+    // The /keys route injects this via: {"prefill_ds": [...]}
+    window.PREFILL_DS = {{ prefill_ds | tojson | safe }};
+
+    const $ = (id) => document.getElementById(id);
+    const dsSel = $('ds'), typSel = $('typ'), objSel = $('obj');
+    const msg = $('msg'), summary = $('summary'), meta = $('meta'),
+          edges = $('edges'), arrays = $('arrays');
+
+    function setMsg(text) {
+      msg.textContent = text || '';
+      msg.style.display = text ? 'block' : 'none';
+    }
+
+    function clearDetails() {
+      summary.innerHTML = '';
+      meta.textContent = '';
+      edges.innerHTML = '';
+      arrays.innerHTML = '';
+    }
+
+    function populateDataspaces(items) {
+      dsSel.innerHTML = '';
+      (items || []).forEach(x => {
+        if (!x || !x.path) return;
+        const o = document.createElement('option');
+        o.value = x.path; o.textContent = x.path;
+        dsSel.appendChild(o);
+      });
+    }
+
+    async function loadDataspaces() {
+      try {
+        const r = await fetch('/keys/dataspaces.json', { credentials: 'same-origin' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const js = await r.json();
+        if (js.items && js.items.length > 0) {
+          populateDataspaces(js.items);
+          setMsg('');
+          return true;
+        }
+        // Fallback to prefill if empty
+        if (Array.isArray(window.PREFILL_DS) && window.PREFILL_DS.length > 0) {
+          populateDataspaces(window.PREFILL_DS);
+          setMsg('');
+          return true;
+        }
+        setMsg('No dataspaces found.');
+        return false;
+      } catch (e) {
+        // Fallback to prefill on any error
+        if (Array.isArray(window.PREFILL_DS) && window.PREFILL_DS.length > 0) {
+          populateDataspaces(window.PREFILL_DS);
+          setMsg('');
+          return true;
+        }
+        setMsg('Failed to load dataspaces.');
+        console.error(e);
+        return false;
+      }
+    }
+
+    async function loadTypes() {
+      if (!dsSel.value) return;
+      setMsg('Loading types…');
+      try {
+        const r = await fetch(`/keys/types.json?ds=${encodeURIComponent(dsSel.value)}`, { credentials: 'same-origin' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const js = await r.json();
+        typSel.innerHTML = '';
+        (js.items || []).forEach(x => {
+          if (!x || !x.name) return;
+          const o = document.createElement('option');
+          o.value = x.name;
+          o.textContent = x.count ? `${x.name} (${x.count})` : x.name;
+          typSel.appendChild(o);
+        });
+        objSel.innerHTML = '';
+        clearDetails();
+        setMsg(js.items && js.items.length ? '' : 'No types found in this dataspace.');
+      } catch (e) {
+        setMsg('Failed to load types.');
+        console.error(e);
+      }
+    }
+
+    async function loadObjects() {
+      if (!dsSel.value || !typSel.value) return;
+      setMsg('Loading objects…');
+      try {
+        const url = `/keys/objects.json?ds=${encodeURIComponent(dsSel.value)}&typ=${encodeURIComponent(typSel.value)}`;
+        const r = await fetch(url, { credentials: 'same-origin' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const js = await r.json();
+        objSel.innerHTML = '';
+        (js.items || []).forEach(x => {
+          const o = document.createElement('option');
+          o.value = x.uuid;
+          o.textContent = `${x.title || x.uuid} — ${x.uuid}`;
+          o.setAttribute('data-uri', x.uri || '');
+          objSel.appendChild(o);
+        });
+        clearDetails();
+        setMsg(js.items && js.items.length ? '' : 'No objects in this type.');
+      } catch (e) {
+        setMsg('Failed to load objects.');
+        console.error(e);
+      }
+    }
+
+    async function loadDetails() {
+      const ds = dsSel.value, typ = typSel.value, uuid = objSel.value;
+      if (!ds || !typ || !uuid) { setMsg('Pick dataspace, type, and object.'); return; }
+      setMsg('Loading object details…');
+      try {
+        const url = `/keys/object.json?ds=${encodeURIComponent(ds)}&typ=${encodeURIComponent(typ)}&uuid=${encodeURIComponent(uuid)}`;
+        const r = await fetch(url, { credentials: 'same-origin' });
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const js = await r.json();
+
+        const uri = (objSel.selectedOptions[0] && objSel.selectedOptions[0].getAttribute('data-uri')) ||
+                    (js.obj && js.obj.uri) || '';
+        const ct  = (js.obj && (js.obj.$type || js.obj.contentType)) || '';
+
+        summary.innerHTML =
+          `<div><b>Dataspace:</b> <code>${ds}</code></div>` +
+          `<div><b>Type:</b> <code>${typ}</code></div>` +
+          `<div><b>UUID:</b> <code>${uuid}</code></div>` +
+          `<div><b>URI/SRN:</b> <code>${uri}</code></div>` +
+          `<div><b>ContentType:</b> <code>${ct}</code></div>`;
+
+        meta.textContent = JSON.stringify(js.obj, null, 2);
+
+        const tgt = (js.edges && js.edges.targets) || [];
+        const src = (js.edges && js.edges.sources) || [];
+        edges.innerHTML = `
+          <details open>
+            <summary><b>Targets</b> (${tgt.length})</summary>
+            ${tgt.length ? `<ul>${tgt.map(e => `<li><code>${e.contentType || ''}</code> — <code>${e.uuid || ''}</code> — ${(e.title || '')}</li>`).join('')}</ul>` : '<p class="muted">None</p>'}
+          </details>
+          <details>
+            <summary><b>Sources</b> (${src.length})</summary>
+            ${src.length ? `<ul>${src.map(e => `<li><code>${e.contentType || ''}</code> — <code>${e.uuid || ''}</code> — ${(e.title || '')}</li>`).join('')}</ul>` : '<p class="muted">None</p>'}
+          </details>
+        `;
+
+        const arr = js.arrays || [];
+        arrays.innerHTML = arr.length
+          ? `<ul>${
+              arr.map(a => {
+                const p = a.path || a.pathInResource || (a.uid && a.uid.pathInResource) || '';
+                const link = `/d/${encodeURIComponent(ds)}/t/${encodeURIComponent(typ)}/${encodeURIComponent(uuid)}/arrays/read?path=${encodeURIComponent(p)}`;
+                return `<li><code>${p}</code> — ${link}Read & stats</span></li>`;
+              }).join('')
+            }</ul>`
+          : '<p class="muted">No arrays.</p>';
+
+        setMsg('');
+      } catch (e) {
+        setMsg('Failed to load object.');
+        console.error(e);
+      }
+    }
+
+    // Wire up events
+    dsSel.addEventListener('change', loadTypes);
+    typSel.addEventListener('change', loadObjects);
+    $('load-details').addEventListener('click', loadDetails);
+
+    // Delegate navigation for span[data-href]
+    document.addEventListener('click', (ev) => {
+      const el = ev.target.closest && ev.target.closest('[data-href]');
+      if (el) {
+        const url = el.getAttribute('data-href');
+        if (url) window.location.assign(url);
+      }
+    });
+
+    // --- Init with optional ?ds=... pre-selection
+    (async function init() {
+      const params = new URLSearchParams(window.location.search);
+      const dsParam = params.get('ds');
+
+      // Prefer server-side prefill first to show something immediately.
+      const hasPrefill = Array.isArray(window.PREFILL_DS) && window.PREFILL_DS.length > 0;
+      if (hasPrefill) {
+        populateDataspaces(window.PREFILL_DS);
+
+        // If a ds= param is provided, select it if present
+        if (dsParam) {
+          [...dsSel.options].forEach(opt => { if (opt.value === dsParam) dsSel.value = dsParam; });
+        }
+
+        setMsg('');
+        await loadTypes();
+        await loadObjects();
+
+        // Also try to refresh dataspaces from JSON quietly (optional)
+        loadDataspaces().then(() => {
+          if (dsParam) {
+            [...dsSel.options].forEach(opt => { if (opt.value === dsParam) dsSel.value = dsParam; });
+            loadTypes().then(loadObjects);
+          }
+        });
+      } else {
+        // No prefill — fetch from server
+        const ok = await loadDataspaces();
+        if (ok && dsParam) {
+          [...dsSel.options].forEach(opt => { if (opt.value === dsParam) dsSel.value = dsParam; });
+        }
+        await loadTypes();
+        await loadObjects();
+      }
+    })();
+  </script>
+{% endblock %}

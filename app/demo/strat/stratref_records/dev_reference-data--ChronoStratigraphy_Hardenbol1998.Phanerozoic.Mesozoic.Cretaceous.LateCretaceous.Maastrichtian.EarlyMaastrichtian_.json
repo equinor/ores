@@ -1,0 +1,43 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Mesozoic.Cretaceous.LateCretaceous.Maastrichtian.EarlyMaastrichtian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Early Maastrichtian",
+    "NameAlias": [
+      {
+        "AliasName": "Early Maastrichtian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Early Maastrichtian Sub Age [69.42 - 71.3]",
+    "Code": "Hardenbol1998.Phanerozoic.Mesozoic.Cretaceous.LateCretaceous.Maastrichtian.EarlyMaastrichtian",
+    "AttributionAuthority": "Hardenbol",
+    "AttributionRevision": "Hardenbol 1998",
+    "AgeBegin": 71.3,
+    "AgeEnd": 69.42,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:Hardenbol1998:",
+    "ChildCodes": [],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Hardenbol1998.Stage:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Mesozoic.Cretaceous.LateCretaceous.Maastrichtian:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "id": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+  "kind": "osdu:wks:reference-data--RiskProbabilityScale:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Equinor Probability scale 1\u20135",
+    "Code": "P-5x5",
+    "Levels": [
+      {
+        "Code": "P1",
+        "Name": "Rare"
+      },
+      {
+        "Code": "P2",
+        "Name": "Unlikely"
+      },
+      {
+        "Code": "P3",
+        "Name": "Possible"
+      },
+      {
+        "Code": "P4",
+        "Name": "Likely"
+      },
+      {
+        "Code": "P5",
+        "Name": "Almost certain"
+      }
+    ]
+  }
+}

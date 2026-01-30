@@ -1,0 +1,70 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Mesozoic.Triassic:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Triassic",
+    "NameAlias": [
+      {
+        "AliasName": "Triassic",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Triassic Period [251.9-201.4]",
+    "Code": "GTS2020.Phanerozoic.Mesozoic.Triassic",
+    "AttributionAuthority": "GTS https://timescalefoundation.org",
+    "AttributionRevision": "GTS 2020",
+    "AgeBegin": 251.9,
+    "AgeEnd": 201.36,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:GTS2020:",
+    "ChildCodes": [
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Anisian.Aegean",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.LateTriassic.Norian.Alaunian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Anisian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Anisian.Bithynian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.LateTriassic.Carnian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.EarlyTriassic.Induan.Dienerian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.EarlyTriassic",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Ladinian.Fassanian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.EarlyTriassic.Induan.Griesbachian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Anisian.Illryan",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.EarlyTriassic.Induan",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.LateTriassic.Carnian.Julian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.LateTriassic.Norian.Lacian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Ladinian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Ladinian.Longobardian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.MiddleTriassic",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.LateTriassic.Norian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.EarlyTriassic.Olenekian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Anisian.Pelsonian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.LateTriassic.Rhaetian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.LateTriassic.Norian.Savatian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.EarlyTriassic.Olenekian.Smithian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.EarlyTriassic.Olenekian.Spathian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.LateTriassic.Carnian.Tuvalian",
+      "GTS2020.Phanerozoic.Mesozoic.Triassic.LateTriassic"
+    ],
+    "Colour": "#812b92",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2020.System:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Mesozoic.Triassic:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

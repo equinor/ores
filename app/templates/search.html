@@ -1,0 +1,284 @@
+
+{% extends "base.html" %}
+{% block title %}Global Search{% endblock %}
+
+{% block content %}
+
+<h2>Search</h2>
+
+<!-- ✅ Working form -->
+<form method="post" action="/search/run" style="width:48rem">
+
+  <label>kind</label>
+  <input type="text" name="kind" value="{{ kind or '' }}" style="width: 100%;">
+
+  <label>query</label>
+  <input type="text" name="query" value="{{ q or '*' }}" style="width: 100%;">
+
+  <label>limit</label>
+  <input type="number" name="limit" value="{{ limit or 5 }}" min="1" max="500">
+
+  <!-- returnedFields is not used server-side right now, kept for future -->
+  <label>returnedFields (comma separated)</label>
+  <input type="text" name="returnedFields" value="{{ returnedFields or 'id,kind,version' }}" style="width: 100%;">
+
+  <button type="submit">Search</button>
+</form>
+
+{% if error %}
+  <div class="error">
+    <strong>Error:</strong> {{ error }}
+    {% if error_detail %}
+    <details>
+      <summary>Details</summary>
+      <pre>{{ error_detail }}</pre>
+    </details>
+    {% endif %}
+  </div>
+{% endif %}
+
+{% if results %}
+  {% set total = results.totalCount or (results.results | length) %}
+  <h4>Results ({{ total }})</h4>
+
+  {% if total == 0 %}
+    <p>No records matched your query.</p>
+  {% else %}
+    <!-- Summary table (unchanged) -->
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Kind</th>
+        <th>ID</th>
+        <th>Version</th>
+        <th>ParentObjectID</th>
+        <th>Parents</th>
+        <th>Children</th>
+        <th>Action</th>
+      </tr>
+      {% for rec in results.results or [] %}
+        {% set name = (rec.data or {}).get('Name') %}
+        {% set desc = (rec.data or {}).get('Description') %}
+        {% set parentObj = (rec.data or {}).get('ParentObjectID') %}
+        <tr>
+          <td>{{ name or '—' }}</td>
+          <td>{{ desc or '—' }}</td>
+          <td>{{ rec.kind or '—' }}</td>
+          <td>{{ rec.id or '—' }}</td>
+          <td>{{ rec.version if rec.version is not none else '—' }}</td>
+          <td>{{ parentObj or '—' }}</td>
+          <td>
+            {% if rec.ancestry_parents %}
+              {% for p in rec.ancestry_parents %}– {{ p }} {% endfor %}
+            {% else %}—{% endif %}
+          </td>
+          <td>
+            {% if rec.ancestry_children %}
+              {% for ch in rec.ancestry_children %}– {{ ch }} {% endfor %}
+            {% else %}—{% endif %}
+          </td>
+          <td><!-- Keep as-is to be surgical; add a link here if desired -->
+            /search/view/{{ rec.id }}View Details</a>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <!-- Selection UI -->
+    <h4 style="margin-top:1rem">Select a result to view relationships and tables</h4>
+    <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem">
+      <label for="recSelect">Record:</label>
+      <select id="recSelect">
+        {% for rec in results.results or [] %}
+          {% set label = (rec.data or {}).get('Name') or rec.id %}
+          <option value="{{ loop.index }}">{{ label }} — {{ rec.id }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    {# --- Label escaping macro for Mermaid --- #}
+    {% macro esc_label(s) -%}
+      {{ (s or '')
+        | replace('\r',' ')
+        | replace('\n',' ')
+        | replace('[','&#91;')
+        | replace(']','&#93;')
+        | replace('"','\\\"')
+        | replace('|','&#124;')
+        | replace('{','&#123;')
+        | replace('}','&#125;')
+      }}
+    {%- endmacro %}
+
+    {# --- Generic flattening macro for metadata table --- #}
+    {% macro render_pairs(val, path='') -%}
+      {% if val is mapping %}
+        {% for k, v in val.items() %}
+          {{ render_pairs(v, (path and path ~ '.') ~ k) }}
+        {% endfor %}
+      {% elif val is sequence and (val is not string) %}
+        {% for v in val %}
+          {{ render_pairs(v, (path and path ~ '.') ~ loop.index0|string) }}
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td class="meta-name">{{ path }}</td>
+          <td class="meta-value">
+            {% if val is boolean %}{{ val|string }}
+            {% elif val is number %}{{ val }}
+            {% elif val is string %}{{ val }}
+            {% elif val is none %}—{% else %}
+              {{ val|string }}
+            {% endif %}
+          </td>
+        </tr>
+      {% endif %}
+    {%- endmacro %}
+
+    <!-- Per-record blocks: make FIRST visible by default as a safe fallback -->
+    {% for rec in results.results or [] %}
+      {% set rec_index = loop.index %}
+      {% set name = (rec.data or {}).get('Name') %}
+      {% set label = name or rec.id %}
+
+      {# Volumes helpers #}
+      {% set vol = rec.volumes or {} %}
+      {% set vmap = vol.ColumnValues or {} %}
+      {% set key_cols = vol.KeyColumns or [] %}
+      {% set val_cols = vol.Columns or [] %}
+      {% set key_names = [] %}
+      {% for k in key_cols %}{% set _ = key_names.append(k.ColumnName) %}{% endfor %}
+      {% set value_names = [] %}
+      {% for c in val_cols %}
+        {% if (c.ColumnRole or '').lower() == 'value' %}
+          {% set _ = value_names.append(c.ColumnName) %}
+        {% endif %}
+      {% endfor %}
+      {% if value_names|length == 0 and vmap %}
+        {% for cname, _vals in vmap.items() %}
+          {% if cname not in key_names %}
+            {% set _ = value_names.append(cname) %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% set headers = key_names + value_names %}
+      {% set sample_col = ((key_names|length > 0 and key_names[0]) or (value_names|length > 0 and value_names[0]) or '') %}
+      {% set nrows = (sample_col and (vmap.get(sample_col) or [])|length) or 0 %}
+      {% set has_volumes = (vmap and headers|length > 0 and nrows > 0) %}
+
+      <div class="rec-block" id="rec-{{ rec_index }}" {% if loop.first %}style=""{% else %}style="display:none"{% endif %}>
+        <h4>{{ label }}</h4>
+
+        <!-- Relationships (ancestry + data[] links) -->
+        <pre class="mermaid">
+graph LR
+REC{{ rec_index }}["{{ esc_label(label) }} ({{ esc_label(rec.id) }})"]
+{% for p in rec.ancestry_parents or [] %}
+P{{ rec_index }}a{{ loop.index0 }}["{{ esc_label(p) }}"]
+P{{ rec_index }}a{{ loop.index0 }} --> REC{{ rec_index }}:::ancestry_parent
+{% endfor %}
+{% for ch in rec.ancestry_children or [] %}
+C{{ rec_index }}c{{ loop.index0 }}["{{ esc_label(ch) }}"]
+REC{{ rec_index }} --> C{{ rec_index }}c{{ loop.index0 }}:::ancestry_child
+{% endfor %}
+{% for l in rec.links or [] %}
+{% set lid = l.id %}
+{% set info = (rec.linked_labels or {}).get(lid, {}) %}
+{% set lname = info.name or lid %}
+L{{ rec_index }}x{{ loop.index0 }}["{{ esc_label(lname) }} ({{ esc_label(lid) }})"]
+REC{{ rec_index }} --> L{{ rec_index }}x{{ loop.index0 }}:::{{ (l.role or 'ref') | replace('-','_') }}
+{% endfor %}
+classDef prior_activity fill:#fff3cd,stroke:#d39e00,color:#222;
+classDef parameter_object fill:#d1ecf1,stroke:#0c5460,color:#222;
+classDef parent_object fill:#f8d7da,stroke:#721c24,color:#222;
+classDef parent_work_product fill:#f8d7da,stroke:#721c24,color:#222;
+classDef risk fill:#f5c6cb,stroke:#721c24,color:#222;
+classDef ancestry_parent fill:#cfe2ff,stroke:#084298,color:#222;
+classDef ancestry_child fill:#e2e3e5,stroke:#6c757d,color:#222;
+classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
+        </pre>
+
+        <!-- Metadata (generic, all object types) -->
+        <h4 style="margin-top:.75rem">Metadata</h4>
+        <div class="meta-container">
+          <div class="meta-toolbar" style="display:flex;gap:.5rem;align-items:center;margin:.25rem 0;">
+            <input type="text" class="meta-filter" placeholder="Filter names…" style="flex:1;max-width:20rem;">
+            <button type="button" class="meta-copy" title="Copy table as CSV">Copy (CSV)</button>
+          </div>
+
+          <table class="meta-table" data-sortable="true" style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr>
+                <th data-col="name" style="text-align:left;border-bottom:1px solid #ddd;">Name</th>
+                <th data-col="value" style="text-align:left;border-bottom:1px solid #ddd;">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% set src = {
+                'id': rec.id,
+                'kind': rec.kind,
+                'version': rec.version if rec.version is not none else '',
+                'acl': rec.acl or {},
+                'legal': rec.legal or {},
+                'data': rec.data or {},
+                'ext': rec.ext or {},
+                'links': rec.links or [],
+                'ancestry.parents': rec.ancestry_parents or [],
+                'ancestry.children': rec.ancestry_children or []
+              } %}
+              {{ render_pairs(src) }}
+            </tbody>
+          </table>
+
+          <div class="muted" style="font-size:.85rem;margin-top:.25rem;">
+            Tip: click “Name” or “Value” to sort; use the filter to narrow rows.
+          </div>
+        </div>
+
+        <!-- Volumes table (ColumnBasedTable) -->
+        {% if has_volumes %}
+          <h4 style="margin-top:.5rem">{{ label }} — Volumes</h4>
+          <table>
+            <tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr>
+            {% for i in range(nrows) %}
+              <tr>
+                {% for h in headers %}
+                  {% set col_vals = vmap.get(h) or [] %}
+                  <td>{% if (col_vals|length) > i %}{{ col_vals[i] }}{% else %}—{% endif %}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </table>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <!-- JS: selection toggles visibility and re-renders Mermaid safely -->
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+
+      const sel = document.getElementById('recSelect');
+      const blocks = Array.from(document.querySelectorAll('.rec-block'));
+
+      // Cache original diagram source for every <pre.mermaid> (for clean re-parsing)
+      const allPres = Array.from(document.querySelectorAll('pre.mermaid'));
+      allPres.forEach(el => { if (!el.dataset.src) el.dataset.src = el.textContent; });
+
+      function renderMermaidIn(container) {
+        const nodes = container.querySelectorAll('pre.mermaid');
+        nodes.forEach(n => { if (n.dataset.src) n.textContent = n.dataset.src; n.removeAttribute('data-processed'); });
+        try { mermaid.init(undefined, nodes); } catch (e) { console.warn('Mermaid re-init failed:', e); }
+      }
+      function showBlock(idx) {
+        blocks.forEach(b => { b.style.display = 'none'; });
+        const el = document.getElementById('rec-' + idx);
+        if (el) { el.style.display = ''; renderMermaidIn(el); }
+      }
+      if (sel && sel.options.length > 0) sel.value = sel.options[0].value;
+      sel?.addEventListener('change', (e) => { const idx = e.target.value; if (idx) showBlock(idx); });
+    </script>
+  {% endif %}
+{% endif %}
+{% endblock %}

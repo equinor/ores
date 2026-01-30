@@ -1,0 +1,81 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Mesozoic.Jurassic:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Jurassic",
+    "NameAlias": [
+      {
+        "AliasName": "Jurassic",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Jurassic Period [201.4-143.1]",
+    "Code": "GTS2020.Phanerozoic.Mesozoic.Jurassic",
+    "AttributionAuthority": "GTS https://timescalefoundation.org",
+    "AttributionRevision": "GTS 2020",
+    "AgeBegin": 201.36,
+    "AgeEnd": 143.1,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:GTS2020:",
+    "ChildCodes": [
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Aalenian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bajocian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bathonian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Callovian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Pliensbachian.Carixian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Pliensbachian.Domerian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Aalenian.EarlyAalenian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bajocian.EarlyBajocian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bathonian.EarlyBathonian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Callovian.EarlyCallovian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Kimmeridgian.EarlyKimmeridgian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Oxfordian.EarlyOxfordian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Sinemurian.EarlySinemurian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Tithonian.EarlyTithonian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Toarcian.EarlyToarcian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Hettangian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Kimmeridgian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Aalenian.LateAalenian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bajocian.LateBajocian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bathonian.LateBathonian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Callovian.LateCallovian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.LateJurassic",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Kimmeridgian.LateKimmeridgian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Oxfordian.LateOxfordian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Tithonian.LateTithonian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Toarcian.LateToarcian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Sinemurian.Lotharingian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Aalenian.MiddleAalenian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bathonian.MiddleBathonian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Callovian.MiddleCallovian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Oxfordian.MiddleOxfordian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Oxfordian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Pliensbachian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Sinemurian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Tithonian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Toarcian"
+    ],
+    "Colour": "#34b2c9",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2020.System:",
+    "ParentIDs": [],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

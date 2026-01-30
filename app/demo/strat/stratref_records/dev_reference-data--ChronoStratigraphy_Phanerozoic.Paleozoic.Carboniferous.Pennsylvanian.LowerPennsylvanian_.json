@@ -1,0 +1,48 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Carboniferous.Pennsylvanian.LowerPennsylvanian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Lower Pennsylvanian",
+    "NameAlias": [
+      {
+        "AliasName": "LowerPennsylvanian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:",
+        "DefinitionOrganisationID": "dev:reference-data--StandardsOrganisation:ICS:"
+      }
+    ],
+    "Description": "The Lower Pennsylvanian Epoch Sub-Epoch [323.2-315.2]",
+    "Code": "Phanerozoic.Paleozoic.Carboniferous.Pennsylvanian.LowerPennsylvanian",
+    "AttributionAuthority": "ICS https://stratigraphy.org",
+    "AttributionPublication": "https://github.com/CSIRO-enviro-informatics/interactive-geological-timescale/tree/master/src/assets",
+    "AttributionRevision": "ICS 2017/02",
+    "AgeBegin": 323.2,
+    "AgeEnd": 315.2,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChildCodes": [
+      "Phanerozoic.Paleozoic.Carboniferous.Pennsylvanian.LowerPennsylvanian.Bashkirian"
+    ],
+    "Colour": "#85C9CB",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Series:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Carboniferous.Pennsylvanian:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

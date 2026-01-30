@@ -1,0 +1,96 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}OsduUi{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+  body { font-family: Segoe UI, Roboto, Arial, sans-serif; margin: 0; padding: 0; }
+  header { background: #004578; color: #fff; padding: 10px 16px; }
+  .navlink { color: #fff; cursor: pointer; margin-right: 14px; display: inline-block; }
+  .navlink:hover { text-decoration: underline; }
+  main { padding: 16px; }
+  .banner { background: #fff4ce; color: #323130; border-left: 4px solid #ffb900; padding: 8px 12px; margin: 0; font-size: 14px; }
+  .muted { color: #605e5c; }
+  .btn { display: inline-block; padding: 6px 10px; border: 1px solid #605e5c; border-radius: 3px; background: #fff; cursor: pointer; user-select: none; }
+  .btn:hover { background: #f3f2f1; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid #e1dfdd; text-align: left; }
+  input[type=text], input[type=number] { padding: 6px 8px; width: 100%; box-sizing: border-box; }
+  .row { display: grid; grid-template-columns: 220px 1fr; gap: 8px 12px; align-items: center; margin-bottom: 8px; }
+  details { margin: 8px 0 16px; }
+  summary { cursor: pointer; }
+  pre { white-space: pre-wrap; background: #f3f2f1; padding: 8px; border-radius: 4px; }
+  code { background: #f3f2f1; padding: 1px 3px; border-radius: 3px; }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header>
+    <nav id="nav-root" data-current-path="{{ request.url.path }}">
+      <!-- Navigation is injected by inline JS below (and /static/app.js as fallback) -->
+      Loading…
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <!-- INLINE: Build navigation immediately -->
+<script>
+(function () {
+  function el(tag, attrs, text) {
+    var e = document.createElement(tag);
+    if (attrs) for (var k in attrs) {
+      if (k === 'class') e.className = attrs[k];
+      else if (k === 'style' && typeof attrs[k] === 'object') { for (var s in attrs[k]) e.style[s] = attrs[k][s]; }
+      else e.setAttribute(k, attrs[k]);
+    }
+    if (text) e.textContent = text;
+    return e;
+  }
+  function linkSpan(href, text, cls) {
+    var s = el('span', { 'data-href': href, 'class': cls || 'navlink' }, text);
+    s.addEventListener('click', function () { window.location.assign(href); });
+    return s;
+  }
+  function buildHeader() {
+    var root = document.getElementById('nav-root');
+    if (!root) return;
+    var current = root.getAttribute('data-current-path') || '/';
+    root.textContent = '';
+    // --- Add nav entries here ---
+    root.appendChild(linkSpan('/', 'Rddms'));
+    root.appendChild(linkSpan('/keys', 'Resources'));
+    root.appendChild(linkSpan('/search', 'Search'));
+    root.appendChild(linkSpan('/strat', 'Strat'));  <!-- NEW -->
+    root.appendChild(el('span', { 'class': 'muted' }, ' '));
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', buildHeader);
+  } else {
+    buildHeader();
+  }
+  document.addEventListener('click', function (e) {
+    var elx = e.target.closest && e.target.closest('[data-href]');
+    if (elx) {
+      var url = elx.getAttribute('data-href');
+      if (url) window.location.assign(url);
+    }
+  });
+})();
+</script>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'default',
+    securityLevel: 'loose'
+  });
+</script>
+<script src=/static/app.js></script>
+</body>
+</html>
+
+
+

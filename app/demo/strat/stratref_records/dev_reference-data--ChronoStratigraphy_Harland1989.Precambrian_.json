@@ -1,0 +1,63 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Harland1989.Precambrian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Precambrian",
+    "NameAlias": [
+      {
+        "AliasName": "Precambrian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Precambrian Supereon [4560.0-570.0]",
+    "Code": "Harland1989.Precambrian",
+    "AttributionAuthority": "Harland",
+    "AttributionRevision": "Harland 1989",
+    "AgeBegin": 4560.0,
+    "AgeEnd": 570.0,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:Harland1989:",
+    "ChildCodes": [
+      "Harland1989.Precambrian.Proterozoic.Animikean",
+      "Harland1989.Precambrian.Archean",
+      "Harland1989.Precambrian.Proterozoic.Riphean.Burzyan",
+      "Harland1989.Precambrian.Proterozoic.Sinian.Vendian.Ediacara",
+      "Harland1989.Precambrian.Hadean",
+      "Harland1989.Precambrian.Proterozoic.Huronian",
+      "Harland1989.Precambrian.Archean.Isuan",
+      "Harland1989.Precambrian.Proterozoic.Riphean.Karatau",
+      "Harland1989.Precambrian.Proterozoic.Sinian.Vendian.Varanger.Mortensnes",
+      "Harland1989.Precambrian.Proterozoic.Sinian.Vendian.Ediacara.Poundian",
+      "Harland1989.Precambrian.Proterozoic",
+      "Harland1989.Precambrian.Archean.Randian",
+      "Harland1989.Precambrian.Proterozoic.Riphean",
+      "Harland1989.Precambrian.Proterozoic.Sinian",
+      "Harland1989.Precambrian.Proterozoic.Sinian.Vendian.Varanger.Smalfjord",
+      "Harland1989.Precambrian.Proterozoic.Sinian.Sturtian",
+      "Harland1989.Precambrian.Archean.Swazian",
+      "Harland1989.Precambrian.Proterozoic.Sinian.Vendian.Varanger",
+      "Harland1989.Precambrian.Proterozoic.Sinian.Vendian",
+      "Harland1989.Precambrian.Proterozoic.Sinian.Vendian.Ediacara.Wonokan",
+      "Harland1989.Precambrian.Proterozoic.Riphean.Yurmatin"
+    ],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Harland1989.SuperEonothem:",
+    "ParentIDs": [],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

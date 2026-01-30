@@ -1,0 +1,82 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Mesozoic.Jurassic:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Jurassic",
+    "NameAlias": [
+      {
+        "AliasName": "Jurassic",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Jurassic Period [201.3-145.0]",
+    "Code": "GTS2012.Phanerozoic.Mesozoic.Jurassic",
+    "AttributionAuthority": "GTS https://timescalefoundation.org",
+    "AttributionRevision": "GTS 2012",
+    "AgeBegin": 201.3,
+    "AgeEnd": 145.0,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:GTS2012:",
+    "ChildCodes": [
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Aalenian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bajocian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bathonian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Callovian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Aalenian.earlyAalenian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bajocian.earlyBajocian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bathonian.earlyBathonian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Callovian.earlyCallovian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Kimmeridgian.earlyKimmeridgian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Oxfordian.earlyOxfordian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Pliensbachian.earlyPliensbachian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Sinemurian.earlySinemurian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Tithonian.earlyTithonian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Toarcian.earlyToarcian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Hettangian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Kimmeridgian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Aalenian.lateAalenian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bajocian.lateBajocian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bathonian.lateBathonian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Callovian.lateCallovian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Kimmeridgian.lateKimmeridgian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Oxfordian.lateOxfordian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Pliensbachian.latePliensbachian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Sinemurian.lateSinemurian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Tithonian.lateTithonian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Toarcian.lateToarcian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Aalenian.middleAalenian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Bathonian.middleBathonian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Callovian.middleCallovian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Oxfordian.middleOxfordian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Oxfordian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Pliensbachian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Sinemurian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Toarcian",
+      "GTS2012.Phanerozoic.Mesozoic.Jurassic.LateJurassic"
+    ],
+    "Colour": "#34b2c9",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2012.System:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Mesozoic:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

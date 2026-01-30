@@ -1,0 +1,53 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Paleozoic.Devonian.LateDevonian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Late Devonian",
+    "NameAlias": [
+      {
+        "AliasName": "LateDevonian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Late Devonian Epoch [378.9-359.3]",
+    "Code": "GTS2020.Phanerozoic.Paleozoic.Devonian.LateDevonian",
+    "AttributionAuthority": "GTS https://timescalefoundation.org",
+    "AttributionRevision": "GTS 2020",
+    "AgeBegin": 378.9,
+    "AgeEnd": 359.3,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:GTS2020:",
+    "ChildCodes": [
+      "GTS2020.Phanerozoic.Paleozoic.Devonian.LateDevonian.Famennian.EarlyFamennian",
+      "GTS2020.Phanerozoic.Paleozoic.Devonian.LateDevonian.Frasnian.EarlyFrasnian",
+      "GTS2020.Phanerozoic.Paleozoic.Devonian.LateDevonian.Famennian",
+      "GTS2020.Phanerozoic.Paleozoic.Devonian.LateDevonian.Frasnian",
+      "GTS2020.Phanerozoic.Paleozoic.Devonian.LateDevonian.Famennian.LateFamennian",
+      "GTS2020.Phanerozoic.Paleozoic.Devonian.LateDevonian.Frasnian.LateFrasnian",
+      "GTS2020.Phanerozoic.Paleozoic.Devonian.LateDevonian.Famennian.LatestFamennian",
+      "GTS2020.Phanerozoic.Paleozoic.Devonian.LateDevonian.Famennian.MiddleFammennian",
+      "GTS2020.Phanerozoic.Paleozoic.Devonian.LateDevonian.Frasnian.MiddleFrasnian"
+    ],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2020.Series:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Paleozoic.Devonian:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

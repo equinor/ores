@@ -1,0 +1,25 @@
+{
+  "id": "dev:reference-data--RiskCategory:Cost:1",
+  "kind": "osdu:wks:reference-data--RiskCategory:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Cost",
+    "Code": "Cost",
+    "Description": "CAPEX/OPEX deviations and drivers."
+  }
+}

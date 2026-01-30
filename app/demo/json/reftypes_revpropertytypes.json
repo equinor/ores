@@ -1,0 +1,202 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "ReferenceData": [
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Bulk:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Bulk",
+        "Code": "Bulk",
+        "Description": "Bulk volume, Gross volume, GRV"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Net:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Net",
+        "Code": "Net",
+        "Description": "Net volume, NV"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Pore:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Pore",
+        "Code": "Pore",
+        "Description": "Pore volume, PV"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:HydrocarbonPore:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "HydrocarbonPore",
+        "Code": "HydrocarbonPore",
+        "Description": "Hydrocarbon pore volume, HCPV"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Oil:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Oil",
+        "Code": "Oil",
+        "Description": "Stock tank oil initially in place, STOOIP"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Gas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Gas",
+        "Code": "Gas",
+        "Description": "Gass initially in place, GIIP"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:AssociatedGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "AssociatedGas",
+        "Code": "AssociatedGas",
+        "Description": "Associated gas volume"
+      }
+    }
+  ],
+  "MasterData": [],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [],
+    "WorkProduct": {}
+  }
+}
