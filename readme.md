@@ -126,9 +126,3 @@ Re-use `app/schemahandler.py` and `app/strat.py` when extending demos or composi
 
 All paths above are relative. Open files to inspect payload shapes and example content.
 
-## Development notes and next steps
-
-- Add a `requirements.txt` or `pyproject.toml` to pin dependencies for reproducible installs.
-- Add small unit tests (pytest) for `schemahandler.py` and `strat.py` that validate manifest composition produces expected JSON shapes.
-- Consider exposing manifest preview and dry-run ingest in the UI (client-side action) for safer testing.
-
