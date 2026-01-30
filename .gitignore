@@ -13,3 +13,5 @@ __pycache__/
 ~$*
 *.tmp
 *.lock
+.env
+
