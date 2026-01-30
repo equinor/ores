@@ -125,4 +125,3 @@ Re-use `app/schemahandler.py` and `app/strat.py` when extending demos or composi
 - Demo scripts: `demo/py/`
 
 All paths above are relative. Open files to inspect payload shapes and example content.
-
