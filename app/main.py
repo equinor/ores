@@ -242,7 +242,7 @@ async def search_page(request: Request):
             "request": request,
             "kind": "osdu:wks:work-product-component--ReservoirEstimatedVolumes:1.1.0",
             "q": "*",
-            "limit": 10,
+            "limit": 50,
             "returnedFields": "id,kind,version",
         },
     )

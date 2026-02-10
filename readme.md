@@ -7,23 +7,13 @@ The README below documents the project components, web client pages, demo conten
 ## Quick setup
 
 - Store your Azure AD (adme) `refresh_token` as an environment variable or in a `.env` file used by the app.
-- Required Python libraries (examples): `uvicorn`, `fastapi`, `httpx`, `jinja2`, `numpy`, `python-multipart`.
-
-Run the web client with uvicorn from the repository root:
 
 ```bash
-py -m uvicorn app.main:app --reload --port 8000 --host localhost --env-file ./.env
-# or
+pip install -r requirements.txt
 python -m uvicorn app.main:app --reload --port 8000 --host 127.0.0.1 --env-file ./.env
 ```
-
 Open <http://127.0.0.1:8000/> in a browser.
 
-Install dependencies with pip (example):
-
-```bash
-pip install uvicorn fastapi httpx jinja2 numpy python-multipart
-```
 
 ## Project layout and components
 
