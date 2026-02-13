@@ -20,6 +20,10 @@
   "data": {
     "Name": "Lower Pennsylvanian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Carboniferous.Pennsylvanian.LowerPennsylvanian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Carboniferous.Pennsylvanian.LowerPennsylvanian:",
+    "OlderPossibleAge": 323.2,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-323p2Ma:",
+    "YoungerPossibleAge": 315.2,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-315p2Ma:"
   }
 }

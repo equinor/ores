@@ -20,6 +20,15 @@
   "data": {
     "Name": "Late Hettangian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Hettangian.LateHettangian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Hettangian.LateHettangian:",
+    "OlderPossibleAge": 202.83,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-202p83Ma:",
+    "YoungerPossibleAge": 201.9,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-201p9Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
   }
 }

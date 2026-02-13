@@ -20,6 +20,15 @@
   "data": {
     "Name": "Middle Llandeilo",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llandeilo.MiddleLlandeilo:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llandeilo.MiddleLlandeilo:",
+    "OlderPossibleAge": 467.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-467Ma:",
+    "YoungerPossibleAge": 465.4,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-465p4Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
   }
 }

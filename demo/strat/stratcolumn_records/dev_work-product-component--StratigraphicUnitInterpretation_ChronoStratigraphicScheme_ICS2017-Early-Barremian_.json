@@ -20,6 +20,15 @@
   "data": {
     "Name": "Early Barremian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Mesozoic.Cretaceous.EarlyCretaceous.Barremian.EarlyBarremian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Mesozoic.Cretaceous.EarlyCretaceous.Barremian.EarlyBarremian:",
+    "OlderPossibleAge": 127.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-127Ma:",
+    "YoungerPossibleAge": 124.84,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-124p84Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
   }
 }

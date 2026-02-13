@@ -20,6 +20,10 @@
   "data": {
     "Name": "Pennsylvanian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic.Carboniferous.Pennsylvanian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Carboniferous.Pennsylvanian:",
+    "OlderPossibleAge": 323.2,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-323p2Ma:",
+    "YoungerPossibleAge": 298.9,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-298p9Ma:"
   }
 }

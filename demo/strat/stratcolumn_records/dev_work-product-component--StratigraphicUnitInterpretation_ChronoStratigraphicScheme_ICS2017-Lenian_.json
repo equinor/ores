@@ -20,6 +20,15 @@
   "data": {
     "Name": "Lenian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic.Cambrian.Caerfai.Lenian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic.Cambrian.Caerfai.Lenian:",
+    "OlderPossibleAge": 554.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-554Ma:",
+    "YoungerPossibleAge": 536.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-536Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
   }
 }

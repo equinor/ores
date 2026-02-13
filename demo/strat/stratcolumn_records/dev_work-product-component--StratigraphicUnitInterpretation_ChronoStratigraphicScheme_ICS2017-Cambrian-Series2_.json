@@ -20,6 +20,10 @@
   "data": {
     "Name": "Cambrian Series2",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Cambrian.CambrianSeries2:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Cambrian.CambrianSeries2:",
+    "OlderPossibleAge": 521.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-521Ma:",
+    "YoungerPossibleAge": 509.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-509Ma:"
   }
 }

@@ -20,6 +20,15 @@
   "data": {
     "Name": "Late Callovian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Callovian.LateCallovian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Callovian.LateCallovian:",
+    "OlderPossibleAge": 160.77,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-160p77Ma:",
+    "YoungerPossibleAge": 159.4,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-159p4Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
   }
 }

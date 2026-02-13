@@ -20,6 +20,10 @@
   "data": {
     "Name": "Givetian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic.Devonian.MiddleDevonian.Givetian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Devonian.MiddleDevonian.Givetian:",
+    "OlderPossibleAge": 387.7,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-387p7Ma:",
+    "YoungerPossibleAge": 382.7,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-382p7Ma:"
   }
 }

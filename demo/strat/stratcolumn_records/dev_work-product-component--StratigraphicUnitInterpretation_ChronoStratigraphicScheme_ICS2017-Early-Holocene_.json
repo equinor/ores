@@ -20,6 +20,15 @@
   "data": {
     "Name": "Early Holocene",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2016.Phanerozoic.Cenozoic.Quaternary.Holocene.EarlyHolocene:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2016.Phanerozoic.Cenozoic.Quaternary.Holocene.EarlyHolocene:",
+    "OlderPossibleAge": 0.012,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-0p012Ma:",
+    "YoungerPossibleAge": 0.0082,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-0p0082Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
   }
 }

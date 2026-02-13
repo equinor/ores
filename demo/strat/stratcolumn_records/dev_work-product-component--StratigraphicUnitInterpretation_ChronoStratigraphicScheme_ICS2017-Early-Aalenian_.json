@@ -20,6 +20,15 @@
   "data": {
     "Name": "Early Aalenian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Aalenian.EarlyAalenian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Aalenian.EarlyAalenian:",
+    "OlderPossibleAge": 180.1,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-180p1Ma:",
+    "YoungerPossibleAge": 179.29,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-179p29Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
   }
 }

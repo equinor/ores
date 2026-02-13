@@ -20,6 +20,10 @@
   "data": {
     "Name": "Siderian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2012.Precambrian.Proterozoic.Paleoproterozoic.Siderian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Proterozoic.Paleoproterozoic.Siderian:",
+    "OlderPossibleAge": 2500.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-2500Ma:",
+    "YoungerPossibleAge": 2300.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-2300Ma:"
   }
 }

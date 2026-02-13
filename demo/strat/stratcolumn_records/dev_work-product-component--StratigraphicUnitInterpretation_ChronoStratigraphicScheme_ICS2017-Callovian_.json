@@ -20,6 +20,10 @@
   "data": {
     "Name": "Callovian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Mesozoic.Jurassic.Dogger.Callovian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Jurassic.MiddleJurassic.Callovian:",
+    "OlderPossibleAge": 166.1,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-166p1Ma:",
+    "YoungerPossibleAge": 163.5,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-163p5Ma:"
   }
 }

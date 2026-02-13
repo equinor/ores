@@ -20,6 +20,15 @@
   "data": {
     "Name": "Late Eocene",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Cenozoic.Paleogene.Eocene.LateEocene:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Cenozoic.Paleogene.Eocene.LateEocene:",
+    "OlderPossibleAge": 37.71,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-37p71Ma:",
+    "YoungerPossibleAge": 33.9,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-33p9Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
   }
 }

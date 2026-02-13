@@ -20,6 +20,15 @@
   "data": {
     "Name": "Early Frasnian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Paleozoic.Devonian.LateDevonian.Frasnian.EarlyFrasnian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2016.Phanerozoic.Paleozoic.Devonian.LateDevonian.Frasnian.EarlyFrasnian:",
+    "OlderPossibleAge": 382.69,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-382p69Ma:",
+    "YoungerPossibleAge": 380.38,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-380p38Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
   }
 }

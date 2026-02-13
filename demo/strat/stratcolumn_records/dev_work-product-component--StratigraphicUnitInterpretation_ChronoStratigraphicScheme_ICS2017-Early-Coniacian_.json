@@ -20,6 +20,15 @@
   "data": {
     "Name": "Early Coniacian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Mesozoic.Cretaceous.LateCretaceous.Coniacian.EarlyConiacian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Mesozoic.Cretaceous.LateCretaceous.Coniacian.EarlyConiacian:",
+    "OlderPossibleAge": 89.39,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-89p39Ma:",
+    "YoungerPossibleAge": 88.3,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-88p3Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
   }
 }

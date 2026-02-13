@@ -20,6 +20,10 @@
   "data": {
     "Name": "Asselian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Paleozoic.Permian.Cisuralian.Asselian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Permian.Cisuralian.Asselian:",
+    "OlderPossibleAge": 298.9,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-298p9Ma:",
+    "YoungerPossibleAge": 295.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-295Ma:"
   }
 }

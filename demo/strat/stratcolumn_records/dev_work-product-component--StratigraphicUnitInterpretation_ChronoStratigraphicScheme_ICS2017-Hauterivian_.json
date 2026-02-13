@@ -20,6 +20,10 @@
   "data": {
     "Name": "Hauterivian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Mesozoic.Cretaceous.EarlyCretaceous.Neocomian.Hauterivian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Cretaceous.LowerCretaceous.Hauterivian:",
+    "OlderPossibleAge": 132.9,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-132p9Ma:",
+    "YoungerPossibleAge": 129.4,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-129p4Ma:"
   }
 }

@@ -20,6 +20,10 @@
   "data": {
     "Name": "Piacenzian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Cenozoic.Tertiary.Neogene.Pliocene.Piacenzian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Cenozoic.Neogene.Pliocene.Piacenzian:",
+    "OlderPossibleAge": 3.6,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-3p6Ma:",
+    "YoungerPossibleAge": 2.58,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-2p58Ma:"
   }
 }

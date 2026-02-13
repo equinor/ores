@@ -20,6 +20,10 @@
   "data": {
     "Name": "Middle Triassic",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Mesozoic.Triassic.MiddleTriassic:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Triassic.MiddleTriassic:",
+    "OlderPossibleAge": 247.2,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-247p2Ma:",
+    "YoungerPossibleAge": 237.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-237Ma:"
   }
 }

@@ -21,19 +21,19 @@ Supported conversions
 CLI Usage (examples)
 --------------------
 SMDA → RESQML:
-    python stratcolumnhandler_clean.py smda2resqml --xlsx smda-api_strat-units.xlsx \
+    python stratcolumnhandler.py smda2resqml --xlsx smda-api_strat-units.xlsx \
         --sheet ApiStratUnit -o smda.resqml.json
 
 SMDA → OSDU:
-    python stratcolumnhandler_clean.py smda2osdu --xlsx smda-api_strat-units.xlsx \
+    python stratcolumnhandler.py smda2osdu --xlsx smda-api_strat-units.xlsx \
         --sheet ApiStratUnit --partition data -o smda.osdu.json
 
 RESQML → OSDU:
-    python stratcolumnhandler_clean.py resqml2osdu --resqml-json smda.resqml.json \
+    python stratcolumnhandler.py resqml2osdu --resqml-json smda.resqml.json \
         --partition data -o smda_roundtrip.osdu.json
 
 OSDU → RESQML:
-    python stratcolumnhandler_clean.py osdu2resqml --manifest smda.osdu.json \
+    python stratcolumnhandler.py osdu2resqml --manifest smda.osdu.json \
         -o osdu2.resqml.json
 """
 from __future__ import annotations
@@ -79,7 +79,7 @@ VENDOR_TO_OSDU_MAP_DEFAULT = {
 def sanitize(name: str) -> str:
     """Return a filesystem/ID-safe token derived from a display name."""
     s = (name or "").strip()
-    return "".join(ch if ch.isalnum() or ch in "-. _" else "_" for ch in s) or "unnamed"
+    return "".join(ch if ch.isalnum() or ch in "-._" else "_" for ch in s) or "unnamed"
 
 
 def wpc_id(partition: str, entity: str, name_or_uuid: str) -> str:
@@ -189,26 +189,26 @@ class StratColumn:
             i = h2i.get(key)
             return None if i is None else row[i]
 
+        def _float(x):
+            try:
+                return float(x)
+            except Exception:
+                return None
+
+        def _int(x):
+            try:
+                return int(float(x))
+            except Exception:
+                return None
+
         items: List[Dict[str, Any]] = []
         for row in ws.iter_rows(min_row=2, values_only=True):
             if all(c is None for c in row):
                 continue
 
-            def f(x):
-                try:
-                    return float(x)
-                except Exception:
-                    return None
-
-            def i(x):
-                try:
-                    return int(float(x))
-                except Exception:
-                    return None
-
             d = {h: row[idx] if idx < len(row) else None for h, idx in h2i.items()}
             name = (cell(row, "identifier") or "").strip()
-            level = i(cell(row, "strat_unit_level")) or 9999
+            level = _int(cell(row, "strat_unit_level")) or 9999
             parent = cell(row, "strat_unit_parent")
             if isinstance(parent, str) and parent.lower() in ("", "null", "none"):
                 parent = None
@@ -219,14 +219,16 @@ class StratColumn:
                     "__name": name,
                     "__level": level,
                     "__parent": parent,
-                    "__top": f(cell(row, "top_age")),
-                    "__base": f(cell(row, "base_age")),
+                    "__top": _float(cell(row, "top_age")),
+                    "__base": _float(cell(row, "base_age")),
                     "__color": cell(row, "color_html") or None,
                     "__coltype": str(cell(row, "strat_column_type") or "").lower(),
                     "__uuid": str(cell(row, "uuid") or uuid.uuid4()),
                     "__colname": cell(row, "strat_column_identifier") or "Stratigraphic Column",
                 }
             )
+
+        wb.close()
 
         if not items:
             raise ValueError("No data rows in SMDA sheet")
@@ -298,6 +300,7 @@ class StratColumn:
             uid2u[uid] = StratUnit(
                 name=u.get("title") or "Unit",
                 uuid=uid,
+                level=extra.get("level"),
                 top_age_ma=u.get("topAgeMa"),
                 base_age_ma=u.get("baseAgeMa"),
                 parent_name=u.get("parentName"),
@@ -333,9 +336,12 @@ class StratColumn:
             raise ValueError("OSDU payload must be a dict with 'records'")
         recs = payload["records"]
 
-        units = [r for r in recs if r.get("kind") == KIND_UNIT]
-        ranks = [r for r in recs if r.get("kind") == KIND_RANK]
-        cols = [r for r in recs if r.get("kind") == KIND_COL]
+        _pfx_unit = KIND_UNIT.rsplit(":", 1)[0] + ":"
+        _pfx_rank = KIND_RANK.rsplit(":", 1)[0] + ":"
+        _pfx_col  = KIND_COL.rsplit(":", 1)[0] + ":"
+        units = [r for r in recs if (r.get("kind") or "").startswith(_pfx_unit)]
+        ranks = [r for r in recs if (r.get("kind") or "").startswith(_pfx_rank)]
+        cols  = [r for r in recs if (r.get("kind") or "").startswith(_pfx_col)]
 
         id2u: Dict[str, StratUnit] = {}
         for ur in units:
@@ -345,7 +351,35 @@ class StratColumn:
             uid = rid.split(":")[-2] if rid.endswith(":") else rid
             vm = (d.get("VendorMetadata", {}) or {})
             vendor_raw = vm.get("Raw", vm.get("OW", {}))  # accept legacy 'OW'
-            id2u[ur.get("id")] = StratUnit(name=nm, uuid=uid or str(uuid.uuid4()), vendor=vendor_raw)
+            # Read age, parent, color from structured fields OR vendor metadata
+            tr = d.get("TimeRange", {}) or {}
+            top_age = tr.get("TopAgeMa") or vendor_raw.get("TopAgeMa") or vendor_raw.get("top_age")
+            base_age = tr.get("BaseAgeMa") or vendor_raw.get("BaseAgeMa") or vendor_raw.get("base_age")
+            rel = d.get("Relationships", {}) or {}
+            parent_name = (d.get("ParentName")
+                           or (rel.get("Parent", {}) or {}).get("Name")
+                           or vendor_raw.get("ParentName")
+                           or vendor_raw.get("strat_unit_parent"))
+            color_html = ((d.get("Rendering", {}) or {}).get("ColorHtml")
+                          or vendor_raw.get("ColorHtml")
+                          or vendor_raw.get("color_html"))
+            try:
+                top_age = float(top_age) if top_age is not None else None
+            except (ValueError, TypeError):
+                top_age = None
+            try:
+                base_age = float(base_age) if base_age is not None else None
+            except (ValueError, TypeError):
+                base_age = None
+            id2u[ur.get("id")] = StratUnit(
+                name=nm,
+                uuid=uid or str(uuid.uuid4()),
+                top_age_ma=top_age,
+                base_age_ma=base_age,
+                parent_name=parent_name,
+                color_html=color_html,
+                vendor=vendor_raw,
+            )
 
         sranks: List[StratRank] = []
         for rr in ranks:
@@ -353,10 +387,13 @@ class StratColumn:
             nm = d.get("Name") or "Rank"
             ordering = d.get("OrderingCriteria") or ORDERING_DEFAULT
             if d.get("StratigraphicUnitInterpretationSet"):
-                us = [
-                    id2u.get(x) or StratUnit(name=x or "unit", uuid=str(uuid.uuid4()))
-                    for x in d["StratigraphicUnitInterpretationSet"]
-                ]
+                seen_uids = set()
+                us = []
+                for x in d["StratigraphicUnitInterpretationSet"]:
+                    if x in seen_uids:
+                        continue
+                    seen_uids.add(x)
+                    us.append(id2u.get(x) or StratUnit(name=x or "unit", uuid=str(uuid.uuid4())))
                 sranks.append(StratRank(name=nm, kind="litho", ordering=ordering, units=us))
             elif d.get("ChronoStratigraphySet"):
                 srns = list(d["ChronoStratigraphySet"])
@@ -377,11 +414,14 @@ class StratColumn:
             if r.kind != "litho":
                 continue
             for u in r.units:
+                _em = {"vendor": dict(u.vendor)}
+                if u.level is not None:
+                    _em["level"] = u.level
                 obj = {
                     "resqmlType": "resqml20:StratigraphicUnitInterpretation",
                     "uuid": u.uuid,
                     "title": u.name,
-                    "extraMetadata": {"vendor": dict(u.vendor)},
+                    "extraMetadata": _em,
                 }
                 if u.top_age_ma is not None:
                     obj["topAgeMa"] = u.top_age_ma
@@ -462,7 +502,7 @@ class StratColumn:
             if r.kind != "litho":
                 continue
             for u in r.units:
-                rec_id = wpc_id(partition, "StratigraphicUnitInterpretation", u.name or u.uuid)
+                rec_id = wpc_id(partition, "StratigraphicUnitInterpretation", u.uuid or u.name)
                 unit_id_by_uuid[u.uuid] = rec_id
                 rec = {
                     "id": rec_id,
@@ -471,6 +511,17 @@ class StratColumn:
                 }
                 # Apply mapping from vendor to OSDU structured fields (opt-in)
                 apply_vendor_map(u.vendor, rec, vendor_map)
+                # Write model-level fields to ensure they survive round-trips
+                if u.top_age_ma is not None:
+                    _set_path(rec, "data.TimeRange.TopAgeMa", u.top_age_ma)
+                if u.base_age_ma is not None:
+                    _set_path(rec, "data.TimeRange.BaseAgeMa", u.base_age_ma)
+                if u.parent_name:
+                    _set_path(rec, "data.ParentName", u.parent_name)
+                if u.color_html:
+                    _set_path(rec, "data.Rendering.ColorHtml", u.color_html)
+                if u.level is not None:
+                    _set_path(rec, "data.VendorMetadata.Raw.Level", u.level)
                 records.append(rec)
 
         # Ranks
@@ -540,8 +591,9 @@ def cmd_smda2osdu(ns):
 
 def cmd_resqml2osdu(ns):
     col = StratColumn.from_resqml_json(ns.resqml_json)
+    idx = load_reference_index(getattr(ns, 'chrono_refdata', None))
     m = _load_map(ns.vendor_map)
-    bundle = col.to_osdu_bundle(partition=ns.partition, chrono_rd_index=None, vendor_map=m)
+    bundle = col.to_osdu_bundle(partition=ns.partition, chrono_rd_index=idx, vendor_map=m)
     with open(ns.output, "w", encoding="utf-8") as f:
         json.dump(bundle, f, indent=2)
     print(f"[ok] OSDU bundle written: {ns.output}")
@@ -556,33 +608,32 @@ def cmd_osdu2resqml(ns):
 
 
 def build_parser():
-    import argparse
     from textwrap import dedent
 
     epilog = dedent(r"""
     Examples
     --------
     # 1) SMDA (.xlsx) → RESQML JSON graph
-    python stratcolumnhandler_clean.py smda2resqml \
+    python stratcolumnhandler.py smda2resqml \
         --xlsx smda-api_strat-units.xlsx \
         --sheet ApiStratUnit \
         -o smda.resqml.json
 
     # 2) SMDA (.xlsx) → OSDU WPC bundle (partition 'data', default)
-    python stratcolumnhandler_clean.py smda2osdu \
+    python stratcolumnhandler.py smda2osdu \
         --xlsx smda-api_strat-units.xlsx \
         --sheet ApiStratUnit \
         --partition data \
         -o smda.osdu.json
 
     # 3) RESQML JSON graph → OSDU WPC bundle
-    python stratcolumnhandler_clean.py resqml2osdu \
+    python stratcolumnhandler.py resqml2osdu \
         --resqml-json smda.resqml.json \
         --partition data \
         -o smda_roundtrip.osdu.json
 
     # 4) OSDU WPC bundle → RESQML JSON graph
-    python stratcolumnhandler_clean.py osdu2resqml \
+    python stratcolumnhandler.py osdu2resqml \
         --manifest smda.osdu.json \
         -o osdu2.resqml.json
 
@@ -626,7 +677,7 @@ def build_parser():
     """)
 
     ap = argparse.ArgumentParser(
-        prog="stratcolumnhandler_clean.py",
+        prog="stratcolumnhandler.py",
         description=dedent("""\
             Strat Column Handler (clean)
             ---------------------------
@@ -646,7 +697,7 @@ def build_parser():
         required=True,
         title="Commands",
         metavar="{smda2resqml,smda2osdu,resqml2osdu,osdu2resqml}",
-        help="Run 'stratcolumnhandler_clean.py <command> --help' for command-specific options."
+        help="Run 'stratcolumnhandler.py <command> --help' for command-specific options."
     )
 
     # ---------------------- smda2resqml ----------------------
@@ -751,6 +802,11 @@ def build_parser():
     p.add_argument(
         "--partition", default=DEFAULT_PARTITION,
         help="OSDU partition for record ids (default: env OSDU_PARTITION or 'data')."
+    )
+    p.add_argument(
+        "--chrono-refdata", nargs="*",
+        help="Zero or more JSON file(s) providing ChronoStratigraphy reference-records (SRNs). "
+             "Used to resolve chrono rank names to SRNs."
     )
     p.add_argument(
         "--vendor-map",

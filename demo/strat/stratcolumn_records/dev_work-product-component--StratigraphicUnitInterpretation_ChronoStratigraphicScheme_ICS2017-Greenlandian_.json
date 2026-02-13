@@ -20,6 +20,10 @@
   "data": {
     "Name": "Greenlandian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Cenozoic.Quaternary.Holocene.Greenlandian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Cenozoic.Quaternary.Holocene.Greenlandian:",
+    "OlderPossibleAge": 0.0117,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-0p0117Ma:",
+    "YoungerPossibleAge": 0.008276,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-0p008276Ma:"
   }
 }

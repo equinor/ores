@@ -20,6 +20,10 @@
   "data": {
     "Name": "Lower Triassic",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Triassic.LowerTriassic:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Triassic.LowerTriassic:",
+    "OlderPossibleAge": 251.902,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-251p902Ma:",
+    "YoungerPossibleAge": 247.2,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-247p2Ma:"
   }
 }

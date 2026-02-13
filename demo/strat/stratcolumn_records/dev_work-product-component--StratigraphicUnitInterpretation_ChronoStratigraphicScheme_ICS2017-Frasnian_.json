@@ -20,6 +20,10 @@
   "data": {
     "Name": "Frasnian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic.Devonian.LateDevonian.Frasnian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Devonian.UpperDevonian.Frasnian:",
+    "OlderPossibleAge": 382.7,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-382p7Ma:",
+    "YoungerPossibleAge": 372.2,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-372p2Ma:"
   }
 }

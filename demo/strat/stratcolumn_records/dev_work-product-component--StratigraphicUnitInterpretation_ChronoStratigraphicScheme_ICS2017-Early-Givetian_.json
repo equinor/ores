@@ -20,6 +20,15 @@
   "data": {
     "Name": "Early Givetian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Paleozoic.Devonian.MiddleDevonian.Givetian.EarlyGivetian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2016.Phanerozoic.Paleozoic.Devonian.MiddleDevonian.Givetian.EarlyGivetian:",
+    "OlderPossibleAge": 387.72,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-387p72Ma:",
+    "YoungerPossibleAge": 386.92,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-386p92Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
   }
 }

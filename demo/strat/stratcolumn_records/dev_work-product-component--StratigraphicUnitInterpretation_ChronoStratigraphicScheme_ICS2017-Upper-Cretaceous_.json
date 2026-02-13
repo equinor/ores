@@ -20,6 +20,10 @@
   "data": {
     "Name": "Upper Cretaceous",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Cretaceous.UpperCretaceous:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Cretaceous.UpperCretaceous:",
+    "OlderPossibleAge": 100.5,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-100p5Ma:",
+    "YoungerPossibleAge": 66.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-66Ma:"
   }
 }

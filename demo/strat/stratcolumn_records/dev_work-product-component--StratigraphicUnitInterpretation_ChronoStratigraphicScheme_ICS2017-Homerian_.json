@@ -20,6 +20,10 @@
   "data": {
     "Name": "Homerian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Paleozoic.Silurian.Wenlock.Homerian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Silurian.Wenlock.Homerian:",
+    "OlderPossibleAge": 430.5,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-430p5Ma:",
+    "YoungerPossibleAge": 427.4,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-427p4Ma:"
   }
 }

@@ -20,6 +20,10 @@
   "data": {
     "Name": "Tithonian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Mesozoic.Jurassic.Malm.Tithonian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Jurassic.UpperJurassic.Tithonian:",
+    "OlderPossibleAge": 152.1,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-152p1Ma:",
+    "YoungerPossibleAge": 145.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-145Ma:"
   }
 }

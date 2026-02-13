@@ -20,6 +20,10 @@
   "data": {
     "Name": "Lochkovian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic.Devonian.EarlyDevonian.Lochkovian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Devonian.LowerDevonian.Lochkovian:",
+    "OlderPossibleAge": 419.2,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-419p2Ma:",
+    "YoungerPossibleAge": 410.8,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-410p8Ma:"
   }
 }

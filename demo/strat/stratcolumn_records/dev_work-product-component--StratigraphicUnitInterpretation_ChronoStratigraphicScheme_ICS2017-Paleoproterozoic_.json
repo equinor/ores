@@ -20,6 +20,10 @@
   "data": {
     "Name": "Paleoproterozoic",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2012.Precambrian.Proterozoic.Paleoproterozoic:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Proterozoic.Paleoproterozoic:",
+    "OlderPossibleAge": 2500.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-2500Ma:",
+    "YoungerPossibleAge": 1600.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-1600Ma:"
   }
 }

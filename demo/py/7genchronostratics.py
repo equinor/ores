@@ -13,7 +13,7 @@ Examples (PowerShell):
   py .\7genchronostrat.py --out .\chronostrat_manifest_ics.json --include-scheme --verbose
 """
 
-import argparse, json, sys
+import argparse, copy, json, sys
 from pathlib import Path
 from typing import Any, Dict, List, Union
 
@@ -81,8 +81,23 @@ def build_scheme(partition: str, owners: List[str], viewers: List[str],
         "data": {"Name": name, "Code": code, "Description": name}
     }
 
+def _replace_namespace(obj: Any, namespace: str) -> Any:
+    """Recursively replace {{NAMESPACE}} in all string values."""
+    if isinstance(obj, str):
+        return obj.replace("{{NAMESPACE}}", namespace)
+    if isinstance(obj, list):
+        return [_replace_namespace(x, namespace) for x in obj]
+    if isinstance(obj, dict):
+        return {k: _replace_namespace(v, namespace) for k, v in obj.items()}
+    return obj
+
 def _gather_records(obj: Union[Dict[str, Any], List[Any]], verbose: bool=False) -> List[Dict[str, Any]]:
-    """Return ChronoStratigraphy records regardless of source layout."""
+    """Return ChronoStratigraphy records regardless of source layout.
+
+    Fixed: previously the walk would add records from node['ReferenceData']
+    and then re-walk the same list via `for v in node.values()`, causing
+    every record to be collected twice.
+    """
     found: List[Dict[str, Any]] = []
     def is_chrono(rec: Any) -> bool:
         if not isinstance(rec, dict):
@@ -98,12 +113,15 @@ def _gather_records(obj: Union[Dict[str, Any], List[Any]], verbose: bool=False) 
                 else:
                     walk(x, depth+1)
         elif isinstance(node, dict):
+            handled_keys: set = set()
             if "ReferenceData" in node and isinstance(node["ReferenceData"], list):
+                handled_keys.add("ReferenceData")
                 for x in node["ReferenceData"]:
                     if is_chrono(x):
                         found.append(x)
-            for v in node.values():
-                walk(v, depth+1)
+            for k, v in node.items():
+                if k not in handled_keys:
+                    walk(v, depth+1)
     walk(obj)
     if verbose:
         print(f"_gather_records: collected {len(found)} ChronoStratigraphy candidates")
@@ -118,10 +136,12 @@ def main():
     ap.add_argument('--viewers', default='data.office.global.viewers@dev.dataservices.energy')
     ap.add_argument('--legaltag', default='dev-equinor-osdu-reference-default')
     ap.add_argument('--countries', default='NO')
-    ap.add_argument('--out', default='chronostrat_manifest_ics.json')
+    ap.add_argument('--out', default='')
     ap.add_argument('--include-scheme', action='store_true')
     ap.add_argument('--scheme-name', default='International Chronostratigraphic Chart')
     ap.add_argument('--scheme-code', default='ICS-2024-12')
+    ap.add_argument('--filter-scheme', default='',
+                    help='Only include records from this scheme (e.g. ICS2017, GTS2020). Default: all schemes')
     ap.add_argument('--source-url', default=DEFAULT_URL)
     ap.add_argument('--source-path', default='')
     ap.add_argument('--verbose', action='store_true')
@@ -178,8 +198,19 @@ def main():
     # Extract all ChronoStratigraphy records
     records_in = _gather_records(src_obj, verbose=args.verbose)
 
-    out_ref: List[Dict[str, Any]] = []
-    all_ids: List[str] = []
+    # Optional: filter to a single scheme
+    filter_scheme = (args.filter_scheme or '').strip()
+    if filter_scheme:
+        before = len(records_in)
+        records_in = [
+            r for r in records_in
+            if filter_scheme in (r.get('data') or {}).get('ChronoStratigraphicSchemeID', '')
+        ]
+        if args.verbose:
+            print(f"Filtered to scheme '{filter_scheme}': {before} → {len(records_in)}")
+
+    # Build output, deduplicating by id (last wins)
+    by_id: Dict[str, Dict[str, Any]] = {}   # id → record
     for idx, item in enumerate(records_in):
         data = item.get('data') or {}
         code = data.get('Code')
@@ -188,22 +219,37 @@ def main():
         rid = _id(partition, code)
         pids = data.get('ParentIDs')
         norm_parents = _normalize_parent_ids(partition, pids) if pids else []
-        new_data = dict(data)
+
+        # Deep-copy data and replace {{NAMESPACE}} placeholders
+        new_data = _replace_namespace(copy.deepcopy(data), partition)
         if norm_parents:
             new_data['ParentIDs'] = norm_parents
 
-        # Force-apply your ACL & legal on EVERY record
-        out_ref.append({
+        # Force-apply ACL & legal on every record
+        by_id[rid] = {
             "kind": KIND_CHRONO,
             "id": rid,
             "acl": _acl(owners, viewers),
             "legal": _legal(legaltag, countries),
             "data": new_data
-        })
-        all_ids.append(rid)
+        }
 
-    if args.verbose and all_ids[:5]:
-        print("Sample IDs:", *all_ids[:5], sep="\n  ")
+    out_ref = list(by_id.values())
+    all_ids = [r["id"] for r in out_ref]
+
+    # Per-scheme stats
+    from collections import Counter
+    scheme_counts: Counter = Counter()
+    for rec in out_ref:
+        sid = rec.get('data', {}).get('ChronoStratigraphicSchemeID', '')
+        scheme = sid.split('ChronoStratigraphicScheme:')[-1].rstrip(':') if 'ChronoStratigraphicScheme:' in sid else '(none)'
+        scheme_counts[scheme] += 1
+    if args.verbose:
+        print(f"\nUnique records by scheme ({len(out_ref)} total):")
+        for s, c in scheme_counts.most_common():
+            print(f"  {s}: {c}")
+    if all_ids[:5] and args.verbose:
+        print("\nSample IDs:", *all_ids[:5], sep="\n  ")
 
     manifest = {
         "kind": KIND_MANIFEST,
@@ -221,8 +267,11 @@ def main():
     wpc = build_wpc(partition, owners, viewers, legaltag, countries, args.scheme_name, args.scheme_code, all_ids)
     manifest["Data"]["WorkProductComponents"].append(wpc)
 
-    Path(args.out).write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
-    print(f"\nWrote {args.out} with {len(out_ref)} ChronoStratigraphy records and 1 WPC")
+    out_path = Path(args.out) if args.out else Path(__file__).resolve().parent.parent / 'strat' / 'manifest_chronostratics.json'
+    out_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
+    print(f"\nWrote {out_path} with {len(out_ref)} ChronoStratigraphy records and 1 WPC")
+    for s, c in scheme_counts.most_common():
+        print(f"  {s}: {c}")
     if len(out_ref) == 0:
         print("NOTE: 0 records found. Likely causes:\n"
               "- Source JSON not reachable (proxy, auth) or not JSON\n"

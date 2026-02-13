@@ -20,6 +20,10 @@
   "data": {
     "Name": "Eocene",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Cenozoic.Tertiary.Paleogene.Eocene:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Cenozoic.Paleogene.Eocene:",
+    "OlderPossibleAge": 56.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-56Ma:",
+    "YoungerPossibleAge": 33.9,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-33p9Ma:"
   }
 }

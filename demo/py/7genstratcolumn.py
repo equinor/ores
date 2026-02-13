@@ -63,11 +63,39 @@ def extract_ref_objects(obj: Any, kind_prefix: str) -> List[Dict]:
 
 # tolerant getters for rank and ages
 def get_rank(data: Dict) -> str:
+    """Extract rank name from chrono record data.
+    Tries multiple sources:
+      1) StratigraphicColumnRankUnitTypeID  (most reliable)
+         e.g. '...StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2020.Stage:'
+         → last dot-segment before ':' = 'Stage'
+      2) ChronostratigraphicHierarchy.Rank (rare)
+      3) data.Rank / data.RankName (rare)
+    """
+    # Source 1: StratigraphicColumnRankUnitTypeID — always present on reference chrono records
+    rtid = data.get("StratigraphicColumnRankUnitTypeID") or ""
+    if rtid:
+        # format: "{{NS}}:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2020.Stage:"
+        # or simpler: "...Chronostratigraphic.Stage:"
+        segs = rtid.split(":")
+        for s in segs:
+            if "StratigraphicColumnRankUnitType" in s:
+                continue
+            # Find the segment after the type part (the code segment)
+            pass
+        # Take the second-to-last segment (before trailing ":") and its last dot-part
+        code_seg = segs[-2] if rtid.endswith(":") and len(segs) >= 2 else segs[-1]
+        if "." in code_seg:
+            return code_seg.split(".")[-1]  # e.g. "Eonothem", "Stage"
+        if code_seg:
+            return code_seg
+
+    # Source 2: ChronostratigraphicHierarchy (legacy)
     h = data.get("ChronostratigraphicHierarchy") or data.get("ChronoStratigraphicHierarchy") or {}
     for k in ("Rank", "ChronostratigraphicRank", "ChronoStratigraphicRank", "RankName"):
         v = h.get(k) if isinstance(h, dict) else None
         if v:
             return str(v)
+    # Source 3: direct fields
     for k in ("Rank", "RankName"):
         if k in data and data[k]:
             return str(data[k])
@@ -273,16 +301,21 @@ def main():
         # If scheme id missing on records, include all
         filtered = chrono_refs
 
-    # Normalize units
+    # Normalize units — deduplicate by chrono record id
     units: List[Dict] = []
+    seen_chrono_ids: set = set()
     for r in filtered:
+        cid = r.get("id")
+        if cid in seen_chrono_ids:
+            continue
+        seen_chrono_ids.add(cid)
         data = r.get("data", {})
         name = data.get("Name") or data.get("DefaultName") or r.get("id","").split(":")[-2]
         rank = get_rank(data)
         top_ma = get_ma(data, top=True)
         base_ma = get_ma(data, top=False)
         units.append({
-            "chrono_id": r.get("id"),
+            "chrono_id": cid,
             "name": str(name),
             "rank": str(rank or ""),
             "top_ma": top_ma,
@@ -307,23 +340,34 @@ def main():
 
     unit_records: List[Dict] = []
     unit_id_by_key: Dict[Tuple[str, str], str] = {}
+    seen_unit_ids: set = set()  # deduplicate unit records
     for rk, lst in ranks.items():
         for u in lst:
             rec = build_unit_interp(partition, owners, viewers, legaltags, countries,
                                     column_token, u, role_type_id, args.include_scheme,
                                     args.scheme_id, args.scheme_name, args.scheme_code)
-            unit_records.append(rec)
-            unit_id_by_key[(rk, u["name"])] = rec["id"]
+            uid = rec["id"]
+            if uid not in seen_unit_ids:
+                unit_records.append(rec)
+                seen_unit_ids.add(uid)
+            unit_id_by_key[(rk, u["name"])] = uid
 
-    preferred_rank_order = ["Eonothem","Erathem","System","Series","Stage"]
+    preferred_rank_order = ["SuperEonothem","Eonothem","Erathem","System","SubSystem","Series","SubSeries","Stage","SubStage"]
     rank_keys_sorted = sorted(ranks.keys(), key=lambda x: (preferred_rank_order.index(x) if x in preferred_rank_order else 999, x or ""))
     rank_records: List[Dict] = []
     rank_ids_in_order: List[str] = []
     for rk in rank_keys_sorted:
         lst = ranks[rk]
-        unit_ids = [unit_id_by_key[(rk, u["name"])] for u in lst]
+        # Deduplicate unit IDs in the rank's set (same name → same ID)
+        seen_ids: list = []
+        seen_set: set = set()
+        for u in lst:
+            uid = unit_id_by_key[(rk, u["name"])]
+            if uid not in seen_set:
+                seen_ids.append(uid)
+                seen_set.add(uid)
         rec = build_rank_interp(partition, owners, viewers, legaltags, countries,
-                                column_token, rk or "Unspecified", role_type_id, unit_ids,
+                                column_token, rk or "Unspecified", role_type_id, seen_ids,
                                 args.include_scheme, args.scheme_id, args.scheme_name, args.scheme_code)
         rank_records.append(rec)
         rank_ids_in_order.append(rec["id"])

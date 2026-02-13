@@ -20,6 +20,10 @@
   "data": {
     "Name": "Middle Mississippian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Paleozoic.Carboniferous.Mississippian.MiddleMississippian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Carboniferous.Mississippian.MiddleMississippian:",
+    "OlderPossibleAge": 346.7,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-346p7Ma:",
+    "YoungerPossibleAge": 330.9,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-330p9Ma:"
   }
 }

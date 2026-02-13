@@ -20,6 +20,10 @@
   "data": {
     "Name": "Kasimovian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Paleozoic.Carboniferous.Pennsylvanian.LatePennsylvanian.Kasimovian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Carboniferous.Pennsylvanian.UpperPennsylvanian.Kasimovian:",
+    "OlderPossibleAge": 307.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-307Ma:",
+    "YoungerPossibleAge": 303.7,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-303p7Ma:"
   }
 }

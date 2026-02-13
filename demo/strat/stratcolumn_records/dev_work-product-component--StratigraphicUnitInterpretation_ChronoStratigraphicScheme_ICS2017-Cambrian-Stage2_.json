@@ -20,6 +20,10 @@
   "data": {
     "Name": "Cambrian Stage2",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Cambrian.Terreneuvian.CambrianStage2:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Cambrian.Terreneuvian.CambrianStage2:",
+    "OlderPossibleAge": 529.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-529Ma:",
+    "YoungerPossibleAge": 521.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-521Ma:"
   }
 }

@@ -1,0 +1,25 @@
+{
+    "name": "České skloňování",
+    "short_name": "Čeština",
+    "description": "Procvičování skloňování českých podstatných jmen",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#11457e",
+    "background_color": "#f5f6fa",
+    "lang": "cs",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%2311457e'/%3E%3Ctext x='256' y='200' font-size='160' font-family='system-ui' font-weight='900' text-anchor='middle' fill='white'%3ECZ%3C/text%3E%3Ctext x='256' y='380' font-size='80' font-family='system-ui' text-anchor='middle' fill='%23fdcb6e'%3Eskloň%3C/text%3E%3Crect y='0' width='170' height='8' fill='%2311457e'/%3E%3Crect x='170' y='0' width='172' height='8' fill='white'/%3E%3Crect x='342' y='0' width='170' height='8' fill='%23d7141a'/%3E%3C/svg%3E",
+            "sizes": "512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%2311457e'/%3E%3Ctext x='96' y='80' font-size='64' font-family='system-ui' font-weight='900' text-anchor='middle' fill='white'%3ECZ%3C/text%3E%3Ctext x='96' y='145' font-size='32' font-family='system-ui' text-anchor='middle' fill='%23fdcb6e'%3Eskloň%3C/text%3E%3C/svg%3E",
+            "sizes": "192x192",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

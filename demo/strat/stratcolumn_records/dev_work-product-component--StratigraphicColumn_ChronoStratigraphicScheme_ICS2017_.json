@@ -20,7 +20,11 @@
   "data": {
     "Name": "ChronoStratigraphicScheme:ICS2017",
     "StratigraphicColumnRankInterpretationSet": [
-      "dev:work-product-component--StratigraphicColumnRankInterpretation:ChronoStratigraphicScheme:ICS2017-Chrono-Unspecified:"
+      "dev:work-product-component--StratigraphicColumnRankInterpretation:ChronoStratigraphicScheme:ICS2017-Chrono-Eonothem:",
+      "dev:work-product-component--StratigraphicColumnRankInterpretation:ChronoStratigraphicScheme:ICS2017-Chrono-Erathem:",
+      "dev:work-product-component--StratigraphicColumnRankInterpretation:ChronoStratigraphicScheme:ICS2017-Chrono-System:",
+      "dev:work-product-component--StratigraphicColumnRankInterpretation:ChronoStratigraphicScheme:ICS2017-Chrono-Series:",
+      "dev:work-product-component--StratigraphicColumnRankInterpretation:ChronoStratigraphicScheme:ICS2017-Chrono-Stage:"
     ],
     "StratigraphicColumnValidityAreaType": "dev:reference-data--StratigraphicColumnValidityAreaType:field:",
     "ValueChainStatusType": "dev:reference-data--ValueChainStatusType:Production:"

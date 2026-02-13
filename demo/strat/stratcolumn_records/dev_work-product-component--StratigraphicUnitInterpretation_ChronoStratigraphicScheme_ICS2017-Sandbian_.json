@@ -20,6 +20,10 @@
   "data": {
     "Name": "Sandbian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Paleozoic.Ordovician.LateOrdovician.Sandbian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Ordovician.UpperOrdovician.Sandbian:",
+    "OlderPossibleAge": 458.4,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-458p4Ma:",
+    "YoungerPossibleAge": 453.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-453Ma:"
   }
 }

@@ -20,6 +20,10 @@
   "data": {
     "Name": "Tournaisian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Paleozoic.Carboniferous.Mississippian.EarlyMississippian.Tournaisian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Carboniferous.Mississippian.LowerMississippian.Tournaisian:",
+    "OlderPossibleAge": 358.9,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-358p9Ma:",
+    "YoungerPossibleAge": 346.7,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-346p7Ma:"
   }
 }

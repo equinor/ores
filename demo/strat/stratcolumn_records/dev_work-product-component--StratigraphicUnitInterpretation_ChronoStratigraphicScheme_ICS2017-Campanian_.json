@@ -20,6 +20,10 @@
   "data": {
     "Name": "Campanian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Mesozoic.Cretaceous.Gulf.Senonian.Campanian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Cretaceous.UpperCretaceous.Campanian:",
+    "OlderPossibleAge": 83.6,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-83p6Ma:",
+    "YoungerPossibleAge": 72.1,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-72p1Ma:"
   }
 }

@@ -20,6 +20,10 @@
   "data": {
     "Name": "Precambrian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Precambrian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Precambrian:",
+    "OlderPossibleAge": 4567.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-4567Ma:",
+    "YoungerPossibleAge": 541.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-541Ma:"
   }
 }

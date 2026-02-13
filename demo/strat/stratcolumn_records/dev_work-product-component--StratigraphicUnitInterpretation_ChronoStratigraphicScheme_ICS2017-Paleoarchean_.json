@@ -20,6 +20,10 @@
   "data": {
     "Name": "Paleoarchean",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2012.Precambrian.Archean.Paleoarchean:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Archean.Paleoarchean:",
+    "OlderPossibleAge": 3600.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-3600Ma:",
+    "YoungerPossibleAge": 3200.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-3200Ma:"
   }
 }

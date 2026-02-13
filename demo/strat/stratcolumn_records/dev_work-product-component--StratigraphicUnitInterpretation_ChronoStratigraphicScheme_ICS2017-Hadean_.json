@@ -20,6 +20,10 @@
   "data": {
     "Name": "Hadean",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Precambrian.Hadean:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Hadean:",
+    "OlderPossibleAge": 4567.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-4567Ma:",
+    "YoungerPossibleAge": 4000.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-4000Ma:"
   }
 }

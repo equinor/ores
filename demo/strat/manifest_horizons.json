@@ -1,0 +1,3685 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "ReferenceData": [],
+  "MasterData": [],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-0Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Phanerozoic (+4)",
+          "Description": "Chronostratigraphic boundary at 0.0 Ma",
+          "MeanPossibleAge": 0.0,
+          "OlderPossibleAge": 0.0,
+          "YoungerPossibleAge": 0.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-0p0042Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Northgrippian",
+          "Description": "Chronostratigraphic boundary at 0.0042 Ma",
+          "MeanPossibleAge": 0.0042,
+          "OlderPossibleAge": 0.0042,
+          "YoungerPossibleAge": 0.0042,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-0p008276Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Greenlandian",
+          "Description": "Chronostratigraphic boundary at 0.008276 Ma",
+          "MeanPossibleAge": 0.008276,
+          "OlderPossibleAge": 0.008276,
+          "YoungerPossibleAge": 0.008276,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-0p0117Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Pleistocene (+1)",
+          "Description": "Chronostratigraphic boundary at 0.0117 Ma",
+          "MeanPossibleAge": 0.0117,
+          "OlderPossibleAge": 0.0117,
+          "YoungerPossibleAge": 0.0117,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-0p126Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Middle Pleistocene",
+          "Description": "Chronostratigraphic boundary at 0.126 Ma",
+          "MeanPossibleAge": 0.126,
+          "OlderPossibleAge": 0.126,
+          "YoungerPossibleAge": 0.126,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-0p781Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Calabrian",
+          "Description": "Chronostratigraphic boundary at 0.781 Ma",
+          "MeanPossibleAge": 0.781,
+          "OlderPossibleAge": 0.781,
+          "YoungerPossibleAge": 0.781,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-1p8Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Gelasian",
+          "Description": "Chronostratigraphic boundary at 1.8 Ma",
+          "MeanPossibleAge": 1.8,
+          "OlderPossibleAge": 1.8,
+          "YoungerPossibleAge": 1.8,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-2p58Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Neogene (+2)",
+          "Description": "Chronostratigraphic boundary at 2.58 Ma",
+          "MeanPossibleAge": 2.58,
+          "OlderPossibleAge": 2.58,
+          "YoungerPossibleAge": 2.58,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-3p6Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Zanclean",
+          "Description": "Chronostratigraphic boundary at 3.6 Ma",
+          "MeanPossibleAge": 3.6,
+          "OlderPossibleAge": 3.6,
+          "YoungerPossibleAge": 3.6,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-5p333Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Miocene (+1)",
+          "Description": "Chronostratigraphic boundary at 5.333 Ma",
+          "MeanPossibleAge": 5.333,
+          "OlderPossibleAge": 5.333,
+          "YoungerPossibleAge": 5.333,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-7p246Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Tortonian",
+          "Description": "Chronostratigraphic boundary at 7.246 Ma",
+          "MeanPossibleAge": 7.246,
+          "OlderPossibleAge": 7.246,
+          "YoungerPossibleAge": 7.246,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-11p63Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Serravallian",
+          "Description": "Chronostratigraphic boundary at 11.63 Ma",
+          "MeanPossibleAge": 11.63,
+          "OlderPossibleAge": 11.63,
+          "YoungerPossibleAge": 11.63,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-13p82Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Langhian",
+          "Description": "Chronostratigraphic boundary at 13.82 Ma",
+          "MeanPossibleAge": 13.82,
+          "OlderPossibleAge": 13.82,
+          "YoungerPossibleAge": 13.82,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-15p97Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Burdigalian",
+          "Description": "Chronostratigraphic boundary at 15.97 Ma",
+          "MeanPossibleAge": 15.97,
+          "OlderPossibleAge": 15.97,
+          "YoungerPossibleAge": 15.97,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-20p44Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Aquitanian",
+          "Description": "Chronostratigraphic boundary at 20.44 Ma",
+          "MeanPossibleAge": 20.44,
+          "OlderPossibleAge": 20.44,
+          "YoungerPossibleAge": 20.44,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-23p03Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Paleogene (+2)",
+          "Description": "Chronostratigraphic boundary at 23.03 Ma",
+          "MeanPossibleAge": 23.03,
+          "OlderPossibleAge": 23.03,
+          "YoungerPossibleAge": 23.03,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-27p82Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Rupelian",
+          "Description": "Chronostratigraphic boundary at 27.82 Ma",
+          "MeanPossibleAge": 27.82,
+          "OlderPossibleAge": 27.82,
+          "YoungerPossibleAge": 27.82,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-33p9Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Eocene (+1)",
+          "Description": "Chronostratigraphic boundary at 33.9 Ma",
+          "MeanPossibleAge": 33.9,
+          "OlderPossibleAge": 33.9,
+          "YoungerPossibleAge": 33.9,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-37p8Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Bartonian",
+          "Description": "Chronostratigraphic boundary at 37.8 Ma",
+          "MeanPossibleAge": 37.8,
+          "OlderPossibleAge": 37.8,
+          "YoungerPossibleAge": 37.8,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-41p2Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Lutetian",
+          "Description": "Chronostratigraphic boundary at 41.2 Ma",
+          "MeanPossibleAge": 41.2,
+          "OlderPossibleAge": 41.2,
+          "YoungerPossibleAge": 41.2,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-47p8Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Ypresian",
+          "Description": "Chronostratigraphic boundary at 47.8 Ma",
+          "MeanPossibleAge": 47.8,
+          "OlderPossibleAge": 47.8,
+          "YoungerPossibleAge": 47.8,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-56Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Paleocene (+1)",
+          "Description": "Chronostratigraphic boundary at 56.0 Ma",
+          "MeanPossibleAge": 56.0,
+          "OlderPossibleAge": 56.0,
+          "YoungerPossibleAge": 56.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-59p2Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Selandian",
+          "Description": "Chronostratigraphic boundary at 59.2 Ma",
+          "MeanPossibleAge": 59.2,
+          "OlderPossibleAge": 59.2,
+          "YoungerPossibleAge": 59.2,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-61p6Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Danian",
+          "Description": "Chronostratigraphic boundary at 61.6 Ma",
+          "MeanPossibleAge": 61.6,
+          "OlderPossibleAge": 61.6,
+          "YoungerPossibleAge": 61.6,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-66Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Mesozoic (+3)",
+          "Description": "Chronostratigraphic boundary at 66.0 Ma",
+          "MeanPossibleAge": 66.0,
+          "OlderPossibleAge": 66.0,
+          "YoungerPossibleAge": 66.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-72p1Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Campanian",
+          "Description": "Chronostratigraphic boundary at 72.1 Ma",
+          "MeanPossibleAge": 72.1,
+          "OlderPossibleAge": 72.1,
+          "YoungerPossibleAge": 72.1,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-83p6Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Santonian",
+          "Description": "Chronostratigraphic boundary at 83.6 Ma",
+          "MeanPossibleAge": 83.6,
+          "OlderPossibleAge": 83.6,
+          "YoungerPossibleAge": 83.6,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-86p3Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Coniacian",
+          "Description": "Chronostratigraphic boundary at 86.3 Ma",
+          "MeanPossibleAge": 86.3,
+          "OlderPossibleAge": 86.3,
+          "YoungerPossibleAge": 86.3,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-89p8Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Turonian",
+          "Description": "Chronostratigraphic boundary at 89.8 Ma",
+          "MeanPossibleAge": 89.8,
+          "OlderPossibleAge": 89.8,
+          "YoungerPossibleAge": 89.8,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-93p9Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Cenomanian",
+          "Description": "Chronostratigraphic boundary at 93.9 Ma",
+          "MeanPossibleAge": 93.9,
+          "OlderPossibleAge": 93.9,
+          "YoungerPossibleAge": 93.9,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-100p5Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Lower Cretaceous (+1)",
+          "Description": "Chronostratigraphic boundary at 100.5 Ma",
+          "MeanPossibleAge": 100.5,
+          "OlderPossibleAge": 100.5,
+          "YoungerPossibleAge": 100.5,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-113Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Aptian",
+          "Description": "Chronostratigraphic boundary at 113.0 Ma",
+          "MeanPossibleAge": 113.0,
+          "OlderPossibleAge": 113.0,
+          "YoungerPossibleAge": 113.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-125Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Barremian",
+          "Description": "Chronostratigraphic boundary at 125.0 Ma",
+          "MeanPossibleAge": 125.0,
+          "OlderPossibleAge": 125.0,
+          "YoungerPossibleAge": 125.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-129p4Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Hauterivian",
+          "Description": "Chronostratigraphic boundary at 129.4 Ma",
+          "MeanPossibleAge": 129.4,
+          "OlderPossibleAge": 129.4,
+          "YoungerPossibleAge": 129.4,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-132p9Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Valanginian",
+          "Description": "Chronostratigraphic boundary at 132.9 Ma",
+          "MeanPossibleAge": 132.9,
+          "OlderPossibleAge": 132.9,
+          "YoungerPossibleAge": 132.9,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-139p8Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Berriasian",
+          "Description": "Chronostratigraphic boundary at 139.8 Ma",
+          "MeanPossibleAge": 139.8,
+          "OlderPossibleAge": 139.8,
+          "YoungerPossibleAge": 139.8,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-145Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Jurassic (+2)",
+          "Description": "Chronostratigraphic boundary at 145.0 Ma",
+          "MeanPossibleAge": 145.0,
+          "OlderPossibleAge": 145.0,
+          "YoungerPossibleAge": 145.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-152p1Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Kimmeridgian",
+          "Description": "Chronostratigraphic boundary at 152.1 Ma",
+          "MeanPossibleAge": 152.1,
+          "OlderPossibleAge": 152.1,
+          "YoungerPossibleAge": 152.1,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-157p3Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Oxfordian",
+          "Description": "Chronostratigraphic boundary at 157.3 Ma",
+          "MeanPossibleAge": 157.3,
+          "OlderPossibleAge": 157.3,
+          "YoungerPossibleAge": 157.3,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-163p5Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Middle Jurassic (+1)",
+          "Description": "Chronostratigraphic boundary at 163.5 Ma",
+          "MeanPossibleAge": 163.5,
+          "OlderPossibleAge": 163.5,
+          "YoungerPossibleAge": 163.5,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-166p1Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Bathonian",
+          "Description": "Chronostratigraphic boundary at 166.1 Ma",
+          "MeanPossibleAge": 166.1,
+          "OlderPossibleAge": 166.1,
+          "YoungerPossibleAge": 166.1,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-168p3Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Bajocian",
+          "Description": "Chronostratigraphic boundary at 168.3 Ma",
+          "MeanPossibleAge": 168.3,
+          "OlderPossibleAge": 168.3,
+          "YoungerPossibleAge": 168.3,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-170p3Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Aalenian",
+          "Description": "Chronostratigraphic boundary at 170.3 Ma",
+          "MeanPossibleAge": 170.3,
+          "OlderPossibleAge": 170.3,
+          "YoungerPossibleAge": 170.3,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-174p1Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Lower Jurassic (+1)",
+          "Description": "Chronostratigraphic boundary at 174.1 Ma",
+          "MeanPossibleAge": 174.1,
+          "OlderPossibleAge": 174.1,
+          "YoungerPossibleAge": 174.1,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-182p7Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Pliensbachian",
+          "Description": "Chronostratigraphic boundary at 182.7 Ma",
+          "MeanPossibleAge": 182.7,
+          "OlderPossibleAge": 182.7,
+          "YoungerPossibleAge": 182.7,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-190p8Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Sinemurian",
+          "Description": "Chronostratigraphic boundary at 190.8 Ma",
+          "MeanPossibleAge": 190.8,
+          "OlderPossibleAge": 190.8,
+          "YoungerPossibleAge": 190.8,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-199p3Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Hettangian",
+          "Description": "Chronostratigraphic boundary at 199.3 Ma",
+          "MeanPossibleAge": 199.3,
+          "OlderPossibleAge": 199.3,
+          "YoungerPossibleAge": 199.3,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-201p3Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Triassic (+2)",
+          "Description": "Chronostratigraphic boundary at 201.3 Ma",
+          "MeanPossibleAge": 201.3,
+          "OlderPossibleAge": 201.3,
+          "YoungerPossibleAge": 201.3,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-208p5Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Norian",
+          "Description": "Chronostratigraphic boundary at 208.5 Ma",
+          "MeanPossibleAge": 208.5,
+          "OlderPossibleAge": 208.5,
+          "YoungerPossibleAge": 208.5,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-227Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Carnian",
+          "Description": "Chronostratigraphic boundary at 227.0 Ma",
+          "MeanPossibleAge": 227.0,
+          "OlderPossibleAge": 227.0,
+          "YoungerPossibleAge": 227.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-237Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Middle Triassic (+1)",
+          "Description": "Chronostratigraphic boundary at 237.0 Ma",
+          "MeanPossibleAge": 237.0,
+          "OlderPossibleAge": 237.0,
+          "YoungerPossibleAge": 237.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-242Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Anisian",
+          "Description": "Chronostratigraphic boundary at 242.0 Ma",
+          "MeanPossibleAge": 242.0,
+          "OlderPossibleAge": 242.0,
+          "YoungerPossibleAge": 242.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-247p2Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Lower Triassic (+1)",
+          "Description": "Chronostratigraphic boundary at 247.2 Ma",
+          "MeanPossibleAge": 247.2,
+          "OlderPossibleAge": 247.2,
+          "YoungerPossibleAge": 247.2,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-251p2Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Induan",
+          "Description": "Chronostratigraphic boundary at 251.2 Ma",
+          "MeanPossibleAge": 251.2,
+          "OlderPossibleAge": 251.2,
+          "YoungerPossibleAge": 251.2,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-251p902Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Paleozoic (+3)",
+          "Description": "Chronostratigraphic boundary at 251.902 Ma",
+          "MeanPossibleAge": 251.902,
+          "OlderPossibleAge": 251.902,
+          "YoungerPossibleAge": 251.902,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-254p14Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Wuchiapingian",
+          "Description": "Chronostratigraphic boundary at 254.14 Ma",
+          "MeanPossibleAge": 254.14,
+          "OlderPossibleAge": 254.14,
+          "YoungerPossibleAge": 254.14,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-259p1Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Guadalupian (+1)",
+          "Description": "Chronostratigraphic boundary at 259.1 Ma",
+          "MeanPossibleAge": 259.1,
+          "OlderPossibleAge": 259.1,
+          "YoungerPossibleAge": 259.1,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-265p1Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Wordian",
+          "Description": "Chronostratigraphic boundary at 265.1 Ma",
+          "MeanPossibleAge": 265.1,
+          "OlderPossibleAge": 265.1,
+          "YoungerPossibleAge": 265.1,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-268p8Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Roadian",
+          "Description": "Chronostratigraphic boundary at 268.8 Ma",
+          "MeanPossibleAge": 268.8,
+          "OlderPossibleAge": 268.8,
+          "YoungerPossibleAge": 268.8,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-272p95Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Cisuralian (+1)",
+          "Description": "Chronostratigraphic boundary at 272.95 Ma",
+          "MeanPossibleAge": 272.95,
+          "OlderPossibleAge": 272.95,
+          "YoungerPossibleAge": 272.95,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-283p5Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Artinskian",
+          "Description": "Chronostratigraphic boundary at 283.5 Ma",
+          "MeanPossibleAge": 283.5,
+          "OlderPossibleAge": 283.5,
+          "YoungerPossibleAge": 283.5,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-290p1Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Sakmarian",
+          "Description": "Chronostratigraphic boundary at 290.1 Ma",
+          "MeanPossibleAge": 290.1,
+          "OlderPossibleAge": 290.1,
+          "YoungerPossibleAge": 290.1,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-295Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Asselian",
+          "Description": "Chronostratigraphic boundary at 295.0 Ma",
+          "MeanPossibleAge": 295.0,
+          "OlderPossibleAge": 295.0,
+          "YoungerPossibleAge": 295.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-298p9Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Carboniferous (+3)",
+          "Description": "Chronostratigraphic boundary at 298.9 Ma",
+          "MeanPossibleAge": 298.9,
+          "OlderPossibleAge": 298.9,
+          "YoungerPossibleAge": 298.9,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-303p7Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Kasimovian",
+          "Description": "Chronostratigraphic boundary at 303.7 Ma",
+          "MeanPossibleAge": 303.7,
+          "OlderPossibleAge": 303.7,
+          "YoungerPossibleAge": 303.7,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-307Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Middle Pennsylvanian (+1)",
+          "Description": "Chronostratigraphic boundary at 307.0 Ma",
+          "MeanPossibleAge": 307.0,
+          "OlderPossibleAge": 307.0,
+          "YoungerPossibleAge": 307.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-315p2Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Lower Pennsylvanian (+1)",
+          "Description": "Chronostratigraphic boundary at 315.2 Ma",
+          "MeanPossibleAge": 315.2,
+          "OlderPossibleAge": 315.2,
+          "YoungerPossibleAge": 315.2,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-323p2Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Mississippian (+2)",
+          "Description": "Chronostratigraphic boundary at 323.2 Ma",
+          "MeanPossibleAge": 323.2,
+          "OlderPossibleAge": 323.2,
+          "YoungerPossibleAge": 323.2,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-330p9Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Middle Mississippian (+1)",
+          "Description": "Chronostratigraphic boundary at 330.9 Ma",
+          "MeanPossibleAge": 330.9,
+          "OlderPossibleAge": 330.9,
+          "YoungerPossibleAge": 330.9,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-346p7Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Lower Mississippian (+1)",
+          "Description": "Chronostratigraphic boundary at 346.7 Ma",
+          "MeanPossibleAge": 346.7,
+          "OlderPossibleAge": 346.7,
+          "YoungerPossibleAge": 346.7,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-358p9Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Devonian (+2)",
+          "Description": "Chronostratigraphic boundary at 358.9 Ma",
+          "MeanPossibleAge": 358.9,
+          "OlderPossibleAge": 358.9,
+          "YoungerPossibleAge": 358.9,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-372p2Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Frasnian",
+          "Description": "Chronostratigraphic boundary at 372.2 Ma",
+          "MeanPossibleAge": 372.2,
+          "OlderPossibleAge": 372.2,
+          "YoungerPossibleAge": 372.2,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-382p7Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Middle Devonian (+1)",
+          "Description": "Chronostratigraphic boundary at 382.7 Ma",
+          "MeanPossibleAge": 382.7,
+          "OlderPossibleAge": 382.7,
+          "YoungerPossibleAge": 382.7,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-387p7Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Eifelian",
+          "Description": "Chronostratigraphic boundary at 387.7 Ma",
+          "MeanPossibleAge": 387.7,
+          "OlderPossibleAge": 387.7,
+          "YoungerPossibleAge": 387.7,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-393p3Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Lower Devonian (+1)",
+          "Description": "Chronostratigraphic boundary at 393.3 Ma",
+          "MeanPossibleAge": 393.3,
+          "OlderPossibleAge": 393.3,
+          "YoungerPossibleAge": 393.3,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-407p6Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Pragian",
+          "Description": "Chronostratigraphic boundary at 407.6 Ma",
+          "MeanPossibleAge": 407.6,
+          "OlderPossibleAge": 407.6,
+          "YoungerPossibleAge": 407.6,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-410p8Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Lochkovian",
+          "Description": "Chronostratigraphic boundary at 410.8 Ma",
+          "MeanPossibleAge": 410.8,
+          "OlderPossibleAge": 410.8,
+          "YoungerPossibleAge": 410.8,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-419p2Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Silurian (+2)",
+          "Description": "Chronostratigraphic boundary at 419.2 Ma",
+          "MeanPossibleAge": 419.2,
+          "OlderPossibleAge": 419.2,
+          "YoungerPossibleAge": 419.2,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-423Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Ludlow (+1)",
+          "Description": "Chronostratigraphic boundary at 423.0 Ma",
+          "MeanPossibleAge": 423.0,
+          "OlderPossibleAge": 423.0,
+          "YoungerPossibleAge": 423.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-425p6Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Gorstian",
+          "Description": "Chronostratigraphic boundary at 425.6 Ma",
+          "MeanPossibleAge": 425.6,
+          "OlderPossibleAge": 425.6,
+          "YoungerPossibleAge": 425.6,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-427p4Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Wenlock (+1)",
+          "Description": "Chronostratigraphic boundary at 427.4 Ma",
+          "MeanPossibleAge": 427.4,
+          "OlderPossibleAge": 427.4,
+          "YoungerPossibleAge": 427.4,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-430p5Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Sheinwoodian",
+          "Description": "Chronostratigraphic boundary at 430.5 Ma",
+          "MeanPossibleAge": 430.5,
+          "OlderPossibleAge": 430.5,
+          "YoungerPossibleAge": 430.5,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-433p4Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Llandovery (+1)",
+          "Description": "Chronostratigraphic boundary at 433.4 Ma",
+          "MeanPossibleAge": 433.4,
+          "OlderPossibleAge": 433.4,
+          "YoungerPossibleAge": 433.4,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-438p5Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Aeronian",
+          "Description": "Chronostratigraphic boundary at 438.5 Ma",
+          "MeanPossibleAge": 438.5,
+          "OlderPossibleAge": 438.5,
+          "YoungerPossibleAge": 438.5,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-440p8Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Rhuddanian",
+          "Description": "Chronostratigraphic boundary at 440.8 Ma",
+          "MeanPossibleAge": 440.8,
+          "OlderPossibleAge": 440.8,
+          "YoungerPossibleAge": 440.8,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-443p8Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Ordovician (+2)",
+          "Description": "Chronostratigraphic boundary at 443.8 Ma",
+          "MeanPossibleAge": 443.8,
+          "OlderPossibleAge": 443.8,
+          "YoungerPossibleAge": 443.8,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-445p2Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Katian",
+          "Description": "Chronostratigraphic boundary at 445.2 Ma",
+          "MeanPossibleAge": 445.2,
+          "OlderPossibleAge": 445.2,
+          "YoungerPossibleAge": 445.2,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-453Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Sandbian",
+          "Description": "Chronostratigraphic boundary at 453.0 Ma",
+          "MeanPossibleAge": 453.0,
+          "OlderPossibleAge": 453.0,
+          "YoungerPossibleAge": 453.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-458p4Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Middle Ordovician (+1)",
+          "Description": "Chronostratigraphic boundary at 458.4 Ma",
+          "MeanPossibleAge": 458.4,
+          "OlderPossibleAge": 458.4,
+          "YoungerPossibleAge": 458.4,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-467p3Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Dapingian",
+          "Description": "Chronostratigraphic boundary at 467.3 Ma",
+          "MeanPossibleAge": 467.3,
+          "OlderPossibleAge": 467.3,
+          "YoungerPossibleAge": 467.3,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-470Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Lower Ordovician (+1)",
+          "Description": "Chronostratigraphic boundary at 470.0 Ma",
+          "MeanPossibleAge": 470.0,
+          "OlderPossibleAge": 470.0,
+          "YoungerPossibleAge": 470.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-477p7Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Tremadocian",
+          "Description": "Chronostratigraphic boundary at 477.7 Ma",
+          "MeanPossibleAge": 477.7,
+          "OlderPossibleAge": 477.7,
+          "YoungerPossibleAge": 477.7,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-485p4Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Cambrian (+2)",
+          "Description": "Chronostratigraphic boundary at 485.4 Ma",
+          "MeanPossibleAge": 485.4,
+          "OlderPossibleAge": 485.4,
+          "YoungerPossibleAge": 485.4,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-489p5Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Jiangshanian",
+          "Description": "Chronostratigraphic boundary at 489.5 Ma",
+          "MeanPossibleAge": 489.5,
+          "OlderPossibleAge": 489.5,
+          "YoungerPossibleAge": 489.5,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-494Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Paibian",
+          "Description": "Chronostratigraphic boundary at 494.0 Ma",
+          "MeanPossibleAge": 494.0,
+          "OlderPossibleAge": 494.0,
+          "YoungerPossibleAge": 494.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-497Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Miaolingian (+1)",
+          "Description": "Chronostratigraphic boundary at 497.0 Ma",
+          "MeanPossibleAge": 497.0,
+          "OlderPossibleAge": 497.0,
+          "YoungerPossibleAge": 497.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-500p5Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Drumian",
+          "Description": "Chronostratigraphic boundary at 500.5 Ma",
+          "MeanPossibleAge": 500.5,
+          "OlderPossibleAge": 500.5,
+          "YoungerPossibleAge": 500.5,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-504p5Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Wuliuan",
+          "Description": "Chronostratigraphic boundary at 504.5 Ma",
+          "MeanPossibleAge": 504.5,
+          "OlderPossibleAge": 504.5,
+          "YoungerPossibleAge": 504.5,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-509Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Cambrian Series2 (+1)",
+          "Description": "Chronostratigraphic boundary at 509.0 Ma",
+          "MeanPossibleAge": 509.0,
+          "OlderPossibleAge": 509.0,
+          "YoungerPossibleAge": 509.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-514Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Cambrian Stage3",
+          "Description": "Chronostratigraphic boundary at 514.0 Ma",
+          "MeanPossibleAge": 514.0,
+          "OlderPossibleAge": 514.0,
+          "YoungerPossibleAge": 514.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-521Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Terreneuvian (+1)",
+          "Description": "Chronostratigraphic boundary at 521.0 Ma",
+          "MeanPossibleAge": 521.0,
+          "OlderPossibleAge": 521.0,
+          "YoungerPossibleAge": 521.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-529Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Fortunian",
+          "Description": "Chronostratigraphic boundary at 529.0 Ma",
+          "MeanPossibleAge": 529.0,
+          "OlderPossibleAge": 529.0,
+          "YoungerPossibleAge": 529.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-541Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Precambrian (+3)",
+          "Description": "Chronostratigraphic boundary at 541.0 Ma",
+          "MeanPossibleAge": 541.0,
+          "OlderPossibleAge": 541.0,
+          "YoungerPossibleAge": 541.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-635Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Cryogenian",
+          "Description": "Chronostratigraphic boundary at 635.0 Ma",
+          "MeanPossibleAge": 635.0,
+          "OlderPossibleAge": 635.0,
+          "YoungerPossibleAge": 635.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-720Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Tonian",
+          "Description": "Chronostratigraphic boundary at 720.0 Ma",
+          "MeanPossibleAge": 720.0,
+          "OlderPossibleAge": 720.0,
+          "YoungerPossibleAge": 720.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-1000Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Mesoproterozoic (+1)",
+          "Description": "Chronostratigraphic boundary at 1000.0 Ma",
+          "MeanPossibleAge": 1000.0,
+          "OlderPossibleAge": 1000.0,
+          "YoungerPossibleAge": 1000.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-1200Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Ectasian",
+          "Description": "Chronostratigraphic boundary at 1200.0 Ma",
+          "MeanPossibleAge": 1200.0,
+          "OlderPossibleAge": 1200.0,
+          "YoungerPossibleAge": 1200.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-1400Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Calymmian",
+          "Description": "Chronostratigraphic boundary at 1400.0 Ma",
+          "MeanPossibleAge": 1400.0,
+          "OlderPossibleAge": 1400.0,
+          "YoungerPossibleAge": 1400.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-1600Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Paleoproterozoic (+1)",
+          "Description": "Chronostratigraphic boundary at 1600.0 Ma",
+          "MeanPossibleAge": 1600.0,
+          "OlderPossibleAge": 1600.0,
+          "YoungerPossibleAge": 1600.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-1800Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Orosirian",
+          "Description": "Chronostratigraphic boundary at 1800.0 Ma",
+          "MeanPossibleAge": 1800.0,
+          "OlderPossibleAge": 1800.0,
+          "YoungerPossibleAge": 1800.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-2050Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Rhyacian",
+          "Description": "Chronostratigraphic boundary at 2050.0 Ma",
+          "MeanPossibleAge": 2050.0,
+          "OlderPossibleAge": 2050.0,
+          "YoungerPossibleAge": 2050.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-2300Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Siderian",
+          "Description": "Chronostratigraphic boundary at 2300.0 Ma",
+          "MeanPossibleAge": 2300.0,
+          "OlderPossibleAge": 2300.0,
+          "YoungerPossibleAge": 2300.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-2500Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Archean (+1)",
+          "Description": "Chronostratigraphic boundary at 2500.0 Ma",
+          "MeanPossibleAge": 2500.0,
+          "OlderPossibleAge": 2500.0,
+          "YoungerPossibleAge": 2500.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-2800Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Mesoarchean",
+          "Description": "Chronostratigraphic boundary at 2800.0 Ma",
+          "MeanPossibleAge": 2800.0,
+          "OlderPossibleAge": 2800.0,
+          "YoungerPossibleAge": 2800.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-3200Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Paleoarchean",
+          "Description": "Chronostratigraphic boundary at 3200.0 Ma",
+          "MeanPossibleAge": 3200.0,
+          "OlderPossibleAge": 3200.0,
+          "YoungerPossibleAge": 3200.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-3600Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Eoarchean",
+          "Description": "Chronostratigraphic boundary at 3600.0 Ma",
+          "MeanPossibleAge": 3600.0,
+          "OlderPossibleAge": 3600.0,
+          "YoungerPossibleAge": 3600.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-4000Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Top Hadean",
+          "Description": "Chronostratigraphic boundary at 4000.0 Ma",
+          "MeanPossibleAge": 4000.0,
+          "OlderPossibleAge": 4000.0,
+          "YoungerPossibleAge": 4000.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      },
+      {
+        "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-4567Ma:",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-osdu-reference-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Base Hadean (+1)",
+          "Description": "Chronostratigraphic boundary at 4567.0 Ma",
+          "MeanPossibleAge": 4567.0,
+          "OlderPossibleAge": 4567.0,
+          "YoungerPossibleAge": 4567.0,
+          "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+          "isConformableAbove": true,
+          "isConformableBelow": true,
+          "IsDiscoverable": true
+        }
+      }
+    ],
+    "WorkProduct": {}
+  }
+}

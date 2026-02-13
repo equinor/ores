@@ -20,6 +20,10 @@
   "data": {
     "Name": "Archean",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Precambrian.Archean:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Archean:",
+    "OlderPossibleAge": 4000.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-4000Ma:",
+    "YoungerPossibleAge": 2500.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-2500Ma:"
   }
 }

@@ -20,6 +20,10 @@
   "data": {
     "Name": "Valanginian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Mesozoic.Cretaceous.EarlyCretaceous.Neocomian.Valanginian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Cretaceous.LowerCretaceous.Valanginian:",
+    "OlderPossibleAge": 139.8,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-139p8Ma:",
+    "YoungerPossibleAge": 132.9,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-132p9Ma:"
   }
 }

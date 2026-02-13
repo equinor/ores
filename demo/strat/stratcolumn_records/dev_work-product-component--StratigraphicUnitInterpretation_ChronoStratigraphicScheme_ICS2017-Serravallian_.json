@@ -20,6 +20,10 @@
   "data": {
     "Name": "Serravallian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Cenozoic.Tertiary.Neogene.Miocene.MiddleMiocene.Serravallian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Cenozoic.Neogene.Miocene.Serravallian:",
+    "OlderPossibleAge": 13.82,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-13p82Ma:",
+    "YoungerPossibleAge": 11.63,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-11p63Ma:"
   }
 }

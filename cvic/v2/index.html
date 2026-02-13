@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Čeština">
+    <meta name="theme-color" content="#11457e">
+    <link rel="manifest" href="manifest.json">
+    <title>České skloňování</title>
+    <style>
+        :root {
+            --blue:#11457e; --red:#d7141a; --white:#fff; --bg:#f5f6fa;
+            --card:#fff; --text:#2d3436; --muted:#636e72; --green:#00b894;
+            --err:#d63031; --orange:#fdcb6e; --border:#dfe6e9;
+            --shadow:0 2px 12px rgba(0,0,0,.08); --r:10px;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+            padding-bottom:env(safe-area-inset-bottom,0);}
+        /* Header */
+        .header{background:var(--blue);color:#fff;padding:0;}
+        .flag-stripe{height:4px;background:linear-gradient(to right,var(--blue) 33%,var(--white) 33%,var(--white) 66%,var(--red) 66%);}
+        .hdr{max-width:900px;margin:0 auto;padding:14px 20px 10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+        .hdr h1{font-size:1.25rem;font-weight:700;letter-spacing:-.4px;}
+        .badge{background:rgba(255,255,255,.15);padding:5px 14px;border-radius:18px;font-size:.9rem;font-weight:600;}
+        .badge .pct{color:var(--orange);margin-left:5px;}
+        /* Nav */
+        .nav{max-width:900px;margin:0 auto;display:flex;background:#fff;border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;}
+        .nav button{background:none;border:none;padding:11px 20px;font-size:.88rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+        .nav button:hover{color:var(--blue);}
+        .nav button.active{color:var(--blue);border-bottom-color:var(--red);}
+        /* Main */
+        .main{max-width:900px;margin:0 auto;padding:20px;}
+        .tab{display:none;}.tab.active{display:block;}
+        /* Filter bar */
+        .fbar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+        .fbar select,.fbar button{padding:8px 12px;border:1px solid var(--border);border-radius:6px;font-size:16px;background:#fff;cursor:pointer;-webkit-appearance:none;}
+        .fbar button{background:var(--blue);color:#fff;border:none;font-weight:600;}
+        .fbar button:hover{opacity:.9;}
+        /* Quiz card */
+        .qcard{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:28px;margin-bottom:18px;}
+        .qcard .label{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px;}
+        .sentence{font-size:1.4rem;font-weight:700;margin-bottom:4px;line-height:1.4;}
+        .sentence .blank{display:inline-block;min-width:90px;border-bottom:3px solid var(--red);text-align:center;color:var(--red);padding:0 4px;}
+        .num-hint{font-size:.85rem;font-weight:600;color:var(--blue);background:#e8edf5;padding:2px 10px;border-radius:12px;margin-left:8px;vertical-align:middle;}
+        .noun-info{background:#f0f3ff;border-left:4px solid var(--blue);padding:10px 14px;border-radius:0 6px 6px 0;margin:14px 0 20px;font-size:.92rem;}
+        .noun-info strong{color:var(--blue);}
+        /* Options */
+        .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+        @media(max-width:500px){.opts{grid-template-columns:1fr;}}
+        .opt{padding:14px 16px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:1.05rem;font-weight:600;cursor:pointer;transition:all .15s;text-align:left;-webkit-tap-highlight-color:transparent;min-height:48px;}
+        .opt:hover{border-color:var(--blue);background:#f0f3ff;}
+        .opt.sel{border-color:var(--blue);background:#e0e8ff;}
+        .opt.ok{border-color:var(--green);background:#e6fff5;color:var(--green);}
+        .opt.bad{border-color:var(--err);background:#ffe6e6;color:var(--err);}
+        .opt.rev{border-color:var(--green);background:#e6fff5;}
+        .opt.dis{pointer-events:none;opacity:.7;}
+        /* Buttons */
+        .brow{display:flex;gap:10px;justify-content:center;margin-top:14px;}
+        .btn{padding:12px 30px;border:none;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent;min-height:48px;}
+        .btn-p{background:var(--blue);color:#fff;}.btn-p:hover{opacity:.9;}
+        .btn-s{background:var(--border);color:var(--text);}.btn-s:hover{background:#c8d1d6;}
+        /* Feedback */
+        .fb{padding:14px 18px;border-radius:8px;margin-top:14px;font-size:.92rem;line-height:1.6;}
+        .fb.ok{background:#e6fff5;border-left:4px solid var(--green);}
+        .fb.bad{background:#ffe6e6;border-left:4px solid var(--err);}
+        .fb .t{font-weight:700;font-size:1.05rem;margin-bottom:4px;}
+        .fb .d{color:var(--muted);}.fb .d b{color:var(--text);}
+        /* Progress */
+        .pbar{height:6px;background:var(--border);border-radius:3px;margin-bottom:18px;overflow:hidden;}
+        .pbar .fill{height:100%;background:var(--blue);transition:width .3s;border-radius:3px;}
+        .ptxt{text-align:center;color:var(--muted);font-size:.83rem;margin-bottom:6px;}
+        /* Reference */
+        .rsec{margin-bottom:28px;}
+        .rsec h2{font-size:1.15rem;margin-bottom:10px;color:var(--blue);}
+        .rsec h3{font-size:1rem;margin:14px 0 6px;color:var(--text);}
+        .ptbl{width:100%;border-collapse:collapse;font-size:.83rem;margin-bottom:14px;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+        .ptbl th,.ptbl td{padding:7px 10px;border:1px solid var(--border);text-align:left;}
+        .ptbl th{background:var(--blue);color:#fff;font-weight:600;}
+        .ptbl tr:nth-child(even) td{background:#f9fafc;}
+        .ptbl td:first-child{font-weight:600;color:var(--blue);white-space:nowrap;}
+        /* Stats */
+        .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:22px;}
+        .scard{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:18px;text-align:center;}
+        .scard .n{font-size:1.8rem;font-weight:800;color:var(--blue);}
+        .scard .l{font-size:.75rem;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
+        .cstbl{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+        .cstbl th,.cstbl td{padding:9px 12px;border:1px solid var(--border);text-align:left;font-size:.87rem;}
+        .cstbl th{background:var(--blue);color:#fff;}
+        .cstbl .bc{width:35%;}
+        .mb{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+        .mb .f{height:100%;border-radius:4px;}
+        .mb .f.g{background:var(--green);}.mb .f.m{background:var(--orange);}.mb .f.b{background:var(--err);}
+        /* Intro */
+        .icard{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:24px;margin-bottom:22px;}
+        .icard h2{color:var(--blue);margin-bottom:10px;}
+        .icard p{line-height:1.7;margin-bottom:8px;color:var(--muted);}
+        .clist{list-style:none;padding:0;}
+        .clist li{padding:5px 0;border-bottom:1px solid var(--border);font-size:.9rem;}
+        .clist li:last-child{border-bottom:none;}
+        .clist .cn{display:inline-block;width:20px;height:20px;background:var(--blue);color:#fff;text-align:center;line-height:20px;border-radius:50%;font-size:.72rem;font-weight:700;margin-right:6px;}
+        .clist .nm{font-weight:700;color:var(--blue);}
+        .clist .q{color:var(--muted);font-style:italic;}
+        /* Noun selector */
+        .nsel{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;}
+        .ntag{padding:4px 10px;border:1px solid var(--border);border-radius:14px;font-size:.8rem;cursor:pointer;transition:all .15s;background:#fff;-webkit-tap-highlight-color:transparent;}
+        .ntag:hover{border-color:var(--blue);}
+        .ntag.on{background:var(--blue);color:#fff;border-color:var(--blue);}
+        .gbadge{display:inline-block;padding:1px 7px;border-radius:9px;font-size:.68rem;font-weight:700;color:#fff;margin-left:5px;vertical-align:middle;}
+        .gbadge.ma{background:#6c5ce7;}.gbadge.mi{background:#0984e3;}.gbadge.f{background:#e84393;}.gbadge.n{background:#00b894;}
+        .empty{text-align:center;padding:50px 18px;color:var(--muted);}
+        .empty .ico{font-size:2.5rem;margin-bottom:10px;}
+        /* Mobile tweaks */
+        @media(max-width:600px){
+            .hdr h1{font-size:1.1rem;} .qcard{padding:20px;} .sentence{font-size:1.2rem;}
+            .main{padding:14px;} .fbar select{flex:1 1 120px;min-width:0;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="flag-stripe"></div>
+    <div class="hdr">
+        <h1>České skloňování</h1>
+        <div class="badge" id="hdrScore">0 / 0<span class="pct"></span></div>
+    </div>
+</div>
+
+<div class="nav" id="navBar">
+    <button class="active" data-tab="cviceni">Cvičení</button>
+    <button data-tab="tabulky">Tabulky</button>
+    <button data-tab="statistiky">Statistiky</button>
+</div>
+
+<div class="main">
+    <!-- CVIČENÍ -->
+    <div class="tab active" id="tab-cviceni">
+        <div class="fbar">
+            <select id="fCase">
+                <option value="all">Všechny pády</option>
+                <option value="nom">1. Nominativ</option>
+                <option value="gen">2. Genitiv</option>
+                <option value="dat">3. Dativ</option>
+                <option value="acc">4. Akuzativ</option>
+                <option value="voc">5. Vokativ</option>
+                <option value="loc">6. Lokál</option>
+                <option value="ins">7. Instrumentál</option>
+            </select>
+            <select id="fNum">
+                <option value="all">Sg + Pl</option>
+                <option value="sg">Singulár</option>
+                <option value="pl">Plurál</option>
+            </select>
+            <select id="fGender">
+                <option value="all">Všechny rody</option>
+                <option value="ma">Muž. životný</option>
+                <option value="mi">Muž. neživotný</option>
+                <option value="f">Ženský</option>
+                <option value="n">Střední</option>
+            </select>
+            <button id="btnStart" onclick="startQuiz()">Nový kvíz ▶</button>
+        </div>
+        <div class="ptxt" id="pTxt"></div>
+        <div class="pbar"><div class="fill" id="pFill" style="width:0%"></div></div>
+        <div id="quizArea"></div>
+    </div>
+
+    <!-- TABULKY -->
+    <div class="tab" id="tab-tabulky">
+        <div class="rsec">
+            <h2>Přehled pádů</h2>
+            <ul class="clist">
+                <li><span class="cn">1</span> <span class="nm">Nominativ</span> — podmět — <span class="q">kdo? co?</span></li>
+                <li><span class="cn">2</span> <span class="nm">Genitiv</span> — bez, do, od, z — <span class="q">koho? čeho?</span></li>
+                <li><span class="cn">3</span> <span class="nm">Dativ</span> — k, díky, kvůli — <span class="q">komu? čemu?</span></li>
+                <li><span class="cn">4</span> <span class="nm">Akuzativ</span> — přímý předmět — <span class="q">koho? co?</span></li>
+                <li><span class="cn">5</span> <span class="nm">Vokativ</span> — oslovení — <span class="q">—</span></li>
+                <li><span class="cn">6</span> <span class="nm">Lokál</span> — v, na, o, po — <span class="q">o kom? o čem?</span></li>
+                <li><span class="cn">7</span> <span class="nm">Instrumentál</span> — s, před, za, nad, pod — <span class="q">kým? čím?</span></li>
+            </ul>
+        </div>
+        <div class="rsec">
+            <h2>Vzory — tabulky skloňování</h2>
+            <p style="color:var(--muted);margin-bottom:10px;">Klikněte na podstatné jméno:</p>
+            <div class="nsel" id="nounSel"></div>
+            <div id="paradigmBox"></div>
+        </div>
+        <div class="rsec">
+            <h2>Typické předložky a pády</h2>
+            <table class="ptbl">
+                <tr><th>Pád</th><th>Předložky</th><th>Příklady</th></tr>
+                <tr><td>Genitiv</td><td>bez, do, od, z, u, vedle, kolem, během, podél, blízko, místo, kromě, podle, včetně</td><td>bez knihy, do města, od bratra</td></tr>
+                <tr><td>Dativ</td><td>k, díky, kvůli, naproti, navzdory, proti, vůči</td><td>k domu, díky příteli, kvůli práci</td></tr>
+                <tr><td>Akuzativ</td><td>na, pro, přes, za, o, mezi, skrz</td><td>na školu, pro ženu, přes most</td></tr>
+                <tr><td>Lokál</td><td>v/ve, na, o, po, při</td><td>v městě, na škole, o knize</td></tr>
+                <tr><td>Instrumentál</td><td>s/se, před, za, nad, pod, mezi</td><td>s bratrem, před domem, za hradem</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- STATISTIKY -->
+    <div class="tab" id="tab-statistiky">
+        <div class="sgrid" id="statGrid"></div>
+        <div class="rsec">
+            <h2>Výsledky podle pádu</h2>
+            <table class="cstbl" id="caseStats"></table>
+        </div>
+        <div style="text-align:center;margin-top:22px;">
+            <button class="btn btn-s" onclick="resetStats()">Resetovat statistiky</button>
+        </div>
+    </div>
+</div>
+
+<script src="nouns.js"></script>
+<script src="quiz.js"></script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});</script>
+</body>
+</html>

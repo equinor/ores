@@ -14,11 +14,11 @@
 
 #matrix-root { overflow:auto; max-height: 70vh; border:1px solid #e1dfdd; border-radius:6px; }
 .sc-table { border-collapse: collapse; width: 100%; table-layout: fixed; }
-.sc-table th, .sc-table td { border-bottom: 1px solid #eee; padding: 6px 8px; text-align: left; vertical-align: middle; }
-.sc-table thead th { position: sticky; top: 0; background: #fafafa; z-index: 1; border-bottom: 1px solid #ddd; }
-.sc-table .age { width: 6.5rem; font-weight: 600; color: #444; }
-.sc-cell { border-left: 1px solid #f3f3f3; }
-.sc-chip { display:inline-block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 2px 4px; border: 1px solid rgba(0,0,0,.2); border-radius: 3px; background: #f9f9f9; }
+.sc-table th, .sc-table td { border: 1px solid #ddd; padding: 2px 6px; text-align: left; vertical-align: middle; }
+.sc-table thead th { position: sticky; top: 0; background: #fafafa; z-index: 1; border-bottom: 2px solid #999; }
+.sc-table .age { width: 5rem; font-weight: 600; color: #444; font-size: .85rem; white-space: nowrap; }
+.sc-cell { border-left: 1px solid #ccc; padding: 0 !important; }
+.sc-chip { display:flex; align-items:center; justify-content:center; width:100%; min-height:1.5rem; padding: 2px 6px; border: 1px solid rgba(0,0,0,.15); font-size:.85rem; text-align:center; box-sizing:border-box; }
 .sc-missing { background: repeating-linear-gradient(-45deg, rgba(0,0,0,.04), rgba(0,0,0,.04) 6px, rgba(0,0,0,0) 6px, rgba(0,0,0,0) 12px); }
 .sc-footnote { font-size: .85rem; color: #605e5c; margin-top:.35rem; }
 .legend { display:flex; gap:.5rem; flex-wrap:wrap; margin:.35rem 0 .6rem; }
@@ -45,7 +45,7 @@
       <option value="">— no results —</option>
     </select>
     <div class="muted" style="font-size:.85rem;margin-top:.25rem;">
-      Select a record to render a rank-by-age matrix.
+      Select a record to render a hierarchical stratigraphic column chart.
     </div>
   </div>
 </section>
@@ -66,7 +66,7 @@
   <div id="legend" class="legend"></div>
   <div id="matrix-root"></div>
   <div class="sc-footnote">
-    Rows follow the global age partition defined by all unit Top/Base boundaries (older → younger). A cell shows the unit that spans that interval for that rank; blank = no unit. If no numeric ages are available, the table falls back to rank order (top→base).
+    Hierarchy-based chart: rows = finest-rank units in natural order; higher ranks are mapped via Code prefix (chrono), ParentName chain (litho), age containment, or position. Boundary ages &amp; horizon names shown at cell edges when available. Flat chrono ranks with &gt;10 units are auto-decomposed by Code depth.
   </div>
 </section>
 
@@ -126,77 +126,244 @@
   // Chrono fields (official + synonyms seen in catalogs)
   function readChronoAges(cd){
     return {
-      top:  num(cd.AgeBegin   ?? cd.TopMa      ?? cd.AgeBeginMa),
-      base: num(cd.AgeEnd     ?? cd.BaseMa     ?? cd.AgeEndMa),
+      top:  num(cd.AgeEnd     ?? cd.TopMa      ?? cd.AgeEndMa),
+      base: num(cd.AgeBegin   ?? cd.BaseMa     ?? cd.AgeBeginMa),
     };
   }
-  // Litho fields (fallbacks common in examples)
+  // Litho / unit fields (OSDU AbstractInterpretation + handler TimeRange + vendor)
   function readLithoAges(ud){
+    const tr = ud.TimeRange || {};
+    const vm = ((ud.VendorMetadata||{}).Raw) || ((ud.VendorMetadata||{}).OW) || {};
     return {
-      top:  num(ud.OlderPossibleAge ?? ud.TopMa),
-      base: num(ud.YoungerPossibleAge ?? ud.BaseMa),
+      top:  num(ud.YoungerPossibleAge ?? tr.TopAgeMa  ?? ud.TopMa ?? vm.TopAgeMa  ?? vm.top_age),
+      base: num(ud.OlderPossibleAge   ?? tr.BaseAgeMa ?? ud.BaseMa ?? vm.BaseAgeMa ?? vm.base_age),
     };
   }
-  function agesFor(unit, chrono){
+  function agesFor(unit, chrono, horizonTop, horizonBase){
     const ud = (unit && unit.data) || {};
     const cd = (chrono && chrono.data) || {};
     const c = readChronoAges(cd);
     const u = readLithoAges(ud);
-    const top  = (c.top  != null) ? c.top  : u.top;
-    const base = (c.base != null) ? c.base : u.base;
+    // Horizon boundary ages as fallback (for litho columns without chrono)
+    const htd = (horizonTop && horizonTop.data) || {};
+    const hbd = (horizonBase && horizonBase.data) || {};
+    const hTop  = num(htd.MeanPossibleAge ?? htd.YoungerPossibleAge);
+    const hBase = num(hbd.MeanPossibleAge ?? hbd.OlderPossibleAge);
+    const top  = c.top  ?? u.top  ?? hTop  ?? null;
+    const base = c.base ?? u.base ?? hBase ?? null;
     return { top, base };
   }
 
-  // ---- Build matrix (chrono-first boundaries; ordinal fallback if none) ----
+  // ---- Build matrix: hierarchy-based (leaf-unit rows) ----
+  // Rows = finest-rank ("leaf") units in their natural order.
+  // Higher ranks are mapped to leaf rows via:
+  //   1) Code prefix (chrono)  2) ParentName chain (litho)
+  //   3) Age containment       4) Positional fallback
+  // Age is annotated at cell boundaries, not used as the row axis.
   function buildMatrix(model){
+    // --- Parse & deduplicate units per rank ---
     const ranks = (model.ranks||[]).map((rk, i) => {
-      const units = (rk.units||[]).map(u => {
-        const {top, base} = agesFor(u.unit||null, u.chrono||null);
-        const name  = pick(u.unit?.data?.Name, u.chrono?.data?.Name, '(unit)');
-        const color = u.chrono?.data?.Colour || null; // ICS color if present
+      const seen = new Set();
+      const units = [];
+      for (const u of (rk.units||[])) {
+        const {top, base} = agesFor(u.unit||null, u.chrono||null, u.horizonTop||null, u.horizonBase||null);
+        const cd = (u.chrono?.data) || {};
+        const ud = (u.unit?.data) || {};
+        const vm = ((ud.VendorMetadata||{}).Raw) || ((ud.VendorMetadata||{}).OW) || {};
+        const name  = pick(cd.Name, ud.Name, '(unit)');
+        const color = cd.Colour || (ud.Rendering||{}).ColorHtml || vm.ColorHtml || vm.color_html || null;
+        const code  = cd.Code || u.chronoCode || '';
+        const parentName = ud.ParentName
+          || ((ud.Relationships||{}).Parent||{}).Name
+          || vm.ParentName || vm.strat_unit_parent || '';
+        const horizonTop  = u.horizonTop  || null;
+        const horizonBase = u.horizonBase || null;
+        // Synthesize horizon-like boundary labels from chrono/unit name when
+        // no real HorizonInterpretation records are linked (pre-deployment).
+        // We keep both synth and real so the boundary column can choose what to display.
+        const hasTrueHorizonTop  = !!(horizonTop  && (horizonTop.id  || (horizonTop.data||{}).Name));
+        const hasTrueHorizonBase = !!(horizonBase && (horizonBase.id || (horizonBase.data||{}).Name));
+        const synthTop  = horizonTop  || (top  != null && name !== '(unit)'
+          ? { data: { Name: 'Top ' + name, MeanPossibleAge: top }, _synth: true } : null);
+        const synthBase = horizonBase || (base != null && name !== '(unit)'
+          ? { data: { Name: 'Base ' + name, MeanPossibleAge: base }, _synth: true } : null);
         const idU = u.unit?.id || ''; const idC = u.chrono?.id || '';
-        const hasAge = (top!=null && base!=null && top>=base);
-        const isChrono = !!idC || !!color; // treat as chrono if ref present
-        return { name, top, base, idU, idC, color, hasAge, isChrono };
-      });
-      return { idx:i, rankName: rk.rankName || 'Unspecified', color: rankPalette[i % rankPalette.length], units };
+        const key = idC || idU || name;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        units.push({ name, top, base, idU, idC, color, code, parentName,
+                     horizonTop: synthTop, horizonBase: synthBase,
+                     hasAge: (top!=null && base!=null) });
+      }
+      return { idx:i, rankName: rk.rankName||'Unspecified',
+               color: rankPalette[i % rankPalette.length], units };
+    }).filter(rk => rk.units.length > 0);
+
+    console.log('[buildMatrix] ranks:', ranks.map(r => `${r.rankName} (${r.units.length} units)`));
+    ranks.forEach(rk => rk.units.forEach(u => {
+      if (u.idC && /GTS2020|Harland|Hardenbol|GTS2016|GTS2012/.test(u.idC))
+        console.warn('[buildMatrix] WRONG-SCHEME chrono link:', u.name, u.idC);
+    }));
+
+    if (!ranks.length)
+      return { ranks:[], rows:[], mergeInfo:[], merged:true };
+
+    // --- Leaf rank = rank with the most units (best row resolution) ---
+    // Prefer the last rank among those tied for max size (finest granularity).
+    let leafIdx = ranks.length - 1;
+    let maxCount = 0;
+    for (let i = 0; i < ranks.length; i++) {
+      if (ranks[i].units.length >= maxCount) {
+        maxCount = ranks[i].units.length;
+        leafIdx = i;
+      }
+    }
+    const leafUnits = ranks[leafIdx].units;
+    if (!leafUnits.length)
+      return { ranks, rows:[], mergeInfo:[], merged:true };
+
+    // Sort leaf units by age — youngest (smallest top age) first
+    leafUnits.sort((a, b) => (a.top ?? a.base ?? Infinity) - (b.top ?? b.base ?? Infinity));
+
+    // --- Name → unit lookup per rank for ParentName chain walking ---
+    const nameIdx = ranks.map(rk => {
+      const m = new Map();
+      rk.units.forEach(u => { if (u.name) m.set(u.name, u); });
+      return m;
     });
 
-    // Boundaries from CHRONO items first
-    const chronoCuts = new Set();
-    ranks.forEach(rk => rk.units.forEach(u => { if(u.isChrono && u.hasAge){ chronoCuts.add(u.top); chronoCuts.add(u.base); }}));
+    // --- Map each leaf unit to a parent in every higher rank ---
+    // rowAssign[ri][li] = unit from rank ri that owns leaf unit li
+    const rowAssign = ranks.map(() => new Array(leafUnits.length).fill(null));
+    leafUnits.forEach((u, li) => { rowAssign[leafIdx][li] = u; });
 
-    // If none, use any unit ages
-    const anyCuts = new Set();
-    if (chronoCuts.size === 0){
-      ranks.forEach(rk => rk.units.forEach(u => { if(u.hasAge){ anyCuts.add(u.top); anyCuts.add(u.base); }}));
-    }
+    for (let ri = 0; ri < leafIdx; ri++){
+      const rk = ranks[ri];
 
-    const cuts = (chronoCuts.size ? chronoCuts : anyCuts);
-    const boundaries = Array.from(cuts).filter(v => typeof v === 'number' && !Number.isNaN(v)).sort((a,b)=> b-a);
-
-    // Ordinal fallback when no numeric ages available anywhere
-    if (boundaries.length < 2){
-      const maxlen = Math.max(0, ...ranks.map(rk => rk.units.length));
-      const rows = [];
-      for (let i=0; i<maxlen; i++){
-        const cells = ranks.map(rk => rk.units[i] || null);
-        rows.push({ top: '', base: '', cells });
+      // Strategy 1 — Code prefix (chrono hierarchy)
+      const rkHasCode   = rk.units.some(u => u.code);
+      const leafHasCode = leafUnits.some(u => u.code);
+      if (rkHasCode && leafHasCode){
+        for (let li = 0; li < leafUnits.length; li++){
+          if (rowAssign[ri][li]) continue;
+          const lc = leafUnits[li].code;
+          if (!lc) continue;
+          let best = null, bestLen = 0;
+          for (const ru of rk.units){
+            if (ru.code && lc.startsWith(ru.code) && ru.code.length > bestLen){
+              best = ru; bestLen = ru.code.length;
+            }
+          }
+          if (best) rowAssign[ri][li] = best;
+        }
       }
-      return { ranks, rows, boundaries: [] };
+
+      // Strategy 2 — ParentName chain (litho hierarchy)
+      for (let li = 0; li < leafUnits.length; li++){
+        if (rowAssign[ri][li]) continue;
+        let cur = leafUnits[li].parentName;
+        let depth = 0;
+        while (cur && depth < 12){
+          depth++;
+          if (nameIdx[ri].has(cur)){ rowAssign[ri][li] = nameIdx[ri].get(cur); break; }
+          let advanced = false;
+          for (let mi = leafIdx - 1; mi > ri; mi--){
+            const mid = nameIdx[mi].get(cur);
+            if (mid && mid.parentName){ cur = mid.parentName; advanced = true; break; }
+          }
+          if (!advanced) break;
+        }
+      }
+
+      // Strategy 3 — Age containment
+      for (let li = 0; li < leafUnits.length; li++){
+        if (rowAssign[ri][li]) continue;
+        const lu = leafUnits[li];
+        if (!lu.hasAge) continue;
+        for (const ru of rk.units){
+          if (ru.hasAge && ru.base >= lu.base - 0.001 && ru.top <= lu.top + 0.001){
+            rowAssign[ri][li] = ru; break;
+          }
+        }
+      }
+
+      // Strategy 4 — Positional fallback (distribute proportionally)
+      const gaps = [];
+      for (let li = 0; li < leafUnits.length; li++) if (!rowAssign[ri][li]) gaps.push(li);
+      if (gaps.length && rk.units.length){
+        const nP = rk.units.length, nG = gaps.length;
+        for (let gi = 0; gi < nG; gi++){
+          const pi = Math.min(Math.floor(gi * nP / nG), nP - 1);
+          rowAssign[ri][gaps[gi]] = rk.units[pi];
+        }
+      }
     }
 
-    // Build rows per adjacent boundary
-    const rows = [];
-    for (let i=0; i<boundaries.length-1; i++){
-      const top = boundaries[i], base = boundaries[i+1];
-      const cells = ranks.map(rk => {
-        const u = rk.units.find(x => x.hasAge && x.top >= top - 1e-9 && x.base <= base + 1e-9);
-        return u || null;
-      });
-      rows.push({ top, base, cells });
+    // --- Map ranks AFTER the leaf (finer or misplaced ranks) ---
+    // For each such rank, assign a representative child to each leaf row.
+    for (let ri = leafIdx + 1; ri < ranks.length; ri++){
+      const rk = ranks[ri];
+
+      // Strategy A — Code prefix (child's code starts with leaf's code)
+      const rkHasCode   = rk.units.some(u => u.code);
+      const leafHasCode = leafUnits.some(u => u.code);
+      if (rkHasCode && leafHasCode){
+        for (let li = 0; li < leafUnits.length; li++){
+          if (rowAssign[ri][li]) continue;
+          const lc = leafUnits[li].code;
+          if (!lc) continue;
+          for (const ru of rk.units){
+            if (ru.code && ru.code.startsWith(lc)){
+              rowAssign[ri][li] = ru; break;
+            }
+          }
+        }
+      }
+
+      // Strategy B — Age containment (child's range within leaf's range)
+      for (let li = 0; li < leafUnits.length; li++){
+        if (rowAssign[ri][li]) continue;
+        const lu = leafUnits[li];
+        if (!lu.hasAge) continue;
+        for (const ru of rk.units){
+          if (ru.hasAge && ru.top >= lu.top - 0.001 && ru.base <= lu.base + 0.001){
+            rowAssign[ri][li] = ru; break;
+          }
+        }
+      }
+
+      // Strategy C — ParentName chain (child points to leaf unit)
+      for (let li = 0; li < leafUnits.length; li++){
+        if (rowAssign[ri][li]) continue;
+        const ln = leafUnits[li].name;
+        for (const ru of rk.units){
+          if (ru.parentName === ln){
+            rowAssign[ri][li] = ru; break;
+          }
+        }
+      }
     }
-    return { ranks, rows, boundaries };
+
+    // --- Build rows: one per leaf unit ---
+    const rows = leafUnits.map((lu, li) => ({
+      leafUnit: lu,
+      cells: rowAssign.map(m => m[li]),
+    }));
+
+    // --- Rowspan merging ---
+    const mergeInfo = rows.map(() => ranks.map(() => ({ span:1, skip:false })));
+    for (let c = 0; c < ranks.length; c++){
+      let run = 0;
+      for (let r = 0; r < rows.length; r++){
+        const cur  = rows[r].cells[c];
+        const prev = r > 0 ? rows[r-1].cells[c] : null;
+        const same = cur && prev && (cur.idC||cur.idU||cur.name) === (prev.idC||prev.idU||prev.name);
+        if (same){ mergeInfo[r][c].skip = true; run++; mergeInfo[r-run][c].span = run+1; }
+        else { run = 0; }
+      }
+    }
+
+    return { ranks, rows, mergeInfo, merged:true };
   }
 
   function renderLegend(ranks){
@@ -218,9 +385,8 @@
     // Header
     const thead = document.createElement('thead');
     const hr = document.createElement('tr');
-    const thTop = document.createElement('th'); thTop.className='age'; thTop.textContent='Top (Ma)';
-    const thBase = document.createElement('th'); thBase.className='age'; thBase.textContent='Base (Ma)';
-    hr.appendChild(thTop); hr.appendChild(thBase);
+    const thBdy = document.createElement('th'); thBdy.className='age'; thBdy.textContent='Boundary';
+    hr.appendChild(thBdy);
     matrix.ranks.forEach(rk => {
       const th = document.createElement('th');
       th.className = 'rank-col';
@@ -236,39 +402,76 @@
     if (!matrix.rows.length){
       const tr = document.createElement('tr');
       const td = document.createElement('td');
-      td.colSpan = 2 + matrix.ranks.length;
+      td.colSpan = 1 + matrix.ranks.length;
       td.className = 'muted';
-      td.textContent = 'No numeric ages found for any units in this column.';
+      td.textContent = matrix.ranks.length
+        ? 'No units found in the resolved ranks.'
+        : 'No ranks could be loaded — the referenced StratigraphicColumnRankInterpretation records may not exist in OSDU storage.';
       tr.appendChild(td);
       tbody.appendChild(tr);
     } else {
-      for (const row of matrix.rows){
+      for (let r = 0; r < matrix.rows.length; r++){
+        const row = matrix.rows[r];
+        const lu = row.leafUnit;
         const tr = document.createElement('tr');
-        const tdTop  = document.createElement('td');  tdTop.className='age';  tdTop.textContent = String(row.top);
-        const tdBase = document.createElement('td'); tdBase.className='age'; tdBase.textContent = String(row.base);
-        tr.appendChild(tdTop); tr.appendChild(tdBase);
 
+        // Boundary column — top boundary of this leaf unit
+        const tdBdy = document.createElement('td');
+        tdBdy.className = 'age';
+        const parts = [];
+        if (lu.top != null) parts.push(lu.top + ' Ma');
+        const ht = lu.horizonTop;
+        if (ht){ const htn = ((ht.data||{}).Name)||''; if(htn) parts.push('▲ '+htn); }
+        tdBdy.innerHTML = parts.join('<br>');
+        tr.appendChild(tdBdy);
+
+        // Unit cells with rowspan merging
         row.cells.forEach((u, j) => {
-          const td = document.createElement('td'); td.className='sc-cell';
+          const mi = matrix.mergeInfo[r][j];
+          if (mi.skip) return; // cell covered by rowspan from above
+
+          const td = document.createElement('td');
+          td.className = 'sc-cell';
+          if (mi.span > 1) td.rowSpan = mi.span;
+
           if (!u){
-            td.textContent = ''; // blank where rank has no unit for this interval
-          } else if (u.top==='' && u.base===''){ // ordinal fallback row
-            const chip = document.createElement('div');
-            chip.className = 'sc-chip sc-missing';
-            chip.style.background = matrix.ranks[j].color;
-            chip.textContent = u.name;
-            td.appendChild(chip);
+            td.textContent = '';
           } else {
             const chip = document.createElement('div');
             chip.className = 'sc-chip';
-            chip.style.background = (u.color || matrix.ranks[j].color);
+            const bg = u.color || matrix.ranks[j].color;
+            chip.style.background = bg;
             chip.style.borderColor = 'rgba(0,0,0,.25)';
-            chip.title = `${u.name}\nTop: ${u.top ?? '—'} Ma\nBase: ${u.base ?? '—'} Ma\n${u.idU? 'Unit: '+u.idU+'\n':''}${u.idC? 'Chrono: '+u.idC:''}`;
+            chip.style.height = '100%';
+            chip.style.display = 'flex';
+            chip.style.alignItems = 'center';
+            chip.title = `${u.name}\nTop: ${u.top ?? '—'} Ma  Base: ${u.base ?? '—'} Ma\n${u.idU? 'Unit: '+u.idU+'\n':''}${u.idC? 'Chrono: '+u.idC:''}`;
             chip.textContent = u.name;
+            td.style.padding = '0';
             td.appendChild(chip);
           }
           tr.appendChild(td);
         });
+        tbody.appendChild(tr);
+      }
+
+      // Final boundary row — base of last leaf unit
+      const last = matrix.rows[matrix.rows.length-1].leafUnit;
+      if (last.base != null || last.horizonBase){
+        const tr = document.createElement('tr');
+        const tdBdy = document.createElement('td');
+        tdBdy.className = 'age';
+        const parts = [];
+        if (last.base != null) parts.push(last.base + ' Ma');
+        const hb = last.horizonBase;
+        if (hb){ const hbn=((hb.data||{}).Name)||''; if(hbn) parts.push('▼ '+hbn); }
+        tdBdy.innerHTML = parts.join('<br>');
+        tr.appendChild(tdBdy);
+        for (let j=0; j<matrix.ranks.length; j++){
+          const td = document.createElement('td');
+          td.className = 'sc-cell';
+          tr.appendChild(td);
+        }
         tbody.appendChild(tr);
       }
     }
@@ -296,7 +499,14 @@
       const meta = { column: model.column || {}, ranks: model.ranks || [] };
       renderMetaPairs(meta);
 
-      setStatus('OK');
+      // Diagnostic: warn about missing ranks (404 in OSDU storage)
+      const missing = model.missingRanks || [];
+      if (missing.length) {
+        const total = ((model.column?.data||{}).StratigraphicColumnRankInterpretationSet||[]).length;
+        setStatus(`⚠ ${missing.length} of ${total} rank record(s) not found in OSDU storage (404). The column references ranks that may have been deleted or not yet ingested.`);
+      } else {
+        setStatus('OK');
+      }
     } catch(e){
       console.warn(e);
       setStatus('Load failed: ' + e.message);

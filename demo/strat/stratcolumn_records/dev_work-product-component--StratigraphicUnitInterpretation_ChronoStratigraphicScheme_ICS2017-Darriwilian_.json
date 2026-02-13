@@ -20,6 +20,10 @@
   "data": {
     "Name": "Darriwilian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Paleozoic.Ordovician.MiddleOrdovician.Darriwilian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Ordovician.MiddleOrdovician.Darriwilian:",
+    "OlderPossibleAge": 467.3,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-467p3Ma:",
+    "YoungerPossibleAge": 458.4,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-458p4Ma:"
   }
 }

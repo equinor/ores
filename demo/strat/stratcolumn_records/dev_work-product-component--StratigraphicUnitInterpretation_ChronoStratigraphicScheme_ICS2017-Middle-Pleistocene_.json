@@ -20,6 +20,10 @@
   "data": {
     "Name": "Middle Pleistocene",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Cenozoic.Quaternary.Pleistocene.MiddlePleistocene:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Cenozoic.Quaternary.Pleistocene.MiddlePleistocene:",
+    "OlderPossibleAge": 0.781,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-0p781Ma:",
+    "YoungerPossibleAge": 0.126,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-0p126Ma:"
   }
 }

@@ -20,6 +20,10 @@
   "data": {
     "Name": "Orosirian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2012.Precambrian.Proterozoic.Paleoproterozoic.Orosirian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Proterozoic.Paleoproterozoic.Orosirian:",
+    "OlderPossibleAge": 2050.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-2050Ma:",
+    "YoungerPossibleAge": 1800.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-1800Ma:"
   }
 }

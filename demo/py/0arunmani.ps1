@@ -26,7 +26,7 @@ py .\1genrawmanifest.py
 py .\2vol2stats.py
 # py .\3gengeolabel.py
 py .\4ingest.py  .\manifest_masterwp.json .\manifest_wpcraw.json .\manifest_wpcstat.json #.\manifest_geolabelsets.json
-  
+py .\\8deploy_stratcolumn.py --ingest --namespace dev --verbose  
   
 py .\6query.py --from-manifests ref_types_manifest.json raw_volume_cbt_manifest.json agg_volume_cbt_manifest.json geolabelsets_manifest.json --partition dev --summary --whoami
 py .\6query.py --kind osdu:wks:reference-data--GeoLabelType:1.0.0 --index-diagnostics --query 'data.Code:"Oil.Volume.Bulk.P10"' --limit 5

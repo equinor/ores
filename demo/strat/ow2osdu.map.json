@@ -1,9 +1,14 @@
 {
+  "$comment": "Vendor-to-OSDU field mapping for SMDA strat units. Use with --vendor-map.",
   "strat_unit_type": "data.StratigraphicRoleTypeID",
   "top_age": "data.TimeRange.TopAgeMa",
   "base_age": "data.TimeRange.BaseAgeMa",
   "color_html": "data.Rendering.ColorHtml",
   "strat_unit_parent": "data.Relationships.Parent.Name",
   "source": "data.Source",
-  "uuid": "data.Identifiers.UUID"
+  "uuid": "data.Identifiers.UUID",
+  "update_date": "data.VendorMetadata.Raw.UpdateDate",
+  "update_user": "data.VendorMetadata.Raw.UpdateUser",
+  "insert_date": "data.VendorMetadata.Raw.InsertDate",
+  "insert_user": "data.VendorMetadata.Raw.InsertUser"
 }

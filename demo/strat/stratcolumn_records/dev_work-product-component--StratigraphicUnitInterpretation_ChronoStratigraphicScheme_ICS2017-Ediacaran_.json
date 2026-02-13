@@ -20,6 +20,10 @@
   "data": {
     "Name": "Ediacaran",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2012.Precambrian.Proterozoic.Neoproterozoic.Ediacaran:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Proterozoic.Neoproterozoic.Ediacaran:",
+    "OlderPossibleAge": 635.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-635Ma:",
+    "YoungerPossibleAge": 541.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-541Ma:"
   }
 }

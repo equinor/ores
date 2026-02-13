@@ -20,6 +20,10 @@
   "data": {
     "Name": "Stenian",
     "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
-    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2012.Precambrian.Proterozoic.Mesoproterozoic.Stenian:"
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Proterozoic.Mesoproterozoic.Stenian:",
+    "OlderPossibleAge": 1200.0,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-1200Ma:",
+    "YoungerPossibleAge": 1000.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-1000Ma:"
   }
 }
