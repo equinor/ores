@@ -150,13 +150,14 @@ Units and Horizons are **complementary** — they represent the same stratigraph
 
 ### 2.2 Implementation Status
 
-| Feature | strat.html viewer | stratcolumnhandler.py converter |
-|---------|-------------------|--------------------------------|
-| Unit interval rendering | ✅ Rowspan‑merged coloured blocks | ✅ Round‑trips units through all formats |
-| Horizon boundary overlay | ❌ Not yet | ❌ Does not emit/consume `HorizonInterpretation` |
-| `ColumnStratigraphicHorizonTopID` / `BaseID` | ❌ Not read | ❌ Not populated |
+| Feature | strat.html viewer | stratcolumnhandler.py converter | 10genhorizons.py generator |
+|---------|-------------------|--------------------------------|----------------------------|
+| Unit interval rendering | ✅ Rowspan‑merged coloured blocks | ✅ Round‑trips units through all formats | — |
+| Horizon boundary overlay | ✅ Synthetic "Top X" / "Base X" labels at row edges | ❌ Does not emit/consume `HorizonInterpretation` | ✅ Generates `HorizonInterpretation` WPCs |
+| `ColumnStratigraphicHorizonTopID` / `BaseID` | ✅ Read and displayed (real or synthetic) | ❌ Not populated | ✅ Sets both fields on every unit |
+| `OlderPossibleAge` / `YoungerPossibleAge` on units | ✅ Read via multi‑field fallback | ❌ Not populated | ✅ Copies from linked ChronoStratigraphy ages |
 
-These are optional enrichments for when horizon data becomes available (e.g. lithostratigraphic columns with well‑marker boundaries).
+> **Synthetic horizon labels**: When real `HorizonInterpretation` records are not deployed, the viewer synthesizes boundary labels from unit/chrono names (e.g. "Top Maastrichtian", "Base Cenozoic"). These carry a `_synth: true` marker client‑side.
 
 ---
 
@@ -355,7 +356,9 @@ table column and rows are defined by the **finest‑rank (leaf) units** in their
 Higher‑rank cells span multiple leaf rows when the mapping shows they own those leaf units.
 Age is annotated at row **boundaries** (not as the row axis), and horizon names are shown too.
 
-**Mapping strategies** (tried in order, per higher rank):
+**Mapping strategies** (tried in order):
+
+**For ranks *before* the leaf** (coarser → leaf):
 
 | # | Strategy | Applies when | Match rule |
 |---|----------|--------------|------------|
@@ -364,15 +367,25 @@ Age is annotated at row **boundaries** (not as the row axis), and horizon names 
 | 3 | **Age containment** | Both leaf and parent have age data | Parent age range fully contains leaf age range |
 | 4 | **Positional fallback** | No other strategy matched | Distribute unassigned leaf units proportionally |
 
+**For ranks *after* the leaf** (finer or misplaced — safety net):
+
+| # | Strategy | Match rule |
+|---|----------|------------|
+| A | **Code prefix (child)** | Child's `Code` starts with leaf's `Code` |
+| B | **Age containment (child)** | Child's age range fits within leaf's age range |
+| C | **ParentName** | Child's `parentName` equals leaf unit's name |
+
 **Steps:**
 
 1. **Parse & deduplicate** — each rank's units, reading names, ages, Code, ParentName, colours, horizons
-2. **Identify leaf rank** — last rank = finest granularity; one row per leaf unit
-3. **Map higher ranks** — for each rank above the leaf, assign each leaf row to a parent unit (strategies above)
-4. **Compute rowspan** — consecutive leaf rows with the same parent get merged (`rowSpan`)
-5. **Render** — `<table>` with Boundary column + one column per rank; boundary column shows age (Ma) and/or horizon name at the top edge of each row
+2. **Sort ranks** — backend sorts by unit count ascending (coarsest → finest); leaf = last rank
+3. **Identify leaf rank** — last rank = finest granularity (most units); one row per leaf unit
+4. **Map higher ranks** — for each rank above the leaf, assign each leaf row to a parent unit (strategies 1–4)
+5. **Map lower ranks** — for any ranks after the leaf, assign child units (strategies A–C)
+6. **Compute rowspan** — consecutive leaf rows with the same parent get merged (`rowSpan`)
+7. **Render** — `<table>` with Boundary column + one column per rank; boundary column shows age (Ma) and/or horizon name at the top edge of each row
 
-This algorithm works for **all column types**: chrono (ICS), litho (Group → Formation → Member), mixed, and columns lacking age data entirely.
+This algorithm works for **all column types**: chrono (ICS), litho (Group → Formation → Member), mixed, columns from SMDA/SCE with UUID‑based IDs, and columns lacking age data entirely.
 
 **Resulting layout** (Phanerozoic chrono excerpt):
 
@@ -418,25 +431,79 @@ This algorithm works for **all column types**: chrono (ICS), litho (Group → Fo
 
 | Function | Purpose |
 |----------|---------|
-| `readChronoAges(cd)` | Extract `AgeBegin`/`AgeEnd` from chrono record (with fallbacks) |
-| `readLithoAges(ud)` | Extract ages from unit — full fallback chain: `OlderPossibleAge` → `TimeRange.TopAgeMa` → `VendorMetadata.Raw.*` |
-| `agesFor(unit, chrono)` | Merge chrono + litho ages (chrono preferred when both present) |
-| `buildMatrix(model)` | Hierarchy‑based: leaf‑rank rows, higher ranks mapped via Code/ParentName/age/position, rowspan merging |
+| `readChronoAges(cd)` | Extract `AgeEnd`→top, `AgeBegin`→base from chrono record (with fallbacks) |
+| `readLithoAges(ud)` | Extract ages from unit — `YoungerPossibleAge`→top, `OlderPossibleAge`→base — full fallback chain through `TimeRange`, `VendorMetadata.Raw` |
+| `agesFor(unit, chrono, horizonTop, horizonBase)` | Merge chrono + litho + horizon ages (chrono preferred when both present) |
+| `buildMatrix(model)` | Hierarchy‑based: leaf‑rank rows, higher ranks mapped via Code/ParentName/age/position; also maps ranks after the leaf via child strategies; synthetic horizon labels |
 | `renderMatrix(matrix)` | Emit `<table>` with Boundary column (age + horizon), `rowSpan` cells, colours |
 | `renderLegend(ranks)` | Colour legend per rank |
+| `loadColumnById(id)` | Fetch column JSON, detect `missingRanks`, show diagnostics, call buildMatrix→renderMatrix |
+| `doSearch()` | Search for columns via `/api/strat/search.json?q=...&limit=100` |
 
 ### 6.4 Features
 
 - **Hierarchy‑based rendering**: rows defined by leaf units, not by age intervals — works for both chrono and litho columns, even without age data
 - **Boundary annotations**: age (Ma) and/or horizon names shown at cell edges when available
-- **Search**: full‑text or field query (`data.Name:Gudrun`, `*`) via OSDU Search API
+- **Synthetic horizon labels**: when real `HorizonInterpretation` records are not deployed, the frontend synthesizes "Top X" / "Base X" labels from unit/chrono names
+- **Search**: full‑text or field query (`data.Name:Gudrun`, `*`) via OSDU Search API (default limit 100)
 - **Enrich toggle**: fetch `ChronoStratigraphy` details (names, ages, colours) or view raw references only
 - **Horizon support**: backend fetches `HorizonInterpretation` records referenced by `ColumnStratigraphicHorizonTopID`/`BaseID` on units
 - **Auto‑decomposition**: flat chrono ranks with >10 units split into virtual hierarchical sub‑ranks by `Code` depth
+- **Rank sorting**: final ranks sorted by unit count ascending (coarsest → finest) ensuring the leaf is always last
+- **Post‑leaf mapping**: ranks appearing after the leaf (finer or misplaced) get mapped via child‑code, age‑containment, and ParentName strategies
 - **Deduplication**: duplicate chrono/unit refs (common in ICS schemes) are filtered
 - **Colour cascade**: ICS hex → unit `Rendering.ColorHtml` → `VendorMetadata.Raw` → rank palette
 - **Metadata panel**: filterable, sortable key/value table of all record metadata
 - **Tooltips**: hover any cell → unit name, age range, record IDs
+- **Trailing‑colon resilience**: OSDU references often end with `:` (latest‑version marker). `_storage_fetch_many` automatically retries with/without the trailing colon when a record returns 404, and aliases both forms in results
+- **Missing‑rank diagnostics**: when rank records are 404 (common with SMDA/SCE 3rd‑party columns), the API returns a `missingRanks` array and the UI shows a warning message
+
+### 6.5 Generation & Deployment Pipeline
+
+The ICS 2017 Chronostratigraphic Column is built and deployed through a chain of Python scripts. Each step is idempotent and can be re-run safely.
+
+```mermaid
+graph LR
+    A["7genchronostratics.py"] -->|manifest_chronostratics.json| B["7genstratcolumn.py"]
+    B -->|manifest_stratcolumn.json| C["10genhorizons.py"]
+    C -->|manifest_stratcolumn.json<br>(updated in-place)| D["8deploy_stratcolumn.py"]
+    A -->|manifest_chronostratics.json| E["9deploy_chronostratics.py"]
+    D -->|stratcolumn_records/| F["OSDU Storage"]
+    E -->|chronostrat_records/| F
+```
+
+**Step-by-step:**
+
+```powershell
+# 1. Generate ChronoStratigraphy reference-data manifest
+#    Downloads ICS ChronoStratigraphy.1.json from GitHub, deduplicates, emits manifest
+py .\demo\py\7genchronostratics.py --include-scheme --verbose
+
+# 2. Build Stratigraphic Column manifest (units + ranks + column)
+#    Reads manifest_chronostratics.json, groups by rank, emits WPC manifest
+py .\demo\py\7genstratcolumn.py `
+    --in-manifest .\demo\strat\manifest_chronostratics.json `
+    --out .\demo\strat\manifest_stratcolumn.json `
+    --include-scheme --verbose
+
+# 3. Generate HorizonInterpretation records and enrich units
+#    Reads both manifests, creates 118 horizons, updates units with ages + horizon refs
+py .\demo\py\10genhorizons.py --verbose
+
+# 4. Deploy chrono reference-data to OSDU (dependency-ordered)
+py .\demo\py\9deploy_chronostratics.py --ingest --verbose
+
+# 5. Deploy strat column records to OSDU
+py .\demo\py\8deploy_stratcolumn.py --ingest --verbose
+```
+
+| Script | Input | Output | Records |
+|--------|-------|--------|---------|
+| `7genchronostratics.py` | ChronoStratigraphy.1.json (remote/local) | `manifest_chronostratics.json` | ~1372 ChronoStratigraphy ref-data |
+| `7genstratcolumn.py` | `manifest_chronostratics.json` | `manifest_stratcolumn.json` | 179 units + 5 ranks + 1 column |
+| `10genhorizons.py` | Both manifests | Updates `manifest_stratcolumn.json` in-place | +118 HorizonInterpretation WPCs |
+| `8deploy_stratcolumn.py` | `manifest_stratcolumn.json` | `stratcolumn_records/` (one JSON per record) | 303 files |
+| `9deploy_chronostratics.py` | `manifest_chronostratics.json` | `chronostrat_records/` (one JSON per record) | ~1372 files |
 
 ---
 
@@ -649,13 +716,18 @@ python stratcolumnhandler.py osdu2resqml \
 
 | File | Purpose |
 |------|---------|
-| `app/strat.py` | FastAPI backend — search, batch‑fetch (including horizons), decompose, serve column JSON |
-| `app/templates/strat.html` | Frontend viewer — hierarchy‑based rendering, boundary annotations, rowspan merging |
+| `app/strat.py` | FastAPI backend — search, batch‑fetch, trailing‑colon handling, decompose, rank sort, serve column JSON |
+| `app/templates/strat.html` | Frontend viewer — hierarchy‑based rendering, synthetic horizons, post‑leaf mapping, missing‑rank diagnostics |
 | `demo/strat/stratcolumnhandler.py` | CLI converter — SMDA ↔ RESQML ↔ OSDU round‑trip |
 | `demo/strat/ow2osdu.map.json` | Vendor → OSDU field mapping config |
-| `demo/strat/manifest_stratcolumn.json` | Sample StratigraphicColumn manifest |
-| `demo/strat/manifest_chronostratics.json` | Sample ChronoStratigraphy reference bundle |
-| `demo/py/7genstratcolumn.py` | Generator — builds column manifest from chrono manifest |
+| `demo/strat/manifest_stratcolumn.json` | StratigraphicColumn manifest (179 units + 118 horizons + 5 ranks + 1 column) |
+| `demo/strat/manifest_chronostratics.json` | ChronoStratigraphy reference bundle (1372 records) |
+| `demo/py/7genchronostratics.py` | Generator — downloads/filters ChronoStratigraphy reference records, emits manifest |
+| `demo/py/7genstratcolumn.py` | Generator — builds column manifest (units + ranks + column) from chrono manifest |
+| `demo/py/10genhorizons.py` | Generator — creates `HorizonInterpretation` WPCs from unit boundaries; updates unit records with ages + horizon refs |
+| `demo/py/8deploy_stratcolumn.py` | Deploy — splits strat column manifest into individual records, optionally ingests via osducli |
+| `demo/py/9deploy_chronostratics.py` | Deploy — splits chrono manifest into individual records in dependency order, optionally ingests |
+| `demo/py/7manifest2records.py` | Utility — extracts individual record JSON files from any manifest |
 | `demo/strat/stratcolumn_records/` | Pre‑generated OSDU WPC records (ICS 2017) |
 | `demo/strat/stratref_records/` | Pre‑generated ChronoStratigraphy reference records |
 
@@ -678,7 +750,7 @@ python stratcolumnhandler.py osdu2resqml \
 | 4 | `readLithoAges()` missed `TimeRange.TopAgeMa`, `VendorMetadata.Raw.*` fields | Moderate | Added full fallback chain matching converter output paths |
 | 5 | Litho unit **colour** ignored (`Rendering.ColorHtml`, `VendorMetadata.Raw.ColorHtml`, `color_html`) | Moderate | Added colour fallback chain after chrono `Colour` |
 
-### A.3 Redesign — hierarchy‑based rendering (this session)
+### A.3 Redesign — hierarchy‑based rendering
 
 | # | Scope | Change |
 |---|-------|--------|
@@ -686,7 +758,27 @@ python stratcolumnhandler.py osdu2resqml \
 | 7 | `strat.html` `buildMatrix()` | **Rewritten**: rows = leaf‑rank units (not age intervals); higher ranks mapped via Code prefix → ParentName chain → age containment → positional fallback |
 | 8 | `strat.html` `renderMatrix()` | **Rewritten**: Boundary column shows age (Ma) + horizon names at row edges; works for litho columns without ages |
 
-### A.4 Previously Fixed (prior session)
+### A.4 Trailing‑colon fix & rank ordering
+
+| # | Scope | Change |
+|---|-------|--------|
+| 27 | `strat.py` `_storage_fetch_many()` | **Trailing‑colon resilience**: OSDU references end with `:` (latest‑version marker) but some stored record IDs omit it, and vice versa. After each fetch round (batch or GET), aliases both `id` and `id:` forms in results. On 404, retries with the toggled variant. This fixed all 36 columns (was previously only working for ICS2017). |
+| 28 | `strat.py` | **Rank sorting**: after merge/decomposition, ranks sorted by unit count ascending (coarsest → finest), ensuring the leaf is always the last rank |
+| 29 | `strat.html` `buildMatrix()` | **Post‑leaf mapping**: added mapping for ranks after the leaf index using child‑code prefix, age containment, and ParentName strategies — fixes Sub‑Stage, Series, SubSystem being empty |
+| 30 | `strat.py` | `missingRanks` field added to API response when rank records return 404; frontend shows warning |
+| 31 | `strat.html` | **Synthetic horizon labels**: when no real `HorizonInterpretation` records exist, synthesizes "Top X" / "Base X" from unit/chrono names with `_synth: true` marker |
+| 32 | `strat.py` | Search default limit changed from 20 to 100 |
+| 33 | `strat.py` | Debug endpoint `/api/strat/record.json` for single‑record inspection (encoded + plain URL) |
+
+### A.5 New generator scripts
+
+| # | Script | Purpose |
+|---|--------|---------|
+| 34 | `demo/py/10genhorizons.py` | Generates 118 `HorizonInterpretation` WPC records from ICS2017 unit boundaries. Updates unit records in‑place with `OlderPossibleAge`, `YoungerPossibleAge`, `ColumnStratigraphicHorizonTopID`, `ColumnStratigraphicHorizonBaseID`. |
+| 35 | `demo/py/8deploy_stratcolumn.py` | Splits `manifest_stratcolumn.json` into individual record files in `stratcolumn_records/`, optionally ingests via `osducli storage add` |
+| 36 | `demo/py/9deploy_chronostratics.py` | Splits `manifest_chronostratics.json` in dependency order (scheme → roots → children → WPC), optionally ingests |
+
+### A.6 Previously Fixed (prior session)
 
 | # | Scope | Summary |
 |---|-------|---------|

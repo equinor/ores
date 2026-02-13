@@ -217,18 +217,20 @@ def main():
         return
 
     # Ingest individual files in dependency order:
-    # ref-data → units → ranks → columns
+    # ref-data → units → horizons → ranks → columns
     def sort_key(rec: dict) -> int:
         k = rec.get("kind", "")
         if "reference-data--" in k:
             return 0
         if "UnitInterpretation" in k:
             return 1
-        if "ColumnRankInterpretation" in k:
+        if "HorizonInterpretation" in k:
             return 2
-        if "StratigraphicColumn:" in k:
+        if "ColumnRankInterpretation" in k:
             return 3
-        return 4
+        if "StratigraphicColumn:" in k:
+            return 4
+        return 5
     sorted_records = sorted(all_records, key=sort_key)
 
     print(f"\nIngesting {len(sorted_records)} records (one per osducli call)...")

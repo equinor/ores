@@ -352,7 +352,7 @@ def main():
                 seen_unit_ids.add(uid)
             unit_id_by_key[(rk, u["name"])] = uid
 
-    preferred_rank_order = ["SuperEonothem","Eonothem","Erathem","System","SubSystem","Series","SubSeries","Stage","SubStage"]
+    preferred_rank_order = ["SuperEonothem","Eonothem","Erathem","System","SubSystem","Series","SubSeries","Stage","SubStage","Sub-Stage","Sub-Age","Zone"]
     rank_keys_sorted = sorted(ranks.keys(), key=lambda x: (preferred_rank_order.index(x) if x in preferred_rank_order else 999, x or ""))
     rank_records: List[Dict] = []
     rank_ids_in_order: List[str] = []

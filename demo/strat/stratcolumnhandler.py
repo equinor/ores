@@ -8,8 +8,9 @@ Purpose
 -------
 A generic stratigraphic column model converter for **SMDA (.xlsx)**,
 **RESQML 2.0.1 JSON graph**, and **OSDU Work-Product-Component (WPC) JSON bundle**.
-It supports an **arbitrary number of ranks** per column and **mixed lithostratigraphy
-& chronostratigraphy** in the same column.
+It supports an **arbitrary number of ranks** per column, **mixed lithostratigraphy
+& chronostratigraphy** in the same column, and **HorizonInterpretation** records
+representing the boundaries (Top/Base) of stratigraphic units.
 
 Supported conversions
 ---------------------
@@ -56,6 +57,7 @@ DEFAULT_PARTITION = os.getenv("OSDU_PARTITION", "data")  # default per OSDU exam
 KIND_COL = "osdu:wks:work-product-component--StratigraphicColumn:1.2.0"
 KIND_RANK = "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.3.0"
 KIND_UNIT = "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0"
+KIND_HORIZON = "osdu:wks:work-product-component--HorizonInterpretation:1.0.0"
 ORDERING_DEFAULT = "OlderToYounger"
 
 # Generic vendor→OSDU mapping (paths relative to the **record root**).
@@ -153,6 +155,18 @@ class StratUnit:
 
 
 @dataclass
+class StratHorizon:
+    """Boundary between two stratigraphic units (Top/Base of a unit)."""
+    name: str
+    uuid: str = field(default_factory=lambda: str(uuid.uuid4()))
+    unit_name: Optional[str] = None          # unit this horizon bounds
+    unit_id: Optional[str] = None            # OSDU record id of the unit
+    boundary_type: str = "Top"               # 'Top' | 'Base'
+    age_ma: Optional[float] = None
+    vendor: Dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
 class StratRank:
     name: str
     kind: str  # 'litho' | 'chrono'
@@ -167,6 +181,7 @@ class StratRank:
 class StratColumn:
     name: str
     ranks: List[StratRank]
+    horizons: List[StratHorizon] = field(default_factory=list)
     vendor: Dict[str, Any] = field(default_factory=dict)
 
     # ------------------------------- Importers -----------------------------
@@ -291,6 +306,7 @@ class StratColumn:
         units = [o for o in objs if o.get("resqmlType") == "resqml20:StratigraphicUnitInterpretation"]
         ranks = [o for o in objs if o.get("resqmlType") == "resqml20:StratigraphicColumnRankInterpretation"]
         cols = [o for o in objs if o.get("resqmlType") == "resqml20:StratigraphicColumn"]
+        horizon_objs = [o for o in objs if o.get("resqmlType") == "resqml20:HorizonInterpretation"]
 
         uid2u: Dict[str, StratUnit] = {}
         for u in units:
@@ -326,7 +342,22 @@ class StratColumn:
                 sranks.append(StratRank(name=name, kind="litho", ordering=ordering, units=[]))
 
         cname = cols[0].get("title") if cols else "Stratigraphic Column"
-        return StratColumn(name=cname or "Stratigraphic Column", ranks=sranks, vendor={})
+
+        # Horizons
+        shorizons: List[StratHorizon] = []
+        for h in horizon_objs:
+            uid = h.get("uuid") or str(uuid.uuid4())
+            extra = h.get("extraMetadata", {}) or {}
+            shorizons.append(StratHorizon(
+                name=h.get("title") or "Horizon",
+                uuid=uid,
+                unit_name=extra.get("unitName"),
+                boundary_type=extra.get("boundaryType", "Top"),
+                age_ma=h.get("ageMa"),
+                vendor=extra.get("vendor", {}),
+            ))
+
+        return StratColumn(name=cname or "Stratigraphic Column", ranks=sranks, horizons=shorizons, vendor={})
 
     @staticmethod
     def from_osdu_bundle(path: str) -> "StratColumn":
@@ -336,12 +367,14 @@ class StratColumn:
             raise ValueError("OSDU payload must be a dict with 'records'")
         recs = payload["records"]
 
-        _pfx_unit = KIND_UNIT.rsplit(":", 1)[0] + ":"
-        _pfx_rank = KIND_RANK.rsplit(":", 1)[0] + ":"
-        _pfx_col  = KIND_COL.rsplit(":", 1)[0] + ":"
-        units = [r for r in recs if (r.get("kind") or "").startswith(_pfx_unit)]
-        ranks = [r for r in recs if (r.get("kind") or "").startswith(_pfx_rank)]
-        cols  = [r for r in recs if (r.get("kind") or "").startswith(_pfx_col)]
+        _pfx_unit    = KIND_UNIT.rsplit(":", 1)[0] + ":"
+        _pfx_rank    = KIND_RANK.rsplit(":", 1)[0] + ":"
+        _pfx_col     = KIND_COL.rsplit(":", 1)[0] + ":"
+        _pfx_horizon = KIND_HORIZON.rsplit(":", 1)[0] + ":"
+        units    = [r for r in recs if (r.get("kind") or "").startswith(_pfx_unit)]
+        ranks    = [r for r in recs if (r.get("kind") or "").startswith(_pfx_rank)]
+        cols     = [r for r in recs if (r.get("kind") or "").startswith(_pfx_col)]
+        horizons = [r for r in recs if (r.get("kind") or "").startswith(_pfx_horizon)]
 
         id2u: Dict[str, StratUnit] = {}
         for ur in units:
@@ -401,8 +434,35 @@ class StratColumn:
             else:
                 sranks.append(StratRank(name=nm, kind="litho", ordering=ordering, units=[]))
 
+        # Horizons
+        shorizons: List[StratHorizon] = []
+        for hr in horizons:
+            d = hr.get("data", {})
+            nm = d.get("Name") or "Horizon"
+            rid = hr.get("id") or ""
+            uid = rid.split(":")[-2] if rid.endswith(":") else rid
+            vm = (d.get("VendorMetadata", {}) or {}).get("Raw", {})
+            # Parse boundary type and linked unit
+            btype = vm.get("BoundaryType", "Top")
+            unit_name = vm.get("UnitName")
+            unit_id_ref = None
+            for ref in (d.get("InterpretedFeatureReferences") or []):
+                if isinstance(ref, str):
+                    unit_id_ref = ref
+                    break
+            age = None
+            try:
+                age = float(d.get("AgeMa") or vm.get("AgeMa"))
+            except (ValueError, TypeError):
+                pass
+            shorizons.append(StratHorizon(
+                name=nm, uuid=uid or str(uuid.uuid4()),
+                unit_name=unit_name, unit_id=unit_id_ref,
+                boundary_type=btype, age_ma=age, vendor=vm,
+            ))
+
         cname = cols[0].get("data", {}).get("Name") if cols else "Stratigraphic Column"
-        return StratColumn(name=cname or "Stratigraphic Column", ranks=sranks, vendor={})
+        return StratColumn(name=cname or "Stratigraphic Column", ranks=sranks, horizons=shorizons, vendor={})
 
     # ------------------------------- Exporters -----------------------------
     def to_resqml_json(self, chrono_rd_index: Optional[Dict[str, str]] = None) -> List[Dict[str, Any]]:
@@ -471,6 +531,22 @@ class StratColumn:
                 }
             rank_objs.append(robj)
             objs.append(robj)
+
+        # Horizons
+        for h in self.horizons:
+            hobj: Dict[str, Any] = {
+                "resqmlType": "resqml20:HorizonInterpretation",
+                "uuid": h.uuid,
+                "title": h.name,
+                "extraMetadata": {
+                    "boundaryType": h.boundary_type,
+                    "unitName": h.unit_name,
+                    "vendor": dict(h.vendor),
+                },
+            }
+            if h.age_ma is not None:
+                hobj["ageMa"] = h.age_ma
+            objs.append(hobj)
 
         # Column
         objs.append(
@@ -549,6 +625,27 @@ class StratColumn:
             rec = {"id": rid, "kind": KIND_RANK, "data": data}
             records.append(rec)
             rank_ids.append(rid)
+
+        # Horizons
+        for h in self.horizons:
+            hid = wpc_id(partition, "HorizonInterpretation", h.uuid or h.name)
+            hdata: Dict[str, Any] = {"Name": h.name}
+            vm_raw: Dict[str, Any] = dict(h.vendor)
+            vm_raw["BoundaryType"] = h.boundary_type
+            if h.unit_name:
+                vm_raw["UnitName"] = h.unit_name
+            if h.age_ma is not None:
+                hdata["AgeMa"] = h.age_ma
+            if h.unit_id:
+                hdata["InterpretedFeatureReferences"] = [h.unit_id]
+            elif h.unit_name and unit_id_by_uuid:
+                # Try to resolve unit by name
+                for uid, uid_id in unit_id_by_uuid.items():
+                    if h.unit_name.lower() in uid_id.lower():
+                        hdata["InterpretedFeatureReferences"] = [uid_id]
+                        break
+            hdata["VendorMetadata"] = {"SourceSystem": "StratColumnHandler", "Raw": vm_raw}
+            records.append({"id": hid, "kind": KIND_HORIZON, "data": hdata})
 
         # Column
         cid = wpc_id(partition, "StratigraphicColumn", self.name)
@@ -665,6 +762,7 @@ def build_parser():
       - Column:   osdu:wks:work-product-component--StratigraphicColumn:1.2.0
       - Rank:     osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.3.0
       - Unit:     osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0
+      - Horizon:  osdu:wks:work-product-component--HorizonInterpretation:1.0.0
 
     • Exit codes: 0 on success; non-zero on Errors.
 
