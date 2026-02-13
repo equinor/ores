@@ -1,0 +1,289 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [
+    {
+      "id": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+      "kind": "osdu:wks:master-data--Reservoir:2.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Drogon",
+        "Description": "Drogon field \u2014 Valysar formation",
+        "ancestry": {
+          "parents": [],
+          "children": [
+            "dev:master-data--ReservoirSegment:1571d49d-66c5-42c0-80a3-955da14db813:1",
+            "dev:master-data--ReservoirSegment:16439911-d1fe-411b-8fa7-fb62755895e4:1",
+            "dev:master-data--ReservoirSegment:390da749-3aae-4902-8216-89522a79ea06:1",
+            "dev:master-data--ReservoirSegment:f979f225-295d-4ee1-85e6-86b3f0612246:1",
+            "dev:master-data--ReservoirSegment:674a22bd-67f1-4e72-a150-7f813e8df130:1",
+            "dev:master-data--ReservoirSegment:d8947e7f-c2d3-49aa-8d64-7fab58bb2833:1",
+            "dev:master-data--ReservoirSegment:f5f09d90-3159-4d97-b4a0-f73368a0565b:1"
+          ]
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--ReservoirSegment:1571d49d-66c5-42c0-80a3-955da14db813:1",
+      "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "West Lowland",
+        "Description": "Western lowland fault block of the Valysar formation, Drogon field",
+        "ancestry": {
+          "parents": [
+            "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+          ],
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--ReservoirSegment:16439911-d1fe-411b-8fa7-fb62755895e4:1",
+      "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Central South",
+        "Description": "Central-south structural compartment of the Valysar formation, Drogon field",
+        "ancestry": {
+          "parents": [
+            "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+          ],
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--ReservoirSegment:390da749-3aae-4902-8216-89522a79ea06:1",
+      "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Central North",
+        "Description": "Central-north structural compartment of the Valysar formation, Drogon field",
+        "ancestry": {
+          "parents": [
+            "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+          ],
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--ReservoirSegment:f979f225-295d-4ee1-85e6-86b3f0612246:1",
+      "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "North Horst",
+        "Description": "Northern horst block of the Valysar formation, Drogon field \u2014 contains gas cap",
+        "ancestry": {
+          "parents": [
+            "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+          ],
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--ReservoirSegment:674a22bd-67f1-4e72-a150-7f813e8df130:1",
+      "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Central Ramp",
+        "Description": "Central ramp structure of the Valysar formation, Drogon field",
+        "ancestry": {
+          "parents": [
+            "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+          ],
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--ReservoirSegment:d8947e7f-c2d3-49aa-8d64-7fab58bb2833:1",
+      "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Central Horst",
+        "Description": "Central horst block of the Valysar formation, Drogon field \u2014 largest oil accumulation",
+        "ancestry": {
+          "parents": [
+            "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+          ],
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--ReservoirSegment:f5f09d90-3159-4d97-b4a0-f73368a0565b:1",
+      "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "East Lowland",
+        "Description": "Eastern lowland fault block of the Valysar formation, Drogon field",
+        "ancestry": {
+          "parents": [
+            "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+          ],
+          "children": []
+        }
+      }
+    }
+  ],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [],
+    "WorkProducts": [
+      {
+        "id": "dev:work-product:37dcb76b-e388-4dbf-9940-9ed277418543:1",
+        "kind": "osdu:wks:work-product:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon Reservoir Study",
+          "Description": "Parent WorkProduct for Drogon estimated volumes",
+          "WorkflowStatus": "Active",
+          "ancestry": {
+            "parents": [
+              "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+            ],
+            "children": []
+          }
+        }
+      }
+    ]
+  }
+}

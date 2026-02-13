@@ -233,6 +233,10 @@ def extract_metadata_generic(
     # Curated identity subset into pairs (keeps tables short & readable)
     curated_keys = [
         "Citation.Title",
+        "Citation.Originator",
+        "Citation.Creation",
+        "Citation.Format",
+        "Citation.Description",
         "SchemaVersion",
         "$type",
         "contentType",
@@ -244,4 +248,39 @@ def extract_metadata_generic(
         if ck in md:
             pairs.append({"name": ck, "value": md[ck]})
 
+    # ExtraMetadata (RESQML 2.0.1: list of {Name, Value} or flat dict)
+    extra_meta_raw = obj.get("ExtraMetadata")
+    extra_metadata: list[dict[str, str]] = []
+    if isinstance(extra_meta_raw, list):
+        for em in extra_meta_raw:
+            if isinstance(em, dict):
+                k = em.get("Name") or em.get("name") or em.get("Key") or em.get("key") or ""
+                v = em.get("Value") or em.get("value") or ""
+                if k:
+                    extra_metadata.append({"name": str(k), "value": _shorten(str(v), max_len=max_string_len)})
+                    pairs.append({"name": f"ExtraMetadata.{k}", "value": _shorten(str(v), max_len=max_string_len)})
+    elif isinstance(extra_meta_raw, dict):
+        for k, v in extra_meta_raw.items():
+            extra_metadata.append({"name": str(k), "value": _shorten(str(v), max_len=max_string_len)})
+            pairs.append({"name": f"ExtraMetadata.{k}", "value": _shorten(str(v), max_len=max_string_len)})
+
+    md["extraMetadata"] = extra_metadata
+
+    # Aliases (RESQML 2.0.1: list of {authority, identifier} or flat strings)
+    aliases_raw = obj.get("Aliases") or []
+    aliases: list[dict[str, str]] = []
+    if isinstance(aliases_raw, list):
+        for a in aliases_raw:
+            if isinstance(a, dict):
+                auth = a.get("authority") or a.get("Authority") or ""
+                ident = a.get("Identifier") or a.get("identifier") or ""
+                aliases.append({"authority": str(auth), "identifier": str(ident)})
+                pairs.append({"name": f"Alias ({auth})", "value": str(ident)})
+            elif isinstance(a, str):
+                aliases.append({"authority": "", "identifier": str(a)})
+                pairs.append({"name": "Alias", "value": str(a)})
+    md["aliases"] = aliases
+
     md["pairs"] = pairs
+
+    return md

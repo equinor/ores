@@ -1,0 +1,482 @@
+#!/usr/bin/env python3
+"""Generate RESQML 2.0.1 EPC/H5 from the Drogon OSDU records.
+
+Creates:
+  resqml/drogon_tables.epc   – two DataFrames (Grid2dRepresentation + StringTableLookup)
+  resqml/drogon_tables.h5    – backing HDF5 data
+  resqml/drogon_activity.epc – ActivityTemplate + Activity instance
+  resqml/drogon_activity.h5  – (empty, needed by resqpy)
+
+Each OSDU ColumnBasedTable → resqpy DataFrame, stored as a Grid2dRepresentation
+with StringTableLookup objects providing column names and UoMs.  This is the
+established resqpy convention for tabular data in RESQML 2.0.1.
+
+The Activity links:
+  Input  → Grid2dRepresentation (input parameters table)
+  Process → "RMS Reservoir Model Workflow" (dummy string parameter)
+  Output → Grid2dRepresentation (RAW volumes table)
+"""
+
+from __future__ import annotations
+
+import json
+import pathlib
+import uuid as _uuid
+
+import numpy as np
+import pandas as pd
+
+import resqpy.model as rq
+import resqpy.olio.dataframe as rqdf
+import resqpy.olio.uuid as bu
+import resqpy.olio.xml_et as rqet
+from resqpy.olio.xml_namespaces import curly_namespace as ns
+
+HERE = pathlib.Path(__file__).resolve().parent
+RECORDS = HERE / "records"
+OUT = HERE / "resqml"
+
+# ---------------------------------------------------------------------------
+# Deterministic UUIDs  (uuid5 from a fixed namespace – stable across runs)
+# ---------------------------------------------------------------------------
+_NS = _uuid.UUID("a0000000-d509-4e00-8000-000000000000")
+PARAMS_UUID  = _uuid.uuid5(_NS, "drogon-valysar-input-parameters")
+VOLUMES_UUID = _uuid.uuid5(_NS, "drogon-valysar-raw-volumes")
+TMPL_UUID    = _uuid.uuid5(_NS, "drogon-activity-template")
+ACT_UUID     = _uuid.uuid5(_NS, "drogon-activity-instance")
+
+
+# ---------------------------------------------------------------------------
+# helpers
+# ---------------------------------------------------------------------------
+
+def _osdu_uom(osdu_uom_id: str) -> str:
+    """Convert OSDU UoM ID to RESQML-friendly string."""
+    return osdu_uom_id.rsplit(":", 1)[-1] if osdu_uom_id else "Euc"
+
+
+def _load_osdu_table(record_path: pathlib.Path) -> tuple[dict, str]:
+    """Load an OSDU record and return (table_dict, record_name).
+    Works for 'data.Table' (ColumnBasedTable) and 'data.Volumes' (REV).
+    """
+    rec = json.loads(record_path.read_text("utf-8"))
+    data = rec["data"]
+    name = data.get("Name", record_path.stem)
+    table = data.get("Table") or data.get("Volumes")
+    if table is None:
+        raise ValueError(f"No Table/Volumes in {record_path.name}")
+    return table, name
+
+
+def _table_to_dataframe(table: dict) -> tuple[pd.DataFrame, list[str]]:
+    """Convert OSDU ColumnBasedTable dict → (pandas DataFrame, uom_list).
+    Key columns get UoM 'Euc', value columns get their declared UoM.
+    String key columns are encoded as float category codes (resqpy DataFrame
+    stores the original labels in a StringTableLookup automatically).
+    """
+    cv = table["ColumnValues"]
+    key_names = [c["ColumnName"] for c in table["KeyColumns"]]
+    val_cols = table["Columns"]
+    val_names = [c["ColumnName"] for c in val_cols]
+    all_names = key_names + val_names
+
+    # Build DataFrame – keys first, then values
+    df_dict = {}
+    for col_name in all_names:
+        df_dict[col_name] = cv[col_name]
+    df = pd.DataFrame(df_dict)
+
+    # For resqpy DataFrame, all columns must be numeric.
+    # Encode string key columns as category codes.
+    for c in table["KeyColumns"]:
+        if c.get("ValueType") == "string":
+            df[c["ColumnName"]] = df[c["ColumnName"]].astype("category").cat.codes.astype(float)
+        elif c.get("ValueType") == "integer":
+            df[c["ColumnName"]] = df[c["ColumnName"]].astype(float)
+
+    # Ensure all value columns are float
+    for vc in val_names:
+        df[vc] = pd.to_numeric(df[vc], errors="coerce").astype(float)
+
+    # UoM list: Euc for key columns, declared UoM for value columns
+    uom_list = ["Euc"] * len(key_names)
+    for vc in val_cols:
+        uom_list.append(_osdu_uom(vc.get("UnitOfMeasureID", "")))
+
+    return df, uom_list
+
+
+def _patch_epc_uuids(epc_path: pathlib.Path, uuid_map: dict[str, str]):
+    """Post-process an EPC (ZIP) to replace auto-generated UUIDs with fixed ones.
+
+    *uuid_map*: ``{old_uuid_str: new_uuid_str, ...}``
+    Replaces UUIDs in XML filenames, XML content, and .rels files.
+    """
+    import io, zipfile
+
+    buf = io.BytesIO(epc_path.read_bytes())
+    with zipfile.ZipFile(buf, "r") as zin:
+        names = zin.namelist()
+        contents = {n: zin.read(n) for n in names}
+
+    new_contents: dict[str, bytes] = {}
+    for name, data in contents.items():
+        new_name = name
+        for old, new in uuid_map.items():
+            new_name = new_name.replace(old, new)
+        # Replace inside XML / rels content
+        text = data
+        for old, new in uuid_map.items():
+            text = text.replace(old.encode(), new.encode())
+        new_contents[new_name] = text
+
+    with zipfile.ZipFile(epc_path, "w", zipfile.ZIP_DEFLATED) as zout:
+        for name, data in new_contents.items():
+            zout.writestr(name, data)
+
+
+def _patch_h5_uuids(h5_path: pathlib.Path, uuid_map: dict[str, str]):
+    """Rename HDF5 groups whose names contain old UUIDs to use new UUIDs.
+
+    resqpy stores data under ``RESQML/<uuid>/...`` — this renames those groups.
+    """
+    import h5py
+
+    with h5py.File(str(h5_path), "r+") as h5:
+        if "RESQML" not in h5:
+            return
+        resqml_grp = h5["RESQML"]
+        for old_uuid, new_uuid in uuid_map.items():
+            if old_uuid in resqml_grp:
+                resqml_grp.move(old_uuid, new_uuid)
+
+
+def _inject_stl_extra_metadata(model: rq.Model, df_rq: rqdf.DataFrame,
+                               parts_before: set[str]):
+    """Add ExtraMetadata entries to the Grid2dRepresentation XML listing its
+    associated StringTableLookup UUIDs.  This allows the web UI to resolve
+    column names and UoMs without relying on the RDDMS graph API.
+
+    Only considers STL parts that were added AFTER `parts_before` snapshot.
+
+    Adds:
+      stl_columns=<uuid>   (title contains 'column')
+      stl_uoms=<uuid>      (title contains 'unit')
+      stl_decode=<uuid>,.. (all others, comma-separated)
+    """
+    mesh_node = df_rq.mesh.root
+    if mesh_node is None:
+        return
+
+    stl_cols: list[str] = []
+    stl_uoms: list[str] = []
+    stl_decode: list[str] = []
+
+    for part in model.parts():
+        if part in parts_before:
+            continue  # existed before this DataFrame
+        if "StringTableLookup" not in part:
+            continue
+        stl_uuid = str(model.uuid_for_part(part))
+        stl_node = model.root_for_part(part)
+        title = rqet.find_nested_tags_text(stl_node, ["Citation", "Title"]) or ""
+        tl = title.lower()
+        if "column" in tl or "name" in tl:
+            stl_cols.append(stl_uuid)
+        elif "uom" in tl or "unit" in tl:
+            stl_uoms.append(stl_uuid)
+        else:
+            stl_decode.append(stl_uuid)
+
+    def _add_em(node, name: str, value: str):
+        em = rqet.SubElement(node, ns["resqml2"] + "ExtraMetadata")
+        em.set(ns["xsi"] + "type", ns["resqml2"] + "NameValuePair")
+        n = rqet.SubElement(em, ns["resqml2"] + "Name")
+        n.text = name
+        v = rqet.SubElement(em, ns["resqml2"] + "Value")
+        v.text = value
+
+    if stl_cols:
+        _add_em(mesh_node, "stl_columns", ",".join(stl_cols))
+    if stl_uoms:
+        _add_em(mesh_node, "stl_uoms", ",".join(stl_uoms))
+    if stl_decode:
+        _add_em(mesh_node, "stl_decode", ",".join(stl_decode))
+    print(f"    → ExtraMetadata: stl_columns={len(stl_cols)}, stl_uoms={len(stl_uoms)}, stl_decode={len(stl_decode)}")
+
+
+# ---------------------------------------------------------------------------
+# 1. Build the tables EPC
+# ---------------------------------------------------------------------------
+
+def build_tables_epc() -> tuple[pathlib.Path, _uuid.UUID, _uuid.UUID]:
+    """Create drogon_tables.epc with two DataFrames (Grid2dRepresentation).
+    Returns (epc_path, params_uuid, volumes_uuid).
+    """
+    OUT.mkdir(parents=True, exist_ok=True)
+    epc = OUT / "drogon_tables.epc"
+
+    model = rq.new_model(str(epc))
+
+    # --- Input parameters ---
+    parts_before_params = set(model.parts())
+    params_path = sorted(RECORDS.glob("012_*ColumnBasedTable*.json"))[0]
+    params_table, params_name = _load_osdu_table(params_path)
+    params_df, params_uom = _table_to_dataframe(params_table)
+    print(f"  Params: {params_name}  ({len(params_df)} rows × {len(params_df.columns)} cols)")
+
+    params_rq = rqdf.DataFrame(model, df=params_df, uom_list=params_uom, title=params_name)
+    params_rq.write_hdf5_and_create_xml()
+    _inject_stl_extra_metadata(model, params_rq, parts_before_params)
+    auto_params_uuid = str(params_rq.mesh.uuid)
+    print(f"    → Grid2dRepresentation {auto_params_uuid}  (will become {PARAMS_UUID})")
+
+    # --- Output volumes (RAW) ---
+    parts_before_vol = set(model.parts())
+    vol_path = sorted(RECORDS.glob("010_*ReservoirEstimatedVolumes*.json"))[0]
+    vol_table, vol_name = _load_osdu_table(vol_path)
+    vol_df, vol_uom = _table_to_dataframe(vol_table)
+    print(f"  Volumes: {vol_name}  ({len(vol_df)} rows × {len(vol_df.columns)} cols)")
+
+    vol_rq = rqdf.DataFrame(model, df=vol_df, uom_list=vol_uom, title=vol_name)
+    vol_rq.write_hdf5_and_create_xml()
+    _inject_stl_extra_metadata(model, vol_rq, parts_before_vol)
+    auto_vol_uuid = str(vol_rq.mesh.uuid)
+    print(f"    → Grid2dRepresentation {auto_vol_uuid}  (will become {VOLUMES_UUID})")
+
+    model.store_epc()
+    model.h5_release()
+
+    # Post-process: replace auto-generated UUIDs with deterministic ones
+    uuid_map = {
+        auto_params_uuid: str(PARAMS_UUID),
+        auto_vol_uuid:    str(VOLUMES_UUID),
+    }
+    _patch_epc_uuids(epc, uuid_map)
+    _patch_h5_uuids(epc.with_suffix(".h5"), uuid_map)
+    print(f"  → {epc}  (UUIDs patched)")
+    return epc, PARAMS_UUID, VOLUMES_UUID
+
+
+# ---------------------------------------------------------------------------
+# 2. Build the activity EPC  (ActivityTemplate + Activity)
+# ---------------------------------------------------------------------------
+
+def _add_activity_template(model: rq.Model, title: str) -> rqet.Element:
+    """Manually build an obj_ActivityTemplate XML node (RESQML 2.0.1)."""
+
+    at_uuid = bu.uuid_from_string(str(TMPL_UUID))
+    at_node = model.new_obj_node("ActivityTemplate")
+    at_node.set("uuid", str(TMPL_UUID))
+    model.create_citation(root=at_node, title=title, originator="ores-pipeline")
+
+    # Parameter: Input (ColumnBasedTable – the parameters table)
+    _add_param_template(at_node, "InputParameters", "in",
+                        "Input parameter table for the reservoir model workflow",
+                        is_input=True, is_output=False, max_occurs=1,
+                        allowed_kind="dataObject")
+
+    # Parameter: Process (reference to the RMS reservoir model workflow)
+    _add_param_template(at_node, "Process", "in",
+                        "Reservoir modelling workflow (RMS project)",
+                        is_input=True, is_output=False, max_occurs=1,
+                        allowed_kind="dataObject")
+
+    # Parameter: Output (ColumnBasedTable – the volumes table)
+    _add_param_template(at_node, "OutputVolumes", "out",
+                        "Output volume table produced by the workflow",
+                        is_input=False, is_output=True, max_occurs=1,
+                        allowed_kind="dataObject")
+
+    model.add_part("obj_ActivityTemplate", at_uuid, at_node)
+    return at_node
+
+
+def _add_param_template(root, title: str, role: str, description: str, *,
+                        is_input: bool, is_output: bool, max_occurs: int,
+                        allowed_kind: str):
+    """Add a ParameterTemplate child to an ActivityTemplate node."""
+
+    pt = rqet.SubElement(root, ns["resqml2"] + "ParameterTemplate")
+    pt.set(ns["xsi"] + "type", ns["resqml2"] + "ParameterTemplate")
+    pt.text = rqet.null_xml_text
+
+    kw = rqet.SubElement(pt, ns["resqml2"] + "KeyConstraint")
+    kw.set(ns["xsi"] + "type", ns["xsd"] + "string")
+    kw.text = title
+
+    ii = rqet.SubElement(pt, ns["resqml2"] + "IsInput")
+    ii.set(ns["xsi"] + "type", ns["xsd"] + "boolean")
+    ii.text = str(is_input).lower()
+
+    io = rqet.SubElement(pt, ns["resqml2"] + "IsOutput")
+    io.set(ns["xsi"] + "type", ns["xsd"] + "boolean")
+    io.text = str(is_output).lower()
+
+    t_node = rqet.SubElement(pt, ns["resqml2"] + "Title")
+    t_node.set(ns["xsi"] + "type", ns["xsd"] + "string")
+    t_node.text = title
+
+    d_node = rqet.SubElement(pt, ns["resqml2"] + "Description")  # custom extra
+    d_node.set(ns["xsi"] + "type", ns["xsd"] + "string")
+    d_node.text = description
+
+    mo = rqet.SubElement(pt, ns["resqml2"] + "MaxOccurs")
+    mo.set(ns["xsi"] + "type", ns["xsd"] + "long")
+    mo.text = str(max_occurs)
+
+    mino = rqet.SubElement(pt, ns["resqml2"] + "MinOccurs")
+    mino.set(ns["xsi"] + "type", ns["xsd"] + "long")
+    mino.text = "1"
+
+    ak = rqet.SubElement(pt, ns["resqml2"] + "DefaultParameterKind")
+    ak.set(ns["xsi"] + "type", ns["resqml2"] + "ParameterKind")
+    ak.text = allowed_kind
+
+
+def _add_activity(model: rq.Model, template_node, title: str, *,
+                  input_params_uuid, process_title: str, output_vol_uuid) -> rqet.Element:
+    """Manually build an obj_Activity XML node (RESQML 2.0.1)."""
+
+    act_uuid = bu.uuid_from_string(str(ACT_UUID))
+    act_node = model.new_obj_node("Activity")
+    act_node.set("uuid", str(ACT_UUID))
+    model.create_citation(root=act_node, title=title, originator="ores-pipeline")
+
+    # Link to template
+    tmpl_uuid = template_node.attrib["uuid"]
+    model.create_ref_node("ActivityDescriptor", rqet.find_nested_tags_text(template_node, ["Citation", "Title"]),
+                          tmpl_uuid, content_type="obj_ActivityTemplate", root=act_node)
+
+    # --- Parameter: InputParameters (DataObjectReference to params table) ---
+    _add_activity_param_ref(act_node, "InputParameters",
+                            ref_title="Drogon Valysar Input Parameters",
+                            ref_uuid=input_params_uuid,
+                            ref_content_type="obj_Grid2dRepresentation")
+
+    # --- Parameter: Process (dummy reference to an RMS project) ---
+    _add_activity_param_string(act_node, "Process", process_title)
+
+    # --- Parameter: OutputVolumes (DataObjectReference to volumes table) ---
+    _add_activity_param_ref(act_node, "OutputVolumes",
+                            ref_title="Drogon Valysar RAW Volumes",
+                            ref_uuid=output_vol_uuid,
+                            ref_content_type="obj_Grid2dRepresentation")
+
+    model.add_part("obj_Activity", act_uuid, act_node)
+
+    # relationship: Activity → Template
+    model.create_reciprocal_relationship(act_node, "destinationObject",
+                                         template_node, "sourceObject")
+    return act_node
+
+
+def _add_activity_param_ref(root, key: str, *, ref_title: str, ref_uuid, ref_content_type: str):
+    """Add a Parameter child with a DataObject reference."""
+    param = rqet.SubElement(root, ns["resqml2"] + "Parameter")
+    param.set(ns["xsi"] + "type", ns["resqml2"] + "DataObjectParameter")
+    param.text = rqet.null_xml_text
+
+    kw = rqet.SubElement(param, ns["resqml2"] + "KeyConstraint")
+    kw.set(ns["xsi"] + "type", ns["xsd"] + "string")
+    kw.text = key
+
+    ti = rqet.SubElement(param, ns["resqml2"] + "Title")
+    ti.set(ns["xsi"] + "type", ns["xsd"] + "string")
+    ti.text = key
+
+    # DataObject sub-element (DataObjectReference)
+    dor = rqet.SubElement(param, ns["resqml2"] + "DataObject")
+    dor.set(ns["xsi"] + "type", ns["eml"] + "DataObjectReference")
+    dor.text = rqet.null_xml_text
+
+    ct = rqet.SubElement(dor, ns["eml"] + "ContentType")
+    ct.set(ns["xsi"] + "type", ns["xsd"] + "string")
+    ct.text = f"application/x-resqml+xml;version=2.0;type={ref_content_type}"
+
+    tt = rqet.SubElement(dor, ns["eml"] + "Title")
+    tt.set(ns["xsi"] + "type", ns["eml"] + "DescriptionString")
+    tt.text = ref_title
+
+    uu = rqet.SubElement(dor, ns["eml"] + "UUID")
+    uu.set(ns["xsi"] + "type", ns["eml"] + "UuidString")
+    uu.text = str(ref_uuid)
+
+
+def _add_activity_param_string(root, key: str, value: str):
+    """Add a Parameter child with a string value (for the dummy Process reference)."""
+    param = rqet.SubElement(root, ns["resqml2"] + "Parameter")
+    param.set(ns["xsi"] + "type", ns["resqml2"] + "StringParameter")
+    param.text = rqet.null_xml_text
+
+    kw = rqet.SubElement(param, ns["resqml2"] + "KeyConstraint")
+    kw.set(ns["xsi"] + "type", ns["xsd"] + "string")
+    kw.text = key
+
+    ti = rqet.SubElement(param, ns["resqml2"] + "Title")
+    ti.set(ns["xsi"] + "type", ns["xsd"] + "string")
+    ti.text = key
+
+    val = rqet.SubElement(param, ns["resqml2"] + "Value")
+    val.set(ns["xsi"] + "type", ns["xsd"] + "string")
+    val.text = value
+
+
+def build_activity_epc(params_uuid, vol_uuid) -> pathlib.Path:
+    """Create drogon_activity.epc with an ActivityTemplate and Activity."""
+
+    OUT.mkdir(parents=True, exist_ok=True)
+    epc = OUT / "drogon_activity.epc"
+
+    model = rq.new_model(str(epc))
+
+    tmpl = _add_activity_template(
+        model,
+        title="Reservoir Volumetrics Workflow Template"
+    )
+
+    _add_activity(
+        model, tmpl,
+        title="Drogon Valysar — RMS Reservoir Model Run",
+        input_params_uuid=params_uuid,
+        process_title="RMS Reservoir Model Workflow — Drogon Project (dummy reference)",
+        output_vol_uuid=vol_uuid,
+    )
+
+    model.store_epc()
+    model.h5_release()
+    print(f"  → {epc}")
+    return epc
+
+
+# ---------------------------------------------------------------------------
+# main
+# ---------------------------------------------------------------------------
+
+def main():
+    print("\n=== Step 1: RESQML DataFrames (tables) ===")
+    epc, params_uuid, vol_uuid = build_tables_epc()
+
+    print("\n=== Step 2: RESQML Activity ===")
+    build_activity_epc(params_uuid, vol_uuid)
+
+    print("\n=== Summary ===")
+    # Re-open and list parts
+    m = rq.Model(str(epc))
+    parts = m.parts()
+    print(f"  Tables EPC: {len(parts)} parts")
+    for p in sorted(parts):
+        print(f"    {p}")
+
+    act_epc = OUT / "drogon_activity.epc"
+    m2 = rq.Model(str(act_epc))
+    parts2 = m2.parts()
+    print(f"  Activity EPC: {len(parts2)} parts")
+    for p in sorted(parts2):
+        print(f"    {p}")
+
+    print("\nDone.")
+
+
+if __name__ == "__main__":
+    main()
