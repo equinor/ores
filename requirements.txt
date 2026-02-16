@@ -32,3 +32,10 @@ osdu-client
 fesapi
 fetpapi
 xtgeo
+
+# --- Desktop UI / 3D / RESQML ---
+PyQt6
+pyvista
+pyvistaqt
+resqpy
+gstools

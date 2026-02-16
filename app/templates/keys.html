@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 {% block title %}RDDMS — Resources{% endblock %}
 
+{% block head %}
+<style>
+  .meta-table { width: auto; min-width: 400px; }
+  .meta-table th { background: #f3f2f1; font-weight: 600; }
+  .meta-table td:first-child { white-space: nowrap; font-weight: 500; color: #323130; }
+  .meta-table td:last-child { word-break: break-all; }
+  .data-table { font-size: 13px; }
+  .data-table th { background: #e1dfdd; position: sticky; top: 0; z-index: 1; }
+  .data-table .uom-row th { background: #f3f2f1; font-weight: normal; font-style: italic; color: #605e5c; }
+  .data-table td { font-variant-numeric: tabular-nums; }
+  .section { margin-top: 20px; }
+  .section h3 { margin-bottom: 6px; color: #004578; }
+  .badge { display: inline-block; background: #e1dfdd; border-radius: 3px; padding: 1px 6px; font-size: 12px; margin-left: 6px; }
+  .tag { display: inline-block; background: #deecf9; color: #004578; border-radius: 3px; padding: 1px 6px; font-size: 12px; margin-right: 4px; }
+  .truncation-notice { background: #fff4ce; padding: 6px 10px; border-left: 3px solid #ffb900; margin-bottom: 8px; font-size: 13px; }
+</style>
+{% endblock %}
+
 {% block content %}
   <h2>Resources</h2>
 
@@ -28,27 +46,84 @@
 
   <hr/>
 
-  <h2>Summary</h2>
-  <div id="summary"></div>
+  <!-- Summary -->
+  <div class="section">
+    <h3>Summary</h3>
+    <div id="summary"></div>
+  </div>
 
-  <h2>Metadata</h2>
-  <pre id="meta" style="max-height: 420px; overflow:auto;"></pre>
+  <!-- Structured Metadata (pairs table) -->
+  <div class="section" id="metadata-section" style="display:none;">
+    <h3>Metadata</h3>
+    <div id="metadata-pairs"></div>
+  </div>
 
-  <h2>Targets / Sources</h2>
-  <div id="edges"></div>
+  <!-- ExtraMetadata -->
+  <div class="section" id="extrameta-section" style="display:none;">
+    <h3>ExtraMetadata (RESQML)</h3>
+    <div id="extrameta"></div>
+  </div>
 
-  <h2>Arrays</h2>
-  <div id="arrays"></div>
+  <!-- Aliases -->
+  <div class="section" id="aliases-section" style="display:none;">
+    <h3>Aliases</h3>
+    <div id="aliases"></div>
+  </div>
+
+  <!-- Targets / Sources -->
+  <div class="section">
+    <h3>Targets / Sources</h3>
+    <div id="edges"><p class="muted">Click "Load details" to fetch graph.</p></div>
+  </div>
+
+  <!-- Arrays -->
+  <div class="section">
+    <h3>Arrays</h3>
+    <div id="arrays"></div>
+  </div>
+
+  <!-- Table View (for Grid2dRepresentation) -->
+  <div class="section" id="table-section" style="display:none;">
+    <h3>Table View <span class="badge" id="table-badge"></span></h3>
+    <div id="table-controls" class="row" style="margin-bottom: 8px;">
+      <label></label>
+      <span>
+        <span class="btn" id="load-table">Reconstruct table</span>
+        <span class="muted" id="table-status"></span>
+      </span>
+    </div>
+    <div id="table-view" style="overflow:auto; max-height:600px;"></div>
+  </div>
+
+  <!-- Raw JSON (collapsed) -->
+  <div class="section">
+    <details>
+      <summary><b>Raw JSON</b></summary>
+      <pre id="meta" style="max-height: 500px; overflow:auto;"></pre>
+    </details>
+  </div>
 
   <script>
     // --- Server-side prefill (fallback if JSON fetch fails/returns empty)
-    // The /keys route injects this via: {"prefill_ds": [...]}
     window.PREFILL_DS = {{ prefill_ds | tojson | safe }};
 
     const $ = (id) => document.getElementById(id);
     const dsSel = $('ds'), typSel = $('typ'), objSel = $('obj');
-    const msg = $('msg'), summary = $('summary'), meta = $('meta'),
-          edges = $('edges'), arrays = $('arrays');
+    const msg = $('msg'), summaryEl = $('summary'), metaEl = $('meta'),
+          edgesEl = $('edges'), arraysEl = $('arrays'),
+          metadataSection = $('metadata-section'), metadataPairs = $('metadata-pairs'),
+          extrametaSection = $('extrameta-section'), extrametaEl = $('extrameta'),
+          aliasesSection = $('aliases-section'), aliasesEl = $('aliases'),
+          tableSection = $('table-section'), tableControls = $('table-controls'),
+          tableView = $('table-view'), tableStatus = $('table-status'),
+          tableBadge = $('table-badge');
+
+    // Escape HTML to prevent XSS
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s || '';
+      return d.innerHTML;
+    }
 
     function setMsg(text) {
       msg.textContent = text || '';
@@ -56,10 +131,19 @@
     }
 
     function clearDetails() {
-      summary.innerHTML = '';
-      meta.textContent = '';
-      edges.innerHTML = '';
-      arrays.innerHTML = '';
+      summaryEl.innerHTML = '';
+      metaEl.textContent = '';
+      edgesEl.innerHTML = '';
+      arraysEl.innerHTML = '';
+      metadataSection.style.display = 'none';
+      metadataPairs.innerHTML = '';
+      extrametaSection.style.display = 'none';
+      extrametaEl.innerHTML = '';
+      aliasesSection.style.display = 'none';
+      aliasesEl.innerHTML = '';
+      tableSection.style.display = 'none';
+      tableView.innerHTML = '';
+      tableStatus.textContent = '';
     }
 
     function populateDataspaces(items) {
@@ -72,6 +156,20 @@
       });
     }
 
+    // Render key-value pairs as a table
+    function renderPairsTable(pairs) {
+      if (!pairs || !pairs.length) return '<p class="muted">No metadata.</p>';
+      return `<table class="meta-table"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>${
+        pairs.map(p => `<tr><td>${esc(p.name)}</td><td><code>${esc(String(p.value))}</code></td></tr>`).join('')
+      }</tbody></table>`;
+    }
+
+    // Detect if the current type supports table reconstruction
+    function isTableType(typ) {
+      const t = (typ || '').toLowerCase();
+      return t.includes('grid2drepresentation') || t.includes('grid2d');
+    }
+
     async function loadDataspaces() {
       try {
         const r = await fetch('/keys/dataspaces.json', { credentials: 'same-origin' });
@@ -82,7 +180,6 @@
           setMsg('');
           return true;
         }
-        // Fallback to prefill if empty
         if (Array.isArray(window.PREFILL_DS) && window.PREFILL_DS.length > 0) {
           populateDataspaces(window.PREFILL_DS);
           setMsg('');
@@ -91,7 +188,6 @@
         setMsg('No dataspaces found.');
         return false;
       } catch (e) {
-        // Fallback to prefill on any error
         if (Array.isArray(window.PREFILL_DS) && window.PREFILL_DS.length > 0) {
           populateDataspaces(window.PREFILL_DS);
           setMsg('');
@@ -155,52 +251,182 @@
       const ds = dsSel.value, typ = typSel.value, uuid = objSel.value;
       if (!ds || !typ || !uuid) { setMsg('Pick dataspace, type, and object.'); return; }
       setMsg('Loading object details…');
+      clearDetails();
       try {
-        const url = `/keys/object.json?ds=${encodeURIComponent(ds)}&typ=${encodeURIComponent(typ)}&uuid=${encodeURIComponent(uuid)}`;
-        const r = await fetch(url, { credentials: 'same-origin' });
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        const js = await r.json();
+        // Fetch object details and graph in parallel
+        const qp = `ds=${encodeURIComponent(ds)}&typ=${encodeURIComponent(typ)}&uuid=${encodeURIComponent(uuid)}`;
+        const [objRes, graphRes] = await Promise.all([
+          fetch(`/keys/object.json?${qp}`, { credentials: 'same-origin' }),
+          fetch(`/keys/object/graph.json?${qp}`, { credentials: 'same-origin' }).catch(() => null),
+        ]);
+        if (!objRes.ok) throw new Error('HTTP ' + objRes.status);
+        const js = await objRes.json();
 
-        const uri = (objSel.selectedOptions[0] && objSel.selectedOptions[0].getAttribute('data-uri')) ||
-                    (js.obj && js.obj.uri) || '';
-        const ct  = (js.obj && (js.obj.$type || js.obj.contentType)) || '';
+        // --- Primary info ---
+        const p = js.primary || {};
+        const uri = p.uri || (objSel.selectedOptions[0] && objSel.selectedOptions[0].getAttribute('data-uri')) || '';
+        const ct  = p.contentType || '';
+        const title = p.title || uuid;
 
-        summary.innerHTML =
-          `<div><b>Dataspace:</b> <code>${ds}</code></div>` +
-          `<div><b>Type:</b> <code>${typ}</code></div>` +
-          `<div><b>UUID:</b> <code>${uuid}</code></div>` +
-          `<div><b>URI/SRN:</b> <code>${uri}</code></div>` +
-          `<div><b>ContentType:</b> <code>${ct}</code></div>`;
+        summaryEl.innerHTML =
+          `<div><b>Title:</b> ${esc(title)}</div>` +
+          `<div><b>Dataspace:</b> <code>${esc(ds)}</code></div>` +
+          `<div><b>Type:</b> <code>${esc(typ)}</code></div>` +
+          `<div><b>UUID:</b> <code>${esc(uuid)}</code></div>` +
+          `<div><b>URI:</b> <code>${esc(uri)}</code></div>` +
+          `<div><b>ContentType:</b> <code>${esc(ct)}</code></div>`;
 
-        meta.textContent = JSON.stringify(js.obj, null, 2);
+        // --- Structured Metadata (pairs) ---
+        const md = js.metadata || {};
+        const pairs = md.pairs || [];
+        if (pairs.length) {
+          metadataSection.style.display = '';
+          metadataPairs.innerHTML = renderPairsTable(pairs);
+        }
 
-        const tgt = (js.edges && js.edges.targets) || [];
-        const src = (js.edges && js.edges.sources) || [];
-        edges.innerHTML = `
-          <details open>
-            <summary><b>Targets</b> (${tgt.length})</summary>
-            ${tgt.length ? `<ul>${tgt.map(e => `<li><code>${e.contentType || ''}</code> — <code>${e.uuid || ''}</code> — ${(e.title || '')}</li>`).join('')}</ul>` : '<p class="muted">None</p>'}
-          </details>
-          <details>
-            <summary><b>Sources</b> (${src.length})</summary>
-            ${src.length ? `<ul>${src.map(e => `<li><code>${e.contentType || ''}</code> — <code>${e.uuid || ''}</code> — ${(e.title || '')}</li>`).join('')}</ul>` : '<p class="muted">None</p>'}
-          </details>
-        `;
+        // --- ExtraMetadata ---
+        const em = md.extraMetadata || [];
+        if (em.length) {
+          extrametaSection.style.display = '';
+          extrametaEl.innerHTML = `<table class="meta-table"><thead><tr><th>Name</th><th>Value</th></tr></thead><tbody>${
+            em.map(e => `<tr><td>${esc(e.name)}</td><td><code>${esc(e.value)}</code></td></tr>`).join('')
+          }</tbody></table>`;
+        }
 
+        // --- Aliases ---
+        const al = md.aliases || [];
+        if (al.length) {
+          aliasesSection.style.display = '';
+          aliasesEl.innerHTML = `<table class="meta-table"><thead><tr><th>Authority</th><th>Identifier</th></tr></thead><tbody>${
+            al.map(a => `<tr><td>${esc(a.authority)}</td><td><code>${esc(a.identifier)}</code></td></tr>`).join('')
+          }</tbody></table>`;
+        }
+
+        // --- Graph (Targets / Sources) ---
+        if (graphRes && graphRes.ok) {
+          try {
+            const g = await graphRes.json();
+            const tgt = (g.targets || []).map(e => typeof e === 'object' ? e : {});
+            const src = (g.sources || []).map(e => typeof e === 'object' ? e : {});
+            const crs = g.crs;
+            edgesEl.innerHTML = `
+              <details open>
+                <summary><b>Targets</b> (${tgt.length})</summary>
+                ${tgt.length ? `<ul>${tgt.map(e => `<li><code>${esc(e.contentType || e.$type || '')}</code> — <code>${esc(e.uuid || e.UUID || '')}</code> — ${esc(e.title || (e.Citation && e.Citation.Title) || '')}</li>`).join('')}</ul>` : '<p class="muted">None</p>'}
+              </details>
+              <details>
+                <summary><b>Sources</b> (${src.length})</summary>
+                ${src.length ? `<ul>${src.map(e => `<li><code>${esc(e.contentType || e.$type || '')}</code> — <code>${esc(e.uuid || e.UUID || '')}</code> — ${esc(e.title || (e.Citation && e.Citation.Title) || '')}</li>`).join('')}</ul>` : '<p class="muted">None</p>'}
+              </details>
+              ${crs ? `<details><summary><b>CRS</b></summary><pre>${esc(JSON.stringify(crs, null, 2))}</pre></details>` : ''}
+            `;
+          } catch (ge) {
+            edgesEl.innerHTML = '<p class="muted">Failed to load graph.</p>';
+            console.warn('Graph error:', ge);
+          }
+        } else {
+          edgesEl.innerHTML = '<p class="muted">Graph not available.</p>';
+        }
+
+        // --- Arrays ---
         const arr = js.arrays || [];
-        arrays.innerHTML = arr.length
+        arraysEl.innerHTML = arr.length
           ? `<ul>${
               arr.map(a => {
                 const p = a.path || a.pathInResource || (a.uid && a.uid.pathInResource) || '';
-                const link = `/d/${encodeURIComponent(ds)}/t/${encodeURIComponent(typ)}/${encodeURIComponent(uuid)}/arrays/read?path=${encodeURIComponent(p)}`;
-                return `<li><code>${p}</code> — ${link}Read & stats</span></li>`;
+                return `<li><code>${esc(p)}</code></li>`;
               }).join('')
             }</ul>`
           : '<p class="muted">No arrays.</p>';
 
+        // --- Table section (show button for Grid2dRepresentation) ---
+        if (isTableType(typ) && arr.length > 0) {
+          tableSection.style.display = '';
+          tableBadge.textContent = 'Grid2dRepresentation';
+          tableStatus.textContent = '';
+          tableView.innerHTML = '<p class="muted">Click "Reconstruct table" to decode the RESQML grid as a data table.</p>';
+        }
+
+        // --- Raw JSON ---
+        metaEl.textContent = JSON.stringify(js.content || {}, null, 2);
+
         setMsg('');
       } catch (e) {
-        setMsg('Failed to load object.');
+        setMsg('Failed to load object: ' + e.message);
+        console.error(e);
+      }
+    }
+
+    async function loadTable() {
+      const ds = dsSel.value, typ = typSel.value, uuid = objSel.value;
+      if (!ds || !typ || !uuid) return;
+      tableStatus.textContent = 'Reconstructing…';
+      tableView.innerHTML = '';
+      try {
+        const url = `/keys/object/table.json?ds=${encodeURIComponent(ds)}&typ=${encodeURIComponent(typ)}&uuid=${encodeURIComponent(uuid)}`;
+        const r = await fetch(url, { credentials: 'same-origin' });
+        if (!r.ok) {
+          const err = await r.text();
+          throw new Error(`HTTP ${r.status}: ${err}`);
+        }
+        const js = await r.json();
+
+        const cols = js.columns || [];
+        const uoms = js.uoms || [];
+        const rows = js.rows || [];
+        const nRows = js.n_rows || rows.length;
+        const nCols = js.n_cols || cols.length;
+        const truncated = js.truncated || false;
+        const maxRows = js.max_rows || 0;
+        const lookups = js.string_lookups || {};
+
+        // Truncation notice
+        let notice = '';
+        if (truncated) {
+          notice = `<div class="truncation-notice">Showing first ${rows.length} of ${nRows} rows (max ${maxRows}). Full dataset has ${nRows} rows × ${nCols} columns.</div>`;
+        }
+
+        // Build header row
+        const hasUoms = uoms.some(u => u && u !== '');
+        let thead = '<tr>' + cols.map(c => `<th>${esc(String(c))}</th>`).join('') + '</tr>';
+        if (hasUoms) {
+          thead += '<tr class="uom-row">' + uoms.map(u => `<th>${esc(String(u || ''))}</th>`).join('') + '</tr>';
+        }
+
+        // Build data rows
+        const tbody = rows.map(row => {
+          if (!Array.isArray(row)) return '';
+          return '<tr>' + row.map(cell => {
+            const v = cell === null || cell === undefined ? '' : String(cell);
+            return `<td>${esc(v)}</td>`;
+          }).join('') + '</tr>';
+        }).join('');
+
+        // String lookups info
+        let lookupInfo = '';
+        const lookupKeys = Object.keys(lookups);
+        if (lookupKeys.length) {
+          lookupInfo = `<details style="margin-top:8px;"><summary><b>String Lookups</b> (${lookupKeys.length})</summary><ul>${
+            lookupKeys.map(k => {
+              const lu = lookups[k];
+              const entries = Object.entries(lu || {});
+              const preview = entries.slice(0, 8).map(([i,v]) => `${i}→${v}`).join(', ');
+              const more = entries.length > 8 ? ` … +${entries.length - 8}` : '';
+              return `<li><b>${esc(k)}</b> (${entries.length} entries): ${esc(preview + more)}</li>`;
+            }).join('')
+          }</ul></details>`;
+        }
+
+        tableView.innerHTML =
+          notice +
+          `<p class="muted">${nRows} rows × ${nCols} columns</p>` +
+          `<table class="data-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>` +
+          lookupInfo;
+
+        tableStatus.textContent = truncated ? `Showing ${rows.length}/${nRows} rows` : `${nRows} rows`;
+      } catch (e) {
+        tableStatus.textContent = 'Failed';
+        tableView.innerHTML = `<p style="color:red;">${esc(e.message)}</p>`;
         console.error(e);
       }
     }
@@ -209,6 +435,7 @@
     dsSel.addEventListener('change', loadTypes);
     typSel.addEventListener('change', loadObjects);
     $('load-details').addEventListener('click', loadDetails);
+    $('load-table').addEventListener('click', loadTable);
 
     // Delegate navigation for span[data-href]
     document.addEventListener('click', (ev) => {
@@ -224,21 +451,16 @@
       const params = new URLSearchParams(window.location.search);
       const dsParam = params.get('ds');
 
-      // Prefer server-side prefill first to show something immediately.
       const hasPrefill = Array.isArray(window.PREFILL_DS) && window.PREFILL_DS.length > 0;
       if (hasPrefill) {
         populateDataspaces(window.PREFILL_DS);
-
-        // If a ds= param is provided, select it if present
         if (dsParam) {
           [...dsSel.options].forEach(opt => { if (opt.value === dsParam) dsSel.value = dsParam; });
         }
-
         setMsg('');
         await loadTypes();
         await loadObjects();
 
-        // Also try to refresh dataspaces from JSON quietly (optional)
         loadDataspaces().then(() => {
           if (dsParam) {
             [...dsSel.options].forEach(opt => { if (opt.value === dsParam) dsSel.value = dsParam; });
@@ -246,7 +468,6 @@
           }
         });
       } else {
-        // No prefill — fetch from server
         const ok = await loadDataspaces();
         if (ok && dsParam) {
           [...dsSel.options].forEach(opt => { if (opt.value === dsParam) dsSel.value = dsParam; });

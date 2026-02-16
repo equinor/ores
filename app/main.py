@@ -7,6 +7,9 @@ import logging
 import json
 from typing import List, Dict, Any, Optional, Tuple, Set
 
+from dotenv import load_dotenv
+load_dotenv()  # must run before any module reads os.getenv at import time
+
 import httpx
 from httpx import HTTPStatusError
 from fastapi import FastAPI, Request, Form, HTTPException, Query, Body
@@ -242,7 +245,7 @@ async def search_page(request: Request):
             "request": request,
             "kind": "osdu:wks:work-product-component--ReservoirEstimatedVolumes:1.1.0",
             "q": "*",
-            "limit": 50,
+            "limit": 10,
             "returnedFields": "id,kind,version",
         },
     )
@@ -640,13 +643,18 @@ async def keys_object_json(
         arrays = []
 
     # Generic metadata from schemahandler
-    metadata = extract_metadata_generic(
-        obj,
-        ds=ds, typ=typ_s, uuid=uuid_s,
-        arrays=arrays,
-        max_string_len=300,
-        max_preview_items=5,
-    )
+    metadata = None
+    try:
+        metadata = extract_metadata_generic(
+            obj,
+            ds=ds, typ=typ_s, uuid=uuid_s,
+            arrays=arrays,
+            max_string_len=300,
+            max_preview_items=5,
+        )
+    except Exception as e:
+        log.exception("keys_object_json: extract_metadata_generic FAILED: %s", e)
+        metadata = {"error": str(e), "pairs": []}
     return JSONResponse({
         "primary": primary,
         "content": obj,
@@ -1014,6 +1022,324 @@ def _extract_refs_any(x: Any) -> List[Dict[str, Any]]:
     except Exception:
         pass
     return []
+
+# ── Table reconstruction for Grid2dRepresentation (resqpy DataFrame) ──────────
+
+MAX_TABLE_ROWS = 1000  # safety cutoff for huge tables
+
+@app.get("/keys/object/table.json")
+async def keys_object_table(
+    request: Request,
+    ds: str = Query(..., description="Dataspace path"),
+    typ: str = Query(..., description="RESQML/EML type"),
+    uuid: str = Query(..., description="UUID of Grid2dRepresentation"),
+    max_rows: int = Query(MAX_TABLE_ROWS, description="Row cutoff"),
+):
+    """Reconstruct a tabular view from a Grid2dRepresentation (resqpy DataFrame).
+
+    Returns:
+    {
+      "columns": ["col1","col2",...],
+      "uoms":    ["Euc","m3",...],
+      "rows":    [[val,val,...], ...],
+      "n_rows": int, "n_cols": int,
+      "truncated": bool, "max_rows": int,
+      "string_lookups": {"col_name": {0:"A",1:"B",...}, ...}
+    }
+    """
+    at = _access_token(request)
+    enc = urllib.parse.quote(ds, safe="")
+    typ_s = _sanitize_type(typ)
+    uuid_s = _sanitize_uuid(uuid)
+
+    # 1. Get the Grid2d object to extract shape
+    obj_raw = await osdu.get_resource(at, enc, typ_s, uuid_s)
+    obj = _normalize_resource_obj(obj_raw, uuid_s)
+
+    ctype = obj.get("$type") or obj.get("contentType") or ""
+    if "Grid2dRepresentation" not in ctype and "Grid2dRepresentation" not in typ_s:
+        return JSONResponse({"error": "Not a Grid2dRepresentation"}, status_code=400)
+
+    grid_patch = obj.get("Grid2dPatch") or {}
+    n_cols = int(grid_patch.get("FastestAxisCount", 0))
+    n_rows = int(grid_patch.get("SlowestAxisCount", 0))
+
+    # 2. Read the zvalues array — first discover the actual path via list_arrays
+    zvalues_data = {}
+    zvalues_path = "zvalues"  # fallback
+    try:
+        arr_list = await osdu.list_arrays(at, enc, typ_s, uuid_s)
+        for arr_item in (arr_list or []):
+            uid = arr_item.get("uid") or {}
+            pir = uid.get("pathInResource") or ""
+            if pir.endswith("/zvalues") or pir == "zvalues":
+                zvalues_path = pir
+                break
+    except Exception as e:
+        log.warning("table: list_arrays failed: %s", e)
+
+    try:
+        zvalues_data = await osdu.read_array(
+            at, enc, typ_s, uuid_s,
+            path_in_resource=urllib.parse.quote(zvalues_path, safe=""),
+        )
+    except Exception as e:
+        log.warning("table: read_array(%s) failed: %s", zvalues_path, e)
+        return JSONResponse({"error": f"Failed to read zvalues at path '{zvalues_path}': {e}"}, status_code=502)
+
+    # Parse the flat array into rows
+    flat = zvalues_data.get("data") or zvalues_data.get("values") or zvalues_data
+    if isinstance(flat, dict) and "data" in flat:
+        flat = flat["data"]
+    if isinstance(flat, dict) and "values" in flat:
+        flat = flat["values"]
+    if not isinstance(flat, list):
+        return JSONResponse({"error": "Unexpected zvalues format", "raw_keys": list(zvalues_data.keys()) if isinstance(zvalues_data, dict) else []}, status_code=502)
+
+    # Reshape flat array into 2D: (n_rows, n_cols)
+    truncated = False
+    if n_cols > 0 and len(flat) >= n_cols:
+        actual_rows = len(flat) // n_cols
+        if actual_rows > max_rows:
+            actual_rows = max_rows
+            truncated = True
+        rows = []
+        for i in range(actual_rows):
+            rows.append(flat[i * n_cols:(i + 1) * n_cols])
+    else:
+        rows = [flat]
+
+    # 3. Resolve StringTableLookups for column names, UoMs, and string decode maps.
+    #    Strategy: (a) ExtraMetadata stl_columns/stl_uoms UUIDs (future-proof),
+    #              (b) RDDMS graph targets (works if RDDMS exposes .rels),
+    #              (c) Fallback — scan all STLs in dataspace, match by entry-count.
+    columns = [f"col_{i}" for i in range(n_cols)]
+    uoms = ["" for _ in range(n_cols)]
+    string_lookups: dict[str, dict] = {}
+
+    stl_type = "resqml20.obj_StringTableLookup"
+
+    async def _fetch_stl(stl_uuid: str) -> dict | None:
+        try:
+            raw = await osdu.get_resource(at, enc, stl_type, str(stl_uuid))
+            return _normalize_resource_obj(raw, str(stl_uuid))
+        except Exception as e:
+            log.warning("table: get STL %s failed: %s", stl_uuid, e)
+            return None
+
+    def _parse_stl_entries(stl_obj: dict) -> dict[int, str]:
+        entries = stl_obj.get("Value") or []
+        if not isinstance(entries, list):
+            return {}
+        lookup: dict[int, str] = {}
+        for entry in entries:
+            if isinstance(entry, dict):
+                idx = entry.get("Key")
+                val = entry.get("Value") or entry.get("value") or entry.get("StringValue")
+                if idx is not None and val is not None:
+                    lookup[int(idx)] = str(val)
+        return lookup
+
+    def _classify_stl(stl_obj: dict, lookup: dict[int, str]) -> str:
+        """Classify an STL as 'columns', 'uoms', or 'decode'."""
+        title = ((stl_obj.get("Citation") or {}).get("Title") or "").lower()
+        if "column" in title or "name" in title:
+            return "columns"
+        if "uom" in title or "unit" in title:
+            return "uoms"
+        return "decode"
+
+    def _apply_stl(stl_obj: dict, lookup: dict[int, str], role: str) -> None:
+        if role == "columns":
+            for i in range(min(len(lookup), n_cols)):
+                if i in lookup:
+                    columns[i] = lookup[i]
+        elif role == "uoms":
+            for i in range(min(len(lookup), n_cols)):
+                if i in lookup:
+                    uoms[i] = lookup[i]
+        else:
+            label = (stl_obj.get("Citation") or {}).get("Title") or "unknown"
+            string_lookups[label] = {str(k): v for k, v in lookup.items()}
+
+    stl_resolved = False
+
+    # --- Strategy (a): ExtraMetadata with explicit STL UUIDs -----------
+    extra = obj.get("ExtraMetadata") or []
+    em_map: dict[str, str] = {}
+    for em in extra:
+        if isinstance(em, dict):
+            k = em.get("Name") or em.get("name") or ""
+            v = em.get("Value") or em.get("value") or ""
+            if k and v:
+                em_map[k] = v
+
+    em_stl_uuids: list[str] = []
+    for key in ("stl_columns", "stl_uoms", "stl_decode"):
+        if key in em_map:
+            for u in em_map[key].split(","):
+                u = u.strip()
+                if u:
+                    em_stl_uuids.append(u)
+
+    if em_stl_uuids:
+        log.info("table: using ExtraMetadata STL UUIDs: %s", em_stl_uuids)
+        for stl_uuid in em_stl_uuids:
+            stl_obj = await _fetch_stl(stl_uuid)
+            if not stl_obj:
+                continue
+            lookup = _parse_stl_entries(stl_obj)
+            role = _classify_stl(stl_obj, lookup)
+            _apply_stl(stl_obj, lookup, role)
+        stl_resolved = columns[0] != "col_0"
+
+    # --- Strategy (b): RDDMS graph targets ----------------------------
+    if not stl_resolved:
+        try:
+            targets = await osdu.list_targets(at, enc, typ_s, uuid_s)
+        except Exception:
+            targets = []
+
+        stl_targets = []
+        for t in (targets or []):
+            if not isinstance(t, dict):
+                continue
+            # Check for STL type in $type, contentType, or URI
+            t_type = t.get("$type") or t.get("contentType") or t.get("type") or ""
+            t_uri = t.get("uri") or ""
+            if stl_type in t_type or stl_type in t_uri:
+                uid = t.get("Uuid") or t.get("UUID") or t.get("uuid") or ""
+                if not uid and t_uri:
+                    # Extract UUID from URI like eml:///dataspace('...')/resqml20.obj_StringTableLookup('uuid')
+                    import re
+                    m = re.search(r"StringTableLookup\('?([0-9a-f-]+)'?\)", t_uri)
+                    if m:
+                        uid = m.group(1)
+                if uid:
+                    stl_targets.append(uid)
+
+        for stl_uuid in stl_targets:
+            stl_obj = await _fetch_stl(stl_uuid)
+            if not stl_obj:
+                continue
+            lookup = _parse_stl_entries(stl_obj)
+            role = _classify_stl(stl_obj, lookup)
+            _apply_stl(stl_obj, lookup, role)
+        if stl_targets:
+            stl_resolved = columns[0] != "col_0"
+
+    # --- Strategy (c): Scan all STLs in the dataspace, match by count --
+    if not stl_resolved and n_cols > 0:
+        log.info("table: falling back to STL scan for n_cols=%d", n_cols)
+        try:
+            all_stls = await osdu.list_resources(at, enc, stl_type)
+        except Exception:
+            all_stls = []
+
+        # Fetch the Grid2d's storeCreated for proximity tie-breaking
+        grid_created = obj_raw.get("storeCreated") if isinstance(obj_raw, dict) else ""
+
+        # Fetch each STL and classify
+        col_candidates: list[tuple[dict, dict[int, str], str]] = []  # (obj, lookup, ts)
+        uom_candidates: list[tuple[dict, dict[int, str], str]] = []
+        decode_candidates: list[tuple[dict, dict[int, str], str]] = []
+
+        for stl_node in (all_stls or []):
+            if not isinstance(stl_node, dict):
+                continue
+            stl_uuid = stl_node.get("Uuid") or stl_node.get("UUID") or stl_node.get("uuid") or ""
+            if not stl_uuid:
+                # Try extracting UUID from uri
+                uri = stl_node.get("uri") or ""
+                import re
+                m = re.search(r"\(([0-9a-f-]+)\)", uri)
+                if m:
+                    stl_uuid = m.group(1)
+            if not stl_uuid:
+                continue
+
+            stl_obj = await _fetch_stl(stl_uuid)
+            if not stl_obj:
+                continue
+
+            lookup = _parse_stl_entries(stl_obj)
+            if not lookup:
+                continue
+
+            role = _classify_stl(stl_obj, lookup)
+            ts = stl_node.get("storeCreated") or ""
+
+            if role == "columns" and len(lookup) == n_cols:
+                col_candidates.append((stl_obj, lookup, ts))
+            elif role == "uoms" and len(lookup) == n_cols:
+                uom_candidates.append((stl_obj, lookup, ts))
+            elif role == "decode" and len(lookup) < n_cols:
+                decode_candidates.append((stl_obj, lookup, ts))
+
+        # Pick best candidate by timestamp proximity to Grid2d
+        def _pick_closest(candidates: list, grid_ts: str) -> tuple | None:
+            if not candidates:
+                return None
+            if len(candidates) == 1:
+                return candidates[0]
+            if not grid_ts:
+                return candidates[-1]  # latest
+            # Sort by absolute time distance to grid_ts
+            try:
+                from datetime import datetime
+                gt = datetime.fromisoformat(grid_ts.replace("Z", "+00:00"))
+                scored = []
+                for c in candidates:
+                    try:
+                        ct = datetime.fromisoformat(c[2].replace("Z", "+00:00"))
+                        scored.append((abs((ct - gt).total_seconds()), c))
+                    except Exception:
+                        scored.append((9999999, c))
+                scored.sort(key=lambda x: x[0])
+                return scored[0][1]
+            except Exception:
+                return candidates[-1]
+
+        best_cols = _pick_closest(col_candidates, grid_created)
+        if best_cols:
+            _apply_stl(best_cols[0], best_cols[1], "columns")
+
+        best_uoms = _pick_closest(uom_candidates, grid_created)
+        if best_uoms:
+            _apply_stl(best_uoms[0], best_uoms[1], "uoms")
+
+        for dec_obj, dec_lookup, _ in decode_candidates:
+            _apply_stl(dec_obj, dec_lookup, "decode")
+
+    # 4. Decode string-encoded columns: if column values are all integers
+    #    and a StringTableLookup matches, replace codes with strings
+    for col_idx, col_name in enumerate(columns):
+        for stl_label, stl_map in string_lookups.items():
+            # Match by column name appearing in the STL title
+            if col_name.lower() not in stl_label.lower():
+                continue
+            # Decode: replace float codes in rows with string values
+            for row in rows:
+                if col_idx < len(row):
+                    code = row[col_idx]
+                    if isinstance(code, (int, float)):
+                        s_code = str(int(code))
+                        if s_code in stl_map:
+                            row[col_idx] = stl_map[s_code]
+            break
+
+    return JSONResponse({
+        "columns": columns,
+        "uoms": uoms,
+        "rows": rows,
+        "n_rows": n_rows,
+        "n_cols": n_cols,
+        "truncated": truncated,
+        "max_rows": max_rows,
+        "string_lookups": string_lookups,
+    })
+
+# ── Object graph ──────────────────────────────────────────────────────────────
 
 @app.get("/keys/object/graph.json")
 async def keys_object_graph(
