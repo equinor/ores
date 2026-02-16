@@ -72,6 +72,7 @@ Notable demo artifacts (open these files to inspect exact payloads):
 - `demo/json/*.json` — multiple `refcat_*.json` and `reftypes_*.json` reference data used by manifests (roles, risk/probability, severity, etc.).
 - `demo/strat/` — stratigraphy manifests, `stratcolumn_records/` and `stratref_records/` sample records used to build WPC strat manifests.
 - `demo/md/0aReadmeVolumes.md`, `demo/md/0aReadmeUncertainty.md`, `demo/md/BusinessDecision.md` — human-readable notes describing the demo datasets and mapping to OSDU record types.
+- `demo/drogon/DrogonDataModel.md` — Drogon pipeline/data-model guide, including the RESQML 3-step sequential activity chain (`Generate Input Parameters` → `RMS Run` → `Aggregate Statistics`).
 - `demo/py/1genrawmanifest.py`, `demo/py/4ingest.py`, `demo/py/7manifest2records.py` — scripts to generate manifests, convert manifests to records and to POST ingest/workflow calls (examples accept `--env-file .env`).
 
 How to use the demo scripts locally:

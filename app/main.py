@@ -5,6 +5,8 @@ import re
 import urllib.parse
 import logging
 import json
+from pathlib import Path
+from collections import Counter
 from typing import List, Dict, Any, Optional, Tuple, Set
 
 from dotenv import load_dotenv
@@ -138,6 +140,63 @@ def _normalize_volumes(data_block: Dict[str, Any]) -> Dict[str, Any]:
         "ColumnValues": col_values,
     }
 
+
+def _parse_kind_inputs(kind: str, kinds_extra: str) -> List[str]:
+    """
+    Build an ordered, de-duplicated list of kinds from:
+      - primary 'kind' input
+      - optional 'kinds_extra' (comma / semicolon / newline separated)
+    """
+    out: List[str] = []
+    seen: Set[str] = set()
+
+    candidates: List[str] = []
+    if kind:
+        candidates.append(kind)
+
+    if kinds_extra:
+        for token in re.split(r"[\n,;]+", kinds_extra):
+            token = token.strip()
+            if token:
+                candidates.append(token)
+
+    for k in candidates:
+        if k and k not in seen:
+            out.append(k)
+            seen.add(k)
+    return out
+
+
+def _collect_manifest_kinds() -> List[Dict[str, Any]]:
+    """
+    Scan repository manifest JSON files and return discovered OSDU kinds
+    as [{'kind': '<kind>', 'count': <n>}, ...].
+    """
+    repo_root = Path(__file__).resolve().parents[1]
+    counter: Counter[str] = Counter()
+
+    manifest_files = sorted(repo_root.glob("demo/**/manifest*.json"))
+
+    def _walk(node: Any):
+        if isinstance(node, dict):
+            k = node.get("kind")
+            if isinstance(k, str) and k.startswith("osdu:"):
+                counter[k] += 1
+            for v in node.values():
+                _walk(v)
+        elif isinstance(node, list):
+            for v in node:
+                _walk(v)
+
+    for p in manifest_files:
+        try:
+            payload = json.loads(p.read_text(encoding="utf-8"))
+            _walk(payload)
+        except Exception:
+            continue
+
+    return [{"kind": k, "count": counter[k]} for k in sorted(counter.keys())]
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Pages & actions
 # ──────────────────────────────────────────────────────────────────────────────
@@ -239,11 +298,19 @@ async def dataspaces_create(
 @app.get("/search", response_class=HTMLResponse, summary="Search form (OSDU search v2)")
 async def search_page(request: Request):
     # Pre-fill demo values
+    kind_options = _collect_manifest_kinds()
+    default_kind = (
+        kind_options[0]["kind"]
+        if kind_options
+        else "osdu:wks:work-product-component--ReservoirEstimatedVolumes:1.1.0"
+    )
     return templates.TemplateResponse(
         "search.html",
         {
             "request": request,
-            "kind": "osdu:wks:work-product-component--ReservoirEstimatedVolumes:1.1.0",
+            "kind": default_kind,
+            "kinds_extra": "",
+            "kind_options": kind_options,
             "q": "*",
             "limit": 10,
             "returnedFields": "id,kind,version",
@@ -254,6 +321,7 @@ async def search_page(request: Request):
 async def search_run(
     request: Request,
     kind: str = Form("osdu:wks:work-product-component--ReservoirEstimatedVolumes:1.1.0"),
+    kinds_extra: str = Form(""),
     query: str = Form("*"),
     limit: int = Form(5),
 ):
@@ -277,109 +345,138 @@ async def search_run(
     storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
     hdr = osdu.headers(at)
 
-    payload = {
-        "kind": kind,
-        "query": query,
-        "limit": int(limit),
-        "returnedFields": ["id", "kind", "version"],  # minimal; full fetched below
-        "trackTotalCount": True,
-    }
+    search_kinds = _parse_kind_inputs(kind, kinds_extra)
+    if not search_kinds:
+        search_kinds = [kind]
 
     try:
         enriched_results: List[Dict[str, Any]] = []
+        seen_record_ids: Set[str] = set()
+        merged_total_count = 0
         async with httpx.AsyncClient(timeout=60) as client:
-            # 1) Search
-            r = await client.post(search_url, headers=hdr, json=payload)
-            r.raise_for_status()
-            res = r.json()
-            log.info("[SEARCH] Status=%d, hits=%d", r.status_code, len(res.get("results", [])))
+            for current_kind in search_kinds:
+                payload = {
+                    "kind": current_kind,
+                    "query": query,
+                    "limit": int(limit),
+                    "returnedFields": ["id", "kind", "version"],
+                    "trackTotalCount": True,
+                }
 
-            # 2) Enrich each hit
-            for rec in res.get("results", []):
-                rid = rec.get("id")
-                if not rid:
-                    continue
-                try:
-                    # Fetch full storage record
-                    r_full = await client.get(f"{storage_url}/{rid}", headers=hdr)
-                    if r_full.status_code != 200:
-                        log.warning("[SEARCH] Full record fetch failed for %s: %d", rid, r_full.status_code)
+                # 1) Search for one kind
+                r = await client.post(search_url, headers=hdr, json=payload)
+                r.raise_for_status()
+                res = r.json()
+                merged_total_count += int(res.get("totalCount") or len(res.get("results", [])))
+                log.info(
+                    "[SEARCH] kind=%s status=%d hits=%d",
+                    current_kind,
+                    r.status_code,
+                    len(res.get("results", [])),
+                )
+
+                # 2) Enrich each hit (de-duplicate by record id)
+                for rec in res.get("results", []):
+                    if len(enriched_results) >= int(limit):
+                        break
+
+                    rid = rec.get("id")
+                    if not rid or rid in seen_record_ids:
                         continue
-                    full = r_full.json()
+                    seen_record_ids.add(rid)
 
-                    # data{} block
-                    data_block = full.get("data", {}) or {}
-
-                    # Existing: ancestry & volumes normalization
-                    ancestry = data_block.get("ancestry", {}) or {}
-                    ancestry_parents = ancestry.get("parents", []) or []
-                    ancestry_children = ancestry.get("children", []) or []
-                    volumes = _normalize_volumes(data_block)
-
-                    # Generic WPC/master-data links (exclude reference-data)
-                    links = extract_osdu_links(data_block) or []
-
-                    # Hydrate labels for linked records (bounded)
-                    linked_labels: Dict[str, Dict[str, Any]] = {}
                     try:
-                        for l in links[:25]:
-                            lid = l.get("id")
-                            if not lid or lid in linked_labels:
-                                continue
-                            r_link = await client.get(f"{storage_url}/{lid}", headers=hdr)
-                            if r_link.status_code == 200:
-                                rr = r_link.json()
-                                nm = (rr.get("data") or {}).get("Name")
-                                linked_labels[lid] = {
-                                    "name": nm or lid,
-                                    "kind": rr.get("kind"),
-                                    "version": rr.get("version"),
-                                }
-                    except Exception as e:
-                        log.warning("[SEARCH] Linked record name hydration failed: %s", e)
+                        # Fetch full storage record
+                        r_full = await client.get(f"{storage_url}/{rid}", headers=hdr)
+                        if r_full.status_code != 200:
+                            log.warning("[SEARCH] Full record fetch failed for %s: %d", rid, r_full.status_code)
+                            continue
+                        full = r_full.json()
 
-                    # Compact metadata pairs from data{}
-                    try:
-                        md = extract_metadata_generic(
-                            data_block,
-                            ds="",
-                            typ=full.get("kind", "") or "",
-                            uuid=full.get("id", "") or "",
-                            arrays=None,
-                            max_string_len=300,
-                            max_preview_items=5,
-                        )
-                        metadata_pairs = md.get("pairs", []) or []
-                        # Filter synthesized eml:/// URI (search page cleanliness)
-                        metadata_pairs = [
-                            p for p in metadata_pairs
-                            if not (str(p.get("name")).lower() == "uri" and str(p.get("value") or "").startswith("eml:///"))
-                        ]
-                    except Exception as e:
-                        log.warning("[SEARCH] metadata_pairs extraction failed for %s: %s", rid, e)
-                        metadata_pairs = []
+                        # data{} block
+                        data_block = full.get("data", {}) or {}
 
-                    enriched_results.append({
-                        "id": full.get("id"),
-                        "kind": full.get("kind"),
-                        "version": full.get("version"),
-                        "data": data_block,
-                        "ancestry_parents": ancestry_parents,
-                        "ancestry_children": ancestry_children,
-                        "volumes": volumes,
-                        "links": links,
-                        "linked_labels": linked_labels,
-                        "metadata_pairs": metadata_pairs,
-                    })
-                except Exception as e:
-                    log.warning("[SEARCH] Exception enriching %s: %s", rid, e)
+                        # Existing: ancestry & volumes normalization
+                        ancestry = data_block.get("ancestry", {}) or {}
+                        ancestry_parents = ancestry.get("parents", []) or []
+                        ancestry_children = ancestry.get("children", []) or []
+                        volumes = _normalize_volumes(data_block)
+
+                        # Generic WPC/master-data links (exclude reference-data)
+                        links = extract_osdu_links(data_block) or []
+
+                        # Hydrate labels for linked records (bounded)
+                        linked_labels: Dict[str, Dict[str, Any]] = {}
+                        try:
+                            for l in links[:25]:
+                                lid = l.get("id")
+                                if not lid or lid in linked_labels:
+                                    continue
+                                r_link = await client.get(f"{storage_url}/{lid}", headers=hdr)
+                                if r_link.status_code == 200:
+                                    rr = r_link.json()
+                                    nm = (rr.get("data") or {}).get("Name")
+                                    linked_labels[lid] = {
+                                        "name": nm or lid,
+                                        "kind": rr.get("kind"),
+                                        "version": rr.get("version"),
+                                    }
+                        except Exception as e:
+                            log.warning("[SEARCH] Linked record name hydration failed: %s", e)
+
+                        # Compact metadata pairs from data{}
+                        try:
+                            md = extract_metadata_generic(
+                                data_block,
+                                ds="",
+                                typ=full.get("kind", "") or "",
+                                uuid=full.get("id", "") or "",
+                                arrays=None,
+                                max_string_len=300,
+                                max_preview_items=5,
+                            )
+                            metadata_pairs = md.get("pairs", []) or []
+                            metadata_pairs = [
+                                p for p in metadata_pairs
+                                if not (
+                                    str(p.get("name")).lower() == "uri"
+                                    and str(p.get("value") or "").startswith("eml:///")
+                                )
+                            ]
+                        except Exception as e:
+                            log.warning("[SEARCH] metadata_pairs extraction failed for %s: %s", rid, e)
+                            metadata_pairs = []
+
+                        enriched_results.append({
+                            "id": full.get("id"),
+                            "kind": full.get("kind"),
+                            "version": full.get("version"),
+                            "data": data_block,
+                            "ancestry_parents": ancestry_parents,
+                            "ancestry_children": ancestry_children,
+                            "volumes": volumes,
+                            "links": links,
+                            "linked_labels": linked_labels,
+                            "metadata_pairs": metadata_pairs,
+                        })
+                    except Exception as e:
+                        log.warning("[SEARCH] Exception enriching %s: %s", rid, e)
+
+                if len(enriched_results) >= int(limit):
+                    break
 
         return templates.TemplateResponse(
             "search.html",
             {
                 "request": request,
-                "results": {"results": enriched_results, "totalCount": len(enriched_results)},
+                "results": {
+                    "results": enriched_results,
+                    "totalCount": merged_total_count or len(enriched_results),
+                },
                 "kind": kind,
+                "kinds_extra": kinds_extra,
+                "kind_options": _collect_manifest_kinds(),
+                "selected_kinds": search_kinds,
                 "q": query,
                 "limit": limit,
             },
@@ -393,6 +490,11 @@ async def search_run(
                 "request": request,
                 "error": f"Search failed: {r.status_code} {r.reason_phrase}",
                 "error_detail": (r.text[:2000] if r.text else ""),
+                "kind": kind,
+                "kinds_extra": kinds_extra,
+                "kind_options": _collect_manifest_kinds(),
+                "q": query,
+                "limit": limit,
             },
             status_code=r.status_code or 500,
         )
@@ -404,6 +506,11 @@ async def search_run(
                 "request": request,
                 "error": "Unexpected error",
                 "error_detail": "See server logs",
+                "kind": kind,
+                "kinds_extra": kinds_extra,
+                "kind_options": _collect_manifest_kinds(),
+                "q": query,
+                "limit": limit,
             },
             status_code=500,
         )

@@ -1,0 +1,25 @@
+{
+  "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+  "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:AssociatedLiquid:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "AssociatedLiquid",
+    "Code": "AssociatedLiquid",
+    "Description": "Associated liquid (condensate) volume from gas cap"
+  }
+}

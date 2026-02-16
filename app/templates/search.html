@@ -2,15 +2,52 @@
 {% extends "base.html" %}
 {% block title %}Global Search{% endblock %}
 
+{% block head %}
+<style>
+  .search-form { width: 58rem; max-width: 100%; }
+  .kind-row { display: grid; grid-template-columns: 220px 1fr auto; gap: .5rem; align-items: center; }
+  .chips { display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0; }
+  .chip { background: #e1dfdd; border-radius: 999px; padding: .15rem .6rem; font-size: .85rem; }
+  .record-sections { display: grid; gap: .75rem; }
+  .section-card { border: 1px solid #e1dfdd; border-radius: 6px; padding: .7rem; }
+  .section-card h5 { margin: 0 0 .5rem 0; color: #004578; }
+  .mini-grid { display: grid; grid-template-columns: 190px 1fr; gap: .3rem .8rem; }
+  .mini-grid .k { color: #605e5c; }
+  .meta-table td:last-child { word-break: break-word; }
+  .kpi-grid { display:grid; grid-template-columns: repeat(3, minmax(120px, 1fr)); gap:.5rem; }
+  .kpi { border:1px solid #e1dfdd; border-radius:6px; padding:.45rem .55rem; background:#faf9f8; }
+  .kpi .lbl { font-size:.8rem; color:#605e5c; }
+  .kpi .val { font-size:1rem; font-weight:600; }
+  .rel-links { margin-top:.6rem; }
+  .rel-links ul { margin:.3rem 0 0 1rem; }
+</style>
+{% endblock %}
+
 {% block content %}
 
 <h2>Search</h2>
 
-<!-- ✅ Working form -->
-<form method="post" action="/search/run" style="width:48rem">
+<form method="post" action="/search/run" class="search-form">
 
-  <label>kind</label>
-  <input type="text" name="kind" value="{{ kind or '' }}" style="width: 100%;">
+  <label>Kind (primary)</label>
+  <div class="kind-row">
+    <select id="kindPreset" style="min-width: 0;">
+      <option value="">Select kind from repo manifests…</option>
+      {% for opt in kind_options or [] %}
+        <option value="{{ opt.kind }}" {% if opt.kind == kind %}selected{% endif %}>{{ opt.kind }}{% if opt.count %} ({{ opt.count }}){% endif %}</option>
+      {% endfor %}
+    </select>
+    <input type="text" id="kindInput" name="kind" value="{{ kind or '' }}" list="kindCatalog" placeholder="osdu:wks:...">
+    <button type="button" id="useSelectedKind">Use</button>
+  </div>
+  <datalist id="kindCatalog">
+    {% for opt in kind_options or [] %}
+      <option value="{{ opt.kind }}"></option>
+    {% endfor %}
+  </datalist>
+
+  <label>More kinds (optional)</label>
+  <textarea name="kinds_extra" rows="3" style="width:100%;box-sizing:border-box" placeholder="Add more kinds (comma or newline separated)">{{ kinds_extra or '' }}</textarea>
 
   <label>query</label>
   <input type="text" name="query" value="{{ q or '*' }}" style="width: 100%;">
@@ -24,6 +61,20 @@
 
   <button type="submit">Search</button>
 </form>
+
+<script>
+  (function () {
+    const preset = document.getElementById('kindPreset');
+    const input = document.getElementById('kindInput');
+    const btn = document.getElementById('useSelectedKind');
+    function applyPreset() {
+      if (!preset || !input || !preset.value) return;
+      input.value = preset.value;
+    }
+    preset?.addEventListener('change', applyPreset);
+    btn?.addEventListener('click', applyPreset);
+  })();
+</script>
 
 {% if error %}
   <div class="error">
@@ -41,10 +92,17 @@
   {% set total = results.totalCount or (results.results | length) %}
   <h4>Results ({{ total }})</h4>
 
+  {% if selected_kinds and (selected_kinds|length) > 1 %}
+    <div class="chips" title="Kinds included in this run">
+      {% for k in selected_kinds %}
+        <span class="chip">{{ k }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   {% if total == 0 %}
     <p>No records matched your query.</p>
   {% else %}
-    <!-- Summary table (unchanged) -->
     <table>
       <tr>
         <th>Name</th>
@@ -70,23 +128,20 @@
           <td>{{ parentObj or '—' }}</td>
           <td>
             {% if rec.ancestry_parents %}
-              {% for p in rec.ancestry_parents %}– {{ p }} {% endfor %}
+              {% for p in rec.ancestry_parents %}<div>{{ p }}</div>{% endfor %}
             {% else %}—{% endif %}
           </td>
           <td>
             {% if rec.ancestry_children %}
-              {% for ch in rec.ancestry_children %}– {{ ch }} {% endfor %}
+              {% for ch in rec.ancestry_children %}<div>{{ ch }}</div>{% endfor %}
             {% else %}—{% endif %}
           </td>
-          <td><!-- Keep as-is to be surgical; add a link here if desired -->
-            /search/view/{{ rec.id }}View Details</a>
-          </td>
+          <td><a href="/search/view/{{ rec.id }}">View Details</a></td>
         </tr>
       {% endfor %}
     </table>
 
-    <!-- Selection UI -->
-    <h4 style="margin-top:1rem">Select a result to view relationships and tables</h4>
+    <h4 style="margin-top:1rem">Select a result</h4>
     <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem">
       <label for="recSelect">Record:</label>
       <select id="recSelect">
@@ -97,7 +152,6 @@
       </select>
     </div>
 
-    {# --- Label escaping macro for Mermaid --- #}
     {% macro esc_label(s) -%}
       {{ (s or '')
         | replace('\r',' ')
@@ -111,32 +165,6 @@
       }}
     {%- endmacro %}
 
-    {# --- Generic flattening macro for metadata table --- #}
-    {% macro render_pairs(val, path='') -%}
-      {% if val is mapping %}
-        {% for k, v in val.items() %}
-          {{ render_pairs(v, (path and path ~ '.') ~ k) }}
-        {% endfor %}
-      {% elif val is sequence and (val is not string) %}
-        {% for v in val %}
-          {{ render_pairs(v, (path and path ~ '.') ~ loop.index0|string) }}
-        {% endfor %}
-      {% else %}
-        <tr>
-          <td class="meta-name">{{ path }}</td>
-          <td class="meta-value">
-            {% if val is boolean %}{{ val|string }}
-            {% elif val is number %}{{ val }}
-            {% elif val is string %}{{ val }}
-            {% elif val is none %}—{% else %}
-              {{ val|string }}
-            {% endif %}
-          </td>
-        </tr>
-      {% endif %}
-    {%- endmacro %}
-
-    <!-- Per-record blocks: make FIRST visible by default as a safe fallback -->
     {% for rec in results.results or [] %}
       {% set rec_index = loop.index %}
       {% set name = (rec.data or {}).get('Name') %}
@@ -166,21 +194,102 @@
       {% set sample_col = ((key_names|length > 0 and key_names[0]) or (value_names|length > 0 and value_names[0]) or '') %}
       {% set nrows = (sample_col and (vmap.get(sample_col) or [])|length) or 0 %}
       {% set has_volumes = (vmap and headers|length > 0 and nrows > 0) %}
+      {% set is_business_decision = ('businessdecision' in ((rec.kind or '')|lower)) %}
+
+      {# Headline volume candidates from reconstructed table #}
+      {% set volns = namespace(o10=0.0,o50=0.0,o90=0.0,g10=0.0,g50=0.0,g90=0.0,has_o10=false,has_o50=false,has_o90=false,has_g10=false,has_g50=false,has_g90=false) %}
+      {% for x in (vmap.get('Oil.P10') or []) %}{% set volns.o10 = volns.o10 + (x|float) %}{% set volns.has_o10 = true %}{% endfor %}
+      {% for x in (vmap.get('Oil.P50') or []) %}{% set volns.o50 = volns.o50 + (x|float) %}{% set volns.has_o50 = true %}{% endfor %}
+      {% for x in (vmap.get('Oil.P90') or []) %}{% set volns.o90 = volns.o90 + (x|float) %}{% set volns.has_o90 = true %}{% endfor %}
+      {% for x in (vmap.get('Gas.P10') or []) %}{% set volns.g10 = volns.g10 + (x|float) %}{% set volns.has_g10 = true %}{% endfor %}
+      {% for x in (vmap.get('Gas.P50') or []) %}{% set volns.g50 = volns.g50 + (x|float) %}{% set volns.has_g50 = true %}{% endfor %}
+      {% for x in (vmap.get('Gas.P90') or []) %}{% set volns.g90 = volns.g90 + (x|float) %}{% set volns.has_g90 = true %}{% endfor %}
+
+      {% set ext_eq = ((rec.data or {}).get('ext') or {}).get('equinor') or {} %}
+      {% set unc = ext_eq.get('UncertaintySummary') or {} %}
+      {% set static_oil = unc.get('StaticInPlace_Oil_m3') or {} %}
+      {% set reco_oil = unc.get('Recoverable_Oil_m3') or {} %}
+      {% set oil_from_table = 'P10 ' ~ ('%.3f'|format(volns.o10)) ~ ' · P50 ' ~ ('%.3f'|format(volns.o50)) ~ ' · P90 ' ~ ('%.3f'|format(volns.o90)) %}
+      {% set gas_from_table = 'P10 ' ~ ('%.3f'|format(volns.g10)) ~ ' · P50 ' ~ ('%.3f'|format(volns.g50)) ~ ' · P90 ' ~ ('%.3f'|format(volns.g90)) %}
+      {% set total_from_table = 'P10 ' ~ ('%.3f'|format(volns.o10 + volns.g10)) ~ ' · P50 ' ~ ('%.3f'|format(volns.o50 + volns.g50)) ~ ' · P90 ' ~ ('%.3f'|format(volns.o90 + volns.g90)) %}
+      {% set oil_from_static = 'P10 ' ~ (static_oil.get('P10') or '—') ~ ' · P50 ' ~ (static_oil.get('P50') or '—') ~ ' · P90 ' ~ (static_oil.get('P90') or '—') %}
+      {% set oil_from_reco = 'P10 ' ~ (reco_oil.get('P10') or '—') ~ ' · P50 ' ~ (reco_oil.get('P50') or '—') ~ ' · P90 ' ~ (reco_oil.get('P90') or '—') %}
 
       <div class="rec-block" id="rec-{{ rec_index }}" {% if loop.first %}style=""{% else %}style="display:none"{% endif %}>
         <h4>{{ label }}</h4>
 
-        <!-- Relationships (ancestry + data[] links) -->
-        <pre class="mermaid">
+        <div class="record-sections">
+          <section class="section-card">
+            <h5>Overview</h5>
+            <div class="mini-grid">
+              <div class="k">Name</div><div>{{ name or '—' }}</div>
+              <div class="k">Description</div><div>{{ (rec.data or {}).get('Description') or '—' }}</div>
+              <div class="k">Kind</div><div>{{ rec.kind or '—' }}</div>
+              <div class="k">ID</div><div>{{ rec.id or '—' }}</div>
+              <div class="k">Version</div><div>{{ rec.version if rec.version is not none else '—' }}</div>
+              <div class="k">ParentObjectID</div><div>{{ (rec.data or {}).get('ParentObjectID') or '—' }}</div>
+            </div>
+          </section>
+
+          {% if is_business_decision %}
+          <section class="section-card">
+            <h5>Business Decision Summary</h5>
+            <div class="mini-grid" style="margin-bottom:.6rem;">
+              <div class="k">Project</div><div>{{ (rec.data or {}).get('ProjectName') or '—' }}</div>
+              <div class="k">Decision Level</div><div>{{ (rec.data or {}).get('DecisionLevelID') or '—' }}</div>
+              <div class="k">Approval Status</div><div>{{ (rec.data or {}).get('ApprovalStatusID') or '—' }}</div>
+              <div class="k">Decision Date</div><div>{{ (rec.data or {}).get('DecisionDate') or '—' }}</div>
+              <div class="k">Due Date</div><div>{{ (rec.data or {}).get('DecisionDueDate') or '—' }}</div>
+              <div class="k">Summary</div><div>{{ (rec.data or {}).get('DecisionSummary') or (rec.data or {}).get('Description') or '—' }}</div>
+            </div>
+
+            {% if ext_eq.get('Alternatives') %}
+            <div style="margin-bottom:.55rem;"><b>Alternatives</b></div>
+            <ul>
+              {% for alt in ext_eq.get('Alternatives') or [] %}
+                <li>
+                  <b>{{ alt.get('Name') or 'Alternative' }}</b>{% if alt.get('Rank') is not none %} (rank {{ alt.get('Rank') }}){% endif %}
+                  {% if alt.get('Rationale') %} — {{ alt.get('Rationale') }}{% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+
+            <div style="margin:.6rem 0 .35rem;"><b>Headline Volumes</b> (P10 / P50 / P90)</div>
+            <div class="kpi-grid">
+              <div class="kpi"><div class="lbl">Oil</div><div class="val">{{ (volns.has_o10 or volns.has_o50 or volns.has_o90) and oil_from_table or ((static_oil and oil_from_static) or (reco_oil and oil_from_reco) or '—') }}</div></div>
+              <div class="kpi"><div class="lbl">Gas</div><div class="val">{{ (volns.has_g10 or volns.has_g50 or volns.has_g90) and gas_from_table or '—' }}</div></div>
+              <div class="kpi"><div class="lbl">Total</div><div class="val">{{ (volns.has_o10 or volns.has_g10 or volns.has_o50 or volns.has_g50 or volns.has_o90 or volns.has_g90) and total_from_table or '—' }}</div></div>
+            </div>
+
+            <div style="margin:.6rem 0 .35rem;"><b>Risks</b></div>
+            {% if (rec.data or {}).get('RiskIDs') %}
+              <ul>
+                {% for rid in (rec.data or {}).get('RiskIDs') or [] %}
+                  <li><a href="/search/view/{{ rid }}" title="Open linked risk">{{ rid }}</a></li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <div class="muted">No explicit risk list on this record.</div>
+            {% endif %}
+          </section>
+          {% endif %}
+
+          <section class="section-card">
+            <h5>Relationships</h5>
+            <pre class="mermaid">
 graph LR
 REC{{ rec_index }}["{{ esc_label(label) }} ({{ esc_label(rec.id) }})"]
+click REC{{ rec_index }} href "/search/view/{{ rec.id }}" "Open record"
 {% for p in rec.ancestry_parents or [] %}
 P{{ rec_index }}a{{ loop.index0 }}["{{ esc_label(p) }}"]
 P{{ rec_index }}a{{ loop.index0 }} --> REC{{ rec_index }}:::ancestry_parent
+click P{{ rec_index }}a{{ loop.index0 }} href "/search/view/{{ p }}" "Open parent"
 {% endfor %}
 {% for ch in rec.ancestry_children or [] %}
 C{{ rec_index }}c{{ loop.index0 }}["{{ esc_label(ch) }}"]
 REC{{ rec_index }} --> C{{ rec_index }}c{{ loop.index0 }}:::ancestry_child
+click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open child"
 {% endfor %}
 {% for l in rec.links or [] %}
 {% set lid = l.id %}
@@ -188,6 +297,7 @@ REC{{ rec_index }} --> C{{ rec_index }}c{{ loop.index0 }}:::ancestry_child
 {% set lname = info.name or lid %}
 L{{ rec_index }}x{{ loop.index0 }}["{{ esc_label(lname) }} ({{ esc_label(lid) }})"]
 REC{{ rec_index }} --> L{{ rec_index }}x{{ loop.index0 }}:::{{ (l.role or 'ref') | replace('-','_') }}
+click L{{ rec_index }}x{{ loop.index0 }} href "/search/view/{{ lid }}" "Open linked object"
 {% endfor %}
 classDef prior_activity fill:#fff3cd,stroke:#d39e00,color:#222;
 classDef parameter_object fill:#d1ecf1,stroke:#0c5460,color:#222;
@@ -197,64 +307,86 @@ classDef risk fill:#f5c6cb,stroke:#721c24,color:#222;
 classDef ancestry_parent fill:#cfe2ff,stroke:#084298,color:#222;
 classDef ancestry_child fill:#e2e3e5,stroke:#6c757d,color:#222;
 classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
-        </pre>
+            </pre>
 
-        <!-- Metadata (generic, all object types) -->
-        <h4 style="margin-top:.75rem">Metadata</h4>
-        <div class="meta-container">
-          <div class="meta-toolbar" style="display:flex;gap:.5rem;align-items:center;margin:.25rem 0;">
-            <input type="text" class="meta-filter" placeholder="Filter names…" style="flex:1;max-width:20rem;">
-            <button type="button" class="meta-copy" title="Copy table as CSV">Copy (CSV)</button>
-          </div>
-
-          <table class="meta-table" data-sortable="true" style="width:100%;border-collapse:collapse">
-            <thead>
-              <tr>
-                <th data-col="name" style="text-align:left;border-bottom:1px solid #ddd;">Name</th>
-                <th data-col="value" style="text-align:left;border-bottom:1px solid #ddd;">Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% set src = {
-                'id': rec.id,
-                'kind': rec.kind,
-                'version': rec.version if rec.version is not none else '',
-                'acl': rec.acl or {},
-                'legal': rec.legal or {},
-                'data': rec.data or {},
-                'ext': rec.ext or {},
-                'links': rec.links or [],
-                'ancestry.parents': rec.ancestry_parents or [],
-                'ancestry.children': rec.ancestry_children or []
-              } %}
-              {{ render_pairs(src) }}
-            </tbody>
-          </table>
-
-          <div class="muted" style="font-size:.85rem;margin-top:.25rem;">
-            Tip: click “Name” or “Value” to sort; use the filter to narrow rows.
-          </div>
-        </div>
-
-        <!-- Volumes table (ColumnBasedTable) -->
-        {% if has_volumes %}
-          <h4 style="margin-top:.5rem">{{ label }} — Volumes</h4>
-          <table>
-            <tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr>
-            {% for i in range(nrows) %}
-              <tr>
-                {% for h in headers %}
-                  {% set col_vals = vmap.get(h) or [] %}
-                  <td>{% if (col_vals|length) > i %}{{ col_vals[i] }}{% else %}—{% endif %}</td>
+            <div class="rel-links">
+              <b>Linked objects</b>
+              <ul>
+                {% for l in rec.links or [] %}
+                  {% set lid = l.id %}
+                  {% set info = (rec.linked_labels or {}).get(lid, {}) %}
+                  <li>
+                    <a href="/search/view/{{ lid }}" title="Role: {{ l.role or 'ref' }}{% if info.kind %} · Kind: {{ info.kind }}{% endif %}">
+                      {{ info.name or lid }}
+                    </a>
+                    <span class="muted">({{ l.role or 'ref' }})</span>
+                  </li>
                 {% endfor %}
-              </tr>
-            {% endfor %}
-          </table>
-        {% endif %}
+                {% if not (rec.links or []) %}<li class="muted">No linked objects.</li>{% endif %}
+              </ul>
+            </div>
+          </section>
+
+          <section class="section-card">
+            <h5>Metadata</h5>
+            <div class="meta-container">
+              <div class="meta-toolbar" style="display:flex;gap:.5rem;align-items:center;margin:.25rem 0;">
+                <input type="text" class="meta-filter" placeholder="Filter metadata names…" style="flex:1;max-width:20rem;">
+                <button type="button" class="meta-copy" title="Copy table as CSV">Copy (CSV)</button>
+              </div>
+              <table class="meta-table" style="width:100%;border-collapse:collapse">
+                <thead>
+                  <tr><th class="meta-name">Name</th><th>Value</th></tr>
+                </thead>
+                <tbody>
+                  {% set rendered_count = namespace(v=0) %}
+                  {% for p in rec.metadata_pairs or [] %}
+                    {% set n = (p.name or '') %}
+                    {% set nl = n|lower %}
+                    {% if ('volumes' in nl)
+                          or ('columnvalues' in nl)
+                          or ('columnbasedtable' in nl)
+                          or ('reservoirestimatedvolumes' in nl)
+                          or ('[0]' in n) or ('[1]' in n) or ('[2]' in n) or ('[3]' in n) or ('[4]' in n)
+                          or ('.0.' in n) or ('.1.' in n) or ('.2.' in n) or ('.3.' in n) or ('.4.' in n)
+                    %}
+                    {% else %}
+                      {% set rendered_count.v = rendered_count.v + 1 %}
+                      <tr>
+                        <td class="meta-name">{{ n }}</td>
+                        <td>{{ p.value if p.value is not none else '—' }}</td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                  {% if rendered_count.v == 0 %}
+                    <tr><td colspan="2" class="muted">No non-tabular metadata to display.</td></tr>
+                  {% endif %}
+                </tbody>
+              </table>
+              <div class="muted" style="font-size:.85rem;margin-top:.25rem;">Tabular volume arrays are intentionally hidden here and shown only in the reconstructed table below.</div>
+            </div>
+          </section>
+
+          {% if has_volumes %}
+          <section class="section-card">
+            <h5>Reconstructed Table</h5>
+            <table>
+              <tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr>
+              {% for i in range(nrows) %}
+                <tr>
+                  {% for h in headers %}
+                    {% set col_vals = vmap.get(h) or [] %}
+                    <td>{% if (col_vals|length) > i %}{{ col_vals[i] }}{% else %}—{% endif %}</td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </table>
+          </section>
+          {% endif %}
+        </div>
       </div>
     {% endfor %}
 
-    <!-- JS: selection toggles visibility and re-renders Mermaid safely -->
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
