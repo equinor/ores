@@ -1,7 +1,7 @@
 # Minimal requirements for running the OSDU RDDMS admin UI demo (Python 3.12)
 # Pinned FastAPI/Pydantic/Starlette to avoid IncEx import errors and ensure reproducible env
 fastapi==0.115.6
-starlette==0.41.3
+starlette==0.49.1
 pydantic==2.10.6
 uvicorn[standard]==0.32.1
 
