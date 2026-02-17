@@ -1,5 +1,6 @@
 
 from __future__ import annotations
+import asyncio
 import os
 import urllib.parse
 from typing import Any, Dict, List
@@ -48,17 +49,7 @@ def _as_id(x: Any) -> str:
         return x.get("id") or x.get("recordId") or x.get("$ref") or ""
     return ""
 
-def _ids(val: Any) -> List[str]:
-    """Return a list of string ids from a heterogeneous array or a string."""
-    if isinstance(val, list):
-        out = []
-        for item in val:
-            s = _as_id(item)
-            if s:
-                out.append(s)
-        return out
-    s = _as_id(val)
-    return [s] if s else []
+
 
 def _get_data(rec):
     return rec.get("data") or {}
@@ -126,10 +117,7 @@ async def strat_search(
 
     return JSONResponse({"items": items, "total": total})
 
-# --- add at the top of strat.py imports ---
-import asyncio
 
-# --- helpers: ID normalization unchanged from your version ---
 def _ids(val: Any) -> List[str]:
     if isinstance(val, list):
         out = []

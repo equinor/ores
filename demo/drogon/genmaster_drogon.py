@@ -40,17 +40,7 @@ def acl_block() -> Dict:
 def legal_block() -> Dict:
     return {"legaltags": DEFAULT_LEGAL, "otherRelevantDataCountries": DEFAULT_COUNTRY}
 
-# ── Descriptive segment names ───────────────────────────────────────────
-# CamelCase CSV value → human-readable display name + geological description
-SEGMENT_NAMES = {
-    "WestLowland":  "West Lowland",
-    "CentralSouth": "Central South",
-    "CentralNorth": "Central North",
-    "NorthHorst":   "North Horst",
-    "CentralRamp":  "Central Ramp",
-    "CentralHorst": "Central Horst",
-    "EastLowland":  "East Lowland",
-}
+from _shared import SEGMENT_NAMES  # noqa: E402
 SEGMENT_DESCRIPTIONS = {
     "WestLowland":  "Western lowland fault block of the Valysar formation, Drogon field",
     "CentralSouth": "Central-south structural compartment of the Valysar formation, Drogon field",

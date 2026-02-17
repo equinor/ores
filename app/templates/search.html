@@ -20,6 +20,42 @@
   .kpi .val { font-size:1rem; font-weight:600; }
   .rel-links { margin-top:.6rem; }
   .rel-links ul { margin:.3rem 0 0 1rem; }
+
+  /* ── Business Decision card styling ── */
+  .bd-card { border: 1px solid #c5d5e4; border-radius: 10px; padding: 0; overflow: hidden; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+  .bd-header { background: linear-gradient(135deg, #e8f0fa 0%, #f0e8f5 100%); padding: 1rem 1.25rem .75rem; border-bottom: 1px solid #d6dfe8; }
+  .bd-header h4 { margin: 0 0 .25rem; font-size: 1.25rem; color: #1a3a5c; font-weight: 700; }
+  .bd-header .bd-subtitle { font-size: .9rem; color: #4a5568; line-height: 1.45; }
+  .bd-body { padding: .9rem 1.25rem 1rem; }
+  .bd-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .5rem .8rem; margin-bottom: .75rem; }
+  .bd-meta-item { background: #f7f8fa; border-radius: 6px; padding: .45rem .6rem; }
+  .bd-meta-item .bd-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: #718096; margin-bottom: .1rem; }
+  .bd-meta-item .bd-value { font-size: .92rem; color: #2d3748; font-weight: 500; }
+  .bd-section-title { font-size: .85rem; font-weight: 600; color: #4a5568; text-transform: uppercase; letter-spacing: .04em; margin: .8rem 0 .45rem; padding-bottom: .25rem; border-bottom: 1px solid #edf2f7; }
+  .bd-kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .6rem; margin-bottom: .4rem; }
+  .bd-kpi { border-radius: 8px; padding: .65rem .75rem; text-align: center; }
+  .bd-kpi.oil { background: #fef3e2; border: 1px solid #fbd38d; }
+  .bd-kpi.gas { background: #e6f7f1; border: 1px solid #9ae6b4; }
+  .bd-kpi.total { background: #ebf4ff; border: 1px solid #90cdf4; }
+  .bd-kpi .bd-kpi-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: #718096; }
+  .bd-kpi .bd-kpi-stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: .3rem; margin-top: .3rem; }
+  .bd-kpi .bd-kpi-num { font-size: 1.05rem; font-weight: 700; color: #2d3748; }
+  .bd-kpi .bd-kpi-pct { font-size: .65rem; color: #a0aec0; }
+  .bd-alt-list { list-style: none; padding: 0; margin: 0; }
+  .bd-alt-list li { background: #f7f8fa; border-radius: 6px; padding: .5rem .7rem; margin-bottom: .4rem; border-left: 3px solid #a3bffa; }
+  .bd-alt-list li.rank-1 { border-left-color: #68d391; }
+  .bd-alt-list li.rank-2 { border-left-color: #f6ad55; }
+  .bd-alt-name { font-weight: 600; color: #2d3748; }
+  .bd-alt-rank { font-size: .78rem; background: #edf2f7; border-radius: 999px; padding: .1rem .5rem; color: #4a5568; }
+  .bd-alt-rationale { font-size: .88rem; color: #718096; margin-top: .2rem; }
+  .bd-risk-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .bd-risk-chip { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 999px; padding: .2rem .65rem; font-size: .82rem; color: #c53030; text-decoration: none; }
+  .bd-risk-chip:hover { background: #fed7d7; }
+  .bd-param-list { list-style: none; padding: 0; margin: 0; }
+  .bd-param-list li { display: grid; grid-template-columns: 1fr auto; gap: .5rem; background: #f7f8fa; border-radius: 6px; padding: .45rem .65rem; margin-bottom: .35rem; align-items: center; }
+  .bd-param-title { font-weight: 500; color: #2d3748; }
+  .bd-param-desc { font-size: .82rem; color: #718096; }
+  .bd-param-tag { font-size: .75rem; background: #e2e8f0; border-radius: 999px; padding: .1rem .45rem; color: #4a5568; white-space: nowrap; }
 </style>
 {% endblock %}
 
@@ -195,6 +231,7 @@
       {% set nrows = (sample_col and (vmap.get(sample_col) or [])|length) or 0 %}
       {% set has_volumes = (vmap and headers|length > 0 and nrows > 0) %}
       {% set is_business_decision = ('businessdecision' in ((rec.kind or '')|lower)) %}
+      {% set is_rev = ('reservoirestimatedvolumes' in ((rec.kind or '')|lower)) %}
 
       {# Headline volume candidates from reconstructed table #}
       {% set volns = namespace(o10=0.0,o50=0.0,o90=0.0,g10=0.0,g50=0.0,g90=0.0,has_o10=false,has_o50=false,has_o90=false,has_g10=false,has_g50=false,has_g90=false) %}
@@ -207,13 +244,15 @@
 
       {% set ext_eq = ((rec.data or {}).get('ext') or {}).get('equinor') or {} %}
       {% set unc = ext_eq.get('UncertaintySummary') or {} %}
-      {% set static_oil = unc.get('StaticInPlace_Oil_m3') or {} %}
+      {% set static_oil = unc.get('StaticInPlace_Oil_m3') or unc.get('StaticInPlace_Oil_MSm3') or {} %}
       {% set reco_oil = unc.get('Recoverable_Oil_m3') or {} %}
-      {% set oil_from_table = 'P10 ' ~ ('%.3f'|format(volns.o10)) ~ ' · P50 ' ~ ('%.3f'|format(volns.o50)) ~ ' · P90 ' ~ ('%.3f'|format(volns.o90)) %}
-      {% set gas_from_table = 'P10 ' ~ ('%.3f'|format(volns.g10)) ~ ' · P50 ' ~ ('%.3f'|format(volns.g50)) ~ ' · P90 ' ~ ('%.3f'|format(volns.g90)) %}
-      {% set total_from_table = 'P10 ' ~ ('%.3f'|format(volns.o10 + volns.g10)) ~ ' · P50 ' ~ ('%.3f'|format(volns.o50 + volns.g50)) ~ ' · P90 ' ~ ('%.3f'|format(volns.o90 + volns.g90)) %}
-      {% set oil_from_static = 'P10 ' ~ (static_oil.get('P10') or '—') ~ ' · P50 ' ~ (static_oil.get('P50') or '—') ~ ' · P90 ' ~ (static_oil.get('P90') or '—') %}
-      {% set oil_from_reco = 'P10 ' ~ (reco_oil.get('P10') or '—') ~ ' · P50 ' ~ (reco_oil.get('P50') or '—') ~ ' · P90 ' ~ (reco_oil.get('P90') or '—') %}
+      {% set vol_summary = ext_eq.get('VolumesSummary_STOIIP_MSm3') or {} %}
+
+      {# ── Format volume helpers ── #}
+      {# Try stat WPC columns first, then ext UncertaintySummary, then VolumesSummary total #}
+      {% set has_table_vol = (volns.has_o10 or volns.has_o50 or volns.has_o90 or volns.has_g10 or volns.has_g50 or volns.has_g90) %}
+      {% set has_ext_vol = (static_oil and (static_oil.get('P90') is not none or static_oil.get('P50') is not none or static_oil.get('P10') is not none)) %}
+      {% set has_summary_vol = (vol_summary.get('Total') and vol_summary['Total'].get('P90') is not none) %}
 
       <div class="rec-block" id="rec-{{ rec_index }}" {% if loop.first %}style=""{% else %}style="display:none"{% endif %}>
         <h4>{{ label }}</h4>
@@ -232,47 +271,267 @@
           </section>
 
           {% if is_business_decision %}
-          <section class="section-card">
-            <h5>Business Decision Summary</h5>
-            <div class="mini-grid" style="margin-bottom:.6rem;">
-              <div class="k">Project</div><div>{{ (rec.data or {}).get('ProjectName') or '—' }}</div>
-              <div class="k">Decision Level</div><div>{{ (rec.data or {}).get('DecisionLevelID') or '—' }}</div>
-              <div class="k">Approval Status</div><div>{{ (rec.data or {}).get('ApprovalStatusID') or '—' }}</div>
-              <div class="k">Decision Date</div><div>{{ (rec.data or {}).get('DecisionDate') or '—' }}</div>
-              <div class="k">Due Date</div><div>{{ (rec.data or {}).get('DecisionDueDate') or '—' }}</div>
-              <div class="k">Summary</div><div>{{ (rec.data or {}).get('DecisionSummary') or (rec.data or {}).get('Description') or '—' }}</div>
+          {# ══════════ BUSINESS DECISION CARD ══════════ #}
+          <div class="bd-card">
+            <div class="bd-header">
+              <h4>{{ name or 'Business Decision' }}</h4>
+              <div class="bd-subtitle">{{ (rec.data or {}).get('DecisionSummary') or (rec.data or {}).get('Description') or '' }}</div>
             </div>
+            <div class="bd-body">
 
-            {% if ext_eq.get('Alternatives') %}
-            <div style="margin-bottom:.55rem;"><b>Alternatives</b></div>
-            <ul>
-              {% for alt in ext_eq.get('Alternatives') or [] %}
-                <li>
-                  <b>{{ alt.get('Name') or 'Alternative' }}</b>{% if alt.get('Rank') is not none %} (rank {{ alt.get('Rank') }}){% endif %}
-                  {% if alt.get('Rationale') %} — {{ alt.get('Rationale') }}{% endif %}
+              {# ── Gate metadata ── #}
+              <div class="bd-meta-grid">
+                <div class="bd-meta-item">
+                  <div class="bd-label">Project</div>
+                  <div class="bd-value">{{ (rec.data or {}).get('ProjectName') or '—' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Decision Gate</div>
+                  <div class="bd-value">{{ ((rec.data or {}).get('DecisionLevelID') or '—').split(':')[-2] if ':' in ((rec.data or {}).get('DecisionLevelID') or '') else (rec.data or {}).get('DecisionLevelID') or '—' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Status</div>
+                  <div class="bd-value">{{ ((rec.data or {}).get('ApprovalStatusID') or '—').split(':')[-2] if ':' in ((rec.data or {}).get('ApprovalStatusID') or '') else (rec.data or {}).get('ApprovalStatusID') or '—' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Decision Date</div>
+                  <div class="bd-value">{{ (rec.data or {}).get('DecisionDate') or '—' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Due Date</div>
+                  <div class="bd-value">{{ (rec.data or {}).get('DecisionDueDate') or '—' }}</div>
+                </div>
+                {% if ext_eq.get('DevelopmentConcept') %}
+                {% set dcon = ext_eq.get('DevelopmentConcept') %}
+                <div class="bd-meta-item">
+                  <div class="bd-label">Formation</div>
+                  <div class="bd-value">{{ dcon.get('ReservoirFormation') or '—' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Wells</div>
+                  <div class="bd-value">{{ dcon.get('WellCount') or '—' }}{% if dcon.get('MultilateralWells') %} ({{ dcon.get('MultilateralWells') }} MLT){% endif %}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Target Start-up</div>
+                  <div class="bd-value">{{ dcon.get('TargetStartUp') or '—' }}</div>
+                </div>
+                {% endif %}
+              </div>
+
+              {# ── Headline Volumes ── #}
+              <div class="bd-section-title">Headline Volumes (STOIIP)</div>
+              <div class="bd-kpi-row">
+                {% if has_table_vol %}
+                {# Volumes from stat WPC ColumnValues (m³) — display as Mm³ #}
+                <div class="bd-kpi oil">
+                  <div class="bd-kpi-label">Oil in Place</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o10 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o50 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o90 / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                <div class="bd-kpi gas">
+                  <div class="bd-kpi-label">Gas in Place</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g10 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g50 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g90 / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                <div class="bd-kpi total">
+                  <div class="bd-kpi-label">Total</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o10 + volns.g10) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o50 + volns.g50) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o90 + volns.g90) / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                {% elif has_summary_vol %}
+                {# Volumes from ext VolumesSummary_STOIIP_MSm3 (already MSm³) #}
+                {% set vtot = vol_summary.get('Total') or {} %}
+                <div class="bd-kpi oil">
+                  <div class="bd-kpi-label">STOIIP Total</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ vtot.get('P90', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">REF</div><div class="bd-kpi-num">{{ vtot.get('REF', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ vtot.get('P10', '—') }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
+                </div>
+                {% for sname, svals in vol_summary.items() if sname != 'Total' %}
+                <div class="bd-kpi {{ loop.cycle('gas','total','oil') }}">
+                  <div class="bd-kpi-label">{{ sname }}</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ svals.get('P90', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">REF</div><div class="bd-kpi-num">{{ svals.get('REF', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ svals.get('P10', '—') }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
+                </div>
+                {% endfor %}
+                {% elif has_ext_vol %}
+                {# Volumes from UncertaintySummary StaticInPlace / Recoverable #}
+                {% set is_m3 = (static_oil.get('P90', 0) is number and static_oil.get('P90', 0) > 10000) %}
+                <div class="bd-kpi oil">
+                  <div class="bd-kpi-label">Static In-Place Oil</div>
+                  <div class="bd-kpi-stat">
+                    {% if is_m3 %}
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format((static_oil.get('P90',0)|float) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(((static_oil.get('P50') or static_oil.get('REF') or 0)|float) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format((static_oil.get('P10',0)|float) / 1000000) }}</div></div>
+                    {% else %}
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ static_oil.get('P90', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ static_oil.get('P50') or static_oil.get('REF') or '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ static_oil.get('P10', '—') }}</div></div>
+                    {% endif %}
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">{% if is_m3 %}Mm³{% else %}MSm³{% endif %}</div>
+                </div>
+                {% if reco_oil %}
+                <div class="bd-kpi gas">
+                  <div class="bd-kpi-label">Recoverable Oil</div>
+                  <div class="bd-kpi-stat">
+                    {% if is_m3 %}
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format((reco_oil.get('P90',0)|float) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(((reco_oil.get('P50') or reco_oil.get('REF') or 0)|float) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format((reco_oil.get('P10',0)|float) / 1000000) }}</div></div>
+                    {% else %}
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ reco_oil.get('P90', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ reco_oil.get('P50') or reco_oil.get('REF') or '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ reco_oil.get('P10', '—') }}</div></div>
+                    {% endif %}
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">{% if is_m3 %}Mm³{% else %}MSm³{% endif %}</div>
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="muted">No headline volumes available for this record.</div>
+                {% endif %}
+              </div>
+
+              {# ── Alternatives ── #}
+              {% if ext_eq.get('Alternatives') %}
+              <div class="bd-section-title">Alternatives</div>
+              <ul class="bd-alt-list">
+                {% for alt in ext_eq.get('Alternatives') or [] %}
+                <li class="rank-{{ alt.get('Rank', 0) }}">
+                  <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;">
+                    <span class="bd-alt-name">{{ alt.get('Name') or 'Alternative' }}</span>
+                    {% if alt.get('Rank') is not none %}<span class="bd-alt-rank">Rank {{ alt.get('Rank') }}</span>{% endif %}
+                    {% if alt.get('RecommendedAction') %}<span class="bd-alt-rank" style="background:#e6fffa;color:#276749;">{{ alt.get('RecommendedAction') }}</span>{% endif %}
+                  </div>
+                  {% if alt.get('Rationale') %}<div class="bd-alt-rationale">{{ alt.get('Rationale') }}</div>{% endif %}
                 </li>
-              {% endfor %}
-            </ul>
-            {% endif %}
-
-            <div style="margin:.6rem 0 .35rem;"><b>Headline Volumes</b> (P10 / P50 / P90)</div>
-            <div class="kpi-grid">
-              <div class="kpi"><div class="lbl">Oil</div><div class="val">{{ (volns.has_o10 or volns.has_o50 or volns.has_o90) and oil_from_table or ((static_oil and oil_from_static) or (reco_oil and oil_from_reco) or '—') }}</div></div>
-              <div class="kpi"><div class="lbl">Gas</div><div class="val">{{ (volns.has_g10 or volns.has_g50 or volns.has_g90) and gas_from_table or '—' }}</div></div>
-              <div class="kpi"><div class="lbl">Total</div><div class="val">{{ (volns.has_o10 or volns.has_g10 or volns.has_o50 or volns.has_g50 or volns.has_o90 or volns.has_g90) and total_from_table or '—' }}</div></div>
-            </div>
-
-            <div style="margin:.6rem 0 .35rem;"><b>Risks</b></div>
-            {% if (rec.data or {}).get('RiskIDs') %}
-              <ul>
-                {% for rid in (rec.data or {}).get('RiskIDs') or [] %}
-                  <li><a href="/search/view/{{ rid }}" title="Open linked risk">{{ rid }}</a></li>
                 {% endfor %}
               </ul>
-            {% else %}
-              <div class="muted">No explicit risk list on this record.</div>
-            {% endif %}
-          </section>
+              {% endif %}
+
+              {# ── Risks ── #}
+              {% if (rec.data or {}).get('RiskIDs') %}
+              <div class="bd-section-title">Risks</div>
+              <div class="bd-risk-chips">
+                {% for rid in (rec.data or {}).get('RiskIDs') or [] %}
+                  {% set rinfo = (rec.linked_labels or {}).get(rid, {}) %}
+                  <a class="bd-risk-chip" href="/search/view/{{ rid }}" title="{{ rid }}">{{ rinfo.name or rid.split(':')[-2] if ':' in rid else rid }}</a>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              {# ── Key Uncertainties ── #}
+              {% if ext_eq.get('KeyUncertainties') %}
+              <div class="bd-section-title">Key Uncertainties</div>
+              <ul class="bd-alt-list">
+                {% for ku in ext_eq.get('KeyUncertainties') or [] %}
+                <li style="border-left-color:{% if ku.get('Impact') == 'High' %}#fc8181{% elif ku.get('Impact') == 'Medium' %}#f6ad55{% else %}#68d391{% endif %};">
+                  <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;">
+                    <span class="bd-alt-name">{{ ku.get('Factor') or 'Uncertainty' }}</span>
+                    {% if ku.get('Impact') %}<span class="bd-alt-rank" style="background:{% if ku.get('Impact') == 'High' %}#fff5f5;color:#c53030{% elif ku.get('Impact') == 'Medium' %}#fffaf0;color:#c05621{% else %}#f0fff4;color:#276749{% endif %};">{{ ku.get('Impact') }}</span>{% endif %}
+                  </div>
+                  {% if ku.get('Description') %}<div class="bd-alt-rationale">{{ ku.get('Description') }}</div>{% endif %}
+                </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+
+              {# ── Input Parameters ── #}
+              {% set bd_params = (rec.data or {}).get('Parameters') or [] %}
+              {% if bd_params %}
+              <div class="bd-section-title">Input Parameters</div>
+              <ul class="bd-param-list">
+                {% for p in bd_params if p is mapping %}
+                <li>
+                  <div>
+                    <div class="bd-param-title">{{ p.get('Title') or 'Parameter' }}</div>
+                    {% if p.get('Selection') %}<div class="bd-param-desc">{{ p.get('Selection') }}</div>{% endif %}
+                  </div>
+                  {% set pkeys = p.get('Keys') or [] %}
+                  {% if pkeys is mapping %}{% set pkeys = [pkeys] %}{% endif %}
+                  {% if pkeys and pkeys is iterable and pkeys|length > 0 %}
+                    {% set pk0 = pkeys[0] if pkeys[0] is mapping else {} %}
+                    <span class="bd-param-tag">{{ pk0.get('StringParameterKey') or pk0.get('ParameterKey') or '' }}</span>
+                  {% endif %}
+                </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+
+              {# ── Authors & Review Team ── #}
+              {% if ext_eq.get('Authors') or ext_eq.get('ReviewTeam') %}
+              <div class="bd-section-title">Authors & Governance</div>
+              <div class="bd-meta-grid">
+                {% for a in ext_eq.get('Authors') or [] %}
+                <div class="bd-meta-item">
+                  <div class="bd-label">{{ a.get('Role') or 'Author' }}</div>
+                  <div class="bd-value">{{ a.get('Name') or '—' }}</div>
+                  {% if a.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ a.get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% set rt = ext_eq.get('ReviewTeam') or {} %}
+                {% if rt.get('ApprovedBy') %}
+                <div class="bd-meta-item" style="border-left:2px solid #68d391;">
+                  <div class="bd-label">Approved By</div>
+                  <div class="bd-value">{{ rt['ApprovedBy'].get('Name') }}</div>
+                  {% if rt['ApprovedBy'].get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ rt['ApprovedBy'].get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endif %}
+                {% if rt.get('QARecommender') %}
+                <div class="bd-meta-item" style="border-left:2px solid #90cdf4;">
+                  <div class="bd-label">QA Recommender</div>
+                  <div class="bd-value">{{ rt['QARecommender'].get('Name') }}</div>
+                  {% if rt['QARecommender'].get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ rt['QARecommender'].get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endif %}
+              </div>
+              {% endif %}
+
+              {# ── Recommendations ── #}
+              {% set recos = ext_eq.get('DG2Recommendations') or ext_eq.get('DG3Recommendations') or [] %}
+              {% if recos %}
+              <div class="bd-section-title">Recommendations for Next Gate</div>
+              <ol style="margin:0 0 0 1.2rem;padding:0;color:#4a5568;font-size:.88rem;line-height:1.5;">
+                {% for r in recos %}
+                <li style="margin-bottom:.25rem;">{{ r }}</li>
+                {% endfor %}
+              </ol>
+              {% endif %}
+
+              {# ── Uncertainty basis ── #}
+              {% if unc.get('Basis') %}
+              <div class="bd-section-title">Uncertainty Methodology</div>
+              <div style="font-size:.88rem;color:#4a5568;line-height:1.5;">
+                <b>Basis:</b> {{ unc.get('Basis') }}<br>
+                {% if unc.get('TotalRealisations') %}<b>Realisations:</b> {{ unc.get('TotalRealisations') }}{% endif %}
+                {% if unc.get('MethodologyReference') %} · {{ unc.get('MethodologyReference') }}{% endif %}
+                {% if unc.get('Note') %}<br><span class="muted">{{ unc.get('Note') }}</span>{% endif %}
+              </div>
+              {% endif %}
+
+            </div>{# /bd-body #}
+          </div>{# /bd-card #}
           {% endif %}
 
           <section class="section-card">
@@ -282,22 +541,28 @@ graph LR
 REC{{ rec_index }}["{{ esc_label(label) }} ({{ esc_label(rec.id) }})"]
 click REC{{ rec_index }} href "/search/view/{{ rec.id }}" "Open record"
 {% for p in rec.ancestry_parents or [] %}
-P{{ rec_index }}a{{ loop.index0 }}["{{ esc_label(p) }}"]
+{% set pinfo = (rec.linked_labels or {}).get(p, {}) %}
+{% set pname = pinfo.name or p %}
+P{{ rec_index }}a{{ loop.index0 }}["{{ esc_label(pname) }} ({{ esc_label(p) }})"]
 P{{ rec_index }}a{{ loop.index0 }} --> REC{{ rec_index }}:::ancestry_parent
 click P{{ rec_index }}a{{ loop.index0 }} href "/search/view/{{ p }}" "Open parent"
 {% endfor %}
 {% for ch in rec.ancestry_children or [] %}
-C{{ rec_index }}c{{ loop.index0 }}["{{ esc_label(ch) }}"]
+{% set cinfo = (rec.linked_labels or {}).get(ch, {}) %}
+{% set cname = cinfo.name or ch %}
+C{{ rec_index }}c{{ loop.index0 }}["{{ esc_label(cname) }} ({{ esc_label(ch) }})"]
 REC{{ rec_index }} --> C{{ rec_index }}c{{ loop.index0 }}:::ancestry_child
 click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open child"
 {% endfor %}
 {% for l in rec.links or [] %}
 {% set lid = l.id %}
+{% if lid not in (rec.ancestry_parents or []) and lid not in (rec.ancestry_children or []) %}
 {% set info = (rec.linked_labels or {}).get(lid, {}) %}
 {% set lname = info.name or lid %}
 L{{ rec_index }}x{{ loop.index0 }}["{{ esc_label(lname) }} ({{ esc_label(lid) }})"]
 REC{{ rec_index }} --> L{{ rec_index }}x{{ loop.index0 }}:::{{ (l.role or 'ref') | replace('-','_') }}
 click L{{ rec_index }}x{{ loop.index0 }} href "/search/view/{{ lid }}" "Open linked object"
+{% endif %}
 {% endfor %}
 classDef prior_activity fill:#fff3cd,stroke:#d39e00,color:#222;
 classDef parameter_object fill:#d1ecf1,stroke:#0c5460,color:#222;
@@ -314,6 +579,7 @@ classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
               <ul>
                 {% for l in rec.links or [] %}
                   {% set lid = l.id %}
+                  {% if lid not in (rec.ancestry_parents or []) and lid not in (rec.ancestry_children or []) %}
                   {% set info = (rec.linked_labels or {}).get(lid, {}) %}
                   <li>
                     <a href="/search/view/{{ lid }}" title="Role: {{ l.role or 'ref' }}{% if info.kind %} · Kind: {{ info.kind }}{% endif %}">
@@ -321,6 +587,7 @@ classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
                     </a>
                     <span class="muted">({{ l.role or 'ref' }})</span>
                   </li>
+                  {% endif %}
                 {% endfor %}
                 {% if not (rec.links or []) %}<li class="muted">No linked objects.</li>{% endif %}
               </ul>
@@ -369,7 +636,43 @@ classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
 
           {% if has_volumes %}
           <section class="section-card">
-            <h5>Reconstructed Table</h5>
+            <h5>{% if is_business_decision %}Volume Breakdown (Statistical REV){% elif is_rev %}Reservoir Estimated Volumes{% else %}Reconstructed Table{% endif %}</h5>
+            {# ── REV headline summaries (totals from column sums) ── #}
+            {% if (volns.has_o10 or volns.has_o50 or volns.has_o90 or volns.has_g10 or volns.has_g50 or volns.has_g90) and not is_business_decision %}
+            <div class="kpi-grid" style="margin-bottom:.75rem;">
+              {% if volns.has_o10 or volns.has_o50 or volns.has_o90 %}
+              <div style="background:#fef3e2;border:1px solid #fbd38d;border-radius:8px;padding:.5rem .75rem;text-align:center;">
+                <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#718096;">Oil (sum)</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;margin-top:.2rem;">
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P10</div><div style="font-weight:700;">{{ '%.2f'|format(volns.o10 / 1000000) }}</div></div>
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P50</div><div style="font-weight:700;">{{ '%.2f'|format(volns.o50 / 1000000) }}</div></div>
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P90</div><div style="font-weight:700;">{{ '%.2f'|format(volns.o90 / 1000000) }}</div></div>
+                </div>
+                <div style="font-size:.65rem;color:#a0aec0;margin-top:.15rem;">Mm³</div>
+              </div>
+              {% endif %}
+              {% if volns.has_g10 or volns.has_g50 or volns.has_g90 %}
+              <div style="background:#e6f7f1;border:1px solid #9ae6b4;border-radius:8px;padding:.5rem .75rem;text-align:center;">
+                <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#718096;">Gas (sum)</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;margin-top:.2rem;">
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P10</div><div style="font-weight:700;">{{ '%.2f'|format(volns.g10 / 1000000) }}</div></div>
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P50</div><div style="font-weight:700;">{{ '%.2f'|format(volns.g50 / 1000000) }}</div></div>
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P90</div><div style="font-weight:700;">{{ '%.2f'|format(volns.g90 / 1000000) }}</div></div>
+                </div>
+                <div style="font-size:.65rem;color:#a0aec0;margin-top:.15rem;">Mm³</div>
+              </div>
+              {% endif %}
+              <div style="background:#ebf4ff;border:1px solid #90cdf4;border-radius:8px;padding:.5rem .75rem;text-align:center;">
+                <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#718096;">Total (sum)</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;margin-top:.2rem;">
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P10</div><div style="font-weight:700;">{{ '%.2f'|format((volns.o10 + volns.g10) / 1000000) }}</div></div>
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P50</div><div style="font-weight:700;">{{ '%.2f'|format((volns.o50 + volns.g50) / 1000000) }}</div></div>
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P90</div><div style="font-weight:700;">{{ '%.2f'|format((volns.o90 + volns.g90) / 1000000) }}</div></div>
+                </div>
+                <div style="font-size:.65rem;color:#a0aec0;margin-top:.15rem;">Mm³</div>
+              </div>
+            </div>
+            {% endif %}
             <table>
               <tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr>
               {% for i in range(nrows) %}

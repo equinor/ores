@@ -97,20 +97,24 @@ def extract_osdu_links(data_block: Dict[str, Any]) -> List[Dict[str, Any]]:
         if isinstance(c, str) and _looks_like_osdu_id(c):
             links.append({"id": c, "role": "ancestry-child", "source_path": "ancestry.children"})
 
-    # generic walk across all properties (data[...] only)
-    for found in _walk_collect_ids(data_block):
-        links.append(found)
-
-    # de-duplicate by (ID, role) to keep the graph clean
-    seen: Set[Tuple[str, str]] = set()
-    uniq: List[Dict[str, Any]] = []
-    for l in links:
-        key = (l.get("id", ""), l.get("role", ""))
-        if key in seen:
+    # generic walk across all properties — skip 'ancestry' (handled above)
+    for k, v in data_block.items():
+        if k == "ancestry":
             continue
-        seen.add(key)
-        uniq.append(l)
-    return uniq
+        for found in _walk_collect_ids(v, k):
+            links.append(found)
+
+    # de-duplicate by ID.  When the same record appears under multiple
+    # roles keep the most specific one (anything other than "ref" wins).
+    seen: Dict[str, Dict[str, Any]] = {}   # id → link dict
+    for l in links:
+        rid = l.get("id", "")
+        prev = seen.get(rid)
+        if prev is None:
+            seen[rid] = l
+        elif prev.get("role") == "ref" and l.get("role") != "ref":
+            seen[rid] = l          # prefer the specific role
+    return list(seen.values())
 
 
 # ---------------------------------------------------------------------

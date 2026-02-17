@@ -389,25 +389,3 @@ async def build_manifest_for_uris(
         r = await client.post(url, headers=hdr, json=body)
         r.raise_for_status()
         return r.json() or {}
-
-
-# --- Graph helpers (sources/targets) ---
-async def list_sources(access_token: str, ds_enc: str, typ: str, uuid: str) -> list[dict]:
-    """GET /dataspaces/{dataspaceId}/resources/{type}/{uuid}/sources"""
-    url = f"https://{OSDU_BASE_URL}/api/reservoir-ddms/v2/dataspaces/{ds_enc}/resources/{typ}/{uuid}/sources"
-    async with httpx.AsyncClient(timeout=90) as client:
-        r = await client.get(url, headers=headers(access_token))
-        r.raise_for_status()
-        return r.json() or []
-
-async def list_targets(access_token: str, ds_enc: str, typ: str, uuid: str) -> list[dict]:
-    """GET /dataspaces/{dataspaceId}/resources/{type}/{uuid}/targets"""
-    url = f"https://{OSDU_BASE_URL}/api/reservoir-ddms/v2/dataspaces/{ds_enc}/resources/{typ}/{uuid}/targets"
-    async with httpx.AsyncClient(timeout=90) as client:
-        r = await client.get(url, headers=headers(access_token))
-        r.raise_for_status()
-        return r.json() or []
-
-def _eml_uri_from_parts(path: str, typ: str, uuid: str) -> str:
-    """Canonical EML URI if a node lacks 'uri'."""
-    return f"eml:///dataspace('{path}')/{typ}('{uuid}')"

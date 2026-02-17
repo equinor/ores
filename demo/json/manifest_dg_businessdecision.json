@@ -22,13 +22,14 @@
         ]
       },
       "data": {
-        "Name": "GRAND — Decision Gate 2 DG2 Concept Select",
-        "ProjectName": "Grane Northern Area Development GRAND",
+        "Name": "GRAND \u2014 Decision Gate 2 DG2 Concept Select",
+        "Description": "DG2 concept selection for the Grane Northern Area Development (GRAND) project. The GRAND area comprises F-Structure and D-Structure discoveries in Palaeocene Heimdal Formation sands on the NW flank of Utsira High, Viking Graben. 300 geo-realisations were run to quantify STOIIP uncertainty across three structures (F, D, D-North) and three facies groups (Heimdal, Mapped Injectites, Unmapped Injectites). DG2 recommends subsea tie-back to Grane with 4\u00d76-slot templates, 23 wells (including 2 multilateral), targeting June 2023 start-up.",
+        "ProjectName": "Grane Northern Area Development (GRAND)",
         "DecisionLevelID": "dev:reference-data--DecisionLevel:DG2:1",
         "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:1",
         "DecisionDueDate": "2019-04-26",
         "DecisionDate": "2019-04-26",
-        "DecisionSummary": "Approve subsea tie-back to Grane; four 6-slot templates; start-up target originally June 2023.",
+        "DecisionSummary": "Approve subsea tie-back development to Grane platform. Four 6-slot templates (24 slots), 23 wells plus 2 multilateral. Reference case STOIIP 118.7 MSm\u00b3 (P90 70.7, P10 158.7). Start-up target June 2023.",
         "RiskAssessmentDocument": "dev:work-product-component--Document:PM398-DD-200-001_01_Final_INTERNAL.pdf:1",
         "RiskIDs": [
           "dev:master-data--Risk:GRAND-DepthConversionTopReservoir:1",
@@ -60,6 +61,13 @@
             "DataObjectParameter": "dev:master-data--Reservoir:f9585655-83d8-4549-ae3e-2dffc2cd5937:1"
           },
           {
+            "Title": "Petroleum Technology Report (DG2)",
+            "Selection": "PM398-DD-200-001 Rev 01 Final \u2014 548 pages covering seismic, petrophysics, geomodelling, dynamic simulation",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:work-product-component--Document:PM398-DD-200-001_01_Final_INTERNAL.pdf:1"
+          },
+          {
             "Title": "SRA report",
             "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
             "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
@@ -74,31 +82,169 @@
         ],
         "ext": {
           "equinor": {
-            "Alternatives": [
+            "Authors": [
               {
-                "Name": "Alt-A Subsea to Grane",
-                "Rank": 1,
-                "Rationale": "Highest NPV; robust P50 volumes; acceptable residual risks."
+                "Name": "Berit Frantzen",
+                "Role": "Petec Manager",
+                "Organisation": "GRAND Petec"
               },
               {
-                "Name": "Alt-B FPSO",
+                "Name": "Sarah Riordan",
+                "Role": "Geomodelling Lead",
+                "Organisation": "GRAND Geomodelling"
+              },
+              {
+                "Name": "Abdulhamit Akalin",
+                "Role": "Geophysicist",
+                "Organisation": "GRAND Subsurface"
+              },
+              {
+                "Name": "Alok Saraf",
+                "Role": "Reservoir Engineer",
+                "Organisation": "GRAND Reservoir"
+              },
+              {
+                "Name": "Asbj\u00f8rn S\u00e6b\u00f8",
+                "Role": "Petrophysicist",
+                "Organisation": "GRAND Subsurface"
+              },
+              {
+                "Name": "Ingvar Skaar",
+                "Role": "Geologist",
+                "Organisation": "GRAND Subsurface"
+              }
+            ],
+            "ReviewTeam": {
+              "PreparedBy": {
+                "Name": "Sarah Riordan",
+                "Organisation": "GRAND Geomodelling"
+              },
+              "Responsible": {
+                "Name": "Berit Frantzen",
+                "Organisation": "GRAND Petec Manager"
+              },
+              "QARecommender": {
+                "Name": "Rune Instefjord",
+                "Organisation": "ST MSU DYN"
+              },
+              "ProcessControlledBy": {
+                "Name": "Stine Skotheim",
+                "Organisation": "GRAND QRM Manager"
+              },
+              "ApprovedBy": {
+                "Name": "Hilde Reme",
+                "Organisation": "GRAND Project Director"
+              }
+            },
+            "Alternatives": [
+              {
+                "Name": "Alt-A: Subsea tie-back to Grane (4\u00d76-slot templates)",
+                "Rank": 1,
+                "Rationale": "Highest NPV; leverages existing Grane infrastructure for lift gas and water handling. 23 wells + 2 multilateral; start-up heater and LP gas debottlenecking on Grane required. Provisions for future expansion with additional templates or subsea pump.",
+                "RecommendedAction": "Approve"
+              },
+              {
+                "Name": "Alt-B: Standalone FPSO",
                 "Rank": 2,
-                "Rationale": "Higher CAPEX and schedule risk per SRA and CRA."
+                "Rationale": "Higher CAPEX and schedule risk per SRA and CRA. Provides independence from Grane but does not justify the cost premium given the reference-case volumes.",
+                "RecommendedAction": "Reject"
+              },
+              {
+                "Name": "Alt-C: Reduced scope \u2014 F-Structure only",
+                "Rank": 3,
+                "Rationale": "Lower initial investment but forgoes 55% of the reference STOIIP (D-Structure = 64.3 MSm\u00b3 REF). May be revisited if D-Structure volumes prove lower than P90 after DG3 appraisal.",
+                "RecommendedAction": "Fallback"
+              }
+            ],
+            "DevelopmentConcept": {
+              "Summary": "Subsea development with 4\u00d76-slot templates (24 slots), tie-back to Grane platform. Two flowlines (16\" and 14\") plus 8\" gas lift line. Distance to Grane ~10-12 km. Water depth 128\u2013130 m.",
+              "WellCount": 23,
+              "MultilateralWells": 2,
+              "TemplateSlots": 24,
+              "DrillingCentres": 4,
+              "ReservoirFormation": "Heimdal (Palaeocene)",
+              "FieldArea": "Grane Northern Area",
+              "WaterDepth_m": 129,
+              "DistanceToHost_km": 11,
+              "HostFacility": "Grane Platform",
+              "TargetStartUp": "2023-06"
+            },
+            "ReservoirProperties": {
+              "FormationName": "Heimdal (Palaeocene)",
+              "Structures": ["F-Structure", "D-Structure", "D-North"],
+              "FaciesGroups": ["Heimdal", "Mapped Injectites", "Unmapped Injectites"],
+              "AveragePorosity_FStruct": 0.32,
+              "AveragePorosity_DStruct": 0.34,
+              "AveragePermeability_mD_FStruct": 6907,
+              "AveragePermeability_mD_DStruct": 8223,
+              "NetToGross": 1.0,
+              "OilGradient_gcc_F": 0.87,
+              "OilGradient_gcc_D": 0.85,
+              "FWL_m_TVDSS_F": 1759.5,
+              "FWL_m_TVDSS_D": 1758.0,
+              "ReservoirPressure_bara": 138,
+              "ReservoirTemperature_degC": 77,
+              "ReservoirDepth_m_TVD_MSL": 1750,
+              "BoFactor_F": 1.085,
+              "BoFactor_D": 1.099,
+              "GOR_F": 20.5,
+              "GOR_D": 26.5
+            },
+            "VolumesSummary_STOIIP_MSm3": {
+              "FStructure": { "P90": 29.5, "REF": 51.8, "P10": 69.9 },
+              "DStructure": { "P90": 39.9, "REF": 64.3, "P10": 84.9 },
+              "DNorth":     { "P90": 1.3,  "REF": 2.6,  "P10": 3.8 },
+              "Total":      { "P90": 70.7, "REF": 118.7, "P10": 158.7 }
+            },
+            "KeyUncertainties": [
+              {
+                "Factor": "Seismic time interpretation and depth conversion",
+                "Impact": "High",
+                "Description": "Top reservoir interpretation is uncertain due to limitations in seismic resolution. Depth conversion adds to total depth uncertainty of the top reservoir surface. New 4D baseline acquisition planned for 2020."
+              },
+              {
+                "Factor": "Early water breakthrough",
+                "Impact": "High",
+                "Description": "Thin and heavy oil zone directly above an active aquifer. Recovery may be low due to high oil viscosity and thin oil column thickness. ICD/AICD and subsea pumps under evaluation."
+              },
+              {
+                "Factor": "Injectite volume contribution",
+                "Impact": "Medium",
+                "Description": "Sand remobilisation and injection processes have generated a complex network of sand dykes and sills. Predicting their location and volumetric potential is highly uncertain. Mapped injectites contribute 22.1 MSm\u00b3 (REF) but unmapped injectites add 14.9 MSm\u00b3 with high uncertainty."
+              },
+              {
+                "Factor": "Well placement optimisation",
+                "Impact": "Medium",
+                "Description": "Wells target areas with >10 m oil column in Heimdal and >12 m in mapped injectites. Higher placement towards top Heimdal and longer reservoir sections could improve recovery."
               }
             ],
             "UncertaintySummary": {
-              "Basis": "PRMS; probabilistic FMU using static in-place volumes from REV stats",
-              "StaticInPlace_Oil_m3": {
-                "P90": 120000000,
-                "P50": 198000000,
-                "P10": 263000000
+              "Basis": "PRMS; probabilistic FMU using 300 geo-realisations (3 selected: Real 1 = REF, Real 88 = P90, Real 58 = P10). Static in-place volumes from DG2 geomodels.",
+              "Note": "Volumes from Table 11-23 of PM398-DD-200-001 Rev 01. Bo and GOR differentiated by structure.",
+              "TotalRealisations": 300,
+              "SelectedRealisations": { "P90": "Real 88", "REF": "Real 1", "P10": "Real 58" },
+              "MethodologyReference": "FMU Level 2 static uncertainty workflow (GRAND DG2 geomodel)",
+              "StaticInPlace_Oil_MSm3": {
+                "P90": 70.7,
+                "REF": 118.7,
+                "P10": 158.7
               },
-              "Recoverable_Oil_m3": {
-                "P90": 65000000,
-                "P50": 82000000,
-                "P10": 103000000
+              "TargetSTOIIP_MSm3": {
+                "P90": 57.4,
+                "REF": 103.8,
+                "P10": 142.6,
+                "Note": "STOIIP by target thickness; excludes unmapped injectites (not well targets)"
               }
-            }
+            },
+            "DG3Recommendations": [
+              "Adjust layer thickness below FWL in simulation grid to improve modelling of OWC movements",
+              "Implement full Level 3 FMU uncertainty workflow for more detailed dynamic uncertainty analysis",
+              "Investigate PERMZ value in unmapped injectites to better reflect sub-grid geology",
+              "Run sensitivities on effect of periodical gas injection (huff & puff)",
+              "Evaluate AICD vs ICD in lower completion",
+              "Acquire new 4D seismic baseline in 2020 for monitoring",
+              "Evaluate potential for infill drilling and subsea multiphase pumps"
+            ]
           }
         }
       }

@@ -141,6 +141,61 @@ def _normalize_volumes(data_block: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+async def _enrich_bd_volumes(
+    data_block: Dict[str, Any],
+    client: httpx.AsyncClient,
+    storage_url: str,
+    hdr: dict,
+) -> Dict[str, Any]:
+    """For BusinessDecision records, fetch volumes from the stat REV WPC
+    referenced in ``Parameters``.
+
+    Returns a normalized volumes dict (may be empty if nothing found).
+    The strategy:
+      1. Walk ``data.Parameters`` for entries whose ``DataObjectParameter``
+         points to a ReservoirEstimatedVolumes WPC.
+      2. Prefer the one tagged ``REV-stats``; fall back to any REV WPC.
+      3. Fetch that record and return its ``_normalize_volumes()`` output.
+    """
+    params = data_block.get("Parameters") or []
+    if not isinstance(params, list):
+        return {}
+
+    stat_id: str = ""
+    any_rev_id: str = ""
+    for p in params:
+        if not isinstance(p, dict):
+            continue
+        dop = p.get("DataObjectParameter") or ""
+        if "ReservoirEstimatedVolumes" not in dop:
+            continue
+        # Check StringParameterKey for "stats"
+        keys = p.get("Keys") or []
+        is_stat = any(
+            "stat" in (kv.get("StringParameterKey") or "").lower()
+            for kv in keys if isinstance(kv, dict)
+        )
+        if is_stat:
+            stat_id = dop
+            break
+        if not any_rev_id:
+            any_rev_id = dop
+
+    target_id = stat_id or any_rev_id
+    if not target_id:
+        return {}
+
+    try:
+        r = await client.get(f"{storage_url}/{target_id}", headers=hdr)
+        if r.status_code != 200:
+            return {}
+        d = (r.json() or {}).get("data", {}) or {}
+        return _normalize_volumes(d)
+    except Exception as e:
+        log.warning("[BD-VOLUMES] Failed to fetch stat REV %s: %s", target_id, e)
+        return {}
+
+
 def _parse_kind_inputs(kind: str, kinds_extra: str) -> List[str]:
     """
     Build an ordered, de-duplicated list of kinds from:
@@ -402,6 +457,12 @@ async def search_run(
                         ancestry_children = ancestry.get("children", []) or []
                         volumes = _normalize_volumes(data_block)
 
+                        # BusinessDecision: pull headline volumes from linked stat REV WPC
+                        if "businessdecision" in (full.get("kind") or "").lower():
+                            if not (volumes or {}).get("ColumnValues"):
+                                volumes = await _enrich_bd_volumes(
+                                    data_block, client, storage_url, hdr)
+
                         # Generic WPC/master-data links (exclude reference-data)
                         links = extract_osdu_links(data_block) or []
 
@@ -517,22 +578,117 @@ async def search_run(
 
 @app.get("/search/view/{record_id}", response_class=HTMLResponse)
 async def view_record(request: Request, record_id: str):
+    """Fetch a single record by ID and render it through the search template."""
     at = _access_token(request)
-    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records/{record_id}"
+    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
     hdr = osdu.headers(at)
-    async with httpx.AsyncClient(timeout=60) as client:
-        r = await client.get(storage_url, headers=hdr)
-        r.raise_for_status()
-        full = r.json()
-        data_block = full.get("data", {}) or {}
-        volumes = _normalize_volumes(data_block)
+    try:
+        async with httpx.AsyncClient(timeout=60) as client:
+            r = await client.get(f"{storage_url}/{record_id}", headers=hdr)
+            r.raise_for_status()
+            full = r.json()
+
+            data_block = full.get("data", {}) or {}
+            ancestry = data_block.get("ancestry", {}) or {}
+            volumes = _normalize_volumes(data_block)
+
+            # BusinessDecision: pull headline volumes from linked stat REV WPC
+            if "businessdecision" in (full.get("kind") or "").lower():
+                if not (volumes or {}).get("ColumnValues"):
+                    volumes = await _enrich_bd_volumes(
+                        data_block, client, storage_url, hdr)
+
+            links = extract_osdu_links(data_block) or []
+
+            linked_labels: Dict[str, Dict[str, Any]] = {}
+            try:
+                for l in links[:25]:
+                    lid = l.get("id")
+                    if not lid or lid in linked_labels:
+                        continue
+                    r_link = await client.get(f"{storage_url}/{lid}", headers=hdr)
+                    if r_link.status_code == 200:
+                        rr = r_link.json()
+                        nm = (rr.get("data") or {}).get("Name")
+                        linked_labels[lid] = {
+                            "name": nm or lid,
+                            "kind": rr.get("kind"),
+                            "version": rr.get("version"),
+                        }
+            except Exception as e:
+                log.warning("[VIEW] Linked record name hydration failed: %s", e)
+
+            try:
+                md = extract_metadata_generic(
+                    data_block, ds="",
+                    typ=full.get("kind", "") or "",
+                    uuid=full.get("id", "") or "",
+                    arrays=None, max_string_len=300, max_preview_items=5,
+                )
+                metadata_pairs = [
+                    p for p in (md.get("pairs", []) or [])
+                    if not (str(p.get("name")).lower() == "uri"
+                            and str(p.get("value") or "").startswith("eml:///"))
+                ]
+            except Exception as e:
+                log.warning("[VIEW] metadata_pairs extraction failed: %s", e)
+                metadata_pairs = []
+
+            enriched = {
+                "id": full.get("id"),
+                "kind": full.get("kind"),
+                "version": full.get("version"),
+                "data": data_block,
+                "ancestry_parents": ancestry.get("parents", []) or [],
+                "ancestry_children": ancestry.get("children", []) or [],
+                "volumes": volumes,
+                "links": links,
+                "linked_labels": linked_labels,
+                "metadata_pairs": metadata_pairs,
+            }
+
         return templates.TemplateResponse(
-            "record.html",
+            "search.html",
             {
                 "request": request,
-                "record": full,
-                "volumes": volumes,
+                "results": {"results": [enriched], "totalCount": 1},
+                "kind": full.get("kind", ""),
+                "kinds_extra": "",
+                "kind_options": _collect_manifest_kinds(),
+                "q": record_id,
+                "limit": 1,
             },
+        )
+    except HTTPStatusError as e:
+        return templates.TemplateResponse(
+            "search.html",
+            {
+                "request": request,
+                "error": f"Record fetch failed: {e.response.status_code}",
+                "error_detail": (e.response.text[:2000] if e.response.text else ""),
+                "kind": "",
+                "kinds_extra": "",
+                "kind_options": _collect_manifest_kinds(),
+                "q": record_id,
+                "limit": 1,
+            },
+            status_code=e.response.status_code or 500,
+        )
+    except Exception as e:
+        log.exception("[VIEW] Unexpected error: %s", e)
+        return templates.TemplateResponse(
+            "search.html",
+            {
+                "request": request,
+                "error": "Unexpected error",
+                "error_detail": "See server logs",
+                "kind": "",
+                "kinds_extra": "",
+                "kind_options": _collect_manifest_kinds(),
+                "q": record_id,
+                "limit": 1,
+            },
+            status_code=500,
         )
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -920,19 +1076,10 @@ async def dataspaces_manifest_build_uris(
             log.warning("build-uris: list_targets failed: %s", e)
             targets = []
 
-        def add_node_uri(node: dict):
-            u = node.get("uri")
-            if u:
-                uris.add(u); return
-            tpath = (node.get("$type") or node.get("type") or "") or _infer_type_path(node)
-            nid = _node_uuid(node, fallback_uri=u or "")
-            if tpath and nid:
-                uris.add(osdu._eml_uri_from_parts(ds, tpath, nid))
-
         for node in (sources or []):
-            if isinstance(node, dict): add_node_uri(node)
+            if isinstance(node, dict): _add_node_uri(node, uris, ds)
         for node in (targets or []):
-            if isinstance(node, dict): add_node_uri(node)
+            if isinstance(node, dict): _add_node_uri(node, uris, ds)
 
     manifest = await osdu.build_manifest_for_uris(
         at,
@@ -1022,19 +1169,10 @@ async def dataspaces_manifest_build_from_selection(
                 log.warning("build-from-selection: list_targets failed: %s", e)
                 targets = []
 
-            def add_node_uri(node: dict):
-                u = node.get("uri")
-                if u:
-                    uris.add(u); return
-                tpath = (node.get("$type") or node.get("type") or "") or _infer_type_path(node)
-                nid = _node_uuid(node, fallback_uri=u or "")
-                if tpath and nid:
-                    uris.add(osdu._eml_uri_from_parts(ds, tpath, nid))
-
             for node in (sources or []):
-                if isinstance(node, dict): add_node_uri(node)
+                if isinstance(node, dict): _add_node_uri(node, uris, ds)
             for node in (targets or []):
-                if isinstance(node, dict): add_node_uri(node)
+                if isinstance(node, dict): _add_node_uri(node, uris, ds)
 
     # 4) Call the manifest builder
     try:
@@ -1318,7 +1456,6 @@ async def keys_object_table(
                 uid = t.get("Uuid") or t.get("UUID") or t.get("uuid") or ""
                 if not uid and t_uri:
                     # Extract UUID from URI like eml:///dataspace('...')/resqml20.obj_StringTableLookup('uuid')
-                    import re
                     m = re.search(r"StringTableLookup\('?([0-9a-f-]+)'?\)", t_uri)
                     if m:
                         uid = m.group(1)
@@ -1358,7 +1495,6 @@ async def keys_object_table(
             if not stl_uuid:
                 # Try extracting UUID from uri
                 uri = stl_node.get("uri") or ""
-                import re
                 m = re.search(r"\(([0-9a-f-]+)\)", uri)
                 if m:
                     stl_uuid = m.group(1)
@@ -1542,25 +1678,3 @@ async def keys_object_graph(
         "refs": refs,
         "summary": summary,
     })
-
-# ── OSDU storage helper (auth-aware) ──────────────────────────────────────────
-
-async def osdu_get_record(request: Request, record_id: str) -> dict:
-    at = _access_token(request)
-    base = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
-    url = f"{base}/{urllib.parse.quote(record_id, safe='')}"
-    hdr = osdu.headers(at)
-    async with httpx.AsyncClient(timeout=30) as client:
-        r = await client.get(url, headers=hdr)
-        if r.status_code == 200:
-            return r.json()
-        if r.status_code == 404:
-            return {}
-        r.raise_for_status()
-    return {}
-
-def _safe(lst):
-    return lst if isinstance(lst, list) else []
-
-def _get_data(rec):
-    return rec.get("data") or {}

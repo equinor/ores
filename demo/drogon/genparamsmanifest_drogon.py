@@ -49,21 +49,7 @@ PARAM_COLUMNS = [
     ("Porosity_Crevasse",            "Porosity_Crevasse",            "Euc", "number"),
 ]
 
-# ── Descriptive segment names ───────────────────────────────────────────
-SEGMENT_NAMES = {
-    "WestLowland":  "West Lowland",
-    "CentralSouth": "Central South",
-    "CentralNorth": "Central North",
-    "NorthHorst":   "North Horst",
-    "CentralRamp":  "Central Ramp",
-    "CentralHorst": "Central Horst",
-    "EastLowland":  "East Lowland",
-}
-
-# ── Helpers ─────────────────────────────────────────────────────────────
-def load_json(path: str) -> Dict[str, Any]:
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+from _shared import load_json, SEGMENT_NAMES  # noqa: E402
 
 
 def std_ref_id(prefix: str, entity: str, name: str) -> str:

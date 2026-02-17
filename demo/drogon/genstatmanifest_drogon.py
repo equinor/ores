@@ -29,9 +29,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 JSON_DIR   = SCRIPT_DIR.parent / "json"
 
 # ── Helpers ─────────────────────────────────────────────────────────────
-def load_json(path: str) -> Dict[str, Any]:
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+from _shared import load_json  # noqa: E402
 
 def ref_id(prefix: str, entity: str, name: str) -> str:
     """Reference-data ID WITH trailing colon (for PropertyTypeID)."""

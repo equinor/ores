@@ -35,7 +35,8 @@
     return r.json();
   }
 
-  // ---------- top nav ----------
+  // ---------- top nav (built by inline <script> in base.html) ----------
+  // el() and linkSpan() kept for use by other UI code below.
   function el(tag, attrs, text) {
     const e = document.createElement(tag);
     if (attrs) for (const [k, v] of Object.entries(attrs)) {
@@ -51,18 +52,6 @@
     s.addEventListener('click', () => { window.location.assign(href); });
     return s;
   }
-  function buildHeader() {
-    const root = document.getElementById('nav-root');
-    if (!root) return;
-    root.textContent = '';
-    root.appendChild(linkSpan('/', 'Rddms'));
-    root.appendChild(linkSpan('/keys', 'Resources'));
-    root.appendChild(linkSpan('/search', 'Search'));
-    root.appendChild(linkSpan('/strat', 'Strat'));
-    root.appendChild(el('span', { 'class': 'muted' }, ' · '));
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', buildHeader);
-  else buildHeader();
   document.addEventListener('click', function (e) {
     const el = e.target.closest('[data-href]');
     if (!el) return;
