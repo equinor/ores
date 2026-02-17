@@ -42,11 +42,14 @@ def _as_id(x: Any) -> str:
       - a string id, or
       - an object with 'id' (Storage record ref), or
       - an object with '$ref'/'recordId' (defensive)
+    Returns the ID as-is (no trailing-colon stripping) because some OSDU records
+    (e.g. ICS2017 chrono) store the trailing ':' as part of their canonical ID.
     """
     if isinstance(x, str):
-        return x
+        return x.strip()
     if isinstance(x, dict):
-        return x.get("id") or x.get("recordId") or x.get("$ref") or ""
+        raw = x.get("id") or x.get("recordId") or x.get("$ref") or ""
+        return raw.strip()
     return ""
 
 
@@ -119,52 +122,48 @@ async def strat_search(
 
 
 def _ids(val: Any) -> List[str]:
+    """Extract a list of record IDs from heterogeneous inputs."""
     if isinstance(val, list):
         out = []
         for item in val:
-            if isinstance(item, str):
-                out.append(item)
-            elif isinstance(item, dict):
-                s = item.get("id") or item.get("recordId") or item.get("$ref") or ""
-                if s: out.append(s)
+            s = _as_id(item)
+            if s:
+                out.append(s)
         return out
-    if isinstance(val, str):
-        return [val]
-    if isinstance(val, dict):
-        s = val.get("id") or val.get("recordId") or val.get("$ref") or ""
-        return [s] if s else []
-    return []
+    s = _as_id(val)
+    return [s] if s else []
 
 async def _storage_fetch_many(request: Request, ids: List[str]) -> Dict[str, dict]:
+    """Batch-fetch records.  Handles both UUID IDs (no trailing ':') and named IDs
+    (trailing ':' is canonical).  After the first pass, any not-found IDs are retried
+    with the colon toggled.  Results are keyed under both forms for easy lookup."""
     at = _access_token(request)
     base = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2"
     hdr = osdu.headers(at)
 
-    # NEW: normalize heterogeneous inputs (str | dict) -> str ids
+    # Normalize heterogeneous inputs (str | dict) -> str ids
     norm_ids: List[str] = []
     for i in ids or []:
-        s = _as_id(i)  # handles str, {"id":...}, {"recordId":...}, {"$ref":...}
+        s = _as_id(i)
         if s:
-            s = s.strip()
-            if s:
-                norm_ids.append(s)
+            norm_ids.append(s)
 
-    # dedupe while preserving order
-    uniq = [x for x in dict.fromkeys(norm_ids)]
+    # Dedupe while preserving order
+    uniq = list(dict.fromkeys(norm_ids))
     if not uniq:
         return {}
 
     results: Dict[str, dict] = {}
 
-    async def post_batch(client: httpx.AsyncClient, chunk: List[str]) -> None:
+    async def post_batch(client: httpx.AsyncClient, chunk: List[str]) -> List[str]:
         url = f"{base}/query/records:batch"
-        payload = {"records": chunk}
-        r = await client.post(url, headers=hdr, json=payload)
+        r = await client.post(url, headers=hdr, json={"records": chunk})
         if r.status_code == 404:
             raise FileNotFoundError("records:batch not available")
         r.raise_for_status()
         data = r.json() or {}
         recs = data.get("records")
+        not_found: List[str] = data.get("notFound") or []
         if isinstance(recs, list):
             for item in recs:
                 if isinstance(item, dict):
@@ -172,11 +171,11 @@ async def _storage_fetch_many(request: Request, ids: List[str]) -> Dict[str, dic
                     body = item.get("record") or item
                     if rid and isinstance(body, dict):
                         results[rid] = body
-        else:
-            if isinstance(data, list):
-                for body in data:
-                    if isinstance(body, dict) and body.get("id"):
-                        results[body["id"]] = body
+        elif isinstance(data, list):
+            for body in data:
+                if isinstance(body, dict) and body.get("id"):
+                    results[body["id"]] = body
+        return not_found
 
     async def get_one(client: httpx.AsyncClient, rid: str, sem: asyncio.Semaphore) -> None:
         url = f"{base}/records/{urllib.parse.quote(rid, safe='')}"
@@ -184,20 +183,48 @@ async def _storage_fetch_many(request: Request, ids: List[str]) -> Dict[str, dic
             r = await client.get(url, headers=hdr)
             if r.status_code == 200:
                 results[rid] = r.json() or {}
-            elif r.status_code == 404:
-                results[rid] = {}
-            else:
+            elif r.status_code != 404:
                 r.raise_for_status()
 
     async with httpx.AsyncClient(timeout=30, http2=True) as client:
         chunks = [uniq[i:i+20] for i in range(0, len(uniq), 20)]
         try:
-            await asyncio.gather(*(post_batch(client, c) for c in chunks))
-            return results
+            # Pass 1: try all IDs as-is
+            nf_lists = await asyncio.gather(*(post_batch(client, c) for c in chunks))
+            all_not_found = [nf for sublist in nf_lists for nf in sublist]
+
+            # Pass 2: retry not-found IDs with toggled trailing colon
+            retry = []
+            for nf_id in all_not_found:
+                alt = nf_id[:-1] if nf_id.endswith(":") else nf_id + ":"
+                if alt not in results:
+                    retry.append(alt)
+            if retry:
+                retry_chunks = [retry[i:i+20] for i in range(0, len(retry), 20)]
+                await asyncio.gather(*(post_batch(client, c) for c in retry_chunks))
+
         except FileNotFoundError:
+            # Fallback: individual GET for each ID
             sem = asyncio.Semaphore(12)
             await asyncio.gather(*(get_one(client, rid, sem) for rid in uniq))
-            return results
+            # Retry with toggled colon for missing
+            missing = [rid for rid in uniq if rid not in results]
+            retry2 = []
+            for rid in missing:
+                alt = rid[:-1] if rid.endswith(":") else rid + ":"
+                if alt not in results:
+                    retry2.append(alt)
+            if retry2:
+                await asyncio.gather(*(get_one(client, rid, sem) for rid in retry2))
+
+    # Store results under both colon forms for easy caller lookups
+    for rid in list(results.keys()):
+        body = results[rid]
+        alt = rid[:-1] if rid.endswith(":") else rid + ":"
+        if alt not in results:
+            results[alt] = body
+
+    return results
         
 
 @router.get("/api/strat/column.json")
@@ -274,7 +301,7 @@ async def get_strat_column(
     units_by_id = await _storage_fetch_many(request, unit_ids_all) if unit_ids_all else {}
     for u in units_by_id.values():
         ud = _get_data(u)
-        cid = ud.get("ChronoStratigraphyID") or ud.get("ChronostratigraphyID")
+        cid = _as_id(ud.get("ChronoStratigraphyID") or ud.get("ChronostratigraphyID") or "")
         if cid:
             chrono_ids_all.append(cid)
 
@@ -340,7 +367,7 @@ async def get_strat_column(
             if not urec:
                 continue
             ud = _get_data(urec)
-            cid = ud.get("ChronoStratigraphyID") or ud.get("ChronostratigraphyID")
+            cid = _as_id(ud.get("ChronoStratigraphyID") or ud.get("ChronostratigraphyID") or "")
             cobj = chron_by_id.get(cid) if cid else {}
             units_model.append({"unit": urec, "chrono": cobj})
 
