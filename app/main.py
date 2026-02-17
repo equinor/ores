@@ -1156,6 +1156,18 @@ def _infer_type_path(item: Dict[str, Any]) -> str:
 
 # ── route: manifest building ──────────────────────────────────────────────────
 
+def _add_node_uri(node: Dict[str, Any], uris: Set[str], ds: str) -> None:
+    """Extract the EML URI from a RDDMS graph node and add it to *uris*."""
+    uri = node.get("uri") or ""
+    if uri:
+        uris.add(uri)
+        return
+    # Fallback: construct the URI from type + uuid
+    uid = _node_uuid(node)
+    tpath = _infer_type_path(node)
+    if uid and tpath:
+        uris.add(osdu._eml_uri_from_parts(ds, tpath, uid))
+
 @app.post("/dataspaces/manifest/build-uris", summary="Build manifest for one object (+ optional refs)")
 async def dataspaces_manifest_build_uris(
     request: Request,
@@ -1195,15 +1207,27 @@ async def dataspaces_manifest_build_uris(
         for node in (targets or []):
             if isinstance(node, dict): _add_node_uri(node, uris, ds)
 
-    manifest = await osdu.build_manifest_for_uris(
-        at,
-        sorted(uris),
-        legal_tag=legal or osdu.DEFAULT_LEGAL_TAG,
-        owners=[x.strip() for x in owners.split(",") if x.strip()],
-        viewers=[x.strip() for x in viewers.split(",") if x.strip()],
-        countries=[x.strip() for x in countries.split(",") if x.strip()],
-        create_missing_refs=bool(create_missing),
-    )
+    try:
+        manifest = await osdu.build_manifest_for_uris(
+            at,
+            sorted(uris),
+            legal_tag=legal or osdu.DEFAULT_LEGAL_TAG,
+            owners=[x.strip() for x in owners.split(",") if x.strip()],
+            viewers=[x.strip() for x in viewers.split(",") if x.strip()],
+            countries=[x.strip() for x in countries.split(",") if x.strip()],
+            create_missing_refs=bool(create_missing),
+        )
+    except HTTPStatusError as e:
+        r = e.response
+        return JSONResponse(
+            {
+                "status": "error",
+                "code": r.status_code,
+                "reason": r.reason_phrase,
+                "detail": (r.text[:2000] if r.text else ""),
+            },
+            status_code=r.status_code or 500,
+        )
     app.state.last_manifest = manifest
     return JSONResponse({"status": "ok", "countUris": len(uris), "manifest": manifest})
 

@@ -3,33 +3,131 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>{% block title %}OsduUi{% endblock %}</title>
+  <title>{% block title %}ORES{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-  body { font-family: Segoe UI, Roboto, Arial, sans-serif; margin: 0; padding: 0; }
-  header { background: #004578; color: #fff; padding: 10px 16px; }
-  .navlink { color: #fff; cursor: pointer; margin-right: 14px; display: inline-block; }
-  .navlink:hover { text-decoration: underline; }
-  main { padding: 16px; }
-  .banner { background: #fff4ce; color: #323130; border-left: 4px solid #ffb900; padding: 8px 12px; margin: 0; font-size: 14px; }
-  .muted { color: #605e5c; }
-  .btn { display: inline-block; padding: 6px 10px; border: 1px solid #605e5c; border-radius: 3px; background: #fff; cursor: pointer; user-select: none; }
-  .btn:hover { background: #f3f2f1; }
+  /* ── Equinor-branded design tokens ── */
+  :root {
+    --eq-red:       #FF1243;
+    --eq-red-dark:  #D6002B;
+    --eq-charcoal:  #333333;
+    --eq-slate:     #565656;
+    --eq-grey:      #6F6F6F;
+    --eq-light:     #F7F7F7;
+    --eq-border:    #E6E6E6;
+    --eq-white:     #FFFFFF;
+    --eq-bg:        #FAFAFA;
+    --eq-link:      #007079;
+    --eq-link-hover:#004F55;
+    --eq-success:   #4BB748;
+    --eq-warn-bg:   #FFF8E1;
+    --eq-warn-border: #FFB300;
+    --radius:       6px;
+    --shadow-sm:    0 1px 3px rgba(0,0,0,.08);
+    --shadow-md:    0 2px 8px rgba(0,0,0,.10);
+    --font:         'Equinor', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+
+  /* ── Reset & base ── */
+  *, *::before, *::after { box-sizing: border-box; }
+  body { font-family: var(--font); margin: 0; padding: 0; background: var(--eq-bg); color: var(--eq-charcoal); font-size: 14px; line-height: 1.55; }
+  a { color: var(--eq-link); text-decoration: none; }
+  a:hover { color: var(--eq-link-hover); text-decoration: underline; }
+
+  /* ── Header / Nav ── */
+  header {
+    background: var(--eq-white);
+    border-bottom: 3px solid var(--eq-red);
+    padding: 0 1.25rem;
+    display: flex;
+    align-items: center;
+    height: 52px;
+    box-shadow: var(--shadow-sm);
+    position: sticky; top: 0; z-index: 100;
+  }
+  #nav-root { display: flex; align-items: center; width: 100%; gap: 0; }
+  .nav-brand {
+    font-weight: 700; font-size: 15px; color: var(--eq-red);
+    letter-spacing: .02em; margin-right: 1.5rem;
+    cursor: pointer; white-space: nowrap;
+  }
+  .nav-brand:hover { color: var(--eq-red-dark); }
+  .navlink {
+    color: var(--eq-slate); cursor: pointer; padding: .45rem .75rem;
+    border-radius: var(--radius); font-size: 13.5px; font-weight: 500;
+    transition: background .15s, color .15s; white-space: nowrap;
+  }
+  .navlink:hover { background: var(--eq-light); color: var(--eq-charcoal); }
+  .navlink.active { color: var(--eq-red); background: rgba(255,18,67,.06); }
+  .nav-spacer { flex: 1; }
+  .nav-signout {
+    color: var(--eq-grey); font-size: 12.5px; cursor: pointer;
+    padding: .35rem .65rem; border-radius: var(--radius);
+  }
+  .nav-signout:hover { background: var(--eq-light); color: var(--eq-charcoal); }
+  .nav-signin {
+    color: var(--eq-link); font-size: 12.5px; font-weight: 500; cursor: pointer;
+    padding: .35rem .65rem; border-radius: var(--radius); margin-right: .25rem;
+  }
+  .nav-signin:hover { background: var(--eq-light); color: var(--eq-link-hover); }
+
+  /* ── Main content ── */
+  main { padding: 1.25rem 1.5rem; max-width: 1440px; margin: 0 auto; }
+
+  /* ── Shared components ── */
+  .muted { color: var(--eq-grey); }
+  .banner { background: var(--eq-warn-bg); color: var(--eq-charcoal); border-left: 4px solid var(--eq-warn-border); padding: 10px 14px; margin: 0 0 1rem; border-radius: 0 var(--radius) var(--radius) 0; font-size: 13.5px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: .35rem;
+    padding: 7px 14px; border: 1px solid var(--eq-border); border-radius: var(--radius);
+    background: var(--eq-white); color: var(--eq-charcoal);
+    font-size: 13px; font-weight: 500; cursor: pointer; user-select: none;
+    transition: background .15s, border-color .15s, box-shadow .15s;
+  }
+  .btn:hover { background: var(--eq-light); border-color: #CCC; box-shadow: var(--shadow-sm); }
+  .btn:active { background: #EFEFEF; }
+  .btn-primary {
+    background: var(--eq-red); color: var(--eq-white); border-color: var(--eq-red);
+  }
+  .btn-primary:hover { background: var(--eq-red-dark); border-color: var(--eq-red-dark); }
+
+  /* ── Tables ── */
   table { border-collapse: collapse; width: 100%; }
-  th, td { padding: 6px 8px; border-bottom: 1px solid #e1dfdd; text-align: left; }
-  input[type=text], input[type=number] { padding: 6px 8px; width: 100%; box-sizing: border-box; }
-  .row { display: grid; grid-template-columns: 220px 1fr; gap: 8px 12px; align-items: center; margin-bottom: 8px; }
+  th, td { padding: 8px 10px; border-bottom: 1px solid var(--eq-border); text-align: left; font-size: 13.5px; }
+  th { font-weight: 600; color: var(--eq-slate); background: var(--eq-light); }
+  tr:hover { background: rgba(0,112,121,.03); }
+
+  /* ── Forms ── */
+  input[type=text], input[type=number], select, textarea {
+    padding: 7px 10px; width: 100%; box-sizing: border-box;
+    border: 1px solid var(--eq-border); border-radius: var(--radius);
+    font-size: 13.5px; font-family: inherit; color: var(--eq-charcoal);
+    transition: border-color .15s;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--eq-link); box-shadow: 0 0 0 2px rgba(0,112,121,.12); }
+  label { font-weight: 500; font-size: 13.5px; color: var(--eq-slate); }
+
+  /* ── Layout helpers ── */
+  .row { display: grid; grid-template-columns: 220px 1fr; gap: 8px 14px; align-items: center; margin-bottom: 10px; }
   details { margin: 8px 0 16px; }
-  summary { cursor: pointer; }
-  pre { white-space: pre-wrap; background: #f3f2f1; padding: 8px; border-radius: 4px; }
-  code { background: #f3f2f1; padding: 1px 3px; border-radius: 3px; }
+  summary { cursor: pointer; font-weight: 500; color: var(--eq-slate); }
+  summary:hover { color: var(--eq-charcoal); }
+  pre { white-space: pre-wrap; background: var(--eq-light); padding: 10px 12px; border-radius: var(--radius); border: 1px solid var(--eq-border); font-size: 12.5px; }
+  code { background: var(--eq-light); padding: 2px 5px; border-radius: 3px; font-size: 12.5px; }
+  h2 { color: var(--eq-charcoal); font-size: 20px; font-weight: 600; margin: 0 0 1rem; letter-spacing: -.01em; }
+  h3 { color: var(--eq-slate); font-size: 16px; font-weight: 600; margin: 0 0 .75rem; }
+
+  /* ── Scrollbar (webkit) ── */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #CCC; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #AAA; }
   </style>
   {% block head %}{% endblock %}
 </head>
 <body data-auth-mode="{{ auth_mode|default('env_token') }}">
   <header>
     <nav id="nav-root" data-current-path="{{ request.url.path }}">
-      <!-- Navigation is injected by inline JS below (and /static/app.js as fallback) -->
       Loading…
     </nav>
   </header>
@@ -59,18 +157,34 @@
     if (!root) return;
     var current = root.getAttribute('data-current-path') || '/';
     root.textContent = '';
-    // --- Add nav entries here ---
-    root.appendChild(linkSpan('/', 'Rddms'));
-    root.appendChild(linkSpan('/keys', 'Resources'));
-    root.appendChild(linkSpan('/search', 'Search'));
-    root.appendChild(linkSpan('/strat', 'Strat'));
-    root.appendChild(el('span', { 'class': 'muted' }, ' '));
-    // Logout link (only visible in per-user mode — server sets data attr)
-    var body = document.body;
-    if (body.getAttribute('data-auth-mode') === 'per_user_pkce') {
-      var logout = linkSpan('/logout', 'Sign out', 'navlink');
-      logout.style.cssFloat = 'right';
-      root.appendChild(logout);
+
+    // Brand
+    var brand = el('span', { 'class': 'nav-brand', 'data-href': '/' }, 'ORES');
+    brand.addEventListener('click', function () { window.location.assign('/'); });
+    root.appendChild(brand);
+
+    // Nav links
+    var links = [
+      { href: '/',       label: 'RddmsAdmin' },
+      { href: '/keys',   label: 'RddmsResources' },
+      { href: '/search', label: 'OsduSearch' },
+      { href: '/strat',  label: 'Stratigraphy' },
+    ];
+    links.forEach(function (lk) {
+      var sp = linkSpan(lk.href, lk.label);
+      if (current === lk.href || (lk.href !== '/' && current.indexOf(lk.href) === 0)) {
+        sp.classList.add('active');
+      }
+      root.appendChild(sp);
+    });
+
+    // Spacer
+    root.appendChild(el('span', { 'class': 'nav-spacer' }));
+
+    // Auth links (only visible in per-user PKCE mode — no REFRESH_TOKEN)
+    if (document.body.getAttribute('data-auth-mode') === 'per_user_pkce') {
+      root.appendChild(linkSpan('/login-page', 'Sign in', 'nav-signin'));
+      root.appendChild(linkSpan('/logout', 'Sign out', 'nav-signout'));
     }
   }
   if (document.readyState === 'loading') {
@@ -98,6 +212,3 @@
 <script src=/static/app.js></script>
 </body>
 </html>
-
-
-

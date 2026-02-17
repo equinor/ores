@@ -57,6 +57,33 @@ def _as_id(x: Any) -> str:
 def _get_data(rec):
     return rec.get("data") or {}
 
+def _extract_ages(unit_rec: dict, chrono_rec: dict):
+    """Return (topMa, baseMa) as floats, or (None, None)."""
+    cd = _get_data(chrono_rec) if chrono_rec else {}
+    ud = _get_data(unit_rec) if unit_rec else {}
+    top = (
+        cd.get("AgeBegin") or cd.get("TopMa") or cd.get("AgeBeginMa")
+        or ud.get("OlderPossibleAge") or ud.get("TopMa")
+    )
+    base = (
+        cd.get("AgeEnd") or cd.get("BaseMa") or cd.get("AgeEndMa")
+        or ud.get("YoungerPossibleAge") or ud.get("BaseMa")
+    )
+    try:
+        return (float(top), float(base))
+    except (TypeError, ValueError):
+        return (None, None)
+
+def _flat_unit_fields(unit_rec: dict, chrono_rec: dict) -> dict:
+    """Extract flat convenience fields from a unit + chrono pair."""
+    ud = _get_data(unit_rec) if unit_rec else {}
+    cd = _get_data(chrono_rec) if chrono_rec else {}
+    top, base = _extract_ages(unit_rec, chrono_rec)
+    name = ud.get("Name") or cd.get("Name") or ""
+    color = cd.get("Colour") or cd.get("Color") or None
+    code = cd.get("Code") or ""
+    return {"name": name, "topMa": top, "baseMa": base, "color": color, "code": code}
+
 def _label_from_ref_id(val: str) -> str:
     if not val:
         return ""
@@ -315,24 +342,12 @@ async def get_strat_column(
     ranks_model: List[Dict[str, Any]] = []
 
     def _age_key(u: Dict[str, Any]):
-        """
-        Sort key: older (larger Ma) first by 'top'; ties by 'base'.
-        Prefer chrono ages (AgeBegin/AgeEnd or TopMa/BaseMa) then litho fallbacks (OlderPossibleAge/YoungerPossibleAge).
-        """
-        cd = (u.get("chrono") or {}).get("data") or {}
-        ud = (u.get("unit")   or {}).get("data") or {}
-        top = (
-            cd.get("AgeBegin") or cd.get("TopMa") or cd.get("AgeBeginMa")
-            or ud.get("OlderPossibleAge") or ud.get("TopMa")
-        )
-        base = (
-            cd.get("AgeEnd") or cd.get("BaseMa") or cd.get("AgeEndMa")
-            or ud.get("YoungerPossibleAge") or ud.get("BaseMa")
-        )
-        try:
-            return (-float(top), float(base))
-        except Exception:
-            return (float("inf"), float("inf"))
+        """Sort key using pre-computed flat fields: older (larger topMa) first."""
+        top = u.get("topMa")
+        base = u.get("baseMa")
+        if top is not None and base is not None:
+            return (-top, base)
+        return (float("inf"), float("inf"))
 
     for rid in rank_ids:
         rk = ranks_by_id.get(rid)
@@ -359,7 +374,8 @@ async def get_strat_column(
         for cid in chrono_ids:
             crec = chron_by_id.get(cid)
             if crec:
-                units_model.append({"unit": {}, "chrono": crec})
+                ff = _flat_unit_fields(None, crec)
+                units_model.append({"unit": {}, "chrono": crec, **ff})
 
         # B) Rank-level unit interpretations: attach chrono if the unit points to one (ChronoStratigraphyID)
         for uid in unit_ids:
@@ -369,7 +385,8 @@ async def get_strat_column(
             ud = _get_data(urec)
             cid = _as_id(ud.get("ChronoStratigraphyID") or ud.get("ChronostratigraphyID") or "")
             cobj = chron_by_id.get(cid) if cid else {}
-            units_model.append({"unit": urec, "chrono": cobj})
+            ff = _flat_unit_fields(urec, cobj)
+            units_model.append({"unit": urec, "chrono": cobj, **ff})
 
         # C) Order units older→younger for non-overlap per rank (as intended by the OSDU model)
         units_model.sort(key=_age_key)
@@ -378,6 +395,7 @@ async def get_strat_column(
             "rankName": rank_name,
             "isChrono": is_chrono_rank,
             "rank": rk,
+            "unitCount": len(units_model),
             "units": units_model
         })
 

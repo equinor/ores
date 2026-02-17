@@ -3,25 +3,24 @@
 {% block content %}
 <h2>Stratigraphy — Stratigraphic Column Viewer</h2>
 <style>
-/* ---- Plain HTML table for strat column (no SVG) ---- */
+/* ---- Hierarchy-based stratigraphic column ---- */
 .sc-wrap { max-width: 96rem; }
 .sc-panel { border:1px solid #e1dfdd; border-radius:8px; background:#fff; padding:.75rem; }
 .muted { color:#605e5c; }
 .btn { display:inline-block; padding:.35rem .6rem; border:1px solid #605e5c; border-radius:3px; background:#fff; cursor:pointer; }
 .btn:hover { background:#f3f2f1; }
-#matrix-root { overflow:auto; max-height: 70vh; border:1px solid #e1dfdd; border-radius:6px; }
-.sc-table { border-collapse: collapse; width: 100%; table-layout: fixed; }
-.sc-table th, .sc-table td { border-bottom: 1px solid #eee; padding: 6px 8px; text-align: left; vertical-align: middle; }
-.sc-table thead th { position: sticky; top: 0; background: #fafafa; z-index: 1; border-bottom: 1px solid #ddd; }
-.sc-table .age { width: 6.5rem; font-weight: 600; color: #444; }
-.sc-cell { border-left: 1px solid #f3f3f3; }
-.sc-chip { display:inline-block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 2px 4px; border: 1px solid rgba(0,0,0,.2); border-radius: 3px; background: #f9f9f9; }
-.sc-chip .sc-age { font-size:.85em; opacity:.9; }  /* NEW: small age line */
-.sc-missing { background: repeating-linear-gradient(-45deg, rgba(0,0,0,.04), rgba(0,0,0,.04) 6px, rgba(0,0,0,0) 6px, rgba(0,0,0,0) 12px); }
+#matrix-root { overflow:auto; max-height: 78vh; border:1px solid #ccc; border-radius:6px; }
+.sc-table { border-collapse: collapse; width: 100%; }
+.sc-table th, .sc-table td { padding: 4px 7px; text-align: left; vertical-align: middle; }
+.sc-table thead th { position: sticky; top: 0; z-index: 2; font-size: .9rem;
+  border-bottom: 2px solid rgba(0,0,0,.25); letter-spacing: .02em; }
+.sc-cell { border: 1px solid rgba(0,0,0,.12); }
+.sc-cell strong { display: block; font-size: .88rem; line-height: 1.25; }
+.sc-age { font-size: .78rem; opacity: .75; margin-top: 1px; }
+.sc-empty { background: #f8f8f8; border: 1px solid rgba(0,0,0,.06); }
 .sc-footnote { font-size: .85rem; color: #605e5c; margin-top:.35rem; }
 .legend { display:flex; gap:.5rem; flex-wrap:wrap; margin:.35rem 0 .6rem; }
-.legend i { width:14px; height:14px; border:1px solid rgba(0,0,0,.18); border-radius:3px; display:inline-block; margin-right:.3rem; }
-.rank-col { min-width: 12rem; }
+.rank-col { min-width: 8rem; }
 </style>
 
 <!-- Search -->
@@ -43,13 +42,10 @@
       <option value="">— no results —</option>
     </select>
     <div class="muted" style="font-size:.85rem;margin-top:.25rem;">
-      Select a record to render a rank-by-age matrix.
+      Select a record to render the hierarchical stratigraphic column.
     </div>
   </div>
 </section>
-
-<!-- Remove the confusing toggle -->
-<!-- Options: (deleted) -->
 
 <!-- Legend + Matrix -->
 <section class="sc-wrap sc-panel">
@@ -57,8 +53,9 @@
   <div id="legend" class="legend"></div>
   <div id="matrix-root"></div>
   <div class="sc-footnote">
-    Rows follow the global chronostratigraphic age partition (older → younger).
-    Cells row‑span when a unit covers multiple consecutive intervals at that rank; blank = no unit.
+    Columns represent rank levels (coarsest left, finest right).
+    Cells span rows to show the hierarchical nesting of stratigraphic units.
+    Ages displayed as supplementary information within each cell.
   </div>
   <details style="margin-top:.75rem;">
     <summary class="muted">Raw metadata</summary>
@@ -83,208 +80,363 @@
   const matrixRoot = $('#matrix-root');
   const metaBody   = $('#meta-body');
 
-  const rankPalette = ['#cfe8ff','#ffe0cc','#e6f2d9','#f5e3ff','#fff2cc','#dff0ff','#f2dede','#e8f7ff','#fdf1e6'];
-
   const setStatus = (msg) => { if (statusBox) statusBox.textContent = msg || ''; };
   const clear = (el) => { if (el) el.innerHTML=''; };
-  const pick  = (v, ...alts) => (v!==undefined && v!==null && v!=='') ? v : (alts.find(x=>x!==undefined && x!==null && x!=='') ?? '');
 
-  // --- Metadata ---
+  /* ------------------------------------------------------------------ */
+  /*  METADATA helper                                                   */
+  /* ------------------------------------------------------------------ */
   function renderMetaPairs(obj){
     if (!metaBody) return;
     function flt(val, path='', out=[]){
-      if (val && typeof val === 'object' && !Array.isArray(val)) {
+      if (val && typeof val === 'object' && !Array.isArray(val))
         for (const [k,v] of Object.entries(val)) flt(v, path ? `${path}.${k}` : k, out);
-      } else if (Array.isArray(val)) { val.forEach((v,i)=>flt(v, path ? `${path}.${i}` : `${i}`, out)); }
+      else if (Array.isArray(val)) val.forEach((v,i)=>flt(v, path?`${path}.${i}`:`${i}`, out));
       else out.push({name:path, value:(val===null||val===undefined)?'—':String(val)});
       return out;
     }
     const pairs = flt(obj);
     clear(metaBody);
-    if (!pairs.length){
-      const tr=document.createElement('tr'); tr.innerHTML='<td class="muted">No metadata</td><td></td>'; metaBody.appendChild(tr); return;
+    if (!pairs.length){ metaBody.innerHTML='<tr><td class="muted">No metadata</td><td></td></tr>'; return; }
+    for (const p of pairs){
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td class="meta-name">${p.name}</td><td>${p.value}</td>`;
+      metaBody.appendChild(tr);
     }
-    for (const p of pairs){ const tr=document.createElement('tr'); tr.innerHTML=`<td class="meta-name">${p.name}</td><td>${p.value}</td>`; metaBody.appendChild(tr); }
   }
 
-  // --- Age helpers ---
-  const num = (x) => { if (x===0) return 0; if (x==null) return null; const v=+x; return Number.isNaN(v)?null:v; };
-  function readChronoAges(cd){ return { top: num(cd?.AgeBegin ?? cd?.TopMa ?? cd?.AgeBeginMa),
-                                        base: num(cd?.AgeEnd   ?? cd?.BaseMa ?? cd?.AgeEndMa) }; }
-  function readLithoAges(ud){ return { top:  num(ud?.OlderPossibleAge ?? ud?.TopMa),
-                                       base: num(ud?.YoungerPossibleAge ?? ud?.BaseMa) }; }
-  function agesFor(unit, chrono){
-    const ud = (unit  && unit.data)  || {};
-    const cd = (chrono && chrono.data) || {};
-    const c = readChronoAges(cd), u = readLithoAges(ud);
-    const top  = (c.top  != null) ? c.top  : u.top;
-    const base = (c.base != null) ? c.base : u.base;
-    return { top, base };
-  }
-
-  // --- STRICT matrix: use chrono ranks (isChrono=true) for boundaries ---
-  function buildMatrix(model){
-    // Expect backend to supply: ranks: [{ rankName, isChrono, units:[{unit,chrono}] }]
-    const ranks = (model.ranks||[]).map((rk,i)=>{
-      const units = (rk.units||[]).map(u=>{
-        const {top, base} = agesFor(u.unit||null, u.chrono||null);
-        const name  = pick(u.unit?.data?.Name, u.chrono?.data?.Name, '(unit)');
-        const color = u.chrono?.data?.Colour || null;
-        const idU   = u.unit?.id   || '';
-        const idC   = u.chrono?.id || '';
-        const hasAge = (top!=null && base!=null && top>=base);
-        const isChronoUnit = !!idC || !!color;
-        return { name, top, base, idU, idC, color, hasAge, isChronoUnit };
-      });
-      return {
-        idx: i,
-        rankName: rk.rankName || 'Unspecified',
-        isChrono: !!rk.isChrono,            // <— comes from backend; see server snippet
-        color: rankPalette[i % rankPalette.length],
-        units
-      };
-    });
-
-    // Boundaries from chrono ranks first; fallback to any ages if none
-    const chronoRanks = ranks.filter(rk => rk.isChrono);
-    const cuts = new Set();
-    const takeFrom = chronoRanks.length ? chronoRanks : ranks;
-    takeFrom.forEach(rk => rk.units.forEach(u => { if (u.hasAge){ cuts.add(u.top); cuts.add(u.base); }}));
-    const boundaries = Array.from(cuts).filter(v => typeof v === 'number' && !Number.isNaN(v)).sort((a,b)=> b-a);
-
-    if (boundaries.length < 2) return { ranks, rows: [], boundaries: [] };
-
-    // Rows: adjacent boundary pairs; one cell per rank — choose unit that fully covers [top,base]
-    const rows = [];
-    for (let i=0; i<boundaries.length-1; i++){
-      const top  = boundaries[i], base = boundaries[i+1];
-      const cells = ranks.map(rk => rk.units.find(x => x.hasAge && x.top >= top - 1e-9 && x.base <= base + 1e-9) || null);
-      rows.push({ top, base, cells });
+  /* ------------------------------------------------------------------ */
+  /*  CONTAINMENT helpers                                               */
+  /* ------------------------------------------------------------------ */
+  function isContainedIn(child, parent) {
+    // Age containment: topMa = older (bigger), baseMa = younger (smaller)
+    // Use 0.5 Ma tolerance for boundary rounding between geological schemes
+    if (child.topMa != null && child.baseMa != null &&
+        parent.topMa != null && parent.baseMa != null) {
+      return child.topMa <= parent.topMa + 0.5 &&
+             child.baseMa >= parent.baseMa - 0.5;
     }
-    return { ranks, rows, boundaries };
-  }
-
-  // --- Rowspan helpers ---
-  function sameUnit(a, b){
-    if (!a && !b) return true;
-    if (!a || !b) return false;
-    const aU=a.idU||'', bU=b.idU||''; const aC=a.idC||'', bC=b.idC||'';
-    const aN=a.name||'', bN=b.name||''; const aT=a.top??null, aB=a.base??null; const bT=b.top??null, bB=b.base??null;
-    return (aU===bU && aC===bC) || (aN===bN && aT===bT && aB===bB);
-  }
-  function fmtAgeRange(u){
-    const r = (x)=> (x==null || Number.isNaN(+x)) ? null : Math.round((+x + Number.EPSILON)*1000)/1000;
-    const t=r(u.top), b=r(u.base); return (t!=null && b!=null) ? `${t}–${b} Ma` : '';
-  }
-
-  function renderLegend(ranks){
-    clear(legendBox);
-    ranks.forEach(rk=>{
-      const span=document.createElement('span'); span.className='legend';
-      span.innerHTML = `<i style="background:${rk.color}"></i><span>${rk.rankName}</span>`;
-      legendBox.appendChild(span);
-    });
-  }
-
-  function renderMatrix(matrix){
-    clear(matrixRoot);
-    const table = document.createElement('table'); table.className='sc-table';
-
-    // Header
-    const thead=document.createElement('thead'); const hr=document.createElement('tr');
-    const thTop=document.createElement('th'); thTop.className='age'; thTop.textContent='Top (Ma)';
-    const thBase=document.createElement('th'); thBase.className='age'; thBase.textContent='Base (Ma)';
-    hr.appendChild(thTop); hr.appendChild(thBase);
-    matrix.ranks.forEach(rk=>{ const th=document.createElement('th'); th.className='rank-col'; th.textContent=rk.rankName; hr.appendChild(th); });
-    thead.appendChild(hr); table.appendChild(thead);
-
-    const tbody=document.createElement('tbody');
-    if (!matrix.rows.length){
-      const tr=document.createElement('tr'); const td=document.createElement('td');
-      td.colSpan = 2 + matrix.ranks.length; td.className='muted';
-      td.textContent='No numeric ages found for any units in this column.'; tr.appendChild(td);
-      tbody.appendChild(tr); table.appendChild(tbody); matrixRoot.appendChild(table); return;
+    // Chrono Code hierarchy (e.g. "Phanerozoic.Paleozoic.Silurian")
+    if (child.code && parent.code) {
+      return child.code.startsWith(parent.code + '.') || child.code === parent.code;
     }
+    return false;
+  }
 
-    // Compute row-spans per rank
-    const nRows=matrix.rows.length, nRanks=matrix.ranks.length;
-    const runStart = Array.from({length:nRanks}, ()=>Array(nRows).fill(null));
-    const covered  = Array.from({length:nRanks}, ()=>Array(nRows).fill(false));
-    for (let j=0;j<nRanks;j++){
-      let curU=null, start=0, span=0;
-      const closeRun=()=>{ if (span>0){ runStart[j][start]={u:curU,span}; for(let r=start+1;r<start+span;r++) covered[j][r]=true; } curU=null; span=0; };
-      for (let i=0;i<nRows;i++){
-        const u=matrix.rows[i].cells[j] || null;
-        if (span===0){ curU=u; start=i; span=1; }
-        else if (sameUnit(curU,u)) span += 1;
-        else { closeRun(); curU=u; start=i; span=1; }
+  /* ------------------------------------------------------------------ */
+  /*  BUILD HIERARCHY TREE                                              */
+  /*  Ranks kept in original OSDU order (coarsest → finest).            */
+  /*  Parent–child via age/code containment; leaf nodes get colSpan     */
+  /*  to fill remaining columns.  Row count = number of leaves.         */
+  /* ------------------------------------------------------------------ */
+  function buildHierarchy(model) {
+    const ranks = (model.ranks || []).map((rk, ri) => ({
+      rankName: rk.rankName || 'Unspecified',
+      units: (rk.units || []).map(u => ({
+        name:   u.name   || '(unit)',
+        topMa:  (u.topMa  != null) ? u.topMa  : null,
+        baseMa: (u.baseMa != null) ? u.baseMa : null,
+        color:  u.color  || null,
+        code:   u.code   || '',
+      }))
+    })).filter(rk => rk.units.length > 0);
+
+    if (!ranks.length) return null;
+    const nRanks = ranks.length;
+
+    // Create tree nodes
+    const levels = ranks.map((rk, ri) =>
+      rk.units.map(u => ({
+        ...u,
+        rankIdx:   ri,
+        rankName:  rk.rankName,
+        children:  [],
+        parent:    null,
+        leafCount: 0,
+        rowStart:  0,
+        isLeaf:    false,
+        colSpan:   1,
+      }))
+    );
+
+    // Assign parents: for each node at rank ri, find nearest ancestor with tightest fit
+    for (let ri = 1; ri < nRanks; ri++) {
+      for (const child of levels[ri]) {
+        let bestParent = null;
+        let bestRange  = Infinity;    // narrowest age-span wins
+        let bestRank   = -1;
+        for (let pi = ri - 1; pi >= 0; pi--) {
+          for (const p of levels[pi]) {
+            if (!isContainedIn(child, p)) continue;
+            const range = (p.topMa != null && p.baseMa != null)
+              ? (p.topMa - p.baseMa) : Infinity;
+            // Prefer nearest rank; within same rank, prefer narrowest range
+            if (pi > bestRank || (pi === bestRank && range < bestRange)) {
+              bestParent = p;
+              bestRange  = range;
+              bestRank   = pi;
+            }
+          }
+          if (bestParent && bestRank === pi) break;   // found at nearest possible rank
+        }
+        if (bestParent) {
+          bestParent.children.push(child);
+          child.parent = bestParent;
+        }
       }
-      closeRun();
     }
 
-    // Body
-    for (let i=0;i<nRows;i++){
-      const row=matrix.rows[i]; const tr=document.createElement('tr');
-      const tdTop=document.createElement('td');  tdTop.className='age';  tdTop.textContent=String(row.top);
-      const tdBase=document.createElement('td'); tdBase.className='age'; tdBase.textContent=String(row.base);
-      tr.appendChild(tdTop); tr.appendChild(tdBase);
+    // Collect roots (no parent) — rank-0 nodes + orphans from deeper ranks
+    const roots = [];
+    for (let ri = 0; ri < nRanks; ri++)
+      for (const n of levels[ri])
+        if (!n.parent) roots.push(n);
 
-      for (let j=0;j<nRanks;j++){
-        const startRun=runStart[j][i], isCovered=covered[j][i];
-        if (startRun){
-          const {u,span}=startRun; const td=document.createElement('td'); td.className='sc-cell'; if (span>1) td.rowSpan=span;
-          if (u){
-            const chip=document.createElement('div'); chip.className='sc-chip';
-            chip.style.background=(u.color||matrix.ranks[j].color); chip.style.borderColor='rgba(0,0,0,.25)';
-            const age=fmtAgeRange(u);
-            chip.innerHTML = age ? `<strong>${u.name}</strong><br><span class="sc-age">${age}</span>` : `<strong>${u.name}</strong>`;
-            chip.title = `${u.name}${age?`\n${age}`:''}${u.idU?`\nUnit: ${u.idU}`:''}${u.idC?`\nChrono: ${u.idC}`:''}`;
-            td.appendChild(chip);
-          } else { td.textContent=''; }
+    // Sort roots older-first (bigger topMa first)
+    roots.sort((a, b) => (b.topMa || 0) - (a.topMa || 0));
+
+    // Compute leaf counts + colSpan
+    function computeLeaf(node) {
+      if (node.children.length === 0) {
+        node.isLeaf = true;
+        node.leafCount = 1;
+        node.colSpan = nRanks - node.rankIdx;   // span to rightmost column
+      } else {
+        node.isLeaf = false;
+        node.children.sort((a, b) => (b.topMa || 0) - (a.topMa || 0));
+        node.leafCount = 0;
+        for (const c of node.children) {
+          computeLeaf(c);
+          node.leafCount += c.leafCount;
+        }
+        const minChildRank = Math.min(...node.children.map(c => c.rankIdx));
+        node.colSpan = minChildRank - node.rankIdx;
+      }
+    }
+    for (const r of roots) computeLeaf(r);
+
+    // Assign row starts via DFS
+    let rowIdx = 0;
+    function assignRows(nodes) {
+      for (const n of nodes) {
+        n.rowStart = rowIdx;
+        if (n.isLeaf) rowIdx++;
+        else assignRows(n.children);
+      }
+    }
+    assignRows(roots);
+
+    const totalRows = rowIdx;
+
+    // Column metadata: rank-level gradient dark → light
+    const columns = ranks.map((rk, ri) => {
+      const t = nRanks === 1 ? 0.5 : ri / (nRanks - 1);
+      const lightness  = Math.round(36 + t * 50);    // 36% → 86%
+      const saturation = Math.round(46 - t * 16);    // 46% → 30%
+      const bg = `hsl(210, ${saturation}%, ${lightness}%)`;
+      const fg = lightness < 55 ? '#fff' : '#222';
+      return { rankName: rk.rankName, bg, fg, nodes: levels[ri] };
+    });
+
+    return { columns, totalRows, nRanks };
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  RENDER LEGEND                                                     */
+  /* ------------------------------------------------------------------ */
+  function renderLegend(columns) {
+    clear(legendBox);
+    if (!columns) return;
+    for (const col of columns) {
+      const wrap = document.createElement('span');
+      wrap.style.cssText = 'display:inline-flex;align-items:center;gap:.3rem;margin-right:.75rem;';
+      const sw = document.createElement('i');
+      sw.style.cssText = `width:14px;height:14px;display:inline-block;border-radius:3px;border:1px solid rgba(0,0,0,.18);background:${col.bg};`;
+      wrap.appendChild(sw);
+      const lbl = document.createElement('span');
+      lbl.textContent = `${col.rankName} (${col.nodes.length})`;
+      wrap.appendChild(lbl);
+      legendBox.appendChild(wrap);
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  RENDER HIERARCHY TABLE                                            */
+  /* ------------------------------------------------------------------ */
+  function fmtAge(v) {
+    if (v == null) return '';
+    return Math.round(v * 100) / 100;
+  }
+  function isLightColor(hex) {
+    if (!hex || hex[0] !== '#') return true;
+    const r = parseInt(hex.substr(1,2),16),
+          g = parseInt(hex.substr(3,2),16),
+          b = parseInt(hex.substr(5,2),16);
+    return (0.299*r + 0.587*g + 0.114*b) > 155;
+  }
+
+  function renderHierarchy(hierarchy) {
+    clear(matrixRoot);
+    if (!hierarchy || hierarchy.totalRows === 0) {
+      matrixRoot.innerHTML = '<p class="muted" style="padding:.5rem;">No stratigraphic units to display.</p>';
+      return;
+    }
+    const { columns, totalRows, nRanks } = hierarchy;
+
+    // Build start-map per column:  row → node
+    const startMap = columns.map(col => {
+      const m = new Map();
+      for (const node of col.nodes) m.set(node.rowStart, node);
+      return m;
+    });
+
+    const table = document.createElement('table');
+    table.className = 'sc-table';
+
+    //  Header
+    const thead = document.createElement('thead');
+    const hr = document.createElement('tr');
+    for (const col of columns) {
+      const th = document.createElement('th');
+      th.textContent = col.rankName;
+      th.className = 'rank-col';
+      th.style.background = col.bg;
+      th.style.color = col.fg;
+      hr.appendChild(th);
+    }
+    thead.appendChild(hr);
+    table.appendChild(thead);
+
+    //  Body
+    const tbody = document.createElement('tbody');
+    const coveredUntil = new Array(nRanks).fill(-1);
+
+    for (let r = 0; r < totalRows; r++) {
+      const tr = document.createElement('tr');
+
+      for (let c = 0; c < nRanks; c++) {
+        if (r <= coveredUntil[c]) continue;           // covered by rowspan / colspan
+
+        const node = startMap[c].get(r);
+        if (node) {
+          const td = document.createElement('td');
+          td.className = 'sc-cell';
+          if (node.leafCount > 1)  td.rowSpan = node.leafCount;
+          if (node.colSpan  > 1)   td.colSpan = node.colSpan;
+
+          // Background: prefer ICS chrono colour; else rank gradient
+          const bgColor = node.color || columns[c].bg;
+          td.style.background = bgColor;
+          td.style.color = node.color ? (isLightColor(node.color) ? '#222' : '#fff') : columns[c].fg;
+
+          // Name
+          const nameEl = document.createElement('strong');
+          nameEl.textContent = node.name;
+          td.appendChild(nameEl);
+
+          // Age (supplementary info)
+          if (node.topMa != null && node.baseMa != null) {
+            const ageEl = document.createElement('div');
+            ageEl.className = 'sc-age';
+            ageEl.textContent = `${fmtAge(node.topMa)}\u2013${fmtAge(node.baseMa)} Ma`;
+            td.appendChild(ageEl);
+          }
+
+          td.title = node.name
+            + (node.topMa != null ? `\n${node.topMa}\u2013${node.baseMa} Ma` : '')
+            + (node.code  ? `\n${node.code}` : '');
+
           tr.appendChild(td);
-        } else if (!isCovered){
-          const td=document.createElement('td'); td.className='sc-cell'; td.textContent=''; tr.appendChild(td);
+
+          // Mark coverage
+          const endRow = r + node.leafCount - 1;
+          for (let cc = c; cc < Math.min(c + node.colSpan, nRanks); cc++)
+            coveredUntil[cc] = Math.max(coveredUntil[cc], endRow);
+        } else {
+          // Uncovered empty cell (rare with colSpan logic)
+          const td = document.createElement('td');
+          td.className = 'sc-cell sc-empty';
+          tr.appendChild(td);
         }
       }
       tbody.appendChild(tr);
     }
-    table.appendChild(tbody); matrixRoot.appendChild(table);
+
+    table.appendChild(tbody);
+    matrixRoot.appendChild(table);
   }
 
-  // --- Load + Search (unchanged search flow) ---
+  /* ------------------------------------------------------------------ */
+  /*  LOAD + SEARCH                                                     */
+  /* ------------------------------------------------------------------ */
   async function loadColumnById(id){
-    const rid=(id||'').trim(); if (!rid){ setStatus('Select a StratigraphicColumn.'); return; }
-    setStatus('Loading…');
-    try{
-      const url=`/api/strat/column.json?id=${encodeURIComponent(rid)}&enrich=true`;
-      const res=await fetch(url,{ headers:{'Cache-Control':'no-store'} }); if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-      const model=await res.json();
-      const matrix=buildMatrix(model);
-      renderLegend(matrix.ranks);
-      renderMatrix(matrix);
-      renderMetaPairs({ column: model.column||{}, ranks: model.ranks||[] });
-      setStatus('OK');
-    }catch(e){ console.warn(e); setStatus('Load failed: '+e.message); }
+    const rid = (id||'').trim();
+    if (!rid) { setStatus('Select a StratigraphicColumn.'); return; }
+    setStatus('Loading\u2026');
+    try {
+      const url = `/api/strat/column.json?id=${encodeURIComponent(rid)}&enrich=true`;
+      const res = await fetch(url, { headers:{'Cache-Control':'no-store'} });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      const model = await res.json();
+      const hierarchy = buildHierarchy(model);
+      renderLegend(hierarchy ? hierarchy.columns : []);
+      renderHierarchy(hierarchy);
+      renderMetaPairs({
+        column: model.column || {},
+        ranks: (model.ranks || []).map(r => ({
+          rankName: r.rankName,
+          unitCount: r.unitCount || (r.units||[]).length
+        }))
+      });
+      const info = hierarchy
+        ? `${hierarchy.totalRows} rows \u00d7 ${hierarchy.nRanks} ranks`
+        : 'empty';
+      setStatus(`OK \u2014 ${info}`);
+    } catch(e) {
+      console.warn(e);
+      setStatus('Load failed: ' + e.message);
+    }
   }
+
   async function doSearch(){
-    const q=(qInput.value||'*').trim();
-    const lim=Math.max(1,Math.min(200,parseInt(limitInput.value||'20',10)));
-    searchStat.textContent='Searching…';
-    resSelect.innerHTML='<option value="">— searching —</option>';
-    try{
-      const url=`/api/strat/search.json?q=${encodeURIComponent(q)}&limit=${lim}`;
-      const r=await fetch(url,{ headers:{'Cache-Control':'no-store'} }); if(!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-      const data=await r.json(); const items=data.items||[];
-      resSelect.innerHTML='';
-      if(!items.length){ resSelect.innerHTML='<option value="">— no results —</option>'; searchStat.textContent='No results'; clear(legendBox); clear(matrixRoot); return; }
-      for (const it of items){ const opt=document.createElement('option'); opt.value=it.id; opt.textContent=`[StratigraphicColumn] ${it.name||it.id} — ${it.id}`; resSelect.appendChild(opt); }
-      resSelect.selectedIndex=0; searchStat.textContent=`Found ${data.total ?? items.length}`;
+    const q = (qInput.value||'*').trim();
+    const lim = Math.max(1, Math.min(200, parseInt(limitInput.value||'20', 10)));
+    searchStat.textContent = 'Searching\u2026';
+    resSelect.innerHTML = '<option value="">— searching —</option>';
+    try {
+      const url = `/api/strat/search.json?q=${encodeURIComponent(q)}&limit=${lim}`;
+      const r = await fetch(url, { headers:{'Cache-Control':'no-store'} });
+      if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+      const data = await r.json();
+      const items = data.items || [];
+      resSelect.innerHTML = '';
+      if (!items.length) {
+        resSelect.innerHTML = '<option value="">— no results —</option>';
+        searchStat.textContent = 'No results';
+        clear(legendBox); clear(matrixRoot);
+        return;
+      }
+      for (const it of items) {
+        const opt = document.createElement('option');
+        opt.value = it.id;
+        opt.textContent = `[StratigraphicColumn] ${it.name||it.id} — ${it.id}`;
+        resSelect.appendChild(opt);
+      }
+      resSelect.selectedIndex = 0;
+      searchStat.textContent = `Found ${data.total ?? items.length}`;
       loadColumnById(resSelect.value);
-    }catch(e){ console.warn(e); resSelect.innerHTML='<option value="">— error —</option>'; searchStat.textContent='Search failed: '+e.message; }
+    } catch(e) {
+      console.warn(e);
+      resSelect.innerHTML = '<option value="">— error —</option>';
+      searchStat.textContent = 'Search failed: ' + e.message;
+    }
   }
 
   btnSearch?.addEventListener('click', doSearch);
-  resSelect?.addEventListener('change', ()=>{ const id=resSelect.value||''; if(id) loadColumnById(id); });
+  resSelect?.addEventListener('change', () => {
+    const id = resSelect.value || '';
+    if (id) loadColumnById(id);
+  });
 
 })();
 </script>
