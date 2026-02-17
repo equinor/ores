@@ -95,6 +95,68 @@ def _access_token(request: Request) -> str:
         raise HTTPException(401, "Authentication failed")
     return at
 
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Local BD enrichment overlay
+# ──────────────────────────────────────────────────────────────────────────────
+# OSDU's BusinessDecision schema only preserves registered ext.equinor keys.
+# Custom keys (ProductionProfile, Authors, DevelopmentConcept, etc.) are
+# silently dropped during workflow ingestion.  We load them from the local
+# manifest files and merge them back into fetched records so the UI can render
+# the full decision package.
+# ──────────────────────────────────────────────────────────────────────────────
+
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+
+_BD_LOCAL_ENRICHMENTS: Dict[str, Dict[str, Any]] = {}
+
+
+def _load_bd_enrichments() -> None:
+    """Scan known BD manifest files and cache ext.equinor data by record ID."""
+    manifest_paths = [
+        _REPO_ROOT / "demo" / "json" / "manifest_dg_businessdecision.json",
+        _REPO_ROOT / "demo" / "drogon" / "manifest_bd_drogon.json",
+    ]
+    for path in manifest_paths:
+        if not path.exists():
+            continue
+        try:
+            with open(path, encoding="utf-8") as f:
+                manifest = json.load(f)
+            for rec in manifest.get("MasterData", []):
+                rid = rec.get("id", "")
+                data = rec.get("data") or {}
+                ext_eq = (data.get("ext") or {}).get("equinor") or {}
+                if ext_eq and rid:
+                    _BD_LOCAL_ENRICHMENTS[rid] = ext_eq
+                    log.info("[BD-ENRICH] Loaded local enrichments for %s (%d keys)",
+                             rid, len(ext_eq))
+        except Exception as e:
+            log.warning("[BD-ENRICH] Failed to load %s: %s", path, e)
+
+
+_load_bd_enrichments()
+
+
+def _apply_bd_local_enrichment(data_block: Dict[str, Any], record_id: str) -> None:
+    """Merge locally-cached ext.equinor fields into *data_block* in-place.
+
+    Only fills keys that are absent in the OSDU-returned record, so live data
+    always wins.
+    """
+    local = _BD_LOCAL_ENRICHMENTS.get(record_id)
+    if not local:
+        return
+    ext_eq = data_block.setdefault("ext", {}).setdefault("equinor", {})
+    merged = 0
+    for k, v in local.items():
+        if k not in ext_eq:
+            ext_eq[k] = v
+            merged += 1
+    if merged:
+        log.debug("[BD-ENRICH] Merged %d local keys into %s", merged, record_id)
+
+
 def _normalize_volumes(data_block: Dict[str, Any]) -> Dict[str, Any]:
     """
     Normalize OSDU ColumnBasedTable in data_block['Volumes'] to a structure:
@@ -457,8 +519,9 @@ async def search_run(
                         ancestry_children = ancestry.get("children", []) or []
                         volumes = _normalize_volumes(data_block)
 
-                        # BusinessDecision: pull headline volumes from linked stat REV WPC
+                        # BusinessDecision: merge local enrichments + pull headline volumes
                         if "businessdecision" in (full.get("kind") or "").lower():
+                            _apply_bd_local_enrichment(data_block, rid)
                             if not (volumes or {}).get("ColumnValues"):
                                 volumes = await _enrich_bd_volumes(
                                     data_block, client, storage_url, hdr)
@@ -592,8 +655,9 @@ async def view_record(request: Request, record_id: str):
             ancestry = data_block.get("ancestry", {}) or {}
             volumes = _normalize_volumes(data_block)
 
-            # BusinessDecision: pull headline volumes from linked stat REV WPC
+            # BusinessDecision: merge local enrichments + pull headline volumes
             if "businessdecision" in (full.get("kind") or "").lower():
+                _apply_bd_local_enrichment(data_block, record_id)
                 if not (volumes or {}).get("ColumnValues"):
                     volumes = await _enrich_bd_volumes(
                         data_block, client, storage_url, hdr)

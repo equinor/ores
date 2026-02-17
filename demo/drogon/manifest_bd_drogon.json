@@ -192,6 +192,12 @@
               "TotalRealisations": 3,
               "MethodologyReference": "FMU Level 2 static uncertainty workflow (Valysar geomodel v1)"
             },
+            "KeyEconomics": {
+              "NPV_10pct_MUSD": null,
+              "BreakevenOilPrice_USDperbbl": null,
+              "CAPEX_MNOK": null,
+              "Note": "DG1 — economic screening not yet completed; deferred to DG2."
+            },
             "DG2Recommendations": [
               "Implement Level 3 FMU uncertainty workflow with increased realisation count (target 50+) for DG2",
               "Acquire additional core data from NorthSea and EastLobe segments to reduce porosity uncertainty",
