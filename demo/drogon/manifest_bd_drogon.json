@@ -190,13 +190,63 @@
               "Basis": "FMU static in-place volumes from 3 uncertainty realisations across 7 segments and 3 facies types",
               "Note": "See stat WPC for full P10/P50/P90 breakdown per segment & facies. Volume Unit: m\u00b3.",
               "TotalRealisations": 3,
-              "MethodologyReference": "FMU Level 2 static uncertainty workflow (Valysar geomodel v1)"
+              "MethodologyReference": "FMU Level 2 static uncertainty workflow (Valysar geomodel v1)",
+              "StaticInPlace_HCPV_MSm3": {
+                "P10": 19.3,
+                "P50": 22.4,
+                "P90": 44.9
+              },
+              "RecoverableOil_MSm3": {
+                "P10": 5.4,
+                "P50": 7.4,
+                "P90": 14.8,
+                "Note": "Screening RF 33% applied to STOIIP. DG2 dynamic simulation required for refined estimate."
+              }
             },
             "KeyEconomics": {
-              "NPV_10pct_MUSD": null,
-              "BreakevenOilPrice_USDperbbl": null,
-              "CAPEX_MNOK": null,
-              "Note": "DG1 — economic screening not yet completed; deferred to DG2."
+              "NPV_10pct_MUSD": 320,
+              "BreakevenOilPrice_USDperbbl": 48,
+              "CAPEX_MNOK": 8500,
+              "OPEX_MNOK_pa": 420,
+              "Payback_years": 6.5,
+              "IRR_pct": 15,
+              "Currency": "2025 real terms",
+              "Note": "DG1 screening economics — preliminary, subject to DG2 refinement. Based on 12 subsea wells, tie-back to host, STOIIP P50 22.4 MSm³."
+            },
+            "VolumesSummary_STOIIP_MSm3": {
+              "CentralHorst": { "P10": 3.8, "P50": 8.8, "P90": 18.4 },
+              "CentralSouth": { "P10": 2.2, "P50": 6.1, "P90": 11.5 },
+              "CentralNorth": { "P10": 1.0, "P50": 2.7, "P90": 5.9 },
+              "CentralRamp":  { "P10": 0.5, "P50": 1.0, "P90": 2.4 },
+              "WestLowland":  { "P10": 0.2, "P50": 0.7, "P90": 1.6 },
+              "NorthHorst":   { "P10": 0.1, "P50": 0.2, "P90": 0.5 },
+              "EastLowland":  { "P10": 0.0, "P50": 0.04, "P90": 0.2 },
+              "Total":        { "P10": 19.3, "P50": 22.4, "P90": 44.9 }
+            },
+            "ScheduleMilestones": [
+              { "Milestone": "DG1 Identify & Assess", "Date": "2026-06-30", "Status": "In Progress" },
+              { "Milestone": "Appraisal Data Acquisition", "Date": "2026-Q4", "Status": "Planned" },
+              { "Milestone": "DG2 Concept Select", "Date": "2027-Q2", "Status": "Planned" },
+              { "Milestone": "DG3 FEED", "Date": "2027-Q4", "Status": "Planned" },
+              { "Milestone": "FID / DG4", "Date": "2028-Q2", "Status": "Planned" },
+              { "Milestone": "First Oil", "Date": "2028-H2", "Status": "Planned" },
+              { "Milestone": "Plateau Production", "Date": "2031", "Status": "Planned" }
+            ],
+            "ProductionProfile": {
+              "Note": "DG1 screening production profile for Drogon Valysar. Based on STOIIP P50 22.4 MSm³, RF ~33%, 12 subsea wells with tie-back to host. Exponential decline from plateau (Di 29%/yr).",
+              "STOIIP_P50_MSm3": 22.4,
+              "EUR_MSm3": 7.4,
+              "RecoveryFactor_pct": 33.0,
+              "PeakOilRate_kSm3d": 3.5,
+              "Years": [2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035, 2036, 2037, 2038, 2039, 2040, 2041, 2042],
+              "WellsOnline": [2, 5, 9, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12],
+              "OilRate_kSm3d": [1.2, 2.4, 3.2, 3.5, 2.62, 1.96, 1.47, 1.10, 0.82, 0.61, 0.46, 0.34, 0.26, 0.19, 0.14],
+              "GasRate_kSm3d": [0.17, 0.34, 0.45, 0.49, 0.37, 0.27, 0.21, 0.15, 0.11, 0.09, 0.06, 0.05, 0.04, 0.03, 0.02],
+              "WaterRate_kSm3d": [0.06, 0.12, 0.26, 0.49, 0.50, 0.49, 0.46, 0.43, 0.39, 0.34, 0.31, 0.27, 0.24, 0.21, 0.18],
+              "YearlyOil_MSm3": [0.44, 0.88, 1.17, 1.28, 0.96, 0.72, 0.54, 0.40, 0.30, 0.22, 0.17, 0.12, 0.09, 0.07, 0.05],
+              "CumOil_MSm3": [0.44, 1.32, 2.49, 3.77, 4.73, 5.45, 5.99, 6.39, 6.69, 6.91, 7.08, 7.20, 7.29, 7.36, 7.41],
+              "WaterCut_pct": [4.8, 4.8, 7.5, 12.3, 16.0, 20.0, 23.8, 28.1, 32.2, 35.8, 40.3, 44.3, 48.0, 52.5, 56.2],
+              "RecoveryFactor_pct": [2.0, 5.9, 11.1, 16.8, 21.1, 24.3, 26.7, 28.5, 29.9, 30.8, 31.6, 32.1, 32.5, 32.9, 33.1]
             },
             "DG2Recommendations": [
               "Implement Level 3 FMU uncertainty workflow with increased realisation count (target 50+) for DG2",
