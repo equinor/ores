@@ -105,6 +105,21 @@ graph TD
 | 13 | `master-data--Risk` | Porosity & Cementation | `Drogon-PorosityAndCementation` |
 | 14 | `master-data--BusinessDecision` | DG1 Identify & Assess | `Drogon-DG1-Identify` |
 
+### BusinessDecision enrichment (ext.equinor)
+
+The Drogon BD manifest (`manifest_bd_drogon.json`) carries the following `ext.equinor` sections for rich UI rendering:
+
+- **Authors / ReviewTeam** — names and roles
+- **Alternatives** — 3 development concepts with rank, action (Pursue/Monitor/Reject)
+- **DevelopmentConcept** — Subsea tieback, 4 production wells, 2 injectors, FPSO host
+- **ReservoirProperties** — depth, temperature, pressure, porosity, permeability
+- **KeyUncertainties** — reservoir connectivity, OWC depth, aquifer support (with impact ratings)
+- **UncertaintySummary** — P10/P50/P90 STOIIP range, Monte Carlo method
+- **DG2Recommendations** — next-gate action items
+- **KeyEconomics** — placeholder (DG1 economics not yet finalised)
+
+> **Note:** OSDU only persists 7 registered ext.equinor keys (see `demo/md/BusinessDecision.md` Appendix A). The remaining keys are restored at runtime by the local enrichment overlay in `app/main.py`.
+
 ---
 
 ## Relationship Patterns

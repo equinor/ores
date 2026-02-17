@@ -277,3 +277,165 @@ Then reference this WorkProduct from `BusinessDecision.Parameters[]` as a **sing
 - WorkProduct / CollaborationProjectCollection: [WorkProduct ER](https://github.com/jonslo/osdu/osdu-data-data-definitions/blob/master/E-R/work-product/WorkProduct.1.0.0.md), [CollaborationProjectCollection ER](https://github.com/jonslo/osdu/osdu-data-data-definitions/blob/master/E-R/work-product-component/CollaborationProjectCollection.1.0.0.md).
 
 ---
+
+## Appendix A: OSDU `ext.equinor` schema limitation
+
+The OSDU `BusinessDecision` schema registers only **7** `ext.equinor` keys. During workflow ingestion, any unregistered key under `data.ext.equinor` is **silently dropped** — the API returns `201 Created` and the workflow completes with `status: finished`, but the data is gone.
+
+### Registered keys (survive ingestion)
+
+| Key | Purpose |
+|-----|---------|
+| `Alternatives` | Decision alternatives with rank/action |
+| `Assurance` | Assurance metadata |
+| `CRA` | Cost Risk Assessment |
+| `Ensemble` | Ensemble metadata |
+| `InterpretationLineage` | Interpretation provenance |
+| `SRA` | Schedule Risk Assessment |
+| `UncertaintySummary` | P10/P50/P90 volume summary |
+
+### Dropped keys (do not survive ingestion)
+
+These are custom keys we added to enrich the BD manifest but which OSDU silently removes:
+
+- `Authors`, `ReviewTeam`
+- `DevelopmentConcept` (concept, wells count, facilities, IOR method, etc.)
+- `ReservoirProperties` (depth, temperature, pressure, porosity, permeability, etc.)
+- `VolumesSummary_STOIIP_MSm3` (P10/P50/P90 in-place volumes as simple numbers)
+- `KeyUncertainties` (descriptions with impact ratings)
+- `KeyEconomics` (NPV, IRR, CAPEX, breakeven, payback)
+- `ScheduleMilestones` (milestone, target date, status)
+- `ProductionProfile` (yearly oil/gas/water forecast + peak/EUR/RF)
+- `DG2Recommendations` / `DG3Recommendations`
+
+### Implications
+
+You cannot rely on OSDU Storage to persist arbitrary extension fields. Options:
+1. **Register the keys** — request schema extension from the OSDU operator to add the keys to the `equinor` extension namespace.
+2. **Local enrichment overlay** — load the fields from manifest files at runtime and merge them into fetched records (implemented in this project, see Appendix B).
+3. **Separate records** — store custom data in a separate WPC (e.g., `ColumnBasedTable`) and link from the BD via `Parameters[]`.
+
+---
+
+## Appendix B: Local BD enrichment overlay (implementation)
+
+Because registering schema extensions is slow, we implemented a **local overlay** in `app/main.py` that restores the dropped `ext.equinor` fields at read time.
+
+### How it works
+
+```
+Startup                          Search / View
+───────                          ─────────────
+_load_bd_enrichments()           _apply_bd_local_enrichment(data, rid)
+  ├ scan manifest files            ├ lookup rid in cache
+  ├ extract ext.equinor per ID     ├ for each cached key:
+  └ store in _BD_LOCAL_ENRICHMENTS │   if key NOT in live ext.equinor:
+                                   │     inject it
+                                   └ result: full ext.equinor in data
+```
+
+**Manifest files scanned:**
+- `demo/json/manifest_dg_businessdecision.json` (GRAND DG2)
+- `demo/drogon/manifest_bd_drogon.json` (Drogon DG1)
+
+**Merge rule:** Only fills keys that are **absent** in the OSDU-returned record. Live data always wins, so if OSDU eventually preserves a key, the local value is ignored.
+
+**Wired into:**
+- Search results loop (after fetching BD records from OSDU Search)
+- Single-record view route (after fetching from OSDU Storage)
+
+---
+
+## Appendix C: Enriched BD manifest structure
+
+Both GRAND (DG2) and Drogon (DG1) manifests carry the following `ext.equinor` sections:
+
+### ProductionProfile (GRAND DG2 only)
+
+Yearly forecast with oil, gas, water, and derived summary:
+
+```json
+{
+  "ext": {
+    "equinor": {
+      "ProductionProfile": {
+        "Years": [2023, 2024, ..., 2045],
+        "OilRate_kSm3d": [0.0, 5.2, ..., 0.6],
+        "GasRate_MSm3d": [0.0, 1.1, ..., 0.12],
+        "WaterRate_kSm3d": [0.0, 0.3, ..., 1.8],
+        "PeakOilRate_kSm3d": 13.8,
+        "EUR_Oil_MSm3": 43.4,
+        "RecoveryFactor_pct": 36.6
+      }
+    }
+  }
+}
+```
+
+Rendered in the UI as a Chart.js stacked bar chart (oil + gas + water) with a line overlay for oil rate, plus a collapsible data table.
+
+### KeyEconomics
+
+```json
+"KeyEconomics": {
+  "NPV_MUSD": 820,
+  "IRR_pct": 22,
+  "CAPEX_MNOK": 22400,
+  "Breakeven_USDpbbl": 35,
+  "Payback_years": 4.5
+}
+```
+
+### ScheduleMilestones
+
+```json
+"ScheduleMilestones": [
+  { "Milestone": "DG2 Concept Select",    "TargetDate": "2023-06-15", "Status": "Completed" },
+  { "Milestone": "FEED Award",            "TargetDate": "2023-12-01", "Status": "Completed" },
+  { "Milestone": "DG3 Plan for Execution","TargetDate": "2024-09-01", "Status": "On Track" },
+  ...
+]
+```
+
+### Other ext.equinor sections
+
+- **Authors / ReviewTeam** — names and roles for governance display.
+- **DevelopmentConcept** — concept name, well counts, facilities, IOR method, design life, water depth.
+- **ReservoirProperties** — depth range, temperature, pressure, porosity, permeability, fluid contacts.
+- **VolumesSummary_STOIIP_MSm3** — simple P10/P50/P90 in-place volumes (fallback when stat WPC ColumnValues unavailable).
+- **KeyUncertainties** — list of uncertainties with description, impact rating (High/Medium/Low), and mitigation text.
+- **Alternatives** — decision alternatives with rank, action (Pursue/Monitor/Reject), and description.
+- **UncertaintySummary** — volume range P10/P50/P90, method, confidence level, date (registered — survives ingestion).
+
+---
+
+## Appendix D: UI rendering — BD card sections
+
+The search template (`app/templates/search.html`) detects `BusinessDecision` records by kind and renders a rich `.bd-card` with the following sections:
+
+| Section | Data source | CSS class | Notes |
+|---------|-------------|-----------|-------|
+| Header | `data.Name`, `DecisionLevelID`, `ApprovalStatusID` | `.bd-card header` | Gradient background, decision chips |
+| Meta grid | `DecisionDate`, `DecisionSummary`, `ApprovalStatusID` | `.bd-meta-grid` | — |
+| Headline volumes | stat REV ColumnValues → ext UncertaintySummary → ext VolumesSummary | `.bd-kpi` | Three-tier fallback |
+| Development concept | `ext.equinor.DevelopmentConcept` | `.bd-devcon-grid` | Blue-tinted grid items |
+| Reservoir properties | `ext.equinor.ReservoirProperties` | `.bd-resprop-grid` | Yellow-tinted grid items |
+| Key economics | `ext.equinor.KeyEconomics` | `.bd-econ-row` | Responsive grid with labels |
+| Schedule milestones | `ext.equinor.ScheduleMilestones` | `.bd-schedule` | 3-column grid with status pills |
+| Production forecast | `ext.equinor.ProductionProfile` | Chart.js canvas | Stacked bar + line chart + collapsible table |
+| Alternatives | `ext.equinor.Alternatives` | — | Cards with rank/action badges |
+| Risk chips | `data.RiskIDs` | `.risk-chip` | Linked risk badges |
+| Key uncertainties | `ext.equinor.KeyUncertainties` | — | Impact-coloured list |
+| Input parameters | `data.Parameters` | — | Tagged parameter list |
+| Authors & governance | `ext.equinor.Authors`, `ReviewTeam` | — | Name/role grid |
+| Recommendations | `ext.equinor.DG3Recommendations` | — | Bullet list |
+| Uncertainty methodology | `ext.equinor.UncertaintySummary` | — | Method, confidence, date |
+
+### Three-tier volume fallback
+
+The headline KPIs try three sources in order:
+1. **Stat WPC ColumnValues** — fetched via `_enrich_bd_volumes()` from the REV-stats WPC referenced in `Parameters[]`.
+2. **ext.equinor.UncertaintySummary** — P10/P50/P90 from the registered extension.
+3. **ext.equinor.VolumesSummary_STOIIP_MSm3** — simple fallback numbers (requires local enrichment since this key is dropped by OSDU).
+
+---
