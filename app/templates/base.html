@@ -26,7 +26,7 @@
   </style>
   {% block head %}{% endblock %}
 </head>
-<body>
+<body data-auth-mode="{{ auth_mode|default('env_token') }}">
   <header>
     <nav id="nav-root" data-current-path="{{ request.url.path }}">
       <!-- Navigation is injected by inline JS below (and /static/app.js as fallback) -->
@@ -65,6 +65,13 @@
     root.appendChild(linkSpan('/search', 'Search'));
     root.appendChild(linkSpan('/strat', 'Strat'));
     root.appendChild(el('span', { 'class': 'muted' }, ' '));
+    // Logout link (only visible in per-user mode — server sets data attr)
+    var body = document.body;
+    if (body.getAttribute('data-auth-mode') === 'per_user_pkce') {
+      var logout = linkSpan('/logout', 'Sign out', 'navlink');
+      logout.style.cssFloat = 'right';
+      root.appendChild(logout);
+    }
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', buildHeader);

@@ -2,6 +2,7 @@
 from __future__ import annotations
 import os
 import re
+import secrets
 import urllib.parse
 import logging
 import json
@@ -20,6 +21,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.responses import Response
 
+from starlette.middleware.sessions import SessionMiddleware
+
 # App modules
 from .schemahandler import extract_osdu_links
 from .schemahandler import extract_metadata_generic
@@ -28,6 +31,9 @@ from . import osdu
 from .auth import (
     router as auth_router,
     tokens_from_env,
+    tokens_from_session,
+    AUTH_MODE,
+    PUBLIC_PATHS,
 )
 from .strat import router as strat_router
 
@@ -42,6 +48,16 @@ log = logging.getLogger("rddms-admin")
 
 app = FastAPI(title="RDDMS Admin")
 
+# Session middleware — needed for per-user PKCE auth (cookie-based sessions)
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=os.getenv("SECRET_KEY", secrets.token_hex(16)),
+    session_cookie="ores_session",
+    max_age=8 * 3600,          # 8 h session lifetime
+    same_site="lax",
+    https_only=False,           # allow http in local dev; set True behind TLS in prod
+)
+
 # Security headers & cache hardening
 @app.middleware("http")
 async def no_transform_headers(request: Request, call_next):
@@ -50,22 +66,45 @@ async def no_transform_headers(request: Request, call_next):
     resp.headers.setdefault("X-Content-Type-Options", "nosniff")
     return resp
 
-# Auth: server-side refresh-token minting (no cookies)
+# Auth middleware: env-token primary → per-user session fallback → redirect to /login
 @app.middleware("http")
 async def inject_access_token(request: Request, call_next):
     """
-    Mint a fresh access_token from REFRESH_TOKEN and attach to request.state.
-    Fails fast with 401 if unavailable.
+    Resolve an access_token and attach it to request.state.
+    Priority: 1) REFRESH_TOKEN from env  2) per-user session token  3) redirect to /login
     """
+    path = request.url.path
+
+    # Let public paths through without a token
+    if path in PUBLIC_PATHS or path.startswith("/static"):
+        return await call_next(request)
+
+    access_token: str | None = None
+
+    # 1. Try shared env-token (fast, no user interaction)
     try:
-        tokens = await tokens_from_env()
-        if not tokens or not tokens.get("access_token"):
-            log.error("Auth failed: missing/invalid refresh_token")
-            return JSONResponse({"error": "Authentication failed: missing/invalid refresh_token"}, status_code=401)
-        request.state.access_token = tokens["access_token"]
+        env_tokens = await tokens_from_env()
+        if env_tokens:
+            access_token = env_tokens.get("access_token")
     except Exception as e:
-        log.error("Failed to mint access token: %s", e)
-        return JSONResponse({"error": f"Authentication failed: {e}"}, status_code=401)
+        log.warning("Env-token mint failed: %s", e)
+
+    # 2. Fallback — per-user session token (PKCE flow)
+    if not access_token:
+        try:
+            sess_tokens = await tokens_from_session(request)
+            if sess_tokens:
+                access_token = sess_tokens.get("access_token")
+        except Exception as e:
+            log.warning("Session token failed: %s", e)
+
+    # 3. No token at all — redirect to login page (for browser) or 401 (for API)
+    if not access_token:
+        if path.startswith("/api"):
+            return JSONResponse({"error": "Authentication required. No env token and no session."}, status_code=401)
+        return RedirectResponse("/login-page")
+
+    request.state.access_token = access_token
     return await call_next(request)
 
 # Attach routers & static
@@ -81,9 +120,20 @@ app.mount(
 templates = Jinja2Templates(
     directory=os.path.join(os.path.dirname(__file__), "templates")
 )
+# Make auth_mode available in every template (for nav Sign-out link)
+templates.env.globals["auth_mode"] = AUTH_MODE
 
 # Log routes at startup (helps when a route goes missing)
 log.info("Routes registered: %s", [getattr(r, "path", str(r)) for r in app.routes])
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Login landing page (per-user PKCE mode)
+# ──────────────────────────────────────────────────────────────────────────────
+
+@app.get("/login-page", response_class=HTMLResponse)
+async def login_page(request: Request):
+    """Serve the sign-in landing page (only reached when no env token is set)."""
+    return templates.TemplateResponse("login.html", {"request": request})
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Utilities
