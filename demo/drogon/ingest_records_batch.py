@@ -74,6 +74,16 @@ MAX_RETRIES = 4          # retry up to 4 times on transient 404 (eventual consis
 RETRY_BACKOFF = [3, 6, 10, 15]  # seconds between retries
 
 
+def put_records_batch(env: Dict[str, str], records: List[Dict[str, Any]],
+                      client: httpx.Client) -> Dict[str, Any]:
+    """PUT all records in a single call (up to 500 per OSDU limit)."""
+    url = f"{env['host']}/api/storage/v2/records"
+    r = client.put(url, json=records, timeout=120)
+    if r.is_success:
+        return r.json()
+    raise RuntimeError(f"Batch PUT failed ({r.status_code}): {r.text[:1000]}")
+
+
 def put_one_record(env: Dict[str, str], record: Dict[str, Any],
                    client: httpx.Client) -> Dict[str, Any]:
     """PUT a single record, retrying on 404 (parent not yet indexed)."""
@@ -136,30 +146,60 @@ def main():
     skipped: List[str] = []
     failed:  List[str] = []
 
-    print(f"\nIngesting {len(records)} records sequentially (delay={args.delay}s, start={args.start}) …")
+    active = records[args.start:]
+    print(f"\nIngesting {len(active)} records …")
     with httpx.Client(headers=headers) as client:
-        for i, rec in enumerate(records):
-            rid = rec.get("id", "?")
-            short = rid.split(":")[-1][:30] if ":" in rid else rid[:40]
-            if i < args.start:
-                print(f"  [{i+1:02d}/{len(records)}] SKIP (--start {args.start}) {short}")
-                continue
+        # ── Try a single batch PUT first ──────────────────────────────────────
+        if args.start == 0:
+            print(f"  Attempting single batch PUT ({len(active)} records) …")
             try:
-                resp = put_one_record(env, rec, client)
-                ids = resp.get("recordIds", [])
-                sk  = resp.get("skippedRecordIds", [])
-                if ids:
-                    created.extend(ids)
-                    print(f"  [{i+1:02d}/{len(records)}] OK  {short}")
-                if sk:
-                    skipped.extend(sk)
-                    print(f"  [{i+1:02d}/{len(records)}] SKIP {short}")
+                resp = put_records_batch(env, active, client)
+                created.extend(resp.get("recordIds", []))
+                skipped.extend(resp.get("skippedRecordIds", []))
+                print(f"  Batch OK — created={len(resp.get('recordIds',[]))}  "
+                      f"skipped={len(resp.get('skippedRecordIds',[]))}")
             except RuntimeError as e:
-                failed.append(f"{rid}: {e}")
-                print(f"  [{i+1:02d}/{len(records)}] FAIL {short}: {e}")
-            # Wait between records so the index catches up
-            if i < len(records) - 1:
-                time.sleep(args.delay)
+                print(f"  Batch PUT failed ({e}); falling back to sequential …")
+                # Fall through to sequential below
+                args.start = 0   # reset so sequential loop covers all
+                for i, rec in enumerate(active):
+                    rid = rec.get("id", "?")
+                    short = rid.split(":")[-1][:30] if ":" in rid else rid[:40]
+                    try:
+                        r = put_one_record(env, rec, client)
+                        ids = r.get("recordIds", [])
+                        sk  = r.get("skippedRecordIds", [])
+                        created.extend(ids)
+                        skipped.extend(sk)
+                        tag = "OK  " if ids else "SKIP"
+                        print(f"  [{i+1:02d}/{len(active)}] {tag} {short}")
+                    except RuntimeError as e2:
+                        failed.append(f"{rid}: {e2}")
+                        print(f"  [{i+1:02d}/{len(active)}] FAIL {short}: {e2}")
+                    if i < len(active) - 1:
+                        time.sleep(args.delay)
+        else:
+            # --start was specified: sequential only
+            print(f"  Sequential mode (--start {args.start}, delay={args.delay}s) …")
+            for i, rec in enumerate(records):
+                rid = rec.get("id", "?")
+                short = rid.split(":")[-1][:30] if ":" in rid else rid[:40]
+                if i < args.start:
+                    print(f"  [{i+1:02d}/{len(records)}] SKIP (--start) {short}")
+                    continue
+                try:
+                    r = put_one_record(env, rec, client)
+                    ids = r.get("recordIds", [])
+                    sk  = r.get("skippedRecordIds", [])
+                    created.extend(ids)
+                    skipped.extend(sk)
+                    tag = "OK  " if ids else "SKIP"
+                    print(f"  [{i+1:02d}/{len(records)}] {tag} {short}")
+                except RuntimeError as e:
+                    failed.append(f"{rid}: {e}")
+                    print(f"  [{i+1:02d}/{len(records)}] FAIL {short}: {e}")
+                if i < len(records) - 1:
+                    time.sleep(args.delay)
 
     print(f"\n--- Summary ---")
     print(f"  created/updated : {len(created)}")

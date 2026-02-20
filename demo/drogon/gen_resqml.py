@@ -44,9 +44,10 @@ PARAMS_UUID  = _uuid.uuid5(_NS, "drogon-valysar-input-parameters")
 VOLUMES_UUID = _uuid.uuid5(_NS, "drogon-valysar-raw-volumes")
 STATS_UUID   = _uuid.uuid5(_NS, "drogon-valysar-stat-volumes")
 TMPL_UUID    = _uuid.uuid5(_NS, "drogon-activity-template")
-ACT1_UUID    = _uuid.uuid5(_NS, "drogon-activity-01-generate-input-parameters")
-ACT2_UUID    = _uuid.uuid5(_NS, "drogon-activity-02-run-volumetrics")
-ACT3_UUID    = _uuid.uuid5(_NS, "drogon-activity-03-generate-statistics")
+# Single merged activity (replaces former three-step ACT1/2/3 chain).
+# Same seed as used for the OSDU Activity record in gen_activity_drogon.py:
+#   uuid5(_NS, "drogon-activity-merged")
+ACT_UUID     = _uuid.uuid5(_NS, "drogon-activity-merged")
 
 
 # ---------------------------------------------------------------------------
@@ -644,66 +645,53 @@ def build_activity_epc(params_uuid, raw_vol_uuid, stat_vol_uuid) -> pathlib.Path
         }
     ], separators=(",", ":"))
 
-    # Activity 1: generate input parameter table
+    # Single merged activity: input params → RMS run → statistical table.
+    # Incorporates the scenario data from obj_Activity_MISSING.xml.
+    # UUID matches the OSDU Activity record (gen_activity_drogon.py).
     _add_activity(
         model, tmpl,
-        title="Drogon Valysar — Generate Input Parameter Table",
-        act_uuid=ACT1_UUID,
-        process_title="Generate per-realisation input parameter table",
-        output_ref={
-            "key": "OutputParameters",
-            "title": "Drogon Valysar Input Parameters",
-            "uuid": params_uuid,
-            "content_type": "obj_Grid2dRepresentation",
-        },
-        extra_int_params={"NumberOfRealizations": 3},
-        extra_string_params={
-            "Workflow": "DecisionExample",
-            "ReportTable": "DecisionExample_report",
-            "Method": "User_Defined",
-            "Variables": variables,
-            "DesignMatrix": design_matrix,
-        },
-    )
-
-    # Activity 2: run volumetrics workflow (params -> raw volumes)
-    _add_activity(
-        model, tmpl,
-        title="Drogon Valysar — RMS Reservoir Model Run",
-        act_uuid=ACT2_UUID,
+        title="Drogon Valysar — DG1 Volumetrics Workflow Run",
+        act_uuid=ACT_UUID,
         input_ref={
             "key": "InputParameters",
             "title": "Drogon Valysar Input Parameters",
             "uuid": params_uuid,
             "content_type": "obj_Grid2dRepresentation",
         },
-        process_title="RMS Reservoir Model Workflow — Drogon Project (dummy reference)",
+        process_title="RMS DecisionExample — Drogon Valysar (3 realisations: Base / Low / High)",
         output_ref={
             "key": "OutputVolumes",
             "title": "Drogon Valysar RAW Volumes",
             "uuid": raw_vol_uuid,
             "content_type": "obj_Grid2dRepresentation",
         },
+        extra_int_params={"NumberOfRealizations": 3},
+        extra_string_params={
+            "Workflow":         "DecisionExample",
+            "ReportTableName": "DecisionExample_report",
+            "Method":           "User_Defined",
+            "Variables":        variables,
+            "DesignMatrix":     design_matrix,
+        },
     )
-
-    # Activity 3: aggregate/report statistics (raw volumes -> stat table)
-    _add_activity(
-        model, tmpl,
-        title="Drogon Valysar — Aggregate Statistical Volumes",
-        act_uuid=ACT3_UUID,
-        input_ref={
-            "key": "InputVolumes",
-            "title": "Drogon Valysar RAW Volumes",
-            "uuid": raw_vol_uuid,
-            "content_type": "obj_Grid2dRepresentation",
-        },
-        process_title="Aggregate realisations into statistical report table",
-        output_ref={
-            "key": "ReportTable",
-            "title": "Drogon Valysar Statistical Volumes",
-            "uuid": stat_vol_uuid,
-            "content_type": "obj_Grid2dRepresentation",
-        },
+    # Add OutputParameters (params Grid2dRepresentation) as a second DataObject reference.
+    act_node = model.root_for_part(
+        model.part_for_uuid(bu.uuid_from_string(str(ACT_UUID)))
+    )
+    _add_activity_param_ref(
+        act_node,
+        "OutputParameters",
+        ref_title="Drogon Valysar Input Parameters",
+        ref_uuid=params_uuid,
+        ref_content_type="obj_Grid2dRepresentation",
+    )
+    # Add the report table (STAT) as a third output reference.
+    _add_activity_param_ref(
+        act_node,
+        "ReportTable",
+        ref_title="Drogon Valysar Statistical Volumes",
+        ref_uuid=stat_vol_uuid,
+        ref_content_type="obj_Grid2dRepresentation",
     )
 
     model.store_epc()

@@ -94,7 +94,8 @@ $space_root_cmd  = "/bin/openETPServer space $etp_credentials"
 
 # ── Copy EPC+H5 files to a temp dir (avoid spaces in volume mount path) ───
 
-$tempDir = Join-Path $env:TEMP "ores_resqml_import"
+$tmpRoot = if ($env:TEMP) { $env:TEMP } elseif ($env:TMPDIR) { $env:TMPDIR } else { "/tmp" }
+$tempDir = Join-Path $tmpRoot "ores_resqml_import"
 if (Test-Path $tempDir) { Remove-Item -Recurse -Force $tempDir }
 New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
 
