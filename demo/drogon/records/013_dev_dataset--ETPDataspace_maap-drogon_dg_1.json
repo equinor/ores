@@ -1,0 +1,28 @@
+{
+  "id": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+  "kind": "osdu:wks:dataset--ETPDataspace:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 Geomodel Dataspace (maap/drogon_dg)",
+    "Description": "RDDMS dataspace holding the Drogon DG2 geomodel EPC files exported from RMS (drogon_activity.epc, drogon_tables.epc).",
+    "DatasetProperties": {
+      "URI": "eml:///dataspace(maap/drogon_dg)",
+      "ServerURL": "wss://equinorswedev.energy.azure.com/api/reservoir-ddms-etp/v2/"
+    }
+  }
+}

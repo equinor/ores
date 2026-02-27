@@ -69,6 +69,22 @@
   /* ── Production profile chart ── */
   .prod-chart-wrap { max-width: 56rem; height: 320px; position: relative; margin-bottom: .75rem; }
 
+  /* ── Data Sources / Ancestry card ── */
+  .sources-card { border: 1px solid #c3dafe; border-radius: 10px; padding: 0; overflow: hidden; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.06); max-width: 72rem; }
+  .sources-header { background: linear-gradient(135deg, #ebf4ff 0%, #e6fffa 100%); padding: .75rem 1.25rem .6rem; border-bottom: 1px solid #c3dafe; display: flex; align-items: center; gap: .75rem; }
+  .sources-header h5 { margin: 0; font-size: 1rem; color: #1a365d; font-weight: 700; }
+  .sources-header .sources-kind-badge { font-size: .72rem; background: #bee3f8; border-radius: 999px; padding: .15rem .55rem; color: #2b6cb0; font-weight: 600; }
+  .sources-body { padding: .75rem 1.25rem .9rem; }
+  .eml-block { background: #f0fff4; border: 1px solid #9ae6b4; border-radius: 6px; padding: .45rem .7rem; margin: .4rem 0; font-family: monospace; font-size: .88rem; color: #22543d; display: flex; align-items: center; gap: .5rem; word-break: break-all; }
+  .eml-copy-btn { flex-shrink: 0; background: #c6f6d5; border: none; border-radius: 4px; padding: .2rem .5rem; font-size: .78rem; cursor: pointer; color: #22543d; }
+  .eml-copy-btn:hover { background: #9ae6b4; }
+  .ds-entry { background: #f7faff; border: 1px solid #bee3f8; border-radius: 8px; padding: .55rem .8rem; margin-bottom: .5rem; }
+  .ds-entry .ds-name { font-weight: 600; color: #2b6cb0; font-size: .95rem; }
+  .ds-entry .ds-id { font-size: .78rem; color: #718096; font-family: monospace; margin-top: .1rem; word-break: break-all; }
+  .ds-entry .ds-server { font-size: .8rem; color: #4a5568; margin-top: .2rem; }
+  .ds-entry a { color: #2b6cb0; text-decoration: none; }
+  .ds-entry a:hover { text-decoration: underline; }
+
   /* ── REV card styling ── */
   .rev-card { border: 1px solid #b2d8d8; border-radius: 10px; padding: 0; overflow: hidden; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.06); max-width: 72rem; }
   .rev-header { background: linear-gradient(135deg, #e8faf5 0%, #e8f0fa 100%); padding: 1rem 1.25rem .75rem; border-bottom: 1px solid #b2d8d8; }
@@ -285,6 +301,14 @@
       {% set has_volumes = (vmap and headers|length > 0 and nrows > 0) %}
       {% set is_business_decision = ('businessdecision' in ((rec.kind or '')|lower)) %}
       {% set is_rev = ('reservoirestimatedvolumes' in ((rec.kind or '')|lower)) %}
+      {% set is_dataspace = ('etpdataspace' in ((rec.kind or '')|lower)) %}
+      {# Collect GeoModelDataspace / ETPDataspace parameters from data.Parameters #}
+      {% set ds_params = [] %}
+      {% for p in ((rec.data or {}).get('Parameters') or []) if p is mapping %}
+        {% if 'etpdataspace' in ((p.get('DataObjectParameter') or '')|lower) or p.get('Title') == 'GeoModelDataspace' %}
+          {% set _ = ds_params.append(p) %}
+        {% endif %}
+      {% endfor %}
 
       {# Headline volume candidates from reconstructed table #}
       {% set volns = namespace(o10=0.0,o50=0.0,o90=0.0,g10=0.0,g50=0.0,g90=0.0,has_o10=false,has_o50=false,has_o90=false,has_g10=false,has_g50=false,has_g90=false) %}
@@ -322,6 +346,82 @@
               <div class="k">ParentObjectID</div><div>{{ (rec.data or {}).get('ParentObjectID') or '—' }}</div>
             </div>
           </section>
+
+          {# ══════════ ETPDataspace record card ══════════ #}
+          {% if is_dataspace %}
+          {% set ds_props = (rec.data or {}).get('DatasetProperties') or {} %}
+          {% set ds_uri   = ds_props.get('URI') or (rec.data or {}).get('DatasetProperties.URI') or '' %}
+          {% set ds_srv   = ds_props.get('ServerURL') or '' %}
+          <div class="sources-card">
+            <div class="sources-header">
+              <h5>🗄 Reservoir DDMS Dataspace</h5>
+              <span class="sources-kind-badge">ETPDataspace</span>
+            </div>
+            <div class="sources-body">
+              {% if ds_uri %}
+              <div style="margin-bottom:.35rem;font-size:.85rem;color:#4a5568;">EML URI — use this to address the dataspace in ETP / RESQML clients:</div>
+              <div class="eml-block" id="eml-uri-{{ rec_index }}">
+                {{ ds_uri }}
+                <button class="eml-copy-btn" onclick="navigator.clipboard.writeText('{{ ds_uri }}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})" type="button">Copy</button>
+              </div>
+              {% endif %}
+              {% if ds_srv %}
+              <div style="margin-top:.4rem;">
+                <span class="mini-grid"><span class="k" style="font-size:.8rem;">Server URL</span>
+                <code style="font-size:.82rem;color:#2b6cb0;">{{ ds_srv }}</code></span>
+              </div>
+              {% endif %}
+              <div style="margin-top:.6rem;">
+                <a href="/search/view/{{ rec.id }}" style="font-size:.85rem;">Open full record →</a>
+                {% if ds_uri %}{% set ds_link_name = ds_uri | replace('eml:///dataspace(', '') | replace(')', '') %}
+                <a href="/keys?ds={{ ds_link_name }}" style="font-size:.85rem;margin-left:1.2rem;">Browse in RDDMS →</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          {# ══════════ DATA SOURCES / ANCESTRY section (Activity, BD, any record with GeoModelDataspace param) ══════════ #}
+          {% if ds_params and not is_dataspace and not is_business_decision %}
+          <div class="sources-card">
+            <div class="sources-header">
+              <h5>Data Sources</h5>
+              <span class="sources-kind-badge">Reservoir DDMS</span>
+            </div>
+            <div class="sources-body">
+              <div style="font-size:.85rem;color:#4a5568;margin-bottom:.55rem;">
+                Geomodel data referenced by this record is stored in a Reservoir DDMS (ETP) dataspace.
+              </div>
+              {% for p in ds_params %}
+                {% set ds_id = p.get('DataObjectParameter') or '' %}
+                {% set ds_info = (rec.linked_labels or {}).get(ds_id) or {} %}
+                {% set ds_data = ds_info.get('data') or {} %}
+                {% set raw_uri = (ds_data.get('DatasetProperties') or {}).get('URI') or ds_data.get('DatasetProperties.URI') or '' %}
+                {% set srv_url = (ds_data.get('DatasetProperties') or {}).get('ServerURL') or '' %}
+                <div class="ds-entry">
+                  <div class="ds-name">
+                    {% if ds_id %}<a href="/search/view/{{ ds_id }}">{{ ds_info.name or p.get('Title') or 'Dataspace' }}</a>{% else %}{{ p.get('Title') or 'Dataspace' }}{% endif %}
+                  </div>
+                  {% if p.get('Selection') or p.get('Description') %}
+                  <div style="font-size:.82rem;color:#718096;margin-top:.1rem;">{{ p.get('Selection') or p.get('Description') }}</div>
+                  {% endif %}
+                  {% if ds_id %}<div class="ds-id">OSDU: {{ ds_id }}</div>{% endif %}
+                  {% if raw_uri %}
+                  <div style="margin-top:.4rem;font-size:.82rem;color:#4a5568;">EML URI:</div>
+                  <div class="eml-block" id="eml-{{ rec_index }}-{{ loop.index }}">
+                    {{ raw_uri }}
+                    <button class="eml-copy-btn" onclick="navigator.clipboard.writeText('{{ raw_uri }}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})" type="button">Copy</button>
+                  </div>
+                  {% endif %}
+                  {% if srv_url %}<div class="ds-server">Server: <code>{{ srv_url }}</code></div>{% endif %}
+                  {% if raw_uri %}{% set ds_link_name = raw_uri | replace('eml:///dataspace(', '') | replace(')', '') %}
+                  <div style="margin-top:.4rem;"><a href="/keys?ds={{ ds_link_name }}">Browse in RDDMS →</a></div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
 
           {% if is_business_decision %}
           {# ══════════ BUSINESS DECISION CARD ══════════ #}
@@ -658,6 +758,8 @@
               <div class="bd-section-title">Input Parameters</div>
               <ul class="bd-param-list">
                 {% for p in bd_params if p is mapping %}
+                {# Skip GeoModelDataspace — shown in Data Sources section below #}
+                {% if 'etpdataspace' not in ((p.get('DataObjectParameter') or '')|lower) and p.get('Title') != 'GeoModelDataspace' %}
                 <li>
                   <div>
                     <div class="bd-param-title">{{ p.get('Title') or 'Parameter' }}</div>
@@ -670,8 +772,42 @@
                     <span class="bd-param-tag">{{ pk0.get('StringParameterKey') or pk0.get('ParameterKey') or '' }}</span>
                   {% endif %}
                 </li>
+                {% endif %}
                 {% endfor %}
               </ul>
+              {% endif %}
+
+              {# ── Data Sources (ETPDataspace / RDDMS geomodel) ── #}
+              {% if ds_params %}
+              <div class="bd-section-title">Data Sources</div>
+              {% for p in ds_params %}
+                {% set ds_id   = p.get('DataObjectParameter') or '' %}
+                {% set ds_info = (rec.linked_labels or {}).get(ds_id) or {} %}
+                {% set ds_data = ds_info.get('data') or {} %}
+                {% set raw_uri = (ds_data.get('DatasetProperties') or {}).get('URI') or ds_data.get('DatasetProperties.URI') or '' %}
+                {% set srv_url = (ds_data.get('DatasetProperties') or {}).get('ServerURL') or '' %}
+                <div class="ds-entry">
+                  <div class="ds-name">
+                    {% if ds_id %}<a href="/search/view/{{ ds_id }}">{{ ds_info.name or p.get('Title') or 'Dataspace' }}</a>{% else %}{{ p.get('Title') or 'Dataspace' }}{% endif %}
+                    <span style="font-size:.78rem;background:#bee3f8;border-radius:999px;padding:.1rem .4rem;color:#2b6cb0;margin-left:.4rem;font-weight:400;">Reservoir DDMS</span>
+                  </div>
+                  {% if p.get('Selection') or p.get('Description') %}
+                  <div style="font-size:.82rem;color:#718096;margin-top:.1rem;">{{ p.get('Selection') or p.get('Description') }}</div>
+                  {% endif %}
+                  {% if ds_id %}<div class="ds-id">OSDU: {{ ds_id }}</div>{% endif %}
+                  {% if raw_uri %}
+                  <div style="margin-top:.4rem;font-size:.82rem;color:#4a5568;">EML URI:</div>
+                  <div class="eml-block">
+                    {{ raw_uri }}
+                    <button class="eml-copy-btn" onclick="navigator.clipboard.writeText('{{ raw_uri }}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})" type="button">Copy</button>
+                  </div>
+                  {% endif %}
+                  {% if srv_url %}<div class="ds-server">Server: <code>{{ srv_url }}</code></div>{% endif %}
+                  {% if raw_uri %}{% set ds_link_name = raw_uri | replace('eml:///dataspace(', '') | replace(')', '') %}
+                  <div style="margin-top:.4rem;"><a href="/keys?ds={{ ds_link_name }}">Browse in RDDMS →</a></div>
+                  {% endif %}
+                </div>
+              {% endfor %}
               {% endif %}
 
               {# ── Authors & Review Team ── #}

@@ -96,6 +96,9 @@ def main():
         else [x for x in [raw_wpc_id, stat_wpc_id, params_wpc_id] if x]
     )
 
+    # ETPDataspace: RDDMS dataspace holding the RESQML artefacts linked to this BD
+    dataspace_id = f"{args.id_prefix}:dataset--ETPDataspace:maap-drogon_dg:1"
+
     bd_id = f"{args.id_prefix}:master-data--BusinessDecision:Drogon-DG1-Identify:1"
 
     bd_record = {
@@ -164,7 +167,21 @@ def main():
                     "ParameterRoleID": f"{args.id_prefix}:reference-data--ParameterRole:InputReference:1",
                     "DataObjectParameter": reservoir_id,
                 },
+                {
+                    "Title": "GeoModelDataspace",
+                    "Selection": "RDDMS ETP dataspace with the Drogon DG2 geomodel EPC files (RMS export)",
+                    "ParameterKindID": f"{args.id_prefix}:reference-data--ParameterKind:DataObject:1",
+                    "ParameterRoleID": f"{args.id_prefix}:reference-data--ParameterRole:InputReference:1",
+                    "DataObjectParameter": dataspace_id,
+                    "Keys": [
+                        {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"},
+                    ],
+                },
             ],
+            "ancestry": {
+                "parents": [activity_id] if activity_id else [],
+                "children": [],
+            },
             "ext": {
                 "equinor": {
                     "Authors": [

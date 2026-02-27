@@ -590,11 +590,16 @@ async def search_run(
                                 if r_link.status_code == 200:
                                     rr = r_link.json()
                                     nm = (rr.get("data") or {}).get("Name")
-                                    linked_labels[lid] = {
+                                    entry: Dict[str, Any] = {
                                         "name": nm or lid,
                                         "kind": rr.get("kind"),
                                         "version": rr.get("version"),
                                     }
+                                    # Include data block for ETPDataspace so templates
+                                    # can render the EML URI and server URL directly.
+                                    if "ETPDataspace" in (rr.get("kind") or ""):
+                                        entry["data"] = rr.get("data") or {}
+                                    linked_labels[lid] = entry
                         except Exception as e:
                             log.warning("[SEARCH] Linked record name hydration failed: %s", e)
 

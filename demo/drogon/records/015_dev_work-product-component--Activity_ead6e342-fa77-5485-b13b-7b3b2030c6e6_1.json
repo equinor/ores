@@ -127,6 +127,19 @@
             "StringParameterKey": "REV-stats"
           }
         ]
+      },
+      {
+        "Title": "GeoModelDataspace",
+        "Description": "RDDMS ETP dataspace containing the Drogon DG2 geomodel EPC files (drogon_activity.epc, drogon_tables.epc) exported from RMS.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "ETPDataspace"
+          }
+        ]
       }
     ],
     "ancestry": {

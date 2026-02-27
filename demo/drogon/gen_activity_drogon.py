@@ -46,6 +46,11 @@ SCRIPT_DIR = Path(__file__).resolve().parent  # demo/drogon
 TEMPLATE_UUID = "aa2791c8-e2ea-5aa5-871d-25db294aad8a"
 ACTIVITY_UUID = "ead6e342-fa77-5485-b13b-7b3b2030c6e6"
 
+# ── Reservoir DDMS / ETP dataspace for the Drogon RESQML artefacts ─────────
+# URI format confirmed from live OSDU records: no quotes around dataspace path
+DATASPACE_NAME = "maap/drogon_dg"  # dataspace path in Reservoir DDMS
+DATASPACE_ID_SUFFIX = DATASPACE_NAME.replace("/", "-")  # maap-drogon_dg
+
 DEFAULT_ACL = {
     "owners":  ["data.default.owners@dev.dataservices.energy"],
     "viewers": ["data.office.global.viewers@dev.dataservices.energy"],
@@ -217,6 +222,27 @@ def build_template(prefix: str, acl: dict, legal: dict) -> Dict[str, Any]:
     }
 
 
+def build_dataspace(prefix: str, acl: dict, legal: dict) -> Dict[str, Any]:
+    """Build an OSDU dataset--ETPDataspace record for the Drogon RDDMS dataspace."""
+    return {
+        "id":    f"{prefix}:dataset--ETPDataspace:{DATASPACE_ID_SUFFIX}:1",
+        "kind":  "osdu:wks:dataset--ETPDataspace:1.0.0",
+        "acl":   acl,
+        "legal": legal,
+        "data": {
+            "Name": f"Drogon DG2 Geomodel Dataspace ({DATASPACE_NAME})",
+            "Description": (
+                "RDDMS dataspace holding the Drogon DG2 geomodel EPC files exported from RMS "
+                "(drogon_activity.epc, drogon_tables.epc)."
+            ),
+            "DatasetProperties": {
+                "URI": f"eml:///dataspace({DATASPACE_NAME})",
+                "ServerURL": "wss://equinorswedev.energy.azure.com/api/reservoir-ddms-etp/v2/",
+            },
+        },
+    }
+
+
 def build_activity(
     prefix: str,
     acl: dict,
@@ -227,6 +253,7 @@ def build_activity(
     params_wpc_id: str,
     raw_wpc_id: str,
     stat_wpc_id: str,
+    dataspace_id: str = "",
 ) -> Dict[str, Any]:
     """Build a single merged OSDU Activity WPC record."""
     activity_id = f"{prefix}:work-product-component--Activity:{ACTIVITY_UUID}:1"
@@ -323,6 +350,19 @@ def build_activity(
         },
     ]
 
+    if dataspace_id:
+        parameters.append({
+            "Title": "GeoModelDataspace",
+            "Description": (
+                "RDDMS ETP dataspace containing the Drogon DG2 geomodel EPC files "
+                "(drogon_activity.epc, drogon_tables.epc) exported from RMS."
+            ),
+            "ParameterKindID": f"{prefix}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{prefix}:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": dataspace_id,
+            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"}],
+        })
+
     return {
         "id": activity_id,
         "kind": "osdu:wks:work-product-component--Activity:1.0.0",
@@ -404,9 +444,11 @@ def main() -> None:
 
     prefix = args.id_prefix
     template_id = f"{prefix}:work-product-component--ActivityTemplate:{TEMPLATE_UUID}:1"
+    dataspace_id = f"{prefix}:dataset--ETPDataspace:{DATASPACE_ID_SUFFIX}:1"
 
-    template = build_template(prefix, acl, legal)
-    activity = build_activity(
+    dataspace = build_dataspace(prefix, acl, legal)
+    template  = build_template(prefix, acl, legal)
+    activity  = build_activity(
         prefix, acl, legal,
         template_id=template_id,
         reservoir_id=reservoir_id,
@@ -414,6 +456,7 @@ def main() -> None:
         params_wpc_id=params_wpc_id,
         raw_wpc_id=raw_wpc_id,
         stat_wpc_id=stat_wpc_id,
+        dataspace_id=dataspace_id,
     )
 
     manifest = {
@@ -421,7 +464,7 @@ def main() -> None:
         "ReferenceData": [],
         "MasterData": [],
         "Data": {
-            "Datasets": [],
+            "Datasets": [dataspace],
             "WorkProductComponents": [template, activity],
             "WorkProducts": [],
         },
@@ -430,6 +473,7 @@ def main() -> None:
     out = Path(args.manifest)
     out.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"Written: {out}")
+    print(f"  ETPDataspace     : {dataspace['id']}")
     print(f"  ActivityTemplate : {template['id']}")
     print(f"  Activity         : {activity['id']}")
     print(f"  Inputs:  params={params_wpc_id}")

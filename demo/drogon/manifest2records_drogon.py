@@ -44,7 +44,7 @@ def _flatten_manifest(man: Dict[str, Any]) -> List[Dict[str, Any]]:
             if isinstance(r, dict) and "data" in r:
                 out.append(r)
     data = man.get("Data", {})
-    for grp_key in ("WorkProductComponents", "WorkProducts"):
+    for grp_key in ("Datasets", "WorkProductComponents", "WorkProducts"):
         for r in data.get(grp_key, []):
             if isinstance(r, dict) and "data" in r:
                 out.append(r)

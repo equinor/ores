@@ -81,8 +81,27 @@
             "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
             "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
             "DataObjectParameter": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+          },
+          {
+            "Title": "GeoModelDataspace",
+            "Selection": "RDDMS ETP dataspace with the Drogon DG2 geomodel EPC files (RMS export)",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "ETPDataspace"
+              }
+            ]
           }
         ],
+        "ancestry": {
+          "parents": [
+            "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1"
+          ],
+          "children": []
+        },
         "ext": {
           "equinor": {
             "Authors": [
