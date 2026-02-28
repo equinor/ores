@@ -30,7 +30,8 @@
         "DecisionDueDate": "2026-06-30",
         "DecisionSummary": "Evaluate the Valysar formation of the Drogon field. Assess in-place volumes (oil + gas) across 7 reservoir segments with facies-dependent porosity uncertainty. Determine whether to proceed to DG2 Concept Select.",
         "RiskIDs": [
-          "dev:master-data--Risk:Drogon-PorosityAndCementation:1"
+          "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+          "dev:master-data--Risk:Drogon-FaultCompartment:1"
         ],
         "PriorActivityIDs": [
           "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1"
@@ -213,6 +214,11 @@
                 "Factor": "Cementation and diagenesis",
                 "Impact": "Medium",
                 "Description": "Deeper segments show evidence of diagenetic cementation reducing effective porosity and permeability, particularly in Crevasse facies."
+              },
+              {
+                "Factor": "Fault transmissibility and reservoir compartmentalization",
+                "Impact": "High",
+                "Description": "Bounding and intra-reservoir faults may act as sealing or partially-sealing barriers, isolating drainage blocks and reducing sweep efficiency. This risk could require additional infill wells beyond the current 12-well plan and extended production testing, with significant cost increase implications (estimated 50\u2013150 MUSD additional CAPEX). Mitigation: production testing to confirm pressure connectivity, and up to 4 additional wells targeting isolated fault compartments."
               }
             ],
             "UncertaintySummary": {
@@ -225,7 +231,9 @@
               "Implement Level 3 FMU uncertainty workflow with increased realisation count (target 50+) for DG2",
               "Acquire additional core data from NorthSea and EastLobe segments to reduce porosity uncertainty",
               "Evaluate seismic reprocessing for improved depth conversion of Valysar top reservoir",
-              "Conduct cross-discipline review of OWC sensitivity on recovery factor estimates"
+              "Conduct cross-discipline review of OWC sensitivity on recovery factor estimates",
+              "Execute production testing programme across suspected fault blocks to establish pressure connectivity and constrain dynamic simulation models (target DG2 input, 2027-Q2)",
+              "Plan up to 4 additional infill wells targeting isolated fault compartments; include CAPEX range 50\u2013150 MUSD in DG2 cost estimate and sensitivity analysis"
             ]
           }
         }

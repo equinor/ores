@@ -315,6 +315,21 @@ def main():
                                 "in Crevasse facies."
                             ),
                         },
+                        {
+                            "Factor": "Fault transmissibility and reservoir compartmentalization",
+                            "Impact": "High",
+                            "Description": (
+                                "Bounding and intra-reservoir faults may act as sealing or "
+                                "partially-sealing barriers, isolating drainage blocks and "
+                                "reducing sweep efficiency. This risk could require additional "
+                                "infill wells beyond the current 12-well plan and extended "
+                                "production testing, with significant cost increase "
+                                "implications (estimated 50\u2013150 MUSD additional CAPEX). "
+                                "Mitigation: production testing to confirm pressure "
+                                "connectivity, and up to 4 additional wells targeting "
+                                "isolated fault compartments."
+                            ),
+                        },
                     ],
                     "UncertaintySummary": {
                         "Basis": (
@@ -333,6 +348,8 @@ def main():
                         "Acquire additional core data from NorthSea and EastLobe segments to reduce porosity uncertainty",
                         "Evaluate seismic reprocessing for improved depth conversion of Valysar top reservoir",
                         "Conduct cross-discipline review of OWC sensitivity on recovery factor estimates",
+                        "Execute production testing programme across suspected fault blocks to establish pressure connectivity and constrain dynamic simulation models (target DG2 input, 2027-Q2)",
+                        "Plan up to 4 additional infill wells targeting isolated fault compartments; include CAPEX range 50\u2013150 MUSD in DG2 cost estimate and sensitivity analysis",
                     ],
                 },
             },
