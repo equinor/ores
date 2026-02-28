@@ -34,7 +34,8 @@
         "RiskIDs": [
           "dev:master-data--Risk:GRAND-DepthConversionTopReservoir:1",
           "dev:master-data--Risk:GRAND-EarlyWaterBreakthrough:1",
-          "dev:master-data--Risk:GRAND-InjectiteUncertainty:1"
+          "dev:master-data--Risk:GRAND-InjectiteUncertainty:1",
+          "dev:master-data--Risk:GRAND-WellPlacement:1"
         ],
         "PriorActivityIDs": [
           "dev:work-product-component--ReservoirEstimatedVolumes:5033c9e2-b1cf-424a-86c9-76b846942cf8:1",
@@ -106,19 +107,6 @@
             "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
             "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
             "DataObjectParameter": "dev:work-product-component--Document:CRA-GRAND-DG2-Report:1"
-          },
-          {
-            "Title": "Key Uncertainties",
-            "Selection": "GRAND DG2 subsurface uncertainty factors (High/Medium impact)",
-            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:GRAND-DG2-KeyUncertainties:1",
-            "Keys": [
-              {
-                "ParameterKey": "artifact",
-                "StringParameterKey": "KeyUncertainties"
-              }
-            ]
           },
           {
             "Title": "Production Forecast (23-year)",

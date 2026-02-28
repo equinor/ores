@@ -65,7 +65,6 @@ def main():
     ap.add_argument("--params",    default=str(SCRIPT_DIR / "manifest_wpcparams_drogon.json"))
     ap.add_argument("--activity",  default=str(SCRIPT_DIR / "manifest_activity_drogon.json"))
     ap.add_argument("--risks",     default=str(SCRIPT_DIR / "manifest_risk_drogon.json"))
-    ap.add_argument("--keyuncert", default=str(SCRIPT_DIR / "manifest_wpc_keyuncertainties_drogon.json"))
     ap.add_argument("--manifest",  default=str(SCRIPT_DIR / "manifest_bd_drogon.json"))
     ap.add_argument("--id-prefix", default="dev")
     args = ap.parse_args()
@@ -84,13 +83,12 @@ def main():
         act_man = load_json(str(activity_manifest_path))
         activity_id = _find_id(act_man, "work-product-component--Activity:")
 
-    keyuncert = load_json(args.keyuncert) if Path(args.keyuncert).exists() else {}
+    keyuncert = {}
 
     reservoir_id = _find_id(masterwp, "master-data--Reservoir:")
     raw_wpc_id   = _find_id(rawvol, "ReservoirEstimatedVolumes")
     stat_wpc_id  = _find_id(statvol, "ReservoirEstimatedVolumes")
     params_wpc_id = _find_id(params, "ColumnBasedTable")
-    ku_wpc_id    = _find_id(keyuncert, "ColumnBasedTable") if keyuncert else ""
     risk_ids     = _find_all_ids(risks, "master-data--Risk:")
 
     # PriorActivityIDs: use the merged Activity record when available;
@@ -182,16 +180,7 @@ def main():
                         {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"},
                     ],
                 },
-            ] + ([
-                {
-                    "Title": "Key Uncertainties",
-                    "Selection": "DG1 subsurface uncertainty factors (High/Medium impact)",
-                    "ParameterKindID": f"{args.id_prefix}:reference-data--ParameterKind:DataObject:1",
-                    "ParameterRoleID": f"{args.id_prefix}:reference-data--ParameterRole:Input:1",
-                    "DataObjectParameter": ku_wpc_id,
-                    "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "KeyUncertainties"}],
-                },
-            ] if ku_wpc_id else []),
+            ],
             # ── Canonical: Personnel[] ← Authors ──
             "Personnel": [
                 {

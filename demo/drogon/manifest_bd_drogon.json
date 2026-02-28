@@ -32,7 +32,8 @@
         "DecisionSummary": "Evaluate the Valysar formation of the Drogon field. Assess in-place volumes (oil + gas) across 7 reservoir segments with facies-dependent porosity uncertainty. Determine whether to proceed to DG2 Concept Select.",
         "RiskIDs": [
           "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
-          "dev:master-data--Risk:Drogon-FaultCompartment:1"
+          "dev:master-data--Risk:Drogon-FaultCompartment:1",
+          "dev:master-data--Risk:Drogon-OWCDepth:1"
         ],
         "PriorActivityIDs": [
           "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1"
@@ -94,19 +95,6 @@
               {
                 "ParameterKey": "artifact",
                 "StringParameterKey": "ETPDataspace"
-              }
-            ]
-          },
-          {
-            "Title": "Key Uncertainties",
-            "Selection": "DG1 subsurface uncertainty factors (High/Medium impact)",
-            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG1-KeyUncertainties:1",
-            "Keys": [
-              {
-                "ParameterKey": "artifact",
-                "StringParameterKey": "KeyUncertainties"
               }
             ]
           }

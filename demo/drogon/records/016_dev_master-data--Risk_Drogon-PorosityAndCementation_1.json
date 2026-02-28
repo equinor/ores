@@ -20,7 +20,7 @@
   "data": {
     "Name": "Drogon — Porosity and cementation uncertainty",
     "Summary": "Porosity and cementation quality in the Valysar fluvial deposits drive uncertainty in pore volume and hydrocarbon recovery.",
-    "Description": "The Valysar fluvial system shows significant facies-dependent porosity variation (Floodplain ~0.10, Channel ~0.28, Crevasse ~0.21). Cementation and diagenetic effects further reduce effective porosity, particularly in the deeper segments. This risk affects volumetric estimates (BulkOil, PoreOil, HydrocarbonPoreOil) and recovery factor across all 7 reservoir segments.",
+    "Description": "The Valysar fluvial system shows significant facies-dependent porosity variation (Floodplain ~0.10, Channel ~0.28, Crevasse ~0.21). Cementation and diagenetic effects further reduce effective porosity, particularly in the deeper segments. This risk affects volumetric estimates (BulkOil, PoreOil, HydrocarbonPoreOil) and recovery factor across all 7 reservoir segments.\n\nKey Uncertainty — Facies-dependent porosity [High]: Porosity varies 0.10–0.28 across facies; Channel-dominant segments (CentralHorst) have higher confidence than Floodplain-rich segments (NorthSea, EastLobe).\n\nKey Uncertainty — Cementation and diagenesis [Medium]: Deeper segments show evidence of diagenetic cementation reducing effective porosity and permeability, particularly in Crevasse facies.",
     "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
     "EffectiveDateTime": "2026-02-13T00:00:00Z",
     "ext": {
@@ -35,7 +35,8 @@
         "ResidualProbability": "P3",
         "AcceptedAsIs": false,
         "Status": "Open",
-        "MitigationActionIDs": []
+        "MitigationActionIDs": [],
+        "UncertaintyImpact": "High"
       }
     }
   }

@@ -1,5 +1,5 @@
 {
-  "id": "dev:master-data--Risk:GRAND-InjectiteUncertainty:1",
+  "id": "dev:master-data--Risk:Drogon-DG2-RecoveryFactor:1",
   "kind": "osdu:wks:master-data--Risk:1.2.0",
   "acl": {
     "owners": [
@@ -18,14 +18,14 @@
     ]
   },
   "data": {
-    "Name": "GRAND — Injectite distribution and NTG uncertainty",
-    "Summary": "Sub-seismic injectites drive uncertainty in net sand and connectivity, impacting well placement and volumes.",
-    "Description": "Thin sand sills and dykes below seismic resolution lead to uncertain NTG and connectivity affecting volumetrics.\n\nKey Uncertainty — Injectite volume contribution [Medium]: Sand remobilisation and injection processes have generated a complex network of sand dykes and sills. Predicting their location and volumetric potential is highly uncertain. Mapped injectites contribute 22.1 MSm³ (REF) but unmapped injectites add 14.9 MSm³ with high uncertainty.",
+    "Name": "Drogon DG2 — Recovery factor uncertainty",
+    "Summary": "Dynamic simulation shows wide RF range (28–37%) driven by sweep efficiency and fault compartmentalisation.",
+    "Description": "Dynamic simulation (50 realisations, revised porosity) gives RF range 28–37%. P50 = 32.5%. Absolute recoverable reduced by ~20% vs DG1 (14.8 vs 18.5 MSm³). Main driver is sweep efficiency in NorthHorst and EastLobe where fault baffles may create unswept compartments. ICD completions and Phase 2 water injection are key mitigations.",
     "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
-    "EffectiveDateTime": "2019-04-26T00:00:00Z",
+    "EffectiveDateTime": "2026-02-28T00:00:00Z",
     "ext": {
       "equinor": {
-        "CategoryID": "dev:reference-data--RiskCategory:Subsurface-Static:1",
+        "CategoryID": "dev:reference-data--RiskCategory:Subsurface-Dynamic:1",
         "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
         "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
         "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
@@ -36,7 +36,7 @@
         "AcceptedAsIs": false,
         "Status": "Open",
         "MitigationActionIDs": [],
-        "UncertaintyImpact": "Medium"
+        "UncertaintyImpact": "High"
       }
     }
   }

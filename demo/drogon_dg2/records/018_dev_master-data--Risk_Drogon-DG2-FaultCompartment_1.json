@@ -1,0 +1,43 @@
+{
+  "id": "dev:master-data--Risk:Drogon-DG2-FaultCompartment:1",
+  "kind": "osdu:wks:master-data--Risk:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 — Fault transmissibility and reservoir compartmentalization",
+    "Summary": "Sealing or partially-sealing faults may compartmentalise the Valysar reservoir, restricting drainage and requiring additional infill wells.",
+    "Description": "Production testing in early appraisal wells (2025-Q4) confirmed partial pressure communication across the CentralHorst–CentralSouth boundary fault, reducing worst-case compartmentalisation risk. However NorthHorst and EastLobe remain untested. With DG2-revised porosity (×0.8), absolute recoverable volumes are lower, making infill well economics more marginal. Dynamic simulation (50 realisations) indicates 30% probability of needing 2–4 additional infill wells (est. 80–120 MUSD incremental CAPEX). DG2 concept includes 2 contingent well slots in the template layout.\n\nKey Uncertainty — Fault transmissibility [High]: Production testing confirmed partial communication across CentralHorst–CentralSouth fault. NorthHorst and EastLobe remain untested. 30% probability of needing 2–4 infill wells (80–120 MUSD incremental CAPEX).",
+    "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+    "EffectiveDateTime": "2026-02-28T00:00:00Z",
+    "ext": {
+      "equinor": {
+        "CategoryID": "dev:reference-data--RiskCategory:Subsurface-Dynamic:1",
+        "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+        "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+        "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+        "InherentSeverity": "S3",
+        "InherentProbability": "P3",
+        "ResidualSeverity": "S2",
+        "ResidualProbability": "P2",
+        "AcceptedAsIs": false,
+        "Status": "Mitigated",
+        "MitigationActionIDs": [],
+        "UncertaintyImpact": "High"
+      }
+    }
+  }
+}

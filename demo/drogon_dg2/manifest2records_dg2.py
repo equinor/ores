@@ -32,8 +32,7 @@ MANIFEST_ORDER = [
     (SCRIPT_DIR, "manifest_wpcparams_dg2.json"),
     (SCRIPT_DIR, "manifest_wpcraw_dg2.json"),
     (SCRIPT_DIR, "manifest_wpcstat_dg2.json"),
-    # DG2-specific Key Uncertainties & Production Forecast
-    (SCRIPT_DIR, "manifest_wpc_keyuncertainties_dg2.json"),
+    # DG2-specific Production Forecast
     (SCRIPT_DIR, "manifest_wpc_production_dg2.json"),
     # DG2-specific activity (links to DG2 WPCs)
     (SCRIPT_DIR, "manifest_activity_dg2.json"),

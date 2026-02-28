@@ -90,7 +90,6 @@ def main():
     # DG2-specific risks & documents
     ap.add_argument("--risks",     default=str(SCRIPT_DIR / "manifest_risk_dg2.json"))
     ap.add_argument("--documents", default=str(SCRIPT_DIR / "manifest_documents_dg2.json"))
-    ap.add_argument("--keyuncert", default=str(SCRIPT_DIR / "manifest_wpc_keyuncertainties_dg2.json"))
     ap.add_argument("--production", default=str(SCRIPT_DIR / "manifest_wpc_production_dg2.json"))
     ap.add_argument("--manifest",  default=str(SCRIPT_DIR / "manifest_bd_dg2.json"))
     ap.add_argument("--id-prefix", default="dev")
@@ -132,10 +131,7 @@ def main():
     params_wpc_id = _find_id(params,   "ColumnBasedTable")
     risk_ids      = _find_all_ids(risks, "master-data--Risk:")
 
-    # KU and PP WPC manifests
-    ku_wpc_id = ""
-    if Path(args.keyuncert).exists():
-        ku_wpc_id = _find_id(load_json(args.keyuncert), "ColumnBasedTable")
+    # PP WPC manifest
     pp_wpc_id = ""
     if Path(args.production).exists():
         pp_wpc_id = _find_id(load_json(args.production), "ColumnBasedTable")
@@ -188,7 +184,7 @@ def main():
             "Parameters": _build_parameters(
                 pfx, raw_wpc_id, stat_wpc_id, params_wpc_id,
                 reservoir_id, dataspace_id, dg1_bd_id, doc_ids,
-                ku_wpc_id, pp_wpc_id,
+                pp_wpc_id,
             ),
             # ── Canonical fields (survive OSDU ingestion) ──
             **_build_canonical_fields(pfx),
@@ -234,7 +230,7 @@ def _build_parameters(
     raw_wpc_id: str, stat_wpc_id: str, params_wpc_id: str,
     reservoir_id: str, dataspace_id: str, dg1_bd_id: str,
     doc_ids: Dict[str, str],
-    ku_wpc_id: str = "", pp_wpc_id: str = "",
+    pp_wpc_id: str = "",
 ) -> List[Dict[str, Any]]:
     params: List[Dict[str, Any]] = [
         {
@@ -301,16 +297,7 @@ def _build_parameters(
                 "ParameterRoleID": f"{pfx}:reference-data--ParameterRole:InputReference:1",
                 "DataObjectParameter": did,
             })
-    # Key Uncertainties & Production Forecast WPC references
-    if ku_wpc_id:
-        params.append({
-            "Title": "Key Uncertainties",
-            "Selection": "DG2 subsurface uncertainty factors (High/Medium impact)",
-            "ParameterKindID": f"{pfx}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{pfx}:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": ku_wpc_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "KeyUncertainties"}],
-        })
+    # Production Forecast WPC reference
     if pp_wpc_id:
         params.append({
             "Title": "Production Forecast (20-year)",

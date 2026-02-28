@@ -1,0 +1,43 @@
+{
+  "id": "dev:master-data--Risk:Drogon-DG2-ScheduleFPSO:1",
+  "kind": "osdu:wks:master-data--Risk:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 — Schedule risk (FPSO and long-lead equipment)",
+    "Summary": "FPSO conversion drydock availability and subsea template fabrication lead times threaten the 2028-H1 first oil target.",
+    "Description": "SRA Monte Carlo schedule analysis (1000 iterations) gives P50 first oil June 2028 and P90 first oil March 2029. Key drivers: (1) FPSO drydock slot availability — only two qualifying yards confirmed for 2027-Q1 window, (2) subsea template fabrication — 18-month lead time from order to delivery, (3) drilling rig market tightness with 2027 contracting window. Mitigation: early FEED commitment, dual-yard tendering strategy, and pre-ordering of long-lead subsea equipment.\n\nKey Uncertainty — FPSO water treatment capacity [Medium]: Water cut expected to reach 50% by Year 5 and 70% by Year 10. FPSO design includes 5,000 m³/d treatment; expansion module to 8,000 m³/d available for Year 7+. Uncertainty in early water breakthrough timing from EastLobe aquifer.",
+    "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+    "EffectiveDateTime": "2026-02-28T00:00:00Z",
+    "ext": {
+      "equinor": {
+        "CategoryID": "dev:reference-data--RiskCategory:Schedule:1",
+        "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+        "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+        "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+        "InherentSeverity": "S3",
+        "InherentProbability": "P3",
+        "ResidualSeverity": "S2",
+        "ResidualProbability": "P2",
+        "AcceptedAsIs": false,
+        "Status": "Open",
+        "MitigationActionIDs": [],
+        "UncertaintyImpact": "Medium"
+      }
+    }
+  }
+}

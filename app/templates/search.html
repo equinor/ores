@@ -834,23 +834,6 @@
               </div>
               {% endif %}
 
-              {# ── Key Uncertainties (prefer WPC ColumnBasedTable, fall back to ext.equinor) ── #}
-              {% set ku_list = rec.bd_uncertainties or ext_eq.get('KeyUncertainties') or [] %}
-              {% if ku_list %}
-              <div class="bd-section-title">Key Uncertainties</div>
-              <ul class="bd-alt-list">
-                {% for ku in ku_list %}
-                <li style="border-left-color:{% if ku.get('Impact') == 'High' %}#fc8181{% elif ku.get('Impact') == 'Medium' %}#f6ad55{% else %}#68d391{% endif %};">
-                  <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;">
-                    <span class="bd-alt-name">{{ ku.get('Factor') or 'Uncertainty' }}</span>
-                    {% if ku.get('Impact') %}<span class="bd-alt-rank" style="background:{% if ku.get('Impact') == 'High' %}#fff5f5;color:#c53030{% elif ku.get('Impact') == 'Medium' %}#fffaf0;color:#c05621{% else %}#f0fff4;color:#276749{% endif %};">{{ ku.get('Impact') }}</span>{% endif %}
-                  </div>
-                  {% if ku.get('Description') %}<div class="bd-alt-rationale">{{ ku.get('Description') }}</div>{% endif %}
-                </li>
-                {% endfor %}
-              </ul>
-              {% endif %}
-
               {# ── Uncertainty Summary (methodology + P10/P50/P90 volume ranges) ── #}
               {% set usumm = ext_eq.get('UncertaintySummary') or {} %}
               {% if usumm %}

@@ -22,9 +22,9 @@
         ]
       },
       "data": {
-        "Name": "GRAND — Depth conversion and top reservoir uncertainty",
+        "Name": "GRAND \u2014 Depth conversion and top reservoir uncertainty",
         "Summary": "Uncertainty in time interpretation and depth conversion may reduce structure and volumes.",
-        "Description": "Seismic time interpretation and time-depth conversion limitations drive volumetric uncertainty.",
+        "Description": "Seismic time interpretation and time-depth conversion limitations drive volumetric uncertainty.\n\nKey Uncertainty \u2014 Seismic time interpretation and depth conversion [High]: Top reservoir interpretation is uncertain due to limitations in seismic resolution. Depth conversion adds to total depth uncertainty of the top reservoir surface. New 4D baseline acquisition planned for 2020.",
         "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
         "EffectiveDateTime": "2019-04-26T00:00:00Z",
         "ext": {
@@ -42,7 +42,8 @@
             "MitigationActionIDs": [
               "dev:work-product-component--Document:MA-017-Depth-Conversion-Cal:1",
               "dev:work-product-component--Document:MA-021-Time-Depth-Joint-Inversion:1"
-            ]
+            ],
+            "UncertaintyImpact": "High"
           }
         }
       }
@@ -67,11 +68,27 @@
         ]
       },
       "data": {
-        "Name": "GRAND — Early water breakthrough and high WOR risk",
+        "Name": "GRAND \u2014 Early water breakthrough and high WOR risk",
         "Summary": "Thin heavy-oil zone above active aquifer may cause early water production and lower recovery.",
-        "Description": "High viscosity and a thin oil column above an active aquifer may drive early breakthrough and reserves loss.",
+        "Description": "High viscosity and a thin oil column above an active aquifer may drive early breakthrough and reserves loss.\n\nKey Uncertainty \u2014 Early water breakthrough [High]: Thin and heavy oil zone directly above an active aquifer. Recovery may be low due to high oil viscosity and thin oil column thickness. ICD/AICD and subsea pumps under evaluation.",
         "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
-        "EffectiveDateTime": "2019-04-26T00:00:00Z"
+        "EffectiveDateTime": "2019-04-26T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Subsurface-Dynamic:1",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+            "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+            "InherentSeverity": "S4",
+            "InherentProbability": "P4",
+            "ResidualSeverity": "S3",
+            "ResidualProbability": "P3",
+            "AcceptedAsIs": false,
+            "Status": "Open",
+            "MitigationActionIDs": [],
+            "UncertaintyImpact": "High"
+          }
+        }
       }
     },
     {
@@ -94,11 +111,70 @@
         ]
       },
       "data": {
-        "Name": "GRAND — Injectite distribution and NTG uncertainty",
+        "Name": "GRAND \u2014 Injectite distribution and NTG uncertainty",
         "Summary": "Sub-seismic injectites drive uncertainty in net sand and connectivity, impacting well placement and volumes.",
-        "Description": "Thin sand sills and dykes below seismic resolution lead to uncertain NTG and connectivity affecting volumetrics.",
+        "Description": "Thin sand sills and dykes below seismic resolution lead to uncertain NTG and connectivity affecting volumetrics.\n\nKey Uncertainty \u2014 Injectite volume contribution [Medium]: Sand remobilisation and injection processes have generated a complex network of sand dykes and sills. Predicting their location and volumetric potential is highly uncertain. Mapped injectites contribute 22.1 MSm\u00b3 (REF) but unmapped injectites add 14.9 MSm\u00b3 with high uncertainty.",
         "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
-        "EffectiveDateTime": "2019-04-26T00:00:00Z"
+        "EffectiveDateTime": "2019-04-26T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Subsurface-Static:1",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+            "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+            "InherentSeverity": "S3",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P2",
+            "AcceptedAsIs": false,
+            "Status": "Open",
+            "MitigationActionIDs": [],
+            "UncertaintyImpact": "Medium"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Risk:GRAND-WellPlacement:1",
+      "kind": "osdu:wks:master-data--Risk:1.2.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "GRAND \u2014 Well placement optimisation uncertainty",
+        "Summary": "Optimal well placement depends on uncertain oil column thickness and injectite distribution.",
+        "Description": "Wells target areas with >10 m oil column in Heimdal and >12 m in mapped injectites. Higher placement towards top Heimdal and longer reservoir sections could improve recovery. Uncertainty in injectite distribution and oil column thickness limits well placement optimisation at DG2 stage.",
+        "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+        "EffectiveDateTime": "2019-04-26T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Subsurface-Dynamic:1",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+            "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+            "InherentSeverity": "S2",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P2",
+            "AcceptedAsIs": false,
+            "Status": "Open",
+            "MitigationActionIDs": [],
+            "UncertaintyImpact": "Medium"
+          }
+        }
       }
     }
   ],

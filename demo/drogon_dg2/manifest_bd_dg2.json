@@ -34,7 +34,9 @@
           "dev:master-data--Risk:Drogon-DG2-PorosityAndCementation:1",
           "dev:master-data--Risk:Drogon-DG2-FaultCompartment:1",
           "dev:master-data--Risk:Drogon-DG2-HSE-Environmental:1",
-          "dev:master-data--Risk:Drogon-DG2-ScheduleFPSO:1"
+          "dev:master-data--Risk:Drogon-DG2-ScheduleFPSO:1",
+          "dev:master-data--Risk:Drogon-DG2-OWCDepth:1",
+          "dev:master-data--Risk:Drogon-DG2-RecoveryFactor:1"
         ],
         "PriorActivityIDs": [
           "dev:work-product-component--Activity:f7b43d02-f3e1-5c3b-ae2e-dce9da267c19:1"
@@ -135,19 +137,6 @@
             "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
             "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
             "DataObjectParameter": "dev:work-product-component--Document:Drogon-PTR-DG2-Report:1"
-          },
-          {
-            "Title": "Key Uncertainties",
-            "Selection": "DG2 subsurface uncertainty factors (High/Medium impact)",
-            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-KeyUncertainties:1",
-            "Keys": [
-              {
-                "ParameterKey": "artifact",
-                "StringParameterKey": "KeyUncertainties"
-              }
-            ]
           },
           {
             "Title": "Production Forecast (20-year)",
