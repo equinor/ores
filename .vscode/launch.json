@@ -15,12 +15,7 @@
       ],
       "jinja": true,
       "envFile": "${workspaceFolder}/.env",
-      "cwd": "${workspaceFolder}",
-      "serverReadyAction": {
-        "pattern": "Uvicorn running on http://.*:(\\d+)",
-        "uriFormat": "http://localhost:%s",
-        "action": "openInIntegratedBrowser"
-      }
+      "cwd": "${workspaceFolder}"
     }
   ]
 }
