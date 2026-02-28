@@ -1,0 +1,245 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [
+    {
+      "kind": "osdu:wks:reference-data--FacetRole:1.1.0",
+      "id": "dev:reference-data--FacetRole:ArithmeticMean",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Arithmetic Mean",
+        "Code": "ArithmeticMean",
+        "Description": "Facet role 'Arithmetic Mean' under FacetType 'statistics'.",
+        "FacetType": "statistics"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--FacetRole:1.1.0",
+      "id": "dev:reference-data--FacetRole:P10",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "P10",
+        "Code": "P10",
+        "Description": "Facet role 'P10' under FacetType 'statistics'.",
+        "FacetType": "statistics"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--FacetRole:1.1.0",
+      "id": "dev:reference-data--FacetRole:P50",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "P50",
+        "Code": "P50",
+        "Description": "Facet role 'P50' under FacetType 'statistics'.",
+        "FacetType": "statistics"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--FacetRole:1.1.0",
+      "id": "dev:reference-data--FacetRole:P90",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "P90",
+        "Code": "P90",
+        "Description": "Facet role 'P90' under FacetType 'statistics'.",
+        "FacetType": "statistics"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--FacetRole:1.1.0",
+      "id": "dev:reference-data--FacetRole:Minimum",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Minimum",
+        "Code": "Minimum",
+        "Description": "Facet role 'Minimum' under FacetType 'statistics'.",
+        "FacetType": "statistics"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--FacetRole:1.1.0",
+      "id": "dev:reference-data--FacetRole:Maximum",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Maximum",
+        "Code": "Maximum",
+        "Description": "Facet role 'Maximum' under FacetType 'statistics'.",
+        "FacetType": "statistics"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--FacetRole:1.1.0",
+      "id": "dev:reference-data--FacetRole:StardardDeviation",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Standard Deviation",
+        "Code": "StardardDeviation",
+        "Description": "Facet role 'Standard Deviation' under FacetType 'statistics'.",
+        "FacetType": "statistics"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--FacetRole:1.1.0",
+      "id": "dev:reference-data--FacetRole:GeometricMean",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Geometric Mean",
+        "Code": "GeometricMean",
+        "Description": "Facet role 'Geometric Mean' under FacetType 'statistics'.",
+        "FacetType": "statistics"
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--FacetRole:1.1.0",
+      "id": "dev:reference-data--FacetRole:HarmonicMean",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Harmonic Mean",
+        "Code": "HarmonicMean",
+        "Description": "Facet role 'Harmonic Mean' under FacetType 'statistics'.",
+        "FacetType": "statistics"
+      }
+    }
+  ],
+  "MasterData": [],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [],
+    "WorkProduct": []
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "dev:reference-data--DecisionLevel:DG0",
+  "kind": "osdu:wks:reference-data--DecisionLevel:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "DG0 — Opportunity Framing",
+    "Code": "DG0",
+    "Description": "Early framing / identify opportunity.",
+    "Source": "Equinor DEV partition (OPEN catalog extended)"
+  }
+}

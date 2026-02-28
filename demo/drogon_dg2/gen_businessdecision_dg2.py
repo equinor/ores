@@ -90,6 +90,8 @@ def main():
     # DG2-specific risks & documents
     ap.add_argument("--risks",     default=str(SCRIPT_DIR / "manifest_risk_dg2.json"))
     ap.add_argument("--documents", default=str(SCRIPT_DIR / "manifest_documents_dg2.json"))
+    ap.add_argument("--keyuncert", default=str(SCRIPT_DIR / "manifest_wpc_keyuncertainties_dg2.json"))
+    ap.add_argument("--production", default=str(SCRIPT_DIR / "manifest_wpc_production_dg2.json"))
     ap.add_argument("--manifest",  default=str(SCRIPT_DIR / "manifest_bd_dg2.json"))
     ap.add_argument("--id-prefix", default="dev")
     args = ap.parse_args()
@@ -129,6 +131,14 @@ def main():
     stat_wpc_id   = _find_id(statvol,  "ReservoirEstimatedVolumes")
     params_wpc_id = _find_id(params,   "ColumnBasedTable")
     risk_ids      = _find_all_ids(risks, "master-data--Risk:")
+
+    # KU and PP WPC manifests
+    ku_wpc_id = ""
+    if Path(args.keyuncert).exists():
+        ku_wpc_id = _find_id(load_json(args.keyuncert), "ColumnBasedTable")
+    pp_wpc_id = ""
+    if Path(args.production).exists():
+        pp_wpc_id = _find_id(load_json(args.production), "ColumnBasedTable")
 
     # Reference to DG1 BD (prior decision gate)
     dg1_bd_id = f"{pfx}:master-data--BusinessDecision:Drogon-DG1-Identify:1"
@@ -178,7 +188,10 @@ def main():
             "Parameters": _build_parameters(
                 pfx, raw_wpc_id, stat_wpc_id, params_wpc_id,
                 reservoir_id, dataspace_id, dg1_bd_id, doc_ids,
+                ku_wpc_id, pp_wpc_id,
             ),
+            # ── Canonical fields (survive OSDU ingestion) ──
+            **_build_canonical_fields(pfx),
             "ancestry": {
                 "parents": [activity_id] if activity_id else [],
                 "children": [],
@@ -221,6 +234,7 @@ def _build_parameters(
     raw_wpc_id: str, stat_wpc_id: str, params_wpc_id: str,
     reservoir_id: str, dataspace_id: str, dg1_bd_id: str,
     doc_ids: Dict[str, str],
+    ku_wpc_id: str = "", pp_wpc_id: str = "",
 ) -> List[Dict[str, Any]]:
     params: List[Dict[str, Any]] = [
         {
@@ -287,7 +301,89 @@ def _build_parameters(
                 "ParameterRoleID": f"{pfx}:reference-data--ParameterRole:InputReference:1",
                 "DataObjectParameter": did,
             })
+    # Key Uncertainties & Production Forecast WPC references
+    if ku_wpc_id:
+        params.append({
+            "Title": "Key Uncertainties",
+            "Selection": "DG2 subsurface uncertainty factors (High/Medium impact)",
+            "ParameterKindID": f"{pfx}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{pfx}:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": ku_wpc_id,
+            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "KeyUncertainties"}],
+        })
+    if pp_wpc_id:
+        params.append({
+            "Title": "Production Forecast (20-year)",
+            "Selection": "Reference case forecast from dynamic simulation (revised porosity ×0.8)",
+            "ParameterKindID": f"{pfx}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{pfx}:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": pp_wpc_id,
+            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "ProductionForecast"}],
+        })
     return params
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Canonical BD fields (survive OSDU ingestion)
+# ─────────────────────────────────────────────────────────────────────
+
+def _build_canonical_fields(pfx: str) -> Dict[str, Any]:
+    """Return canonical data.* fields mapped from ext.equinor concepts."""
+    return {
+        # ── Personnel[] ← Authors ──
+        "Personnel": [
+            {"Name": "Kristin Haugen",   "ProjectRoleID": f"{pfx}:reference-data--ProjectRole:GeoscienceLead:1",   "Organisation": "Drogon Subsurface"},
+            {"Name": "Henrik Bjørnstad", "ProjectRoleID": f"{pfx}:reference-data--ProjectRole:ReservoirEngineer:1", "Organisation": "Drogon Reservoir Management"},
+            {"Name": "Anna-Lise Tveit",  "ProjectRoleID": f"{pfx}:reference-data--ProjectRole:Petrophysicist:1",   "Organisation": "Drogon Petec"},
+            {"Name": "Erik Stensrud",    "ProjectRoleID": f"{pfx}:reference-data--ProjectRole:FMULead:1",           "Organisation": "Drogon Geomodelling"},
+            {"Name": "Silje Vik",        "ProjectRoleID": f"{pfx}:reference-data--ProjectRole:FacilitiesEngineer:1","Organisation": "Drogon Concept"},
+            {"Name": "Olav Mæland",      "ProjectRoleID": f"{pfx}:reference-data--ProjectRole:DrillingWellsLead:1", "Organisation": "Drogon D&W"},
+        ],
+        # ── DecisionOwners/Makers/Contributors[] ← ReviewTeam ──
+        "DecisionOwners": [
+            {"Name": "Kristin Haugen", "Organisation": "Drogon Subsurface Lead"},
+        ],
+        "DecisionMakers": [
+            {"Name": "Lars Kongsvik", "Organisation": "Drogon Project Director"},
+        ],
+        "Contributors": [
+            {"Name": "Erik Stensrud", "Organisation": "Drogon Geomodelling"},
+            {"Name": "Marte Nygaard", "Organisation": "ST MSU Subsurface QA"},
+            {"Name": "Trond Berge",   "Organisation": "Drogon QRM Manager"},
+        ],
+        # ── Remarks[] ← Recommendations ──
+        "Remarks": [
+            {"Remark": r, "RemarkSource": "DG2 Recommendations"}
+            for r in [
+                "Execute FEED for FPSO conversion and subsea installation scope",
+                "Secure FPSO drydock slot (2027-Q4 target) with dual-yard tendering strategy",
+                "Drill NorthHorst appraisal sidetrack to constrain fault compartmentalisation model",
+                "Finalise Phase 2 water injection well locations based on DG3 dynamic simulation",
+                "Complete EIA with cold-water coral avoidance routing for flowline corridor",
+                "Run Level 3+ FMU workflow with 100+ realisations for DG3 volumetric basis",
+                "Prepare PDO final draft for MPE submission post-FID",
+            ]
+        ],
+        # ── ProjectSpecifications[] ← KeyEconomics ──
+        "ProjectSpecifications": [
+            {"ParameterTypeID": f"{pfx}:reference-data--ParameterType:NPV_10pct:1",      "DataQuantityParameter": 520,  "UnitOfMeasureID": f"{pfx}:reference-data--UnitOfMeasure:MUSD:1"},
+            {"ParameterTypeID": f"{pfx}:reference-data--ParameterType:IRR:1",             "DataQuantityParameter": 17,   "UnitOfMeasureID": f"{pfx}:reference-data--UnitOfMeasure:percent:1"},
+            {"ParameterTypeID": f"{pfx}:reference-data--ParameterType:CAPEX:1",           "DataQuantityParameter": 8500, "UnitOfMeasureID": f"{pfx}:reference-data--UnitOfMeasure:MNOK:1"},
+            {"ParameterTypeID": f"{pfx}:reference-data--ParameterType:OPEX_pa:1",         "DataQuantityParameter": 420,  "UnitOfMeasureID": f"{pfx}:reference-data--UnitOfMeasure:MNOK:1"},
+            {"ParameterTypeID": f"{pfx}:reference-data--ParameterType:BreakevenOil:1",    "DataQuantityParameter": 42,   "UnitOfMeasureID": f"{pfx}:reference-data--UnitOfMeasure:USDperbbl:1"},
+            {"ParameterTypeID": f"{pfx}:reference-data--ParameterType:Payback:1",         "DataQuantityParameter": 7.0,  "UnitOfMeasureID": f"{pfx}:reference-data--UnitOfMeasure:years:1"},
+        ],
+        # ── ActivityStates[] ← ScheduleMilestones ──
+        "ActivityStates": [
+            {"EffectiveDateTime": "2026-02-28", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Completed:1", "Remark": "DG2 Concept Select"},
+            {"EffectiveDateTime": "2027-01-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:1",   "Remark": "DG3 FEED"},
+            {"EffectiveDateTime": "2027-07-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:1",   "Remark": "FID / DG4"},
+            {"EffectiveDateTime": "2027-10-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:1",   "Remark": "FPSO Drydock Start"},
+            {"EffectiveDateTime": "2028-01-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:1",   "Remark": "Subsea Installation"},
+            {"EffectiveDateTime": "2028-06-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:1",   "Remark": "First Oil"},
+            {"EffectiveDateTime": "2029-01-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:1",   "Remark": "Plateau Production"},
+        ],
+    }
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -296,60 +392,6 @@ def _build_parameters(
 
 def _build_ext_equinor(pfx: str, risk_ids: List[str]) -> Dict[str, Any]:
     return {
-        "Authors": [
-            {
-                "Name": "Kristin Haugen",
-                "Role": "Geoscience Lead",
-                "Organisation": "Drogon Subsurface",
-            },
-            {
-                "Name": "Henrik Bj\u00f8rnstad",
-                "Role": "Reservoir Engineer",
-                "Organisation": "Drogon Reservoir Management",
-            },
-            {
-                "Name": "Anna-Lise Tveit",
-                "Role": "Petrophysicist",
-                "Organisation": "Drogon Petec",
-            },
-            {
-                "Name": "Erik Stensrud",
-                "Role": "FMU Lead / Geologist",
-                "Organisation": "Drogon Geomodelling",
-            },
-            {
-                "Name": "Silje Vik",
-                "Role": "Facilities Engineer",
-                "Organisation": "Drogon Concept",
-            },
-            {
-                "Name": "Olav M\u00e6land",
-                "Role": "Drilling & Wells Lead",
-                "Organisation": "Drogon D&W",
-            },
-        ],
-        "ReviewTeam": {
-            "PreparedBy": {
-                "Name": "Erik Stensrud",
-                "Organisation": "Drogon Geomodelling",
-            },
-            "Responsible": {
-                "Name": "Kristin Haugen",
-                "Organisation": "Drogon Subsurface Lead",
-            },
-            "QARecommender": {
-                "Name": "Marte Nygaard",
-                "Organisation": "ST MSU Subsurface QA",
-            },
-            "ProcessControlledBy": {
-                "Name": "Trond Berge",
-                "Organisation": "Drogon QRM Manager",
-            },
-            "ApprovedBy": {
-                "Name": "Lars Kongsvik",
-                "Organisation": "Drogon Project Director",
-            },
-        },
 
         # ── Alternatives with per-alternative economics ──────────────
         "Alternatives": [
@@ -429,97 +471,6 @@ def _build_ext_equinor(pfx: str, risk_ids: List[str]) -> Dict[str, Any]:
             },
         },
 
-        # ── Reservoir Properties (same as DG1 + dynamic additions) ───
-        "ReservoirProperties": {
-            "FormationName": "Valysar",
-            "NumberOfSegments": 7,
-            "Segments": [
-                "NorthSea", "NorthHorst", "CentralHorst",
-                "CentralFlanks", "CentralSouth", "SouthWing", "EastLobe",
-            ],
-            "FaciesTypes": ["Channel", "Crevasse", "Floodplain"],
-            "AveragePorosity_Channel": 0.22,
-            "AveragePorosity_Crevasse": 0.17,
-            "AveragePorosity_Floodplain": 0.08,
-            "PorosityNote": "Revised ×0.8 from DG1 based on core + thin-section analysis",
-            "NetToGross": 0.85,
-            "OWC_m_TVDSS": 1710,
-            "ReservoirTemperature_degC": 72,
-            "ReservoirPressure_bara": 170,
-            "AveragePermeability_mD": 450,
-            "OilViscosity_cP": 1.2,
-            "BoFactor": 1.12,
-            "GOR_Sm3Sm3": 85,
-        },
-
-        # ── Volumes Summary per segment ──────────────────────────────
-        "VolumesSummary_STOIIP_MSm3": {
-            "Note": "All STOIIP values reduced by ~20% vs DG1 due to revised porosity ×0.8",
-            "NorthSea":      {"P90": 3.0,  "P50": 4.2,  "P10": 5.7},
-            "NorthHorst":    {"P90": 4.1,  "P50": 5.6,  "P10": 7.4},
-            "CentralHorst":  {"P90": 8.2,  "P50": 11.0, "P10": 14.5},
-            "CentralFlanks": {"P90": 3.6,  "P50": 4.9,  "P10": 6.4},
-            "CentralSouth":  {"P90": 7.0,  "P50": 9.2,  "P10": 12.0},
-            "SouthWing":     {"P90": 4.2,  "P50": 5.6,  "P10": 7.4},
-            "EastLobe":      {"P90": 3.8,  "P50": 5.0,  "P10": 6.0},
-            "Total":         {"P90": 33.8, "P50": 45.4, "P10": 59.4},
-        },
-
-        # ── Key Uncertainties (updated for DG2) ─────────────────────
-        "KeyUncertainties": [
-            {
-                "Factor": "Facies-dependent porosity",
-                "Impact": "Medium",
-                "Description": (
-                    "DG2 appraisal core data have narrowed porosity ranges "
-                    "(revised \u00d70.8 from DG1): "
-                    "Channel 0.21\u20130.24, Crevasse 0.15\u20130.18, Floodplain 0.06\u20130.10. "
-                    "Impact downgraded from High (DG1) to Medium based on 50-realisation "
-                    "FMU results. STOIIP reduced by ~20% vs DG1."
-                ),
-            },
-            {
-                "Factor": "Fault transmissibility",
-                "Impact": "High",
-                "Description": (
-                    "Production testing confirmed partial communication across "
-                    "CentralHorst\u2013CentralSouth fault. NorthHorst and EastLobe "
-                    "remain untested. 30% probability of needing 2\u20134 infill wells "
-                    "(80\u2013120 MUSD incremental CAPEX)."
-                ),
-            },
-            {
-                "Factor": "OWC depth and aquifer support",
-                "Impact": "Medium",
-                "Description": (
-                    "OWC refined to 1710 \u00b1 10 m TVDSS (from \u00b115 m at DG1). "
-                    "Aquifer modelling suggests moderate pressure support, sufficient "
-                    "for primary depletion; water injection reserved for Phase 2."
-                ),
-            },
-            {
-                "Factor": "Recovery factor uncertainty",
-                "Impact": "High",
-                "Description": (
-                    "Dynamic simulation (50 realisations, revised porosity) gives "
-                    "RF range 28\u201337%. P50 = 32.5%. Absolute recoverable reduced by "
-                    "~20% vs DG1 (14.8 vs 18.5 MSm\u00b3). Main driver is sweep efficiency "
-                    "in NorthHorst and EastLobe where fault baffles may create unswept "
-                    "compartments. ICD completions and Phase 2 water injection are key mitigations."
-                ),
-            },
-            {
-                "Factor": "FPSO water treatment capacity",
-                "Impact": "Medium",
-                "Description": (
-                    "Water cut expected to reach 50% by Year 5 and 70% by Year 10. "
-                    "FPSO design includes 5,000 m\u00b3/d treatment; expansion module "
-                    "to 8,000 m\u00b3/d available for Year 7+. Uncertainty in early "
-                    "water breakthrough timing from EastLobe aquifer."
-                ),
-            },
-        ],
-
         # ── Uncertainty Summary (enriched with recoverable) ──────────
         "UncertaintySummary": {
             "Basis": (
@@ -555,114 +506,6 @@ def _build_ext_equinor(pfx: str, risk_ids: List[str]) -> Dict[str, Any]:
                 "P10": 37.0,
             },
         },
-
-        # ── Key Economics ─────────────────────────────────────────────
-        "KeyEconomics": {
-            "NPV_10pct_MUSD": 520,
-            "BreakevenOilPrice_USDperbbl": 42,
-            "CAPEX_MNOK": 8500,
-            "OPEX_MNOK_pa": 420,
-            "Payback_years": 7.0,
-            "IRR_pct": 17,
-            "Currency": "2026 real terms",
-            "OilPriceAssumption_USDperbbl": 75,
-            "Note": (
-                "Reference case economics from CRA, updated for DG2 revised volumes "
-                "(porosity \u00d70.8 \u2192 ~20% less STOIIP and recoverable). "
-                "NPV reduced from DG1's 650 MUSD to 520 MUSD. "
-                "Breakeven up from $38 to $42/bbl. CAPEX unchanged. "
-                "Payback extended by 1 year due to lower production rates."
-            ),
-        },
-
-        # ── Schedule Milestones ───────────────────────────────────────
-        "ScheduleMilestones": [
-            {"Milestone": "DG2 Concept Select",     "Date": "2026-02-28", "Status": "Completed"},
-            {"Milestone": "DG3 FEED",               "Date": "2027-Q1",    "Status": "Planned"},
-            {"Milestone": "FID / DG4",              "Date": "2027-Q3",    "Status": "Planned"},
-            {"Milestone": "FPSO Drydock Start",     "Date": "2027-Q4",    "Status": "Planned"},
-            {"Milestone": "Subsea Installation",    "Date": "2028-Q1",    "Status": "Planned"},
-            {"Milestone": "First Oil",              "Date": "2028-H1",    "Status": "Planned"},
-            {"Milestone": "Plateau Production",     "Date": "2029",       "Status": "Planned"},
-        ],
-
-        # ── Production Profile (20-year) ─────────────────────────────
-        "ProductionProfile": {
-            "Note": (
-                "Reference case production forecast from dynamic simulation. "
-                "12 producers, Valysar formation, Drogon FPSO host. "
-                "Revised porosity \u00d70.8 reduces all pore-dependent volumes by ~20%. "
-                "Recovery factor P50 = 32.5% (unchanged). Lower absolute rates and EUR."
-            ),
-            "STOIIP_P50_MSm3": 45.4,
-            "EUR_MSm3": 14.8,
-            "PeakOilRate_kSm3d": 5.2,
-            "Years": [
-                2028, 2029, 2030, 2031, 2032, 2033,
-                2034, 2035, 2036, 2037, 2038, 2039,
-                2040, 2041, 2042, 2043, 2044, 2045,
-                2046, 2047,
-            ],
-            "WellsOnline": [
-                3, 8, 12, 12, 12, 12,
-                12, 12, 12, 12, 12, 12,
-                12, 12, 12, 12, 12, 12,
-                12, 12,
-            ],
-            "OilRate_kSm3d": [
-                1.7, 4.0, 5.2, 5.0, 4.5, 3.8,
-                3.3, 2.8, 2.4, 2.1, 1.8, 1.5,
-                1.3, 1.1, 1.0, 0.8, 0.7, 0.6,
-                0.6, 0.5,
-            ],
-            "GasRate_kSm3d": [
-                142, 340, 442, 429, 381, 326,
-                279, 238, 204, 177, 150, 130,
-                109, 95, 82, 68, 62, 54,
-                48, 41,
-            ],
-            "WaterRate_kSm3d": [
-                0.3, 1.0, 2.5, 4.5, 7.0, 9.0,
-                10.5, 11.5, 12.0, 12.0, 11.5, 10.8,
-                10.0, 9.2, 8.3, 7.5, 6.7, 6.0,
-                5.3, 4.7,
-            ],
-            "YearlyOil_MSm3": [
-                0.30, 1.46, 1.90, 1.84, 1.63, 1.40,
-                1.20, 1.02, 0.88, 0.76, 0.64, 0.55,
-                0.46, 0.41, 0.35, 0.30, 0.26, 0.23,
-                0.21, 0.18,
-            ],
-            "CumOil_MSm3": [
-                0.30, 1.76, 3.66, 5.50, 7.13, 8.53,
-                9.73, 10.75, 11.63, 12.39, 13.03, 13.58,
-                14.04, 14.45, 14.80, 15.10, 15.36, 15.59,
-                15.80, 15.98,
-            ],
-            "WaterCut_pct": [
-                12.5, 16.7, 27.8, 41.7, 55.6, 65.2,
-                71.9, 76.7, 80.0, 82.2, 83.9, 85.0,
-                86.2, 86.8, 87.4, 88.2, 88.2, 88.2,
-                88.3, 88.7,
-            ],
-            "RecoveryFactor_pct": [
-                0.7, 3.9, 8.1, 12.1, 15.7, 18.8,
-                21.4, 23.7, 25.6, 27.3, 28.7, 29.9,
-                30.9, 31.8, 32.6, 33.3, 33.8, 34.3,
-                34.8, 35.2,
-            ],
-        },
-
-        # ── DG3 Recommendations ──────────────────────────────────────
-        "DG3Recommendations": [
-            "Execute FEED for FPSO conversion and subsea installation scope",
-            "Secure FPSO drydock slot (2027-Q4 target) with dual-yard tendering strategy",
-            "Drill NorthHorst appraisal sidetrack to constrain fault compartmentalisation model",
-            "Finalise Phase 2 water injection well locations based on DG3 dynamic simulation",
-            "Complete EIA with cold-water coral avoidance routing for flowline corridor",
-            "Run Level 3+ FMU workflow with 100+ realisations for DG3 volumetric basis",
-            "Prepare PDO final draft for MPE submission post-FID",
-        ],
     }
 
 

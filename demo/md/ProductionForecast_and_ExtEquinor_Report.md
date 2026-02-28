@@ -470,7 +470,7 @@ The `ext.equinor.ReservoirProperties` section data (porosity, permeability, temp
 | 9 | `KeyEconomics` | {NPV, IRR, CAPEX, OPEX, Breakeven, Payback, Currency, Note} | ~9 fields | **No** (dropped) |
 | 10 | `ScheduleMilestones` | Array of {Milestone, Date, Status} | 7 entries | **No** (dropped) |
 | 11 | `ProductionProfile` | {Years[], OilRate[], GasRate[], WaterRate[], YearlyOil[], CumOil[], WaterCut[], RF%, WellsOnline[], PeakOil, EUR, STOIIP} | 20 years × 8 cols | **No** (dropped) |
-| 12 | `DG3Recommendations` | Array of recommendation strings | 7 entries | **No** (dropped) |
+| 12 | `Recommendations` | Array of recommendation strings | 7 entries | **No** (dropped) |
 
 ### 7.2 Canonical Mapping Assessment
 
@@ -487,7 +487,7 @@ The `ext.equinor.ReservoirProperties` section data (porosity, permeability, temp
 | **KeyEconomics** | `BD.ProjectSpecifications[]` or `BD.FundsAuthorizations[]` (partial) | **Moderate** | NPV, IRR, CAPEX → `ProjectSpecifications[]` with `ParameterTypeID` and `UnitOfMeasureID`. No dedicated economics schema in OSDU. Breakeven/Payback less standard. |
 | **ScheduleMilestones** | `BD.ActivityStates[]` (from AbstractProjectActivity) | **Moderate** | Each milestone → an ActivityState with `EffectiveDateTime`, `ActivityStatusID`, `Remark`. Incomplete: no "planned date" field — only effective/termination. |
 | **ProductionProfile** | `work-product-component--ColumnBasedTable` or `--ProductionValues` | **Strong** | Create a separate ColumnBasedTable WPC with yearly forecast data. Link from BD via `Parameters[]`. Scalar summaries (PeakOil, EUR) → `Parameters[]` as `DataQuantityParameter`. |
-| **DG3Recommendations** | `BD.Remarks[]` (AbstractRemark) | **Moderate** | Each recommendation → a Remark item with `Remark` text and `RemarkSource`. Alternatively, `BD.DecisionSummary` for a combined narrative. |
+| **Recommendations** | `BD.Remarks[]` (AbstractRemark) | **Moderate** | Each recommendation → a Remark item with `Remark` text and `RemarkSource`. Alternatively, `BD.DecisionSummary` for a combined narrative. |
 
 ---
 
@@ -515,7 +515,7 @@ These elements lack clean canonical counterparts and benefit from extension or a
 | **DevelopmentConcept** | Split: summary text → `BD.Purpose` or `BD.Description`; numeric quantities → `BD.ProjectSpecifications[]`; complex sub-structures (WellPlan) → `Document` WPC or `ColumnBasedTable` | No single OSDU schema for development concepts. ProjectSpecifications can hold typed quantities but is flat. |
 | **KeyEconomics** | `BD.ProjectSpecifications[]` for NPV/IRR/CAPEX with typed ParameterType + UOM. Alternatively, a dedicated `ColumnBasedTable` WPC if economics are complex. | OSDU has no economics-specific schema. ProjectSpecifications is the closest canonical fit. |
 | **ScheduleMilestones** | `BD.ActivityStates[]` for completed milestones; planned milestones → `BD.Triggers[]` or `BD.Remarks[]` with structured naming. | ActivityStates captures state transitions but lacks a "planned date" concept — only effective/termination. |
-| **DG3Recommendations** | `BD.Remarks[]` or `BD.DecisionSummary` | Pure narrative content; Remarks is the natural home. |
+| **Recommendations** | `BD.Remarks[]` or `BD.DecisionSummary` | Pure narrative content; Remarks is the natural home. |
 | **Alternatives (economic data)** | Keep `Alternatives` as registered ext.equinor (survives ingestion). NPV/CAPEX/IRR per alternative → `DoableAlternatives[].Triggers[]` metadata or `ProjectSpecifications[]` with keyed indices. | The registered Alternatives key works. Economic fields per alternative have no canonical home — DoableAlternatives only has SequenceNumber + Triggers + AssessmentID. |
 
 ### 8.3 Schema Extension Registration Request
@@ -529,7 +529,7 @@ For elements that don't fit canonical schemas well, request registration of addi
 | Medium | `ScheduleMilestones` | Planned milestones don't fit ActivityStates cleanly. |
 | Medium | `ProductionProfile` | While a ColumnBasedTable WPC is better, a summary version is useful for quick rendering. |
 | Low | `Authors` / `ReviewTeam` | Strong canonical mapping exists via Personnel/Contributors/DecisionOwners. |
-| Low | `DG3Recommendations` | Fits in Remarks[]. |
+| Low | `Recommendations` | Fits in Remarks[]. |
 
 ### 8.4 Hybrid Architecture (Recommended)
 
@@ -541,7 +541,7 @@ BusinessDecision record
   │   ├── RiskIDs[] ← KeyUncertainties (as Risk records)
   │   ├── ProjectSpecifications[] ← KeyEconomics (NPV, CAPEX, IRR)
   │   ├── ActivityStates[] ← ScheduleMilestones (completed)
-  │   ├── Remarks[] ← DG3Recommendations
+  │   ├── Remarks[] ← Recommendations
   │   └── DecisionQualities.DoableAlternatives[] ← Alternatives (narrative)
   │
   ├── Linked WPCs (via Parameters[])
@@ -568,7 +568,7 @@ BusinessDecision record
 | 2 | Map Authors → Personnel[], ReviewTeam → DecisionOwners/Contributors | Low |
 | 3 | Map KeyEconomics → ProjectSpecifications[] with typed ParameterType reference-data | Medium |
 | 4 | Create Risk records for KeyUncertainties, link via RiskIDs[] | Medium |
-| 5 | Map DG3Recommendations → Remarks[] | Low |
+| 5 | Map Recommendations → Remarks[] | Low |
 | 6 | Map ScheduleMilestones → ActivityStates[] (completed) + Remarks[] (planned) | Medium |
 | 7 | Request schema extension registration for DevelopmentConcept, KeyEconomics | External dependency |
 

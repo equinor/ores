@@ -1,0 +1,26 @@
+{
+  "id": "dev:reference-data--DecisionLevel:DG3",
+  "kind": "osdu:wks:reference-data--DecisionLevel:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "DG3 — Project Sanction",
+    "Code": "DG3",
+    "Description": "Sanction / FID.",
+    "Source": "Equinor DEV partition (OPEN catalog extended)"
+  }
+}

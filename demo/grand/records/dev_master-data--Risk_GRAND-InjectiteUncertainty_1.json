@@ -1,0 +1,27 @@
+{
+  "id": "dev:master-data--Risk:GRAND-InjectiteUncertainty:1",
+  "kind": "osdu:wks:master-data--Risk:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "GRAND — Injectite distribution & NTG uncertainty",
+    "Summary": "Sub‑seismic injectites drive uncertainty in net sand and volumes; impacts well placement and reserves.",
+    "Description": "A complex network of thin sand sills/dykes (RMC/injectites) below seismic resolution leads to uncertain NTG and connectivity, affecting volumetrics and production forecasts.",
+    "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+    "EffectiveDateTime": "2019-04-26T00:00:00Z"
+  }
+}

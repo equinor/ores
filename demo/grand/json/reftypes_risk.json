@@ -1,0 +1,169 @@
+
+[
+  {
+    "id": "dev:reference-data--RiskCategory:Subsurface-Static:1",
+    "kind": "osdu:wks:reference-data--RiskCategory:1.0.0",
+    "acl": {
+      "owners": ["data.default.owners@dev.dataservices.energy"],
+      "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+    },
+    "legal": {
+      "legaltags": ["dev-equinor-private-default"],
+      "otherRelevantDataCountries": ["NO"]
+    },
+    "data": {
+      "Name": "Subsurface — Static",
+      "Code": "Subsurface-Static",
+      "Description": "Geological/structural/NTG/in-place risks."
+    }
+  },
+  {
+    "id": "dev:reference-data--RiskCategory:Subsurface-Dynamic:1",
+    "kind": "osdu:wks:reference-data--RiskCategory:1.0.0",
+    "acl": {
+      "owners": ["data.default.owners@dev.dataservices.energy"],
+      "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+    },
+    "legal": {
+      "legaltags": ["dev-equinor-private-default"],
+      "otherRelevantDataCountries": ["NO"]
+    },
+    "data": {
+      "Name": "Subsurface — Dynamic",
+      "Code": "Subsurface-Dynamic",
+      "Description": "Production behavior, WOR/breakthrough, operational response."
+    }
+  },
+  {
+    "id": "dev:reference-data--RiskCategory:Schedule:1",
+    "kind": "osdu:wks:reference-data--RiskCategory:1.0.0",
+    "acl": {
+      "owners": ["data.default.owners@dev.dataservices.energy"],
+      "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+    },
+    "legal": {
+      "legaltags": ["dev-equinor-private-default"],
+      "otherRelevantDataCountries": ["NO"]
+    },
+    "data": {
+      "Name": "Schedule",
+      "Code": "Schedule",
+      "Description": "Planning, fabrication, shutdown windows, tie-in timing."
+    }
+  },
+  {
+    "id": "dev:reference-data--RiskCategory:Cost:1",
+    "kind": "osdu:wks:reference-data--RiskCategory:1.0.0",
+    "acl": {
+      "owners": ["data.default.owners@dev.dataservices.energy"],
+      "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+    },
+    "legal": {
+      "legaltags": ["dev-equinor-private-default"],
+      "otherRelevantDataCountries": ["NO"]
+    },
+    "data": {
+      "Name": "Cost",
+      "Code": "Cost",
+      "Description": "CAPEX/OPEX deviations and drivers."
+    }
+  },
+  {
+    "id": "dev:reference-data--RiskCategory:HSE:1",
+    "kind": "osdu:wks:reference-data--RiskCategory:1.0.0",
+    "acl": {
+      "owners": ["data.default.owners@dev.dataservices.energy"],
+      "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+    },
+    "legal": {
+      "legaltags": ["dev-equinor-private-default"],
+      "otherRelevantDataCountries": ["NO"]
+    },
+    "data": {
+      "Name": "HSE",
+      "Code": "HSE",
+      "Description": "Health, safety, environment risks."
+    }
+  },
+  {
+    "id": "dev:reference-data--RiskCategory:Regulatory:1",
+    "kind": "osdu:wks:reference-data--RiskCategory:1.0.0",
+    "acl": {
+      "owners": ["data.default.owners@dev.dataservices.energy"],
+      "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+    },
+    "legal": {
+      "legaltags": ["dev-equinor-private-default"],
+      "otherRelevantDataCountries": ["NO"]
+    },
+    "data": {
+      "Name": "Regulatory / Stakeholder",
+      "Code": "Regulatory",
+      "Description": "Permits, external stakeholders, authorities."
+    }
+  },
+  {
+    "id": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+    "kind": "osdu:wks:reference-data--RiskSeverityScale:1.0.0",
+    "acl": {
+      "owners": ["data.default.owners@dev.dataservices.energy"],
+      "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+    },
+    "legal": {
+      "legaltags": ["dev-equinor-private-default"],
+      "otherRelevantDataCountries": ["NO"]
+    },
+    "data": {
+      "Name": "Equinor Severity scale 1–5",
+      "Code": "S-5x5",
+      "Levels": [
+        { "Code": "S1", "Name": "Insignificant" },
+        { "Code": "S2", "Name": "Minor" },
+        { "Code": "S3", "Name": "Moderate" },
+        { "Code": "S4", "Name": "Major" },
+        { "Code": "S5", "Name": "Catastrophic" }
+      ]
+    }
+  },
+  {
+    "id": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+    "kind": "osdu:wks:reference-data--RiskProbabilityScale:1.0.0",
+    "acl": {
+      "owners": ["data.default.owners@dev.dataservices.energy"],
+      "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+    },
+    "legal": {
+      "legaltags": ["dev-equinor-private-default"],
+      "otherRelevantDataCountries": ["NO"]
+    },
+    "data": {
+      "Name": "Equinor Probability scale 1–5",
+      "Code": "P-5x5",
+      "Levels": [
+        { "Code": "P1", "Name": "Rare" },
+        { "Code": "P2", "Name": "Unlikely" },
+        { "Code": "P3", "Name": "Possible" },
+        { "Code": "P4", "Name": "Likely" },
+        { "Code": "P5", "Name": "Almost certain" }
+      ]
+    }
+  },
+  {
+    "id": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+    "kind": "osdu:wks:reference-data--RiskAcceptanceCriteria:1.0.0",
+    "acl": {
+      "owners": ["data.default.owners@dev.dataservices.energy"],
+      "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+    },
+    "legal": {
+      "legaltags": ["dev-equinor-private-default"],
+      "otherRelevantDataCountries": ["NO"]
+    },
+    "data": {
+      "Name": "Project RAC (2025) — Z-013 aligned",
+      "Code": "RAC-2025-01",
+      "Description": "Project-level acceptance criteria for personal, asset integrity, environment, reputation/business; ALARP principle; used at DG2/DG3.",
+      "Source": "Equinor Management System & NORSOK Z-013 guidance"
+    }
+  }
+]

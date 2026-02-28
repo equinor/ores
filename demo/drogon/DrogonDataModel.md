@@ -131,7 +131,7 @@ The Drogon BD manifest (`manifest_bd_drogon.json`) carries the following `ext.eq
 - **ReservoirProperties** — depth, temperature, pressure, porosity, permeability
 - **KeyUncertainties** — reservoir connectivity, OWC depth, aquifer support (with impact ratings)
 - **UncertaintySummary** — P10/P50/P90 STOIIP range, Monte Carlo method
-- **DG2Recommendations** — next-gate action items
+- **Recommendations** — next-gate action items (generic, not DG-specific)
 - **KeyEconomics** — placeholder (DG1 economics not yet finalised)
 
 > **Note:** OSDU only persists 7 registered ext.equinor keys (see `demo/md/BusinessDecision.md` Appendix A). The remaining keys are restored at runtime by the local enrichment overlay in `app/main.py`.

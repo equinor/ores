@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+{% block title %}Add DG — Create Business Decision{% endblock %}
+
+{% block head %}
+<style>
+  /* ── Page layout ── */
+  .addgate-wrap { max-width: 72rem; }
+  .addgate-panel {
+    border: 1px solid var(--eq-border); border-radius: 8px;
+    background: var(--eq-white); padding: 1rem 1.25rem;
+    margin-bottom: 1rem; box-shadow: var(--shadow-sm);
+  }
+  .addgate-panel h3 {
+    margin: 0 0 .8rem; font-size: 16px; font-weight: 700;
+    color: var(--eq-charcoal); border-bottom: 2px solid var(--eq-red);
+    padding-bottom: .4rem;
+  }
+
+  /* ── Form grid ── */
+  .form-grid {
+    display: grid; grid-template-columns: 180px 1fr;
+    gap: 10px 16px; align-items: start; margin-bottom: 12px;
+  }
+  .form-grid label { padding-top: 6px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  .form-grid .hint { grid-column: 2 / -1; font-size: .78rem; color: var(--eq-grey); margin-top: -6px; }
+
+  /* ── Link section ── */
+  .link-section { margin-top: .5rem; }
+  .link-row {
+    display: grid; grid-template-columns: 150px 1fr 80px;
+    gap: 8px; align-items: center; margin-bottom: 8px;
+  }
+  .link-row label { font-size: 13px; }
+  .link-row select, .link-row input { font-size: 13px; }
+  .link-badge {
+    display: inline-block; font-size: .72rem; font-weight: 600;
+    padding: .1rem .4rem; border-radius: 999px; text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+  .link-badge.required { background: #fed7d7; color: #c53030; }
+  .link-badge.optional { background: #e2e8f0; color: #4a5568; }
+
+  /* ── Risk list ── */
+  .risk-list { display: flex; flex-direction: column; gap: .3rem; margin: .5rem 0; }
+  .risk-item {
+    display: flex; align-items: center; gap: .5rem;
+    background: var(--eq-light); padding: .35rem .6rem;
+    border-radius: var(--radius); font-size: 13px;
+  }
+  .risk-item .risk-id { flex: 1; font-family: monospace; font-size: 12px; color: var(--eq-slate); overflow: hidden; text-overflow: ellipsis; }
+  .risk-item .remove-btn {
+    background: none; border: none; color: #e53e3e; cursor: pointer;
+    font-weight: 700; font-size: 16px; padding: 0 4px; line-height: 1;
+  }
+  .risk-item .remove-btn:hover { color: #c53030; }
+
+  /* ── Result banner ── */
+  .result-ok {
+    background: #f0fff4; border: 1px solid #c6f6d5; border-left: 4px solid #38a169;
+    border-radius: var(--radius); padding: 12px 16px; margin-top: 1rem; font-size: 14px;
+  }
+  .result-ok .bd-id { font-family: monospace; font-size: 12.5px; word-break: break-all; color: var(--eq-link); }
+  .result-err {
+    background: #fff5f5; border: 1px solid #fed7d7; border-left: 4px solid #e53e3e;
+    border-radius: var(--radius); padding: 12px 16px; margin-top: 1rem; font-size: 14px; color: #c53030;
+  }
+
+  /* ── Loading overlay ── */
+  .submit-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(255,255,255,.7);
+    z-index: 200; align-items: center; justify-content: center;
+  }
+  .submit-overlay.active { display: flex; }
+  .submit-overlay .spinner-lg {
+    width: 36px; height: 36px; border: 3px solid var(--eq-border);
+    border-top-color: var(--eq-red); border-radius: 50%;
+    animation: spin .6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── WPC search modal ── */
+  .wpc-modal-bg {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,.35);
+    z-index: 300; align-items: center; justify-content: center;
+  }
+  .wpc-modal-bg.active { display: flex; }
+  .wpc-modal {
+    background: var(--eq-white); border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,.2);
+    width: 600px; max-width: 92vw; max-height: 80vh; display: flex; flex-direction: column;
+  }
+  .wpc-modal-head {
+    padding: .75rem 1rem; border-bottom: 1px solid var(--eq-border);
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .wpc-modal-head h4 { margin: 0; flex: 1; font-size: 15px; }
+  .wpc-modal-head .close-btn {
+    background: none; border: none; font-size: 20px; cursor: pointer;
+    color: var(--eq-grey); padding: 0 4px;
+  }
+  .wpc-modal-body { padding: .5rem 1rem; overflow-y: auto; flex: 1; }
+  .wpc-modal-body .search-input { margin-bottom: .5rem; }
+  .wpc-result-list { max-height: 300px; overflow-y: auto; }
+  .wpc-result-item {
+    padding: .4rem .6rem; cursor: pointer; border-bottom: 1px solid var(--eq-border);
+    font-size: 13px;
+  }
+  .wpc-result-item:hover { background: rgba(0,112,121,.06); }
+  .wpc-result-item .wpc-name { font-weight: 500; }
+  .wpc-result-item .wpc-id { font-size: 11.5px; color: var(--eq-grey); font-family: monospace; word-break: break-all; }
+
+  /* ── Preview JSON ── */
+  .preview-wrap { margin-top: 1rem; }
+  .preview-wrap pre {
+    max-height: 400px; overflow: auto; font-size: 12px; line-height: 1.4;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="addgate-wrap">
+  <h2>Add Decision Gate</h2>
+  <p class="muted" style="margin-top:-.5rem;margin-bottom:1rem;">
+    Create a new <code>BusinessDecision</code> record linked to an existing Reservoir and its data records, then ingest it to OSDU.
+  </p>
+
+  <!-- ═══ 1. Reservoir selection ═══ -->
+  <div class="addgate-panel">
+    <h3>1. Reservoir</h3>
+    <div class="form-grid">
+      <label for="reservoir-select">Reservoir</label>
+      <select id="reservoir-select">
+        <option value="">— select a reservoir —</option>
+        {% for r in reservoirs %}
+        <option value="{{ r.id }}">{{ r.name }}  ({{ r.id | truncate(60) }})</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <!-- ═══ 2. Decision metadata ═══ -->
+  <div class="addgate-panel">
+    <h3>2. Decision Metadata</h3>
+    <div class="form-grid">
+      <label for="bd-name">Name *</label>
+      <input type="text" id="bd-name" placeholder="e.g. MyField — Decision Gate 2 Concept Select" />
+
+      <label for="bd-project">Project name</label>
+      <input type="text" id="bd-project" placeholder="e.g. MyField Development" />
+
+      <label for="bd-level">Decision level *</label>
+      <select id="bd-level">
+        <option value="DG1">DG1 — Identify & Assess</option>
+        <option value="DG2" selected>DG2 — Concept Select</option>
+        <option value="DG3">DG3 — Define & Execute</option>
+        <option value="DG4">DG4 — Operate & Improve</option>
+      </select>
+
+      <label for="bd-status">Approval status</label>
+      <select id="bd-status">
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+        <option value="Deferred">Deferred</option>
+      </select>
+
+      <label for="bd-date">Decision date</label>
+      <input type="date" id="bd-date" />
+
+      <label for="bd-due-date">Due date</label>
+      <input type="date" id="bd-due-date" />
+
+      <label for="bd-description">Description</label>
+      <textarea id="bd-description" rows="3" placeholder="Describe the scope and objectives of this decision gate…"></textarea>
+
+      <label for="bd-summary">Decision summary</label>
+      <textarea id="bd-summary" rows="3" placeholder="Summary of the decision and its rationale…"></textarea>
+    </div>
+  </div>
+
+  <!-- ═══ 3. Linked records ═══ -->
+  <div class="addgate-panel">
+    <h3>3. Linked Records (Parameters)</h3>
+    <p class="muted" style="margin-top:-.4rem; font-size:.82rem;">
+      Link the decision to existing OSDU data. You can paste record IDs directly or use
+      <strong>Browse</strong> to search.
+    </p>
+
+    <div class="link-section">
+      <div class="link-row">
+        <label>REV-stats <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-rev-stats" placeholder="dev:work-product-component--ReservoirEstimatedVolumes:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-rev-stats','osdu:wks:work-product-component--ReservoirEstimatedVolumes:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>REV-raw <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-rev-raw" placeholder="dev:work-product-component--ReservoirEstimatedVolumes:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-rev-raw','osdu:wks:work-product-component--ReservoirEstimatedVolumes:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>GeoLabelSet <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-geolabelset" placeholder="dev:work-product-component--GeoLabelSet:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-geolabelset','osdu:wks:work-product-component--GeoLabelSet:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>Parameters <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-params" placeholder="dev:work-product-component--ColumnBasedTable:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-params','osdu:wks:work-product-component--ColumnBasedTable:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>Activity <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-activity" placeholder="dev:work-product-component--Activity:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-activity','osdu:wks:work-product-component--Activity:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>Dataspace <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-dataspace" placeholder="dev:dataset--ETPDataspace:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-dataspace','osdu:wks:dataset--ETPDataspace:*')">Browse</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 4. Risks ═══ -->
+  <div class="addgate-panel">
+    <h3>4. Risk Records</h3>
+    <p class="muted" style="margin-top:-.4rem; font-size:.82rem;">
+      Link <code>master-data--Risk</code> records to this decision.
+    </p>
+    <div style="display:flex;gap:.5rem;margin-bottom:.5rem;">
+      <input type="text" id="risk-input" placeholder="dev:master-data--Risk:…" style="flex:1;" />
+      <button class="btn" type="button" onclick="openBrowse('risk-input','osdu:wks:master-data--Risk:*')">Browse</button>
+      <button class="btn" type="button" onclick="addRisk()">+ Add</button>
+    </div>
+    <div class="risk-list" id="risk-list"></div>
+  </div>
+
+  <!-- ═══ 5. Preview & submit ═══ -->
+  <div class="addgate-panel">
+    <h3>5. Review & Ingest</h3>
+    <div style="display:flex;gap:.5rem;">
+      <button class="btn" type="button" onclick="previewRecord()">Preview JSON</button>
+      <button class="btn btn-primary" type="button" onclick="submitRecord()">Create & Ingest to OSDU</button>
+    </div>
+    <div class="preview-wrap" id="preview-wrap" style="display:none;">
+      <pre id="preview-json"></pre>
+    </div>
+    <div id="result-area"></div>
+  </div>
+</div>
+
+<!-- ═══ WPC browse modal ═══ -->
+<div class="wpc-modal-bg" id="wpc-modal-bg">
+  <div class="wpc-modal">
+    <div class="wpc-modal-head">
+      <h4 id="wpc-modal-title">Browse records</h4>
+      <button class="close-btn" onclick="closeBrowse()">&times;</button>
+    </div>
+    <div class="wpc-modal-body">
+      <input type="text" class="search-input" id="wpc-search-q" placeholder="Search query…" value="*" />
+      <button class="btn" type="button" onclick="runBrowseSearch()" style="margin-bottom:.5rem;">Search</button>
+      <div class="wpc-result-list" id="wpc-result-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Loading overlay ═══ -->
+<div class="submit-overlay" id="submit-overlay">
+  <div style="text-align:center;">
+    <div class="spinner-lg"></div>
+    <p style="margin-top:.5rem;font-size:14px;color:var(--eq-slate);">Ingesting to OSDU…</p>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ── Risk management ──
+  var riskIds = [];
+
+  window.addRisk = function() {
+    var inp = document.getElementById('risk-input');
+    var val = inp.value.trim();
+    if (!val) return;
+    if (riskIds.indexOf(val) < 0) riskIds.push(val);
+    inp.value = '';
+    renderRisks();
+  };
+
+  function removeRisk(idx) {
+    riskIds.splice(idx, 1);
+    renderRisks();
+  }
+  window.removeRisk = removeRisk;
+
+  function renderRisks() {
+    var el = document.getElementById('risk-list');
+    if (!riskIds.length) { el.innerHTML = '<span class="muted" style="font-size:13px;">No risks linked yet.</span>'; return; }
+    el.innerHTML = riskIds.map(function(id, i) {
+      return '<div class="risk-item"><span class="risk-id">' + escHtml(id) + '</span>' +
+             '<button class="remove-btn" onclick="removeRisk(' + i + ')" title="Remove">&times;</button></div>';
+    }).join('');
+  }
+  renderRisks();
+
+  // ── Browse modal ──
+  var browseTarget = null;
+  var browseKind = '';
+
+  window.openBrowse = function(targetId, kind) {
+    browseTarget = targetId;
+    browseKind = kind;
+    document.getElementById('wpc-modal-title').textContent = 'Browse: ' + kind.split('--').pop().replace(':*','');
+    document.getElementById('wpc-search-q').value = '*';
+    document.getElementById('wpc-result-list').innerHTML = '';
+    document.getElementById('wpc-modal-bg').classList.add('active');
+    runBrowseSearch();
+  };
+
+  window.closeBrowse = function() {
+    document.getElementById('wpc-modal-bg').classList.remove('active');
+    browseTarget = null;
+  };
+
+  window.runBrowseSearch = function() {
+    var q = document.getElementById('wpc-search-q').value || '*';
+    var list = document.getElementById('wpc-result-list');
+    list.innerHTML = '<span class="muted">Searching…</span>';
+    fetch('/add-dg/wpc-search?kind=' + encodeURIComponent(browseKind) + '&q=' + encodeURIComponent(q) + '&limit=20')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (!data.length) { list.innerHTML = '<span class="muted">No results.</span>'; return; }
+        list.innerHTML = data.map(function(rec) {
+          return '<div class="wpc-result-item" onclick="selectBrowseResult(\'' + escAttr(rec.id) + '\')">' +
+                 '<div class="wpc-name">' + escHtml(rec.name) + '</div>' +
+                 '<div class="wpc-id">' + escHtml(rec.id) + '</div></div>';
+        }).join('');
+      })
+      .catch(function(err) { list.innerHTML = '<span class="muted">Error: ' + escHtml(err.message) + '</span>'; });
+  };
+
+  window.selectBrowseResult = function(id) {
+    if (browseTarget === 'risk-input') {
+      document.getElementById('risk-input').value = id;
+      addRisk();
+    } else if (browseTarget) {
+      document.getElementById(browseTarget).value = id;
+    }
+    closeBrowse();
+  };
+
+  // ── Build record payload ──
+  function buildPayload() {
+    return {
+      reservoir_id:     document.getElementById('reservoir-select').value,
+      name:             document.getElementById('bd-name').value,
+      project_name:     document.getElementById('bd-project').value,
+      description:      document.getElementById('bd-description').value,
+      decision_level:   document.getElementById('bd-level').value,
+      approval_status:  document.getElementById('bd-status').value,
+      decision_date:    document.getElementById('bd-date').value,
+      decision_due_date:document.getElementById('bd-due-date').value,
+      decision_summary: document.getElementById('bd-summary').value,
+      rev_stats_id:     document.getElementById('link-rev-stats').value,
+      rev_raw_id:       document.getElementById('link-rev-raw').value,
+      geolabelset_id:   document.getElementById('link-geolabelset').value,
+      params_id:        document.getElementById('link-params').value,
+      activity_id:      document.getElementById('link-activity').value,
+      dataspace_id:     document.getElementById('link-dataspace').value,
+      risk_ids:         riskIds.slice(),
+    };
+  }
+
+  // ── Preview ──
+  window.previewRecord = function() {
+    var payload = buildPayload();
+    var wrap = document.getElementById('preview-wrap');
+    var pre = document.getElementById('preview-json');
+    pre.textContent = JSON.stringify(payload, null, 2);
+    wrap.style.display = 'block';
+  };
+
+  // ── Submit ──
+  window.submitRecord = function() {
+    var payload = buildPayload();
+    if (!payload.reservoir_id) { alert('Please select a Reservoir.'); return; }
+    if (!payload.name) { alert('Please enter a BD name.'); return; }
+
+    document.getElementById('submit-overlay').classList.add('active');
+    document.getElementById('result-area').innerHTML = '';
+
+    fetch('/add-dg/create', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    })
+    .then(function(r) { return r.json().then(function(d) { return {status: r.status, data: d}; }); })
+    .then(function(res) {
+      document.getElementById('submit-overlay').classList.remove('active');
+      var area = document.getElementById('result-area');
+      if (res.data.ok) {
+        area.innerHTML = '<div class="result-ok">' +
+          '<strong>&#10003; BusinessDecision created successfully</strong><br>' +
+          '<span class="bd-id">' + escHtml(res.data.bd_id) + '</span><br>' +
+          '<span class="muted">Status: ' + res.status + ' &middot; ' +
+          res.data.parameters_count + ' parameters &middot; ' +
+          res.data.risk_count + ' risks</span></div>';
+      } else {
+        area.innerHTML = '<div class="result-err">' +
+          '<strong>Ingest failed (HTTP ' + res.status + ')</strong><br>' +
+          '<pre style="margin:.4rem 0 0;font-size:12px;white-space:pre-wrap;">' +
+          escHtml(res.data.response || res.data.error || JSON.stringify(res.data)) + '</pre></div>';
+      }
+    })
+    .catch(function(err) {
+      document.getElementById('submit-overlay').classList.remove('active');
+      document.getElementById('result-area').innerHTML =
+        '<div class="result-err"><strong>Network error:</strong> ' + escHtml(err.message) + '</div>';
+    });
+  };
+
+  // ── Helpers ──
+  function escHtml(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+  function escAttr(s) { return (s || '').replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+  // Click outside modal closes it
+  document.getElementById('wpc-modal-bg').addEventListener('click', function(e) {
+    if (e.target === this) closeBrowse();
+  });
+})();
+</script>
+{% endblock %}

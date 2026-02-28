@@ -622,9 +622,6 @@
                 {% endif %}
               </div>
 
-              {# ── Alternatives ── #}
-              {% if ext_eq.get('Alternatives') %}
-
               {# ── Development Concept ── #}
               {% if ext_eq.get('DevelopmentConcept') %}
               {% set dcon = ext_eq.get('DevelopmentConcept') %}
@@ -726,8 +723,26 @@
               {% endif %}
 
               {# ── Key Economics ── #}
+              {% set proj_specs = (rec.data or {}).get('ProjectSpecifications') or [] %}
               {% set econ = ext_eq.get('KeyEconomics') or {} %}
-              {% if econ and (econ.get('NPV_10pct_MUSD') is not none or econ.get('CAPEX_MNOK') is not none) %}
+              {% if proj_specs %}
+              <div class="bd-section-title">Key Economics</div>
+              <div class="bd-econ-row">
+                {% for ps in proj_specs if ps is mapping %}
+                {% set pt_raw = ps.get('ParameterTypeID', '') %}
+                {% set pt_name = pt_raw.split(':')[-2] if ':' in pt_raw else pt_raw %}
+                {% set unit_raw = ps.get('UnitOfMeasureID', '') %}
+                {% set unit = unit_raw.split(':')[-2] if ':' in unit_raw else unit_raw %}
+                {% set val = ps.get('DataQuantityParameter') %}
+                {% if val is not none %}
+                <div class="bd-econ">
+                  <div class="bd-econ-label">{{ pt_name | replace('_', ' ') }}</div>
+                  <div class="bd-econ-num">{% if 'USD' in unit or 'MUSD' in unit %}${% endif %}{{ val }}{% if 'percent' in unit %}%{% elif unit %} {{ unit }}{% endif %}</div>
+                </div>
+                {% endif %}
+                {% endfor %}
+              </div>
+              {% elif econ and (econ.get('NPV_10pct_MUSD') is not none or econ.get('CAPEX_MNOK') is not none) %}
               <div class="bd-section-title">Key Economics</div>
               {% if econ.get('Note') %}<div style="font-size:.82rem;color:#718096;margin-bottom:.4rem;">{{ econ.get('Note') }}</div>{% endif %}
               <div class="bd-econ-row">
@@ -760,8 +775,20 @@
               {% endif %}
 
               {# ── Schedule Milestones ── #}
+              {% set act_states = (rec.data or {}).get('ActivityStates') or [] %}
               {% set sched = ext_eq.get('ScheduleMilestones') or [] %}
-              {% if sched %}
+              {% if act_states %}
+              <div class="bd-section-title">Schedule</div>
+              <div class="bd-schedule">
+                {% for st in act_states if st is mapping %}
+                <div class="sched-ms">{{ st.get('Remark') or '—' }}</div>
+                <div class="sched-date">{{ st.get('EffectiveDateTime') or '—' }}</div>
+                {% set st_raw = st.get('ActivityStatusID', '') %}
+                {% set st_label = st_raw.split(':')[-2] if ':' in st_raw else (st_raw or 'Planned') %}
+                <div class="sched-status {{ st_label | lower }}">{{ st_label }}</div>
+                {% endfor %}
+              </div>
+              {% elif sched %}
               <div class="bd-section-title">Schedule</div>
               <div class="bd-schedule">
                 {% for ms in sched if ms is mapping %}
@@ -772,6 +799,8 @@
               </div>
               {% endif %}
 
+              {# ── Alternatives ── #}
+              {% if ext_eq.get('Alternatives') %}
               <div class="bd-section-title">Alternatives</div>
               <ul class="bd-alt-list">
                 {% for alt in ext_eq.get('Alternatives') or [] %}
@@ -805,11 +834,12 @@
               </div>
               {% endif %}
 
-              {# ── Key Uncertainties ── #}
-              {% if ext_eq.get('KeyUncertainties') %}
+              {# ── Key Uncertainties (prefer WPC ColumnBasedTable, fall back to ext.equinor) ── #}
+              {% set ku_list = rec.bd_uncertainties or ext_eq.get('KeyUncertainties') or [] %}
+              {% if ku_list %}
               <div class="bd-section-title">Key Uncertainties</div>
               <ul class="bd-alt-list">
-                {% for ku in ext_eq.get('KeyUncertainties') or [] %}
+                {% for ku in ku_list %}
                 <li style="border-left-color:{% if ku.get('Impact') == 'High' %}#fc8181{% elif ku.get('Impact') == 'Medium' %}#f6ad55{% else %}#68d391{% endif %};">
                   <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;">
                     <span class="bd-alt-name">{{ ku.get('Factor') or 'Uncertainty' }}</span>
@@ -819,6 +849,78 @@
                 </li>
                 {% endfor %}
               </ul>
+              {% endif %}
+
+              {# ── Uncertainty Summary (methodology + P10/P50/P90 volume ranges) ── #}
+              {% set usumm = ext_eq.get('UncertaintySummary') or {} %}
+              {% if usumm %}
+              <details class="bd-collapse" open>
+              <summary class="bd-section-title" style="cursor:pointer;">Uncertainty Summary ▸</summary>
+              <div style="font-size:.86rem;color:#4a5568;line-height:1.5;">
+                {% if usumm.get('Basis') %}<div style="margin-bottom:.4rem;">{{ usumm.get('Basis') }}</div>{% endif %}
+                {% if usumm.get('MethodologyReference') %}<div style="margin-bottom:.4rem;color:#718096;">Method: {{ usumm.get('MethodologyReference') }}</div>{% endif %}
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.4rem;">
+                  {% if usumm.get('TotalRealisations') is not none %}<span class="bd-alt-rank" style="background:#ebf4ff;color:#2b6cb0;">{{ usumm.get('TotalRealisations') }} realisations</span>{% endif %}
+                  {% set sel = usumm.get('SelectedRealisations') or {} %}
+                  {% if sel %}
+                  {% for key, val in sel.items() %}<span class="bd-alt-rank" style="background:#f0fff4;color:#276749;">{{ key }}: {{ val }}</span>{% endfor %}
+                  {% endif %}
+                </div>
+                {% if usumm.get('Note') %}<div style="font-size:.82rem;color:#a0aec0;margin-bottom:.4rem;">{{ usumm.get('Note') }}</div>{% endif %}
+                {# P-value volume table (if any volume data exists) #}
+                {% set stoiip = usumm.get('StaticInPlace_Oil_MSm3') or {} %}
+                {% set recov = usumm.get('Recoverable_Oil_MSm3') or {} %}
+                {% set rf = usumm.get('RecoveryFactor_pct') or {} %}
+                {% set tstoiip = usumm.get('TargetSTOIIP_MSm3') or {} %}
+                {% if stoiip or recov or rf or tstoiip %}
+                <table style="width:100%;border-collapse:collapse;margin-top:.4rem;font-size:.84rem;">
+                  <thead>
+                    <tr style="border-bottom:1px solid #e2e8f0;color:#718096;">
+                      <th style="text-align:left;padding:.25rem .4rem;">Metric</th>
+                      <th style="text-align:right;padding:.25rem .4rem;">P90</th>
+                      <th style="text-align:right;padding:.25rem .4rem;">{% if stoiip.get('REF') is not none or tstoiip.get('REF') is not none %}REF{% else %}P50{% endif %}</th>
+                      <th style="text-align:right;padding:.25rem .4rem;">P10</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if stoiip %}
+                    <tr style="border-bottom:1px solid #f7fafc;">
+                      <td style="padding:.25rem .4rem;">STOIIP (MSm³)</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ stoiip.get('P90', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ stoiip.get('REF') or stoiip.get('P50', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ stoiip.get('P10', '—') }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if tstoiip %}
+                    <tr style="border-bottom:1px solid #f7fafc;">
+                      <td style="padding:.25rem .4rem;">Target STOIIP (MSm³)</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ tstoiip.get('P90', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ tstoiip.get('REF') or tstoiip.get('P50', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ tstoiip.get('P10', '—') }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if recov %}
+                    <tr style="border-bottom:1px solid #f7fafc;">
+                      <td style="padding:.25rem .4rem;">Recoverable (MSm³)</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ recov.get('P90', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ recov.get('REF') or recov.get('P50', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ recov.get('P10', '—') }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if rf %}
+                    <tr>
+                      <td style="padding:.25rem .4rem;">Recovery Factor (%)</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ rf.get('P90', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ rf.get('REF') or rf.get('P50', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ rf.get('P10', '—') }}</td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+                {% if tstoiip.get('Note') %}<div style="font-size:.78rem;color:#a0aec0;margin-top:.2rem;">{{ tstoiip.get('Note') }}</div>{% endif %}
+                {% endif %}
+              </div>
+              </details>
               {% endif %}
 
               {# ── Input Parameters ── #}
@@ -882,26 +984,73 @@
               {% endif %}
 
               {# ── Authors & Review Team ── #}
-              {% if ext_eq.get('Authors') or ext_eq.get('ReviewTeam') %}
+              {% set personnel = (rec.data or {}).get('Personnel') or [] %}
+              {% set authors = ext_eq.get('Authors') or [] %}
+              {% set d_owners = (rec.data or {}).get('DecisionOwners') or [] %}
+              {% set d_makers = (rec.data or {}).get('DecisionMakers') or [] %}
+              {% set contribs = (rec.data or {}).get('Contributors') or [] %}
+              {% set rt = ext_eq.get('ReviewTeam') or {} %}
+              {% if personnel or authors or d_owners or d_makers or contribs or rt %}
               <details class="bd-collapse">
               <summary class="bd-section-title" style="cursor:pointer;">Authors & Governance ▸</summary>
               <div class="bd-meta-grid">
-                {% for a in ext_eq.get('Authors') or [] %}
+                {# Prefer canonical Personnel[], fall back to ext.equinor Authors #}
+                {% if personnel %}
+                {% for p in personnel %}
+                <div class="bd-meta-item">
+                  <div class="bd-label">{{ p.get('ProjectRoleID', '').split(':')[-2] | replace('_', ' ') if p.get('ProjectRoleID') and ':' in p.get('ProjectRoleID', '') else 'Author' }}</div>
+                  <div class="bd-value">{{ p.get('Name') or '—' }}</div>
+                  {% if p.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ p.get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% else %}
+                {% for a in authors %}
                 <div class="bd-meta-item">
                   <div class="bd-label">{{ a.get('Role') or 'Author' }}</div>
                   <div class="bd-value">{{ a.get('Name') or '—' }}</div>
                   {% if a.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ a.get('Organisation') }}</div>{% endif %}
                 </div>
                 {% endfor %}
-                {% set rt = ext_eq.get('ReviewTeam') or {} %}
-                {% if rt.get('ApprovedBy') %}
+                {% endif %}
+                {# Governance: prefer canonical DecisionMakers → ApprovedBy #}
+                {% if d_makers %}
+                {% for m in d_makers %}
+                <div class="bd-meta-item" style="border-left:2px solid #68d391;">
+                  <div class="bd-label">Approved By</div>
+                  <div class="bd-value">{{ m.get('Name') }}</div>
+                  {% if m.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ m.get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% elif rt.get('ApprovedBy') %}
                 <div class="bd-meta-item" style="border-left:2px solid #68d391;">
                   <div class="bd-label">Approved By</div>
                   <div class="bd-value">{{ rt['ApprovedBy'].get('Name') }}</div>
                   {% if rt['ApprovedBy'].get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ rt['ApprovedBy'].get('Organisation') }}</div>{% endif %}
                 </div>
                 {% endif %}
-                {% if rt.get('QARecommender') %}
+                {# Decision Owners #}
+                {% if d_owners %}
+                {% for o in d_owners %}
+                <div class="bd-meta-item" style="border-left:2px solid #d69e2e;">
+                  <div class="bd-label">Decision Owner</div>
+                  <div class="bd-value">{{ o.get('Name') or '—' }}</div>
+                  {% if o.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ o.get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {# Contributors: show all with role label (QA highlighted, others labelled by role/org) #}
+                {% if contribs %}
+                {% for c in contribs %}
+                {% set c_org = c.get('Organisation') or '' %}
+                {% set c_role = 'QA Recommender' if 'QA' in c_org else (c.get('ProjectRoleID', '').split(':')[-2] | replace('_', ' ') if c.get('ProjectRoleID') and ':' in c.get('ProjectRoleID', '') else 'Contributor') %}
+                {% set c_color = '#90cdf4' if 'QA' in c_org else '#e2e8f0' %}
+                <div class="bd-meta-item" style="border-left:2px solid {{ c_color }};">
+                  <div class="bd-label">{{ c_role }}</div>
+                  <div class="bd-value">{{ c.get('Name') or '—' }}</div>
+                  {% if c_org %}<div style="font-size:.75rem;color:#a0aec0;">{{ c_org }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% elif rt.get('QARecommender') %}
                 <div class="bd-meta-item" style="border-left:2px solid #90cdf4;">
                   <div class="bd-label">QA Recommender</div>
                   <div class="bd-value">{{ rt['QARecommender'].get('Name') }}</div>
@@ -913,13 +1062,20 @@
               {% endif %}
 
               {# ── Recommendations ── #}
-              {% set recos = ext_eq.get('DG2Recommendations') or ext_eq.get('DG3Recommendations') or [] %}
-              {% if recos %}
+              {% set remarks = (rec.data or {}).get('Remarks') or [] %}
+              {% set recos = ext_eq.get('Recommendations') or ext_eq.get('DG2Recommendations') or ext_eq.get('DG3Recommendations') or [] %}
+              {% if remarks or recos %}
               <div class="bd-section-title">Recommendations for Next Gate</div>
               <ol style="margin:0 0 0 1.2rem;padding:0;color:#4a5568;font-size:.88rem;line-height:1.5;">
+                {% if remarks %}
+                {% for rm in remarks %}
+                <li style="margin-bottom:.25rem;">{{ rm.get('Remark') if rm is mapping else rm }}</li>
+                {% endfor %}
+                {% else %}
                 {% for r in recos %}
                 <li style="margin-bottom:.25rem;">{{ r }}</li>
                 {% endfor %}
+                {% endif %}
               </ol>
               {% endif %}
 

@@ -1,0 +1,27 @@
+{
+  "id": "dev:master-data--Risk:GRAND-EarlyWaterBreakthrough:1",
+  "kind": "osdu:wks:master-data--Risk:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "GRAND — Early water breakthrough / high WOR risk",
+    "Summary": "Thin heavy-oil zone over active aquifer may cause early water production and lower recovery.",
+    "Description": "Due to high viscosity and a thin oil column directly above an active aquifer, producers may experience early water breakthrough, increasing WOR and reducing reserves.",
+    "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+    "EffectiveDateTime": "2019-04-26T00:00:00Z"
+  }
+}

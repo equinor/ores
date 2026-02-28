@@ -37,6 +37,7 @@ from .auth import (
 )
 from .strat import router as strat_router
 from .analyse import router as analyse_router
+from .addgate import router as addgate_router
 
 # ──────────────────────────────────────────────────────────────────────────────
 # App setup & logging
@@ -113,6 +114,7 @@ app.include_router(auth_router)  # keeps /auth diagnostics
 app.include_router(ingest_router, prefix="/api")
 app.include_router(strat_router)
 app.include_router(analyse_router)
+app.include_router(addgate_router)
 
 app.mount(
     "/static",
@@ -165,15 +167,25 @@ _LOCAL_RECORDS: Dict[str, Dict[str, Any]] = {}
 
 
 def _load_local_records() -> None:
-    """Index all demo/*/records/*.json by their ``id`` field at startup."""
+    """Index all demo/*/records/*.json by their ``id`` field at startup.
+
+    When duplicate IDs are found, prefer the record with more data keys
+    (ensures canonical-enriched records win over stale predecessors).
+    """
     import glob
     for pattern in ("demo/*/records/*.json", "demo/drogon_dg2/records/*.json"):
-        for path in glob.glob(str(_REPO_ROOT / pattern)):
+        for path in sorted(glob.glob(str(_REPO_ROOT / pattern))):
             try:
                 with open(path, encoding="utf-8") as f:
                     rec = json.load(f)
                 rid = rec.get("id", "")
                 if rid:
+                    existing = _LOCAL_RECORDS.get(rid)
+                    if existing:
+                        old_keys = len((existing.get("data") or existing).keys())
+                        new_keys = len((rec.get("data") or rec).keys())
+                        if new_keys <= old_keys:
+                            continue  # keep the richer record
                     _LOCAL_RECORDS[rid] = rec
             except Exception:
                 pass
@@ -235,20 +247,35 @@ def _apply_bd_local_enrichment(data_block: Dict[str, Any], record_id: str) -> No
     """
     # 1) ext.equinor merge
     local = _BD_LOCAL_ENRICHMENTS.get(record_id)
-    if not local:
-        return
-    ext_eq = data_block.setdefault("ext", {}).setdefault("equinor", {})
-    merged = 0
-    for k, v in local.items():
-        if k not in ext_eq:
-            ext_eq[k] = v
-            merged += 1
-    if merged:
-        log.debug("[BD-ENRICH] Merged %d local ext.equinor keys into %s", merged, record_id)
+    if local:
+        ext_eq = data_block.setdefault("ext", {}).setdefault("equinor", {})
+        merged = 0
+        for k, v in local.items():
+            if k not in ext_eq:
+                ext_eq[k] = v
+                merged += 1
+        if merged:
+            log.debug("[BD-ENRICH] Merged %d local ext.equinor keys into %s", merged, record_id)
+
+    # 1b) canonical data-level fields — fill from local record if absent
+    _CANONICAL_BD_FIELDS = (
+        "Personnel", "DecisionOwners", "DecisionMakers", "Contributors",
+        "Remarks", "ProjectSpecifications", "ActivityStates",
+    )
+    local_data = _get_local_record_data(record_id)
+    if local_data:
+        canon_merged = 0
+        for cf in _CANONICAL_BD_FIELDS:
+            if cf not in data_block and cf in local_data:
+                data_block[cf] = local_data[cf]
+                canon_merged += 1
+        if canon_merged:
+            log.debug("[BD-ENRICH] Merged %d canonical fields into %s", canon_merged, record_id)
 
     # 2) Parameters[] merge — add entries present in local record but missing
     #    from OSDU-returned data (matched by DataObjectParameter).
-    local_data = _get_local_record_data(record_id)
+    if not local_data:
+        local_data = _get_local_record_data(record_id)
     if not local_data:
         return
     local_params = local_data.get("Parameters") or []
@@ -588,6 +615,102 @@ async def _enrich_bd_production(
     except Exception as e:
         log.warning("[BD-PROD] Failed to parse production CBT %s: %s", target_id, e)
         return {}
+
+
+async def _enrich_bd_uncertainties(
+    data_block: Dict[str, Any],
+    client: httpx.AsyncClient,
+    storage_url: str,
+    hdr: dict,
+) -> List[Dict[str, Any]]:
+    """Fetch KeyUncertainties ColumnBasedTable from BD Parameters[].
+
+    Looks for a Parameters entry with StringParameterKey 'KeyUncertainties'.
+    Returns a list of dicts: [{"Factor": ..., "Impact": ..., "Description": ...}, ...]
+    """
+    params = data_block.get("Parameters") or []
+    if not isinstance(params, list):
+        return []
+
+    target_id = ""
+    for p in params:
+        if not isinstance(p, dict):
+            continue
+        dop = p.get("DataObjectParameter") or ""
+        if "ColumnBasedTable" not in dop:
+            continue
+        keys = p.get("Keys") or []
+        if any("KeyUncertainties" in (kv.get("StringParameterKey") or "")
+               for kv in keys if isinstance(kv, dict)):
+            target_id = dop
+            break
+
+    if not target_id:
+        return []
+
+    # Try OSDU storage first, fall back to local demo record
+    d: Optional[Dict[str, Any]] = None
+    try:
+        r = await client.get(f"{storage_url}/{target_id}", headers=hdr)
+        if r.status_code == 200:
+            d = (r.json() or {}).get("data", {}) or {}
+        else:
+            log.debug("[BD-KU] CBT %s returned %d, trying local", target_id, r.status_code)
+    except Exception as e:
+        log.debug("[BD-KU] OSDU fetch failed for %s: %s, trying local", target_id, e)
+
+    if not d:
+        d = _get_local_record_data(target_id)
+        if d:
+            log.info("[BD-KU] Using local record for %s", target_id)
+
+    if not d:
+        return []
+
+    try:
+        return _parse_cbt_uncertainties(d, target_id)
+    except Exception as e:
+        log.warning("[BD-KU] Failed to parse uncertainties CBT %s: %s", target_id, e)
+        return []
+
+
+def _parse_cbt_uncertainties(d: Dict[str, Any], target_id: str = "") -> List[Dict[str, Any]]:
+    """Parse a ColumnBasedTable ``data`` block into a list of uncertainty dicts."""
+    tbl = d.get("Table") or {}
+    key_cols = tbl.get("KeyColumns") or []
+    val_cols = tbl.get("Columns") or []
+    col_values = tbl.get("ColumnValues") or []
+    if not col_values:
+        return []
+
+    all_col_defs = key_cols + val_cols
+    col_data: Dict[str, list] = {}
+    for i, cv_entry in enumerate(col_values):
+        if not isinstance(cv_entry, dict):
+            continue
+        name = all_col_defs[i].get("ColumnName", f"col_{i}") if i < len(all_col_defs) else f"col_{i}"
+        vals = (cv_entry.get("StringColumn")
+                or cv_entry.get("IntegerColumn")
+                or cv_entry.get("NumberColumn")
+                or [])
+        col_data[name] = vals
+
+    factors = col_data.get("Factor", [])
+    impacts = col_data.get("Impact", [])
+    descriptions = col_data.get("Description", [])
+    n = len(factors)
+
+    result = []
+    for i in range(n):
+        result.append({
+            "Factor": factors[i] if i < len(factors) else "",
+            "Impact": impacts[i] if i < len(impacts) else "",
+            "Description": descriptions[i] if i < len(descriptions) else "",
+        })
+
+    if result:
+        log.info("[BD-KU] Loaded %d uncertainty factors from %s", len(result), target_id)
+    return result
 
 
 def _parse_cbt_production(d: Dict[str, Any], target_id: str = "") -> Dict[str, Any]:
@@ -949,6 +1072,7 @@ async def search_run(
                         # BusinessDecision: merge local enrichments + pull headline volumes
                         bd_geolabel: Dict[str, Any] = {}
                         bd_production: Dict[str, Any] = {}
+                        bd_uncertainties: List[Dict[str, Any]] = []
                         if "businessdecision" in (full.get("kind") or "").lower():
                             _apply_bd_local_enrichment(data_block, rid)
                             if not (volumes or {}).get("ColumnValues"):
@@ -957,6 +1081,8 @@ async def search_run(
                             bd_geolabel = await _enrich_bd_geolabel(
                                 data_block, client, storage_url, hdr)
                             bd_production = await _enrich_bd_production(
+                                data_block, client, storage_url, hdr)
+                            bd_uncertainties = await _enrich_bd_uncertainties(
                                 data_block, client, storage_url, hdr)
 
                         # Generic WPC/master-data links (exclude reference-data)
@@ -1022,6 +1148,7 @@ async def search_run(
                             "metadata_pairs": metadata_pairs,
                             "bd_geolabel": bd_geolabel,
                             "bd_production": bd_production,
+                            "bd_uncertainties": bd_uncertainties,
                         })
                     except Exception as e:
                         log.warning("[SEARCH] Exception enriching %s: %s", rid, e)
@@ -1098,6 +1225,7 @@ async def view_record(request: Request, record_id: str):
             # BusinessDecision: merge local enrichments + pull headline volumes
             bd_geolabel: Dict[str, Any] = {}
             bd_production: Dict[str, Any] = {}
+            bd_uncertainties: List[Dict[str, Any]] = []
             if "businessdecision" in (full.get("kind") or "").lower():
                 _apply_bd_local_enrichment(data_block, record_id)
                 if not (volumes or {}).get("ColumnValues"):
@@ -1106,6 +1234,8 @@ async def view_record(request: Request, record_id: str):
                 bd_geolabel = await _enrich_bd_geolabel(
                     data_block, client, storage_url, hdr)
                 bd_production = await _enrich_bd_production(
+                    data_block, client, storage_url, hdr)
+                bd_uncertainties = await _enrich_bd_uncertainties(
                     data_block, client, storage_url, hdr)
 
             links = extract_osdu_links(data_block) or []
@@ -1157,6 +1287,7 @@ async def view_record(request: Request, record_id: str):
                 "metadata_pairs": metadata_pairs,
                 "bd_geolabel": bd_geolabel,
                 "bd_production": bd_production,
+                "bd_uncertainties": bd_uncertainties,
             }
 
         return templates.TemplateResponse(

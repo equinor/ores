@@ -26,6 +26,7 @@ MANIFEST_ORDER = [
     "manifest_wpcraw_drogon.json",          # RAW volumes
     "manifest_wpcstat_drogon.json",         # statistics
     "manifest_wpcparams_drogon.json",       # input parameters (ColumnBasedTable)
+    "manifest_wpc_keyuncertainties_drogon.json",  # Key Uncertainties (ColumnBasedTable)
     "manifest_activity_drogon.json",        # ActivityTemplate + Activity (merged workflow)
     "manifest_risk_drogon.json",            # Risk
     "manifest_bd_drogon.json",              # BusinessDecision (references everything)

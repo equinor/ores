@@ -96,6 +96,89 @@
                 "StringParameterKey": "ETPDataspace"
               }
             ]
+          },
+          {
+            "Title": "Key Uncertainties",
+            "Selection": "DG1 subsurface uncertainty factors (High/Medium impact)",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG1-KeyUncertainties:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "KeyUncertainties"
+              }
+            ]
+          }
+        ],
+        "Personnel": [
+          {
+            "Name": "Kristin Haugen",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:GeoscienceLead:1",
+            "Organisation": "Drogon Subsurface"
+          },
+          {
+            "Name": "Henrik Bj\u00f8rnstad",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:ReservoirEngineer:1",
+            "Organisation": "Drogon Reservoir Management"
+          },
+          {
+            "Name": "Anna-Lise Tveit",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:Petrophysicist:1",
+            "Organisation": "Drogon Petec"
+          },
+          {
+            "Name": "Erik Stensrud",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:FMULead:1",
+            "Organisation": "Drogon Geomodelling"
+          }
+        ],
+        "DecisionOwners": [
+          {
+            "Name": "Kristin Haugen",
+            "Organisation": "Drogon Subsurface Lead"
+          }
+        ],
+        "DecisionMakers": [
+          {
+            "Name": "Lars Kongsvik",
+            "Organisation": "Drogon Project Director"
+          }
+        ],
+        "Contributors": [
+          {
+            "Name": "Erik Stensrud",
+            "Organisation": "Drogon Geomodelling"
+          },
+          {
+            "Name": "Marte Nygaard",
+            "Organisation": "ST MSU Subsurface QA"
+          }
+        ],
+        "Remarks": [
+          {
+            "Remark": "Implement Level 3 FMU uncertainty workflow with increased realisation count (target 50+) for DG2",
+            "RemarkSource": "DG1 Recommendations"
+          },
+          {
+            "Remark": "Acquire additional core data from NorthSea and EastLobe segments to reduce porosity uncertainty",
+            "RemarkSource": "DG1 Recommendations"
+          },
+          {
+            "Remark": "Evaluate seismic reprocessing for improved depth conversion of Valysar top reservoir",
+            "RemarkSource": "DG1 Recommendations"
+          },
+          {
+            "Remark": "Conduct cross-discipline review of OWC sensitivity on recovery factor estimates",
+            "RemarkSource": "DG1 Recommendations"
+          },
+          {
+            "Remark": "Execute production testing programme across suspected fault blocks to establish pressure connectivity and constrain dynamic simulation models (target DG2 input, 2027-Q2)",
+            "RemarkSource": "DG1 Recommendations"
+          },
+          {
+            "Remark": "Plan up to 4 additional infill wells targeting isolated fault compartments; include CAPEX range 50\u2013150 MUSD in DG2 cost estimate and sensitivity analysis",
+            "RemarkSource": "DG1 Recommendations"
           }
         ],
         "ancestry": {
@@ -106,46 +189,6 @@
         },
         "ext": {
           "equinor": {
-            "Authors": [
-              {
-                "Name": "Kristin Haugen",
-                "Role": "Geoscience Lead",
-                "Organisation": "Drogon Subsurface"
-              },
-              {
-                "Name": "Henrik Bj\u00f8rnstad",
-                "Role": "Reservoir Engineer",
-                "Organisation": "Drogon Reservoir Management"
-              },
-              {
-                "Name": "Anna-Lise Tveit",
-                "Role": "Petrophysicist",
-                "Organisation": "Drogon Petec"
-              },
-              {
-                "Name": "Erik Stensrud",
-                "Role": "Geologist / FMU Lead",
-                "Organisation": "Drogon Geomodelling"
-              }
-            ],
-            "ReviewTeam": {
-              "PreparedBy": {
-                "Name": "Erik Stensrud",
-                "Organisation": "Drogon Geomodelling"
-              },
-              "Responsible": {
-                "Name": "Kristin Haugen",
-                "Organisation": "Drogon Subsurface Lead"
-              },
-              "QARecommender": {
-                "Name": "Marte Nygaard",
-                "Organisation": "ST MSU Subsurface QA"
-              },
-              "ApprovedBy": {
-                "Name": "Lars Kongsvik",
-                "Organisation": "Drogon Project Director"
-              }
-            },
             "Alternatives": [
               {
                 "Name": "Proceed to DG2 with full 7-segment development",
@@ -175,67 +218,12 @@
               "WaterDepth_m": 108,
               "TargetStartUp": "2028-H1"
             },
-            "ReservoirProperties": {
-              "FormationName": "Valysar",
-              "NumberOfSegments": 7,
-              "Segments": [
-                "NorthSea",
-                "NorthHorst",
-                "CentralHorst",
-                "CentralFlanks",
-                "CentralSouth",
-                "SouthWing",
-                "EastLobe"
-              ],
-              "FaciesTypes": [
-                "Channel",
-                "Crevasse",
-                "Floodplain"
-              ],
-              "AveragePorosity_Channel": 0.28,
-              "AveragePorosity_Crevasse": 0.21,
-              "AveragePorosity_Floodplain": 0.1,
-              "NetToGross": 0.85,
-              "OWC_m_TVDSS": 1710,
-              "ReservoirTemperature_degC": 72,
-              "ReservoirPressure_bara": 170
-            },
-            "KeyUncertainties": [
-              {
-                "Factor": "Facies-dependent porosity",
-                "Impact": "High",
-                "Description": "Porosity varies 0.10\u20130.28 across facies; Channel-dominant segments (CentralHorst) have higher confidence than Floodplain-rich segments (NorthSea, EastLobe)."
-              },
-              {
-                "Factor": "OWC depth and aquifer support",
-                "Impact": "Medium",
-                "Description": "OWC modelled at 1710 m TVDSS with \u00b115 m uncertainty; deeper OWC would increase STOIIP but also water production risk."
-              },
-              {
-                "Factor": "Cementation and diagenesis",
-                "Impact": "Medium",
-                "Description": "Deeper segments show evidence of diagenetic cementation reducing effective porosity and permeability, particularly in Crevasse facies."
-              },
-              {
-                "Factor": "Fault transmissibility and reservoir compartmentalization",
-                "Impact": "High",
-                "Description": "Bounding and intra-reservoir faults may act as sealing or partially-sealing barriers, isolating drainage blocks and reducing sweep efficiency. This risk could require additional infill wells beyond the current 12-well plan and extended production testing, with significant cost increase implications (estimated 50\u2013150 MUSD additional CAPEX). Mitigation: production testing to confirm pressure connectivity, and up to 4 additional wells targeting isolated fault compartments."
-              }
-            ],
             "UncertaintySummary": {
               "Basis": "FMU static in-place volumes from 3 uncertainty realisations across 7 segments and 3 facies types",
               "Note": "See stat WPC for full P10/P50/P90 breakdown per segment & facies. Volume Unit: m\u00b3.",
               "TotalRealisations": 3,
               "MethodologyReference": "FMU Level 2 static uncertainty workflow (Valysar geomodel v1)"
-            },
-            "DG2Recommendations": [
-              "Implement Level 3 FMU uncertainty workflow with increased realisation count (target 50+) for DG2",
-              "Acquire additional core data from NorthSea and EastLobe segments to reduce porosity uncertainty",
-              "Evaluate seismic reprocessing for improved depth conversion of Valysar top reservoir",
-              "Conduct cross-discipline review of OWC sensitivity on recovery factor estimates",
-              "Execute production testing programme across suspected fault blocks to establish pressure connectivity and constrain dynamic simulation models (target DG2 input, 2027-Q2)",
-              "Plan up to 4 additional infill wells targeting isolated fault compartments; include CAPEX range 50\u2013150 MUSD in DG2 cost estimate and sensitivity analysis"
-            ]
+            }
           }
         }
       }

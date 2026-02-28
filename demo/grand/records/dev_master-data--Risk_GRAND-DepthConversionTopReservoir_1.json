@@ -1,0 +1,27 @@
+{
+  "id": "dev:master-data--Risk:GRAND-DepthConversionTopReservoir:1",
+  "kind": "osdu:wks:master-data--Risk:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "GRAND — Depth conversion & top reservoir uncertainty",
+    "Summary": "Uncertainty in seismic time interpretation and depth conversion can reduce structural elevation, impacting volumes and NPV.",
+    "Description": "Top reservoir interpretation is limited by seismic resolution; depth conversion adds uncertainty leading to large volumetric range and potential NPV downside.",
+    "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+    "EffectiveDateTime": "2019-04-26T00:00:00Z"
+  }
+}

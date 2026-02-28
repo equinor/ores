@@ -1,0 +1,361 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [
+    {
+      "id": "dev:master-data--BusinessDecision:GRAND-DG2-ConceptSelect:1",
+      "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "GRAND — Decision Gate 2 DG2 Concept Select",
+        "Description": "DG2 concept selection for the Grane Northern Area Development (GRAND) project. The GRAND area comprises F-Structure and D-Structure discoveries in Palaeocene Heimdal Formation sands on the NW flank of Utsira High, Viking Graben. 300 geo-realisations were run to quantify STOIIP uncertainty across three structures (F, D, D-North) and three facies groups (Heimdal, Mapped Injectites, Unmapped Injectites). DG2 recommends subsea tie-back to Grane with 4×6-slot templates, 23 wells (including 2 multilateral), targeting June 2023 start-up.",
+        "ProjectName": "Grane Northern Area Development (GRAND)",
+        "DecisionLevelID": "dev:reference-data--DecisionLevel:DG2:1",
+        "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:1",
+        "DecisionDueDate": "2019-04-26",
+        "DecisionDate": "2019-04-26",
+        "DecisionSummary": "Approve subsea tie-back development to Grane platform. Four 6-slot templates (24 slots), 23 wells plus 2 multilateral. Reference case STOIIP 118.7 MSm³ (P90 70.7, P10 158.7). Start-up target June 2023.",
+        "RiskAssessmentDocument": "dev:work-product-component--Document:PM398-DD-200-001_01_Final_INTERNAL.pdf:1",
+        "RiskIDs": [
+          "dev:master-data--Risk:GRAND-DepthConversionTopReservoir:1",
+          "dev:master-data--Risk:GRAND-EarlyWaterBreakthrough:1",
+          "dev:master-data--Risk:GRAND-InjectiteUncertainty:1"
+        ],
+        "PriorActivityIDs": [
+          "dev:work-product-component--ReservoirEstimatedVolumes:5033c9e2-b1cf-424a-86c9-76b846942cf8:1",
+          "dev:work-product-component--ReservoirEstimatedVolumes:6b8095a6-8d29-4baa-91b1-c14f5afa95bc:1",
+          "dev:work-product-component--GeoLabelSet:d92d1630-1c61-40f3-af65-8e799ca061d0:1"
+        ],
+        "Parameters": [
+          {
+            "Title": "Volumes evidence",
+            "Selection": "Aggregated PRMS statistics used for the DG2 decision",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:5033c9e2-b1cf-424a-86c9-76b846942cf8:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "REV-stats"
+              }
+            ]
+          },
+          {
+            "Title": "Raw volumes (per realisation)",
+            "Selection": "300 geo-realisations × 12 zones, individual STOIIP volumes per realisation",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:6b8095a6-8d29-4baa-91b1-c14f5afa95bc:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "REV-raw"
+              }
+            ]
+          },
+          {
+            "Title": "Headline volumes & reservoir properties (GeoLabelSet)",
+            "Selection": "P10/P50/P90 headline volumes per segment and totals, derived from stat REV",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--GeoLabelSet:d92d1630-1c61-40f3-af65-8e799ca061d0:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "GeoLabelSet"
+              }
+            ]
+          },
+          {
+            "Title": "Reservoir scope",
+            "Selection": "Master-data context for the decision",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:master-data--Reservoir:f9585655-83d8-4549-ae3e-2dffc2cd5937:1"
+          },
+          {
+            "Title": "Petroleum Technology Report (DG2)",
+            "Selection": "PM398-DD-200-001 Rev 01 Final — 548 pages covering seismic, petrophysics, geomodelling, dynamic simulation",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:work-product-component--Document:PM398-DD-200-001_01_Final_INTERNAL.pdf:1"
+          },
+          {
+            "Title": "SRA report",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:work-product-component--Document:SRA-GRAND-DG2-Report:1"
+          },
+          {
+            "Title": "CRA report",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:work-product-component--Document:CRA-GRAND-DG2-Report:1"
+          },
+          {
+            "Title": "Key Uncertainties",
+            "Selection": "GRAND DG2 subsurface uncertainty factors (High/Medium impact)",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:GRAND-DG2-KeyUncertainties:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "KeyUncertainties"
+              }
+            ]
+          },
+          {
+            "Title": "Production Forecast (23-year)",
+            "Selection": "Reference case forecast, 460 FMU realisations, 23 wells",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:GRAND-DG2-ProductionForecast:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "ProductionForecast"
+              }
+            ]
+          }
+        ],
+        "Personnel": [
+          {
+            "Name": "Berit Frantzen",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:PetecManager:1",
+            "Organisation": "GRAND Petec"
+          },
+          {
+            "Name": "Sarah Riordan",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:GeomodellingLead:1",
+            "Organisation": "GRAND Geomodelling"
+          },
+          {
+            "Name": "Abdulhamit Akalin",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:Geophysicist:1",
+            "Organisation": "GRAND Subsurface"
+          },
+          {
+            "Name": "Alok Saraf",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:ReservoirEngineer:1",
+            "Organisation": "GRAND Reservoir"
+          },
+          {
+            "Name": "Asbjørn Sæbø",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:Petrophysicist:1",
+            "Organisation": "GRAND Subsurface"
+          },
+          {
+            "Name": "Ingvar Skaar",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:Geologist:1",
+            "Organisation": "GRAND Subsurface"
+          }
+        ],
+        "DecisionOwners": [
+          {
+            "Name": "Berit Frantzen",
+            "Organisation": "GRAND Petec Manager"
+          }
+        ],
+        "DecisionMakers": [
+          {
+            "Name": "Hilde Reme",
+            "Organisation": "GRAND Project Director"
+          }
+        ],
+        "Contributors": [
+          {
+            "Name": "Sarah Riordan",
+            "Organisation": "GRAND Geomodelling"
+          },
+          {
+            "Name": "Rune Instefjord",
+            "Organisation": "ST MSU DYN"
+          },
+          {
+            "Name": "Stine Skotheim",
+            "Organisation": "GRAND QRM Manager"
+          }
+        ],
+        "Remarks": [
+          {
+            "Remark": "Adjust layer thickness below FWL in simulation grid to improve modelling of OWC movements",
+            "RemarkSource": "DG2 Recommendations"
+          },
+          {
+            "Remark": "Implement full Level 3 FMU uncertainty workflow for more detailed dynamic uncertainty analysis",
+            "RemarkSource": "DG2 Recommendations"
+          },
+          {
+            "Remark": "Investigate PERMZ value in unmapped injectites to better reflect sub-grid geology",
+            "RemarkSource": "DG2 Recommendations"
+          },
+          {
+            "Remark": "Run sensitivities on effect of periodical gas injection (huff & puff)",
+            "RemarkSource": "DG2 Recommendations"
+          },
+          {
+            "Remark": "Evaluate AICD vs ICD in lower completion",
+            "RemarkSource": "DG2 Recommendations"
+          },
+          {
+            "Remark": "Acquire new 4D seismic baseline in 2020 for monitoring",
+            "RemarkSource": "DG2 Recommendations"
+          },
+          {
+            "Remark": "Evaluate potential for infill drilling and subsea multiphase pumps",
+            "RemarkSource": "DG2 Recommendations"
+          }
+        ],
+        "ProjectSpecifications": [
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:NPV_10pct:1",
+            "DataQuantityParameter": 820,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MUSD:1"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:IRR:1",
+            "DataQuantityParameter": 22,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:percent:1"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:CAPEX:1",
+            "DataQuantityParameter": 22400,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:1"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:OPEX_pa:1",
+            "DataQuantityParameter": 1050,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:1"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:BreakevenOil:1",
+            "DataQuantityParameter": 35,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:USDperbbl:1"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:Payback:1",
+            "DataQuantityParameter": 5.5,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:years:1"
+          }
+        ],
+        "ActivityStates": [
+          {
+            "EffectiveDateTime": "2019-04-26",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:1",
+            "Remark": "DG2 Concept Select"
+          },
+          {
+            "EffectiveDateTime": "2020-04-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:1",
+            "Remark": "DG3 FEED"
+          },
+          {
+            "EffectiveDateTime": "2021-01-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:1",
+            "Remark": "FID / DG4"
+          },
+          {
+            "EffectiveDateTime": "2021-10-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:1",
+            "Remark": "Fabrication Start"
+          },
+          {
+            "EffectiveDateTime": "2022-07-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:1",
+            "Remark": "Subsea Installation"
+          },
+          {
+            "EffectiveDateTime": "2023-06-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:1",
+            "Remark": "First Oil"
+          },
+          {
+            "EffectiveDateTime": "2026-01-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:1",
+            "Remark": "Plateau Production"
+          }
+        ],
+        "ext": {
+          "equinor": {
+            "Alternatives": [
+              {
+                "Name": "Alt-A: Subsea tie-back to Grane (4×6-slot templates)",
+                "Rank": 1,
+                "Rationale": "Highest NPV; leverages existing Grane infrastructure for lift gas and water handling. 23 wells + 2 multilateral; start-up heater and LP gas debottlenecking on Grane required. Provisions for future expansion with additional templates or subsea pump.",
+                "RecommendedAction": "Approve"
+              },
+              {
+                "Name": "Alt-B: Standalone FPSO",
+                "Rank": 2,
+                "Rationale": "Higher CAPEX and schedule risk per SRA and CRA. Provides independence from Grane but does not justify the cost premium given the reference-case volumes.",
+                "RecommendedAction": "Reject"
+              },
+              {
+                "Name": "Alt-C: Reduced scope — F-Structure only",
+                "Rank": 3,
+                "Rationale": "Lower initial investment but forgoes 55% of the reference STOIIP (D-Structure = 64.3 MSm³ REF). May be revisited if D-Structure volumes prove lower than P90 after DG3 appraisal.",
+                "RecommendedAction": "Fallback"
+              }
+            ],
+            "DevelopmentConcept": {
+              "Summary": "Subsea development with 4×6-slot templates (24 slots), tie-back to Grane platform. Two flowlines (16\" and 14\") plus 8\" gas lift line. Distance to Grane ~10-12 km. Water depth 128–130 m.",
+              "WellCount": 23,
+              "MultilateralWells": 2,
+              "TemplateSlots": 24,
+              "DrillingCentres": 4,
+              "ReservoirFormation": "Heimdal (Palaeocene)",
+              "FieldArea": "Grane Northern Area",
+              "WaterDepth_m": 129,
+              "DistanceToHost_km": 11,
+              "HostFacility": "Grane Platform",
+              "TargetStartUp": "2023-06"
+            },
+            "UncertaintySummary": {
+              "Basis": "PRMS; probabilistic FMU using 300 geo-realisations (3 selected: Real 1 = REF, Real 88 = P90, Real 58 = P10). Static in-place volumes from DG2 geomodels.",
+              "Note": "Volumes from Table 11-23 of PM398-DD-200-001 Rev 01. Bo and GOR differentiated by structure.",
+              "TotalRealisations": 300,
+              "SelectedRealisations": {
+                "P90": "Real 88",
+                "REF": "Real 1",
+                "P10": "Real 58"
+              },
+              "MethodologyReference": "FMU Level 2 static uncertainty workflow (GRAND DG2 geomodel)",
+              "StaticInPlace_Oil_MSm3": {
+                "P90": 70.7,
+                "REF": 118.7,
+                "P10": 158.7
+              },
+              "TargetSTOIIP_MSm3": {
+                "P90": 57.4,
+                "REF": 103.8,
+                "P10": 142.6,
+                "Note": "STOIIP by target thickness; excludes unmapped injectites (not well targets)"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [],
+    "WorkProducts": []
+  }
+}

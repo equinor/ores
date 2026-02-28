@@ -1,0 +1,73 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [
+      {
+        "id": "dev:work-product-component--ColumnBasedTable:GRAND-DG2-KeyUncertainties:1",
+        "kind": "osdu:wks:work-product-component--ColumnBasedTable:1.4.0",
+        "acl": {
+          "owners": ["data.default.owners@dev.dataservices.energy"],
+          "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+        },
+        "legal": {
+          "legaltags": ["dev-equinor-private-default"],
+          "otherRelevantDataCountries": ["NO"]
+        },
+        "data": {
+          "Name": "GRAND DG2 — Key Uncertainties",
+          "Description": "Key subsurface and development uncertainties for the GRAND DG2 Concept Select. Heimdal Formation, Palaeocene sands. 300 geo-realisations basis. 4 factors with High/Medium impact ratings.",
+          "ColumnBasedTableTypeID": "dev:reference-data--ColumnBasedTableType:AdHoc",
+          "Table": {
+            "ColumnBasedTableTypeID": "dev:reference-data--ColumnBasedTableType:AdHoc",
+            "KeyColumns": [
+              {
+                "ColumnName": "Factor",
+                "ValueType": "string"
+              }
+            ],
+            "Columns": [
+              {
+                "ColumnName": "Impact",
+                "ValueType": "string"
+              },
+              {
+                "ColumnName": "Description",
+                "ValueType": "string"
+              }
+            ],
+            "ColumnValues": [
+              {
+                "StringColumn": [
+                  "Seismic time interpretation and depth conversion",
+                  "Early water breakthrough",
+                  "Injectite volume contribution",
+                  "Well placement optimisation"
+                ]
+              },
+              {
+                "StringColumn": [
+                  "High",
+                  "High",
+                  "Medium",
+                  "Medium"
+                ]
+              },
+              {
+                "StringColumn": [
+                  "Top reservoir interpretation is uncertain due to limitations in seismic resolution. Depth conversion adds to total depth uncertainty of the top reservoir surface. New 4D baseline acquisition planned for 2020.",
+                  "Thin and heavy oil zone directly above an active aquifer. Recovery may be low due to high oil viscosity and thin oil column thickness. ICD/AICD and subsea pumps under evaluation.",
+                  "Sand remobilisation and injection processes have generated a complex network of sand dykes and sills. Predicting their location and volumetric potential is highly uncertain. Mapped injectites contribute 22.1 MSm\u00b3 (REF) but unmapped injectites add 14.9 MSm\u00b3 with high uncertainty.",
+                  "Wells target areas with >10 m oil column in Heimdal and >12 m in mapped injectites. Higher placement towards top Heimdal and longer reservoir sections could improve recovery."
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "WorkProducts": []
+  }
+}

@@ -306,7 +306,7 @@ These are custom keys we added to enrich the BD manifest but which OSDU silently
 - `KeyEconomics` (NPV, IRR, CAPEX, breakeven, payback)
 - `ScheduleMilestones` (milestone, target date, status)
 - `ProductionProfile` (yearly oil/gas/water forecast + peak/EUR/RF)
-- `DG2Recommendations` / `DG3Recommendations`
+- `Recommendations` (formerly `DG2Recommendations` / `DG3Recommendations`)
 
 ### Implications
 
@@ -428,7 +428,7 @@ The search template (`app/templates/search.html`) detects `BusinessDecision` rec
 | Key uncertainties | `ext.equinor.KeyUncertainties` | — | Impact-coloured list |
 | Input parameters | `data.Parameters` | — | Tagged parameter list |
 | Authors & governance | `ext.equinor.Authors`, `ReviewTeam` | — | Name/role grid |
-| Recommendations | `ext.equinor.DG3Recommendations` | — | Bullet list |
+| Recommendations | `ext.equinor.Recommendations` | — | Bullet list |
 | Uncertainty methodology | `ext.equinor.UncertaintySummary` | — | Method, confidence, date |
 
 ### Three-tier volume fallback

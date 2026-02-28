@@ -217,7 +217,7 @@
             "Description": "Deeper segments show evidence of diagenetic cementation reducing effective porosity and permeability, particularly in Crevasse facies."
           }
         ],
-        "DG2Recommendations": [
+        "Recommendations": [
           "Implement Level 3 FMU uncertainty workflow with increased realisation count (target 50+) for DG2",
           "Acquire additional core data from NorthSea and EastLobe segments to reduce porosity uncertainty",
           "Evaluate seismic reprocessing for improved depth conversion of Valysar top reservoir",
