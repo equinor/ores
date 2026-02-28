@@ -166,6 +166,7 @@ def _load_bd_enrichments() -> None:
     manifest_paths = [
         _REPO_ROOT / "demo" / "json" / "manifest_dg_businessdecision.json",
         _REPO_ROOT / "demo" / "drogon" / "manifest_bd_drogon.json",
+        _REPO_ROOT / "demo" / "drogon_dg2" / "manifest_bd_dg2.json",
     ]
     for path in manifest_paths:
         if not path.exists():

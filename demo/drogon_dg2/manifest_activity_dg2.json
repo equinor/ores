@@ -1,0 +1,306 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [],
+  "Data": {
+    "Datasets": [
+      {
+        "id": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+        "kind": "osdu:wks:dataset--ETPDataspace:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon DG Geomodel Dataspace (maap/drogon_dg)",
+          "Description": "RDDMS dataspace holding the Drogon geomodel EPC files exported from RMS (drogon_activity.epc, drogon_tables.epc). Shared between DG1 and DG2 — same structural model.",
+          "DatasetProperties": {
+            "URI": "eml:///dataspace(maap/drogon_dg)",
+            "ServerURL": "wss://equinorswedev.energy.azure.com/api/reservoir-ddms-etp/v2/"
+          }
+        }
+      }
+    ],
+    "WorkProductComponents": [
+      {
+        "id": "dev:work-product-component--ActivityTemplate:be0cabb6-8f79-5aee-894e-4bda337bb6d4:1",
+        "kind": "osdu:wks:work-product-component--ActivityTemplate:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon Valysar — DG2 Volumetrics Workflow Template (porosity ×0.8)",
+          "Description": "ActivityTemplate for the Drogon / Valysar DG2 volumetrics ensemble workflow. Identical three-step structure to DG1 but with revised porosity (×0.8 factor) and expanded to 50 Latin Hypercube realisations. Step 1: generate input parameter table (OWC + revised PHIT). Step 2: run RMS DecisionExample with 50 realisations. Step 3: aggregate into P10/P50/P90 statistics.",
+          "Originator": "markuslund.vevle@emerson.com",
+          "ParameterTemplates": [
+            {
+              "Title": "InputParameters",
+              "Description": "Input parameter table (ColumnBasedTable WPC) with revised porosity.",
+              "IsInput": true,
+              "IsOutput": false,
+              "MinOccurs": 0,
+              "MaxOccurs": 1,
+              "DefaultParameterKind": "DataObject"
+            },
+            {
+              "Title": "Process",
+              "Description": "Name of the RMS reservoir model / workflow.",
+              "IsInput": true,
+              "IsOutput": false,
+              "MinOccurs": 1,
+              "MaxOccurs": 1,
+              "DefaultParameterKind": "string"
+            },
+            {
+              "Title": "NumberOfRealizations",
+              "Description": "Total number of realisations executed (50 for DG2).",
+              "IsInput": true,
+              "IsOutput": false,
+              "MinOccurs": 1,
+              "MaxOccurs": 1,
+              "DefaultParameterKind": "integer"
+            },
+            {
+              "Title": "Workflow",
+              "Description": "Workflow label within the RMS project.",
+              "IsInput": true,
+              "IsOutput": false,
+              "MinOccurs": 0,
+              "MaxOccurs": 1,
+              "DefaultParameterKind": "string"
+            },
+            {
+              "Title": "Method",
+              "Description": "Uncertainty sampling method (Latin Hypercube for DG2).",
+              "IsInput": true,
+              "IsOutput": false,
+              "MinOccurs": 0,
+              "MaxOccurs": 1,
+              "DefaultParameterKind": "string"
+            },
+            {
+              "Title": "Variables",
+              "Description": "Serialised JSON list of uncertainty variable definitions (DG2 revised PHIT).",
+              "IsInput": true,
+              "IsOutput": false,
+              "MinOccurs": 0,
+              "MaxOccurs": 1,
+              "DefaultParameterKind": "string"
+            },
+            {
+              "Title": "DesignMatrix",
+              "Description": "Serialised JSON design matrix (50 realisations).",
+              "IsInput": true,
+              "IsOutput": false,
+              "MinOccurs": 0,
+              "MaxOccurs": 1,
+              "DefaultParameterKind": "string"
+            },
+            {
+              "Title": "OutputParameters",
+              "Description": "Generated per-realisation input parameter table (ColumnBasedTable WPC).",
+              "IsInput": false,
+              "IsOutput": true,
+              "MinOccurs": 0,
+              "MaxOccurs": 1,
+              "DefaultParameterKind": "DataObject"
+            },
+            {
+              "Title": "OutputVolumes",
+              "Description": "Per-realisation reservoir estimated volumes (RAW REV WPC).",
+              "IsInput": false,
+              "IsOutput": true,
+              "MinOccurs": 1,
+              "MaxOccurs": 1,
+              "DefaultParameterKind": "DataObject"
+            },
+            {
+              "Title": "ReportTable",
+              "Description": "Statistical aggregation of realisations (STAT REV WPC: P10/P50/P90).",
+              "IsInput": false,
+              "IsOutput": true,
+              "MinOccurs": 1,
+              "MaxOccurs": 1,
+              "DefaultParameterKind": "DataObject"
+            }
+          ]
+        }
+      },
+      {
+        "id": "dev:work-product-component--Activity:f7b43d02-f3e1-5c3b-ae2e-dce9da267c19:1",
+        "kind": "osdu:wks:work-product-component--Activity:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon Valysar — DG2 Volumetrics Workflow Run (porosity ×0.8, 50 realisations)",
+          "Description": "DG2 volumetrics workflow for the Valysar formation of the Drogon field. Same three-step structure as DG1 but with revised petrophysical interpretation: porosity reduced by factor 0.8 based on additional core data and thin-section analysis. Ensemble expanded from 3 to 50 Latin Hypercube realisations for improved uncertainty quantification. Pore-dependent volumes (Oil, Gas, etc.) correspondingly reduced by ~20%. OWC depths and structural model unchanged from DG1.",
+          "Originator": "markuslund.vevle@emerson.com",
+          "CreationDateTime": "2026-03-01T09:00:00.000Z",
+          "ActivityTemplateID": "dev:work-product-component--ActivityTemplate:be0cabb6-8f79-5aee-894e-4bda337bb6d4:1",
+          "WorkflowStatus": "Completed",
+          "ParentObjectID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+          "ParentWorkProductID": "dev:work-product:37dcb76b-e388-4dbf-9940-9ed277418543:1",
+          "Parameters": [
+            {
+              "Title": "InputParameters",
+              "Description": "DG2 per-realisation OWC depth and revised PHIT input parameter table (porosity ×0.8)",
+              "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+              "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:221547dc-1a16-49f5-a180-f5caf88ee098:1",
+              "Keys": [
+                {
+                  "ParameterKey": "artifact",
+                  "StringParameterKey": "ColumnBasedTable-params"
+                }
+              ]
+            },
+            {
+              "Title": "Process",
+              "Description": "RMS reservoir model workflow that executes the DG2 realisations",
+              "ParameterKindID": "dev:reference-data--ParameterKind:String:1",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+              "StringParameter": "RMS DecisionExample — Drogon Valysar (DG2, revised PHIT)"
+            },
+            {
+              "Title": "NumberOfRealizations",
+              "Description": "Number of realisations executed in the DG2 ensemble",
+              "ParameterKindID": "dev:reference-data--ParameterKind:Integer:1",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+              "IntegerParameter": 50
+            },
+            {
+              "Title": "Workflow",
+              "Description": "Workflow label within the RMS project",
+              "ParameterKindID": "dev:reference-data--ParameterKind:String:1",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+              "StringParameter": "DecisionExample"
+            },
+            {
+              "Title": "Method",
+              "Description": "Uncertainty sampling method — upgraded to Latin Hypercube at DG2",
+              "ParameterKindID": "dev:reference-data--ParameterKind:String:1",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+              "StringParameter": "Latin_Hypercube"
+            },
+            {
+              "Title": "Variables",
+              "Description": "Uncertainty variable configuration: OWC contacts (7 segments, unchanged) and PHIT per facies (Floodplain, Channel, Crevasse) revised ×0.8.",
+              "ParameterKindID": "dev:reference-data--ParameterKind:String:1",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+              "StringParameter": "[{\"Name\":\"ModTable, Oil/water contact OWC 1\",\"QuantityType\":\"Low/Base/High\",\"Low\":1650.0,\"Base\":1660.0,\"High\":1670.0,\"Group\":\"Skirt\"},{\"Name\":\"ModTable, Oil/water contact OWC 2\",\"QuantityType\":\"Low/Base/High\",\"Low\":1667.0,\"Base\":1677.0,\"High\":1687.0,\"Group\":\"Centre\"},{\"Name\":\"ModTable, Oil/water contact OWC 3\",\"QuantityType\":\"Low/Base/High\",\"Low\":1667.0,\"Base\":1677.0,\"High\":1687.0,\"Group\":\"Centre\"},{\"Name\":\"ModTable, Oil/water contact OWC 4\",\"QuantityType\":\"Low/Base/High\",\"Low\":1650.0,\"Base\":1660.0,\"High\":1670.0,\"Group\":\"Skirt\"},{\"Name\":\"ModTable, Oil/water contact OWC 5\",\"QuantityType\":\"Low/Base/High\",\"Low\":1667.0,\"Base\":1677.0,\"High\":1687.0,\"Group\":\"Centre\"},{\"Name\":\"ModTable, Oil/water contact OWC 6\",\"QuantityType\":\"Low/Base/High\",\"Low\":1667.0,\"Base\":1677.0,\"High\":1687.0,\"Group\":\"Centre\"},{\"Name\":\"ModTable, Oil/water contact OWC 7\",\"QuantityType\":\"Low/Base/High\",\"Low\":1650.0,\"Base\":1660.0,\"High\":1670.0,\"Group\":\"Skirt\"},{\"Name\":\"std_valysar, Floodplain, PHIT, expected mean\",\"QuantityType\":\"Low/Base/High\",\"Low\":0.072,\"Base\":0.0824,\"High\":0.0904,\"Group\":\"Centre\"},{\"Name\":\"std_valysar, Channel, PHIT, expected mean\",\"QuantityType\":\"Low/Base/High\",\"Low\":0.212256,\"Base\":0.220257,\"High\":0.22825601,\"Group\":\"Centre\"},{\"Name\":\"std_valysar, Crevasse, PHIT, expected mean\",\"QuantityType\":\"Low/Base/High\",\"Low\":0.15896,\"Base\":0.16695852,\"High\":0.17496001,\"Group\":\"Centre\"}]"
+            },
+            {
+              "Title": "DesignMatrix",
+              "Description": "Design matrix for 50 realisations: 3 anchored (Base/Low/High) + 47 Latin Hypercube draws.",
+              "ParameterKindID": "dev:reference-data--ParameterKind:String:1",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+              "StringParameter": "[{\"Realization\":1,\"Scenario\":\"Base\"},{\"Realization\":2,\"Scenario\":\"Low\"},{\"Realization\":3,\"Scenario\":\"High\"},{\"Realization\":4,\"Scenario\":\"MonteCarlo-4\"},{\"Realization\":5,\"Scenario\":\"MonteCarlo-5\"},{\"Realization\":6,\"Scenario\":\"MonteCarlo-6\"},{\"Realization\":7,\"Scenario\":\"MonteCarlo-7\"},{\"Realization\":8,\"Scenario\":\"MonteCarlo-8\"},{\"Realization\":9,\"Scenario\":\"MonteCarlo-9\"},{\"Realization\":10,\"Scenario\":\"MonteCarlo-10\"},{\"Realization\":11,\"Scenario\":\"MonteCarlo-11\"},{\"Realization\":12,\"Scenario\":\"MonteCarlo-12\"},{\"Realization\":13,\"Scenario\":\"MonteCarlo-13\"},{\"Realization\":14,\"Scenario\":\"MonteCarlo-14\"},{\"Realization\":15,\"Scenario\":\"MonteCarlo-15\"},{\"Realization\":16,\"Scenario\":\"MonteCarlo-16\"},{\"Realization\":17,\"Scenario\":\"MonteCarlo-17\"},{\"Realization\":18,\"Scenario\":\"MonteCarlo-18\"},{\"Realization\":19,\"Scenario\":\"MonteCarlo-19\"},{\"Realization\":20,\"Scenario\":\"MonteCarlo-20\"},{\"Realization\":21,\"Scenario\":\"MonteCarlo-21\"},{\"Realization\":22,\"Scenario\":\"MonteCarlo-22\"},{\"Realization\":23,\"Scenario\":\"MonteCarlo-23\"},{\"Realization\":24,\"Scenario\":\"MonteCarlo-24\"},{\"Realization\":25,\"Scenario\":\"MonteCarlo-25\"},{\"Realization\":26,\"Scenario\":\"MonteCarlo-26\"},{\"Realization\":27,\"Scenario\":\"MonteCarlo-27\"},{\"Realization\":28,\"Scenario\":\"MonteCarlo-28\"},{\"Realization\":29,\"Scenario\":\"MonteCarlo-29\"},{\"Realization\":30,\"Scenario\":\"MonteCarlo-30\"},{\"Realization\":31,\"Scenario\":\"MonteCarlo-31\"},{\"Realization\":32,\"Scenario\":\"MonteCarlo-32\"},{\"Realization\":33,\"Scenario\":\"MonteCarlo-33\"},{\"Realization\":34,\"Scenario\":\"MonteCarlo-34\"},{\"Realization\":35,\"Scenario\":\"MonteCarlo-35\"},{\"Realization\":36,\"Scenario\":\"MonteCarlo-36\"},{\"Realization\":37,\"Scenario\":\"MonteCarlo-37\"},{\"Realization\":38,\"Scenario\":\"MonteCarlo-38\"},{\"Realization\":39,\"Scenario\":\"MonteCarlo-39\"},{\"Realization\":40,\"Scenario\":\"MonteCarlo-40\"},{\"Realization\":41,\"Scenario\":\"MonteCarlo-41\"},{\"Realization\":42,\"Scenario\":\"MonteCarlo-42\"},{\"Realization\":43,\"Scenario\":\"MonteCarlo-43\"},{\"Realization\":44,\"Scenario\":\"MonteCarlo-44\"},{\"Realization\":45,\"Scenario\":\"MonteCarlo-45\"},{\"Realization\":46,\"Scenario\":\"MonteCarlo-46\"},{\"Realization\":47,\"Scenario\":\"MonteCarlo-47\"},{\"Realization\":48,\"Scenario\":\"MonteCarlo-48\"},{\"Realization\":49,\"Scenario\":\"MonteCarlo-49\"},{\"Realization\":50,\"Scenario\":\"MonteCarlo-50\"}]"
+            },
+            {
+              "Title": "OutputParameters",
+              "Description": "Generated DG2 per-realisation input parameter table (porosity ×0.8)",
+              "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Output:1",
+              "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:221547dc-1a16-49f5-a180-f5caf88ee098:1",
+              "Keys": [
+                {
+                  "ParameterKey": "artifact",
+                  "StringParameterKey": "ColumnBasedTable-params"
+                }
+              ]
+            },
+            {
+              "Title": "OutputVolumes",
+              "Description": "DG2 per-realisation estimated volumes (RAW REV WPC, ×0.8)",
+              "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Output:1",
+              "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:c9122010-c68a-4100-9959-f5b6733b39ec:1",
+              "Keys": [
+                {
+                  "ParameterKey": "artifact",
+                  "StringParameterKey": "REV-raw"
+                }
+              ]
+            },
+            {
+              "Title": "ReportTable",
+              "Description": "DG2 statistical aggregation of realisations (STAT REV WPC: P10/P50/P90)",
+              "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Output:1",
+              "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:d9179447-b244-4753-a08a-50bf7ec7646c:1",
+              "Keys": [
+                {
+                  "ParameterKey": "artifact",
+                  "StringParameterKey": "REV-stats"
+                }
+              ]
+            },
+            {
+              "Title": "GeoModelDataspace",
+              "Description": "RDDMS ETP dataspace containing the Drogon geomodel EPC files. Shared structural model — same dataspace as DG1.",
+              "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+              "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+              "Keys": [
+                {
+                  "ParameterKey": "artifact",
+                  "StringParameterKey": "ETPDataspace"
+                }
+              ]
+            }
+          ],
+          "ancestry": {
+            "parents": [
+              "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+            ],
+            "children": [
+              "dev:work-product-component--ColumnBasedTable:221547dc-1a16-49f5-a180-f5caf88ee098:1",
+              "dev:work-product-component--ReservoirEstimatedVolumes:c9122010-c68a-4100-9959-f5b6733b39ec:1",
+              "dev:work-product-component--ReservoirEstimatedVolumes:d9179447-b244-4753-a08a-50bf7ec7646c:1"
+            ]
+          }
+        }
+      }
+    ],
+    "WorkProducts": []
+  }
+}

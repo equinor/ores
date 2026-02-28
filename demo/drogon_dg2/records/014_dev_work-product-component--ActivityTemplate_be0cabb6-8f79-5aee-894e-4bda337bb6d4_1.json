@@ -1,0 +1,117 @@
+{
+  "id": "dev:work-product-component--ActivityTemplate:be0cabb6-8f79-5aee-894e-4bda337bb6d4:1",
+  "kind": "osdu:wks:work-product-component--ActivityTemplate:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon Valysar — DG2 Volumetrics Workflow Template (porosity ×0.8)",
+    "Description": "ActivityTemplate for the Drogon / Valysar DG2 volumetrics ensemble workflow. Identical three-step structure to DG1 but with revised porosity (×0.8 factor) and expanded to 50 Latin Hypercube realisations. Step 1: generate input parameter table (OWC + revised PHIT). Step 2: run RMS DecisionExample with 50 realisations. Step 3: aggregate into P10/P50/P90 statistics.",
+    "Originator": "markuslund.vevle@emerson.com",
+    "ParameterTemplates": [
+      {
+        "Title": "InputParameters",
+        "Description": "Input parameter table (ColumnBasedTable WPC) with revised porosity.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "Process",
+        "Description": "Name of the RMS reservoir model / workflow.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "NumberOfRealizations",
+        "Description": "Total number of realisations executed (50 for DG2).",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "integer"
+      },
+      {
+        "Title": "Workflow",
+        "Description": "Workflow label within the RMS project.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "Method",
+        "Description": "Uncertainty sampling method (Latin Hypercube for DG2).",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "Variables",
+        "Description": "Serialised JSON list of uncertainty variable definitions (DG2 revised PHIT).",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "DesignMatrix",
+        "Description": "Serialised JSON design matrix (50 realisations).",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "OutputParameters",
+        "Description": "Generated per-realisation input parameter table (ColumnBasedTable WPC).",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "OutputVolumes",
+        "Description": "Per-realisation reservoir estimated volumes (RAW REV WPC).",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "ReportTable",
+        "Description": "Statistical aggregation of realisations (STAT REV WPC: P10/P50/P90).",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      }
+    ]
+  }
+}

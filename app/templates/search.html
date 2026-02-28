@@ -123,6 +123,14 @@
   .prod-legend .leg-gas::before { background: #38a169; }
   .prod-legend .leg-water::before { background: #3182ce; }
   .prod-legend .leg-cum::before { background: #805ad5; }
+
+  /* ── Collapsible detail sections ── */
+  .bd-collapse { margin-bottom: .2rem; }
+  .bd-collapse > summary { list-style: none; }
+  .bd-collapse > summary::-webkit-details-marker { display: none; }
+  .bd-collapse[open] > summary { margin-bottom: .45rem; }
+  .bd-collapse[open] > summary::after { content: ' ▾'; }
+  .bd-collapse > summary::after { content: ''; }
 </style>
 {% endblock %}
 
@@ -321,8 +329,8 @@
 
       {% set ext_eq = ((rec.data or {}).get('ext') or {}).get('equinor') or {} %}
       {% set unc = ext_eq.get('UncertaintySummary') or {} %}
-      {% set static_oil = unc.get('StaticInPlace_Oil_m3') or unc.get('StaticInPlace_Oil_MSm3') or {} %}
-      {% set reco_oil = unc.get('Recoverable_Oil_m3') or {} %}
+      {% set static_oil = unc.get('StaticInPlace_Oil_MSm3') or {} %}
+      {% set reco_oil = unc.get('Recoverable_Oil_MSm3') or {} %}
       {% set vol_summary = ext_eq.get('VolumesSummary_STOIIP_MSm3') or {} %}
 
       {# ── Format volume helpers ── #}
@@ -506,59 +514,47 @@
                 {% elif has_summary_vol %}
                 {# Volumes from ext VolumesSummary_STOIIP_MSm3 (already MSm³) #}
                 {% set vtot = vol_summary.get('Total') or {} %}
+                {% set mid_label = 'REF' if vtot.get('REF') is not none else 'P50' %}
                 <div class="bd-kpi oil">
                   <div class="bd-kpi-label">STOIIP Total</div>
                   <div class="bd-kpi-stat">
                     <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ vtot.get('P90', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">REF</div><div class="bd-kpi-num">{{ vtot.get('REF', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">{{ mid_label }}</div><div class="bd-kpi-num">{{ vtot.get('REF') if vtot.get('REF') is not none else vtot.get('P50', '—') }}</div></div>
                     <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ vtot.get('P10', '—') }}</div></div>
                   </div>
                   <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
                 </div>
-                {% for sname, svals in vol_summary.items() if sname != 'Total' %}
+                {% for sname, svals in vol_summary.items() if sname != 'Total' and sname != 'Note' %}
                 <div class="bd-kpi {{ loop.cycle('gas','total','oil') }}">
                   <div class="bd-kpi-label">{{ sname }}</div>
                   <div class="bd-kpi-stat">
                     <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ svals.get('P90', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">REF</div><div class="bd-kpi-num">{{ svals.get('REF', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">{{ mid_label }}</div><div class="bd-kpi-num">{{ svals.get('REF') if svals.get('REF') is not none else svals.get('P50', '—') }}</div></div>
                     <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ svals.get('P10', '—') }}</div></div>
                   </div>
                   <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
                 </div>
                 {% endfor %}
                 {% elif has_ext_vol %}
-                {# Volumes from UncertaintySummary StaticInPlace / Recoverable #}
-                {% set is_m3 = (static_oil.get('P90', 0) is number and static_oil.get('P90', 0) > 10000) %}
+                {# Volumes from UncertaintySummary StaticInPlace / Recoverable (MSm³) #}
                 <div class="bd-kpi oil">
                   <div class="bd-kpi-label">Static In-Place Oil</div>
                   <div class="bd-kpi-stat">
-                    {% if is_m3 %}
-                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format((static_oil.get('P90',0)|float) / 1000000) }}</div></div>
-                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(((static_oil.get('P50') or static_oil.get('REF') or 0)|float) / 1000000) }}</div></div>
-                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format((static_oil.get('P10',0)|float) / 1000000) }}</div></div>
-                    {% else %}
                     <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ static_oil.get('P90', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ static_oil.get('P50') or static_oil.get('REF') or '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ static_oil.get('P50', '—') }}</div></div>
                     <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ static_oil.get('P10', '—') }}</div></div>
-                    {% endif %}
                   </div>
-                  <div class="bd-kpi-pct" style="margin-top:.2rem">{% if is_m3 %}Mm³{% else %}MSm³{% endif %}</div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
                 </div>
                 {% if reco_oil %}
                 <div class="bd-kpi gas">
                   <div class="bd-kpi-label">Recoverable Oil</div>
                   <div class="bd-kpi-stat">
-                    {% if is_m3 %}
-                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format((reco_oil.get('P90',0)|float) / 1000000) }}</div></div>
-                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(((reco_oil.get('P50') or reco_oil.get('REF') or 0)|float) / 1000000) }}</div></div>
-                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format((reco_oil.get('P10',0)|float) / 1000000) }}</div></div>
-                    {% else %}
                     <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ reco_oil.get('P90', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ reco_oil.get('P50') or reco_oil.get('REF') or '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ reco_oil.get('P50', '—') }}</div></div>
                     <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ reco_oil.get('P10', '—') }}</div></div>
-                    {% endif %}
                   </div>
-                  <div class="bd-kpi-pct" style="margin-top:.2rem">{% if is_m3 %}Mm³{% else %}MSm³{% endif %}</div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
                 </div>
                 {% endif %}
                 {% else %}
@@ -599,13 +595,39 @@
                 {% if dcon.get('TargetStartUp') %}
                 <div class="bd-devcon-item"><div class="bd-label">Target Start-up</div><div class="bd-value">{{ dcon.get('TargetStartUp') }}</div></div>
                 {% endif %}
+                {% if dcon.get('ContingentWells') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Contingent Wells</div><div class="bd-value">{{ dcon.get('ContingentWells') }}</div></div>
+                {% endif %}
+                {% if dcon.get('FlowlineSpec') %}
+                <div class="bd-devcon-item"><div class="bd-label">Flowline</div><div class="bd-value">{{ dcon.get('FlowlineSpec') }}</div></div>
+                {% endif %}
+                {% if dcon.get('SubseaBoostingPump') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Subsea Boost</div><div class="bd-value">{{ 'Yes' if dcon.get('SubseaBoostingPump') else 'No' }}</div></div>
+                {% endif %}
+                {% if dcon.get('WaterTreatmentCapacity_m3d') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Water Treatment</div><div class="bd-value">{{ dcon.get('WaterTreatmentCapacity_m3d') }} m³/d</div></div>
+                {% endif %}
+                {% if dcon.get('InjectionStrategy') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Injection Strategy</div><div class="bd-value">{{ dcon.get('InjectionStrategy') }}</div></div>
+                {% endif %}
+                {% if dcon.get('WellPlan') is mapping %}
+                {% set wp = dcon.get('WellPlan') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Well Plan</div><div class="bd-value" style="display:flex;gap:.6rem;flex-wrap:wrap;">
+                  {% if wp.get('Producers') is not none %}<span>{{ wp.get('Producers') }} prod.</span>{% endif %}
+                  {% if wp.get('Injectors_Phase2') is not none %}<span>{{ wp.get('Injectors_Phase2') }} inj. (Ph2)</span>{% endif %}
+                  {% if wp.get('AvgWellDepth_mMD') is not none %}<span>~{{ wp.get('AvgWellDepth_mMD') }} m MD</span>{% endif %}
+                  {% if wp.get('DrillingDuration_days_avg') is not none %}<span>{{ wp.get('DrillingDuration_days_avg') }} d/well</span>{% endif %}
+                  {% if wp.get('CompletionType') %}<span>{{ wp.get('CompletionType') }}</span>{% endif %}
+                </div></div>
+                {% endif %}
               </div>
               {% endif %}
 
               {# ── Reservoir Properties ── #}
               {% set rp = ext_eq.get('ReservoirProperties') or {} %}
               {% if rp %}
-              <div class="bd-section-title">Reservoir Properties</div>
+              <details class="bd-collapse">
+              <summary class="bd-section-title" style="cursor:pointer;">Reservoir Properties ▸</summary>
               <div class="bd-resprop-grid">
                 {% if rp.get('FormationName') %}
                 <div class="bd-resprop-item"><div class="bd-label">Formation</div><div class="bd-value">{{ rp.get('FormationName') }}</div></div>
@@ -664,7 +686,26 @@
                 {% if rp.get('FWL_m_TVDSS_D') is not none %}
                 <div class="bd-resprop-item"><div class="bd-label">FWL D-Struct</div><div class="bd-value">{{ rp.get('FWL_m_TVDSS_D') }} m</div></div>
                 {% endif %}
+                {% if rp.get('AveragePermeability_mD') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Avg. Permeability</div><div class="bd-value">{{ rp.get('AveragePermeability_mD') }} mD</div></div>
+                {% endif %}
+                {% if rp.get('OilViscosity_cP') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Oil Viscosity</div><div class="bd-value">{{ rp.get('OilViscosity_cP') }} cP</div></div>
+                {% endif %}
+                {% if rp.get('BoFactor') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Bo Factor</div><div class="bd-value">{{ rp.get('BoFactor') }}</div></div>
+                {% endif %}
+                {% if rp.get('GOR_Sm3Sm3') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">GOR</div><div class="bd-value">{{ rp.get('GOR_Sm3Sm3') }} Sm³/Sm³</div></div>
+                {% endif %}
+                {% if rp.get('NumberOfSegments') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Segment Count</div><div class="bd-value">{{ rp.get('NumberOfSegments') }}</div></div>
+                {% endif %}
+                {% if rp.get('PorosityNote') %}
+                <div class="bd-resprop-item" style="grid-column:1/-1;"><div class="bd-label">Porosity Note</div><div class="bd-value" style="font-style:italic;color:#718096;">{{ rp.get('PorosityNote') }}</div></div>
+                {% endif %}
               </div>
+              </details>
               {% endif %}
 
               {# ── Key Economics ── #}
@@ -691,7 +732,11 @@
                 {% if econ.get('Payback_years') is not none %}
                 <div class="bd-econ"><div class="bd-econ-label">Payback</div><div class="bd-econ-num">{{ econ.get('Payback_years') }} yr</div></div>
                 {% endif %}
+                {% if econ.get('OilPriceAssumption_USDperbbl') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">Oil Price</div><div class="bd-econ-num">${{ econ.get('OilPriceAssumption_USDperbbl') }}/bbl</div></div>
+                {% endif %}
               </div>
+              {% if econ.get('Currency') %}<div style="font-size:.78rem;color:#a0aec0;margin-top:.2rem;">{{ econ.get('Currency') }}</div>{% endif %}
               {% elif econ and econ.get('Note') %}
               <div class="bd-section-title">Key Economics</div>
               <div style="font-size:.88rem;color:#718096;">{{ econ.get('Note') }}</div>
@@ -720,6 +765,13 @@
                     {% if alt.get('RecommendedAction') %}<span class="bd-alt-rank" style="background:#e6fffa;color:#276749;">{{ alt.get('RecommendedAction') }}</span>{% endif %}
                   </div>
                   {% if alt.get('Rationale') %}<div class="bd-alt-rationale">{{ alt.get('Rationale') }}</div>{% endif %}
+                  {% if alt.get('NPV_10pct_MUSD') is not none or alt.get('CAPEX_MNOK') is not none or alt.get('IRR_pct') is not none %}
+                  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.3rem;">
+                    {% if alt.get('NPV_10pct_MUSD') is not none %}<span class="bd-alt-rank" style="background:#f0fff4;color:#276749;">NPV ${{ alt.get('NPV_10pct_MUSD') }}M</span>{% endif %}
+                    {% if alt.get('CAPEX_MNOK') is not none %}<span class="bd-alt-rank" style="background:#ebf8ff;color:#2b6cb0;">CAPEX {{ alt.get('CAPEX_MNOK') }} MNOK</span>{% endif %}
+                    {% if alt.get('IRR_pct') is not none %}<span class="bd-alt-rank" style="background:#fefcbf;color:#975a16;">IRR {{ alt.get('IRR_pct') }}%</span>{% endif %}
+                  </div>
+                  {% endif %}
                 </li>
                 {% endfor %}
               </ul>
@@ -755,7 +807,8 @@
               {# ── Input Parameters ── #}
               {% set bd_params = (rec.data or {}).get('Parameters') or [] %}
               {% if bd_params %}
-              <div class="bd-section-title">Input Parameters</div>
+              <details class="bd-collapse">
+              <summary class="bd-section-title" style="cursor:pointer;">Input Parameters ▸</summary>
               <ul class="bd-param-list">
                 {% for p in bd_params if p is mapping %}
                 {# Skip GeoModelDataspace — shown in Data Sources section below #}
@@ -775,6 +828,7 @@
                 {% endif %}
                 {% endfor %}
               </ul>
+              </details>
               {% endif %}
 
               {# ── Data Sources (ETPDataspace / RDDMS geomodel) ── #}
@@ -812,7 +866,8 @@
 
               {# ── Authors & Review Team ── #}
               {% if ext_eq.get('Authors') or ext_eq.get('ReviewTeam') %}
-              <div class="bd-section-title">Authors & Governance</div>
+              <details class="bd-collapse">
+              <summary class="bd-section-title" style="cursor:pointer;">Authors & Governance ▸</summary>
               <div class="bd-meta-grid">
                 {% for a in ext_eq.get('Authors') or [] %}
                 <div class="bd-meta-item">
@@ -837,6 +892,7 @@
                 </div>
                 {% endif %}
               </div>
+              </details>
               {% endif %}
 
               {# ── Recommendations ── #}
@@ -852,13 +908,29 @@
 
               {# ── Uncertainty basis ── #}
               {% if unc.get('Basis') %}
-              <div class="bd-section-title">Uncertainty Methodology</div>
+              <details class="bd-collapse">
+              <summary class="bd-section-title" style="cursor:pointer;">Uncertainty Methodology ▸</summary>
               <div style="font-size:.88rem;color:#4a5568;line-height:1.5;">
                 <b>Basis:</b> {{ unc.get('Basis') }}<br>
                 {% if unc.get('TotalRealisations') %}<b>Realisations:</b> {{ unc.get('TotalRealisations') }}{% endif %}
                 {% if unc.get('MethodologyReference') %} · {{ unc.get('MethodologyReference') }}{% endif %}
                 {% if unc.get('Note') %}<br><span class="muted">{{ unc.get('Note') }}</span>{% endif %}
               </div>
+              {% set rf = unc.get('RecoveryFactor_pct') or {} %}
+              {% if rf.get('P90') is not none or rf.get('P50') is not none or rf.get('P10') is not none %}
+              <div class="bd-econ-row" style="margin-top:.5rem;">
+                {% if rf.get('P90') is not none %}<div class="bd-econ"><div class="bd-econ-label">RF P90</div><div class="bd-econ-num">{{ rf.get('P90') }}%</div></div>{% endif %}
+                {% if rf.get('P50') is not none %}<div class="bd-econ"><div class="bd-econ-label">RF P50</div><div class="bd-econ-num">{{ rf.get('P50') }}%</div></div>{% endif %}
+                {% if rf.get('P10') is not none %}<div class="bd-econ"><div class="bd-econ-label">RF P10</div><div class="bd-econ-num">{{ rf.get('P10') }}%</div></div>{% endif %}
+              </div>
+              {% endif %}
+              {% set selr = unc.get('SelectedRealisations') or {} %}
+              {% if selr %}
+              <div style="font-size:.82rem;color:#718096;margin-top:.3rem;">
+                Selected: {% for pk, pv in selr.items() %}{{ pk }}={{ pv }}{% if not loop.last %}, {% endif %}{% endfor %}
+              </div>
+              {% endif %}
+              </details>
               {% endif %}
 
             </div>{# /bd-body #}
@@ -1082,14 +1154,15 @@ classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
           {# ── BD VolumesSummary as breakdown table (no live WPC data) ── #}
           <section class="section-card">
             <h5>Volume Breakdown (STOIIP from Decision Package)</h5>
+            {% set mid_hdr = 'REF' if (vol_summary.get('Total') or {}).get('REF') is not none else 'P50' %}
             <div class="table-scroll">
             <table>
-              <tr><th>Structure</th><th>P90 (MSm³)</th><th>REF (MSm³)</th><th>P10 (MSm³)</th></tr>
-              {% for sname, svals in vol_summary.items() %}
+              <tr><th>Structure</th><th>P90 (MSm³)</th><th>{{ mid_hdr }} (MSm³)</th><th>P10 (MSm³)</th></tr>
+              {% for sname, svals in vol_summary.items() if sname != 'Note' %}
               <tr{% if sname == 'Total' %} style="font-weight:700;border-top:2px solid #4a5568;"{% endif %}>
                 <td>{{ sname }}</td>
                 <td>{{ svals.get('P90', '—') }}</td>
-                <td>{{ svals.get('REF', '—') }}</td>
+                <td>{{ svals.get('REF') if svals.get('REF') is not none else svals.get('P50', '—') }}</td>
                 <td>{{ svals.get('P10', '—') }}</td>
               </tr>
               {% endfor %}
@@ -1104,6 +1177,14 @@ classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
           {% if prod_years %}
           <section class="section-card">
             <h5>Production Forecast</h5>
+            {% if prod_profile.get('EUR_MSm3') is not none or prod_profile.get('PeakOilRate_kSm3d') is not none or prod_profile.get('STOIIP_P50_MSm3') is not none %}
+            <div class="bd-econ-row" style="margin-bottom:.5rem;">
+              {% if prod_profile.get('STOIIP_P50_MSm3') is not none %}<div class="bd-econ"><div class="bd-econ-label">STOIIP P50</div><div class="bd-econ-num">{{ prod_profile.get('STOIIP_P50_MSm3') }} MSm³</div></div>{% endif %}
+              {% if prod_profile.get('EUR_MSm3') is not none %}<div class="bd-econ"><div class="bd-econ-label">EUR</div><div class="bd-econ-num">{{ prod_profile.get('EUR_MSm3') }} MSm³</div></div>{% endif %}
+              {% if prod_profile.get('PeakOilRate_kSm3d') is not none %}<div class="bd-econ"><div class="bd-econ-label">Peak Oil Rate</div><div class="bd-econ-num">{{ prod_profile.get('PeakOilRate_kSm3d') }} kSm³/d</div></div>{% endif %}
+            </div>
+            {% endif %}
+            {% if prod_profile.get('Note') %}<div style="font-size:.82rem;color:#718096;margin-bottom:.4rem;">{{ prod_profile.get('Note') }}</div>{% endif %}
             <div class="prod-legend">
               <span class="leg-oil">Oil Rate (kSm³/d)</span>
               <span class="leg-gas">Gas Rate (kSm³/d)</span>
