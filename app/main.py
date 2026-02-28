@@ -158,6 +158,38 @@ def _access_token(request: Request) -> str:
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 
+# ── Local record cache (demo files, indexed by OSDU id) ─────────────────────
+_LOCAL_RECORDS: Dict[str, Dict[str, Any]] = {}
+
+
+def _load_local_records() -> None:
+    """Index all demo/*/records/*.json by their ``id`` field at startup."""
+    import glob
+    for pattern in ("demo/*/records/*.json", "demo/drogon_dg2/records/*.json"):
+        for path in glob.glob(str(_REPO_ROOT / pattern)):
+            try:
+                with open(path, encoding="utf-8") as f:
+                    rec = json.load(f)
+                rid = rec.get("id", "")
+                if rid:
+                    _LOCAL_RECORDS[rid] = rec
+            except Exception:
+                pass
+    if _LOCAL_RECORDS:
+        log.info("[LOCAL] Indexed %d demo records for local fallback", len(_LOCAL_RECORDS))
+
+
+_load_local_records()
+
+
+def _get_local_record_data(record_id: str) -> Optional[Dict[str, Any]]:
+    """Return the ``data`` block from a locally-cached record, or *None*."""
+    rec = _LOCAL_RECORDS.get(record_id)
+    if rec:
+        return rec.get("data") or rec
+    return None
+
+
 _BD_LOCAL_ENRICHMENTS: Dict[str, Dict[str, Any]] = {}
 
 
@@ -192,9 +224,14 @@ _load_bd_enrichments()
 def _apply_bd_local_enrichment(data_block: Dict[str, Any], record_id: str) -> None:
     """Merge locally-cached ext.equinor fields into *data_block* in-place.
 
+    Also patches Parameters[] from the local record if the OSDU-returned
+    record has fewer entries (e.g. GeoLabelSet / ProductionForecast refs
+    added after the last ingestion).
+
     Only fills keys that are absent in the OSDU-returned record, so live data
     always wins.
     """
+    # 1) ext.equinor merge
     local = _BD_LOCAL_ENRICHMENTS.get(record_id)
     if not local:
         return
@@ -205,7 +242,28 @@ def _apply_bd_local_enrichment(data_block: Dict[str, Any], record_id: str) -> No
             ext_eq[k] = v
             merged += 1
     if merged:
-        log.debug("[BD-ENRICH] Merged %d local keys into %s", merged, record_id)
+        log.debug("[BD-ENRICH] Merged %d local ext.equinor keys into %s", merged, record_id)
+
+    # 2) Parameters[] merge — add entries present in local record but missing
+    #    from OSDU-returned data (matched by DataObjectParameter).
+    local_data = _get_local_record_data(record_id)
+    if not local_data:
+        return
+    local_params = local_data.get("Parameters") or []
+    if not local_params:
+        return
+    live_params = data_block.get("Parameters") or []
+    live_dops = {p.get("DataObjectParameter") for p in live_params if isinstance(p, dict)}
+    added = 0
+    for lp in local_params:
+        if not isinstance(lp, dict):
+            continue
+        if lp.get("DataObjectParameter") not in live_dops:
+            live_params.append(lp)
+            added += 1
+    if added:
+        data_block["Parameters"] = live_params
+        log.debug("[BD-ENRICH] Added %d local Parameters entries to %s", added, record_id)
 
 
 def _normalize_volumes(data_block: Dict[str, Any]) -> Dict[str, Any]:
@@ -307,6 +365,296 @@ async def _enrich_bd_volumes(
     except Exception as e:
         log.warning("[BD-VOLUMES] Failed to fetch stat REV %s: %s", target_id, e)
         return {}
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# GeoLabelSet & ColumnBasedTable dynamic enrichment
+# ──────────────────────────────────────────────────────────────────────────────
+
+def _normalize_geolabel(data_block: Dict[str, Any]) -> Dict[str, Any]:
+    """Extract a flat, template-friendly dict from a GeoLabelSet record.
+
+    Returns::
+
+        {
+          "volumes_by_segment": {
+              "<SegmentID>": {"Oil.P90": v, "Oil.P50": v, "Oil.P10": v, ...},
+              ...
+          },
+          "properties": {
+              "Porosity": {"Channel": 0.22, "Crevasse": 0.17, ...},
+              "NetToGross": 0.85,
+              "Permeability": 450,
+              ...
+          },
+          "uncertainty": {
+              "Recoverable.P90": v, "Recoverable.P50": v, ...
+              "RecoveryFactor.P90": v, ...
+          },
+          "raw_geolabels": <original GeoLabels block>,
+        }
+    """
+    gl = (data_block or {}).get("GeoLabels") or {}
+    cv = gl.get("ColumnValues") or {}
+    if not cv:
+        return {}
+
+    segments = cv.get("SegmentID") or []
+    facies = cv.get("Facies") or []
+    n_rows = len(segments)
+
+    # Identify value column names (exclude key columns)
+    key_names = {c.get("ColumnName") for c in (gl.get("KeyColumns") or [])}
+    val_col_names = [k for k in cv if k not in key_names]
+
+    # Volumetric columns (Oil.P*, Recoverable.*, RecoveryFactor.*)
+    vol_prefixes = ("Oil.", "Gas.", "AssociatedGas.", "Bulk.", "Net.",
+                    "Pore.", "HydrocarbonPore.")
+    unc_prefixes = ("Recoverable.", "RecoveryFactor.")
+    # Property columns (everything else)
+
+    volumes_by_seg: Dict[str, Dict[str, Any]] = {}
+    properties: Dict[str, Any] = {}
+    uncertainty: Dict[str, Any] = {}
+
+    for i in range(n_rows):
+        seg = segments[i] if i < len(segments) else "TOTAL"
+        fac = facies[i] if i < len(facies) else "ALL"
+
+        for col in val_col_names:
+            vals = cv.get(col) or []
+            v = vals[i] if i < len(vals) else None
+            if v is None:
+                continue
+
+            if col.startswith(unc_prefixes):
+                # Uncertainty summary (field-level, TOTAL/ALL)
+                uncertainty[col] = v
+            elif col.startswith(vol_prefixes):
+                # Per-segment volumes
+                seg_dict = volumes_by_seg.setdefault(seg, {})
+                seg_dict[col] = v
+            else:
+                # Property column
+                if fac != "ALL":
+                    # Facies-specific property (e.g. Porosity per facies)
+                    prop_dict = properties.setdefault(col, {})
+                    if isinstance(prop_dict, dict):
+                        prop_dict[fac] = v
+                else:
+                    # Field-level scalar
+                    properties[col] = v
+
+    return {
+        "volumes_by_segment": volumes_by_seg,
+        "properties": properties,
+        "uncertainty": uncertainty,
+        "raw_geolabels": gl,
+    }
+
+
+async def _enrich_bd_geolabel(
+    data_block: Dict[str, Any],
+    client: httpx.AsyncClient,
+    storage_url: str,
+    hdr: dict,
+) -> Dict[str, Any]:
+    """Fetch the GeoLabelSet referenced in BD Parameters[] and normalise it.
+
+    Looks for a Parameters entry with StringParameterKey 'GeoLabelSet'.
+    """
+    params = data_block.get("Parameters") or []
+    if not isinstance(params, list):
+        return {}
+
+    target_id = ""
+    for p in params:
+        if not isinstance(p, dict):
+            continue
+        dop = p.get("DataObjectParameter") or ""
+        if "GeoLabelSet" not in dop:
+            continue
+        keys = p.get("Keys") or []
+        if any("GeoLabelSet" in (kv.get("StringParameterKey") or "")
+               for kv in keys if isinstance(kv, dict)):
+            target_id = dop
+            break
+        if not target_id:
+            target_id = dop
+
+    if not target_id:
+        return {}
+
+    # Try OSDU storage first, fall back to local demo record
+    d: Optional[Dict[str, Any]] = None
+    try:
+        r = await client.get(f"{storage_url}/{target_id}", headers=hdr)
+        if r.status_code == 200:
+            d = (r.json() or {}).get("data", {}) or {}
+        else:
+            log.debug("[BD-GLS] GeoLabelSet %s returned %d, trying local", target_id, r.status_code)
+    except Exception as e:
+        log.debug("[BD-GLS] OSDU fetch failed for %s: %s, trying local", target_id, e)
+
+    if not d:
+        d = _get_local_record_data(target_id)
+        if d:
+            log.info("[BD-GLS] Using local record for %s", target_id)
+
+    if not d:
+        return {}
+
+    try:
+        result = _normalize_geolabel(d)
+        if result:
+            log.info("[BD-GLS] Loaded GeoLabelSet %s (%d segments, %d props)",
+                     target_id,
+                     len(result.get("volumes_by_segment", {})),
+                     len(result.get("properties", {})))
+        return result
+    except Exception as e:
+        log.warning("[BD-GLS] Failed to normalise GeoLabelSet %s: %s", target_id, e)
+        return {}
+
+
+async def _enrich_bd_production(
+    data_block: Dict[str, Any],
+    client: httpx.AsyncClient,
+    storage_url: str,
+    hdr: dict,
+) -> Dict[str, Any]:
+    """Fetch ColumnBasedTable production forecast from BD Parameters[].
+
+    The OSDU ColumnBasedTable 1.4.0 schema stores column data under
+    ``data.Table``:
+
+    - ``Table.KeyColumns`` – list of key column defs (e.g. Year)
+    - ``Table.Columns`` – list of value column defs
+    - ``Table.ColumnValues`` – **positional array** of objects, each with
+      either ``IntegerColumn`` or ``NumberColumn`` holding the values.
+      Index *i* in the array corresponds to the column at the same index
+      in *KeyColumns + Columns*.
+
+    Returns a flat dict with template-friendly names::
+
+        {"Years": [...], "OilRate_kSm3d": [...], ...}
+    """
+    params = data_block.get("Parameters") or []
+    if not isinstance(params, list):
+        return {}
+
+    target_id = ""
+    for p in params:
+        if not isinstance(p, dict):
+            continue
+        dop = p.get("DataObjectParameter") or ""
+        if "ColumnBasedTable" not in dop:
+            continue
+        keys = p.get("Keys") or []
+        if any("ProductionForecast" in (kv.get("StringParameterKey") or "")
+               for kv in keys if isinstance(kv, dict)):
+            target_id = dop
+            break
+
+    if not target_id:
+        return {}
+
+    # Try OSDU storage first, fall back to local demo record
+    d: Optional[Dict[str, Any]] = None
+    try:
+        r = await client.get(f"{storage_url}/{target_id}", headers=hdr)
+        if r.status_code == 200:
+            d = (r.json() or {}).get("data", {}) or {}
+        else:
+            log.debug("[BD-PROD] CBT %s returned %d, trying local", target_id, r.status_code)
+    except Exception as e:
+        log.debug("[BD-PROD] OSDU fetch failed for %s: %s, trying local", target_id, e)
+
+    if not d:
+        d = _get_local_record_data(target_id)
+        if d:
+            log.info("[BD-PROD] Using local record for %s", target_id)
+
+    if not d:
+        return {}
+
+    try:
+        return _parse_cbt_production(d, target_id)
+    except Exception as e:
+        log.warning("[BD-PROD] Failed to parse production CBT %s: %s", target_id, e)
+        return {}
+
+
+def _parse_cbt_production(d: Dict[str, Any], target_id: str = "") -> Dict[str, Any]:
+    """Parse a ColumnBasedTable ``data`` block into template-friendly dict."""
+    tbl = d.get("Table") or {}
+    key_cols = tbl.get("KeyColumns") or []
+    val_cols = tbl.get("Columns") or []
+    col_values = tbl.get("ColumnValues") or []
+    if not col_values:
+        return {}
+
+    # Build ordered column name list: KeyColumns first, then Columns
+    all_col_defs = key_cols + val_cols
+    if len(all_col_defs) != len(col_values):
+        log.warning("[BD-PROD] Column count mismatch: %d defs vs %d value arrays",
+                    len(all_col_defs), len(col_values))
+
+    # Extract values from each positional entry
+    # Each entry is {"IntegerColumn": [...]} or {"NumberColumn": [...]}
+    col_data: Dict[str, list] = {}
+    for i, cv_entry in enumerate(col_values):
+        if not isinstance(cv_entry, dict):
+            continue
+        name = all_col_defs[i].get("ColumnName", f"col_{i}") if i < len(all_col_defs) else f"col_{i}"
+        # Pick whichever typed array is present
+        vals = (cv_entry.get("IntegerColumn")
+                or cv_entry.get("NumberColumn")
+                or cv_entry.get("StringColumn")
+                or cv_entry.get("BooleanColumn")
+                or [])
+        col_data[name] = vals
+
+    # Map CBT column names → template keys
+    name_map = {
+        "OilRate": "OilRate_kSm3d",
+        "GasRate": "GasRate_kSm3d",
+        "WaterRate": "WaterRate_kSm3d",
+        "YearlyOil": "YearlyOil_MSm3",
+        "CumulativeOil": "CumOil_MSm3",
+        "WaterCut": "WaterCut_pct",
+        "RecoveryFactor": "RecoveryFactor_pct",
+        "WellsOnline": "WellsOnline",
+    }
+
+    result: Dict[str, Any] = {}
+    # Key column → Years
+    for kc in key_cols:
+        cn = kc.get("ColumnName", "")
+        if cn in col_data:
+            result["Years"] = col_data[cn]
+
+    # Value columns
+    for vc in val_cols:
+        cn = vc.get("ColumnName", "")
+        if cn in col_data:
+            tpl_key = name_map.get(cn, cn)
+            result[tpl_key] = col_data[cn]
+
+    # Extract summary from ext.equinor.ForecastSummary if present
+    ext_eq = (d.get("ext") or {}).get("equinor") or {}
+    summary = ext_eq.get("ForecastSummary") or {}
+    if summary:
+        result["summary"] = summary
+    # Also carry forward the Note
+    note = ext_eq.get("Note") or d.get("Description") or ""
+    if note:
+        result["Note"] = note
+
+    if result.get("Years"):
+        log.info("[BD-PROD] Loaded production forecast: %d years, %d columns",
+                 len(result["Years"]), len(result) - 1)
+    return result
 
 
 def _parse_kind_inputs(kind: str, kinds_extra: str) -> List[str]:
@@ -571,11 +919,17 @@ async def search_run(
                         volumes = _normalize_volumes(data_block)
 
                         # BusinessDecision: merge local enrichments + pull headline volumes
+                        bd_geolabel: Dict[str, Any] = {}
+                        bd_production: Dict[str, Any] = {}
                         if "businessdecision" in (full.get("kind") or "").lower():
                             _apply_bd_local_enrichment(data_block, rid)
                             if not (volumes or {}).get("ColumnValues"):
                                 volumes = await _enrich_bd_volumes(
                                     data_block, client, storage_url, hdr)
+                            bd_geolabel = await _enrich_bd_geolabel(
+                                data_block, client, storage_url, hdr)
+                            bd_production = await _enrich_bd_production(
+                                data_block, client, storage_url, hdr)
 
                         # Generic WPC/master-data links (exclude reference-data)
                         links = extract_osdu_links(data_block) or []
@@ -638,6 +992,8 @@ async def search_run(
                             "links": links,
                             "linked_labels": linked_labels,
                             "metadata_pairs": metadata_pairs,
+                            "bd_geolabel": bd_geolabel,
+                            "bd_production": bd_production,
                         })
                     except Exception as e:
                         log.warning("[SEARCH] Exception enriching %s: %s", rid, e)
@@ -712,11 +1068,17 @@ async def view_record(request: Request, record_id: str):
             volumes = _normalize_volumes(data_block)
 
             # BusinessDecision: merge local enrichments + pull headline volumes
+            bd_geolabel: Dict[str, Any] = {}
+            bd_production: Dict[str, Any] = {}
             if "businessdecision" in (full.get("kind") or "").lower():
                 _apply_bd_local_enrichment(data_block, record_id)
                 if not (volumes or {}).get("ColumnValues"):
                     volumes = await _enrich_bd_volumes(
                         data_block, client, storage_url, hdr)
+                bd_geolabel = await _enrich_bd_geolabel(
+                    data_block, client, storage_url, hdr)
+                bd_production = await _enrich_bd_production(
+                    data_block, client, storage_url, hdr)
 
             links = extract_osdu_links(data_block) or []
 
@@ -765,6 +1127,8 @@ async def view_record(request: Request, record_id: str):
                 "links": links,
                 "linked_labels": linked_labels,
                 "metadata_pairs": metadata_pairs,
+                "bd_geolabel": bd_geolabel,
+                "bd_production": bd_production,
             }
 
         return templates.TemplateResponse(

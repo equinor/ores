@@ -1,0 +1,321 @@
+[
+  {
+    "id": "dev:reference-data--GeoLabelType:Porosity",
+    "kind": "osdu:wks:reference-data--GeoLabelType:1.0.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.office.global.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ]
+    },
+    "data": {
+      "Name": "Porosity",
+      "Code": "Porosity",
+      "Description": "Average porosity (fraction)",
+      "ValueType": "number",
+      "ValueCount": 1,
+      "UnitQuantityID": "dev:reference-data--UnitQuantity:dimensionless:",
+      "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:fraction:"
+    }
+  },
+  {
+    "id": "dev:reference-data--GeoLabelType:NetToGross",
+    "kind": "osdu:wks:reference-data--GeoLabelType:1.0.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.office.global.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ]
+    },
+    "data": {
+      "Name": "NetToGross",
+      "Code": "NetToGross",
+      "Description": "Net-to-gross ratio (fraction)",
+      "ValueType": "number",
+      "ValueCount": 1,
+      "UnitQuantityID": "dev:reference-data--UnitQuantity:dimensionless:",
+      "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:fraction:"
+    }
+  },
+  {
+    "id": "dev:reference-data--GeoLabelType:Permeability",
+    "kind": "osdu:wks:reference-data--GeoLabelType:1.0.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.office.global.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ]
+    },
+    "data": {
+      "Name": "Permeability",
+      "Code": "Permeability",
+      "Description": "Average permeability",
+      "ValueType": "number",
+      "ValueCount": 1,
+      "UnitQuantityID": "dev:reference-data--UnitQuantity:permeability:",
+      "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:mD:"
+    }
+  },
+  {
+    "id": "dev:reference-data--GeoLabelType:OilWaterContact",
+    "kind": "osdu:wks:reference-data--GeoLabelType:1.0.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.office.global.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ]
+    },
+    "data": {
+      "Name": "OilWaterContact",
+      "Code": "OilWaterContact",
+      "Description": "Oil-water contact depth (m TVDSS)",
+      "ValueType": "number",
+      "ValueCount": 1,
+      "UnitQuantityID": "dev:reference-data--UnitQuantity:length:",
+      "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m:"
+    }
+  },
+  {
+    "id": "dev:reference-data--GeoLabelType:Temperature",
+    "kind": "osdu:wks:reference-data--GeoLabelType:1.0.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.office.global.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ]
+    },
+    "data": {
+      "Name": "Temperature",
+      "Code": "Temperature",
+      "Description": "Reservoir temperature",
+      "ValueType": "number",
+      "ValueCount": 1,
+      "UnitQuantityID": "dev:reference-data--UnitQuantity:temperature:",
+      "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:degC:"
+    }
+  },
+  {
+    "id": "dev:reference-data--GeoLabelType:Pressure",
+    "kind": "osdu:wks:reference-data--GeoLabelType:1.0.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.office.global.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ]
+    },
+    "data": {
+      "Name": "Pressure",
+      "Code": "Pressure",
+      "Description": "Reservoir pressure",
+      "ValueType": "number",
+      "ValueCount": 1,
+      "UnitQuantityID": "dev:reference-data--UnitQuantity:pressure:",
+      "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:bar:"
+    }
+  },
+  {
+    "id": "dev:reference-data--GeoLabelType:Viscosity",
+    "kind": "osdu:wks:reference-data--GeoLabelType:1.0.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.office.global.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ]
+    },
+    "data": {
+      "Name": "Viscosity",
+      "Code": "Viscosity",
+      "Description": "Oil viscosity",
+      "ValueType": "number",
+      "ValueCount": 1,
+      "UnitQuantityID": "dev:reference-data--UnitQuantity:dynamic viscosity:",
+      "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:cP:"
+    }
+  },
+  {
+    "id": "dev:reference-data--GeoLabelType:FormationVolumeFactor",
+    "kind": "osdu:wks:reference-data--GeoLabelType:1.0.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.office.global.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ]
+    },
+    "data": {
+      "Name": "FormationVolumeFactor",
+      "Code": "FormationVolumeFactor",
+      "Description": "Oil formation volume factor (Bo)",
+      "ValueType": "number",
+      "ValueCount": 1,
+      "UnitQuantityID": "dev:reference-data--UnitQuantity:dimensionless:",
+      "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:rm3/sm3:"
+    }
+  },
+  {
+    "id": "dev:reference-data--GeoLabelType:GasOilRatio",
+    "kind": "osdu:wks:reference-data--GeoLabelType:1.0.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.office.global.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ]
+    },
+    "data": {
+      "Name": "GasOilRatio",
+      "Code": "GasOilRatio",
+      "Description": "Solution gas-oil ratio (GOR)",
+      "ValueType": "number",
+      "ValueCount": 1,
+      "UnitQuantityID": "dev:reference-data--UnitQuantity:volume per volume:",
+      "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Sm3/Sm3:"
+    }
+  },
+  {
+    "id": "dev:reference-data--GeoLabelType:Recoverable",
+    "kind": "osdu:wks:reference-data--GeoLabelType:1.0.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.office.global.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ]
+    },
+    "data": {
+      "Name": "Recoverable",
+      "Code": "Recoverable",
+      "Description": "Recoverable volume",
+      "ValueType": "number",
+      "ValueCount": 1,
+      "UnitQuantityID": "dev:reference-data--UnitQuantity:volume:",
+      "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MSm3:"
+    }
+  },
+  {
+    "id": "dev:reference-data--GeoLabelType:RecoveryFactor",
+    "kind": "osdu:wks:reference-data--GeoLabelType:1.0.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.office.global.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ]
+    },
+    "data": {
+      "Name": "RecoveryFactor",
+      "Code": "RecoveryFactor",
+      "Description": "Recovery factor (percent)",
+      "ValueType": "number",
+      "ValueCount": 1,
+      "UnitQuantityID": "dev:reference-data--UnitQuantity:dimensionless:",
+      "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%:"
+    }
+  }
+]

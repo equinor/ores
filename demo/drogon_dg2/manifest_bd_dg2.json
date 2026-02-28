@@ -136,6 +136,33 @@
             "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
             "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
             "DataObjectParameter": "dev:work-product-component--Document:Drogon-PTR-DG2-Report:1"
+          },
+          {
+            "Title": "Production forecast (reference case)",
+            "Selection": "20-year production forecast from dynamic simulation (revised porosity \u00d70.8)",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:a7c3e1f2-9d4b-4a8e-b6f5-2e8c4d1a3b7f:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "ProductionForecast"
+              }
+            ]
+          },
+          {
+            "Title": "Headline volumes & reservoir properties (GeoLabelSet)",
+            "Selection": "Per-segment STOIIP P90/P50/P10 and average reservoir properties",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--GeoLabelSet:e4b7a1c3-5f28-4d9e-8a61-7c3d9e0f2b85:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "GeoLabelSet",
+                "StringValue": "HeadlineVolumesAndProperties"
+              }
+            ]
           }
         ],
         "ancestry": {
@@ -253,79 +280,6 @@
                 "CompletionType": "Frac-pack + ICD lower completion"
               }
             },
-            "ReservoirProperties": {
-              "FormationName": "Valysar",
-              "NumberOfSegments": 7,
-              "Segments": [
-                "NorthSea",
-                "NorthHorst",
-                "CentralHorst",
-                "CentralFlanks",
-                "CentralSouth",
-                "SouthWing",
-                "EastLobe"
-              ],
-              "FaciesTypes": [
-                "Channel",
-                "Crevasse",
-                "Floodplain"
-              ],
-              "AveragePorosity_Channel": 0.22,
-              "AveragePorosity_Crevasse": 0.17,
-              "AveragePorosity_Floodplain": 0.08,
-              "PorosityNote": "Revised \u00d70.8 from DG1 based on core + thin-section analysis",
-              "NetToGross": 0.85,
-              "OWC_m_TVDSS": 1710,
-              "ReservoirTemperature_degC": 72,
-              "ReservoirPressure_bara": 170,
-              "AveragePermeability_mD": 450,
-              "OilViscosity_cP": 1.2,
-              "BoFactor": 1.12,
-              "GOR_Sm3Sm3": 85
-            },
-            "VolumesSummary_STOIIP_MSm3": {
-              "Note": "All STOIIP values reduced by ~20% vs DG1 due to revised porosity \u00d70.8",
-              "NorthSea": {
-                "P90": 3.0,
-                "P50": 4.2,
-                "P10": 5.7
-              },
-              "NorthHorst": {
-                "P90": 4.1,
-                "P50": 5.6,
-                "P10": 7.4
-              },
-              "CentralHorst": {
-                "P90": 8.2,
-                "P50": 11.0,
-                "P10": 14.5
-              },
-              "CentralFlanks": {
-                "P90": 3.6,
-                "P50": 4.9,
-                "P10": 6.4
-              },
-              "CentralSouth": {
-                "P90": 7.0,
-                "P50": 9.2,
-                "P10": 12.0
-              },
-              "SouthWing": {
-                "P90": 4.2,
-                "P50": 5.6,
-                "P10": 7.4
-              },
-              "EastLobe": {
-                "P90": 3.8,
-                "P50": 5.0,
-                "P10": 6.0
-              },
-              "Total": {
-                "P90": 33.8,
-                "P50": 45.4,
-                "P10": 59.4
-              }
-            },
             "KeyUncertainties": [
               {
                 "Factor": "Facies-dependent porosity",
@@ -353,32 +307,6 @@
                 "Description": "Water cut expected to reach 50% by Year 5 and 70% by Year 10. FPSO design includes 5,000 m\u00b3/d treatment; expansion module to 8,000 m\u00b3/d available for Year 7+. Uncertainty in early water breakthrough timing from EastLobe aquifer."
               }
             ],
-            "UncertaintySummary": {
-              "Basis": "FMU static + dynamic uncertainty from 50 geo-realisations across 7 segments and 3 facies types. Porosity revised \u00d70.8 from DG1. Dynamic forecasts run on 3 selected realisations (P90/P50/P10) with 5 sensitivity cases each.",
-              "Note": "See stat WPC for full P10/P50/P90 breakdown per segment & facies. Recoverable estimated from dynamic simulation with 12-producer base case.",
-              "TotalRealisations": 50,
-              "SelectedRealisations": {
-                "P90": "Real 42",
-                "P50": "Real 1",
-                "P10": "Real 17"
-              },
-              "MethodologyReference": "FMU Level 3 static + dynamic uncertainty workflow (Valysar geomodel v2)",
-              "StaticInPlace_Oil_MSm3": {
-                "P90": 33.8,
-                "P50": 45.4,
-                "P10": 59.4
-              },
-              "Recoverable_Oil_MSm3": {
-                "P90": 10.0,
-                "P50": 14.8,
-                "P10": 20.6
-              },
-              "RecoveryFactor_pct": {
-                "P90": 28.0,
-                "P50": 32.5,
-                "P10": 37.0
-              }
-            },
             "KeyEconomics": {
               "NPV_10pct_MUSD": 520,
               "BreakevenOilPrice_USDperbbl": 42,
@@ -427,210 +355,6 @@
                 "Status": "Planned"
               }
             ],
-            "ProductionProfile": {
-              "Note": "Reference case production forecast from dynamic simulation. 12 producers, Valysar formation, Drogon FPSO host. Revised porosity \u00d70.8 reduces all pore-dependent volumes by ~20%. Recovery factor P50 = 32.5% (unchanged). Lower absolute rates and EUR.",
-              "STOIIP_P50_MSm3": 45.4,
-              "EUR_MSm3": 14.8,
-              "PeakOilRate_kSm3d": 5.2,
-              "Years": [
-                2028,
-                2029,
-                2030,
-                2031,
-                2032,
-                2033,
-                2034,
-                2035,
-                2036,
-                2037,
-                2038,
-                2039,
-                2040,
-                2041,
-                2042,
-                2043,
-                2044,
-                2045,
-                2046,
-                2047
-              ],
-              "WellsOnline": [
-                3,
-                8,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12,
-                12
-              ],
-              "OilRate_kSm3d": [
-                1.7,
-                4.0,
-                5.2,
-                5.0,
-                4.5,
-                3.8,
-                3.3,
-                2.8,
-                2.4,
-                2.1,
-                1.8,
-                1.5,
-                1.3,
-                1.1,
-                1.0,
-                0.8,
-                0.7,
-                0.6,
-                0.6,
-                0.5
-              ],
-              "GasRate_kSm3d": [
-                142,
-                340,
-                442,
-                429,
-                381,
-                326,
-                279,
-                238,
-                204,
-                177,
-                150,
-                130,
-                109,
-                95,
-                82,
-                68,
-                62,
-                54,
-                48,
-                41
-              ],
-              "WaterRate_kSm3d": [
-                0.3,
-                1.0,
-                2.5,
-                4.5,
-                7.0,
-                9.0,
-                10.5,
-                11.5,
-                12.0,
-                12.0,
-                11.5,
-                10.8,
-                10.0,
-                9.2,
-                8.3,
-                7.5,
-                6.7,
-                6.0,
-                5.3,
-                4.7
-              ],
-              "YearlyOil_MSm3": [
-                0.3,
-                1.46,
-                1.9,
-                1.84,
-                1.63,
-                1.4,
-                1.2,
-                1.02,
-                0.88,
-                0.76,
-                0.64,
-                0.55,
-                0.46,
-                0.41,
-                0.35,
-                0.3,
-                0.26,
-                0.23,
-                0.21,
-                0.18
-              ],
-              "CumOil_MSm3": [
-                0.3,
-                1.76,
-                3.66,
-                5.5,
-                7.13,
-                8.53,
-                9.73,
-                10.75,
-                11.63,
-                12.39,
-                13.03,
-                13.58,
-                14.04,
-                14.45,
-                14.8,
-                15.1,
-                15.36,
-                15.59,
-                15.8,
-                15.98
-              ],
-              "WaterCut_pct": [
-                12.5,
-                16.7,
-                27.8,
-                41.7,
-                55.6,
-                65.2,
-                71.9,
-                76.7,
-                80.0,
-                82.2,
-                83.9,
-                85.0,
-                86.2,
-                86.8,
-                87.4,
-                88.2,
-                88.2,
-                88.2,
-                88.3,
-                88.7
-              ],
-              "RecoveryFactor_pct": [
-                0.7,
-                3.9,
-                8.1,
-                12.1,
-                15.7,
-                18.8,
-                21.4,
-                23.7,
-                25.6,
-                27.3,
-                28.7,
-                29.9,
-                30.9,
-                31.8,
-                32.6,
-                33.3,
-                33.8,
-                34.3,
-                34.8,
-                35.2
-              ]
-            },
             "DG3Recommendations": [
               "Execute FEED for FPSO conversion and subsea installation scope",
               "Secure FPSO drydock slot (2027-Q4 target) with dual-yard tendering strategy",
@@ -645,9 +369,5 @@
       }
     }
   ],
-  "Data": {
-    "Datasets": [],
-    "WorkProductComponents": [],
-    "WorkProducts": []
-  }
+  "Data": {}
 }

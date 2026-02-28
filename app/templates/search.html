@@ -328,16 +328,20 @@
       {% for x in (vmap.get('Gas.P90') or []) %}{% set volns.g90 = volns.g90 + (x|float) %}{% set volns.has_g90 = true %}{% endfor %}
 
       {% set ext_eq = ((rec.data or {}).get('ext') or {}).get('equinor') or {} %}
-      {% set unc = ext_eq.get('UncertaintySummary') or {} %}
-      {% set static_oil = unc.get('StaticInPlace_Oil_MSm3') or {} %}
-      {% set reco_oil = unc.get('Recoverable_Oil_MSm3') or {} %}
-      {% set vol_summary = ext_eq.get('VolumesSummary_STOIIP_MSm3') or {} %}
 
-      {# ── Format volume helpers ── #}
-      {# Try stat WPC columns first, then ext UncertaintySummary, then VolumesSummary total #}
+      {# ── GeoLabelSet canonical data (preferred source) ── #}
+      {% set gls = rec.bd_geolabel or {} %}
+      {% set gls_vols = gls.get('volumes_by_segment') or {} %}
+      {% set gls_props = gls.get('properties') or {} %}
+      {% set gls_unc = gls.get('uncertainty') or {} %}
+      {% set has_gls_vol = (gls_vols.get('TOTAL') and gls_vols['TOTAL'].get('Oil.P50') is not none) %}
+      {% set has_gls_props = (gls_props|length > 0) %}
+
+      {# ── Production forecast from ColumnBasedTable ── #}
+      {% set bd_prod = rec.bd_production or {} %}
+
+      {# ── Stat WPC table volume helpers ── #}
       {% set has_table_vol = (volns.has_o10 or volns.has_o50 or volns.has_o90 or volns.has_g10 or volns.has_g50 or volns.has_g90) %}
-      {% set has_ext_vol = (static_oil and (static_oil.get('P90') is not none or static_oil.get('P50') is not none or static_oil.get('P10') is not none)) %}
-      {% set has_summary_vol = (vol_summary.get('Total') and vol_summary['Total'].get('P90') is not none) %}
 
       <div class="rec-block" id="rec-{{ rec_index }}" {% if loop.first %}style=""{% else %}style="display:none"{% endif %}>
         <h4>{{ label }}</h4>
@@ -482,8 +486,54 @@
               {# ── Headline Volumes ── #}
               <div class="bd-section-title">Headline Volumes (STOIIP)</div>
               <div class="bd-kpi-row">
-                {% if has_table_vol %}
-                {# Volumes from stat WPC ColumnValues (m³) — display as Mm³ #}
+                {% if has_gls_vol %}
+                {# ─── Source: GeoLabelSet canonical record (preferred) ─── #}
+                {% set gtot = gls_vols.get('TOTAL') or {} %}
+                <div class="bd-kpi oil">
+                  <div class="bd-kpi-label">STOIIP Total</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ gtot.get('Oil.P90', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ gtot.get('Oil.P50', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ gtot.get('Oil.P10', '—') }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
+                </div>
+                {# Recoverable & RF from GeoLabelSet uncertainty #}
+                {% if gls_unc.get('Recoverable.P50') is not none %}
+                <div class="bd-kpi gas">
+                  <div class="bd-kpi-label">Recoverable Oil</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ gls_unc.get('Recoverable.P90', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ gls_unc.get('Recoverable.P50', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ gls_unc.get('Recoverable.P10', '—') }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
+                </div>
+                {% endif %}
+                {% if gls_unc.get('RecoveryFactor.P50') is not none %}
+                <div class="bd-kpi total">
+                  <div class="bd-kpi-label">Recovery Factor</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ gls_unc.get('RecoveryFactor.P90', '—') }}%</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ gls_unc.get('RecoveryFactor.P50', '—') }}%</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ gls_unc.get('RecoveryFactor.P10', '—') }}%</div></div>
+                  </div>
+                </div>
+                {% endif %}
+                {# Per-segment STOIIP from GeoLabelSet #}
+                {% for sname, svals in gls_vols.items() if sname != 'TOTAL' %}
+                <div class="bd-kpi {{ loop.cycle('gas','total','oil') }}">
+                  <div class="bd-kpi-label">{{ sname }}</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ svals.get('Oil.P90', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ svals.get('Oil.P50', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ svals.get('Oil.P10', '—') }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
+                </div>
+                {% endfor %}
+                {% elif has_table_vol %}
+                {# ─── Fallback 1: stat WPC ColumnValues (m³) → Mm³ ─── #}
                 <div class="bd-kpi oil">
                   <div class="bd-kpi-label">Oil in Place</div>
                   <div class="bd-kpi-stat">
@@ -511,52 +561,6 @@
                   </div>
                   <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
                 </div>
-                {% elif has_summary_vol %}
-                {# Volumes from ext VolumesSummary_STOIIP_MSm3 (already MSm³) #}
-                {% set vtot = vol_summary.get('Total') or {} %}
-                {% set mid_label = 'REF' if vtot.get('REF') is not none else 'P50' %}
-                <div class="bd-kpi oil">
-                  <div class="bd-kpi-label">STOIIP Total</div>
-                  <div class="bd-kpi-stat">
-                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ vtot.get('P90', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">{{ mid_label }}</div><div class="bd-kpi-num">{{ vtot.get('REF') if vtot.get('REF') is not none else vtot.get('P50', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ vtot.get('P10', '—') }}</div></div>
-                  </div>
-                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
-                </div>
-                {% for sname, svals in vol_summary.items() if sname != 'Total' and sname != 'Note' %}
-                <div class="bd-kpi {{ loop.cycle('gas','total','oil') }}">
-                  <div class="bd-kpi-label">{{ sname }}</div>
-                  <div class="bd-kpi-stat">
-                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ svals.get('P90', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">{{ mid_label }}</div><div class="bd-kpi-num">{{ svals.get('REF') if svals.get('REF') is not none else svals.get('P50', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ svals.get('P10', '—') }}</div></div>
-                  </div>
-                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
-                </div>
-                {% endfor %}
-                {% elif has_ext_vol %}
-                {# Volumes from UncertaintySummary StaticInPlace / Recoverable (MSm³) #}
-                <div class="bd-kpi oil">
-                  <div class="bd-kpi-label">Static In-Place Oil</div>
-                  <div class="bd-kpi-stat">
-                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ static_oil.get('P90', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ static_oil.get('P50', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ static_oil.get('P10', '—') }}</div></div>
-                  </div>
-                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
-                </div>
-                {% if reco_oil %}
-                <div class="bd-kpi gas">
-                  <div class="bd-kpi-label">Recoverable Oil</div>
-                  <div class="bd-kpi-stat">
-                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ reco_oil.get('P90', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ reco_oil.get('P50', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ reco_oil.get('P10', '—') }}</div></div>
-                  </div>
-                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
-                </div>
-                {% endif %}
                 {% else %}
                 <div class="muted">No headline volumes available for this record.</div>
                 {% endif %}
@@ -623,86 +627,43 @@
               </div>
               {% endif %}
 
-              {# ── Reservoir Properties ── #}
-              {% set rp = ext_eq.get('ReservoirProperties') or {} %}
-              {% if rp %}
+              {# ── Reservoir Properties (from GeoLabelSet canonical record) ── #}
+              {% if has_gls_props %}
               <details class="bd-collapse">
               <summary class="bd-section-title" style="cursor:pointer;">Reservoir Properties ▸</summary>
               <div class="bd-resprop-grid">
-                {% if rp.get('FormationName') %}
-                <div class="bd-resprop-item"><div class="bd-label">Formation</div><div class="bd-value">{{ rp.get('FormationName') }}</div></div>
+                {% if gls_props.get('Pressure') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Pressure</div><div class="bd-value">{{ gls_props.get('Pressure') }} bar</div></div>
                 {% endif %}
-                {% if rp.get('Structures') %}
-                <div class="bd-resprop-item"><div class="bd-label">Structures</div><div class="bd-value">{{ rp.get('Structures') | join(', ') }}</div></div>
+                {% if gls_props.get('Temperature') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Temperature</div><div class="bd-value">{{ gls_props.get('Temperature') }} °C</div></div>
                 {% endif %}
-                {% if rp.get('Segments') %}
-                <div class="bd-resprop-item"><div class="bd-label">Segments</div><div class="bd-value">{{ rp.get('Segments') | join(', ') }}</div></div>
+                {% if gls_props.get('NetToGross') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Net / Gross</div><div class="bd-value">{{ gls_props.get('NetToGross') }}</div></div>
                 {% endif %}
-                {% if rp.get('FaciesGroups') %}
-                <div class="bd-resprop-item"><div class="bd-label">Facies Groups</div><div class="bd-value">{{ rp.get('FaciesGroups') | join(', ') }}</div></div>
+                {# ─ Porosity: may be scalar or per-facies dict ─ #}
+                {% set gls_por = gls_props.get('Porosity') %}
+                {% if gls_por is mapping %}
+                {% for facies_name, facies_val in gls_por.items() %}
+                <div class="bd-resprop-item"><div class="bd-label">Porosity ({{ facies_name }})</div><div class="bd-value">{{ facies_val }}</div></div>
+                {% endfor %}
+                {% elif gls_por is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Porosity</div><div class="bd-value">{{ gls_por }}</div></div>
                 {% endif %}
-                {% if rp.get('FaciesTypes') %}
-                <div class="bd-resprop-item"><div class="bd-label">Facies Types</div><div class="bd-value">{{ rp.get('FaciesTypes') | join(', ') }}</div></div>
+                {% if gls_props.get('Permeability') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Avg. Permeability</div><div class="bd-value">{{ gls_props.get('Permeability') }} mD</div></div>
                 {% endif %}
-                {% if rp.get('ReservoirDepth_m_TVD_MSL') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Depth (TVD MSL)</div><div class="bd-value">{{ rp.get('ReservoirDepth_m_TVD_MSL') }} m</div></div>
+                {% if gls_props.get('OilWaterContact') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">OWC (TVDSS)</div><div class="bd-value">{{ gls_props.get('OilWaterContact') }} m</div></div>
                 {% endif %}
-                {% if rp.get('ReservoirPressure_bara') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Pressure</div><div class="bd-value">{{ rp.get('ReservoirPressure_bara') }} bara</div></div>
+                {% if gls_props.get('Viscosity') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Oil Viscosity</div><div class="bd-value">{{ gls_props.get('Viscosity') }} cP</div></div>
                 {% endif %}
-                {% if rp.get('ReservoirTemperature_degC') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Temperature</div><div class="bd-value">{{ rp.get('ReservoirTemperature_degC') }} °C</div></div>
+                {% if gls_props.get('FormationVolumeFactor') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Bo Factor</div><div class="bd-value">{{ gls_props.get('FormationVolumeFactor') }}</div></div>
                 {% endif %}
-                {% if rp.get('NetToGross') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Net / Gross</div><div class="bd-value">{{ rp.get('NetToGross') }}</div></div>
-                {% endif %}
-                {% if rp.get('AveragePorosity_FStruct') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Porosity (F-Struct)</div><div class="bd-value">{{ rp.get('AveragePorosity_FStruct') }}</div></div>
-                {% endif %}
-                {% if rp.get('AveragePorosity_DStruct') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Porosity (D-Struct)</div><div class="bd-value">{{ rp.get('AveragePorosity_DStruct') }}</div></div>
-                {% endif %}
-                {% if rp.get('AveragePorosity_Channel') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Porosity (Channel)</div><div class="bd-value">{{ rp.get('AveragePorosity_Channel') }}</div></div>
-                {% endif %}
-                {% if rp.get('AveragePorosity_Crevasse') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Porosity (Crevasse)</div><div class="bd-value">{{ rp.get('AveragePorosity_Crevasse') }}</div></div>
-                {% endif %}
-                {% if rp.get('AveragePorosity_Floodplain') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Porosity (Floodplain)</div><div class="bd-value">{{ rp.get('AveragePorosity_Floodplain') }}</div></div>
-                {% endif %}
-                {% if rp.get('AveragePermeability_mD_FStruct') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Perm. F-Struct</div><div class="bd-value">{{ rp.get('AveragePermeability_mD_FStruct') }} mD</div></div>
-                {% endif %}
-                {% if rp.get('AveragePermeability_mD_DStruct') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Perm. D-Struct</div><div class="bd-value">{{ rp.get('AveragePermeability_mD_DStruct') }} mD</div></div>
-                {% endif %}
-                {% if rp.get('OWC_m_TVDSS') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">OWC (TVDSS)</div><div class="bd-value">{{ rp.get('OWC_m_TVDSS') }} m</div></div>
-                {% endif %}
-                {% if rp.get('FWL_m_TVDSS_F') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">FWL F-Struct</div><div class="bd-value">{{ rp.get('FWL_m_TVDSS_F') }} m</div></div>
-                {% endif %}
-                {% if rp.get('FWL_m_TVDSS_D') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">FWL D-Struct</div><div class="bd-value">{{ rp.get('FWL_m_TVDSS_D') }} m</div></div>
-                {% endif %}
-                {% if rp.get('AveragePermeability_mD') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Avg. Permeability</div><div class="bd-value">{{ rp.get('AveragePermeability_mD') }} mD</div></div>
-                {% endif %}
-                {% if rp.get('OilViscosity_cP') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Oil Viscosity</div><div class="bd-value">{{ rp.get('OilViscosity_cP') }} cP</div></div>
-                {% endif %}
-                {% if rp.get('BoFactor') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Bo Factor</div><div class="bd-value">{{ rp.get('BoFactor') }}</div></div>
-                {% endif %}
-                {% if rp.get('GOR_Sm3Sm3') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">GOR</div><div class="bd-value">{{ rp.get('GOR_Sm3Sm3') }} Sm³/Sm³</div></div>
-                {% endif %}
-                {% if rp.get('NumberOfSegments') is not none %}
-                <div class="bd-resprop-item"><div class="bd-label">Segment Count</div><div class="bd-value">{{ rp.get('NumberOfSegments') }}</div></div>
-                {% endif %}
-                {% if rp.get('PorosityNote') %}
-                <div class="bd-resprop-item" style="grid-column:1/-1;"><div class="bd-label">Porosity Note</div><div class="bd-value" style="font-style:italic;color:#718096;">{{ rp.get('PorosityNote') }}</div></div>
+                {% if gls_props.get('GasOilRatio') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">GOR</div><div class="bd-value">{{ gls_props.get('GasOilRatio') }} Sm³/Sm³</div></div>
                 {% endif %}
               </div>
               </details>
@@ -904,33 +865,6 @@
                 <li style="margin-bottom:.25rem;">{{ r }}</li>
                 {% endfor %}
               </ol>
-              {% endif %}
-
-              {# ── Uncertainty basis ── #}
-              {% if unc.get('Basis') %}
-              <details class="bd-collapse">
-              <summary class="bd-section-title" style="cursor:pointer;">Uncertainty Methodology ▸</summary>
-              <div style="font-size:.88rem;color:#4a5568;line-height:1.5;">
-                <b>Basis:</b> {{ unc.get('Basis') }}<br>
-                {% if unc.get('TotalRealisations') %}<b>Realisations:</b> {{ unc.get('TotalRealisations') }}{% endif %}
-                {% if unc.get('MethodologyReference') %} · {{ unc.get('MethodologyReference') }}{% endif %}
-                {% if unc.get('Note') %}<br><span class="muted">{{ unc.get('Note') }}</span>{% endif %}
-              </div>
-              {% set rf = unc.get('RecoveryFactor_pct') or {} %}
-              {% if rf.get('P90') is not none or rf.get('P50') is not none or rf.get('P10') is not none %}
-              <div class="bd-econ-row" style="margin-top:.5rem;">
-                {% if rf.get('P90') is not none %}<div class="bd-econ"><div class="bd-econ-label">RF P90</div><div class="bd-econ-num">{{ rf.get('P90') }}%</div></div>{% endif %}
-                {% if rf.get('P50') is not none %}<div class="bd-econ"><div class="bd-econ-label">RF P50</div><div class="bd-econ-num">{{ rf.get('P50') }}%</div></div>{% endif %}
-                {% if rf.get('P10') is not none %}<div class="bd-econ"><div class="bd-econ-label">RF P10</div><div class="bd-econ-num">{{ rf.get('P10') }}%</div></div>{% endif %}
-              </div>
-              {% endif %}
-              {% set selr = unc.get('SelectedRealisations') or {} %}
-              {% if selr %}
-              <div style="font-size:.82rem;color:#718096;margin-top:.3rem;">
-                Selected: {% for pk, pv in selr.items() %}{{ pk }}={{ pv }}{% if not loop.last %}, {% endif %}{% endfor %}
-              </div>
-              {% endif %}
-              </details>
               {% endif %}
 
             </div>{# /bd-body #}
@@ -1150,45 +1084,35 @@ classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
             </table>
             </div>
           </section>
-          {% elif is_business_decision and has_summary_vol %}
-          {# ── BD VolumesSummary as breakdown table (no live WPC data) ── #}
-          <section class="section-card">
-            <h5>Volume Breakdown (STOIIP from Decision Package)</h5>
-            {% set mid_hdr = 'REF' if (vol_summary.get('Total') or {}).get('REF') is not none else 'P50' %}
-            <div class="table-scroll">
-            <table>
-              <tr><th>Structure</th><th>P90 (MSm³)</th><th>{{ mid_hdr }} (MSm³)</th><th>P10 (MSm³)</th></tr>
-              {% for sname, svals in vol_summary.items() if sname != 'Note' %}
-              <tr{% if sname == 'Total' %} style="font-weight:700;border-top:2px solid #4a5568;"{% endif %}>
-                <td>{{ sname }}</td>
-                <td>{{ svals.get('P90', '—') }}</td>
-                <td>{{ svals.get('REF') if svals.get('REF') is not none else svals.get('P50', '—') }}</td>
-                <td>{{ svals.get('P10', '—') }}</td>
-              </tr>
-              {% endfor %}
-            </table>
-            </div>
-          </section>
           {% endif %}
 
-          {# ── Production Profile (if present in ext.equinor) ── #}
+          {# ── Production Profile (prefer ColumnBasedTable, fall back to ext.equinor) ── #}
           {% set prod_profile = ext_eq.get('ProductionProfile') or {} %}
-          {% set prod_years = prod_profile.get('Years') or [] %}
+          {% set pp_src = bd_prod if (bd_prod and bd_prod.get('Years')) else {} %}
+          {% set pp_fallback = prod_profile if (not pp_src and prod_profile.get('Years')) else {} %}
+          {% set pp = pp_src or pp_fallback %}
+          {% set prod_years = pp.get('Years') or [] %}
           {% if prod_years %}
+          {# If from CBT, summary may be in pp.summary; from ext, directly in prod_profile #}
+          {% set pp_summary = pp.get('summary') or {} %}
+          {% set pp_eur = pp_summary.get('EUR_MSm3') or prod_profile.get('EUR_MSm3') %}
+          {% set pp_peak = pp_summary.get('PeakOilRate_kSm3d') or prod_profile.get('PeakOilRate_kSm3d') %}
+          {% set pp_stoiip = pp_summary.get('STOIIP_P50_MSm3') or prod_profile.get('STOIIP_P50_MSm3') %}
           <section class="section-card">
             <h5>Production Forecast</h5>
-            {% if prod_profile.get('EUR_MSm3') is not none or prod_profile.get('PeakOilRate_kSm3d') is not none or prod_profile.get('STOIIP_P50_MSm3') is not none %}
+            {% if pp_eur is not none or pp_peak is not none or pp_stoiip is not none %}
             <div class="bd-econ-row" style="margin-bottom:.5rem;">
-              {% if prod_profile.get('STOIIP_P50_MSm3') is not none %}<div class="bd-econ"><div class="bd-econ-label">STOIIP P50</div><div class="bd-econ-num">{{ prod_profile.get('STOIIP_P50_MSm3') }} MSm³</div></div>{% endif %}
-              {% if prod_profile.get('EUR_MSm3') is not none %}<div class="bd-econ"><div class="bd-econ-label">EUR</div><div class="bd-econ-num">{{ prod_profile.get('EUR_MSm3') }} MSm³</div></div>{% endif %}
-              {% if prod_profile.get('PeakOilRate_kSm3d') is not none %}<div class="bd-econ"><div class="bd-econ-label">Peak Oil Rate</div><div class="bd-econ-num">{{ prod_profile.get('PeakOilRate_kSm3d') }} kSm³/d</div></div>{% endif %}
+              {% if pp_stoiip is not none %}<div class="bd-econ"><div class="bd-econ-label">STOIIP P50</div><div class="bd-econ-num">{{ pp_stoiip }} MSm³</div></div>{% endif %}
+              {% if pp_eur is not none %}<div class="bd-econ"><div class="bd-econ-label">EUR</div><div class="bd-econ-num">{{ pp_eur }} MSm³</div></div>{% endif %}
+              {% if pp_peak is not none %}<div class="bd-econ"><div class="bd-econ-label">Peak Oil Rate</div><div class="bd-econ-num">{{ pp_peak }} kSm³/d</div></div>{% endif %}
             </div>
             {% endif %}
-            {% if prod_profile.get('Note') %}<div style="font-size:.82rem;color:#718096;margin-bottom:.4rem;">{{ prod_profile.get('Note') }}</div>{% endif %}
+            {% set pp_note = pp.get('Note') or prod_profile.get('Note') %}
+            {% if pp_note %}<div style="font-size:.82rem;color:#718096;margin-bottom:.4rem;">{{ pp_note }}</div>{% endif %}
             <div class="prod-legend">
               <span class="leg-oil">Oil Rate (kSm³/d)</span>
-              <span class="leg-gas">Gas Rate (kSm³/d)</span>
               <span class="leg-water">Water Rate (kSm³/d)</span>
+              <span class="leg-gas" style="border-bottom:2px dashed rgba(56,161,105,.85);background:none;padding-bottom:1px;">Gas Rate (kSm³/d)</span>
               <span class="leg-cum">Cum. Oil (MSm³)</span>
             </div>
             <div class="prod-chart-wrap">
@@ -1204,14 +1128,14 @@ classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
                   <th>Yearly Oil (MSm³)</th><th>Cum. Oil (MSm³)</th>
                   <th>Water Cut (%)</th><th>RF (%)</th>
                 </tr>
-                {% set pp_oil = prod_profile.get('OilRate_kSm3d') or [] %}
-                {% set pp_gas = prod_profile.get('GasRate_kSm3d') or [] %}
-                {% set pp_water = prod_profile.get('WaterRate_kSm3d') or [] %}
-                {% set pp_yearly = prod_profile.get('YearlyOil_MSm3') or [] %}
-                {% set pp_cum = prod_profile.get('CumOil_MSm3') or [] %}
-                {% set pp_wcut = prod_profile.get('WaterCut_pct') or [] %}
-                {% set pp_rf = prod_profile.get('RecoveryFactor_pct') or [] %}
-                {% set pp_wells = prod_profile.get('WellsOnline') or [] %}
+                {% set pp_oil = pp.get('OilRate_kSm3d') or [] %}
+                {% set pp_gas = pp.get('GasRate_kSm3d') or [] %}
+                {% set pp_water = pp.get('WaterRate_kSm3d') or [] %}
+                {% set pp_yearly = pp.get('YearlyOil_MSm3') or [] %}
+                {% set pp_cum = pp.get('CumOil_MSm3') or [] %}
+                {% set pp_wcut = pp.get('WaterCut_pct') or [] %}
+                {% set pp_rf = pp.get('RecoveryFactor_pct') or [] %}
+                {% set pp_wells = pp.get('WellsOnline') or [] %}
                 {% for yr in prod_years %}
                 <tr>
                   <td>{{ yr }}</td>
@@ -1274,25 +1198,35 @@ classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
             cum.push(parseFloat(cells[6].textContent) || 0);
           });
           if (!years.length) return;
+          const hasGas = gas.some(v => v > 0);
+          const datasets = [
+            { label: 'Oil Rate (kSm³/d)', data: oil, backgroundColor: 'rgba(221,107,32,.75)', order: 3, yAxisID: 'y', stack: 'rates' },
+            { label: 'Water Rate (kSm³/d)', data: water, backgroundColor: 'rgba(49,130,206,.40)', order: 4, yAxisID: 'y', stack: 'rates' },
+            { label: 'Cum. Oil (MSm³)', data: cum, type: 'line', borderColor: '#805ad5', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 2, order: 1, yAxisID: 'y1' }
+          ];
+          const scales = {
+            x: { grid: { display: false } },
+            y:  { position: 'left', title: { display: true, text: 'Liquid Rate (kSm³/d)' }, stacked: true, beginAtZero: true },
+            y1: { position: 'right', title: { display: true, text: 'Cum Oil (MSm³)' }, grid: { drawOnChartArea: false }, beginAtZero: true }
+          };
+          if (hasGas) {
+            datasets.splice(2, 0, {
+              label: 'Gas Rate (kSm³/d)', data: gas, type: 'line',
+              borderColor: 'rgba(56,161,105,.85)', backgroundColor: 'transparent',
+              borderWidth: 2, borderDash: [6, 3], pointRadius: 1.5,
+              order: 2, yAxisID: 'y2'
+            });
+            scales.y2 = { position: 'right', title: { display: true, text: 'Gas Rate (kSm³/d)' },
+                          grid: { drawOnChartArea: false }, beginAtZero: true };
+          }
           chartInstances[cv.id] = new Chart(cv.getContext('2d'), {
             type: 'bar',
-            data: {
-              labels: years,
-              datasets: [
-                { label: 'Oil Rate (kSm³/d)', data: oil, backgroundColor: 'rgba(221,107,32,.7)', order: 2, yAxisID: 'y' },
-                { label: 'Gas Rate (kSm³/d)', data: gas, backgroundColor: 'rgba(56,161,105,.5)', order: 3, yAxisID: 'y' },
-                { label: 'Water Rate (kSm³/d)', data: water, backgroundColor: 'rgba(49,130,206,.35)', order: 4, yAxisID: 'y' },
-                { label: 'Cum. Oil (MSm³)', data: cum, type: 'line', borderColor: '#805ad5', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 2, order: 1, yAxisID: 'y1' }
-              ]
-            },
+            data: { labels: years, datasets },
             options: {
               responsive: true, maintainAspectRatio: false,
               interaction: { mode: 'index', intersect: false },
               plugins: { legend: { display: false } },
-              scales: {
-                y:  { position: 'left', title: { display: true, text: 'Rate (kSm³/d)' }, stacked: true, beginAtZero: true },
-                y1: { position: 'right', title: { display: true, text: 'Cum Oil (MSm³)' }, grid: { drawOnChartArea: false }, beginAtZero: true }
-              }
+              scales
             }
           });
         });
