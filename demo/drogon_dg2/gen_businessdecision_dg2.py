@@ -160,9 +160,8 @@ def main():
             ),
             "ProjectName": "Drogon Field Development",
             "DecisionLevelID": f"{pfx}:reference-data--DecisionLevel:DG2:1",
-            "ApprovalStatusID": f"{pfx}:reference-data--DecisionApprovalStatus:Approved:1",
-            "DecisionDueDate": "2026-03-15",
-            "DecisionDate": "2026-02-28",
+            "ApprovalStatusID": f"{pfx}:reference-data--DecisionApprovalStatus:Pending:1",
+            "DecisionDueDate": "2026-06-30",
             "DecisionSummary": (
                 "Approve subsea tie-back development concept. Two 4-slot templates (8 slots), "
                 "12 wells targeting full 7-segment Valysar scope. Reference case STOIIP "

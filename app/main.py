@@ -36,6 +36,7 @@ from .auth import (
     PUBLIC_PATHS,
 )
 from .strat import router as strat_router
+from .analyse import router as analyse_router
 
 # ──────────────────────────────────────────────────────────────────────────────
 # App setup & logging
@@ -111,6 +112,7 @@ async def inject_access_token(request: Request, call_next):
 app.include_router(auth_router)  # keeps /auth diagnostics
 app.include_router(ingest_router, prefix="/api")
 app.include_router(strat_router)
+app.include_router(analyse_router)
 
 app.mount(
     "/static",
@@ -684,34 +686,61 @@ def _parse_kind_inputs(kind: str, kinds_extra: str) -> List[str]:
 
 
 def _collect_manifest_kinds() -> List[Dict[str, Any]]:
+    """Return an ordered list of OSDU kinds for the search dropdown.
+
+    Uses a fixed priority list for the most-used kinds (instant, no I/O),
+    then appends any additional kinds discovered in repo manifests
+    alphabetically.
     """
-    Scan repository manifest JSON files and return discovered OSDU kinds
-    as [{'kind': '<kind>', 'count': <n>}, ...].
-    """
+    # ── Priority kinds (displayed first, in this order) ──
+    _PRIORITY_KINDS = [
+        "osdu:wks:master-data--BusinessDecision:1.0.0",
+        "osdu:wks:work-product-component--ReservoirEstimatedVolumes:1.1.0",
+        "osdu:wks:work-product-component--ColumnBasedTable:1.4.0",
+        "osdu:wks:work-product-component--GeoLabelSet:1.0.0",
+        "osdu:wks:master-data--Risk:1.2.0",
+        "osdu:wks:master-data--Reservoir:2.0.0",
+        "osdu:wks:master-data--ReservoirSegment:2.0.0",
+        "osdu:wks:work-product-component--Activity:1.0.0",
+        "osdu:wks:work-product-component--Document:1.2.0",
+        "osdu:wks:work-product-component--StratigraphicColumn:1.2.0",
+        "osdu:wks:dataset--ETPDataspace:1.0.0",
+    ]
+
+    # ── Scan manifests for counts and extra kinds ──
     repo_root = Path(__file__).resolve().parents[1]
     counter: Counter[str] = Counter()
 
-    manifest_files = sorted(repo_root.glob("demo/**/manifest*.json"))
-
-    def _walk(node: Any):
-        if isinstance(node, dict):
-            k = node.get("kind")
-            if isinstance(k, str) and k.startswith("osdu:"):
-                counter[k] += 1
-            for v in node.values():
-                _walk(v)
-        elif isinstance(node, list):
-            for v in node:
-                _walk(v)
-
-    for p in manifest_files:
+    for p in sorted(repo_root.glob("demo/**/manifest*.json")):
         try:
             payload = json.loads(p.read_text(encoding="utf-8"))
-            _walk(payload)
+            _walk_kinds(payload, counter)
         except Exception:
             continue
 
-    return [{"kind": k, "count": counter[k]} for k in sorted(counter.keys())]
+    # Build result: priority kinds first, then remaining alphabetically
+    seen: set[str] = set()
+    result: List[Dict[str, Any]] = []
+    for k in _PRIORITY_KINDS:
+        result.append({"kind": k, "count": counter.get(k, 0)})
+        seen.add(k)
+    for k in sorted(counter.keys()):
+        if k not in seen:
+            result.append({"kind": k, "count": counter[k]})
+    return result
+
+
+def _walk_kinds(node: Any, counter: Counter) -> None:
+    """Recursively count ``kind`` values starting with ``osdu:``."""
+    if isinstance(node, dict):
+        k = node.get("kind")
+        if isinstance(k, str) and k.startswith("osdu:"):
+            counter[k] += 1
+        for v in node.values():
+            _walk_kinds(v, counter)
+    elif isinstance(node, list):
+        for v in node:
+            _walk_kinds(v, counter)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Pages & actions
@@ -815,11 +844,7 @@ async def dataspaces_create(
 async def search_page(request: Request):
     # Pre-fill demo values
     kind_options = _collect_manifest_kinds()
-    default_kind = (
-        kind_options[0]["kind"]
-        if kind_options
-        else "osdu:wks:work-product-component--ReservoirEstimatedVolumes:1.1.0"
-    )
+    default_kind = "osdu:wks:master-data--BusinessDecision:1.0.0"
     return templates.TemplateResponse(
         "search.html",
         {

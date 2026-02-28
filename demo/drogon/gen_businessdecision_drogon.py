@@ -119,8 +119,9 @@ def main():
             ),
             "ProjectName": "Drogon Field Development",
             "DecisionLevelID": f"{args.id_prefix}:reference-data--DecisionLevel:DG1:1",
-            "ApprovalStatusID": f"{args.id_prefix}:reference-data--DecisionApprovalStatus:Pending:1",
-            "DecisionDueDate": "2026-06-30",
+            "ApprovalStatusID": f"{args.id_prefix}:reference-data--DecisionApprovalStatus:Approved:1",
+            "DecisionDueDate": "2026-03-15",
+            "DecisionDate": "2026-02-28",
             "DecisionSummary": (
                 "Evaluate the Valysar formation of the Drogon field. "
                 "Assess in-place volumes (oil + gas) across 7 reservoir segments "

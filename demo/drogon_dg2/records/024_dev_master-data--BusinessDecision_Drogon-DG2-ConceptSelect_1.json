@@ -22,9 +22,8 @@
     "Description": "DG2 Concept Select for the Drogon field development. Valysar fluvial formation across 7 reservoir segments (NorthSea, NorthHorst, CentralHorst, CentralFlanks, CentralSouth, SouthWing, EastLobe) with three facies types (Channel, Crevasse, Floodplain). Revised petrophysical interpretation: porosity reduced by factor 0.8 based on core analysis and thin sections. 50 FMU realisations quantify STOIIP uncertainty: P90 33.8 / P50 45.4 / P10 59.4 MSm\u00b3 oil in-place. Recoverable oil (P50) 14.8 MSm\u00b3 at 32.5% recovery factor. Recommended concept: subsea tie-back to FPSO with 2\u00d74-slot templates, 12 production wells. NPV@10% 520 MUSD, CAPEX 8,500 MNOK, first oil 2028-H1.",
     "ProjectName": "Drogon Field Development",
     "DecisionLevelID": "dev:reference-data--DecisionLevel:DG2:1",
-    "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:1",
-    "DecisionDueDate": "2026-03-15",
-    "DecisionDate": "2026-02-28",
+    "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Pending:1",
+    "DecisionDueDate": "2026-06-30",
     "DecisionSummary": "Approve subsea tie-back development concept. Two 4-slot templates (8 slots), 12 wells targeting full 7-segment Valysar scope. Reference case STOIIP 45.4 MSm\u00b3 (P90 33.8, P10 59.4) \u2014 revised porosity interpretation \u00d70.8. Recoverable oil P50 14.8 MSm\u00b3 (RF 32.5%). First oil target 2028-H1. Proceed to DG3 FEED.",
     "RiskAssessmentDocument": "dev:work-product-component--Document:Drogon-SRA-DG2-Report:1",
     "RiskIDs": [

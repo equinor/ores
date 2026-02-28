@@ -22,8 +22,9 @@
     "Description": "DG1 evaluation of the Valysar fluvial formation in the Drogon field, covering static in-place volume estimation across 7 reservoir segments (NorthSea, NorthHorst, CentralHorst, CentralFlanks, CentralSouth, SouthWing, EastLobe) with three facies types (Channel, Crevasse, Floodplain). The assessment uses FMU-driven uncertainty realisations to derive P10/P50/P90 oil and gas volumes, forming the basis for the DG2 Concept Select recommendation.",
     "ProjectName": "Drogon Field Development",
     "DecisionLevelID": "dev:reference-data--DecisionLevel:DG1:1",
-    "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Pending:1",
-    "DecisionDueDate": "2026-06-30",
+    "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:1",
+    "DecisionDueDate": "2026-03-15",
+    "DecisionDate": "2026-02-28",
     "DecisionSummary": "Evaluate the Valysar formation of the Drogon field. Assess in-place volumes (oil + gas) across 7 reservoir segments with facies-dependent porosity uncertainty. Determine whether to proceed to DG2 Concept Select.",
     "RiskIDs": [
       "dev:master-data--Risk:Drogon-PorosityAndCementation:1"
