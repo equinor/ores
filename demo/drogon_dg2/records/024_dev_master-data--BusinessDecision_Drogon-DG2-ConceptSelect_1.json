@@ -18,13 +18,13 @@
     ]
   },
   "data": {
-    "Name": "Drogon \u2014 Decision Gate 2 DG2 Concept Select",
-    "Description": "DG2 Concept Select for the Drogon field development. Valysar fluvial formation across 7 reservoir segments (NorthSea, NorthHorst, CentralHorst, CentralFlanks, CentralSouth, SouthWing, EastLobe) with three facies types (Channel, Crevasse, Floodplain). Revised petrophysical interpretation: porosity reduced by factor 0.8 based on core analysis and thin sections. 50 FMU realisations quantify STOIIP uncertainty: P90 33.8 / P50 45.4 / P10 59.4 MSm\u00b3 oil in-place. Recoverable oil (P50) 14.8 MSm\u00b3 at 32.5% recovery factor. Recommended concept: subsea tie-back to FPSO with 2\u00d74-slot templates, 12 production wells. NPV@10% 520 MUSD, CAPEX 8,500 MNOK, first oil 2028-H1.",
+    "Name": "Drogon — Decision Gate 2 DG2 Concept Select",
+    "Description": "DG2 Concept Select for the Drogon field development. Valysar fluvial formation across 7 reservoir segments (NorthSea, NorthHorst, CentralHorst, CentralFlanks, CentralSouth, SouthWing, EastLobe) with three facies types (Channel, Crevasse, Floodplain). Revised petrophysical interpretation: porosity reduced by factor 0.8 based on core analysis and thin sections. 50 FMU realisations quantify STOIIP uncertainty: P90 33.8 / P50 45.4 / P10 59.4 MSm³ oil in-place. Recoverable oil (P50) 14.8 MSm³ at 32.5% recovery factor. Recommended concept: subsea tie-back to FPSO with 2×4-slot templates, 12 production wells. NPV@10% 520 MUSD, CAPEX 8,500 MNOK, first oil 2028-H1.",
     "ProjectName": "Drogon Field Development",
     "DecisionLevelID": "dev:reference-data--DecisionLevel:DG2:1",
     "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Pending:1",
     "DecisionDueDate": "2026-06-30",
-    "DecisionSummary": "Approve subsea tie-back development concept. Two 4-slot templates (8 slots), 12 wells targeting full 7-segment Valysar scope. Reference case STOIIP 45.4 MSm\u00b3 (P90 33.8, P10 59.4) \u2014 revised porosity interpretation \u00d70.8. Recoverable oil P50 14.8 MSm\u00b3 (RF 32.5%). First oil target 2028-H1. Proceed to DG3 FEED.",
+    "DecisionSummary": "Approve subsea tie-back development concept. Two 4-slot templates (8 slots), 12 wells targeting full 7-segment Valysar scope. Reference case STOIIP 45.4 MSm³ (P90 33.8, P10 59.4) — revised porosity interpretation ×0.8. Recoverable oil P50 14.8 MSm³ (RF 32.5%). First oil target 2028-H1. Proceed to DG3 FEED.",
     "RiskAssessmentDocument": "dev:work-product-component--Document:Drogon-SRA-DG2-Report:1",
     "RiskIDs": [
       "dev:master-data--Risk:Drogon-DG2-PorosityAndCementation:1",
@@ -134,7 +134,7 @@
       },
       {
         "Title": "Production forecast (reference case)",
-        "Selection": "20-year production forecast from dynamic simulation (revised porosity \u00d70.8)",
+        "Selection": "20-year production forecast from dynamic simulation (revised porosity ×0.8)",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
         "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:a7c3e1f2-9d4b-4a8e-b6f5-2e8c4d1a3b7f:1",
@@ -175,7 +175,7 @@
             "Organisation": "Drogon Subsurface"
           },
           {
-            "Name": "Henrik Bj\u00f8rnstad",
+            "Name": "Henrik Bjørnstad",
             "Role": "Reservoir Engineer",
             "Organisation": "Drogon Reservoir Management"
           },
@@ -195,7 +195,7 @@
             "Organisation": "Drogon Concept"
           },
           {
-            "Name": "Olav M\u00e6land",
+            "Name": "Olav Mæland",
             "Role": "Drilling & Wells Lead",
             "Organisation": "Drogon D&W"
           }
@@ -224,16 +224,16 @@
         },
         "Alternatives": [
           {
-            "Name": "Alt-A: Subsea tie-back to FPSO (2\u00d74-slot templates)",
+            "Name": "Alt-A: Subsea tie-back to FPSO (2×4-slot templates)",
             "Rank": 1,
-            "Rationale": "Highest NPV; leverages planned FPSO conversion for Drogon area. 12 wells across 7 segments, 2\u00d74-slot templates with 2 contingent slots for infill. Subsea boosting pump included for low-pressure phase. Modular water treatment allows staged capacity expansion.",
+            "Rationale": "Highest NPV; leverages planned FPSO conversion for Drogon area. 12 wells across 7 segments, 2×4-slot templates with 2 contingent slots for infill. Subsea boosting pump included for low-pressure phase. Modular water treatment allows staged capacity expansion.",
             "RecommendedAction": "Approve",
             "NPV_10pct_MUSD": 520,
             "CAPEX_MNOK": 8500,
             "IRR_pct": 17
           },
           {
-            "Name": "Alt-B: Reduced scope \u2014 CentralHorst + CentralSouth only",
+            "Name": "Alt-B: Reduced scope — CentralHorst + CentralSouth only",
             "Rank": 2,
             "Rationale": "Focus on the two highest-confidence segments (Channel facies dominant, lowest porosity uncertainty). 6 wells, single 4-slot template + 2 satellite wells. Lower investment but captures only ~55% of recoverable resource. Provides first-oil option if FPSO schedule slips.",
             "RecommendedAction": "Consider",
@@ -242,7 +242,7 @@
             "IRR_pct": 20
           },
           {
-            "Name": "Alt-C: Defer \u2014 acquire DG3-quality appraisal data",
+            "Name": "Alt-C: Defer — acquire DG3-quality appraisal data",
             "Rank": 3,
             "Rationale": "NorthHorst and EastLobe fault compartmentalisation remains poorly constrained. Additional well test data (est. 12 months, 200 MNOK) would reduce dynamic uncertainty range by ~40%. Risk of losing FPSO drydock window if deferred beyond 2026-Q3.",
             "RecommendedAction": "Fallback",
@@ -252,7 +252,7 @@
           }
         ],
         "DevelopmentConcept": {
-          "Summary": "Subsea development with 2\u00d74-slot templates (8 slots + 2 contingent), tie-back to converted FPSO via dual 10\" production flowlines and 6\" gas-lift line. Distance to FPSO ~8 km. Water depth 108 m. Valysar formation at ~1700 m TVD MSL.",
+          "Summary": "Subsea development with 2×4-slot templates (8 slots + 2 contingent), tie-back to converted FPSO via dual 10\" production flowlines and 6\" gas-lift line. Distance to FPSO ~8 km. Water depth 108 m. Valysar formation at ~1700 m TVD MSL.",
           "WellCount": 12,
           "ContingentWells": 2,
           "TemplateSlots": 10,
@@ -263,7 +263,7 @@
           "DistanceToHost_km": 8,
           "HostFacility": "Drogon FPSO (converted)",
           "TargetStartUp": "2028-H1",
-          "FlowlineSpec": "2\u00d710\" production + 6\" gas lift",
+          "FlowlineSpec": "2×10\" production + 6\" gas lift",
           "SubseaBoostingPump": true,
           "WaterTreatmentCapacity_m3d": 5000,
           "InjectionStrategy": "Water injection for pressure support (4 injectors planned Phase 2)",
@@ -279,27 +279,27 @@
           {
             "Factor": "Facies-dependent porosity",
             "Impact": "Medium",
-            "Description": "DG2 appraisal core data have narrowed porosity ranges (revised \u00d70.8 from DG1): Channel 0.21\u20130.24, Crevasse 0.15\u20130.18, Floodplain 0.06\u20130.10. Impact downgraded from High (DG1) to Medium based on 50-realisation FMU results. STOIIP reduced by ~20% vs DG1."
+            "Description": "DG2 appraisal core data have narrowed porosity ranges (revised ×0.8 from DG1): Channel 0.21–0.24, Crevasse 0.15–0.18, Floodplain 0.06–0.10. Impact downgraded from High (DG1) to Medium based on 50-realisation FMU results. STOIIP reduced by ~20% vs DG1."
           },
           {
             "Factor": "Fault transmissibility",
             "Impact": "High",
-            "Description": "Production testing confirmed partial communication across CentralHorst\u2013CentralSouth fault. NorthHorst and EastLobe remain untested. 30% probability of needing 2\u20134 infill wells (80\u2013120 MUSD incremental CAPEX)."
+            "Description": "Production testing confirmed partial communication across CentralHorst–CentralSouth fault. NorthHorst and EastLobe remain untested. 30% probability of needing 2–4 infill wells (80–120 MUSD incremental CAPEX)."
           },
           {
             "Factor": "OWC depth and aquifer support",
             "Impact": "Medium",
-            "Description": "OWC refined to 1710 \u00b1 10 m TVDSS (from \u00b115 m at DG1). Aquifer modelling suggests moderate pressure support, sufficient for primary depletion; water injection reserved for Phase 2."
+            "Description": "OWC refined to 1710 ± 10 m TVDSS (from ±15 m at DG1). Aquifer modelling suggests moderate pressure support, sufficient for primary depletion; water injection reserved for Phase 2."
           },
           {
             "Factor": "Recovery factor uncertainty",
             "Impact": "High",
-            "Description": "Dynamic simulation (50 realisations, revised porosity) gives RF range 28\u201337%. P50 = 32.5%. Absolute recoverable reduced by ~20% vs DG1 (14.8 vs 18.5 MSm\u00b3). Main driver is sweep efficiency in NorthHorst and EastLobe where fault baffles may create unswept compartments. ICD completions and Phase 2 water injection are key mitigations."
+            "Description": "Dynamic simulation (50 realisations, revised porosity) gives RF range 28–37%. P50 = 32.5%. Absolute recoverable reduced by ~20% vs DG1 (14.8 vs 18.5 MSm³). Main driver is sweep efficiency in NorthHorst and EastLobe where fault baffles may create unswept compartments. ICD completions and Phase 2 water injection are key mitigations."
           },
           {
             "Factor": "FPSO water treatment capacity",
             "Impact": "Medium",
-            "Description": "Water cut expected to reach 50% by Year 5 and 70% by Year 10. FPSO design includes 5,000 m\u00b3/d treatment; expansion module to 8,000 m\u00b3/d available for Year 7+. Uncertainty in early water breakthrough timing from EastLobe aquifer."
+            "Description": "Water cut expected to reach 50% by Year 5 and 70% by Year 10. FPSO design includes 5,000 m³/d treatment; expansion module to 8,000 m³/d available for Year 7+. Uncertainty in early water breakthrough timing from EastLobe aquifer."
           }
         ],
         "KeyEconomics": {
@@ -311,7 +311,7 @@
           "IRR_pct": 17,
           "Currency": "2026 real terms",
           "OilPriceAssumption_USDperbbl": 75,
-          "Note": "Reference case economics from CRA, updated for DG2 revised volumes (porosity \u00d70.8 \u2192 ~20% less STOIIP and recoverable). NPV reduced from DG1's 650 MUSD to 520 MUSD. Breakeven up from $38 to $42/bbl. CAPEX unchanged. Payback extended by 1 year due to lower production rates."
+          "Note": "Reference case economics from CRA, updated for DG2 revised volumes (porosity ×0.8 → ~20% less STOIIP and recoverable). NPV reduced from DG1's 650 MUSD to 520 MUSD. Breakeven up from $38 to $42/bbl. CAPEX unchanged. Payback extended by 1 year due to lower production rates."
         },
         "ScheduleMilestones": [
           {

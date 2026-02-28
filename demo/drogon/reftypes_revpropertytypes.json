@@ -1,0 +1,802 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "ReferenceData": [
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:TotalGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "TotalGas",
+        "Code": "TotalGas",
+        "Description": "Total gas initially in place (GIIP). Free + dissolved gas."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:TotalHydrocarbonGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "TotalHydrocarbonGas",
+        "Code": "TotalHydrocarbonGas",
+        "Description": "Total hydrocarbon gas volume (HC gas)."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Non-AssociatedGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Non-AssociatedGas",
+        "Code": "Non-AssociatedGas",
+        "Description": "Non-associated (free) gas. Free gas above oil column."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Non-AssociatedHydrocarbonGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Non-AssociatedHydrocarbonGas",
+        "Code": "Non-AssociatedHydrocarbonGas",
+        "Description": "Non-associated hydrocarbon gas."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:AssociatedGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "AssociatedGas",
+        "Code": "AssociatedGas",
+        "Description": "Associated gas in oil column (solution gas, SGIIP, Rs)."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:AssociatedHydrocarbon:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "AssociatedHydrocarbon",
+        "Code": "AssociatedHydrocarbon",
+        "Description": "Associated liquid hydrocarbons in gas column (condensate/oil)."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:GasCapGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "GasCapGas",
+        "Code": "GasCapGas",
+        "Description": "Gas cap free gas above oil-water contact."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:GasCapHydrocarbonGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "GasCapHydrocarbonGas",
+        "Code": "GasCapHydrocarbonGas",
+        "Description": "Hydrocarbon gas in the gas-cap zone."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:DissolvedGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "DissolvedGas",
+        "Code": "DissolvedGas",
+        "Description": "Dissolved/solution gas in oil (SGIIP)."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:DissolvedHydrocarbonGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "DissolvedHydrocarbonGas",
+        "Code": "DissolvedHydrocarbonGas",
+        "Description": "Dissolved hydrocarbon gases in oil."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Condensate:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Condensate",
+        "Code": "Condensate",
+        "Description": "Condensate volume in gas column."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:CondensateGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "CondensateGas",
+        "Code": "CondensateGas",
+        "Description": "Gas components yielding condensate at surface."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:CondensateOil:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "CondensateOil",
+        "Code": "CondensateOil",
+        "Description": "Liquid hydrocarbons in gas condensate systems."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Oil:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Oil",
+        "Code": "Oil",
+        "Description": "Oil in-place: STOIIP (stock-tank oil initially in place)."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:CarbonDioxide:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "CarbonDioxide",
+        "Code": "CarbonDioxide",
+        "Description": "CO₂ volume in reservoir fluids."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:HydrogenSulfide:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "HydrogenSulfide",
+        "Code": "HydrogenSulfide",
+        "Description": "H₂S volume in reservoir fluids."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Nitrogen:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Nitrogen",
+        "Code": "Nitrogen",
+        "Description": "N₂ in reservoir fluids."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Hydrocarbon:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Hydrocarbon",
+        "Code": "Hydrocarbon",
+        "Description": "Total hydrocarbons (oil + gas)."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Petroleum:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Petroleum",
+        "Code": "Petroleum",
+        "Description": "Total petroleum hydrocarbons."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Water:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Water",
+        "Code": "Water",
+        "Description": "Water volume in reservoir fluids (connate or movable)."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:BulkOil:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "BulkOil",
+        "Code": "BulkOil",
+        "Description": "Bulk volume of oil-bearing interval (BULK_OIL). Formula: GRV_OIL."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:BulkGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "BulkGas",
+        "Code": "BulkGas",
+        "Description": "Bulk volume of gas-bearing interval (BULK_GAS). Formula: GRV_GAS."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:BulkTotal:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "BulkTotal",
+        "Code": "BulkTotal",
+        "Description": "Bulk volume of full reservoir interval (BULK_TOTAL). Formula: GRV_TOTAL."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:NetOil:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "NetOil",
+        "Code": "NetOil",
+        "Description": "Net rock volume of oil-bearing interval (NET_OIL, NRV_OIL). Formula: NRV = GRV × NTG."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:NetGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "NetGas",
+        "Code": "NetGas",
+        "Description": "Net rock volume of gas-bearing interval (NET_GAS, NRV_GAS). Formula: NRV = GRV × NTG."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:NetTotal:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "NetTotal",
+        "Code": "NetTotal",
+        "Description": "Net rock volume of full interval (NET_TOTAL, NRV_TOTAL). Formula: NRV = GRV × NTG."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:PorvOil:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "PorvOil",
+        "Code": "PorvOil",
+        "Description": "Pore volume in oil-bearing interval (PORV_OIL). Formula: PORV_OIL = NetOil × φ."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:PorvGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "PorvGas",
+        "Code": "PorvGas",
+        "Description": "Pore volume in gas-bearing interval (PORV_GAS). Formula: PORV_GAS = NetGas × φ."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:PorvTotal:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "PorvTotal",
+        "Code": "PorvTotal",
+        "Description": "Total pore volume in reservoir (PORV_TOTAL). Formula: PORV = NetTotal × φ."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:HcpvOil:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "HcpvOil",
+        "Code": "HcpvOil",
+        "Description": "Hydrocarbon pore volume in oil-bearing interval (HCPV_OIL). Formula: PORV_OIL × Shc_OIL."
+      }
+    },
+    {
+      "kind": "osdu:wks:reference-data--ReservoirEstimatedVolumePropertyType:1.0.0",
+      "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:HcpvGas:",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-osdu-reference-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "HcpvGas",
+        "Code": "HcpvGas",
+        "Description": "Hydrocarbon pore volume in gas-bearing interval (HCPV_GAS). Formula: PORV_GAS × Shc_GAS."
+      }
+    }
+  ],
+  "MasterData": [],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [],
+    "WorkProduct": {}
+  }
+}

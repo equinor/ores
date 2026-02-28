@@ -198,7 +198,7 @@ _BD_LOCAL_ENRICHMENTS: Dict[str, Dict[str, Any]] = {}
 def _load_bd_enrichments() -> None:
     """Scan known BD manifest files and cache ext.equinor data by record ID."""
     manifest_paths = [
-        _REPO_ROOT / "demo" / "json" / "manifest_dg_businessdecision.json",
+        _REPO_ROOT / "demo" / "grand" / "json" / "manifest_dg_businessdecision.json",
         _REPO_ROOT / "demo" / "drogon" / "manifest_bd_drogon.json",
         _REPO_ROOT / "demo" / "drogon_dg2" / "manifest_bd_dg2.json",
     ]
@@ -421,6 +421,9 @@ def _normalize_geolabel(data_block: Dict[str, Any]) -> Dict[str, Any]:
 
     for i in range(n_rows):
         seg = segments[i] if i < len(segments) else "TOTAL"
+        # Normalise common "totals" variants → canonical "TOTAL" key
+        if seg.lower() in ("totals", "total", "grand total"):
+            seg = "TOTAL"
         fac = facies[i] if i < len(facies) else "ALL"
 
         for col in val_col_names:

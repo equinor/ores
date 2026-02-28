@@ -56,6 +56,10 @@
   .risk-chip.kept { background: #e2e8f0; color: #4a5568; }
   .risk-chip.added { background: #fed7d7; color: #c53030; border: 1px solid #feb2b2; }
   .risk-chip.removed { background: #c6f6d5; color: #276749; text-decoration: line-through; border: 1px solid #9ae6b4; }
+  .risk-chip.mitigated { background: #c6f6d5; color: #276749; border: 1px solid #9ae6b4; }
+  .risk-chip.reduced { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+  .risk-sev { font-size: .7rem; opacity: .8; margin-left: .2rem; }
+  .risk-status { font-size: .65rem; font-weight: 600; margin-left: .15rem; text-transform: uppercase; }
 
   /* ── Synthesis card ── */
   .synthesis-card { border: 1px solid #b2d8d8; border-radius: 10px; padding: 0; overflow: hidden; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
@@ -68,6 +72,13 @@
 
   /* ── No-results ── */
   .no-gates { text-align: center; padding: 2rem; color: var(--eq-grey); font-size: .95rem; }
+
+  /* ── Charts ── */
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  @media (max-width: 900px) { .chart-row { grid-template-columns: 1fr; } }
+  .chart-card { border: 1px solid var(--eq-border); border-radius: 8px; background: var(--eq-white); padding: .75rem 1rem; box-shadow: var(--shadow-sm); }
+  .chart-card h4 { margin: 0 0 .5rem; font-size: .88rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: #4a5568; }
+  .chart-wrap { position: relative; height: 280px; }
 </style>
 {% endblock %}
 
@@ -112,6 +123,7 @@
   </section>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script>
 (function () {
   'use strict';
@@ -223,11 +235,14 @@
     let html = '';
 
     // ── VOLUMES ──
+    // Volume keys whose values are in m³ (display as MSm³)
+    const volKeys = new Set(['stoiip_p90','stoiip_p50','stoiip_p10','recoverable_p90','recoverable_p50','recoverable_p10']);
+    const fmtMetric = (v, key) => volKeys.has(key) ? fmtVol(v) : fmtNum(v);
     html += buildMetricTable('Volumes (MSm³)', gates, deltas, [
       ['stoiip_p90', 'STOIIP P90'], ['stoiip_p50', 'STOIIP P50'], ['stoiip_p10', 'STOIIP P10'],
       ['recoverable_p90', 'Recoverable P90'], ['recoverable_p50', 'Recoverable P50'], ['recoverable_p10', 'Recoverable P10'],
       ['rf_p90', 'Rec. Factor P90 (%)'], ['rf_p50', 'Rec. Factor P50 (%)'], ['rf_p10', 'Rec. Factor P10 (%)'],
-    ]);
+    ], fmtMetric);
 
     // ── PER-SEGMENT STOIIP P50 ──
     const segKeys = collectSegmentKeys(gates);
@@ -242,10 +257,18 @@
         let prev = null;
         gates.forEach((g, i) => {
           const v = ((g.gls_volumes || {})[seg] || {})['Oil.P50'];
-          html += `<td class="${v != null ? 'cmp-val' : 'cmp-empty'}">${v != null ? fmtNum(v) : '—'}</td>`;
+          html += `<td class="${v != null ? 'cmp-val' : 'cmp-empty'}">${v != null ? fmtVol(v) : '—'}</td>`;
           if (i === gates.length - 1 && gates.length > 1) {
             const pv = ((gates[i-1].gls_volumes || {})[seg] || {})['Oil.P50'];
-            html += '<td>' + deltaCell(pv, v) + '</td>';
+            if (pv != null && v != null) {
+              const dv = v - pv;
+              const sign = dv > 0 ? '+' : '';
+              const cls = dv > 0 ? 'up' : dv < 0 ? 'down' : 'neutral';
+              const pct = pv !== 0 ? Math.round(dv / pv * 100) : null;
+              html += `<td><span class="delta ${cls}">${sign}${fmtVol(dv)}${pct != null ? ' (' + sign + pct + '%)' : ''}</span></td>`;
+            } else {
+              html += '<td>' + deltaCell(pv, v) + '</td>';
+            }
           }
           prev = v;
         });
@@ -253,6 +276,16 @@
       });
       html += '</tbody></table></div></div>';
     }
+
+    // ── CHARTS — visual comparison of key metrics ──
+    html += '<div class="chart-row">';
+    html += '<div class="chart-card"><h4>STOIIP Uncertainty Range by Gate</h4><div class="chart-wrap"><canvas id="chartVolRange"></canvas></div></div>';
+    html += '<div class="chart-card"><h4>Oil in Place by Segment</h4><div class="chart-wrap"><canvas id="chartSegBar"></canvas></div></div>';
+    html += '</div>';
+    html += '<div class="chart-row">';
+    html += '<div class="chart-card"><h4>Delta Tornado — Last Gate Change</h4><div class="chart-wrap"><canvas id="chartTornado"></canvas></div></div>';
+    html += '<div class="chart-card"><h4>Risk Evolution</h4><div class="chart-wrap"><canvas id="chartRiskEvo"></canvas></div></div>';
+    html += '</div>';
 
     // ── ECONOMICS ──
     html += buildMetricTable('Economics', gates, deltas, [
@@ -276,11 +309,13 @@
     html += buildSynthesis(gates, deltas, riskDiffs, propDiffs);
 
     $('#comparison-content').innerHTML = html;
+    renderCharts(gates, deltas, riskDiffs);
   }
 
   // ── Table builders ──
 
-  function buildMetricTable(title, gates, deltas, rows) {
+  function buildMetricTable(title, gates, deltas, rows, fmt) {
+    fmt = fmt || fmtNum;
     // Check if any row has data
     const hasData = rows.some(([key]) => gates.some(g => (g.metrics || {})[key] != null));
     if (!hasData) return '';
@@ -297,7 +332,7 @@
       h += `<tr><td>${esc(label)}</td>`;
       gates.forEach((g, i) => {
         const v = (g.metrics || {})[key];
-        h += `<td class="${v != null ? 'cmp-val' : 'cmp-empty'}">${v != null ? fmtNum(v) : '—'}</td>`;
+        h += `<td class="${v != null ? 'cmp-val' : 'cmp-empty'}">${v != null ? fmt(v, key) : '—'}</td>`;
       });
       if (gates.length > 1) {
         const lastD = deltas[deltas.length - 1] || {};
@@ -308,7 +343,7 @@
           } else {
             const sign = d.abs > 0 ? '+' : '';
             const cls = d.abs > 0 ? 'up' : d.abs < 0 ? 'down' : 'neutral';
-            h += `<td><span class="delta ${cls}">${sign}${fmtNum(d.abs)}${d.pct != null ? ' (' + sign + d.pct + '%)' : ''}</span></td>`;
+            h += `<td><span class="delta ${cls}">${sign}${fmt(d.abs, key)}${d.pct != null ? ' (' + sign + d.pct + '%)' : ''}</span></td>`;
           }
         } else {
           h += '<td></td>';
@@ -428,25 +463,42 @@
 
     gates.forEach((g, i) => {
       const rd = riskDiffs[i] || {};
+      const details = g.risk_details || {};
       h += `<tr><td class="cmp-val">${esc(g.gate_label)}</td><td><div class="risk-row">`;
       (g.risk_ids || []).forEach(rid => {
         const nm = (g.risk_names || {})[rid] || rid.split(':').slice(-2, -1)[0] || rid;
+        const det = details[rid] || {};
         const isNew = (rd.added || []).includes(rid);
-        h += `<span class="risk-chip ${isNew ? 'added' : 'kept'}" title="${esc(rid)}">${esc(nm)}</span>`;
+        const st = (det.status || '').toLowerCase();
+        const cls = st === 'mitigated' ? 'mitigated' : (isNew ? 'added' : 'kept');
+        const sev = det.residual_severity && det.residual_probability
+          ? ` <span class="risk-sev">${esc(det.residual_severity)}/${esc(det.residual_probability)}</span>` : '';
+        const stBadge = st === 'mitigated'
+          ? ' <span class="risk-status" style="color:#276749;">✓</span>' : '';
+        h += `<span class="risk-chip ${cls}" title="${esc(rid)}">${esc(nm)}${sev}${stBadge}</span>`;
       });
       h += '</div></td><td><div class="risk-row">';
       if (i > 0) {
+        // Severity changes (kept risks that changed)
+        (rd.severity_changes || []).forEach(ch => {
+          const cls = ch.direction === 'mitigated' ? 'mitigated' : (ch.direction === 'reduced' ? 'reduced' : 'added');
+          const arrow = ch.direction === 'increased' ? '↑' : '↓';
+          const label = ch.direction === 'mitigated' ? '✓ Mitigated' : `${arrow} ${ch.prev_sev} → ${ch.curr_sev}`;
+          const shortNm = ch.name.split(' — ').pop() || ch.name;
+          h += `<span class="risk-chip ${cls}">${esc(shortNm)}: ${label}</span>`;
+        });
+        // Newly added risks
         (rd.added || []).forEach(rid => {
           const nm = (g.risk_names || {})[rid] || rid.split(':').slice(-2, -1)[0] || rid;
           h += `<span class="risk-chip added">+ ${esc(nm)}</span>`;
         });
+        // Removed risks
         (rd.removed || []).forEach(rid => {
-          // Look up name from previous gate
           const prevG = gates[i - 1];
           const nm = (prevG.risk_names || {})[rid] || rid.split(':').slice(-2, -1)[0] || rid;
           h += `<span class="risk-chip removed">− ${esc(nm)}</span>`;
         });
-        if (!(rd.added || []).length && !(rd.removed || []).length) {
+        if (!(rd.added || []).length && !(rd.removed || []).length && !(rd.severity_changes || []).length) {
           h += '<span class="muted" style="font-size:.8rem;">No change</span>';
         }
       } else {
@@ -495,7 +547,7 @@
       const pct = last.stoiip_p50.pct;
       const dir = pct > 0 ? 'increased' : 'decreased';
       insights.push({
-        text: `STOIIP P50 ${dir} by ${Math.abs(pct)}% (${fmtNum(last.stoiip_p50.abs)} MSm³) from ${prevG.gate_label} to ${currG.gate_label}.`,
+        text: `STOIIP P50 ${dir} by ${Math.abs(pct)}% (${fmtVol(last.stoiip_p50.abs)} MSm³) from ${prevG.gate_label} to ${currG.gate_label}.`,
         cls: pct > 0 ? 'positive' : 'warning'
       });
     }
@@ -535,13 +587,18 @@
     // Risks
     const addedCount = (lastRD.added || []).length;
     const removedCount = (lastRD.removed || []).length;
-    if (addedCount > 0 || removedCount > 0) {
-      let riskText = '';
-      if (addedCount > 0) riskText += `${addedCount} new risk(s) identified`;
-      if (addedCount > 0 && removedCount > 0) riskText += ', ';
-      if (removedCount > 0) riskText += `${removedCount} risk(s) mitigated/removed`;
-      riskText += ` between ${prevG.gate_label} and ${currG.gate_label}.`;
-      insights.push({ text: riskText, cls: addedCount > removedCount ? 'warning' : 'positive' });
+    const sevChanges = (lastRD.severity_changes || []);
+    const mitigatedCount = sevChanges.filter(c => c.direction === 'mitigated').length;
+    const reducedCount = sevChanges.filter(c => c.direction === 'reduced').length;
+    if (addedCount > 0 || removedCount > 0 || mitigatedCount > 0 || reducedCount > 0) {
+      let parts = [];
+      if (mitigatedCount > 0) parts.push(`${mitigatedCount} risk(s) mitigated`);
+      if (reducedCount > 0) parts.push(`${reducedCount} risk(s) reduced in severity`);
+      if (removedCount > 0) parts.push(`${removedCount} risk(s) removed`);
+      if (addedCount > 0) parts.push(`${addedCount} new risk(s) identified`);
+      let riskText = parts.join(', ') + ` between ${prevG.gate_label} and ${currG.gate_label}.`;
+      const isPositive = (mitigatedCount + reducedCount + removedCount) > addedCount;
+      insights.push({ text: riskText, cls: isPositive ? 'positive' : 'warning' });
     }
 
     // Mitigation suggestion
@@ -564,6 +621,158 @@
     });
     h += '</div></div></div>';
     return h;
+  }
+
+  // ── Chart rendering ──
+
+  const GATE_COLORS = ['#3182ce', '#e53e3e', '#38a169', '#d69e2e', '#805ad5', '#dd6b20'];
+  const GATE_COLORS_40 = ['rgba(49,130,206,.4)', 'rgba(229,62,62,.4)', 'rgba(56,161,105,.4)', 'rgba(214,158,46,.4)', 'rgba(128,90,213,.4)', 'rgba(221,107,32,.4)'];
+  let _activeCharts = [];
+
+  function renderCharts(gates, deltas, riskDiffs) {
+    // Destroy previous charts
+    _activeCharts.forEach(c => c.destroy());
+    _activeCharts = [];
+
+    if (typeof Chart === 'undefined' || !gates.length) return;
+
+    // 1. STOIIP Uncertainty Range — grouped bar with error-bar feel (P10 / P50 / P90)
+    const volCtx = document.getElementById('chartVolRange');
+    if (volCtx) {
+      const labels = gates.map(g => g.gate_label);
+      const p10 = gates.map(g => ((g.metrics || {}).stoiip_p10 || 0) / 1e6);
+      const p50 = gates.map(g => ((g.metrics || {}).stoiip_p50 || 0) / 1e6);
+      const p90 = gates.map(g => ((g.metrics || {}).stoiip_p90 || 0) / 1e6);
+      _activeCharts.push(new Chart(volCtx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            { label: 'P10', data: p10, backgroundColor: 'rgba(229,62,62,.65)', borderColor: '#c53030', borderWidth: 1 },
+            { label: 'P50', data: p50, backgroundColor: 'rgba(49,130,206,.75)', borderColor: '#2b6cb0', borderWidth: 1 },
+            { label: 'P90', data: p90, backgroundColor: 'rgba(56,161,105,.55)', borderColor: '#276749', borderWidth: 1 },
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'top', labels: { boxWidth: 14, font: { size: 11 } } } },
+          scales: {
+            y: { title: { display: true, text: 'MSm³', font: { size: 11 } }, ticks: { callback: v => v.toFixed(1) } },
+            x: { ticks: { font: { size: 12, weight: 'bold' } } }
+          }
+        }
+      }));
+    }
+
+    // 2. Oil by Segment — stacked bar per gate
+    const segCtx = document.getElementById('chartSegBar');
+    if (segCtx) {
+      const segKeys = collectSegmentKeys(gates).filter(s => s !== 'TOTAL');
+      if (segKeys.length) {
+        const segColors = ['#3182ce','#e53e3e','#38a169','#d69e2e','#805ad5','#dd6b20','#319795','#b83280','#5a67d8','#718096'];
+        const datasets = segKeys.map((seg, si) => ({
+          label: seg,
+          data: gates.map(g => (((g.gls_volumes || {})[seg] || {})['Oil.P50'] || 0) / 1e6),
+          backgroundColor: segColors[si % segColors.length] + 'cc',
+          borderColor: segColors[si % segColors.length],
+          borderWidth: 1,
+        }));
+        _activeCharts.push(new Chart(segCtx, {
+          type: 'bar',
+          data: { labels: gates.map(g => g.gate_label), datasets },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } } },
+            scales: {
+              x: { stacked: true, ticks: { font: { size: 12, weight: 'bold' } } },
+              y: { stacked: true, title: { display: true, text: 'Oil P50 (MSm³)', font: { size: 11 } }, ticks: { callback: v => v.toFixed(1) } }
+            }
+          }
+        }));
+      }
+    }
+
+    // 3. Delta Tornado — horizontal bar showing metric changes (last gate step)
+    const torCtx = document.getElementById('chartTornado');
+    if (torCtx && deltas.length > 1) {
+      const lastD = deltas[deltas.length - 1] || {};
+      const items = Object.entries(lastD)
+        .filter(([k, v]) => v && v.abs != null && !v.new)
+        .map(([k, v]) => ({ key: v.label || k, abs: v.abs, pct: v.pct }))
+        .sort((a, b) => Math.abs(b.abs) - Math.abs(a.abs))
+        .slice(0, 10);
+      if (items.length) {
+        // Normalize large values: show in MSm³ for volumes, raw for others
+        const labels = items.map(i => i.key);
+        const vals = items.map(i => {
+          const a = i.abs;
+          return (Math.abs(a) > 1e4) ? +(a / 1e6).toFixed(3) : +a.toFixed(2);
+        });
+        const colors = vals.map(v => v >= 0 ? 'rgba(56,161,105,.7)' : 'rgba(229,62,62,.7)');
+        const borders = vals.map(v => v >= 0 ? '#276749' : '#c53030');
+        _activeCharts.push(new Chart(torCtx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              data: vals,
+              backgroundColor: colors,
+              borderColor: borders,
+              borderWidth: 1,
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false },
+              tooltip: { callbacks: { label: ctx => {
+                const i = ctx.dataIndex;
+                const p = items[i].pct;
+                return ctx.formattedValue + (p != null ? ` (${p > 0 ? '+' : ''}${p}%)` : '');
+              }}}
+            },
+            scales: {
+              x: { title: { display: true, text: 'Change', font: { size: 11 } }, grid: { color: '#e2e8f0' } },
+              y: { ticks: { font: { size: 11 } } }
+            }
+          }
+        }));
+      }
+    }
+
+    // 4. Risk Evolution — bar chart showing risk changes per gate
+    const riskCtx = document.getElementById('chartRiskEvo');
+    if (riskCtx && gates.length > 0) {
+      const labels = gates.map(g => g.gate_label);
+      const riskCounts = gates.map(g => (g.risk_ids || []).length);
+      const openCounts = gates.map(g => {
+        const dets = g.risk_details || {};
+        return (g.risk_ids || []).filter(rid => (dets[rid]||{}).status !== 'Mitigated').length;
+      });
+      const mitigatedCounts = gates.map(g => {
+        const dets = g.risk_details || {};
+        return (g.risk_ids || []).filter(rid => (dets[rid]||{}).status === 'Mitigated').length;
+      });
+      _activeCharts.push(new Chart(riskCtx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            { label: 'Open Risks', data: openCounts, backgroundColor: 'rgba(229,62,62,.6)', borderColor: '#c53030', borderWidth: 1, yAxisID: 'y' },
+            { label: 'Mitigated', data: mitigatedCounts, backgroundColor: 'rgba(56,161,105,.6)', borderColor: '#276749', borderWidth: 1, yAxisID: 'y' },
+            { label: 'Total', data: riskCounts, type: 'line', borderColor: '#3182ce', backgroundColor: 'rgba(49,130,206,.1)', fill: false, tension: .3, pointRadius: 5, pointBackgroundColor: '#3182ce', yAxisID: 'y' },
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } } },
+          scales: {
+            y: { beginAtZero: true, stacked: true, title: { display: true, text: 'Count', font: { size: 11 } }, ticks: { stepSize: 1 } },
+            x: { stacked: true, ticks: { font: { size: 12, weight: 'bold' } } }
+          }
+        }
+      }));
+    }
   }
 
   // ── Utilities ──
@@ -595,6 +804,15 @@
     if (isNaN(n)) return String(v);
     if (Number.isInteger(n)) return n.toLocaleString();
     return n.toFixed(Math.abs(n) >= 10 ? 1 : Math.abs(n) >= 1 ? 2 : 4);
+  }
+
+  /** Format a volume value stored in m³ as MSm³ (divide by 1e6) */
+  function fmtVol(v) {
+    if (v == null) return '—';
+    const n = parseFloat(v);
+    if (isNaN(n)) return '—';
+    const msm3 = n / 1e6;
+    return msm3.toFixed(Math.abs(msm3) >= 10 ? 1 : Math.abs(msm3) >= 1 ? 2 : 3);
   }
 
   function esc(s) {

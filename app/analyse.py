@@ -267,21 +267,81 @@ def _compute_deltas(gates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return deltas
 
 
+def _risk_topic(name: str) -> str:
+    """Extract the common topic from a risk name (part after ' — ')."""
+    parts = name.split(" — ", 1)
+    return parts[1].strip().lower() if len(parts) > 1 else name.strip().lower()
+
+
+def _sev_num(s: str) -> int:
+    """Parse 'S3' → 3, 'P4' → 4 etc. Return 0 if unparseable."""
+    if s and len(s) >= 2 and s[0] in "SPsp" and s[1:].isdigit():
+        return int(s[1:])
+    return 0
+
+
 def _diff_risks(gates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """For each gate, annotate risk IDs as added/removed/kept vs previous gate."""
+    """For each gate, match risks by topic name and track severity changes."""
     result: List[Dict[str, Any]] = []
-    prev_set: set = set()
+    prev_by_topic: Dict[str, Dict[str, Any]] = {}
+
     for g in gates:
-        curr_ids = set(g.get("risk_ids") or [])
-        added = curr_ids - prev_set
-        removed = prev_set - curr_ids
-        kept = curr_ids & prev_set
+        curr_ids = g.get("risk_ids") or []
+        curr_details = g.get("risk_details") or {}
+        curr_by_topic: Dict[str, Dict[str, Any]] = {}
+        for rid in curr_ids:
+            det = curr_details.get(rid, {})
+            topic = _risk_topic(det.get("name", rid))
+            curr_by_topic[topic] = {"id": rid, **det}
+
+        prev_topics = set(prev_by_topic.keys())
+        curr_topics = set(curr_by_topic.keys())
+
+        added_topics = curr_topics - prev_topics
+        removed_topics = prev_topics - curr_topics
+        kept_topics = curr_topics & prev_topics
+
+        added = [curr_by_topic[t]["id"] for t in sorted(added_topics)]
+        removed = [prev_by_topic[t]["id"] for t in sorted(removed_topics)]
+        kept = [curr_by_topic[t]["id"] for t in sorted(kept_topics)]
+
+        # Compute severity changes for kept risks
+        changes: List[Dict[str, Any]] = []
+        for t in sorted(kept_topics):
+            prev_d = prev_by_topic[t]
+            curr_d = curr_by_topic[t]
+            ps = _sev_num(prev_d.get("residual_severity", ""))
+            cs = _sev_num(curr_d.get("residual_severity", ""))
+            pp = _sev_num(prev_d.get("residual_probability", ""))
+            cp = _sev_num(curr_d.get("residual_probability", ""))
+            old_status = prev_d.get("status", "")
+            new_status = curr_d.get("status", "")
+            direction = ""
+            if (cs < ps) or (cp < pp):
+                direction = "reduced"
+            elif (cs > ps) or (cp > pp):
+                direction = "increased"
+            if old_status != new_status and new_status.lower() == "mitigated":
+                direction = "mitigated"
+            if direction:
+                changes.append({
+                    "id": curr_d["id"],
+                    "topic": t,
+                    "name": curr_d.get("name", ""),
+                    "prev_sev": f"{prev_d.get('residual_severity','')}/{prev_d.get('residual_probability','')}",
+                    "curr_sev": f"{curr_d.get('residual_severity','')}/{curr_d.get('residual_probability','')}",
+                    "prev_status": old_status,
+                    "curr_status": new_status,
+                    "direction": direction,
+                })
+
         result.append({
-            "added": sorted(added),
-            "removed": sorted(removed),
-            "kept": sorted(kept),
+            "added": added,
+            "removed": removed,
+            "kept": kept,
+            "severity_changes": changes,
         })
-        prev_set = curr_ids
+        prev_by_topic = curr_by_topic
     return result
 
 
@@ -515,32 +575,43 @@ async def analyse_compare(
 
             gates.sort(key=lambda g: g.pop("_sort_key"))
 
-            # Hydrate risk names
+            # Hydrate risk names + details
             all_risk_ids: set = set()
             for g in gates:
+                g.setdefault("risk_details", {})
                 all_risk_ids.update(g.get("risk_ids") or [])
             for rid in all_risk_ids:
                 rname = rid
+                rdata: Dict[str, Any] = {}
                 try:
                     rr = await client.get(
                         f"{storage_url}/{rid}", headers=hdr
                     )
                     if rr.status_code == 200:
-                        rname = (
-                            (rr.json() or {}).get("data", {}).get("Name")
-                            or rid
-                        )
+                        rdata = (rr.json() or {}).get("data", {})
+                        rname = rdata.get("Name") or rid
                     else:
                         lr = LOCAL.get(rid)
                         if lr:
-                            rname = (
-                                (lr.get("data") or {}).get("Name") or rid
-                            )
+                            rdata = (lr.get("data") or {})
+                            rname = rdata.get("Name") or rid
                 except Exception:
                     pass
+                # Extract severity/probability/status from equinor ext
+                eq = (rdata.get("ext") or {}).get("equinor") or {}
+                detail = {
+                    "name": rname,
+                    "inherent_severity": eq.get("InherentSeverity", ""),
+                    "inherent_probability": eq.get("InherentProbability", ""),
+                    "residual_severity": eq.get("ResidualSeverity", ""),
+                    "residual_probability": eq.get("ResidualProbability", ""),
+                    "status": eq.get("Status", ""),
+                    "category": eq.get("RiskCategoryID", ""),
+                }
                 for g in gates:
                     if rid in (g.get("risk_ids") or []):
                         g["risk_names"][rid] = rname
+                        g["risk_details"][rid] = detail
 
     except Exception as e:
         log.exception("[ANALYSE] Compare failed: %s", e)

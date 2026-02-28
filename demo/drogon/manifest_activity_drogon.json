@@ -186,15 +186,15 @@
           "CreationDateTime": "2026-02-13T10:21:57.365Z",
           "ActivityTemplateID": "dev:work-product-component--ActivityTemplate:aa2791c8-e2ea-5aa5-871d-25db294aad8a:1",
           "WorkflowStatus": "Completed",
-          "ParentObjectID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
-          "ParentWorkProductID": "dev:work-product:37dcb76b-e388-4dbf-9940-9ed277418543:1",
+          "ParentObjectID": "dev:master-data--Reservoir:224d8c55-4316-4df8-9a3a-21e22250d00c:1",
+          "ParentWorkProductID": "dev:work-product:862b5d29-3d8b-4e9f-9d38-7b78185079f7:1",
           "Parameters": [
             {
               "Title": "InputParameters",
               "Description": "Per-realisation OWC depth and PHIT input parameter table",
               "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
               "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
-              "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:d8e4e9ba-a484-40a8-b4d6-4e9004913292:1",
+              "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:44675061-ae97-458b-b6b8-5b5ffedbe9e2:1",
               "Keys": [
                 {
                   "ParameterKey": "artifact",
@@ -256,7 +256,7 @@
               "Description": "Generated per-realisation input parameter table (ColumnBasedTable WPC)",
               "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
               "ParameterRoleID": "dev:reference-data--ParameterRole:Output:1",
-              "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:d8e4e9ba-a484-40a8-b4d6-4e9004913292:1",
+              "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:44675061-ae97-458b-b6b8-5b5ffedbe9e2:1",
               "Keys": [
                 {
                   "ParameterKey": "artifact",
@@ -269,7 +269,7 @@
               "Description": "Per-realisation estimated volumes (RAW REV WPC)",
               "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
               "ParameterRoleID": "dev:reference-data--ParameterRole:Output:1",
-              "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:68f57fdc-15b5-4c23-8256-8eee4296130c:1",
+              "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:6a436525-7f21-43ce-84f2-c0a3a130fb73:1",
               "Keys": [
                 {
                   "ParameterKey": "artifact",
@@ -282,7 +282,7 @@
               "Description": "Statistical aggregation of realisations (STAT REV WPC: P10/P50/P90)",
               "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
               "ParameterRoleID": "dev:reference-data--ParameterRole:Output:1",
-              "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:0ed7364d-39f5-45ea-9a73-72bb0bc48c6f:1",
+              "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:2a6251f6-4f3f-4734-9471-c9506e866da2:1",
               "Keys": [
                 {
                   "ParameterKey": "artifact",
@@ -306,12 +306,12 @@
           ],
           "ancestry": {
             "parents": [
-              "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+              "dev:master-data--Reservoir:224d8c55-4316-4df8-9a3a-21e22250d00c:1"
             ],
             "children": [
-              "dev:work-product-component--ColumnBasedTable:d8e4e9ba-a484-40a8-b4d6-4e9004913292:1",
-              "dev:work-product-component--ReservoirEstimatedVolumes:68f57fdc-15b5-4c23-8256-8eee4296130c:1",
-              "dev:work-product-component--ReservoirEstimatedVolumes:0ed7364d-39f5-45ea-9a73-72bb0bc48c6f:1"
+              "dev:work-product-component--ColumnBasedTable:44675061-ae97-458b-b6b8-5b5ffedbe9e2:1",
+              "dev:work-product-component--ReservoirEstimatedVolumes:6a436525-7f21-43ce-84f2-c0a3a130fb73:1",
+              "dev:work-product-component--ReservoirEstimatedVolumes:2a6251f6-4f3f-4734-9471-c9506e866da2:1"
             ]
           }
         }

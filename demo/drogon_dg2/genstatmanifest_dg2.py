@@ -22,7 +22,7 @@ from typing import Any, Dict, List, Tuple
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DG1_DIR    = SCRIPT_DIR.parent / "drogon"
-JSON_DIR   = SCRIPT_DIR.parent / "json"
+JSON_DIR   = SCRIPT_DIR.parent / "drogon"             # demo/drogon (shared ref data)
 
 import sys
 if str(DG1_DIR) not in sys.path:
@@ -55,6 +55,7 @@ FACETS = ("P10", "P50", "P90", "ArithmeticMean", "Minimum", "Maximum", "Standard
 
 
 def _compute_stats(rows: List[Dict], properties: List[str]) -> Dict[str, float]:
+    """Compute P10/P50/P90/Mean/Min/Max/Std across rows (one value per row)."""
     out: Dict[str, float] = {}
     for p in properties:
         arr = [r.get(p, float("nan")) for r in rows]
@@ -66,6 +67,24 @@ def _compute_stats(rows: List[Dict], properties: List[str]) -> Dict[str, float]:
         out[f"{p}.Maximum"]           = float(max(arr)) if arr else float("nan")
         out[f"{p}.StandardDeviation"] = _std(arr)
     return out
+
+
+def _compute_total_stats(rows: List[Dict], properties: List[str]) -> Dict[str, float]:
+    """Compute statistics for TOTAL rows: SUM per-realisation first, then
+    compute P10/P50/P90 across those realisation-level sums."""
+    reals: Dict[Any, List[Dict]] = {}
+    for r in rows:
+        reals.setdefault(r.get("Realisation"), []).append(r)
+
+    real_sums: List[Dict] = []
+    for real_id, grp in sorted(reals.items()):
+        summed: Dict[str, float] = {}
+        for p in properties:
+            vals = [r.get(p, 0.0) or 0.0 for r in grp]
+            summed[p] = sum(vals)
+        real_sums.append(summed)
+
+    return _compute_stats(real_sums, properties)
 
 
 def build_statistics(raw_manifest: Dict, facet_roles: Dict, id_prefix: str) -> Dict:
@@ -100,18 +119,18 @@ def build_statistics(raw_manifest: Dict, facet_roles: Dict, id_prefix: str) -> D
     for seg in seg_set:
         grp = [r for k, v in groups.items() if k[0] == seg for r in v]
         rec = {"SegmentID": seg, "Zone": "TOTAL", "Facies": "TOTAL"}
-        rec.update(_compute_stats(grp, properties))
+        rec.update(_compute_total_stats(grp, properties))
         agg_rows.append(rec)
 
     fac_set = sorted(set(k[2] for k in groups))
     for fac in fac_set:
         grp = [r for k, v in groups.items() if k[2] == fac for r in v]
         rec = {"SegmentID": "TOTAL", "Zone": "TOTAL", "Facies": fac}
-        rec.update(_compute_stats(grp, properties))
+        rec.update(_compute_total_stats(grp, properties))
         agg_rows.append(rec)
 
     rec = {"SegmentID": "TOTAL", "Zone": "TOTAL", "Facies": "TOTAL"}
-    rec.update(_compute_stats(rows, properties))
+    rec.update(_compute_total_stats(rows, properties))
     agg_rows.append(rec)
 
     stat_colvals: Dict[str, List] = {"Zone": [], "SegmentID": [], "Facies": []}

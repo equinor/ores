@@ -27,7 +27,10 @@
     "DecisionDate": "2026-02-28",
     "DecisionSummary": "Evaluate the Valysar formation of the Drogon field. Assess in-place volumes (oil + gas) across 7 reservoir segments with facies-dependent porosity uncertainty. Determine whether to proceed to DG2 Concept Select.",
     "RiskIDs": [
-      "dev:master-data--Risk:Drogon-PorosityAndCementation:1"
+      "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+      "dev:master-data--Risk:Drogon-FaultCompartment:1",
+      "dev:master-data--Risk:Drogon-HSE-Environmental:1",
+      "dev:master-data--Risk:Drogon-ScheduleFPSO:1"
     ],
     "PriorActivityIDs": [
       "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1"

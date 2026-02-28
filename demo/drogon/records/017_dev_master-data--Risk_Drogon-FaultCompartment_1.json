@@ -1,0 +1,42 @@
+{
+  "id": "dev:master-data--Risk:Drogon-FaultCompartment:1",
+  "kind": "osdu:wks:master-data--Risk:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon — Fault transmissibility and reservoir compartmentalization",
+    "Summary": "Sealing or partially-sealing faults may compartmentalise the Valysar reservoir, restricting pressure communication and drainage across segments, leading to production shortfalls and cost increases.",
+    "Description": "Fault transmissibility analysis indicates uncertainty in whether bounding and intra-reservoir faults act as baffles or barriers in the Valysar formation. Compartmentalization could isolate hydrocarbons in poorly-drained fault blocks, reducing sweep efficiency and plateau rates. This risk drives uncertainty in recovery factor and may require additional infill wells beyond the current 12-well plan, with material cost increase implications for the DG2 concept. Mitigation relies on production testing to establish inter-compartment pressure communication and targeted additional wells to drain isolated blocks.",
+    "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+    "EffectiveDateTime": "2026-02-28T00:00:00Z",
+    "ext": {
+      "equinor": {
+        "CategoryID": "dev:reference-data--RiskCategory:Subsurface-Dynamic:1",
+        "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+        "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+        "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+        "InherentSeverity": "S4",
+        "InherentProbability": "P3",
+        "ResidualSeverity": "S3",
+        "ResidualProbability": "P2",
+        "AcceptedAsIs": false,
+        "Status": "Open",
+        "MitigationActionIDs": []
+      }
+    }
+  }
+}

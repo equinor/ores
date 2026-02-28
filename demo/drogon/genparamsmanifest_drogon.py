@@ -32,7 +32,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 SCRIPT_DIR = Path(__file__).resolve().parent          # demo/drogon
-JSON_DIR   = SCRIPT_DIR.parent / "json"               # demo/json
+JSON_DIR   = SCRIPT_DIR                               # demo/drogon
 
 # ── Parameter column metadata ───────────────────────────────────────────
 # (csv_column_name, display_name, UoM code, ValueType)

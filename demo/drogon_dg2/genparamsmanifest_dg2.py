@@ -24,7 +24,7 @@ from typing import Any, Dict, List
 
 SCRIPT_DIR = Path(__file__).resolve().parent        # demo/drogon_dg2
 DG1_DIR    = SCRIPT_DIR.parent / "drogon"            # demo/drogon
-JSON_DIR   = SCRIPT_DIR.parent / "json"
+JSON_DIR   = SCRIPT_DIR.parent / "drogon"             # demo/drogon (shared ref data)
 
 POROSITY_FACTOR = 0.8  # DG2 downward revision
 

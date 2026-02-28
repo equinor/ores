@@ -57,6 +57,12 @@
   .bd-param-desc { font-size: .82rem; color: #718096; }
   .bd-param-tag { font-size: .75rem; background: #e2e8f0; border-radius: 999px; padding: .1rem .45rem; color: #4a5568; white-space: nowrap; }
 
+  /* ── Total row highlighting in volume tables ── */
+  .vol-total-row { background: #f0f5ff !important; }
+  .vol-total-row td { font-weight: 600; color: #1a365d; }
+  .vol-grand-total { background: #e2ecfa !important; border-top: 2px solid #90cdf4; }
+  .vol-grand-total td { font-weight: 700; }
+
   /* ── Width constraints & horizontal scroll ── */
   .record-sections { max-width: 72rem; }
   .section-card { max-width: 72rem; overflow: visible; }
@@ -68,6 +74,21 @@
 
   /* ── Production profile chart ── */
   .prod-chart-wrap { max-width: 56rem; height: 320px; position: relative; margin-bottom: .75rem; }
+
+  /* ── Volume histogram modal ── */
+  .vol-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 9000; display: flex; align-items: center; justify-content: center; }
+  .vol-modal { background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.25); width: 92vw; max-width: 72rem; max-height: 88vh; overflow: auto; padding: 1.25rem 1.5rem; position: relative; }
+  .vol-modal-close { position: absolute; top: .6rem; right: .8rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #718096; line-height: 1; padding: .15rem .4rem; border-radius: 4px; }
+  .vol-modal-close:hover { background: #edf2f7; color: #2d3748; }
+  .vol-modal h4 { margin: 0 0 .6rem; font-size: 1.1rem; color: #1a3a5c; }
+  .vol-chart-wrap { position: relative; height: 380px; }
+  .vol-chart-controls { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin-bottom: .5rem; }
+  .vol-chart-controls label { font-size: .82rem; color: #4a5568; cursor: pointer; }
+  .vol-chart-controls select { font-size: .82rem; padding: .2rem .4rem; border-radius: 4px; border: 1px solid #cbd5e0; }
+  .btn-histogram { font-size: .82rem; padding: .25rem .65rem; border-radius: 6px; border: 1px solid #90cdf4; background: #ebf4ff; color: #2b6cb0; cursor: pointer; font-weight: 500; }
+  .btn-histogram:hover { background: #bee3f8; }
+  .btn-vol-expand { font-size: .82rem; padding: .25rem .65rem; border-radius: 6px; border: 1px solid #c6f6d5; background: #f0fff4; color: #276749; cursor: pointer; font-weight: 500; }
+  .btn-vol-expand:hover { background: #c6f6d5; }
 
   /* ── Data Sources / Ancestry card ── */
   .sources-card { border: 1px solid #c3dafe; border-radius: 10px; padding: 0; overflow: hidden; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.06); max-width: 72rem; }
@@ -157,14 +178,11 @@
     {% endfor %}
   </datalist>
 
-  <label>More kinds (optional)</label>
-  <textarea name="kinds_extra" rows="3" style="width:100%;box-sizing:border-box" placeholder="Add more kinds (comma or newline separated)">{{ kinds_extra or '' }}</textarea>
-
   <label>query</label>
   <input type="text" name="query" value="{{ q or '*' }}" style="width: 100%;">
 
   <label>limit</label>
-  <input type="number" name="limit" value="{{ limit or 5 }}" min="1" max="500">
+  <input type="number" name="limit" value="{{ limit or 50 }}" min="1" max="500">
 
   <!-- returnedFields is not used server-side right now, kept for future -->
   <label>returnedFields (comma separated)</label>
@@ -318,14 +336,52 @@
         {% endif %}
       {% endfor %}
 
-      {# Headline volume candidates from reconstructed table #}
-      {% set volns = namespace(o10=0.0,o50=0.0,o90=0.0,g10=0.0,g50=0.0,g90=0.0,has_o10=false,has_o50=false,has_o90=false,has_g10=false,has_g50=false,has_g90=false) %}
-      {% for x in (vmap.get('Oil.P10') or []) %}{% set volns.o10 = volns.o10 + (x|float) %}{% set volns.has_o10 = true %}{% endfor %}
-      {% for x in (vmap.get('Oil.P50') or []) %}{% set volns.o50 = volns.o50 + (x|float) %}{% set volns.has_o50 = true %}{% endfor %}
-      {% for x in (vmap.get('Oil.P90') or []) %}{% set volns.o90 = volns.o90 + (x|float) %}{% set volns.has_o90 = true %}{% endfor %}
-      {% for x in (vmap.get('Gas.P10') or []) %}{% set volns.g10 = volns.g10 + (x|float) %}{% set volns.has_g10 = true %}{% endfor %}
-      {% for x in (vmap.get('Gas.P50') or []) %}{% set volns.g50 = volns.g50 + (x|float) %}{% set volns.has_g50 = true %}{% endfor %}
-      {% for x in (vmap.get('Gas.P90') or []) %}{% set volns.g90 = volns.g90 + (x|float) %}{% set volns.has_g90 = true %}{% endfor %}
+      {# Headline volume candidates from reconstructed table.
+         Strategy: prefer the grand TOTAL row (Zone=TOTAL & SegmentID=TOTAL) when present;
+         otherwise sum only per-segment/per-facies rows (exclude rows where any key is 'TOTAL'
+         to avoid double-counting totals that are already aggregations). #}
+      {% set volns = namespace(o10=0.0,o50=0.0,o90=0.0,g10=0.0,g50=0.0,g90=0.0,has_o10=false,has_o50=false,has_o90=false,has_g10=false,has_g50=false,has_g90=false, grand_idx=-1) %}
+      {# Find grand total row: all key columns == 'TOTAL' #}
+      {% set zones = vmap.get('Zone') or [] %}
+      {% set seg_ids = vmap.get('SegmentID') or [] %}
+      {% set facies_col = vmap.get('Facies') or [] %}
+      {% for i in range(nrows) %}
+        {% set z = (zones[i]|string if zones|length > i else '') %}
+        {% set s = (seg_ids[i]|string if seg_ids|length > i else '') %}
+        {% set f = (facies_col[i]|string if facies_col|length > i else '') %}
+        {% if (z|upper) == 'TOTAL' or (z|upper) == 'TOTALS' %}
+          {% if (s|upper) == 'TOTAL' or (s|upper) == 'TOTALS' %}
+            {% if (f|upper) == 'TOTAL' or (f|upper) == 'TOTALS' or f == '' %}
+              {% set volns.grand_idx = i %}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% if volns.grand_idx >= 0 %}
+        {# Use grand total row directly #}
+        {% set gi = volns.grand_idx %}
+        {% set op10 = (vmap.get('Oil.P10') or []) %}{% if op10|length > gi %}{% set volns.o10 = op10[gi]|float %}{% set volns.has_o10 = true %}{% endif %}
+        {% set op50 = (vmap.get('Oil.P50') or []) %}{% if op50|length > gi %}{% set volns.o50 = op50[gi]|float %}{% set volns.has_o50 = true %}{% endif %}
+        {% set op90 = (vmap.get('Oil.P90') or []) %}{% if op90|length > gi %}{% set volns.o90 = op90[gi]|float %}{% set volns.has_o90 = true %}{% endif %}
+        {% set gp10 = (vmap.get('Gas.P10') or []) %}{% if gp10|length > gi %}{% set volns.g10 = gp10[gi]|float %}{% set volns.has_g10 = true %}{% endif %}
+        {% set gp50 = (vmap.get('Gas.P50') or []) %}{% if gp50|length > gi %}{% set volns.g50 = gp50[gi]|float %}{% set volns.has_g50 = true %}{% endif %}
+        {% set gp90 = (vmap.get('Gas.P90') or []) %}{% if gp90|length > gi %}{% set volns.g90 = gp90[gi]|float %}{% set volns.has_g90 = true %}{% endif %}
+      {% else %}
+        {# No grand total row — sum only non-TOTAL rows to avoid double-counting #}
+        {% for i in range(nrows) %}
+          {% set z = (zones[i]|string if zones|length > i else '') %}
+          {% set s = (seg_ids[i]|string if seg_ids|length > i else '') %}
+          {% set f = (facies_col[i]|string if facies_col|length > i else '') %}
+          {% if (z|upper) not in ('TOTAL','TOTALS') and (s|upper) not in ('TOTAL','TOTALS') and (f|upper) not in ('TOTAL','TOTALS') %}
+            {% if (vmap.get('Oil.P10') or [])|length > i %}{% set volns.o10 = volns.o10 + ((vmap.get('Oil.P10') or [])[i]|float) %}{% set volns.has_o10 = true %}{% endif %}
+            {% if (vmap.get('Oil.P50') or [])|length > i %}{% set volns.o50 = volns.o50 + ((vmap.get('Oil.P50') or [])[i]|float) %}{% set volns.has_o50 = true %}{% endif %}
+            {% if (vmap.get('Oil.P90') or [])|length > i %}{% set volns.o90 = volns.o90 + ((vmap.get('Oil.P90') or [])[i]|float) %}{% set volns.has_o90 = true %}{% endif %}
+            {% if (vmap.get('Gas.P10') or [])|length > i %}{% set volns.g10 = volns.g10 + ((vmap.get('Gas.P10') or [])[i]|float) %}{% set volns.has_g10 = true %}{% endif %}
+            {% if (vmap.get('Gas.P50') or [])|length > i %}{% set volns.g50 = volns.g50 + ((vmap.get('Gas.P50') or [])[i]|float) %}{% set volns.has_g50 = true %}{% endif %}
+            {% if (vmap.get('Gas.P90') or [])|length > i %}{% set volns.g90 = volns.g90 + ((vmap.get('Gas.P90') or [])[i]|float) %}{% set volns.has_g90 = true %}{% endif %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
 
       {% set ext_eq = ((rec.data or {}).get('ext') or {}).get('equinor') or {} %}
 
@@ -492,9 +548,9 @@
                 <div class="bd-kpi oil">
                   <div class="bd-kpi-label">STOIIP Total</div>
                   <div class="bd-kpi-stat">
-                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ gtot.get('Oil.P90', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ gtot.get('Oil.P50', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ gtot.get('Oil.P10', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{% set v = gtot.get('Oil.P90') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{% set v = gtot.get('Oil.P50') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{% set v = gtot.get('Oil.P10') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
                   </div>
                   <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
                 </div>
@@ -503,9 +559,9 @@
                 <div class="bd-kpi gas">
                   <div class="bd-kpi-label">Recoverable Oil</div>
                   <div class="bd-kpi-stat">
-                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ gls_unc.get('Recoverable.P90', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ gls_unc.get('Recoverable.P50', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ gls_unc.get('Recoverable.P10', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{% set v = gls_unc.get('Recoverable.P90') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{% set v = gls_unc.get('Recoverable.P50') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{% set v = gls_unc.get('Recoverable.P10') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
                   </div>
                   <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
                 </div>
@@ -525,9 +581,9 @@
                 <div class="bd-kpi {{ loop.cycle('gas','total','oil') }}">
                   <div class="bd-kpi-label">{{ sname }}</div>
                   <div class="bd-kpi-stat">
-                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ svals.get('Oil.P90', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ svals.get('Oil.P50', '—') }}</div></div>
-                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ svals.get('Oil.P10', '—') }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{% set v = svals.get('Oil.P90') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{% set v = svals.get('Oil.P50') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{% set v = svals.get('Oil.P10') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
                   </div>
                   <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
                 </div>
@@ -1070,19 +1126,61 @@ classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
               </div>
             </div>
             {% endif %}
+            <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;">
+              <button type="button" class="btn-histogram" onclick="openVolHistogram(this)" title="Show volume histogram">📊 Histogram</button>
+              {% if nrows > 4 %}
+              <button type="button" class="btn-vol-expand" onclick="openVolTable(this)" title="Show full volume table">🗗 Expand Table ({{ nrows }} rows)</button>
+              {% endif %}
+            </div>
+            {# Show compact preview: first 3 rows + grand total row when table is large #}
             <div class="table-scroll">
-            <table>
+            <table class="vol-data-table">
               <tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr>
-              {% for i in range(nrows) %}
-                <tr>
+              {% if nrows > 4 %}
+                {% for i in range(3) %}
+                {% set rit = namespace(total=false) %}
+                {% for kn in key_names %}
+                  {% set kv = (vmap.get(kn) or []) %}
+                  {% if kv|length > i and (kv[i]|string) == 'TOTAL' %}{% set rit.total = true %}{% endif %}
+                {% endfor %}
+                <tr{% if rit.total %} class="vol-total-row"{% endif %}>
                   {% for h in headers %}
                     {% set col_vals = vmap.get(h) or [] %}
                     <td>{% if (col_vals|length) > i %}{{ col_vals[i] }}{% else %}—{% endif %}</td>
                   {% endfor %}
                 </tr>
-              {% endfor %}
+                {% endfor %}
+                <tr class="vol-ellipsis-row"><td colspan="{{ headers|length }}" style="text-align:center;color:#a0aec0;font-size:.82rem;padding:.35rem;">… {{ nrows - 4 }} more rows — click <em>Expand Table</em> to see all</td></tr>
+                {# Always show grand total row (last row) in preview #}
+                {% if volns.grand_idx >= 0 %}
+                {% set gi = volns.grand_idx %}
+                <tr class="vol-total-row vol-grand-total">
+                  {% for h in headers %}
+                    {% set col_vals = vmap.get(h) or [] %}
+                    <td>{% if (col_vals|length) > gi %}{{ col_vals[gi] }}{% else %}—{% endif %}</td>
+                  {% endfor %}
+                </tr>
+                {% endif %}
+              {% else %}
+                {% for i in range(nrows) %}
+                {% set rit = namespace(total=false) %}
+                {% for kn in key_names %}
+                  {% set kv = (vmap.get(kn) or []) %}
+                  {% if kv|length > i and (kv[i]|string) == 'TOTAL' %}{% set rit.total = true %}{% endif %}
+                {% endfor %}
+                <tr{% if rit.total %} class="vol-total-row"{% endif %}>
+                  {% for h in headers %}
+                    {% set col_vals = vmap.get(h) or [] %}
+                    <td>{% if (col_vals|length) > i %}{{ col_vals[i] }}{% else %}—{% endif %}</td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              {% endif %}
             </table>
             </div>
+            <script type="application/json" class="vol-full-data">
+            {"keyNames": {{ key_names | tojson }}, "headers": {{ headers | tojson }}, "rows": [{% for i in range(nrows) %}[{% for h in headers %}{% set col_vals = vmap.get(h) or [] %}{% if (col_vals|length) > i %}{{ col_vals[i] | tojson }}{% else %}null{% endif %}{% if not loop.last %},{% endif %}{% endfor %}]{% if not loop.last %},{% endif %}{% endfor %}]}
+            </script>
           </section>
           {% endif %}
 
@@ -1159,6 +1257,289 @@ classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
     {% endfor %}
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <script>
+    /* ── Volume histogram popup ── */
+    (function(){
+      let activeModal = null;
+      let activeChart = null;
+
+      window.openVolHistogram = function(btn) {
+        const section = btn.closest('.section-card');
+        if (!section) return;
+
+        // ── Read data from embedded JSON (full data, not truncated DOM) ──
+        const dataEl = section.querySelector('.vol-full-data');
+        let headers = [], keyNameSet = new Set(), allRows = [];
+        if (dataEl) {
+          try {
+            const d = JSON.parse(dataEl.textContent);
+            headers = d.headers || [];
+            (d.keyNames || []).forEach(k => keyNameSet.add(k));
+            allRows = d.rows || [];
+          } catch(e) { /* fall through to DOM */ }
+        }
+        // Fallback: parse DOM table
+        if (!headers.length) {
+          const tbl = section.querySelector('table.vol-data-table');
+          if (!tbl) return;
+          headers = Array.from(tbl.querySelectorAll('tr:first-child th')).map(th => th.textContent.trim());
+          const domRows = Array.from(tbl.querySelectorAll('tr')).slice(1);
+          domRows.forEach(r => {
+            if (r.classList.contains('vol-ellipsis-row')) return;
+            allRows.push(Array.from(r.cells).map(c => {
+              const t = c.textContent.trim(); const n = parseFloat(t); return isNaN(n) ? t : n;
+            }));
+          });
+          // Heuristic: columns without a dot are keys
+          headers.forEach(h => { if (!h.includes('.')) keyNameSet.add(h); });
+        }
+        if (!headers.length || !allRows.length) return;
+
+        // Classify key vs value columns
+        const keyCols = [], valCols = [];
+        headers.forEach((h, i) => {
+          if (keyNameSet.has(h)) keyCols.push({name: h, idx: i});
+          else valCols.push({name: h, idx: i});
+        });
+        if (!valCols.length) { alert('No numeric volume columns found.'); return; }
+
+        // Build segment labels + column data
+        const segments = [];
+        const colData = {};
+        valCols.forEach(c => { colData[c.name] = []; });
+        allRows.forEach((row, ri) => {
+          const segParts = keyCols.map(k => row[k.idx] != null ? String(row[k.idx]) : '').filter(Boolean);
+          segments.push(segParts.join(' / ') || ('Row ' + (ri + 1)));
+          valCols.forEach(c => {
+            colData[c.name].push(typeof row[c.idx] === 'number' ? row[c.idx] : (parseFloat(row[c.idx]) || 0));
+          });
+        });
+
+        // Group columns by fluid (Oil, Gas, etc.)
+        const groups = {};
+        valCols.forEach(c => {
+          const parts = c.name.split('.');
+          const fluid = parts.length > 1 ? parts[0] : 'Value';
+          const stat = parts.length > 1 ? parts.slice(1).join('.') : c.name;
+          if (!groups[fluid]) groups[fluid] = [];
+          groups[fluid].push({stat, col: c.name});
+        });
+
+        // Build modal
+        if (activeModal) { activeModal.remove(); activeModal = null; }
+        if (activeChart) { activeChart.destroy(); activeChart = null; }
+
+        const overlay = document.createElement('div');
+        overlay.className = 'vol-modal-overlay';
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeVolModal(); });
+
+        const modal = document.createElement('div');
+        modal.className = 'vol-modal';
+
+        // Fluid selector
+        const fluidNames = Object.keys(groups);
+        // Default to 'Oil' if present, else first
+        const defaultFluid = fluidNames.includes('Oil') ? 'Oil' : fluidNames[0];
+        let controlsHTML = '<div class="vol-chart-controls">';
+        controlsHTML += '<label>Fluid: <select id="volFluidSel">';
+        fluidNames.forEach(f => {
+          controlsHTML += '<option value="' + f + '"' + (f===defaultFluid?' selected':'') + '>' + f + '</option>';
+        });
+        controlsHTML += '</select></label>';
+        controlsHTML += '<label style="margin-left:auto;"><input type="checkbox" id="volLogScale"> Log scale</label>';
+        controlsHTML += '</div>';
+
+        modal.innerHTML = '<button class="vol-modal-close" onclick="closeVolModal()" title="Close">&times;</button>'
+          + '<h4>Volume Histogram — per Segment</h4>'
+          + controlsHTML
+          + '<div class="vol-chart-wrap"><canvas id="volHistCanvas"></canvas></div>';
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        activeModal = overlay;
+
+        // Esc key to close
+        const escHandler = e => { if (e.key === 'Escape') closeVolModal(); };
+        document.addEventListener('keydown', escHandler);
+        overlay._escHandler = escHandler;
+
+        // Color: one hue per fluid, dark→light by statistic
+        // Base HSL hues per fluid property
+        const fluidHSL = {
+          'Oil':              [28, 82],   // warm orange
+          'Gas':              [153, 55],  // green
+          'Total':            [211, 65],  // blue
+          'AssociatedLiquid': [263, 55],  // purple
+          'AssociatedGas':    [0, 55],    // red
+          'BulkOil':          [35, 60],   // tan-orange
+          'BulkGas':          [145, 45],  // sage green
+          'PoreOil':          [30, 50],   // muted orange
+          'PoreGas':          [155, 40],  // muted green
+          'HydrocarbonPoreOil': [20, 55], // rust
+          'HydrocarbonPoreGas': [160, 50],// teal
+          'Bulk':             [230, 40],  // slate blue
+          'Pore':             [270, 45],  // violet
+        };
+        const defaultHSL = [0, 0];       // grey
+
+        // Stat → lightness level (dark = small L → light = large L)
+        const statLevel = {
+          'P10': 35, 'P50': 50, 'P90': 65,
+          'ArithmeticMean': 42, 'Minimum': 72, 'Maximum': 78, 'StandardDeviation': 82
+        };
+        const defaultLevel = 55;
+
+        function fluidColor(fluid, stat) {
+          const [h, s] = fluidHSL[fluid] || defaultHSL;
+          const l = statLevel[stat] || defaultLevel;
+          return 'hsl(' + h + ',' + s + '%,' + l + '%)';
+        }
+
+        function buildChart(fluid){
+          if (activeChart) activeChart.destroy();
+          const cols = groups[fluid] || [];
+          const datasets = cols.map(c => ({
+            label: c.stat || c.col,
+            data: colData[c.col],
+            backgroundColor: fluidColor(fluid, c.stat),
+            borderColor: fluidColor(fluid, 'P10'),
+            borderWidth: 1,
+            borderRadius: 3,
+          }));
+          const logScale = document.getElementById('volLogScale')?.checked;
+          activeChart = new Chart(document.getElementById('volHistCanvas').getContext('2d'), {
+            type: 'bar',
+            data: { labels: segments, datasets },
+            options: {
+              responsive: true, maintainAspectRatio: false,
+              interaction: { mode: 'index', intersect: false },
+              plugins: {
+                legend: { position: 'top', labels: { boxWidth: 14, font: { size: 11 } } },
+                tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + (ctx.parsed.y != null ? ctx.parsed.y.toLocaleString(undefined, {maximumFractionDigits: 2}) : '—') } }
+              },
+              scales: {
+                x: {
+                  grid: { display: false },
+                  ticks: { maxRotation: 45, minRotation: 0, font: { size: 10 },
+                    callback: function(val) {
+                      const lbl = this.getLabelForValue(val);
+                      return lbl.length > 18 ? lbl.slice(0,16) + '…' : lbl;
+                    }
+                  }
+                },
+                y: {
+                  type: logScale ? 'logarithmic' : 'linear',
+                  beginAtZero: !logScale,
+                  title: { display: true, text: fluid + ' volume' },
+                  ticks: { callback: v => v >= 1e6 ? (v/1e6).toFixed(1) + 'M' : v >= 1e3 ? (v/1e3).toFixed(1) + 'k' : v }
+                }
+              }
+            }
+          });
+        }
+
+        buildChart(defaultFluid);
+
+        document.getElementById('volFluidSel')?.addEventListener('change', e => buildChart(e.target.value));
+        document.getElementById('volLogScale')?.addEventListener('change', () => {
+          const sel = document.getElementById('volFluidSel');
+          buildChart(sel ? sel.value : fluidNames[0]);
+        });
+      };
+
+      window.closeVolModal = function(){
+        if (activeChart) { activeChart.destroy(); activeChart = null; }
+        if (activeModal) {
+          if (activeModal._escHandler) document.removeEventListener('keydown', activeModal._escHandler);
+          activeModal.remove();
+          activeModal = null;
+        }
+      };
+
+      /* ── Full volume table popup ── */
+      window.openVolTable = function(btn) {
+        const section = btn.closest('.section-card');
+        if (!section) return;
+        const tbl = section.querySelector('table.vol-data-table');
+        if (!tbl) return;
+
+        // Parse full table (including the ellipsis row we'll skip)
+        const ths = Array.from(tbl.querySelectorAll('tr:first-child th'));
+        const headers = ths.map(th => th.textContent.trim());
+        if (!headers.length) return;
+
+        // We need the full data — read from the Jinja-embedded data attributes
+        // Actually, the preview table only has 3 rows. We'll rebuild from the hidden full data.
+        // Strategy: find ALL vol-data-table rows (skip ellipsis), but full data is in the DOM
+        //   We'll use a data attribute approach — embed full JSON in a hidden element.
+        //   Simpler: the full data is available in the hidden sibling.
+        // Best approach: clone the preview table and populate from data attributes.
+
+        // Look for the full-data script tag next to the table
+        const dataEl = section.querySelector('.vol-full-data');
+        if (!dataEl) return;
+        let fullData;
+        try { fullData = JSON.parse(dataEl.textContent); } catch(e) { return; }
+
+        if (activeModal) { activeModal.remove(); activeModal = null; }
+
+        const overlay = document.createElement('div');
+        overlay.className = 'vol-modal-overlay';
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeVolModal(); });
+
+        const modal = document.createElement('div');
+        modal.className = 'vol-modal';
+
+        let h = '<button class="vol-modal-close" onclick="closeVolModal()" title="Close">&times;</button>';
+        h += '<h4>Volume Table — ' + fullData.rows.length + ' rows</h4>';
+        h += '<div style="margin-bottom:.5rem;display:flex;gap:.5rem;align-items:center;"><input type="text" id="volTblFilter" placeholder="Filter rows…" style="flex:1;max-width:20rem;font-size:.85rem;padding:.25rem .5rem;border:1px solid #cbd5e0;border-radius:4px;"><button type="button" class="btn-vol-expand" onclick="copyVolTableCSV()" title="Copy as CSV">📋 Copy CSV</button></div>';
+        h += '<div class="table-scroll" style="max-height:60vh;overflow:auto;"><table class="vol-data-table" id="volFullTable">';
+        h += '<tr>' + fullData.headers.map(hd => '<th>' + hd + '</th>').join('') + '</tr>';
+        const keySet = new Set(fullData.keyNames || []);
+        fullData.rows.forEach(row => {
+          // Detect total rows: any key column has value 'TOTAL'
+          let isTotal = false, isGrand = true;
+          fullData.headers.forEach((hd, ci) => {
+            if (keySet.has(hd) && String(row[ci]) === 'TOTAL') isTotal = true;
+            if (keySet.has(hd) && String(row[ci]) !== 'TOTAL') isGrand = false;
+          });
+          const cls = (isTotal && isGrand) ? ' class="vol-grand-total"' : isTotal ? ' class="vol-total-row"' : '';
+          h += '<tr' + cls + '>' + row.map(v => '<td>' + (v != null ? v : '—') + '</td>').join('') + '</tr>';
+        });
+        h += '</table></div>';
+
+        modal.innerHTML = h;
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        activeModal = overlay;
+
+        const escHandler = e => { if (e.key === 'Escape') closeVolModal(); };
+        document.addEventListener('keydown', escHandler);
+        overlay._escHandler = escHandler;
+
+        // Filter
+        document.getElementById('volTblFilter')?.addEventListener('input', function() {
+          const q = this.value.toLowerCase();
+          const rows = document.querySelectorAll('#volFullTable tr');
+          rows.forEach((r, i) => {
+            if (i === 0) return; // header
+            r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+          });
+        });
+      };
+
+      window.copyVolTableCSV = function() {
+        const tbl = document.getElementById('volFullTable');
+        if (!tbl) return;
+        const rows = Array.from(tbl.querySelectorAll('tr'));
+        const csv = rows.map(r => Array.from(r.querySelectorAll('th,td')).map(c => c.textContent.trim()).join('\t')).join('\n');
+        navigator.clipboard.writeText(csv).then(() => {
+          const btn = document.querySelector('.vol-modal .btn-vol-expand');
+          if (btn) { const orig = btn.textContent; btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = orig, 1500); }
+        });
+      };
+    })();
+    </script>
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });

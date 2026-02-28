@@ -31,7 +31,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 SCRIPT_DIR = Path(__file__).resolve().parent          # demo/drogon
-JSON_DIR   = SCRIPT_DIR.parent / "json"               # demo/json
+JSON_DIR   = SCRIPT_DIR                               # demo/drogon
 
 # ── Volume column metadata ──────────────────────────────────────────────
 # (canonical column name, base PropertyType code, UoM code)

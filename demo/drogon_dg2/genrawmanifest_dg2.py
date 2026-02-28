@@ -26,7 +26,7 @@ from typing import Any, Dict, List
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DG1_DIR    = SCRIPT_DIR.parent / "drogon"
-JSON_DIR   = SCRIPT_DIR.parent / "json"
+JSON_DIR   = SCRIPT_DIR.parent / "drogon"             # demo/drogon (shared ref data)
 
 VOLUME_FACTOR = 0.8
 

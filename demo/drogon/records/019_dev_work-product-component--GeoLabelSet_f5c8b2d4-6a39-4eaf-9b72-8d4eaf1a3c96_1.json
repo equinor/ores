@@ -18,14 +18,14 @@
     ]
   },
   "data": {
-    "Name": "Drogon DG1 \u2014 Headline Volumes & Reservoir Properties",
-    "Description": "Per-segment STOIIP (P90/P50/P10), recoverable volumes, recovery factor, and average reservoir properties for the DG1 Identify & Assess decision gate. Pre-revision porosity (original lab values).",
-    "ParentObjectID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd0e94:1",
+    "Name": "Drogon Valysar \u2014 GeoLabelSet (DG1)",
+    "Description": "GeoLabelSet for DG1, derived from stat REV. All volumes in m\u00b3. Includes per-segment Oil P10/P50/P90, field-level recoverable volumes, and petro-physical properties.",
+    "ParentObjectID": "dev:master-data--Reservoir:224d8c55-4316-4df8-9a3a-21e22250d00c:1",
     "ParentWorkProductID": "dev:work-product:Drogon-DG1-IdentifyAssess:1",
-    "LabelledEntityID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd0e94:1",
+    "LabelledEntityID": "dev:master-data--Reservoir:224d8c55-4316-4df8-9a3a-21e22250d00c:1",
     "ancestry": {
       "parents": [
-        "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd0e94:1"
+        "dev:master-data--Reservoir:224d8c55-4316-4df8-9a3a-21e22250d00c:1"
       ]
     },
     "GeoLabels": {
@@ -48,192 +48,120 @@
           "ColumnName": "Oil.P90",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:Oil",
-          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MSm3",
-          "FacetIDs": [
-            {
-              "FacetTypeID": "dev:reference-data--FacetType:statistics",
-              "FacetRoleID": "dev:reference-data--FacetRole:P90"
-            }
-          ]
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m3"
         },
         {
           "ColumnName": "Oil.P50",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:Oil",
-          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MSm3",
-          "FacetIDs": [
-            {
-              "FacetTypeID": "dev:reference-data--FacetType:statistics",
-              "FacetRoleID": "dev:reference-data--FacetRole:P50"
-            }
-          ]
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m3"
         },
         {
           "ColumnName": "Oil.P10",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:Oil",
-          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MSm3",
-          "FacetIDs": [
-            {
-              "FacetTypeID": "dev:reference-data--FacetType:statistics",
-              "FacetRoleID": "dev:reference-data--FacetRole:P10"
-            }
-          ]
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m3"
         },
         {
           "ColumnName": "Recoverable.P90",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:Recoverable",
-          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MSm3",
-          "FacetIDs": [
-            {
-              "FacetTypeID": "dev:reference-data--FacetType:statistics",
-              "FacetRoleID": "dev:reference-data--FacetRole:P90"
-            }
-          ]
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m3"
         },
         {
           "ColumnName": "Recoverable.P50",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:Recoverable",
-          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MSm3",
-          "FacetIDs": [
-            {
-              "FacetTypeID": "dev:reference-data--FacetType:statistics",
-              "FacetRoleID": "dev:reference-data--FacetRole:P50"
-            }
-          ]
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m3"
         },
         {
           "ColumnName": "Recoverable.P10",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:Recoverable",
-          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MSm3",
-          "FacetIDs": [
-            {
-              "FacetTypeID": "dev:reference-data--FacetType:statistics",
-              "FacetRoleID": "dev:reference-data--FacetRole:P10"
-            }
-          ]
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m3"
         },
         {
           "ColumnName": "RecoveryFactor.P90",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:RecoveryFactor",
-          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%",
-          "FacetIDs": [
-            {
-              "FacetTypeID": "dev:reference-data--FacetType:statistics",
-              "FacetRoleID": "dev:reference-data--FacetRole:P90"
-            }
-          ]
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%"
         },
         {
           "ColumnName": "RecoveryFactor.P50",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:RecoveryFactor",
-          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%",
-          "FacetIDs": [
-            {
-              "FacetTypeID": "dev:reference-data--FacetType:statistics",
-              "FacetRoleID": "dev:reference-data--FacetRole:P50"
-            }
-          ]
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%"
         },
         {
           "ColumnName": "RecoveryFactor.P10",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:RecoveryFactor",
-          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%",
-          "FacetIDs": [
-            {
-              "FacetTypeID": "dev:reference-data--FacetType:statistics",
-              "FacetRoleID": "dev:reference-data--FacetRole:P10"
-            }
-          ]
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%"
         },
         {
           "ColumnName": "Porosity",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:Porosity",
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:fraction"
         },
         {
           "ColumnName": "NetToGross",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:NetToGross",
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:fraction"
         },
         {
           "ColumnName": "Permeability",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:Permeability",
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:mD"
         },
         {
           "ColumnName": "OilWaterContact",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:OilWaterContact",
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m"
         },
         {
           "ColumnName": "Temperature",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:Temperature",
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:degC"
         },
         {
           "ColumnName": "Pressure",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:Pressure",
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:bar"
         },
         {
           "ColumnName": "Viscosity",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:Viscosity",
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:cP"
         },
         {
           "ColumnName": "FormationVolumeFactor",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:FormationVolumeFactor",
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Rm3/Sm3"
         },
         {
           "ColumnName": "GasOilRatio",
           "ColumnRole": "Value",
           "ValueType": "number",
-          "GeoLabelTypeID": "dev:reference-data--GeoLabelType:GasOilRatio",
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Sm3/Sm3"
         }
       ],
       "ColumnValues": {
         "SegmentID": [
-          "NorthSea",
-          "NorthHorst",
-          "CentralHorst",
-          "CentralFlanks",
-          "CentralSouth",
-          "SouthWing",
-          "EastLobe",
+          "Central Horst",
+          "Central North",
+          "Central Ramp",
+          "Central South",
+          "East Lowland",
+          "North Horst",
+          "West Lowland",
           "TOTAL",
           "TOTAL",
           "TOTAL",
@@ -253,40 +181,40 @@
           "Floodplain"
         ],
         "Oil.P90": [
-          3.8,
-          5.1,
-          10.2,
-          4.5,
-          8.8,
-          5.2,
-          4.7,
-          42.2,
+          7406621.4,
+          2208412.7,
+          844609.4,
+          4612409.2,
+          36323.5,
+          120254.2,
+          599947.2,
+          14438314.8,
           null,
           null,
           null
         ],
         "Oil.P50": [
-          5.2,
-          7.0,
-          13.8,
-          6.1,
-          11.5,
-          7.0,
-          6.2,
-          56.8,
+          6136936.9,
+          1648700.9,
+          658159.8,
+          3836231.7,
+          31324.6,
+          109805.9,
+          465864.8,
+          13664686.0,
           null,
           null,
           null
         ],
         "Oil.P10": [
-          7.1,
-          9.2,
-          18.1,
-          8.0,
-          15.0,
-          9.2,
-          7.5,
-          74.2,
+          5651736.9,
+          1519395.5,
+          636626.5,
+          3459811.2,
+          25908.2,
+          102783.3,
+          387516.2,
+          12316214.5,
           null,
           null,
           null
@@ -299,7 +227,7 @@
           null,
           null,
           null,
-          12.5,
+          4331494.4,
           null,
           null,
           null
@@ -312,7 +240,7 @@
           null,
           null,
           null,
-          18.5,
+          4714316.7,
           null,
           null,
           null
@@ -325,7 +253,7 @@
           null,
           null,
           null,
-          25.8,
+          4803323.7,
           null,
           null,
           null

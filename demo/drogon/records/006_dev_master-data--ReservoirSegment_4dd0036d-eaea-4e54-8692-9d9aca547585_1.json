@@ -1,0 +1,30 @@
+{
+  "id": "dev:master-data--ReservoirSegment:4dd0036d-eaea-4e54-8692-9d9aca547585:1",
+  "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Central Ramp",
+    "Description": "Central ramp structure of the Valysar formation, Drogon field",
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Reservoir:224d8c55-4316-4df8-9a3a-21e22250d00c:1"
+      ],
+      "children": []
+    }
+  }
+}

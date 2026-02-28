@@ -35,6 +35,13 @@ try {
         Write-Host "`n═══ Step 0: Split CSV (skipped) ═══" -ForegroundColor DarkGray
     }
 
+    # ── Step 0b: Generate reference data (PropertyTypes + FacetRoles) ──
+    Write-Host "`n═══ Step 0b: Reference data ═══" -ForegroundColor Cyan
+    py demo/drogon/genrefpropertytypes_drogon.py
+    if ($LASTEXITCODE -ne 0) { throw "genrefpropertytypes_drogon.py failed" }
+    py demo/drogon/genreffacetrole_drogon.py
+    if ($LASTEXITCODE -ne 0) { throw "genreffacetrole_drogon.py failed" }
+
     # ── Step 1: Generate master data (Reservoir + Segments + WP) ────
     Write-Host "`n═══ Step 1: Master data ═══" -ForegroundColor Cyan
     py demo/drogon/genmaster_drogon.py
