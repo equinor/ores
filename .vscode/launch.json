@@ -19,7 +19,7 @@
       "serverReadyAction": {
         "pattern": "Uvicorn running on http://.*:(\\d+)",
         "uriFormat": "http://localhost:%s",
-        "action": "openExternally"
+        "action": "openInIntegratedBrowser"
       }
     }
   ]

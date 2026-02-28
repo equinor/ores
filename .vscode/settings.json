@@ -2,7 +2,7 @@
   "remote.portsAttributes": {
     "8000": {
       "label": "FastAPI",
-      "onAutoForward": "openBrowser"
+      "onAutoForward": "silent"
     }
   },
   "remote.autoForwardPorts": true
