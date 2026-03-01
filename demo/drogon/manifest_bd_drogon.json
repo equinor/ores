@@ -83,7 +83,7 @@
             "Selection": "Master-data context for the decision",
             "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
             "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
-            "DataObjectParameter": "dev:master-data--Reservoir:224d8c55-4316-4df8-9a3a-21e22250d00c:1"
+            "DataObjectParameter": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
           },
           {
             "Title": "GeoModelDataspace",
@@ -108,6 +108,19 @@
               {
                 "ParameterKey": "artifact",
                 "StringParameterKey": "DevelopmentConcept"
+              }
+            ]
+          },
+          {
+            "Title": "Production Forecast (Reference Case)",
+            "Selection": "20-year production forecast for Valysar DG1",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:b8d4f2e3-ae5c-4b9f-c7a6-3f9d5e2b4c8a:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "ProductionForecast"
               }
             ]
           }

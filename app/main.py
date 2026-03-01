@@ -163,46 +163,7 @@ def _access_token(request: Request) -> str:
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 
-# ── Local record cache (demo files, indexed by OSDU id) ─────────────────────
-_LOCAL_RECORDS: Dict[str, Dict[str, Any]] = {}
-
-
-def _load_local_records() -> None:
-    """Index all demo/*/records/*.json by their ``id`` field at startup.
-
-    When duplicate IDs are found, prefer the record with more data keys
-    (ensures canonical-enriched records win over stale predecessors).
-    """
-    import glob
-    for pattern in ("demo/*/records/*.json", "demo/drogon_dg2/records/*.json"):
-        for path in sorted(glob.glob(str(_REPO_ROOT / pattern))):
-            try:
-                with open(path, encoding="utf-8") as f:
-                    rec = json.load(f)
-                rid = rec.get("id", "")
-                if rid:
-                    existing = _LOCAL_RECORDS.get(rid)
-                    if existing:
-                        old_keys = len((existing.get("data") or existing).keys())
-                        new_keys = len((rec.get("data") or rec).keys())
-                        if new_keys <= old_keys:
-                            continue  # keep the richer record
-                    _LOCAL_RECORDS[rid] = rec
-            except Exception:
-                pass
-    if _LOCAL_RECORDS:
-        log.info("[LOCAL] Indexed %d demo records for local fallback", len(_LOCAL_RECORDS))
-
-
-_load_local_records()
-
-
-def _get_local_record_data(record_id: str) -> Optional[Dict[str, Any]]:
-    """Return the ``data`` block from a locally-cached record, or *None*."""
-    rec = _LOCAL_RECORDS.get(record_id)
-    if rec:
-        return rec.get("data") or rec
-    return None
+# (Local record cache removed — all demo records are now in OSDU.)
 
 
 def _normalize_volumes(data_block: Dict[str, Any]) -> Dict[str, Any]:
@@ -427,21 +388,15 @@ async def _enrich_bd_geolabel(
     if not target_id:
         return {}
 
-    # Try OSDU storage first, fall back to local demo record
     d: Optional[Dict[str, Any]] = None
     try:
         r = await client.get(f"{storage_url}/{target_id}", headers=hdr)
         if r.status_code == 200:
             d = (r.json() or {}).get("data", {}) or {}
         else:
-            log.debug("[BD-GLS] GeoLabelSet %s returned %d, trying local", target_id, r.status_code)
+            log.warning("[BD-GLS] GeoLabelSet %s returned %d", target_id, r.status_code)
     except Exception as e:
-        log.debug("[BD-GLS] OSDU fetch failed for %s: %s, trying local", target_id, e)
-
-    if not d:
-        d = _get_local_record_data(target_id)
-        if d:
-            log.info("[BD-GLS] Using local record for %s", target_id)
+        log.warning("[BD-GLS] OSDU fetch failed for %s: %s", target_id, e)
 
     if not d:
         return {}
@@ -501,21 +456,15 @@ async def _enrich_bd_production(
     if not target_id:
         return {}
 
-    # Try OSDU storage first, fall back to local demo record
     d: Optional[Dict[str, Any]] = None
     try:
         r = await client.get(f"{storage_url}/{target_id}", headers=hdr)
         if r.status_code == 200:
             d = (r.json() or {}).get("data", {}) or {}
         else:
-            log.debug("[BD-PROD] CBT %s returned %d, trying local", target_id, r.status_code)
+            log.warning("[BD-PROD] CBT %s returned %d", target_id, r.status_code)
     except Exception as e:
-        log.debug("[BD-PROD] OSDU fetch failed for %s: %s, trying local", target_id, e)
-
-    if not d:
-        d = _get_local_record_data(target_id)
-        if d:
-            log.info("[BD-PROD] Using local record for %s", target_id)
+        log.warning("[BD-PROD] OSDU fetch failed for %s: %s", target_id, e)
 
     if not d:
         return {}
@@ -647,22 +596,15 @@ async def _enrich_bd_developmentconcept(
     if not target_id:
         return
 
-    # Try OSDU storage first, fall back to local demo record
     d: Optional[Dict[str, Any]] = None
     try:
         r = await client.get(f"{storage_url}/{target_id}", headers=hdr)
         if r.status_code == 200:
             d = (r.json() or {}).get("data", {}) or {}
         else:
-            log.debug("[BD-DC] DevelopmentConcept %s returned %d, trying local",
-                      target_id, r.status_code)
+            log.warning("[BD-DC] DevelopmentConcept %s returned %d", target_id, r.status_code)
     except Exception as e:
-        log.debug("[BD-DC] OSDU fetch failed for %s: %s, trying local", target_id, e)
-
-    if not d:
-        d = _get_local_record_data(target_id)
-        if d:
-            log.info("[BD-DC] Using local record for %s", target_id)
+        log.warning("[BD-DC] OSDU fetch failed for %s: %s", target_id, e)
 
     if not d:
         return
@@ -676,7 +618,7 @@ async def _enrich_bd_developmentconcept(
     if not dcon:
         return
 
-    # Inject into ext.equinor.DevelopmentConcept (overwrites local fallback)
+    # Inject into ext.equinor.DevelopmentConcept
     ext_eq = data_block.setdefault("ext", {}).setdefault("equinor", {})
     ext_eq["DevelopmentConcept"] = dcon
     log.info("[BD-DC] Injected DevelopmentConcept from WPC %s (%d fields)",

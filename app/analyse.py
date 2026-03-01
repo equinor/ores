@@ -35,18 +35,9 @@ def _access_token(request: Request) -> str:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Lazy import helpers — main.py owns the enrichment machinery & local cache.
+# Lazy import helpers — main.py owns the enrichment machinery.
 # We import at call time to avoid circular imports.
 # ──────────────────────────────────────────────────────────────────────────────
-
-def _local_records() -> Dict[str, Dict[str, Any]]:
-    from .main import _LOCAL_RECORDS
-    return _LOCAL_RECORDS
-
-
-def _apply_enrichment(data_block: Dict[str, Any], record_id: str) -> None:
-    from .main import _apply_bd_local_enrichment
-    _apply_bd_local_enrichment(data_block, record_id)
 
 
 async def _enrich_geolabel(
@@ -424,9 +415,6 @@ async def analyse_compare(
     # not supported.  We use a plain full-text query containing the
     # reservoir id (which is embedded in Parameters[].DataObjectParameter)
     # and then filter the results in-memory to ensure the match is real.
-    # We also always scan _LOCAL_RECORDS so demo/manifest BDs are found
-    # even before they are ingested.
-    LOCAL = _local_records()
 
     # Build a short search token from the reservoir id — use the UUID
     # portion so we don't hit Lucene special-char issues with colons.
@@ -446,32 +434,19 @@ async def analyse_compare(
     try:
         async with httpx.AsyncClient(timeout=120) as client:
             # OSDU search (may return false positives — filtered below)
-            osdu_hit_ids: set = set()
+            all_bd_ids: list = []
             try:
                 r = await client.post(search_url, headers=hdr, json=payload)
                 r.raise_for_status()
-                osdu_hit_ids = {
+                all_bd_ids = [
                     h.get("id") for h in r.json().get("results", []) if h.get("id")
-                }
+                ]
             except Exception as e:
-                log.warning("[ANALYSE] BD OSDU search failed (continuing with local): %s", e)
+                log.warning("[ANALYSE] BD OSDU search failed: %s", e)
 
-            # Local manifest BDs
-            local_bd_ids: set = set()
-            for rec in LOCAL.values():
-                if "BusinessDecision" not in (rec.get("kind") or ""):
-                    continue
-                params = (rec.get("data") or {}).get("Parameters") or []
-                for p in params:
-                    if isinstance(p, dict) and reservoir_id in (
-                        p.get("DataObjectParameter") or ""
-                    ):
-                        local_bd_ids.add(rec.get("id"))
-
-            all_bd_ids = list(osdu_hit_ids | local_bd_ids)
             log.info(
-                "[ANALYSE] Found %d BD candidates (%d OSDU + %d local) for reservoir %s",
-                len(all_bd_ids), len(osdu_hit_ids), len(local_bd_ids), reservoir_id,
+                "[ANALYSE] Found %d BD candidates for reservoir %s",
+                len(all_bd_ids), reservoir_id,
             )
 
             for bid in all_bd_ids:
@@ -488,14 +463,7 @@ async def analyse_compare(
                     except Exception:
                         pass
                     if not data_block:
-                        local_rec = LOCAL.get(bid)
-                        if local_rec:
-                            full = local_rec
-                            data_block = local_rec.get("data") or local_rec
-                    if not data_block:
                         continue
-
-                    _apply_enrichment(data_block, bid)
 
                     # Post-filter: verify this BD actually references the
                     # selected reservoir via Parameters[].DataObjectParameter.
@@ -590,11 +558,6 @@ async def analyse_compare(
                     if rr.status_code == 200:
                         rdata = (rr.json() or {}).get("data", {})
                         rname = rdata.get("Name") or rid
-                    else:
-                        lr = LOCAL.get(rid)
-                        if lr:
-                            rdata = (lr.get("data") or {})
-                            rname = rdata.get("Name") or rid
                 except Exception:
                     pass
                 # Extract severity/probability/status from equinor ext
