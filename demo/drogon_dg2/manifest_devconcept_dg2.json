@@ -27,10 +27,10 @@
         "data": {
           "Name": "Drogon DG2 \u2014 Development Concept",
           "Description": "Full development concept for Drogon DG2 Concept Select. Subsea tie-back to converted FPSO, 2\u00d74-slot templates, 12 production wells, subsea boosting pump.",
-          "ParentObjectID": "dev:master-data--Reservoir:224d8c55-4316-4df8-9a3a-21e22250d00c:1",
+          "ParentObjectID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
           "ancestry": {
             "parents": [
-              "dev:master-data--Reservoir:224d8c55-4316-4df8-9a3a-21e22250d00c:1"
+              "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
             ],
             "children": []
           },
