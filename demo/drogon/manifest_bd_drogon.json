@@ -97,6 +97,19 @@
                 "StringParameterKey": "ETPDataspace"
               }
             ]
+          },
+          {
+            "Title": "Development Concept",
+            "Selection": "DG1 development concept definition",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:Drogon-DG1:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "DevelopmentConcept"
+              }
+            ]
           }
         ],
         "Personnel": [

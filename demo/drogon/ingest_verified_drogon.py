@@ -38,7 +38,8 @@ DEFAULT_MANIFESTS = [
     "manifest_wpcraw_drogon.json",          # 2. RAW WPC → refs Reservoir & WP
     "manifest_wpcstat_drogon.json",         # 3. STAT WPC → refs Reservoir & WP
     "manifest_risk_drogon.json",            # 4. Risk (no ancestry deps)
-    "manifest_bd_drogon.json",              # 5. BusinessDecision
+    "manifest_devconcept_drogon.json",      # 5. DevelopmentConcept WPC → refs Reservoir
+    "manifest_bd_drogon.json",              # 6. BusinessDecision
 ]
 
 

@@ -91,6 +91,7 @@ def main():
     ap.add_argument("--risks",     default=str(SCRIPT_DIR / "manifest_risk_dg2.json"))
     ap.add_argument("--documents", default=str(SCRIPT_DIR / "manifest_documents_dg2.json"))
     ap.add_argument("--production", default=str(SCRIPT_DIR / "manifest_wpc_production_dg2.json"))
+    ap.add_argument("--devconcept", default=str(SCRIPT_DIR / "manifest_devconcept_dg2.json"))
     ap.add_argument("--manifest",  default=str(SCRIPT_DIR / "manifest_bd_dg2.json"))
     ap.add_argument("--id-prefix", default="dev")
     args = ap.parse_args()
@@ -135,6 +136,11 @@ def main():
     pp_wpc_id = ""
     if Path(args.production).exists():
         pp_wpc_id = _find_id(load_json(args.production), "ColumnBasedTable")
+
+    # DevelopmentConcept WPC manifest
+    devconcept_wpc_id = ""
+    if Path(args.devconcept).exists():
+        devconcept_wpc_id = _find_id(load_json(args.devconcept), "DevelopmentConcept")
 
     # Reference to DG1 BD (prior decision gate)
     dg1_bd_id = f"{pfx}:master-data--BusinessDecision:Drogon-DG1-Identify:1"
@@ -184,7 +190,7 @@ def main():
             "Parameters": _build_parameters(
                 pfx, raw_wpc_id, stat_wpc_id, params_wpc_id,
                 reservoir_id, dataspace_id, dg1_bd_id, doc_ids,
-                pp_wpc_id,
+                pp_wpc_id, devconcept_wpc_id,
             ),
             # ── Canonical fields (survive OSDU ingestion) ──
             **_build_canonical_fields(pfx),
@@ -231,6 +237,7 @@ def _build_parameters(
     reservoir_id: str, dataspace_id: str, dg1_bd_id: str,
     doc_ids: Dict[str, str],
     pp_wpc_id: str = "",
+    devconcept_wpc_id: str = "",
 ) -> List[Dict[str, Any]]:
     params: List[Dict[str, Any]] = [
         {
@@ -306,6 +313,16 @@ def _build_parameters(
             "ParameterRoleID": f"{pfx}:reference-data--ParameterRole:Input:1",
             "DataObjectParameter": pp_wpc_id,
             "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "ProductionForecast"}],
+        })
+    # DevelopmentConcept WPC reference
+    if devconcept_wpc_id:
+        params.append({
+            "Title": "Development Concept",
+            "Selection": "DG2 development concept definition",
+            "ParameterKindID": f"{pfx}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{pfx}:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": devconcept_wpc_id,
+            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "DevelopmentConcept"}],
         })
     return params
 

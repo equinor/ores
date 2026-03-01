@@ -70,6 +70,11 @@ try {
     # ── Step 6: Generate Business Decision ──────────────────────────    Write-Host "`n═══ Step 5b: Activity manifest ═══" -ForegroundColor Cyan
     py demo/drogon/gen_activity_drogon.py
     if ($LASTEXITCODE -ne 0) { throw "gen_activity_drogon.py failed" }
+
+    Write-Host "`n═══ Step 5c: DevelopmentConcept WPC ═══" -ForegroundColor Cyan
+    py demo/drogon/gen_devconcept_drogon.py
+    if ($LASTEXITCODE -ne 0) { throw "gen_devconcept_drogon.py failed" }
+
     Write-Host "`n═══ Step 6: Business Decision ═══" -ForegroundColor Cyan
     py demo/drogon/gen_businessdecision_drogon.py
     if ($LASTEXITCODE -ne 0) { throw "gen_businessdecision_drogon.py failed" }

@@ -65,6 +65,7 @@ def main():
     ap.add_argument("--params",    default=str(SCRIPT_DIR / "manifest_wpcparams_drogon.json"))
     ap.add_argument("--activity",  default=str(SCRIPT_DIR / "manifest_activity_drogon.json"))
     ap.add_argument("--risks",     default=str(SCRIPT_DIR / "manifest_risk_drogon.json"))
+    ap.add_argument("--devconcept", default=str(SCRIPT_DIR / "manifest_devconcept_drogon.json"))
     ap.add_argument("--manifest",  default=str(SCRIPT_DIR / "manifest_bd_drogon.json"))
     ap.add_argument("--id-prefix", default="dev")
     args = ap.parse_args()
@@ -90,6 +91,11 @@ def main():
     stat_wpc_id  = _find_id(statvol, "ReservoirEstimatedVolumes")
     params_wpc_id = _find_id(params, "ColumnBasedTable")
     risk_ids     = _find_all_ids(risks, "master-data--Risk:")
+
+    # DevelopmentConcept WPC
+    devconcept_wpc_id = ""
+    if Path(args.devconcept).exists():
+        devconcept_wpc_id = _find_id(load_json(args.devconcept), "DevelopmentConcept")
 
     # PriorActivityIDs: use the merged Activity record when available;
     # fall back to the three WPC IDs for backward compatibility.
@@ -180,6 +186,16 @@ def main():
                         {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"},
                     ],
                 },
+                *([{
+                    "Title": "Development Concept",
+                    "Selection": "DG1 development concept definition",
+                    "ParameterKindID": f"{args.id_prefix}:reference-data--ParameterKind:DataObject:1",
+                    "ParameterRoleID": f"{args.id_prefix}:reference-data--ParameterRole:Input:1",
+                    "DataObjectParameter": devconcept_wpc_id,
+                    "Keys": [
+                        {"ParameterKey": "artifact", "StringParameterKey": "DevelopmentConcept"},
+                    ],
+                }] if devconcept_wpc_id else []),
             ],
             # ── Canonical: Personnel[] ← Authors ──
             "Personnel": [

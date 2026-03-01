@@ -5,6 +5,7 @@
       "onAutoForward": "openPreview"
     }
   },
-  "remote.autoForwardPorts": true
+  "remote.autoForwardPorts": true,
+  "remote.autoForwardPortsSource": "process"
 }
 

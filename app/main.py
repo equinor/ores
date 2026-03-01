@@ -156,10 +156,14 @@ def _access_token(request: Request) -> str:
 # Local BD enrichment overlay
 # ──────────────────────────────────────────────────────────────────────────────
 # OSDU's BusinessDecision schema only preserves registered ext.equinor keys.
-# Custom keys (ProductionProfile, Authors, DevelopmentConcept, etc.) are
-# silently dropped during workflow ingestion.  We load them from the local
-# manifest files and merge them back into fetched records so the UI can render
-# the full decision package.
+# Custom keys (ProductionProfile, Authors, etc.) are silently dropped during
+# workflow ingestion.  DevelopmentConcept is now stored as a proper WPC
+# (kind dev:wks:work-product-component--DevelopmentConcept:1.0.0) linked
+# via BD Parameters[].  The enrichment function _enrich_bd_developmentconcept()
+# fetches it from OSDU and injects it into ext.equinor.DevelopmentConcept
+# so templates render it unchanged.
+# Other dropped keys (Alternatives, UncertaintySummary) are still loaded from
+# local manifest files and merged via _apply_bd_local_enrichment().
 # ──────────────────────────────────────────────────────────────────────────────
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -191,6 +195,25 @@ def _load_local_records() -> None:
                     _LOCAL_RECORDS[rid] = rec
             except Exception:
                 pass
+    # Also index WPC records from manifest files (for local fallback of
+    # DevelopmentConcept and other custom WPCs that may not have records/).
+    _manifest_wpcs = [
+        _REPO_ROOT / "demo" / "drogon" / "manifest_devconcept_drogon.json",
+        _REPO_ROOT / "demo" / "drogon_dg2" / "manifest_devconcept_dg2.json",
+        _REPO_ROOT / "demo" / "grand" / "json" / "manifest_devconcept_grand.json",
+    ]
+    for mpath in _manifest_wpcs:
+        if not mpath.exists():
+            continue
+        try:
+            with open(mpath, encoding="utf-8") as f:
+                manifest = json.load(f)
+            for wpc in manifest.get("Data", {}).get("WorkProductComponents", []):
+                rid = wpc.get("id", "")
+                if rid and rid not in _LOCAL_RECORDS:
+                    _LOCAL_RECORDS[rid] = wpc
+        except Exception:
+            pass
     if _LOCAL_RECORDS:
         log.info("[LOCAL] Indexed %d demo records for local fallback", len(_LOCAL_RECORDS))
 
@@ -691,6 +714,90 @@ def _parse_cbt_production(d: Dict[str, Any], target_id: str = "") -> Dict[str, A
     return result
 
 
+# ──────────────────────────────────────────────────────────────────────────────
+# BD enrichment: DevelopmentConcept WPC → ext.equinor.DevelopmentConcept
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Fields to extract from the DevelopmentConcept WPC data block
+_DEVCONCEPT_FIELDS = (
+    "Summary", "WellCount", "ContingentWells", "MultilateralWells",
+    "TemplateSlots", "DrillingCentres", "ReservoirFormation", "FieldArea",
+    "WaterDepth_m", "DistanceToHost_km", "HostFacility", "TargetStartUp",
+    "FlowlineSpec", "SubseaBoostingPump", "WaterTreatmentCapacity_m3d",
+    "InjectionStrategy", "WellPlan",
+)
+
+
+async def _enrich_bd_developmentconcept(
+    data_block: Dict[str, Any],
+    client: httpx.AsyncClient,
+    storage_url: str,
+    hdr: dict,
+) -> None:
+    """Fetch DevelopmentConcept WPC from BD Parameters[] and inject into
+    ``data.ext.equinor.DevelopmentConcept`` so templates render it unchanged.
+
+    Looks for a Parameters entry with StringParameterKey 'DevelopmentConcept'.
+    Falls back to local demo record if OSDU fetch fails.
+    Only overwrites ext.equinor.DevelopmentConcept when WPC data is found.
+    """
+    params = data_block.get("Parameters") or []
+    if not isinstance(params, list):
+        return
+
+    # Find the DevelopmentConcept WPC reference
+    target_id = ""
+    for p in params:
+        if not isinstance(p, dict):
+            continue
+        dop = p.get("DataObjectParameter") or ""
+        if "DevelopmentConcept" not in dop:
+            continue
+        keys = p.get("Keys") or []
+        if any("DevelopmentConcept" in (kv.get("StringParameterKey") or "")
+               for kv in keys if isinstance(kv, dict)):
+            target_id = dop
+            break
+
+    if not target_id:
+        return
+
+    # Try OSDU storage first, fall back to local demo record
+    d: Optional[Dict[str, Any]] = None
+    try:
+        r = await client.get(f"{storage_url}/{target_id}", headers=hdr)
+        if r.status_code == 200:
+            d = (r.json() or {}).get("data", {}) or {}
+        else:
+            log.debug("[BD-DC] DevelopmentConcept %s returned %d, trying local",
+                      target_id, r.status_code)
+    except Exception as e:
+        log.debug("[BD-DC] OSDU fetch failed for %s: %s, trying local", target_id, e)
+
+    if not d:
+        d = _get_local_record_data(target_id)
+        if d:
+            log.info("[BD-DC] Using local record for %s", target_id)
+
+    if not d:
+        return
+
+    # Extract DevelopmentConcept fields from the WPC data block
+    dcon: Dict[str, Any] = {}
+    for key in _DEVCONCEPT_FIELDS:
+        if key in d:
+            dcon[key] = d[key]
+
+    if not dcon:
+        return
+
+    # Inject into ext.equinor.DevelopmentConcept (overwrites local fallback)
+    ext_eq = data_block.setdefault("ext", {}).setdefault("equinor", {})
+    ext_eq["DevelopmentConcept"] = dcon
+    log.info("[BD-DC] Injected DevelopmentConcept from WPC %s (%d fields)",
+             target_id, len(dcon))
+
+
 def _parse_kind_inputs(kind: str, kinds_extra: str) -> List[str]:
     """
     Build an ordered, de-duplicated list of kinds from:
@@ -987,6 +1094,8 @@ async def search_run(
                                 data_block, client, storage_url, hdr)
                             bd_production = await _enrich_bd_production(
                                 data_block, client, storage_url, hdr)
+                            await _enrich_bd_developmentconcept(
+                                data_block, client, storage_url, hdr)
 
                         # Generic WPC/master-data links (exclude reference-data)
                         links = extract_osdu_links(data_block) or []
@@ -1135,6 +1244,8 @@ async def view_record(request: Request, record_id: str):
                 bd_geolabel = await _enrich_bd_geolabel(
                     data_block, client, storage_url, hdr)
                 bd_production = await _enrich_bd_production(
+                    data_block, client, storage_url, hdr)
+                await _enrich_bd_developmentconcept(
                     data_block, client, storage_url, hdr)
 
             links = extract_osdu_links(data_block) or []

@@ -120,6 +120,19 @@
                 "StringParameterKey": "ProductionForecast"
               }
             ]
+          },
+          {
+            "Title": "Development Concept",
+            "Selection": "DG2 development concept definition",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:GRAND-DG2:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "DevelopmentConcept"
+              }
+            ]
           }
         ],
         "Personnel": [

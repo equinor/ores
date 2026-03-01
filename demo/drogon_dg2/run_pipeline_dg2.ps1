@@ -70,6 +70,11 @@ try {
     py demo/drogon_dg2/gen_documents_dg2.py
     if ($LASTEXITCODE -ne 0) { throw "gen_documents_dg2.py failed" }
 
+    # ── Step 6b: Generate DG2 DevelopmentConcept WPC ────────────────
+    Write-Host "`n═══ Step 6b: DG2 DevelopmentConcept WPC ═══" -ForegroundColor Cyan
+    py demo/drogon_dg2/gen_devconcept_dg2.py
+    if ($LASTEXITCODE -ne 0) { throw "gen_devconcept_dg2.py failed" }
+
     # ── Step 7: Generate DG2 Business Decision ────────────────────
     Write-Host "`n═══ Step 7: DG2 Business Decision ═══" -ForegroundColor Cyan
     py demo/drogon_dg2/gen_businessdecision_dg2.py
