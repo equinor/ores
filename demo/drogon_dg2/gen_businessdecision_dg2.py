@@ -444,37 +444,6 @@ def _build_ext_equinor(pfx: str, risk_ids: List[str]) -> Dict[str, Any]:
             },
         ],
 
-        # ── Development Concept (enriched vs DG1) ────────────────────
-        "DevelopmentConcept": {
-            "Summary": (
-                "Subsea development with 2\u00d74-slot templates (8 slots + 2 contingent), "
-                "tie-back to converted FPSO via dual 10\" production flowlines and "
-                "6\" gas-lift line. Distance to FPSO ~8 km. Water depth 108 m. "
-                "Valysar formation at ~1700 m TVD MSL."
-            ),
-            "WellCount": 12,
-            "ContingentWells": 2,
-            "TemplateSlots": 10,
-            "DrillingCentres": 2,
-            "ReservoirFormation": "Valysar",
-            "FieldArea": "Drogon",
-            "WaterDepth_m": 108,
-            "DistanceToHost_km": 8,
-            "HostFacility": "Drogon FPSO (converted)",
-            "TargetStartUp": "2028-H1",
-            "FlowlineSpec": "2\u00d710\" production + 6\" gas lift",
-            "SubseaBoostingPump": True,
-            "WaterTreatmentCapacity_m3d": 5000,
-            "InjectionStrategy": "Water injection for pressure support (4 injectors planned Phase 2)",
-            "WellPlan": {
-                "Producers": 12,
-                "Injectors_Phase2": 4,
-                "AvgWellDepth_mMD": 3200,
-                "DrillingDuration_days_avg": 45,
-                "CompletionType": "Frac-pack + ICD lower completion",
-            },
-        },
-
         # ── Uncertainty Summary (enriched with recoverable) ──────────
         "UncertaintySummary": {
             "Basis": (

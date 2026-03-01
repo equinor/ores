@@ -153,17 +153,12 @@ def _access_token(request: Request) -> str:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Local BD enrichment overlay
+# Local record cache & helpers
 # ──────────────────────────────────────────────────────────────────────────────
-# OSDU's BusinessDecision schema only preserves registered ext.equinor keys.
-# Custom keys (ProductionProfile, Authors, etc.) are silently dropped during
-# workflow ingestion.  DevelopmentConcept is now stored as a proper WPC
-# (kind dev:wks:work-product-component--DevelopmentConcept:1.0.0) linked
-# via BD Parameters[].  The enrichment function _enrich_bd_developmentconcept()
-# fetches it from OSDU and injects it into ext.equinor.DevelopmentConcept
-# so templates render it unchanged.
-# Other dropped keys (Alternatives, UncertaintySummary) are still loaded from
-# local manifest files and merged via _apply_bd_local_enrichment().
+# Registered ext.equinor keys (Alternatives, UncertaintySummary, etc.) survive
+# OSDU workflow ingestion.  DevelopmentConcept is stored as a proper WPC
+# (kind dev:wks:work-product-component--DevelopmentConcept:1.0.0) linked via
+# BD Parameters[] and fetched at render-time by _enrich_bd_developmentconcept().
 # ──────────────────────────────────────────────────────────────────────────────
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -195,25 +190,6 @@ def _load_local_records() -> None:
                     _LOCAL_RECORDS[rid] = rec
             except Exception:
                 pass
-    # Also index WPC records from manifest files (for local fallback of
-    # DevelopmentConcept and other custom WPCs that may not have records/).
-    _manifest_wpcs = [
-        _REPO_ROOT / "demo" / "drogon" / "manifest_devconcept_drogon.json",
-        _REPO_ROOT / "demo" / "drogon_dg2" / "manifest_devconcept_dg2.json",
-        _REPO_ROOT / "demo" / "grand" / "json" / "manifest_devconcept_grand.json",
-    ]
-    for mpath in _manifest_wpcs:
-        if not mpath.exists():
-            continue
-        try:
-            with open(mpath, encoding="utf-8") as f:
-                manifest = json.load(f)
-            for wpc in manifest.get("Data", {}).get("WorkProductComponents", []):
-                rid = wpc.get("id", "")
-                if rid and rid not in _LOCAL_RECORDS:
-                    _LOCAL_RECORDS[rid] = wpc
-        except Exception:
-            pass
     if _LOCAL_RECORDS:
         log.info("[LOCAL] Indexed %d demo records for local fallback", len(_LOCAL_RECORDS))
 
@@ -227,97 +203,6 @@ def _get_local_record_data(record_id: str) -> Optional[Dict[str, Any]]:
     if rec:
         return rec.get("data") or rec
     return None
-
-
-_BD_LOCAL_ENRICHMENTS: Dict[str, Dict[str, Any]] = {}
-
-
-def _load_bd_enrichments() -> None:
-    """Scan known BD manifest files and cache ext.equinor data by record ID."""
-    manifest_paths = [
-        _REPO_ROOT / "demo" / "grand" / "json" / "manifest_dg_businessdecision.json",
-        _REPO_ROOT / "demo" / "drogon" / "manifest_bd_drogon.json",
-        _REPO_ROOT / "demo" / "drogon_dg2" / "manifest_bd_dg2.json",
-    ]
-    for path in manifest_paths:
-        if not path.exists():
-            continue
-        try:
-            with open(path, encoding="utf-8") as f:
-                manifest = json.load(f)
-            for rec in manifest.get("MasterData", []):
-                rid = rec.get("id", "")
-                data = rec.get("data") or {}
-                ext_eq = (data.get("ext") or {}).get("equinor") or {}
-                if ext_eq and rid:
-                    _BD_LOCAL_ENRICHMENTS[rid] = ext_eq
-                    log.info("[BD-ENRICH] Loaded local enrichments for %s (%d keys)",
-                             rid, len(ext_eq))
-        except Exception as e:
-            log.warning("[BD-ENRICH] Failed to load %s: %s", path, e)
-
-
-_load_bd_enrichments()
-
-
-def _apply_bd_local_enrichment(data_block: Dict[str, Any], record_id: str) -> None:
-    """Merge locally-cached ext.equinor fields into *data_block* in-place.
-
-    Also patches Parameters[] from the local record if the OSDU-returned
-    record has fewer entries (e.g. GeoLabelSet / ProductionForecast refs
-    added after the last ingestion).
-
-    Only fills keys that are absent in the OSDU-returned record, so live data
-    always wins.
-    """
-    # 1) ext.equinor merge
-    local = _BD_LOCAL_ENRICHMENTS.get(record_id)
-    if local:
-        ext_eq = data_block.setdefault("ext", {}).setdefault("equinor", {})
-        merged = 0
-        for k, v in local.items():
-            if k not in ext_eq:
-                ext_eq[k] = v
-                merged += 1
-        if merged:
-            log.debug("[BD-ENRICH] Merged %d local ext.equinor keys into %s", merged, record_id)
-
-    # 1b) canonical data-level fields — fill from local record if absent
-    _CANONICAL_BD_FIELDS = (
-        "Personnel", "DecisionOwners", "DecisionMakers", "Contributors",
-        "Remarks", "ProjectSpecifications", "ActivityStates",
-    )
-    local_data = _get_local_record_data(record_id)
-    if local_data:
-        canon_merged = 0
-        for cf in _CANONICAL_BD_FIELDS:
-            if cf not in data_block and cf in local_data:
-                data_block[cf] = local_data[cf]
-                canon_merged += 1
-        if canon_merged:
-            log.debug("[BD-ENRICH] Merged %d canonical fields into %s", canon_merged, record_id)
-
-    # 2) Parameters[] merge — add entries present in local record but missing
-    #    from OSDU-returned data (matched by DataObjectParameter).
-    if not local_data:
-        local_data = _get_local_record_data(record_id)
-    if not local_data:
-        return
-    local_params = local_data.get("Parameters") or []
-    if not local_params:
-        return
-    live_params = data_block.get("Parameters") or []
-    live_dops = {p.get("DataObjectParameter") for p in live_params if isinstance(p, dict)}
-    added = 0
-    for lp in local_params:
-        if not isinstance(lp, dict):
-            continue
-        if lp.get("DataObjectParameter") not in live_dops:
-            live_params.append(lp)
-            added += 1
-    if added:
-        data_block["Parameters"] = live_params
-        log.debug("[BD-ENRICH] Added %d local Parameters entries to %s", added, record_id)
 
 
 def _normalize_volumes(data_block: Dict[str, Any]) -> Dict[str, Any]:
@@ -1082,11 +967,10 @@ async def search_run(
                         ancestry_children = ancestry.get("children", []) or []
                         volumes = _normalize_volumes(data_block)
 
-                        # BusinessDecision: merge local enrichments + pull headline volumes
+                        # BusinessDecision: pull headline volumes + linked WPC data
                         bd_geolabel: Dict[str, Any] = {}
                         bd_production: Dict[str, Any] = {}
                         if "businessdecision" in (full.get("kind") or "").lower():
-                            _apply_bd_local_enrichment(data_block, rid)
                             if not (volumes or {}).get("ColumnValues"):
                                 volumes = await _enrich_bd_volumes(
                                     data_block, client, storage_url, hdr)
@@ -1233,11 +1117,10 @@ async def view_record(request: Request, record_id: str):
             ancestry = data_block.get("ancestry", {}) or {}
             volumes = _normalize_volumes(data_block)
 
-            # BusinessDecision: merge local enrichments + pull headline volumes
+            # BusinessDecision: pull headline volumes + linked WPC data
             bd_geolabel: Dict[str, Any] = {}
             bd_production: Dict[str, Any] = {}
             if "businessdecision" in (full.get("kind") or "").lower():
-                _apply_bd_local_enrichment(data_block, record_id)
                 if not (volumes or {}).get("ColumnValues"):
                     volumes = await _enrich_bd_volumes(
                         data_block, client, storage_url, hdr)

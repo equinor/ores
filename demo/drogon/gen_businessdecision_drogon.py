@@ -284,19 +284,6 @@ def main():
                             "RecommendedAction": "Fallback",
                         },
                     ],
-                    "DevelopmentConcept": {
-                        "Summary": (
-                            "Subsea development with tie-back to existing host facility. "
-                            "Valysar formation at ~1700 m TVD MSL in the Drogon area, "
-                            "Norwegian North Sea."
-                        ),
-                        "WellCount": 12,
-                        "TemplateSlots": 16,
-                        "ReservoirFormation": "Valysar",
-                        "FieldArea": "Drogon",
-                        "WaterDepth_m": 108,
-                        "TargetStartUp": "2028-H1",
-                    },
                     "UncertaintySummary": {
                         "Basis": (
                             "FMU static in-place volumes from 3 uncertainty realisations "

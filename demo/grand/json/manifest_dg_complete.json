@@ -524,19 +524,6 @@
                 "RecommendedAction": "Fallback"
               }
             ],
-            "DevelopmentConcept": {
-              "Summary": "Subsea development with 4×6-slot templates (24 slots), tie-back to Grane platform. Two flowlines (16\" and 14\") plus 8\" gas lift line. Distance to Grane ~10-12 km. Water depth 128–130 m.",
-              "WellCount": 23,
-              "MultilateralWells": 2,
-              "TemplateSlots": 24,
-              "DrillingCentres": 4,
-              "ReservoirFormation": "Heimdal (Palaeocene)",
-              "FieldArea": "Grane Northern Area",
-              "WaterDepth_m": 129,
-              "DistanceToHost_km": 11,
-              "HostFacility": "Grane Platform",
-              "TargetStartUp": "2023-06"
-            },
             "UncertaintySummary": {
               "Basis": "PRMS; probabilistic FMU using 300 geo-realisations (3 selected: Real 1 = REF, Real 88 = P90, Real 58 = P10). Static in-place volumes from DG2 geomodels.",
               "Note": "Volumes from Table 11-23 of PM398-DD-200-001 Rev 01. Bo and GOR differentiated by structure.",
