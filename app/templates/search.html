@@ -1152,7 +1152,11 @@ click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open chil
 {% set info = (rec.linked_labels or {}).get(lid, {}) %}
 {% set lname = info.name or lid %}
 L{{ rec_index }}x{{ loop.index0 }}["{{ esc_label(lname) }} ({{ esc_label(lid) }})"]
+{% if l.role == 'referenced-by' %}
+L{{ rec_index }}x{{ loop.index0 }} --> REC{{ rec_index }}:::referenced_by
+{% else %}
 REC{{ rec_index }} --> L{{ rec_index }}x{{ loop.index0 }}:::{{ (l.role or 'ref') | replace('-','_') }}
+{% endif %}
 click L{{ rec_index }}x{{ loop.index0 }} href "/search/view/{{ lid }}" "Open linked object"
 {% endif %}
 {% endfor %}
@@ -1161,6 +1165,7 @@ classDef parameter_object fill:#d1ecf1,stroke:#0c5460,color:#222;
 classDef parent_object fill:#f8d7da,stroke:#721c24,color:#222;
 classDef parent_work_product fill:#f8d7da,stroke:#721c24,color:#222;
 classDef risk fill:#f5c6cb,stroke:#721c24,color:#222;
+classDef referenced_by fill:#d4edda,stroke:#155724,color:#222;
 classDef ancestry_parent fill:#cfe2ff,stroke:#084298,color:#222;
 classDef ancestry_child fill:#e2e3e5,stroke:#6c757d,color:#222;
 classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;

@@ -722,6 +722,7 @@ def _collect_manifest_kinds() -> List[Dict[str, Any]]:
         "osdu:wks:work-product-component--ReservoirEstimatedVolumes:1.1.0",
         "osdu:wks:work-product-component--ColumnBasedTable:1.4.0",
         "osdu:wks:work-product-component--GeoLabelSet:1.0.0",
+        "dev:wks:work-product-component--DevelopmentConcept:1.0.0",
         "osdu:wks:master-data--Risk:1.2.0",
         "osdu:wks:master-data--Reservoir:2.0.0",
         "osdu:wks:master-data--ReservoirSegment:2.0.0",
@@ -755,16 +756,60 @@ def _collect_manifest_kinds() -> List[Dict[str, Any]]:
 
 
 def _walk_kinds(node: Any, counter: Counter) -> None:
-    """Recursively count ``kind`` values starting with ``osdu:``."""
+    """Recursively count ``kind`` values (osdu: and dev: prefixes)."""
     if isinstance(node, dict):
         k = node.get("kind")
-        if isinstance(k, str) and k.startswith("osdu:"):
+        if isinstance(k, str) and (k.startswith("osdu:") or k.startswith("dev:")):
             counter[k] += 1
         for v in node.values():
             _walk_kinds(v, counter)
     elif isinstance(node, list):
         for v in node:
             _walk_kinds(v, counter)
+
+
+async def _reverse_lookup(
+    record_id: str,
+    client: httpx.AsyncClient,
+    search_url: str,
+    hdr: Dict[str, str],
+) -> List[Dict[str, Any]]:
+    """Find records that reference *record_id* (reverse relationships).
+
+    Uses OSDU Search API with a wildcard query on the record ID.
+    Returns a list of ``{id, role, source_path}`` dicts compatible with
+    ``extract_osdu_links()`` output.
+    """
+    try:
+        payload = {
+            "kind": "*:*:*:*",
+            "query": f'"{record_id}"',
+            "limit": 20,
+            "returnedFields": ["id", "kind"],
+        }
+        r = await client.post(search_url, headers=hdr, json=payload)
+        if r.status_code != 200:
+            log.debug("[REV-LOOKUP] search returned %d for %s", r.status_code, record_id)
+            return []
+        hits = r.json().get("results") or []
+        refs: List[Dict[str, Any]] = []
+        for h in hits:
+            hid = h.get("id", "")
+            if hid == record_id:
+                continue  # skip self
+            if "reference-data--" in hid:
+                continue
+            refs.append({
+                "id": hid,
+                "role": "referenced-by",
+                "source_path": "(reverse lookup)",
+            })
+        if refs:
+            log.info("[REV-LOOKUP] %s referenced by %d records", record_id, len(refs))
+        return refs
+    except Exception as e:
+        log.debug("[REV-LOOKUP] Failed for %s: %s", record_id, e)
+        return []
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Pages & actions
@@ -984,6 +1029,14 @@ async def search_run(
                         # Generic WPC/master-data links (exclude reference-data)
                         links = extract_osdu_links(data_block) or []
 
+                        # Reverse-lookup: find records that reference this one
+                        rev_links = await _reverse_lookup(
+                            rid, client, search_url, hdr)
+                        fwd_ids = {l["id"] for l in links}
+                        for rl in rev_links:
+                            if rl["id"] not in fwd_ids:
+                                links.append(rl)
+
                         # Hydrate labels for linked records (bounded)
                         linked_labels: Dict[str, Dict[str, Any]] = {}
                         try:
@@ -1106,6 +1159,7 @@ async def view_record(request: Request, record_id: str):
     """Fetch a single record by ID and render it through the search template."""
     at = _access_token(request)
     storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
+    search_url = f"https://{osdu.OSDU_BASE_URL}/api/search/v2/query"
     hdr = osdu.headers(at)
     try:
         async with httpx.AsyncClient(timeout=60) as client:
@@ -1132,6 +1186,14 @@ async def view_record(request: Request, record_id: str):
                     data_block, client, storage_url, hdr)
 
             links = extract_osdu_links(data_block) or []
+
+            # Reverse-lookup: find records that reference this one
+            rev_links = await _reverse_lookup(
+                record_id, client, search_url, hdr)
+            fwd_ids = {l["id"] for l in links}
+            for rl in rev_links:
+                if rl["id"] not in fwd_ids:
+                    links.append(rl)
 
             linked_labels: Dict[str, Dict[str, Any]] = {}
             try:
