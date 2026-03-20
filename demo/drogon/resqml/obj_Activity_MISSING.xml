@@ -1,0 +1,38 @@
+<resqml20:Activity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gsr="http://www.isotc211.org/2005/gsr" xmlns:dc="http://purl.org/dc/terms/" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:abstract="http://www.energistics.org/schemas/abstract" xmlns:resqml20="http://www.energistics.org/energyml/data/resqmlv2" xmlns:eml20="http://www.energistics.org/energyml/data/commonv2" xsi:type="resqml20:obj_Activity" uuid="MISSING" schemaVersion="2.0">
+  <eml20:Citation xsi:type="eml20:Citation">
+    <eml20:Title xsi:type="eml20:DescriptionString">Drogon_DG_Example</eml20:Title>
+    <eml20:Originator xsi:type="eml20:NameString">markuslund.vevle@emerson.com</eml20:Originator>
+    <eml20:Creation xsi:type="xsd:dateTime">2026-02-13T10:21:57.365Z</eml20:Creation>
+    <eml20:Format xsi:type="eml20:DescriptionString">RMS_descriptor</eml20:Format>
+    <eml20:LastUpdate xsi:type="xsd:dateTime">2026-02-14T13:39:22.572Z</eml20:LastUpdate>
+  </eml20:Citation>
+  <resqml20:ActivityDescriptor xsi:type="eml20:DataObjectReference">
+    <eml20:ContentType xsi:type="xsd:string">application/x-resqml+xml;version=2.0;type=obj_ActivityTemplate</eml20:ContentType>
+    <eml20:Title xsi:type="eml20:DescriptionString">ensembleTemplate</eml20:Title>
+    <eml20:UUID xsi:type="eml20:UuidString">MISSING</eml20:UUID>
+    <eml20:UuidAuthority xsi:type="xsd:string">MISSING</eml20:UuidAuthority>
+  </resqml20:ActivityDescriptor>
+  <resqml20:Parameter xsi:type="resqml20:IntegerQuantityParameter">
+    <resqml20:Title xsi:type="xsd:string">NumberOfRealizations</resqml20:Title>
+    <resqml20:Value>3</resqml20:Value>
+  </resqml20:Parameter>
+    <resqml20:Parameter xsi:type="resqml20:StringParameter">
+    <resqml20:Title xsi:type="xsd:string">Workflow</resqml20:Title>
+    <resqml20:Value xsi:type="xsd:string">DecisionExample</resqml20:Value>
+  </resqml20:Parameter>
+   <resqml20:Parameter xsi:type="resqml20:StringParameter">
+    <resqml20:Title xsi:type="xsd:string">ReportTable</resqml20:Title>
+    <resqml20:Value xsi:type="xsd:string">DecisionExample_report</resqml20:Value>
+  </resqml20:Parameter>
+  <resqml20:Parameter xsi:type="resqml20:StringParameter">
+    <resqml20:Title xsi:type="xsd:string">Method</resqml20:Title>
+    <resqml20:Value xsi:type="xsd:string">User_Defined</resqml20:Value>
+  </resqml20:Parameter>
+  <resqml20:Parameter xsi:type="resqml20:StringParameter">
+    <resqml20:Title xsi:type="xsd:string">Variables</resqml20:Title>
+    <resqml20:Value xsi:type="xsd:string">[{"Name": "ModTable, Oil/water contact OWC 1", "QuantityType": "Low/Base/High", "Low": 1650.0, "Base": 1660.0, "High": 1670.0, "Group": "Skirt"}, {"Name": "ModTable, Oil/water contact OWC 2", "QuantityType": "Low/Base/High", "Low": 1667.0, "Base": 1677.0, "High": 1687.0, "Group": "Centre"}, {"Name": "ModTable, Oil/water contact OWC 3", "QuantityType": "Low/Base/High", "Low": 1667.0, "Base": 1677.0, "High": 1687.0, "Group": "Centre"}, {"Name": "ModTable, Oil/water contact OWC 4", "QuantityType": "Low/Base/High", "Low": 1650.0, "Base": 1660.0, "High": 1670.0, "Group": "Skirt"}, {"Name": "ModTable, Oil/water contact OWC 5", "QuantityType": "Low/Base/High", "Low": 1667.0, "Base": 1677.0, "High": 1687.0, "Group": "Centre"}, {"Name": "ModTable, Oil/water contact OWC 6", "QuantityType": "Low/Base/High", "Low": 1667.0, "Base": 1677.0, "High": 1687.0, "Group": "Centre"}, {"Name": "ModTable, Oil/water contact OWC 7", "QuantityType": "Low/Base/High", "Low": 1650.0, "Base": 1660.0, "High": 1670.0, "Group": "Skirt"}, {"Name": "std_valysar, Floodplain, PHIT, expected mean", "QuantityType": "Low/Base/High", "Low": 0.09000000357627869, "Base": 0.10300000011920929, "High": 0.11299999803304672, "Group": "Centre"}, {"Name": "std_valysar, Channel, PHIT, expected mean", "QuantityType": "Low/Base/High", "Low": 0.2653200030326843, "Base": 0.27532124519348145, "High": 0.2853200137615204, "Group": "Centre"}, {"Name": "std_valysar, Crevasse, PHIT, expected mean", "QuantityType": "Low/Base/High", "Low": 0.19869999587535858, "Base": 0.20869815349578857, "High": 0.21870000660419464, "Group": "Centre"}]</resqml20:Value>
+  </resqml20:Parameter>
+  <resqml20:Parameter xsi:type="resqml20:StringParameter">
+    <resqml20:Title xsi:type="xsd:string">DesignMatrix</resqml20:Title>
+    <resqml20:Value xsi:type="xsd:string">[{"Realization": 1, "Floodplain, PHIT, expected mean": "Base", "Channel, PHIT, expected mean": "Base", "Crevasse, PHIT, expected mean": "Base", "Skirt": "Base", "Center": "Base"}, {"Realization": 2, "Floodplain, PHIT, expected mean": "Low", "Channel, PHIT, expected mean": "Low", "Crevasse, PHIT, expected mean": "Low", "Skirt": "Low", "Center": "Low"}, {"Realization": 3, "Floodplain, PHIT, expected mean": "High", "Channel, PHIT, expected mean": "High", "Crevasse, PHIT, expected mean": "High", "Skirt": "High", "Center": "High"}]</resqml20:Value>
+  </resqml20:Parameter>
