@@ -1,0 +1,71 @@
+{
+  "id": "dev:work-product-component--StratigraphicColumnRankInterpretation:ChronoStratigraphicScheme:ICS2017-Chrono-SubSeries:",
+  "kind": "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.3.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Chronostratigraphic SubSeries",
+    "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+    "RankName": "SubSeries",
+    "StratigraphicUnitInterpretationSet": [
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Aalenian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Aquitanian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Chattian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Early-Eocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Early-Hettangian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Early-Miocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Early-Mississippian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Early-Oligocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Early-Paleocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Early-Pennsylvanian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Early-Pleistocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Early-Pliocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Gallic:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Late-Eocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Late-Miocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Late-Mississippian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Late-Oligocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Late-Paleocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Late-Pennsylvanian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Late-Pleistocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Late-Pliocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Late-Volgian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Messinian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Middle-Eocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Middle-Miocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Middle-Mississippian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Middle-Paleocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Middle-Pennsylvanian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Middle-Pleistocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Neocomian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Paleocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Paleogene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Piacenzian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Pleistocene:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Priabonian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Senonian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Serravallian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Tertiary:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Thanetian:"
+    ]
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
+  }
+}

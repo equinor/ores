@@ -1,0 +1,49 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Devonian.MiddleDevonian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Middle Devonian",
+    "NameAlias": [
+      {
+        "AliasName": "MiddleDevonian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:",
+        "DefinitionOrganisationID": "dev:reference-data--StandardsOrganisation:ICS:"
+      }
+    ],
+    "Description": "The Middle Devonian Epoch [393.3-382.7]",
+    "Code": "Phanerozoic.Paleozoic.Devonian.MiddleDevonian",
+    "AttributionAuthority": "ICS https://stratigraphy.org",
+    "AttributionPublication": "https://github.com/CSIRO-enviro-informatics/interactive-geological-timescale/tree/master/src/assets",
+    "AttributionRevision": "ICS 2017/02",
+    "AgeBegin": 393.3,
+    "AgeEnd": 382.7,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChildCodes": [
+      "Phanerozoic.Paleozoic.Devonian.MiddleDevonian.Givetian",
+      "Phanerozoic.Paleozoic.Devonian.MiddleDevonian.Eifelian"
+    ],
+    "Colour": "#F9CB86",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Series:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Devonian:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

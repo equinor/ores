@@ -1,0 +1,46 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Cretaceous.UpperCretaceous.Turonian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Turonian",
+    "NameAlias": [
+      {
+        "AliasName": "Turonian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:",
+        "DefinitionOrganisationID": "dev:reference-data--StandardsOrganisation:ICS:"
+      }
+    ],
+    "Description": "The Turonian Age [93.9-89.8]",
+    "Code": "Phanerozoic.Mesozoic.Cretaceous.UpperCretaceous.Turonian",
+    "AttributionAuthority": "ICS https://stratigraphy.org",
+    "AttributionPublication": "https://github.com/CSIRO-enviro-informatics/interactive-geological-timescale/tree/master/src/assets",
+    "AttributionRevision": "ICS 2017/02",
+    "AgeBegin": 93.9,
+    "AgeEnd": 89.8,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChildCodes": [],
+    "Colour": "#C5DF83",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Stage:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Cretaceous.UpperCretaceous:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

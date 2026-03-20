@@ -1,0 +1,59 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Mesozoic.Jurassic:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Jurassic",
+    "NameAlias": [
+      {
+        "AliasName": "Jurassic",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Jurassic Period [208.0-145.0]",
+    "Code": "Harland1989.Phanerozoic.Mesozoic.Jurassic",
+    "AttributionAuthority": "Harland",
+    "AttributionRevision": "Harland 1989",
+    "AgeBegin": 208.0,
+    "AgeEnd": 145.0,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:Harland1989:",
+    "ChildCodes": [
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Dogger.Aalenian",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Dogger.Bajocian",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Dogger.Bathonian",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Dogger.Callovian",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Dogger",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Lias.Hettangian",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Malm.Kimmeridgian",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Lias",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Malm",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Malm.Oxfordian",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Lias.Pliensbachian",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Lias.Sinemurian",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Malm.Tithonian",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Tithonian",
+      "Harland1989.Phanerozoic.Mesozoic.Jurassic.Lias.Toarcian"
+    ],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Harland1989.System:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Mesozoic:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

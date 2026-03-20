@@ -1,0 +1,46 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:GTS2016.Phanerozoic.Paleozoic.Ordovician.MiddleOrdovician:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Middle Ordovician",
+    "NameAlias": [
+      {
+        "AliasName": "MiddleOrdovician",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Middle Ordovician Epoch [470.0-458.4]",
+    "Code": "GTS2016.Phanerozoic.Paleozoic.Ordovician.MiddleOrdovician",
+    "AttributionAuthority": "GTS https://timescalefoundation.org",
+    "AttributionRevision": "GTS 2016",
+    "AgeBegin": 469.96,
+    "AgeEnd": 458.36,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:GTS2016:",
+    "ChildCodes": [
+      "GTS2016.Phanerozoic.Paleozoic.Ordovician.MiddleOrdovician.Dapingian",
+      "GTS2016.Phanerozoic.Paleozoic.Ordovician.MiddleOrdovician.Darriwilian"
+    ],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2016.Series:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:GTS2016.Phanerozoic.Paleozoic.Ordovician:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

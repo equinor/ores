@@ -1,0 +1,44 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:GTS2012.Proterozoic.Mesoproterozoic.Calymmian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Calymmian",
+    "NameAlias": [
+      {
+        "AliasName": "Calymmian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Calymmian Period [1600.0-1400.0]",
+    "Code": "GTS2012.Proterozoic.Mesoproterozoic.Calymmian",
+    "AttributionAuthority": "GTS https://timescalefoundation.org",
+    "AttributionRevision": "GTS 2012",
+    "AgeBegin": 1600.0,
+    "AgeEnd": 1400.0,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:GTS2012:",
+    "ChildCodes": [],
+    "Colour": "#fdc07a",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2012.System:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:GTS2012.Proterozoic.Mesoproterozoic:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

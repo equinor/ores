@@ -1,0 +1,47 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Mesozoic.Triassic.LateTriassic.Carnian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Carnian",
+    "NameAlias": [
+      {
+        "AliasName": "Carnian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Carnian Stage [237.0-228.4]",
+    "Code": "GTS2012.Phanerozoic.Mesozoic.Triassic.LateTriassic.Carnian",
+    "AttributionAuthority": "GTS https://timescalefoundation.org",
+    "AttributionRevision": "GTS 2012",
+    "AgeBegin": 237.0,
+    "AgeEnd": 228.4,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:GTS2012:",
+    "ChildCodes": [
+      "GTS2012.Phanerozoic.Mesozoic.Triassic.LateTriassic.Carnian.Julian",
+      "GTS2012.Phanerozoic.Mesozoic.Triassic.LateTriassic.Carnian.Tuvalian"
+    ],
+    "Colour": "#c99bcb",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2012.Stage:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Mesozoic.Triassic.LateTriassic:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

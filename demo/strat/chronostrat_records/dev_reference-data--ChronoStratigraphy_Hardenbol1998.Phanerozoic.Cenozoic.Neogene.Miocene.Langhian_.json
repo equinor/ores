@@ -1,0 +1,43 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene.Langhian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Langhian",
+    "NameAlias": [
+      {
+        "AliasName": "Langhian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Langhian Age [14.8 - 16.4]",
+    "Code": "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene.Langhian",
+    "AttributionAuthority": "Hardenbol",
+    "AttributionRevision": "Hardenbol 1998",
+    "AgeBegin": 16.4,
+    "AgeEnd": 14.8,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:Hardenbol1998:",
+    "ChildCodes": [],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Hardenbol1998.Erathem:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

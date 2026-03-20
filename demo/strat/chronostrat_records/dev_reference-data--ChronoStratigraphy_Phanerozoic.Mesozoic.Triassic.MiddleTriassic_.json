@@ -1,0 +1,49 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Triassic.MiddleTriassic:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Middle Triassic",
+    "NameAlias": [
+      {
+        "AliasName": "MiddleTriassic",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:",
+        "DefinitionOrganisationID": "dev:reference-data--StandardsOrganisation:ICS:"
+      }
+    ],
+    "Description": "The Middle Triassic Epoch [247.2-237.0]",
+    "Code": "Phanerozoic.Mesozoic.Triassic.MiddleTriassic",
+    "AttributionAuthority": "ICS https://stratigraphy.org",
+    "AttributionPublication": "https://github.com/CSIRO-enviro-informatics/interactive-geological-timescale/tree/master/src/assets",
+    "AttributionRevision": "ICS 2017/02",
+    "AgeBegin": 247.2,
+    "AgeEnd": 237.0,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChildCodes": [
+      "Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Ladinian",
+      "Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Anisian"
+    ],
+    "Colour": "#B084C2",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Series:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Phanerozoic.Mesozoic.Triassic:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

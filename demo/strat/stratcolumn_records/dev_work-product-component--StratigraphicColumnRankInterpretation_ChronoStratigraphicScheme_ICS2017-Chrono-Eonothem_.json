@@ -1,0 +1,32 @@
+{
+  "id": "dev:work-product-component--StratigraphicColumnRankInterpretation:ChronoStratigraphicScheme:ICS2017-Chrono-Eonothem:",
+  "kind": "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.3.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Chronostratigraphic Eonothem",
+    "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+    "RankName": "Eonothem",
+    "StratigraphicUnitInterpretationSet": [
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Archean:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Hadean:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Phanerozoic:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Precambrian:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Proterozoic:"
+    ]
+  }
+}

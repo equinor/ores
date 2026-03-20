@@ -1,0 +1,89 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Cenozoic:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Cenozoic",
+    "NameAlias": [
+      {
+        "AliasName": "Cenozoic",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Cenozoic Era [0.01 - 65]",
+    "Code": "Hardenbol1998.Phanerozoic.Cenozoic",
+    "AttributionAuthority": "Hardenbol",
+    "AttributionRevision": "Hardenbol 1998",
+    "AgeBegin": 65.0,
+    "AgeEnd": 0.01,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:Hardenbol1998:",
+    "ChildCodes": [
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene.Aquitanian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Eocene.Bartonian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene.Burdigalian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Quaternary.Pleistocene.Calabrian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Oligocene.Chattian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Paleocene.Danian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Eocene.EarlyEocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene.EarlyMiocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Oligocene.EarlyOligocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Paleocene.EarlyPaleocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Quaternary.Pleistocene.EarlyPleistocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Pliocene.EarlyPliocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Eocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Quaternary.Pleistocene.Gelasian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Quaternary.Pleistocene.Ionian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene.Langhian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Eocene.LateEocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene.LateMiocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Oligocene.LateOligocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Paleocene.LatePaleocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Quaternary.Pleistocene.LatePleistocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Pliocene.LatePliocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Eocene.Lutetian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene.Messinian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Eocene.MiddleEocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene.MiddleMiocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Oligocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Paleocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Pliocene.Piacenzian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Quaternary.Pleistocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Pliocene",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Eocene.Priabonian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Quaternary",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Quaternary.Recent",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Oligocene.Rupelian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Paleocene.Selandian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene.Serravallian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Tertiary",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Paleocene.Thanetian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Miocene.Tortonian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Paleogene.Eocene.Ypresian",
+      "Hardenbol1998.Phanerozoic.Cenozoic.Neogene.Pliocene.Zanclean"
+    ],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Hardenbol1998.System:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

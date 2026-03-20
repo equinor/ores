@@ -1,0 +1,31 @@
+{
+  "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-72p1Ma:",
+  "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Top Campanian",
+    "Description": "Chronostratigraphic boundary at 72.1 Ma",
+    "MeanPossibleAge": 72.1,
+    "OlderPossibleAge": 72.1,
+    "YoungerPossibleAge": 72.1,
+    "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+    "isConformableAbove": true,
+    "isConformableBelow": true,
+    "IsDiscoverable": true
+  }
+}

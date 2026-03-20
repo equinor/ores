@@ -1,0 +1,31 @@
+{
+  "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-426p1Ma:",
+  "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Base Whitwellian",
+    "Description": "Chronostratigraphic boundary at 426.1 Ma",
+    "MeanPossibleAge": 426.1,
+    "OlderPossibleAge": 426.1,
+    "YoungerPossibleAge": 426.1,
+    "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+    "isConformableAbove": true,
+    "isConformableBelow": true,
+    "IsDiscoverable": true
+  }
+}

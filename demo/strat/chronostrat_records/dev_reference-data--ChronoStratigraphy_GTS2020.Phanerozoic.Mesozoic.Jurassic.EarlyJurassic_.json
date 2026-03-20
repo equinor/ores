@@ -1,0 +1,54 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Early Jurassic",
+    "NameAlias": [
+      {
+        "AliasName": "LowerJurassic",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Early Jurassic Epoch [201.4-174.7]",
+    "Code": "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic",
+    "AttributionAuthority": "GTS https://timescalefoundation.org",
+    "AttributionRevision": "GTS 2020",
+    "AgeBegin": 201.36,
+    "AgeEnd": 174.7,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:GTS2020:",
+    "ChildCodes": [
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Pliensbachian.Carixian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Pliensbachian.Domerian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Sinemurian.EarlySinemurian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Toarcian.EarlyToarcian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Hettangian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Toarcian.LateToarcian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Sinemurian.Lotharingian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Pliensbachian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Sinemurian",
+      "GTS2020.Phanerozoic.Mesozoic.Jurassic.EarlyJurassic.Toarcian"
+    ],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2020.Series:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Mesozoic.Jurassic:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-250p55Ma:",
+  "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Base Dienerian",
+    "Description": "Chronostratigraphic boundary at 250.55 Ma",
+    "MeanPossibleAge": 250.55,
+    "OlderPossibleAge": 250.55,
+    "YoungerPossibleAge": 250.55,
+    "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+    "isConformableAbove": true,
+    "isConformableBelow": true,
+    "IsDiscoverable": true
+  }
+}

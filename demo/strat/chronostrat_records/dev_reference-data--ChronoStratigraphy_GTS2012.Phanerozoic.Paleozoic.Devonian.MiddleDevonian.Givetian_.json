@@ -1,0 +1,44 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Paleozoic.Devonian.MiddleDevonian.Givetian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Givetian",
+    "NameAlias": [
+      {
+        "AliasName": "Givetian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Givetian Stage [387.7-382.7]",
+    "Code": "GTS2012.Phanerozoic.Paleozoic.Devonian.MiddleDevonian.Givetian",
+    "AttributionAuthority": "GTS https://timescalefoundation.org",
+    "AttributionRevision": "GTS 2012",
+    "AgeBegin": 387.7,
+    "AgeEnd": 382.7,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:GTS2012:",
+    "ChildCodes": [],
+    "Colour": "#f1e185",
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.GTS2012.Stage:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:GTS2012.Phanerozoic.Paleozoic.Devonian.MiddleDevonian:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

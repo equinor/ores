@@ -1,0 +1,34 @@
+{
+  "id": "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Fassanian:",
+  "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Fassanian",
+    "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2016.Phanerozoic.Mesozoic.Triassic.MiddleTriassic.Ladinian.Fassanian:",
+    "OlderPossibleAge": 241.5,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-241p5Ma:",
+    "YoungerPossibleAge": 239.1,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-239p1Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
+  }
+}

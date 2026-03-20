@@ -1,0 +1,29 @@
+{
+  "id": "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Wuchiapingian:",
+  "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Wuchiapingian",
+    "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Paleozoic.Permian.Lopingian.Wuchiapingian:",
+    "OlderPossibleAge": 259.1,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-259p1Ma:",
+    "YoungerPossibleAge": 254.14,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-254p14Ma:"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Middle-Volgian:",
+  "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Middle Volgian",
+    "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Mesozoic.Jurassic.LateJurassic.Volgian.MiddleVolgian:",
+    "OlderPossibleAge": 145.99,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-145p99Ma:",
+    "YoungerPossibleAge": 144.2,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-144p2Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "id": "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Ashgill:",
+  "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Ashgill",
+    "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic.Ordovician.Bala.Ashgill:",
+    "OlderPossibleAge": 443.1,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-443p1Ma:",
+    "YoungerPossibleAge": 439.0,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-439Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
+  }
+}

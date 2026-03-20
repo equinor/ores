@@ -1,0 +1,41 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Hardenbol1998.Phanerozoic.Mesozoic.Jurassic.Malm.Tithonian:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Tithonian",
+    "NameAlias": [
+      {
+        "AliasName": "Tithonian",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Tithonian Sub Epoch [144.2 - 150.7]",
+    "Code": "Hardenbol1998.Phanerozoic.Mesozoic.Jurassic.Malm.Tithonian",
+    "AttributionAuthority": "Hardenbol",
+    "AttributionRevision": "Hardenbol 1998",
+    "AgeBegin": 150.7,
+    "AgeEnd": 144.2,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:Hardenbol1998:",
+    "ChildCodes": [],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Hardenbol1998.Stage:",
+    "ParentIDs": [],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

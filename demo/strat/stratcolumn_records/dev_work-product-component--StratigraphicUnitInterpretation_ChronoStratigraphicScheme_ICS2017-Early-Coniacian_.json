@@ -1,0 +1,34 @@
+{
+  "id": "dev:work-product-component--StratigraphicUnitInterpretation:ChronoStratigraphicScheme:ICS2017-Early-Coniacian:",
+  "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Early Coniacian",
+    "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+    "ChronoStratigraphyID": "dev:reference-data--ChronoStratigraphy:GTS2020.Phanerozoic.Mesozoic.Cretaceous.LateCretaceous.Coniacian.EarlyConiacian:",
+    "OlderPossibleAge": 89.39,
+    "ColumnStratigraphicHorizonBaseID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-89p39Ma:",
+    "YoungerPossibleAge": 88.3,
+    "ColumnStratigraphicHorizonTopID": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-88p3Ma:"
+  },
+  "tags": {
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:ICS2017:",
+    "ChronoStratigraphicSchemeName": "International Chronostratigraphic Chart",
+    "ChronoStratigraphicSchemeCode": "ICS-2024-12"
+  }
+}

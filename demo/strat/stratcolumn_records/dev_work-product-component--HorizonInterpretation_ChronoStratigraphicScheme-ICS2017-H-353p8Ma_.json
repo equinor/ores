@@ -1,0 +1,31 @@
+{
+  "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-353p8Ma:",
+  "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Top Hastarian",
+    "Description": "Chronostratigraphic boundary at 353.8 Ma",
+    "MeanPossibleAge": 353.8,
+    "OlderPossibleAge": 353.8,
+    "YoungerPossibleAge": 353.8,
+    "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+    "isConformableAbove": true,
+    "isConformableBelow": true,
+    "IsDiscoverable": true
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "kind": "osdu:wks:reference-data--ChronoStratigraphy:1.0.0",
+  "id": "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed:",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Dyfed",
+    "NameAlias": [
+      {
+        "AliasName": "Dyfed",
+        "AliasNameTypeID": "dev:reference-data--AliasNameType:UniqueIdentifier:"
+      }
+    ],
+    "Description": "The Dyfed Sub-Period [476.1-463.9]",
+    "Code": "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed",
+    "AttributionAuthority": "Harland",
+    "AttributionRevision": "Harland 1989",
+    "AgeBegin": 476.1,
+    "AgeEnd": 463.9,
+    "ChronoStratigraphicSchemeID": "dev:reference-data--ChronoStratigraphicScheme:Harland1989:",
+    "ChildCodes": [
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llandeilo.EarlyLlandeilo",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llanvirn.EarlyLlanvirn",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llandeilo.LateLlandeilo",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llanvirn.LateLlanvirn",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llandeilo",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llanvirn",
+      "Harland1989.Phanerozoic.Paleozoic.Ordovician.Dyfed.Llandeilo.MiddleLlandeilo"
+    ],
+    "StratigraphicColumnRankUnitTypeID": "dev:reference-data--StratigraphicColumnRankUnitType:Chronostratigraphic.Harland1989.SubSystem:",
+    "ParentIDs": [
+      "dev:reference-data--ChronoStratigraphy:Harland1989.Phanerozoic.Paleozoic.Ordovician:"
+    ],
+    "Source": "Workbook ReferenceValues/Published/ChronoStratigraphy.1.xlsx; commit SHA 56f7c736.",
+    "CommitDate": "2024-02-09T16:51:15+00:00"
+  }
+}

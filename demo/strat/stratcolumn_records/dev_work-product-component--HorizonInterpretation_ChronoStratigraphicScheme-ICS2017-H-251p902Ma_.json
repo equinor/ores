@@ -1,0 +1,31 @@
+{
+  "id": "dev:work-product-component--HorizonInterpretation:ChronoStratigraphicScheme-ICS2017-H-251p902Ma:",
+  "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-osdu-reference-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Top Paleozoic (+3)",
+    "Description": "Chronostratigraphic boundary at 251.902 Ma",
+    "MeanPossibleAge": 251.902,
+    "OlderPossibleAge": 251.902,
+    "YoungerPossibleAge": 251.902,
+    "StratigraphicRoleTypeID": "dev:reference-data--StratigraphicRoleType:Chronostratigraphic:",
+    "isConformableAbove": true,
+    "isConformableBelow": true,
+    "IsDiscoverable": true
+  }
+}
