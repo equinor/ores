@@ -1,0 +1,411 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [
+    {
+      "id": "dev:master-data--BusinessDecision:Drogon-DG2-ConceptSelect:1",
+      "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Drogon — Decision Gate 2 DG2 Concept Select",
+        "Description": "DG2 Concept Select for the Drogon field development. Valysar fluvial formation across 7 reservoir segments (NorthSea, NorthHorst, CentralHorst, CentralFlanks, CentralSouth, SouthWing, EastLobe) with three facies types (Channel, Crevasse, Floodplain). Revised petrophysical interpretation: porosity reduced by factor 0.8 based on core analysis and thin sections. 50 FMU realisations quantify STOIIP uncertainty: P90 33.8 / P50 45.4 / P10 59.4 MSm³ oil in-place. Recoverable oil (P50) 14.8 MSm³ at 32.5% recovery factor. Recommended concept: subsea tie-back to FPSO with 2×4-slot templates, 12 production wells. NPV@10% 520 MUSD, CAPEX 8,500 MNOK, first oil 2028-H1.",
+        "ProjectName": "Drogon Field Development",
+        "DecisionLevelID": "dev:reference-data--DecisionLevel:DG2:1",
+        "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Pending:1",
+        "DecisionDueDate": "2026-06-30",
+        "DecisionSummary": "Approve subsea tie-back development concept. Two 4-slot templates (8 slots), 12 wells targeting full 7-segment Valysar scope. Reference case STOIIP 45.4 MSm³ (P90 33.8, P10 59.4) — revised porosity interpretation ×0.8. Recoverable oil P50 14.8 MSm³ (RF 32.5%). First oil target 2028-H1. Proceed to DG3 FEED.",
+        "RiskAssessmentDocument": "dev:work-product-component--Document:Drogon-SRA-DG2-Report:1",
+        "RiskIDs": [
+          "dev:master-data--Risk:Drogon-DG2-PorosityAndCementation:1",
+          "dev:master-data--Risk:Drogon-DG2-FaultCompartment:1",
+          "dev:master-data--Risk:Drogon-DG2-HSE-Environmental:1",
+          "dev:master-data--Risk:Drogon-DG2-ScheduleFPSO:1",
+          "dev:master-data--Risk:Drogon-DG2-OWCDepth:1",
+          "dev:master-data--Risk:Drogon-DG2-RecoveryFactor:1"
+        ],
+        "PriorActivityIDs": [
+          "dev:work-product-component--Activity:f7b43d02-f3e1-5c3b-ae2e-dce9da267c19:1"
+        ],
+        "Parameters": [
+          {
+            "Title": "Raw volumes (per realisation)",
+            "Selection": "Raw per-realisation volumes feeding the statistical summary",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:5a021693-c20a-4b96-be28-68f2240791b4:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "REV-raw"
+              }
+            ]
+          },
+          {
+            "Title": "Statistical volumes (P10/P50/P90)",
+            "Selection": "Aggregated statistics used for the DG2 concept selection",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:491522b1-2e98-479e-85e7-a3b17b7cc4ba:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "REV-stats"
+              }
+            ]
+          },
+          {
+            "Title": "Valysar parameters (OWC, porosity)",
+            "Selection": "Per-segment, per-facies input parameters",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:3f518dae-22d4-4ebd-b2ec-b4f7cc60c1e3:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "ColumnBasedTable-params"
+              }
+            ]
+          },
+          {
+            "Title": "Reservoir scope",
+            "Selection": "Master-data context for the decision",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+          },
+          {
+            "Title": "GeoModelDataspace",
+            "Selection": "RDDMS ETP dataspace with the Drogon DG2 geomodel EPC files",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "ETPDataspace"
+              }
+            ]
+          },
+          {
+            "Title": "Prior gate (DG1 Identify & Assess)",
+            "Selection": "DG1 decision record for the Drogon field",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
+            "Keys": [
+              {
+                "ParameterKey": "gate",
+                "StringParameterKey": "DG1"
+              }
+            ]
+          },
+          {
+            "Title": "SRA report",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:work-product-component--Document:Drogon-SRA-DG2-Report:1"
+          },
+          {
+            "Title": "CRA report",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:work-product-component--Document:Drogon-CRA-DG2-Report:1"
+          },
+          {
+            "Title": "PDO (draft)",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:work-product-component--Document:Drogon-PDO-DG2-Draft:1"
+          },
+          {
+            "Title": "Petroleum Technology Report",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": "dev:work-product-component--Document:Drogon-PTR-DG2-Report:1"
+          },
+          {
+            "Title": "Production Forecast (20-year)",
+            "Selection": "Reference case forecast from dynamic simulation (revised porosity ×0.8)",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "ProductionForecast"
+              }
+            ]
+          },
+          {
+            "Title": "Development Concept",
+            "Selection": "DG2 development concept definition",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:Drogon-DG2:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "DevelopmentConcept"
+              }
+            ]
+          },
+          {
+            "Title": "Headline volumes & reservoir properties (GeoLabelSet)",
+            "Selection": "P10/P50/P90 headline volumes per segment, derived from stat REV",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": "dev:work-product-component--GeoLabelSet:e4b7a1c3-5f28-4d9e-8a61-7c3d9e0f2b85:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "GeoLabelSet"
+              }
+            ]
+          }
+        ],
+        "Personnel": [
+          {
+            "Name": "Kristin Haugen",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:GeoscienceLead:1",
+            "Organisation": "Drogon Subsurface"
+          },
+          {
+            "Name": "Henrik Bjørnstad",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:ReservoirEngineer:1",
+            "Organisation": "Drogon Reservoir Management"
+          },
+          {
+            "Name": "Anna-Lise Tveit",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:Petrophysicist:1",
+            "Organisation": "Drogon Petec"
+          },
+          {
+            "Name": "Erik Stensrud",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:FMULead:1",
+            "Organisation": "Drogon Geomodelling"
+          },
+          {
+            "Name": "Silje Vik",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:FacilitiesEngineer:1",
+            "Organisation": "Drogon Concept"
+          },
+          {
+            "Name": "Olav Mæland",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:DrillingWellsLead:1",
+            "Organisation": "Drogon D&W"
+          }
+        ],
+        "DecisionOwners": [
+          {
+            "Name": "Kristin Haugen",
+            "Organisation": "Drogon Subsurface Lead"
+          }
+        ],
+        "DecisionMakers": [
+          {
+            "Name": "Lars Kongsvik",
+            "Organisation": "Drogon Project Director"
+          }
+        ],
+        "Contributors": [
+          {
+            "Name": "Erik Stensrud",
+            "Organisation": "Drogon Geomodelling"
+          },
+          {
+            "Name": "Marte Nygaard",
+            "Organisation": "ST MSU Subsurface QA"
+          },
+          {
+            "Name": "Trond Berge",
+            "Organisation": "Drogon QRM Manager"
+          }
+        ],
+        "Remarks": [
+          {
+            "Remark": "Execute FEED for FPSO conversion and subsea installation scope",
+            "RemarkSource": "DG2 Recommendations"
+          },
+          {
+            "Remark": "Secure FPSO drydock slot (2027-Q4 target) with dual-yard tendering strategy",
+            "RemarkSource": "DG2 Recommendations"
+          },
+          {
+            "Remark": "Drill NorthHorst appraisal sidetrack to constrain fault compartmentalisation model",
+            "RemarkSource": "DG2 Recommendations"
+          },
+          {
+            "Remark": "Finalise Phase 2 water injection well locations based on DG3 dynamic simulation",
+            "RemarkSource": "DG2 Recommendations"
+          },
+          {
+            "Remark": "Complete EIA with cold-water coral avoidance routing for flowline corridor",
+            "RemarkSource": "DG2 Recommendations"
+          },
+          {
+            "Remark": "Run Level 3+ FMU workflow with 100+ realisations for DG3 volumetric basis",
+            "RemarkSource": "DG2 Recommendations"
+          },
+          {
+            "Remark": "Prepare PDO final draft for MPE submission post-FID",
+            "RemarkSource": "DG2 Recommendations"
+          }
+        ],
+        "ProjectSpecifications": [
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:NPV_10pct:1",
+            "DataQuantityParameter": 520,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MUSD:1"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:IRR:1",
+            "DataQuantityParameter": 17,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:percent:1"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:CAPEX:1",
+            "DataQuantityParameter": 8500,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:1"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:OPEX_pa:1",
+            "DataQuantityParameter": 420,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:1"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:BreakevenOil:1",
+            "DataQuantityParameter": 42,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:USDperbbl:1"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:Payback:1",
+            "DataQuantityParameter": 7.0,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:years:1"
+          }
+        ],
+        "ActivityStates": [
+          {
+            "EffectiveDateTime": "2026-02-28",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:1",
+            "Remark": "DG2 Concept Select"
+          },
+          {
+            "EffectiveDateTime": "2027-01-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:1",
+            "Remark": "DG3 FEED"
+          },
+          {
+            "EffectiveDateTime": "2027-07-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:1",
+            "Remark": "FID / DG4"
+          },
+          {
+            "EffectiveDateTime": "2027-10-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:1",
+            "Remark": "FPSO Drydock Start"
+          },
+          {
+            "EffectiveDateTime": "2028-01-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:1",
+            "Remark": "Subsea Installation"
+          },
+          {
+            "EffectiveDateTime": "2028-06-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:1",
+            "Remark": "First Oil"
+          },
+          {
+            "EffectiveDateTime": "2029-01-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:1",
+            "Remark": "Plateau Production"
+          }
+        ],
+        "ancestry": {
+          "parents": [
+            "dev:work-product-component--Activity:f7b43d02-f3e1-5c3b-ae2e-dce9da267c19:1"
+          ],
+          "children": []
+        },
+        "ext": {
+          "equinor": {
+            "Alternatives": [
+              {
+                "Name": "Alt-A: Subsea tie-back to FPSO (2×4-slot templates)",
+                "Rank": 1,
+                "Rationale": "Highest NPV; leverages planned FPSO conversion for Drogon area. 12 wells across 7 segments, 2×4-slot templates with 2 contingent slots for infill. Subsea boosting pump included for low-pressure phase. Modular water treatment allows staged capacity expansion.",
+                "RecommendedAction": "Approve",
+                "NPV_10pct_MUSD": 520,
+                "CAPEX_MNOK": 8500,
+                "IRR_pct": 17
+              },
+              {
+                "Name": "Alt-B: Reduced scope — CentralHorst + CentralSouth only",
+                "Rank": 2,
+                "Rationale": "Focus on the two highest-confidence segments (Channel facies dominant, lowest porosity uncertainty). 6 wells, single 4-slot template + 2 satellite wells. Lower investment but captures only ~55% of recoverable resource. Provides first-oil option if FPSO schedule slips.",
+                "RecommendedAction": "Consider",
+                "NPV_10pct_MUSD": 300,
+                "CAPEX_MNOK": 4800,
+                "IRR_pct": 20
+              },
+              {
+                "Name": "Alt-C: Defer — acquire DG3-quality appraisal data",
+                "Rank": 3,
+                "Rationale": "NorthHorst and EastLobe fault compartmentalisation remains poorly constrained. Additional well test data (est. 12 months, 200 MNOK) would reduce dynamic uncertainty range by ~40%. Risk of losing FPSO drydock window if deferred beyond 2026-Q3.",
+                "RecommendedAction": "Fallback",
+                "NPV_10pct_MUSD": null,
+                "CAPEX_MNOK": null,
+                "IRR_pct": null
+              }
+            ],
+            "UncertaintySummary": {
+              "Basis": "FMU static + dynamic uncertainty from 50 geo-realisations across 7 segments and 3 facies types. Porosity revised ×0.8 from DG1. Dynamic forecasts run on 3 selected realisations (P90/P50/P10) with 5 sensitivity cases each.",
+              "Note": "See stat WPC for full P10/P50/P90 breakdown per segment & facies. Recoverable estimated from dynamic simulation with 12-producer base case.",
+              "TotalRealisations": 50,
+              "SelectedRealisations": {
+                "P90": "Real 42",
+                "P50": "Real 1",
+                "P10": "Real 17"
+              },
+              "MethodologyReference": "FMU Level 3 static + dynamic uncertainty workflow (Valysar geomodel v2)",
+              "StaticInPlace_Oil_MSm3": {
+                "P90": 33.8,
+                "P50": 45.4,
+                "P10": 59.4
+              },
+              "Recoverable_Oil_MSm3": {
+                "P90": 10.0,
+                "P50": 14.8,
+                "P10": 20.6
+              },
+              "RecoveryFactor_pct": {
+                "P90": 28.0,
+                "P50": 32.5,
+                "P10": 37.0
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [],
+    "WorkProducts": []
+  }
+}

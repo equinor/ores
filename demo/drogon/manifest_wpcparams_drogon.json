@@ -6,7 +6,7 @@
     "Datasets": [],
     "WorkProductComponents": [
       {
-        "id": "dev:work-product-component--ColumnBasedTable:d8e4e9ba-a484-40a8-b4d6-4e9004913292:1",
+        "id": "dev:work-product-component--ColumnBasedTable:44675061-ae97-458b-b6b8-5b5ffedbe9e2:1",
         "kind": "osdu:wks:work-product-component--ColumnBasedTable:1.4.0",
         "acl": {
           "owners": [
@@ -28,19 +28,19 @@
           "Name": "Drogon Valysar \u2014 Input Parameters (per realisation)",
           "Description": "Per-realisation input parameters for the Valysar zone of the Drogon field. OWC depths (7 segments) and porosity (3 facies), 3 realisations \u00d7 7 segments \u00d7 4 facies = 84 rows.",
           "ParentObjectID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
-          "ParentWorkProductID": "dev:work-product:37dcb76b-e388-4dbf-9940-9ed277418543:1",
+          "ParentWorkProductID": "dev:work-product:862b5d29-3d8b-4e9f-9d38-7b78185079f7:1",
           "ancestry": {
             "parents": [
               "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
             ],
             "children": [
-              "dev:master-data--ReservoirSegment:1571d49d-66c5-42c0-80a3-955da14db813:1",
-              "dev:master-data--ReservoirSegment:16439911-d1fe-411b-8fa7-fb62755895e4:1",
-              "dev:master-data--ReservoirSegment:390da749-3aae-4902-8216-89522a79ea06:1",
-              "dev:master-data--ReservoirSegment:f979f225-295d-4ee1-85e6-86b3f0612246:1",
-              "dev:master-data--ReservoirSegment:674a22bd-67f1-4e72-a150-7f813e8df130:1",
-              "dev:master-data--ReservoirSegment:d8947e7f-c2d3-49aa-8d64-7fab58bb2833:1",
-              "dev:master-data--ReservoirSegment:f5f09d90-3159-4d97-b4a0-f73368a0565b:1"
+              "dev:master-data--ReservoirSegment:21cd47f4-15c9-4ab1-a347-6d28a18655b1:1",
+              "dev:master-data--ReservoirSegment:1a055370-f84f-430c-954b-d712d13781f0:1",
+              "dev:master-data--ReservoirSegment:01505396-8e72-42a7-9d80-059cf9e17c95:1",
+              "dev:master-data--ReservoirSegment:92dace46-399d-445c-bcc9-36448872ecfc:1",
+              "dev:master-data--ReservoirSegment:4dd0036d-eaea-4e54-8692-9d9aca547585:1",
+              "dev:master-data--ReservoirSegment:98b0c0d4-2c5d-4c94-b8c3-d7e41bf933f9:1",
+              "dev:master-data--ReservoirSegment:b47e81f4-c545-4f8d-ab45-4b9585cfeebb:1"
             ]
           },
           "Table": {

@@ -1,0 +1,36 @@
+{
+  "id": "dev:master-data--Reservoir:224d8c55-4316-4df8-9a3a-21e22250d00c:1",
+  "kind": "osdu:wks:master-data--Reservoir:2.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon",
+    "Description": "Drogon field — Valysar formation",
+    "ancestry": {
+      "parents": [],
+      "children": [
+        "dev:master-data--ReservoirSegment:21cd47f4-15c9-4ab1-a347-6d28a18655b1:1",
+        "dev:master-data--ReservoirSegment:1a055370-f84f-430c-954b-d712d13781f0:1",
+        "dev:master-data--ReservoirSegment:01505396-8e72-42a7-9d80-059cf9e17c95:1",
+        "dev:master-data--ReservoirSegment:92dace46-399d-445c-bcc9-36448872ecfc:1",
+        "dev:master-data--ReservoirSegment:4dd0036d-eaea-4e54-8692-9d9aca547585:1",
+        "dev:master-data--ReservoirSegment:98b0c0d4-2c5d-4c94-b8c3-d7e41bf933f9:1",
+        "dev:master-data--ReservoirSegment:b47e81f4-c545-4f8d-ab45-4b9585cfeebb:1"
+      ]
+    }
+  }
+}

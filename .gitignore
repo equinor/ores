@@ -14,5 +14,8 @@ __pycache__/
 *.tmp
 *.lock
 .env
-.venv
+.venv/
+
+# GRAND demo data (generated manifests & scripts)
+# demo/grand/
 

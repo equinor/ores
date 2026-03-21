@@ -1,3 +1,11 @@
 {
-    "chat.agent.maxRequests": 100
+  "chat.agent.maxRequests": 100,
+  "remote.portsAttributes": {
+    "8000": {
+      "label": "FastAPI",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "remote.autoForwardPorts": true,
+  "remote.autoForwardPortsSource": "process"
 }

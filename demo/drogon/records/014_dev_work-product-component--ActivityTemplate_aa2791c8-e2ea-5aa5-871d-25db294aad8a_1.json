@@ -1,0 +1,126 @@
+{
+  "id": "dev:work-product-component--ActivityTemplate:aa2791c8-e2ea-5aa5-871d-25db294aad8a:1",
+  "kind": "osdu:wks:work-product-component--ActivityTemplate:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon Valysar — Volumetrics Workflow Template",
+    "Description": "ActivityTemplate for the Drogon / Valysar DG1 volumetrics ensemble workflow. Covers three sequential steps: (1) generate per-realisation input parameters (OWC depths + PHIT), (2) run the RMS DecisionExample reservoir model workflow producing per-realisation volumes, (3) aggregate realisations into P10/P50/P90 statistics. All steps are captured as a single merged activity linked from the parent BusinessDecision record.",
+    "Originator": "markuslund.vevle@emerson.com",
+    "ParameterTemplates": [
+      {
+        "Title": "InputParameters",
+        "Description": "Input parameter table (ColumnBasedTable WPC) containing per-realisation OWC depth and PHIT values for each segment and facies.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "Process",
+        "Description": "Name of the RMS reservoir model / workflow that consumes the parameter table.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "NumberOfRealizations",
+        "Description": "Total number of Monte Carlo / design-matrix realisations executed.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "integer"
+      },
+      {
+        "Title": "Workflow",
+        "Description": "Workflow label within the RMS project.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "Method",
+        "Description": "Uncertainty sampling method (e.g. User_Defined, Monte_Carlo).",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "ReportTableName",
+        "Description": "Name of the output statistics report table in RMS (e.g. DecisionExample_report).",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "Variables",
+        "Description": "Serialised JSON list of uncertainty variable definitions (Low/Base/High per OWC contact and PHIT per facies).",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "DesignMatrix",
+        "Description": "Serialised JSON design matrix assigning a Low/Base/High scenario to each realisation for every variable.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "OutputParameters",
+        "Description": "Generated per-realisation input parameter table (ColumnBasedTable WPC).",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "OutputVolumes",
+        "Description": "Per-realisation reservoir estimated volumes (RAW REV WPC).",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "ReportTable",
+        "Description": "Statistical aggregation of realisations (STAT REV WPC: P10/P50/P90).",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      }
+    ]
+  }
+}

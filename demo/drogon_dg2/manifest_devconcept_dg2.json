@@ -1,0 +1,64 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [
+      {
+        "id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2:1",
+        "kind": "dev:wks:work-product-component--DevelopmentConcept:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon DG2 \u2014 Development Concept",
+          "Description": "Full development concept for Drogon DG2 Concept Select. Subsea tie-back to converted FPSO, 2\u00d74-slot templates, 12 production wells, subsea boosting pump.",
+          "ParentObjectID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+          "ancestry": {
+            "parents": [
+              "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+            ],
+            "children": []
+          },
+          "Summary": "Subsea development with 2\u00d74-slot templates (8 slots + 2 contingent), tie-back to converted FPSO via dual 10\" production flowlines and 6\" gas-lift line. Distance to FPSO ~8 km. Water depth 108 m. Valysar formation at ~1700 m TVD MSL.",
+          "WellCount": 12,
+          "ContingentWells": 2,
+          "TemplateSlots": 10,
+          "DrillingCentres": 2,
+          "ReservoirFormation": "Valysar",
+          "FieldArea": "Drogon",
+          "WaterDepth_m": 108,
+          "DistanceToHost_km": 8,
+          "HostFacility": "Drogon FPSO (converted)",
+          "TargetStartUp": "2028-H1",
+          "FlowlineSpec": "2\u00d710\" production + 6\" gas lift",
+          "SubseaBoostingPump": true,
+          "WaterTreatmentCapacity_m3d": 5000,
+          "InjectionStrategy": "Water injection for pressure support (4 injectors planned Phase 2)",
+          "WellPlan": {
+            "Producers": 12,
+            "Injectors_Phase2": 4,
+            "AvgWellDepth_mMD": 3200,
+            "DrillingDuration_days_avg": 45,
+            "CompletionType": "Frac-pack + ICD lower completion"
+          }
+        }
+      }
+    ],
+    "WorkProducts": []
+  }
+}

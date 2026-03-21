@@ -1,42 +1,17 @@
 
 from __future__ import annotations
 import asyncio
-import logging
 import os
 import urllib.parse
-from typing import Any, Dict, List, Optional
-
+from typing import Any, Dict, List
 import httpx
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
-
 from . import osdu
-from .schemahandler import extract_osdu_links
-
-log = logging.getLogger("explorer")
 
 router = APIRouter()
 templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Prepopulated OSDU types for the search dropdown
-# ──────────────────────────────────────────────────────────────────────────────
-EXPLORER_TYPES = [
-    {"label": "Reservoir",                "kind": "osdu:wks:master-data--Reservoir:*"},
-    {"label": "Reservoir Segment",        "kind": "osdu:wks:master-data--ReservoirSegment:*"},
-    {"label": "Work Product",             "kind": "osdu:wks:work-product:*"},
-    {"label": "Estimated Volumes (REV)",  "kind": "osdu:wks:work-product-component--ReservoirEstimatedVolumes:*"},
-    {"label": "Column-Based Table",       "kind": "osdu:wks:work-product-component--ColumnBasedTable:*"},
-    {"label": "Risk",                     "kind": "osdu:wks:master-data--Risk:*"},
-    {"label": "Business Decision",        "kind": "osdu:wks:master-data--BusinessDecision:*"},
-    {"label": "Stratigraphic Column",     "kind": "osdu:wks:work-product-component--StratigraphicColumn:*"},
-]
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Utilities
-# ──────────────────────────────────────────────────────────────────────────────
 
 def _access_token(request: Request) -> str:
     at = getattr(request.state, "access_token", None)
@@ -44,117 +19,178 @@ def _access_token(request: Request) -> str:
         raise HTTPException(401, "Authentication failed")
     return at
 
+async def _osdu_get_record(request: Request, record_id: str) -> dict:
+    at = _access_token(request)
+    base = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
+    url = f"{base}/{urllib.parse.quote(record_id, safe='')}"
+    hdr = osdu.headers(at)
+    async with httpx.AsyncClient(timeout=30) as client:
+        r = await client.get(url, headers=hdr)
+        if r.status_code == 200:
+            return r.json() or {}
+        if r.status_code == 404:
+            return {}
+        r.raise_for_status()
+    return {}
 
-def _short_kind(kind: str) -> str:
-    """Extract short type name from OSDU kind string.
+def _safe(lst):
+    return lst if isinstance(lst, list) else []
 
-    "osdu:wks:master-data--Reservoir:2.0.0" → "Reservoir"
-    "osdu:wks:work-product:1.0.0"           → "work-product"
+def _as_id(x: Any) -> str:
     """
-    if not kind:
+    Normalize inputs that can be:
+      - a string id, or
+      - an object with 'id' (Storage record ref), or
+      - an object with '$ref'/'recordId' (defensive)
+    Returns the ID as-is (no trailing-colon stripping) because some OSDU records
+    (e.g. ICS2017 chrono) store the trailing ':' as part of their canonical ID.
+    """
+    if isinstance(x, str):
+        return x.strip()
+    if isinstance(x, dict):
+        raw = x.get("id") or x.get("recordId") or x.get("$ref") or ""
+        return raw.strip()
+    return ""
+
+
+
+def _get_data(rec):
+    return rec.get("data") or {}
+
+def _extract_ages(unit_rec: dict, chrono_rec: dict):
+    """Return (topMa, baseMa) as floats, or (None, None)."""
+    cd = _get_data(chrono_rec) if chrono_rec else {}
+    ud = _get_data(unit_rec) if unit_rec else {}
+    top = (
+        cd.get("AgeBegin") or cd.get("TopMa") or cd.get("AgeBeginMa")
+        or ud.get("OlderPossibleAge") or ud.get("TopMa")
+    )
+    base = (
+        cd.get("AgeEnd") or cd.get("BaseMa") or cd.get("AgeEndMa")
+        or ud.get("YoungerPossibleAge") or ud.get("BaseMa")
+    )
+    try:
+        return (float(top), float(base))
+    except (TypeError, ValueError):
+        return (None, None)
+
+def _flat_unit_fields(unit_rec: dict, chrono_rec: dict) -> dict:
+    """Extract flat convenience fields from a unit + chrono pair."""
+    ud = _get_data(unit_rec) if unit_rec else {}
+    cd = _get_data(chrono_rec) if chrono_rec else {}
+    top, base = _extract_ages(unit_rec, chrono_rec)
+    name = ud.get("Name") or cd.get("Name") or ""
+    color = cd.get("Colour") or cd.get("Color") or None
+    code = cd.get("Code") or ""
+    return {"name": name, "topMa": top, "baseMa": base, "color": color, "code": code}
+
+def _label_from_ref_id(val: str) -> str:
+    if not val:
         return ""
-    parts = kind.split(":")
-    if len(parts) >= 3:
-        type_part = parts[2]
-        if "--" in type_part:
-            return type_part.split("--", 1)[1]
-        return type_part
-    return kind
+    parts = val.strip().split(":")
+    if len(parts) >= 2 and parts[-1] == "":
+        return parts[-2]
+    return parts[-1] if parts else val
+
+@router.get("/strat", response_class=HTMLResponse)
+async def strat_page(request: Request):
+    return templates.TemplateResponse("strat.html", {"request": request})
+
+@router.get("/api/strat/search.json")
+async def strat_search(
+    request: Request,
+    q: str = Query("*"),
+    limit: int = Query(20, ge=1, le=200),
+):
+    at = _access_token(request)
+    search_url = f"https://{osdu.OSDU_BASE_URL}/api/search/v2/query"
+    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
+    hdr = osdu.headers(at)
+
+    payload = {
+        "kind": "osdu:wks:work-product-component--StratigraphicColumn:*",
+        "query": q or "*",
+        "limit": int(limit),
+        "returnedFields": ["id", "kind", "version", "data.Name"],
+        "trackTotalCount": True,
+    }
+
+    items: List[Dict[str, Any]] = []
+    total = 0
+
+    async with httpx.AsyncClient(timeout=60) as client:
+        r = await client.post(search_url, headers=hdr, json=payload)
+        r.raise_for_status()
+        res = r.json() or {}
+        total = res.get("totalCount") or len(res.get("results") or [])
+
+        for rec in res.get("results") or []:
+            rid = rec.get("id")
+            if not rid:
+                continue
+            # prefer the projected name if present
+            name = ((rec.get("data") or {}).get("Name")) or ""
+            if not name:
+                try:
+                    rf = await client.get(f"{storage_url}/{rid}", headers=hdr)
+                    if rf.status_code == 200:
+                        full = rf.json() or {}
+                        name = (full.get("data") or {}).get("Name") or ""
+                except Exception:
+                    pass
+            items.append({
+                "id": rid,
+                "name": name or rid,
+                "kind": rec.get("kind") or "",
+                "version": rec.get("version"),
+            })
+
+    return JSONResponse({"items": items, "total": total})
 
 
-def _normalize_table_data(data_block: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-    """Normalize ColumnBasedTable data from Volumes or Table property."""
-    for key in ("Volumes", "Table"):
-        vol = (data_block or {}).get(key, {}) or {}
-        if not vol:
-            continue
-        key_cols = vol.get("KeyColumns", []) or []
-        value_cols = vol.get("Columns", []) or []
-        raw_vals = vol.get("ColumnValues", {}) or {}
-
-        # Normalize ColumnValues
-        if isinstance(raw_vals, dict):
-            col_values = raw_vals
-        elif isinstance(raw_vals, list):
-            if raw_vals and all(isinstance(x, dict) for x in raw_vals):
-                out: Dict[str, list] = {}
-                for x in raw_vals:
-                    name = x.get("ColumnName") or x.get("name")
-                    vals = (
-                        x.get("Values") or x.get("values")
-                        or x.get("Data") or x.get("data") or []
-                    )
-                    if name:
-                        out[name] = vals if isinstance(vals, list) else [vals]
-                col_values = out
-            else:
-                col_values = raw_vals
-        else:
-            col_values = raw_vals
-
-        if not col_values:
-            continue
-
-        # Build ordered header list
-        key_names = [k.get("ColumnName", "") for k in key_cols if k.get("ColumnName")]
-        value_names: List[str] = []
-        for c in value_cols:
-            cn = c.get("ColumnName", "")
-            if cn:
-                value_names.append(cn)
-        # Fallback: any column not in key_names is a value column
-        if not value_names:
-            for cname in col_values:
-                if cname not in key_names:
-                    value_names.append(cname)
-
-        headers = key_names + value_names
-        sample = next(((col_values.get(h) or []) for h in headers if h), [])
-        nrows = len(sample)
-
-        if headers and nrows > 0:
-            return {
-                "source": key,
-                "KeyColumns": key_cols,
-                "Columns": value_cols,
-                "ColumnValues": col_values,
-                "headers": headers,
-                "key_names": key_names,
-                "value_names": value_names,
-                "nrows": nrows,
-            }
-    return None
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Batch record fetch (reusable)
-# ──────────────────────────────────────────────────────────────────────────────
+def _ids(val: Any) -> List[str]:
+    """Extract a list of record IDs from heterogeneous inputs."""
+    if isinstance(val, list):
+        out = []
+        for item in val:
+            s = _as_id(item)
+            if s:
+                out.append(s)
+        return out
+    s = _as_id(val)
+    return [s] if s else []
 
 async def _storage_fetch_many(request: Request, ids: List[str]) -> Dict[str, dict]:
-    """
-    Batch-fetch OSDU records.
-    Fast path: POST /api/storage/v2/query/records:batch (20 IDs per call).
-    Fallback:  parallel GET /api/storage/v2/records/{id} (bounded concurrency).
-    """
+    """Batch-fetch records.  Handles both UUID IDs (no trailing ':') and named IDs
+    (trailing ':' is canonical).  After the first pass, any not-found IDs are retried
+    with the colon toggled.  Results are keyed under both forms for easy lookup."""
     at = _access_token(request)
     base = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2"
     hdr = osdu.headers(at)
 
-    uniq = [x for x in dict.fromkeys([i.strip() for i in ids if i and i.strip()])]
+    # Normalize heterogeneous inputs (str | dict) -> str ids
+    norm_ids: List[str] = []
+    for i in ids or []:
+        s = _as_id(i)
+        if s:
+            norm_ids.append(s)
+
+    # Dedupe while preserving order
+    uniq = list(dict.fromkeys(norm_ids))
     if not uniq:
         return {}
 
     results: Dict[str, dict] = {}
 
-    async def post_batch(client: httpx.AsyncClient, chunk: List[str]) -> None:
+    async def post_batch(client: httpx.AsyncClient, chunk: List[str]) -> List[str]:
         url = f"{base}/query/records:batch"
-        payload = {"records": chunk}
-        r = await client.post(url, headers=hdr, json=payload)
+        r = await client.post(url, headers=hdr, json={"records": chunk})
         if r.status_code == 404:
             raise FileNotFoundError("records:batch not available")
         r.raise_for_status()
         data = r.json() or {}
         recs = data.get("records")
+        not_found: List[str] = data.get("notFound") or []
         if isinstance(recs, list):
             for item in recs:
                 if isinstance(item, dict):
@@ -166,6 +202,7 @@ async def _storage_fetch_many(request: Request, ids: List[str]) -> Dict[str, dic
             for body in data:
                 if isinstance(body, dict) and body.get("id"):
                     results[body["id"]] = body
+        return not_found
 
     async def get_one(client: httpx.AsyncClient, rid: str, sem: asyncio.Semaphore) -> None:
         url = f"{base}/records/{urllib.parse.quote(rid, safe='')}"
@@ -173,207 +210,197 @@ async def _storage_fetch_many(request: Request, ids: List[str]) -> Dict[str, dic
             r = await client.get(url, headers=hdr)
             if r.status_code == 200:
                 results[rid] = r.json() or {}
-            elif r.status_code == 404:
-                alt = rid.rstrip(":") if rid.endswith(":") else (rid + ":")
-                url2 = f"{base}/records/{urllib.parse.quote(alt, safe='')}"
-                r2 = await client.get(url2, headers=hdr)
-                if r2.status_code == 200:
-                    body = r2.json() or {}
-                    results[rid] = body
-                    results[alt] = body
-                else:
-                    results[rid] = {}
-            else:
+            elif r.status_code != 404:
                 r.raise_for_status()
 
-    def _alias_colon_variants() -> None:
-        for key in list(results.keys()):
-            body = results[key]
-            if not body:
-                continue
-            stripped = key.rstrip(":")
-            if stripped != key:
-                results.setdefault(stripped, body)
-            else:
-                results.setdefault(key + ":", body)
-
-    try:
-        _client_kw: dict = {"timeout": 30, "http2": True}
-        httpx.AsyncClient(**_client_kw)
-    except Exception:
-        _client_kw = {"timeout": 30}
-
-    async with httpx.AsyncClient(**_client_kw) as client:
-        chunks = [uniq[i:i + 20] for i in range(0, len(uniq), 20)]
-        use_batch = True
+    async with httpx.AsyncClient(timeout=30, http2=True) as client:
+        chunks = [uniq[i:i+20] for i in range(0, len(uniq), 20)]
         try:
-            await asyncio.gather(*(post_batch(client, c) for c in chunks))
-            _alias_colon_variants()
+            # Pass 1: try all IDs as-is
+            nf_lists = await asyncio.gather(*(post_batch(client, c) for c in chunks))
+            all_not_found = [nf for sublist in nf_lists for nf in sublist]
+
+            # Pass 2: retry not-found IDs with toggled trailing colon
+            retry = []
+            for nf_id in all_not_found:
+                alt = nf_id[:-1] if nf_id.endswith(":") else nf_id + ":"
+                if alt not in results:
+                    retry.append(alt)
+            if retry:
+                retry_chunks = [retry[i:i+20] for i in range(0, len(retry), 20)]
+                await asyncio.gather(*(post_batch(client, c) for c in retry_chunks))
+
         except FileNotFoundError:
-            use_batch = False
+            # Fallback: individual GET for each ID
+            sem = asyncio.Semaphore(12)
+            await asyncio.gather(*(get_one(client, rid, sem) for rid in uniq))
+            # Retry with toggled colon for missing
+            missing = [rid for rid in uniq if rid not in results]
+            retry2 = []
+            for rid in missing:
+                alt = rid[:-1] if rid.endswith(":") else rid + ":"
+                if alt not in results:
+                    retry2.append(alt)
+            if retry2:
+                await asyncio.gather(*(get_one(client, rid, sem) for rid in retry2))
 
-        still_missing = [rid for rid in uniq
-                         if rid not in results or not results[rid]]
-        if still_missing:
-            alts: List[str] = []
-            for rid in still_missing:
-                alt = rid.rstrip(":") if rid.endswith(":") else (rid + ":")
-                if alt not in results or not results[alt]:
-                    alts.append(alt)
-            to_retry = list(dict.fromkeys(still_missing + alts))
-
-            if use_batch and to_retry:
-                retry_chunks = [to_retry[i:i + 20] for i in range(0, len(to_retry), 20)]
-                try:
-                    await asyncio.gather(*(post_batch(client, c) for c in retry_chunks))
-                    _alias_colon_variants()
-                except FileNotFoundError:
-                    use_batch = False
-
-            final_missing = [rid for rid in uniq
-                             if rid not in results or not results[rid]]
-            if final_missing:
-                sem = asyncio.Semaphore(12)
-                await asyncio.gather(*(get_one(client, rid, sem) for rid in final_missing))
-                _alias_colon_variants()
+    # Store results under both colon forms for easy caller lookups
+    for rid in list(results.keys()):
+        body = results[rid]
+        alt = rid[:-1] if rid.endswith(":") else rid + ":"
+        if alt not in results:
+            results[alt] = body
 
     return results
+        
 
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Routes
-# ──────────────────────────────────────────────────────────────────────────────
-
-@router.get("/strat", response_class=HTMLResponse)
-async def explorer_page(request: Request):
-    return templates.TemplateResponse("strat.html", {
-        "request": request,
-        "types": EXPLORER_TYPES,
-    })
-
-
-@router.get("/api/strat/search.json")
-async def explorer_search(
+@router.get("/api/strat/column.json")
+async def get_strat_column(
     request: Request,
-    kind: str = Query("osdu:wks:master-data--Reservoir:*"),
-    q: str = Query("*"),
-    limit: int = Query(50, ge=1, le=500),
-):
-    """Generic OSDU search by kind + query string."""
-    at = _access_token(request)
-    search_url = f"https://{osdu.OSDU_BASE_URL}/api/search/v2/query"
-    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
-    hdr = osdu.headers(at)
+    id: str = Query(..., description="StratigraphicColumn record id"),
+    enrich: bool = Query(True, description="Fetch/attach full unit/chrono records"),
+) -> JSONResponse:
+    """
+    Load a StratigraphicColumn (WPC) and return a model for a rank-by-age matrix:
 
-    payload = {
-        "kind": kind,
-        "query": q or "*",
-        "limit": int(limit),
-        "returnedFields": ["id", "kind", "version"],
-        "trackTotalCount": True,
-    }
+      {
+        "column": {...},  # the column WPC record
+        "ranks": [
+          {
+            "rankName": "System" | "Series" | "Group" | "Formation" | ...,
+            "isChrono": true|false,                # true if this rank lists Chronostratigraphy refs
+            "rank": {...},                         # original rank record (optional use)
+            "units": [                             # ordered (older → younger), non-overlapping per rank
+              { "unit": {... or {}}, "chrono": {... or {} } },
+              ...
+            ]
+          },
+          ...
+        ]
+      }
 
-    items: List[Dict[str, Any]] = []
-    total = 0
-    async with httpx.AsyncClient(timeout=60) as client:
-        r = await client.post(search_url, headers=hdr, json=payload)
-        r.raise_for_status()
-        res = r.json() or {}
-        total = res.get("totalCount") or len(res.get("results") or [])
+    Notes:
+      - A StratigraphicColumn contains an ordered list of StratigraphicColumnRankInterpretation.           (Worked Example)  [1](https://www.geeksforgeeks.org/python/fastapi-pydantic-2/)
+      - Each RankInterpretation collects an ordered list of StratigraphicUnitInterpretation with the
+        intention to create a column of non-overlapping intervals (base of one is top of next).            [1](https://www.geeksforgeeks.org/python/fastapi-pydantic-2/)
+      - Chronostratigraphic ranks (Systems/Series) provide the time framework; we mark them as isChrono
+        when rank lists ChronoStratigraphy references.                                                     (Authoring schema) [2](https://stackoverflow.com/questions/78049428/why-when-i-include-a-llama-index-module-do-i-get-pydantic-validation-errors-with)
+    """
+    # 1) Fetch the StratigraphicColumn WPC
+    col = await _osdu_get_record(request, id)
+    if not col or not isinstance(col, dict):
+        raise HTTPException(404, detail="Column not found")
 
-        for rec in (res.get("results") or []):
-            rid = rec.get("id")
-            if not rid:
-                continue
-            name = ""
-            try:
-                rf = await client.get(f"{storage_url}/{rid}", headers=hdr)
-                if rf.status_code == 200:
-                    full = rf.json() or {}
-                    d = full.get("data") or {}
-                    name = d.get("Name") or d.get("ProjectName") or ""
-            except Exception:
-                pass
-            items.append({
-                "id": rid,
-                "name": name or rid,
-                "kind": rec.get("kind") or "",
-                "short_kind": _short_kind(rec.get("kind") or ""),
-                "version": rec.get("version"),
-            })
+    kind = col.get("kind", "")
+    if not kind.startswith("osdu:wks:work-product-component--StratigraphicColumn:"):
+        raise HTTPException(400, detail="Record is not a StratigraphicColumn")
 
-    return JSONResponse({"items": items, "total": total})
+    dcol = _get_data(col)
 
+    # 2) Read ordered rank IDs (use canonical key; tolerate alternates if present)
+    rank_ids = _ids(
+        dcol.get("StratigraphicColumnRankInterpretationSet")
+        or dcol.get("RankInterpretationSet")
+        or []
+    )
+    if not rank_ids:
+        # Return minimal structure; UI will handle empty ranks
+        return JSONResponse({"column": col, "ranks": []})
 
-@router.get("/api/strat/record.json")
-async def explorer_record(request: Request, id: str = Query(...)):
-    """Fetch and enrich a single OSDU record for the explorer view."""
-    at = _access_token(request)
-    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
-    hdr = osdu.headers(at)
+    # 3) Fetch all ranks in one go
+    ranks_by_id = await _storage_fetch_many(request, rank_ids)
 
-    rid = id.strip()
-    async with httpx.AsyncClient(timeout=60) as client:
-        r = await client.get(
-            f"{storage_url}/{urllib.parse.quote(rid, safe='')}",
-            headers=hdr,
+    # 4) Collect unit IDs and chrono IDs referenced by ranks (both rank-level chrono sets and unit-level pointers)
+    unit_ids_all: List[str] = []
+    chrono_ids_all: List[str] = []
+
+    for rid in rank_ids:
+        rk = ranks_by_id.get(rid) or {}
+        drk = _get_data(rk)
+
+        # Rank-level chrono references (Systems/Series)
+        chrono_ids_all.extend(_ids(drk.get("ChronoStratigraphySet") or drk.get("ChronostratigraphySet")))
+
+        # Rank-level unit interpretations (Groups/Formations or user-defined)
+        unit_ids_all.extend(_ids(drk.get("StratigraphicUnitInterpretationSet")))
+
+    # 5) Fetch units, then follow each unit’s chrono pointer (ChronoStratigraphyID) if present
+    units_by_id = await _storage_fetch_many(request, unit_ids_all) if unit_ids_all else {}
+    for u in units_by_id.values():
+        ud = _get_data(u)
+        cid = _as_id(ud.get("ChronoStratigraphyID") or ud.get("ChronostratigraphyID") or "")
+        if cid:
+            chrono_ids_all.append(cid)
+
+    # 6) Fetch all chrono records (deduped by the batched helper)
+    chron_by_id = await _storage_fetch_many(request, chrono_ids_all) if chrono_ids_all else {}
+
+    # 7) Assemble ranks in the original order with:
+    #      - rankName: from data.Name or the StratigraphicColumnRankUnitType label (System/Series/Group/Formation/…)
+    #      - isChrono: True if rank lists chrono refs and has no unit interpretations (as per OSDU usage)
+    #      - units:    ordered older→younger; rank-level Chrono entries first, then unit interpretations
+    ranks_model: List[Dict[str, Any]] = []
+
+    def _age_key(u: Dict[str, Any]):
+        """Sort key using pre-computed flat fields: older (larger topMa) first."""
+        top = u.get("topMa")
+        base = u.get("baseMa")
+        if top is not None and base is not None:
+            return (-top, base)
+        return (float("inf"), float("inf"))
+
+    for rid in rank_ids:
+        rk = ranks_by_id.get(rid)
+        if not rk:
+            continue
+        drk = _get_data(rk)
+
+        # Rank name: prefer explicit Name; otherwise derive from reference value StratigraphicColumnRankUnitType
+        rank_name = (
+            drk.get("Name")
+            or _label_from_ref_id(drk.get("StratigraphicColumnRankUnitType") or "")
+            or "Unspecified"
         )
-        if r.status_code == 404:
-            raise HTTPException(404, "Record not found")
-        r.raise_for_status()
-        full = r.json() or {}
 
-    data_block = full.get("data", {}) or {}
-    name = data_block.get("Name") or data_block.get("ProjectName") or rid
+        # Chrono-vs-Unit identification at rank level
+        chrono_ids = _ids(drk.get("ChronoStratigraphySet") or drk.get("ChronostratigraphySet"))
+        unit_ids   = _ids(drk.get("StratigraphicUnitInterpretationSet"))
+        is_chrono_rank = bool(chrono_ids) and not bool(unit_ids)
 
-    # Ancestry
-    ancestry = data_block.get("ancestry", {}) or {}
-    ancestry_parents = ancestry.get("parents", []) or []
-    ancestry_children = ancestry.get("children", []) or []
+        # Units bucket
+        units_model: List[Dict[str, Any]] = []
 
-    # Links extracted from data block
-    links = extract_osdu_links(data_block) or []
+        # A) Rank-level chrono items (Systems/Series): carry ages & colour from reference data
+        for cid in chrono_ids:
+            crec = chron_by_id.get(cid)
+            if crec:
+                ff = _flat_unit_fields(None, crec)
+                units_model.append({"unit": {}, "chrono": crec, **ff})
 
-    # Collect all referenced IDs for label hydration
-    all_ids: set = set()
-    for lnk in links:
-        lid = lnk.get("id")
-        if lid:
-            all_ids.add(lid)
-    for p in ancestry_parents:
-        if isinstance(p, str):
-            all_ids.add(p)
-    for c in ancestry_children:
-        if isinstance(c, str):
-            all_ids.add(c)
+        # B) Rank-level unit interpretations: attach chrono if the unit points to one (ChronoStratigraphyID)
+        for uid in unit_ids:
+            urec = units_by_id.get(uid)
+            if not urec:
+                continue
+            ud = _get_data(urec)
+            cid = _as_id(ud.get("ChronoStratigraphyID") or ud.get("ChronostratigraphyID") or "")
+            cobj = chron_by_id.get(cid) if cid else {}
+            ff = _flat_unit_fields(urec, cobj)
+            units_model.append({"unit": urec, "chrono": cobj, **ff})
 
-    # Batch-fetch referenced records for names/kinds
-    linked_labels: Dict[str, Dict[str, Any]] = {}
-    if all_ids:
-        fetched = await _storage_fetch_many(request, list(all_ids))
-        for lid, rec in fetched.items():
-            if rec and isinstance(rec, dict):
-                rec_data = rec.get("data") or {}
-                nm = rec_data.get("Name") or rec_data.get("ProjectName") or ""
-                linked_labels[lid] = {
-                    "name": nm or lid,
-                    "kind": rec.get("kind") or "",
-                    "short_kind": _short_kind(rec.get("kind") or ""),
-                }
+        # C) Order units older→younger for non-overlap per rank (as intended by the OSDU model)
+        units_model.sort(key=_age_key)
 
-    # Table data (Volumes or Table property)
-    table_data = _normalize_table_data(data_block)
+        ranks_model.append({
+            "rankName": rank_name,
+            "isChrono": is_chrono_rank,
+            "rank": rk,
+            "unitCount": len(units_model),
+            "units": units_model
+        })
 
+    # 8) Return column model
     return JSONResponse({
-        "id": full.get("id"),
-        "kind": full.get("kind"),
-        "short_kind": _short_kind(full.get("kind") or ""),
-        "version": full.get("version"),
-        "name": name,
-        "data": data_block,
-        "ancestry_parents": ancestry_parents,
-        "ancestry_children": ancestry_children,
-        "links": links,
-        "linked_labels": linked_labels,
-        "table_data": table_data,
+        "column": col,
+        "ranks": ranks_model
     })

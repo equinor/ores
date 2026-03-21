@@ -1,0 +1,268 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [
+    {
+      "id": "dev:master-data--Risk:Drogon-DG2-PorosityAndCementation:1",
+      "kind": "osdu:wks:master-data--Risk:1.2.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Drogon DG2 \u2014 Porosity and cementation uncertainty",
+        "Summary": "Porosity and cementation quality in the Valysar fluvial deposits drive uncertainty in pore volume and hydrocarbon recovery. DG2 appraisal data have narrowed the range but residual risk remains.",
+        "Description": "Updated from DG1 with additional core data from NorthSea and EastLobe segments. Revised petrophysical interpretation reduces porosity by factor 0.8 (Channel ~0.22, Crevasse ~0.17, Floodplain ~0.08). Cementation effects are now better constrained through thin-section analysis, reducing inherent severity from S3 to S2. Revised porosity leads to ~20% reduction in pore volumes and STOIIP (P50 45.4 vs DG1 56.8 MSm\u00b3). 50 FMU realisations (up from 3 at DG1) show volume uncertainty is dominated by Channel facies distribution rather than porosity per facies.\n\nKey Uncertainty \u2014 Facies-dependent porosity [Medium]: DG2 appraisal core data have narrowed porosity ranges (revised \u00d70.8 from DG1): Channel 0.21\u20130.24, Crevasse 0.15\u20130.18, Floodplain 0.06\u20130.10. Impact downgraded from High (DG1) to Medium based on 50-realisation FMU results. STOIIP reduced by ~20% vs DG1.",
+        "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+        "EffectiveDateTime": "2026-02-28T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Subsurface-Static:1",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+            "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+            "InherentSeverity": "S2",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P2",
+            "AcceptedAsIs": false,
+            "Status": "Mitigated",
+            "MitigationActionIDs": [],
+            "UncertaintyImpact": "Medium"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Risk:Drogon-DG2-FaultCompartment:1",
+      "kind": "osdu:wks:master-data--Risk:1.2.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Drogon DG2 \u2014 Fault transmissibility and reservoir compartmentalization",
+        "Summary": "Sealing or partially-sealing faults may compartmentalise the Valysar reservoir, restricting drainage and requiring additional infill wells.",
+        "Description": "Production testing in early appraisal wells (2025-Q4) confirmed partial pressure communication across the CentralHorst\u2013CentralSouth boundary fault, reducing worst-case compartmentalisation risk. However NorthHorst and EastLobe remain untested. With DG2-revised porosity (\u00d70.8), absolute recoverable volumes are lower, making infill well economics more marginal. Dynamic simulation (50 realisations) indicates 30% probability of needing 2\u20134 additional infill wells (est. 80\u2013120 MUSD incremental CAPEX). DG2 concept includes 2 contingent well slots in the template layout.\n\nKey Uncertainty \u2014 Fault transmissibility [High]: Production testing confirmed partial communication across CentralHorst\u2013CentralSouth fault. NorthHorst and EastLobe remain untested. 30% probability of needing 2\u20134 infill wells (80\u2013120 MUSD incremental CAPEX).",
+        "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+        "EffectiveDateTime": "2026-02-28T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Subsurface-Dynamic:1",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+            "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+            "InherentSeverity": "S3",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P2",
+            "AcceptedAsIs": false,
+            "Status": "Mitigated",
+            "MitigationActionIDs": [],
+            "UncertaintyImpact": "High"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Risk:Drogon-DG2-HSE-Environmental:1",
+      "kind": "osdu:wks:master-data--Risk:1.2.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Drogon DG2 \u2014 HSE and environmental impact",
+        "Summary": "Marine discharge and accidental spill risk during subsea installation and production operations in the Drogon area.",
+        "Description": "Environmental impact assessment (EIA) identifies cold-water coral habitats within 2 km of the planned template locations. Produced water discharge exceeding 30 mg/L oil-in-water requires additional treatment capacity on the FPSO. Accidental spill scenarios (blowout, pipeline rupture) modelled with OSCAR show shoreline impact probability <2% under prevailing current conditions. Mitigation: coral avoidance routing for flowlines, enhanced produced-water treatment module, and subsea isolation valves at each template.",
+        "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+        "EffectiveDateTime": "2026-02-28T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:HSE:1",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+            "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+            "InherentSeverity": "S4",
+            "InherentProbability": "P2",
+            "ResidualSeverity": "S3",
+            "ResidualProbability": "P1",
+            "AcceptedAsIs": false,
+            "Status": "Mitigated",
+            "MitigationActionIDs": []
+          }
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Risk:Drogon-DG2-ScheduleFPSO:1",
+      "kind": "osdu:wks:master-data--Risk:1.2.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Drogon DG2 \u2014 Schedule risk (FPSO and long-lead equipment)",
+        "Summary": "FPSO conversion drydock availability and subsea template fabrication lead times threaten the 2028-H1 first oil target.",
+        "Description": "SRA Monte Carlo schedule analysis (1000 iterations) gives P50 first oil June 2028 and P90 first oil March 2029. Key drivers: (1) FPSO drydock slot availability \u2014 only two qualifying yards confirmed for 2027-Q1 window, (2) subsea template fabrication \u2014 18-month lead time from order to delivery, (3) drilling rig market tightness with 2027 contracting window. Mitigation: early FEED commitment, dual-yard tendering strategy, and pre-ordering of long-lead subsea equipment.\n\nKey Uncertainty \u2014 FPSO water treatment capacity [Medium]: Water cut expected to reach 50% by Year 5 and 70% by Year 10. FPSO design includes 5,000 m\u00b3/d treatment; expansion module to 8,000 m\u00b3/d available for Year 7+. Uncertainty in early water breakthrough timing from EastLobe aquifer.",
+        "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+        "EffectiveDateTime": "2026-02-28T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Schedule:1",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+            "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+            "InherentSeverity": "S3",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P2",
+            "AcceptedAsIs": false,
+            "Status": "Open",
+            "MitigationActionIDs": [],
+            "UncertaintyImpact": "Medium"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Risk:Drogon-DG2-OWCDepth:1",
+      "kind": "osdu:wks:master-data--Risk:1.2.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Drogon DG2 \u2014 OWC depth and aquifer support uncertainty",
+        "Summary": "Uncertainty in oil-water contact depth and aquifer pressure support affects STOIIP and depletion strategy.",
+        "Description": "OWC refined to 1710 \u00b1 10 m TVDSS (from \u00b115 m at DG1). Aquifer modelling suggests moderate pressure support, sufficient for primary depletion; water injection reserved for Phase 2.",
+        "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+        "EffectiveDateTime": "2026-02-28T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Subsurface-Static:1",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+            "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+            "InherentSeverity": "S2",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P2",
+            "AcceptedAsIs": false,
+            "Status": "Mitigated",
+            "MitigationActionIDs": [],
+            "UncertaintyImpact": "Medium"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Risk:Drogon-DG2-RecoveryFactor:1",
+      "kind": "osdu:wks:master-data--Risk:1.2.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Drogon DG2 \u2014 Recovery factor uncertainty",
+        "Summary": "Dynamic simulation shows wide RF range (28\u201337%) driven by sweep efficiency and fault compartmentalisation.",
+        "Description": "Dynamic simulation (50 realisations, revised porosity) gives RF range 28\u201337%. P50 = 32.5%. Absolute recoverable reduced by ~20% vs DG1 (14.8 vs 18.5 MSm\u00b3). Main driver is sweep efficiency in NorthHorst and EastLobe where fault baffles may create unswept compartments. ICD completions and Phase 2 water injection are key mitigations.",
+        "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+        "EffectiveDateTime": "2026-02-28T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Subsurface-Dynamic:1",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:1",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:1",
+            "RiskAcceptanceCriteriaID": "dev:reference-data--RiskAcceptanceCriteria:RAC-2025-01:1",
+            "InherentSeverity": "S3",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P2",
+            "AcceptedAsIs": false,
+            "Status": "Open",
+            "MitigationActionIDs": [],
+            "UncertaintyImpact": "High"
+          }
+        }
+      }
+    }
+  ],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [],
+    "WorkProducts": []
+  }
+}

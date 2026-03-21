@@ -31,7 +31,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 SCRIPT_DIR = Path(__file__).resolve().parent          # demo/drogon
-JSON_DIR   = SCRIPT_DIR.parent / "json"               # demo/json
+JSON_DIR   = SCRIPT_DIR                               # demo/drogon
 
 # ── Volume column metadata ──────────────────────────────────────────────
 # (canonical column name, base PropertyType code, UoM code)
@@ -51,9 +51,7 @@ VOLUME_COLUMNS = [
 ]
 
 # ── Helpers ─────────────────────────────────────────────────────────────
-def load_json(path: str) -> Dict[str, Any]:
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+from _shared import load_json, SEGMENT_NAMES  # noqa: E402
 
 def ref_id(prefix: str, entity: str, name: str) -> str:
     """Reference-data ID WITH trailing colon (for PropertyTypeID)."""
@@ -65,18 +63,6 @@ def std_ref_id(prefix: str, entity: str, name: str) -> str:
 
 def wpc_id(prefix: str, entity: str, uid: str) -> str:
     return f"{prefix}:work-product-component--{entity}:{uid}:1"
-
-# ── Descriptive segment names ───────────────────────────────────────────
-# CamelCase CSV value → human-readable display name
-SEGMENT_NAMES = {
-    "WestLowland":  "West Lowland",
-    "CentralSouth": "Central South",
-    "CentralNorth": "Central North",
-    "NorthHorst":   "North Horst",
-    "CentralRamp":  "Central Ramp",
-    "CentralHorst": "Central Horst",
-    "EastLowland":  "East Lowland",
-}
 
 
 def main():

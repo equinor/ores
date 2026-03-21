@@ -1,0 +1,229 @@
+{
+  "id": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
+  "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon \u2014 Decision Gate 1 DG1 Identify & Assess",
+    "Description": "DG1 evaluation of the Valysar fluvial formation in the Drogon field, covering static in-place volume estimation across 7 reservoir segments (NorthSea, NorthHorst, CentralHorst, CentralFlanks, CentralSouth, SouthWing, EastLobe) with three facies types (Channel, Crevasse, Floodplain). The assessment uses FMU-driven uncertainty realisations to derive P10/P50/P90 oil and gas volumes, forming the basis for the DG2 Concept Select recommendation.",
+    "ProjectName": "Drogon Field Development",
+    "DecisionLevelID": "dev:reference-data--DecisionLevel:DG1:1",
+    "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:1",
+    "DecisionDueDate": "2026-03-15",
+    "DecisionDate": "2026-02-28",
+    "DecisionSummary": "Evaluate the Valysar formation of the Drogon field. Assess in-place volumes (oil + gas) across 7 reservoir segments with facies-dependent porosity uncertainty. Determine whether to proceed to DG2 Concept Select.",
+    "RiskIDs": [
+      "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+      "dev:master-data--Risk:Drogon-FaultCompartment:1",
+      "dev:master-data--Risk:Drogon-HSE-Environmental:1",
+      "dev:master-data--Risk:Drogon-ScheduleFPSO:1"
+    ],
+    "PriorActivityIDs": [
+      "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1"
+    ],
+    "Parameters": [
+      {
+        "Title": "Raw volumes (per realisation)",
+        "Selection": "Raw per-realisation volumes feeding the statistical summary",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:68f57fdc-15b5-4c23-8256-8eee4296130c:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "REV-raw"
+          }
+        ]
+      },
+      {
+        "Title": "Statistical volumes (P10/P50/P90)",
+        "Selection": "Aggregated statistics used for the DG1 assessment",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:0ed7364d-39f5-45ea-9a73-72bb0bc48c6f:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "REV-stats"
+          }
+        ]
+      },
+      {
+        "Title": "Valysar parameters (OWC, porosity)",
+        "Selection": "Per-segment, per-facies input parameters",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:d8e4e9ba-a484-40a8-b4d6-4e9004913292:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "ColumnBasedTable-params"
+          }
+        ]
+      },
+      {
+        "Title": "Reservoir scope",
+        "Selection": "Master-data context for the decision",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+        "DataObjectParameter": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+      },
+      {
+        "Title": "GeoModelDataspace",
+        "Selection": "RDDMS ETP dataspace with the Drogon DG2 geomodel EPC files (RMS export)",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "ETPDataspace"
+          }
+        ]
+      },
+      {
+        "Title": "Production forecast (screening level)",
+        "Selection": "20-year screening production forecast based on analogy (pre-revision porosity)",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:b8d4f2e3-ae5c-4b9f-c7a6-3f9d5e2b4c8a:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "ProductionForecast"
+          }
+        ]
+      },
+      {
+        "Title": "Headline volumes & reservoir properties (GeoLabelSet)",
+        "Selection": "Screening-level STOIIP and average reservoir properties",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+        "DataObjectParameter": "dev:work-product-component--GeoLabelSet:f5c8b2d4-6a39-4eaf-9b72-8d4eaf1a3c96:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "GeoLabelSet",
+            "StringValue": "HeadlineVolumesAndProperties"
+          }
+        ]
+      }
+    ],
+    "ancestry": {
+      "parents": [
+        "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1"
+      ],
+      "children": []
+    },
+    "ext": {
+      "equinor": {
+        "Authors": [
+          {
+            "Name": "Kristin Haugen",
+            "Role": "Geoscience Lead",
+            "Organisation": "Drogon Subsurface"
+          },
+          {
+            "Name": "Henrik Bj\u00f8rnstad",
+            "Role": "Reservoir Engineer",
+            "Organisation": "Drogon Reservoir Management"
+          },
+          {
+            "Name": "Anna-Lise Tveit",
+            "Role": "Petrophysicist",
+            "Organisation": "Drogon Petec"
+          },
+          {
+            "Name": "Erik Stensrud",
+            "Role": "Geologist / FMU Lead",
+            "Organisation": "Drogon Geomodelling"
+          }
+        ],
+        "ReviewTeam": {
+          "PreparedBy": {
+            "Name": "Erik Stensrud",
+            "Organisation": "Drogon Geomodelling"
+          },
+          "Responsible": {
+            "Name": "Kristin Haugen",
+            "Organisation": "Drogon Subsurface Lead"
+          },
+          "QARecommender": {
+            "Name": "Marte Nygaard",
+            "Organisation": "ST MSU Subsurface QA"
+          },
+          "ApprovedBy": {
+            "Name": "Lars Kongsvik",
+            "Organisation": "Drogon Project Director"
+          }
+        },
+        "Alternatives": [
+          {
+            "Name": "Proceed to DG2 with full 7-segment development",
+            "Rank": 1,
+            "Rationale": "Static in-place volumes support commercial viability across all 7 segments; porosity risk manageable with appraisal data. Full scope maximises resource capture from CentralHorst (highest Oil concentration) through EastLobe.",
+            "RecommendedAction": "Approve"
+          },
+          {
+            "Name": "Reduced scope \u2014 focus on CentralHorst and CentralSouth",
+            "Rank": 2,
+            "Rationale": "CentralHorst and CentralSouth carry the highest Oil density and lowest porosity uncertainty (Channel facies dominant). De-risks early production but leaves ~40% of upside for later phases.",
+            "RecommendedAction": "Consider"
+          },
+          {
+            "Name": "Defer \u2014 acquire additional appraisal data",
+            "Rank": 3,
+            "Rationale": "Floodplain facies porosity (avg 0.10) and cementation effects in deeper segments remain poorly constrained. Additional core data from NorthSea and EastLobe segments would reduce volume uncertainty range before committing to DG2.",
+            "RecommendedAction": "Fallback"
+          }
+        ],
+        "DevelopmentConcept": {
+          "Summary": "Subsea development with tie-back to existing host facility. Valysar formation at ~1700 m TVD MSL in the Drogon area, Norwegian North Sea.",
+          "WellCount": 12,
+          "TemplateSlots": 16,
+          "ReservoirFormation": "Valysar",
+          "FieldArea": "Drogon",
+          "WaterDepth_m": 108,
+          "TargetStartUp": "2028-H1"
+        },
+        "KeyUncertainties": [
+          {
+            "Factor": "Facies-dependent porosity",
+            "Impact": "High",
+            "Description": "Porosity varies 0.10\u20130.28 across facies; Channel-dominant segments (CentralHorst) have higher confidence than Floodplain-rich segments (NorthSea, EastLobe)."
+          },
+          {
+            "Factor": "OWC depth and aquifer support",
+            "Impact": "Medium",
+            "Description": "OWC modelled at 1710 m TVDSS with \u00b115 m uncertainty; deeper OWC would increase STOIIP but also water production risk."
+          },
+          {
+            "Factor": "Cementation and diagenesis",
+            "Impact": "Medium",
+            "Description": "Deeper segments show evidence of diagenetic cementation reducing effective porosity and permeability, particularly in Crevasse facies."
+          }
+        ],
+        "Recommendations": [
+          "Implement Level 3 FMU uncertainty workflow with increased realisation count (target 50+) for DG2",
+          "Acquire additional core data from NorthSea and EastLobe segments to reduce porosity uncertainty",
+          "Evaluate seismic reprocessing for improved depth conversion of Valysar top reservoir",
+          "Conduct cross-discipline review of OWC sensitivity on recovery factor estimates"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "schemaInfo": {
+    "schemaIdentity": {
+      "authority": "dev",
+      "source": "wks",
+      "entityType": "work-product-component--DevelopmentConcept",
+      "schemaVersionMajor": 1,
+      "schemaVersionMinor": 0,
+      "schemaVersionPatch": 0
+    },
+    "status": "DEVELOPMENT"
+  },
+  "schema": {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "DevelopmentConcept",
+    "description": "Work-product-component capturing development concept data for Business Decision records.  Fields are a superset of all known gate levels (DG1-DG2).  Optional fields allow sparser early-gate records.",
+    "x-osdu-governance-authorities": ["dev"],
+    "type": "object",
+    "required": ["Name"],
+    "properties": {
+      "Name":        { "type": "string", "description": "Short human-readable name (e.g. 'Drogon DG1 Development Concept')." },
+      "Description": { "type": "string" },
+
+      "Summary":             { "type": "string", "description": "Free-text overview of the selected development concept." },
+      "WellCount":           { "type": "integer", "minimum": 0 },
+      "ContingentWells":     { "type": "integer", "minimum": 0, "description": "Additional contingent / infill wells provisioned but not committed." },
+      "MultilateralWells":   { "type": "integer", "minimum": 0 },
+      "TemplateSlots":       { "type": "integer", "minimum": 0, "description": "Total template/manifold slots." },
+      "DrillingCentres":     { "type": "integer", "minimum": 0 },
+      "ReservoirFormation":  { "type": "string" },
+      "FieldArea":           { "type": "string" },
+      "WaterDepth_m":        { "type": "number", "description": "Water depth in metres." },
+      "DistanceToHost_km":   { "type": "number", "description": "Tie-back distance in km." },
+      "HostFacility":        { "type": "string" },
+      "TargetStartUp":       { "type": "string", "description": "Target start-up period, e.g. '2028-H1'." },
+      "FlowlineSpec":        { "type": "string", "description": "Flowline specification, e.g. '2×10\" production + 6\" gas lift'." },
+      "SubseaBoostingPump":  { "type": "boolean" },
+      "WaterTreatmentCapacity_m3d": { "type": "number", "description": "Water treatment capacity in m³/day." },
+      "InjectionStrategy":   { "type": "string" },
+
+      "WellPlan": {
+        "type": "object",
+        "description": "Well plan details (late-gate fields).",
+        "properties": {
+          "Producers":                { "type": "integer" },
+          "Injectors_Phase2":         { "type": "integer" },
+          "AvgWellDepth_mMD":         { "type": "number" },
+          "DrillingDuration_days_avg": { "type": "number" },
+          "CompletionType":           { "type": "string" }
+        },
+        "additionalProperties": true
+      },
+
+      "ParentObjectID":       { "type": "string", "description": "Reservoir or field master-data ID." },
+      "ParentWorkProductID":  { "type": "string" },
+      "ancestry": {
+        "type": "object",
+        "properties": {
+          "parents":  { "type": "array", "items": { "type": "string" } },
+          "children": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "additionalProperties": true
+  }
+}

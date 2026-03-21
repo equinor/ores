@@ -2,21 +2,187 @@
 {% extends "base.html" %}
 {% block title %}Global Search{% endblock %}
 
+{% block head %}
+<style>
+  .search-form { width: 58rem; max-width: 100%; }
+  .kind-row { display: grid; grid-template-columns: 220px 1fr auto; gap: .5rem; align-items: center; }
+  .chips { display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0; }
+  .chip { background: #e1dfdd; border-radius: 999px; padding: .15rem .6rem; font-size: .85rem; }
+  .record-sections { display: grid; gap: .75rem; }
+  .section-card { border: 1px solid #e1dfdd; border-radius: 6px; padding: .7rem; }
+  .section-card h5 { margin: 0 0 .5rem 0; color: #004578; }
+  .mini-grid { display: grid; grid-template-columns: 190px 1fr; gap: .3rem .8rem; }
+  .mini-grid .k { color: #605e5c; }
+  .meta-table td:last-child { word-break: break-word; }
+  .kpi-grid { display:grid; grid-template-columns: repeat(3, minmax(120px, 1fr)); gap:.5rem; }
+  .kpi { border:1px solid #e1dfdd; border-radius:6px; padding:.45rem .55rem; background:#faf9f8; }
+  .kpi .lbl { font-size:.8rem; color:#605e5c; }
+  .kpi .val { font-size:1rem; font-weight:600; }
+  .rel-links { margin-top:.6rem; }
+  .rel-links ul { margin:.3rem 0 0 1rem; }
+
+  /* ── Business Decision card styling ── */
+  .bd-card { border: 1px solid #c5d5e4; border-radius: 10px; padding: 0; overflow: hidden; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+  .bd-header { background: linear-gradient(135deg, #e8f0fa 0%, #f0e8f5 100%); padding: 1rem 1.25rem .75rem; border-bottom: 1px solid #d6dfe8; }
+  .bd-header h4 { margin: 0 0 .25rem; font-size: 1.25rem; color: #1a3a5c; font-weight: 700; }
+  .bd-header .bd-subtitle { font-size: .9rem; color: #4a5568; line-height: 1.45; }
+  .bd-body { padding: .9rem 1.25rem 1rem; }
+  .bd-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .5rem .8rem; margin-bottom: .75rem; }
+  .bd-meta-item { background: #f7f8fa; border-radius: 6px; padding: .45rem .6rem; }
+  .bd-meta-item .bd-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: #718096; margin-bottom: .1rem; }
+  .bd-meta-item .bd-value { font-size: .92rem; color: #2d3748; font-weight: 500; }
+  .bd-section-title { font-size: .85rem; font-weight: 600; color: #4a5568; text-transform: uppercase; letter-spacing: .04em; margin: .8rem 0 .45rem; padding-bottom: .25rem; border-bottom: 1px solid #edf2f7; }
+  .bd-kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: .6rem; margin-bottom: .4rem; }
+  .bd-kpi { border-radius: 8px; padding: .65rem .75rem; text-align: center; }
+  .bd-kpi.oil { background: #fef3e2; border: 1px solid #fbd38d; }
+  .bd-kpi.gas { background: #e6f7f1; border: 1px solid #9ae6b4; }
+  .bd-kpi.total { background: #ebf4ff; border: 1px solid #90cdf4; }
+  .bd-kpi .bd-kpi-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: #718096; }
+  .bd-kpi .bd-kpi-stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: .3rem; margin-top: .3rem; }
+  .bd-kpi .bd-kpi-num { font-size: 1.05rem; font-weight: 700; color: #2d3748; }
+  .bd-kpi .bd-kpi-pct { font-size: .65rem; color: #a0aec0; }
+  .bd-alt-list { list-style: none; padding: 0; margin: 0; }
+  .bd-alt-list li { background: #f7f8fa; border-radius: 6px; padding: .5rem .7rem; margin-bottom: .4rem; border-left: 3px solid #a3bffa; }
+  .bd-alt-list li.rank-1 { border-left-color: #68d391; }
+  .bd-alt-list li.rank-2 { border-left-color: #f6ad55; }
+  .bd-alt-name { font-weight: 600; color: #2d3748; }
+  .bd-alt-rank { font-size: .78rem; background: #edf2f7; border-radius: 999px; padding: .1rem .5rem; color: #4a5568; }
+  .bd-alt-rationale { font-size: .88rem; color: #718096; margin-top: .2rem; }
+  .bd-risk-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .bd-risk-chip { background: #fff5f5; border: 1px solid #feb2b2; border-radius: 999px; padding: .2rem .65rem; font-size: .82rem; color: #c53030; text-decoration: none; }
+  .bd-risk-chip:hover { background: #fed7d7; }
+  .bd-param-list { list-style: none; padding: 0; margin: 0; }
+  .bd-param-list li { display: grid; grid-template-columns: 1fr auto; gap: .5rem; background: #f7f8fa; border-radius: 6px; padding: .45rem .65rem; margin-bottom: .35rem; align-items: center; }
+  .bd-param-title { font-weight: 500; color: #2d3748; }
+  .bd-param-desc { font-size: .82rem; color: #718096; }
+  .bd-param-tag { font-size: .75rem; background: #e2e8f0; border-radius: 999px; padding: .1rem .45rem; color: #4a5568; white-space: nowrap; }
+
+  /* ── Total row highlighting in volume tables ── */
+  .vol-total-row { background: #f0f5ff !important; }
+  .vol-total-row td { font-weight: 600; color: #1a365d; }
+  .vol-grand-total { background: #e2ecfa !important; border-top: 2px solid #90cdf4; }
+  .vol-grand-total td { font-weight: 700; }
+
+  /* ── Width constraints & horizontal scroll ── */
+  .record-sections { max-width: 72rem; }
+  .section-card { max-width: 72rem; overflow: visible; }
+  .table-scroll { overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
+  .table-scroll table { width: max-content; min-width: 100%; }
+  .bd-card { max-width: 72rem; }
+  .bd-kpi-row { max-width: 56rem; }
+  .kpi-grid { max-width: 56rem; }
+
+  /* ── Production profile chart ── */
+  .prod-chart-wrap { max-width: 56rem; height: 320px; position: relative; margin-bottom: .75rem; }
+
+  /* ── Volume histogram modal ── */
+  .vol-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 9000; display: flex; align-items: center; justify-content: center; }
+  .vol-modal { background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.25); width: 92vw; max-width: 72rem; max-height: 88vh; overflow: auto; padding: 1.25rem 1.5rem; position: relative; }
+  .vol-modal-close { position: absolute; top: .6rem; right: .8rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #718096; line-height: 1; padding: .15rem .4rem; border-radius: 4px; }
+  .vol-modal-close:hover { background: #edf2f7; color: #2d3748; }
+  .vol-modal h4 { margin: 0 0 .6rem; font-size: 1.1rem; color: #1a3a5c; }
+  .vol-chart-wrap { position: relative; height: 380px; }
+  .vol-chart-controls { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin-bottom: .5rem; }
+  .vol-chart-controls label { font-size: .82rem; color: #4a5568; cursor: pointer; }
+  .vol-chart-controls select { font-size: .82rem; padding: .2rem .4rem; border-radius: 4px; border: 1px solid #cbd5e0; }
+  .btn-histogram { font-size: .82rem; padding: .25rem .65rem; border-radius: 6px; border: 1px solid #90cdf4; background: #ebf4ff; color: #2b6cb0; cursor: pointer; font-weight: 500; }
+  .btn-histogram:hover { background: #bee3f8; }
+  .btn-vol-expand { font-size: .82rem; padding: .25rem .65rem; border-radius: 6px; border: 1px solid #c6f6d5; background: #f0fff4; color: #276749; cursor: pointer; font-weight: 500; }
+  .btn-vol-expand:hover { background: #c6f6d5; }
+
+  /* ── Data Sources / Ancestry card ── */
+  .sources-card { border: 1px solid #c3dafe; border-radius: 10px; padding: 0; overflow: hidden; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.06); max-width: 72rem; }
+  .sources-header { background: linear-gradient(135deg, #ebf4ff 0%, #e6fffa 100%); padding: .75rem 1.25rem .6rem; border-bottom: 1px solid #c3dafe; display: flex; align-items: center; gap: .75rem; }
+  .sources-header h5 { margin: 0; font-size: 1rem; color: #1a365d; font-weight: 700; }
+  .sources-header .sources-kind-badge { font-size: .72rem; background: #bee3f8; border-radius: 999px; padding: .15rem .55rem; color: #2b6cb0; font-weight: 600; }
+  .sources-body { padding: .75rem 1.25rem .9rem; }
+  .eml-block { background: #f0fff4; border: 1px solid #9ae6b4; border-radius: 6px; padding: .45rem .7rem; margin: .4rem 0; font-family: monospace; font-size: .88rem; color: #22543d; display: flex; align-items: center; gap: .5rem; word-break: break-all; }
+  .eml-copy-btn { flex-shrink: 0; background: #c6f6d5; border: none; border-radius: 4px; padding: .2rem .5rem; font-size: .78rem; cursor: pointer; color: #22543d; }
+  .eml-copy-btn:hover { background: #9ae6b4; }
+  .ds-entry { background: #f7faff; border: 1px solid #bee3f8; border-radius: 8px; padding: .55rem .8rem; margin-bottom: .5rem; }
+  .ds-entry .ds-name { font-weight: 600; color: #2b6cb0; font-size: .95rem; }
+  .ds-entry .ds-id { font-size: .78rem; color: #718096; font-family: monospace; margin-top: .1rem; word-break: break-all; }
+  .ds-entry .ds-server { font-size: .8rem; color: #4a5568; margin-top: .2rem; }
+  .ds-entry a { color: #2b6cb0; text-decoration: none; }
+  .ds-entry a:hover { text-decoration: underline; }
+
+  /* ── REV card styling ── */
+  .rev-card { border: 1px solid #b2d8d8; border-radius: 10px; padding: 0; overflow: hidden; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.06); max-width: 72rem; }
+  .rev-header { background: linear-gradient(135deg, #e8faf5 0%, #e8f0fa 100%); padding: 1rem 1.25rem .75rem; border-bottom: 1px solid #b2d8d8; }
+  .rev-header h4 { margin: 0 0 .25rem; font-size: 1.2rem; color: #1a3a5c; font-weight: 700; }
+  .rev-header .rev-subtitle { font-size: .88rem; color: #4a5568; line-height: 1.45; }
+  .rev-body { padding: .9rem 1.25rem 1rem; }
+
+  /* ── BD economics row ── */
+  .bd-econ-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .5rem; max-width: 56rem; }
+  .bd-econ { border-radius: 8px; padding: .55rem .65rem; text-align: center; background: #f7f7fb; border: 1px solid #e2e8f0; }
+  .bd-econ .bd-econ-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: #718096; }
+  .bd-econ .bd-econ-num { font-size: 1.05rem; font-weight: 700; color: #2d3748; margin-top: .15rem; }
+
+  /* ── Schedule milestone ── */
+  .bd-schedule { display: grid; grid-template-columns: 1fr auto auto; gap: .3rem .8rem; max-width: 48rem; }
+  .bd-schedule .sched-ms { font-weight: 500; color: #2d3748; }
+  .bd-schedule .sched-date { color: #718096; font-size: .9rem; }
+  .bd-schedule .sched-status { font-size: .78rem; border-radius: 999px; padding: .1rem .5rem; }
+  .sched-status.completed { background: #c6f6d5; color: #22543d; }
+  .sched-status.planned { background: #e2e8f0; color: #4a5568; }
+
+  /* ── Dev concept detail grid ── */
+  .bd-devcon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .5rem; max-width: 56rem; }
+  .bd-devcon-item { background: #edf7ff; border-radius: 6px; padding: .45rem .6rem; border-left: 3px solid #90cdf4; }
+  .bd-devcon-item .bd-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: #718096; margin-bottom: .1rem; }
+  .bd-devcon-item .bd-value { font-size: .92rem; color: #2d3748; font-weight: 500; }
+
+  /* ── Reservoir property grid ── */
+  .bd-resprop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .4rem; max-width: 56rem; }
+  .bd-resprop-item { background: #fefaf0; border-radius: 6px; padding: .4rem .55rem; border-left: 3px solid #ecc94b; }
+  .bd-resprop-item .bd-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: #718096; }
+  .bd-resprop-item .bd-value { font-size: .9rem; color: #2d3748; font-weight: 500; }
+  .prod-legend { display: flex; gap: 1rem; flex-wrap: wrap; font-size: .82rem; color: #4a5568; margin-bottom: .4rem; }
+  .prod-legend span::before { content: ''; display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: .3rem; vertical-align: middle; }
+  .prod-legend .leg-oil::before { background: #dd6b20; }
+  .prod-legend .leg-gas::before { background: #38a169; }
+  .prod-legend .leg-water::before { background: #3182ce; }
+  .prod-legend .leg-cum::before { background: #805ad5; }
+
+  /* ── Collapsible detail sections ── */
+  .bd-collapse { margin-bottom: .2rem; }
+  .bd-collapse > summary { list-style: none; }
+  .bd-collapse > summary::-webkit-details-marker { display: none; }
+  .bd-collapse[open] > summary { margin-bottom: .45rem; }
+  .bd-collapse[open] > summary::after { content: ' ▾'; }
+  .bd-collapse > summary::after { content: ''; }
+</style>
+{% endblock %}
+
 {% block content %}
 
 <h2>Search</h2>
 
-<!-- ✅ Working form -->
-<form method="post" action="/search/run" style="width:48rem">
+<form method="post" action="/search/run" class="search-form">
 
-  <label>kind</label>
-  <input type="text" name="kind" value="{{ kind or '' }}" style="width: 100%;">
+  <label>Kind (primary)</label>
+  <div class="kind-row">
+    <select id="kindPreset" style="min-width: 0;">
+      <option value="">Select kind from repo manifests…</option>
+      {% for opt in kind_options or [] %}
+        <option value="{{ opt.kind }}" {% if opt.kind == kind %}selected{% endif %}>{{ opt.kind }}{% if opt.count %} ({{ opt.count }}){% endif %}</option>
+      {% endfor %}
+    </select>
+    <input type="text" id="kindInput" name="kind" value="{{ kind or '' }}" list="kindCatalog" placeholder="osdu:wks:...">
+    <button type="button" id="useSelectedKind">Use</button>
+  </div>
+  <datalist id="kindCatalog">
+    {% for opt in kind_options or [] %}
+      <option value="{{ opt.kind }}"></option>
+    {% endfor %}
+  </datalist>
 
   <label>query</label>
   <input type="text" name="query" value="{{ q or '*' }}" style="width: 100%;">
 
   <label>limit</label>
-  <input type="number" name="limit" value="{{ limit or 5 }}" min="1" max="500">
+  <input type="number" name="limit" value="{{ limit or 50 }}" min="1" max="500">
 
   <!-- returnedFields is not used server-side right now, kept for future -->
   <label>returnedFields (comma separated)</label>
@@ -24,6 +190,20 @@
 
   <button type="submit">Search</button>
 </form>
+
+<script>
+  (function () {
+    const preset = document.getElementById('kindPreset');
+    const input = document.getElementById('kindInput');
+    const btn = document.getElementById('useSelectedKind');
+    function applyPreset() {
+      if (!preset || !input || !preset.value) return;
+      input.value = preset.value;
+    }
+    preset?.addEventListener('change', applyPreset);
+    btn?.addEventListener('click', applyPreset);
+  })();
+</script>
 
 {% if error %}
   <div class="error">
@@ -41,10 +221,18 @@
   {% set total = results.totalCount or (results.results | length) %}
   <h4>Results ({{ total }})</h4>
 
+  {% if selected_kinds and (selected_kinds|length) > 1 %}
+    <div class="chips" title="Kinds included in this run">
+      {% for k in selected_kinds %}
+        <span class="chip">{{ k }}</span>
+      {% endfor %}
+    </div>
+  {% endif %}
+
   {% if total == 0 %}
     <p>No records matched your query.</p>
   {% else %}
-    <!-- Summary table (unchanged) -->
+    <div class="table-scroll">
     <table>
       <tr>
         <th>Name</th>
@@ -70,23 +258,21 @@
           <td>{{ parentObj or '—' }}</td>
           <td>
             {% if rec.ancestry_parents %}
-              {% for p in rec.ancestry_parents %}– {{ p }} {% endfor %}
+              {% for p in rec.ancestry_parents %}<div>{{ p }}</div>{% endfor %}
             {% else %}—{% endif %}
           </td>
           <td>
             {% if rec.ancestry_children %}
-              {% for ch in rec.ancestry_children %}– {{ ch }} {% endfor %}
+              {% for ch in rec.ancestry_children %}<div>{{ ch }}</div>{% endfor %}
             {% else %}—{% endif %}
           </td>
-          <td><!-- Keep as-is to be surgical; add a link here if desired -->
-            /search/view/{{ rec.id }}View Details</a>
-          </td>
+          <td><a href="/search/view/{{ rec.id }}">View Details</a></td>
         </tr>
       {% endfor %}
     </table>
+    </div>
 
-    <!-- Selection UI -->
-    <h4 style="margin-top:1rem">Select a result to view relationships and tables</h4>
+    <h4 style="margin-top:1rem">Select a result</h4>
     <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem">
       <label for="recSelect">Record:</label>
       <select id="recSelect">
@@ -97,7 +283,6 @@
       </select>
     </div>
 
-    {# --- Label escaping macro for Mermaid --- #}
     {% macro esc_label(s) -%}
       {{ (s or '')
         | replace('\r',' ')
@@ -111,32 +296,6 @@
       }}
     {%- endmacro %}
 
-    {# --- Generic flattening macro for metadata table --- #}
-    {% macro render_pairs(val, path='') -%}
-      {% if val is mapping %}
-        {% for k, v in val.items() %}
-          {{ render_pairs(v, (path and path ~ '.') ~ k) }}
-        {% endfor %}
-      {% elif val is sequence and (val is not string) %}
-        {% for v in val %}
-          {{ render_pairs(v, (path and path ~ '.') ~ loop.index0|string) }}
-        {% endfor %}
-      {% else %}
-        <tr>
-          <td class="meta-name">{{ path }}</td>
-          <td class="meta-value">
-            {% if val is boolean %}{{ val|string }}
-            {% elif val is number %}{{ val }}
-            {% elif val is string %}{{ val }}
-            {% elif val is none %}—{% else %}
-              {{ val|string }}
-            {% endif %}
-          </td>
-        </tr>
-      {% endif %}
-    {%- endmacro %}
-
-    <!-- Per-record blocks: make FIRST visible by default as a safe fallback -->
     {% for rec in results.results or [] %}
       {% set rec_index = loop.index %}
       {% set name = (rec.data or {}).get('Name') %}
@@ -166,95 +325,1365 @@
       {% set sample_col = ((key_names|length > 0 and key_names[0]) or (value_names|length > 0 and value_names[0]) or '') %}
       {% set nrows = (sample_col and (vmap.get(sample_col) or [])|length) or 0 %}
       {% set has_volumes = (vmap and headers|length > 0 and nrows > 0) %}
+      {% set is_business_decision = ('businessdecision' in ((rec.kind or '')|lower)) %}
+      {% set is_rev = ('reservoirestimatedvolumes' in ((rec.kind or '')|lower)) %}
+      {% set is_dataspace = ('etpdataspace' in ((rec.kind or '')|lower)) %}
+      {# Collect GeoModelDataspace / ETPDataspace parameters from data.Parameters #}
+      {% set ds_params = [] %}
+      {% for p in ((rec.data or {}).get('Parameters') or []) if p is mapping %}
+        {% if 'etpdataspace' in ((p.get('DataObjectParameter') or '')|lower) or p.get('Title') == 'GeoModelDataspace' %}
+          {% set _ = ds_params.append(p) %}
+        {% endif %}
+      {% endfor %}
+
+      {# Headline volume candidates from reconstructed table.
+         Strategy: prefer the grand TOTAL row (Zone=TOTAL & SegmentID=TOTAL) when present;
+         otherwise sum only per-segment/per-facies rows (exclude rows where any key is 'TOTAL'
+         to avoid double-counting totals that are already aggregations). #}
+      {% set volns = namespace(o10=0.0,o50=0.0,o90=0.0,g10=0.0,g50=0.0,g90=0.0,has_o10=false,has_o50=false,has_o90=false,has_g10=false,has_g50=false,has_g90=false, grand_idx=-1) %}
+      {# Find grand total row: all key columns == 'TOTAL' #}
+      {% set zones = vmap.get('Zone') or [] %}
+      {% set seg_ids = vmap.get('SegmentID') or [] %}
+      {% set facies_col = vmap.get('Facies') or [] %}
+      {% for i in range(nrows) %}
+        {% set z = (zones[i]|string if zones|length > i else '') %}
+        {% set s = (seg_ids[i]|string if seg_ids|length > i else '') %}
+        {% set f = (facies_col[i]|string if facies_col|length > i else '') %}
+        {% if (z|upper) == 'TOTAL' or (z|upper) == 'TOTALS' %}
+          {% if (s|upper) == 'TOTAL' or (s|upper) == 'TOTALS' %}
+            {% if (f|upper) == 'TOTAL' or (f|upper) == 'TOTALS' or f == '' %}
+              {% set volns.grand_idx = i %}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% if volns.grand_idx >= 0 %}
+        {# Use grand total row directly #}
+        {% set gi = volns.grand_idx %}
+        {% set op10 = (vmap.get('Oil.P10') or []) %}{% if op10|length > gi %}{% set volns.o10 = op10[gi]|float %}{% set volns.has_o10 = true %}{% endif %}
+        {% set op50 = (vmap.get('Oil.P50') or []) %}{% if op50|length > gi %}{% set volns.o50 = op50[gi]|float %}{% set volns.has_o50 = true %}{% endif %}
+        {% set op90 = (vmap.get('Oil.P90') or []) %}{% if op90|length > gi %}{% set volns.o90 = op90[gi]|float %}{% set volns.has_o90 = true %}{% endif %}
+        {% set gp10 = (vmap.get('Gas.P10') or []) %}{% if gp10|length > gi %}{% set volns.g10 = gp10[gi]|float %}{% set volns.has_g10 = true %}{% endif %}
+        {% set gp50 = (vmap.get('Gas.P50') or []) %}{% if gp50|length > gi %}{% set volns.g50 = gp50[gi]|float %}{% set volns.has_g50 = true %}{% endif %}
+        {% set gp90 = (vmap.get('Gas.P90') or []) %}{% if gp90|length > gi %}{% set volns.g90 = gp90[gi]|float %}{% set volns.has_g90 = true %}{% endif %}
+      {% else %}
+        {# No grand total row — sum only non-TOTAL rows to avoid double-counting #}
+        {% for i in range(nrows) %}
+          {% set z = (zones[i]|string if zones|length > i else '') %}
+          {% set s = (seg_ids[i]|string if seg_ids|length > i else '') %}
+          {% set f = (facies_col[i]|string if facies_col|length > i else '') %}
+          {% if (z|upper) not in ('TOTAL','TOTALS') and (s|upper) not in ('TOTAL','TOTALS') and (f|upper) not in ('TOTAL','TOTALS') %}
+            {% if (vmap.get('Oil.P10') or [])|length > i %}{% set volns.o10 = volns.o10 + ((vmap.get('Oil.P10') or [])[i]|float) %}{% set volns.has_o10 = true %}{% endif %}
+            {% if (vmap.get('Oil.P50') or [])|length > i %}{% set volns.o50 = volns.o50 + ((vmap.get('Oil.P50') or [])[i]|float) %}{% set volns.has_o50 = true %}{% endif %}
+            {% if (vmap.get('Oil.P90') or [])|length > i %}{% set volns.o90 = volns.o90 + ((vmap.get('Oil.P90') or [])[i]|float) %}{% set volns.has_o90 = true %}{% endif %}
+            {% if (vmap.get('Gas.P10') or [])|length > i %}{% set volns.g10 = volns.g10 + ((vmap.get('Gas.P10') or [])[i]|float) %}{% set volns.has_g10 = true %}{% endif %}
+            {% if (vmap.get('Gas.P50') or [])|length > i %}{% set volns.g50 = volns.g50 + ((vmap.get('Gas.P50') or [])[i]|float) %}{% set volns.has_g50 = true %}{% endif %}
+            {% if (vmap.get('Gas.P90') or [])|length > i %}{% set volns.g90 = volns.g90 + ((vmap.get('Gas.P90') or [])[i]|float) %}{% set volns.has_g90 = true %}{% endif %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% set ext_eq = ((rec.data or {}).get('ext') or {}).get('equinor') or {} %}
+
+      {# ── GeoLabelSet canonical data (preferred source) ── #}
+      {% set gls = rec.bd_geolabel or {} %}
+      {% set gls_vols = gls.get('volumes_by_segment') or {} %}
+      {% set gls_props = gls.get('properties') or {} %}
+      {% set gls_unc = gls.get('uncertainty') or {} %}
+      {% set has_gls_vol = (gls_vols.get('TOTAL') and gls_vols['TOTAL'].get('Oil.P50') is not none) %}
+      {% set has_gls_props = (gls_props|length > 0) %}
+
+      {# ── Production forecast from ColumnBasedTable ── #}
+      {% set bd_prod = rec.bd_production or {} %}
+
+      {# ── Stat WPC table volume helpers ── #}
+      {% set has_table_vol = (volns.has_o10 or volns.has_o50 or volns.has_o90 or volns.has_g10 or volns.has_g50 or volns.has_g90) %}
 
       <div class="rec-block" id="rec-{{ rec_index }}" {% if loop.first %}style=""{% else %}style="display:none"{% endif %}>
         <h4>{{ label }}</h4>
 
-        <!-- Relationships (ancestry + data[] links) -->
-        <pre class="mermaid">
+        <div class="record-sections">
+          <section class="section-card">
+            <h5>Overview</h5>
+            <div class="mini-grid">
+              <div class="k">Name</div><div>{{ name or '—' }}</div>
+              <div class="k">Description</div><div>{{ (rec.data or {}).get('Description') or '—' }}</div>
+              <div class="k">Kind</div><div>{{ rec.kind or '—' }}</div>
+              <div class="k">ID</div><div>{{ rec.id or '—' }}</div>
+              <div class="k">Version</div><div>{{ rec.version if rec.version is not none else '—' }}</div>
+              <div class="k">ParentObjectID</div><div>{{ (rec.data or {}).get('ParentObjectID') or '—' }}</div>
+            </div>
+          </section>
+
+          {# ══════════ ETPDataspace record card ══════════ #}
+          {% if is_dataspace %}
+          {% set ds_props = (rec.data or {}).get('DatasetProperties') or {} %}
+          {% set ds_uri   = ds_props.get('URI') or (rec.data or {}).get('DatasetProperties.URI') or '' %}
+          {% set ds_srv   = ds_props.get('ServerURL') or '' %}
+          <div class="sources-card">
+            <div class="sources-header">
+              <h5>🗄 Reservoir DDMS Dataspace</h5>
+              <span class="sources-kind-badge">ETPDataspace</span>
+            </div>
+            <div class="sources-body">
+              {% if ds_uri %}
+              <div style="margin-bottom:.35rem;font-size:.85rem;color:#4a5568;">EML URI — use this to address the dataspace in ETP / RESQML clients:</div>
+              <div class="eml-block" id="eml-uri-{{ rec_index }}">
+                {{ ds_uri }}
+                <button class="eml-copy-btn" onclick="navigator.clipboard.writeText('{{ ds_uri }}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})" type="button">Copy</button>
+              </div>
+              {% endif %}
+              {% if ds_srv %}
+              <div style="margin-top:.4rem;">
+                <span class="mini-grid"><span class="k" style="font-size:.8rem;">Server URL</span>
+                <code style="font-size:.82rem;color:#2b6cb0;">{{ ds_srv }}</code></span>
+              </div>
+              {% endif %}
+              <div style="margin-top:.6rem;">
+                <a href="/search/view/{{ rec.id }}" style="font-size:.85rem;">Open full record →</a>
+                {% if ds_uri %}{% set ds_link_name = ds_uri | replace('eml:///dataspace(', '') | replace(')', '') %}
+                <a href="/keys?ds={{ ds_link_name }}" style="font-size:.85rem;margin-left:1.2rem;">Browse in RDDMS →</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          {# ══════════ DATA SOURCES / ANCESTRY section (Activity, BD, any record with GeoModelDataspace param) ══════════ #}
+          {% if ds_params and not is_dataspace and not is_business_decision %}
+          <div class="sources-card">
+            <div class="sources-header">
+              <h5>Data Sources</h5>
+              <span class="sources-kind-badge">Reservoir DDMS</span>
+            </div>
+            <div class="sources-body">
+              <div style="font-size:.85rem;color:#4a5568;margin-bottom:.55rem;">
+                Geomodel data referenced by this record is stored in a Reservoir DDMS (ETP) dataspace.
+              </div>
+              {% for p in ds_params %}
+                {% set ds_id = p.get('DataObjectParameter') or '' %}
+                {% set ds_info = (rec.linked_labels or {}).get(ds_id) or {} %}
+                {% set ds_data = ds_info.get('data') or {} %}
+                {% set raw_uri = (ds_data.get('DatasetProperties') or {}).get('URI') or ds_data.get('DatasetProperties.URI') or '' %}
+                {% set srv_url = (ds_data.get('DatasetProperties') or {}).get('ServerURL') or '' %}
+                <div class="ds-entry">
+                  <div class="ds-name">
+                    {% if ds_id %}<a href="/search/view/{{ ds_id }}">{{ ds_info.name or p.get('Title') or 'Dataspace' }}</a>{% else %}{{ p.get('Title') or 'Dataspace' }}{% endif %}
+                  </div>
+                  {% if p.get('Selection') or p.get('Description') %}
+                  <div style="font-size:.82rem;color:#718096;margin-top:.1rem;">{{ p.get('Selection') or p.get('Description') }}</div>
+                  {% endif %}
+                  {% if ds_id %}<div class="ds-id">OSDU: {{ ds_id }}</div>{% endif %}
+                  {% if raw_uri %}
+                  <div style="margin-top:.4rem;font-size:.82rem;color:#4a5568;">EML URI:</div>
+                  <div class="eml-block" id="eml-{{ rec_index }}-{{ loop.index }}">
+                    {{ raw_uri }}
+                    <button class="eml-copy-btn" onclick="navigator.clipboard.writeText('{{ raw_uri }}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})" type="button">Copy</button>
+                  </div>
+                  {% endif %}
+                  {% if srv_url %}<div class="ds-server">Server: <code>{{ srv_url }}</code></div>{% endif %}
+                  {% if raw_uri %}{% set ds_link_name = raw_uri | replace('eml:///dataspace(', '') | replace(')', '') %}
+                  <div style="margin-top:.4rem;"><a href="/keys?ds={{ ds_link_name }}">Browse in RDDMS →</a></div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if is_business_decision %}
+          {# ══════════ BUSINESS DECISION CARD ══════════ #}
+          <div class="bd-card">
+            <div class="bd-header">
+              <h4>{{ name or 'Business Decision' }}</h4>
+              <div class="bd-subtitle">{{ (rec.data or {}).get('DecisionSummary') or (rec.data or {}).get('Description') or '' }}</div>
+            </div>
+            <div class="bd-body">
+
+              {# ── Gate metadata ── #}
+              <div class="bd-meta-grid">
+                <div class="bd-meta-item">
+                  <div class="bd-label">Project</div>
+                  <div class="bd-value">{{ (rec.data or {}).get('ProjectName') or '—' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Decision Gate</div>
+                  <div class="bd-value">{{ ((rec.data or {}).get('DecisionLevelID') or '—').split(':')[-2] if ':' in ((rec.data or {}).get('DecisionLevelID') or '') else (rec.data or {}).get('DecisionLevelID') or '—' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Status</div>
+                  <div class="bd-value">{{ ((rec.data or {}).get('ApprovalStatusID') or '—').split(':')[-2] if ':' in ((rec.data or {}).get('ApprovalStatusID') or '') else (rec.data or {}).get('ApprovalStatusID') or '—' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Decision Date</div>
+                  <div class="bd-value">{{ (rec.data or {}).get('DecisionDate') or '—' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Due Date</div>
+                  <div class="bd-value">{{ (rec.data or {}).get('DecisionDueDate') or '—' }}</div>
+                </div>
+                {% if ext_eq.get('DevelopmentConcept') %}
+                {% set dcon = ext_eq.get('DevelopmentConcept') %}
+                <div class="bd-meta-item">
+                  <div class="bd-label">Formation</div>
+                  <div class="bd-value">{{ dcon.get('ReservoirFormation') or '—' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Wells</div>
+                  <div class="bd-value">{{ dcon.get('WellCount') or '—' }}{% if dcon.get('MultilateralWells') %} ({{ dcon.get('MultilateralWells') }} MLT){% endif %}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Target Start-up</div>
+                  <div class="bd-value">{{ dcon.get('TargetStartUp') or '—' }}</div>
+                </div>
+                {% endif %}
+              </div>
+
+              {# ── Headline Volumes ── #}
+              <div class="bd-section-title">Headline Volumes (STOIIP)</div>
+              <div class="bd-kpi-row">
+                {% if has_gls_vol %}
+                {# ─── Source: GeoLabelSet canonical record (preferred) ─── #}
+                {% set gtot = gls_vols.get('TOTAL') or {} %}
+                <div class="bd-kpi oil">
+                  <div class="bd-kpi-label">STOIIP Total</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{% set v = gtot.get('Oil.P90') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{% set v = gtot.get('Oil.P50') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{% set v = gtot.get('Oil.P10') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
+                </div>
+                {# Recoverable & RF from GeoLabelSet uncertainty #}
+                {% if gls_unc.get('Recoverable.P50') is not none %}
+                <div class="bd-kpi gas">
+                  <div class="bd-kpi-label">Recoverable Oil</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{% set v = gls_unc.get('Recoverable.P90') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{% set v = gls_unc.get('Recoverable.P50') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{% set v = gls_unc.get('Recoverable.P10') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
+                </div>
+                {% endif %}
+                {% if gls_unc.get('RecoveryFactor.P50') is not none %}
+                <div class="bd-kpi total">
+                  <div class="bd-kpi-label">Recovery Factor</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ gls_unc.get('RecoveryFactor.P90', '—') }}%</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ gls_unc.get('RecoveryFactor.P50', '—') }}%</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ gls_unc.get('RecoveryFactor.P10', '—') }}%</div></div>
+                  </div>
+                </div>
+                {% endif %}
+                {# Per-segment STOIIP from GeoLabelSet #}
+                {% for sname, svals in gls_vols.items() if sname != 'TOTAL' %}
+                <div class="bd-kpi {{ loop.cycle('gas','total','oil') }}">
+                  <div class="bd-kpi-label">{{ sname }}</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{% set v = svals.get('Oil.P90') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{% set v = svals.get('Oil.P50') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{% set v = svals.get('Oil.P10') %}{{ '%.2f'|format(v/1000000) if v is not none else '—' }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
+                </div>
+                {% endfor %}
+                {% elif has_table_vol %}
+                {# ─── Fallback 1: stat WPC ColumnValues (m³) → Mm³ ─── #}
+                <div class="bd-kpi oil">
+                  <div class="bd-kpi-label">Oil in Place</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o10 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o50 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o90 / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                <div class="bd-kpi gas">
+                  <div class="bd-kpi-label">Gas in Place</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g10 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g50 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g90 / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                <div class="bd-kpi total">
+                  <div class="bd-kpi-label">Total</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o10 + volns.g10) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o50 + volns.g50) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o90 + volns.g90) / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                {% else %}
+                <div class="muted">No headline volumes available for this record.</div>
+                {% endif %}
+              </div>
+
+              {# ── Development Concept ── #}
+              {% if ext_eq.get('DevelopmentConcept') %}
+              {% set dcon = ext_eq.get('DevelopmentConcept') %}
+              <div class="bd-section-title">Development Concept</div>
+              {% if dcon.get('Summary') %}<div style="font-size:.88rem;color:#4a5568;line-height:1.45;margin-bottom:.5rem;">{{ dcon.get('Summary') }}</div>{% endif %}
+              <div class="bd-devcon-grid">
+                {% if dcon.get('WellCount') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Wells</div><div class="bd-value">{{ dcon.get('WellCount') }}{% if dcon.get('MultilateralWells') %} (+ {{ dcon.get('MultilateralWells') }} MLT){% endif %}</div></div>
+                {% endif %}
+                {% if dcon.get('TemplateSlots') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Template Slots</div><div class="bd-value">{{ dcon.get('TemplateSlots') }}{% if dcon.get('DrillingCentres') %} ({{ dcon.get('DrillingCentres') }} centres){% endif %}</div></div>
+                {% endif %}
+                {% if dcon.get('HostFacility') %}
+                <div class="bd-devcon-item"><div class="bd-label">Host Facility</div><div class="bd-value">{{ dcon.get('HostFacility') }}</div></div>
+                {% endif %}
+                {% if dcon.get('DistanceToHost_km') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Distance to Host</div><div class="bd-value">{{ dcon.get('DistanceToHost_km') }} km</div></div>
+                {% endif %}
+                {% if dcon.get('WaterDepth_m') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Water Depth</div><div class="bd-value">{{ dcon.get('WaterDepth_m') }} m</div></div>
+                {% endif %}
+                {% if dcon.get('ReservoirFormation') %}
+                <div class="bd-devcon-item"><div class="bd-label">Formation</div><div class="bd-value">{{ dcon.get('ReservoirFormation') }}</div></div>
+                {% endif %}
+                {% if dcon.get('FieldArea') %}
+                <div class="bd-devcon-item"><div class="bd-label">Field Area</div><div class="bd-value">{{ dcon.get('FieldArea') }}</div></div>
+                {% endif %}
+                {% if dcon.get('TargetStartUp') %}
+                <div class="bd-devcon-item"><div class="bd-label">Target Start-up</div><div class="bd-value">{{ dcon.get('TargetStartUp') }}</div></div>
+                {% endif %}
+                {% if dcon.get('ContingentWells') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Contingent Wells</div><div class="bd-value">{{ dcon.get('ContingentWells') }}</div></div>
+                {% endif %}
+                {% if dcon.get('FlowlineSpec') %}
+                <div class="bd-devcon-item"><div class="bd-label">Flowline</div><div class="bd-value">{{ dcon.get('FlowlineSpec') }}</div></div>
+                {% endif %}
+                {% if dcon.get('SubseaBoostingPump') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Subsea Boost</div><div class="bd-value">{{ 'Yes' if dcon.get('SubseaBoostingPump') else 'No' }}</div></div>
+                {% endif %}
+                {% if dcon.get('WaterTreatmentCapacity_m3d') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Water Treatment</div><div class="bd-value">{{ dcon.get('WaterTreatmentCapacity_m3d') }} m³/d</div></div>
+                {% endif %}
+                {% if dcon.get('InjectionStrategy') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Injection Strategy</div><div class="bd-value">{{ dcon.get('InjectionStrategy') }}</div></div>
+                {% endif %}
+                {% if dcon.get('WellPlan') is mapping %}
+                {% set wp = dcon.get('WellPlan') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Well Plan</div><div class="bd-value" style="display:flex;gap:.6rem;flex-wrap:wrap;">
+                  {% if wp.get('Producers') is not none %}<span>{{ wp.get('Producers') }} prod.</span>{% endif %}
+                  {% if wp.get('Injectors_Phase2') is not none %}<span>{{ wp.get('Injectors_Phase2') }} inj. (Ph2)</span>{% endif %}
+                  {% if wp.get('AvgWellDepth_mMD') is not none %}<span>~{{ wp.get('AvgWellDepth_mMD') }} m MD</span>{% endif %}
+                  {% if wp.get('DrillingDuration_days_avg') is not none %}<span>{{ wp.get('DrillingDuration_days_avg') }} d/well</span>{% endif %}
+                  {% if wp.get('CompletionType') %}<span>{{ wp.get('CompletionType') }}</span>{% endif %}
+                </div></div>
+                {% endif %}
+              </div>
+              {% endif %}
+
+              {# ── Reservoir Properties (from GeoLabelSet canonical record) ── #}
+              {% if has_gls_props %}
+              <details class="bd-collapse">
+              <summary class="bd-section-title" style="cursor:pointer;">Reservoir Properties ▸</summary>
+              <div class="bd-resprop-grid">
+                {% if gls_props.get('Pressure') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Pressure</div><div class="bd-value">{{ gls_props.get('Pressure') }} bar</div></div>
+                {% endif %}
+                {% if gls_props.get('Temperature') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Temperature</div><div class="bd-value">{{ gls_props.get('Temperature') }} °C</div></div>
+                {% endif %}
+                {% if gls_props.get('NetToGross') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Net / Gross</div><div class="bd-value">{{ gls_props.get('NetToGross') }}</div></div>
+                {% endif %}
+                {# ─ Porosity: may be scalar or per-facies dict ─ #}
+                {% set gls_por = gls_props.get('Porosity') %}
+                {% if gls_por is mapping %}
+                {% for facies_name, facies_val in gls_por.items() %}
+                <div class="bd-resprop-item"><div class="bd-label">Porosity ({{ facies_name }})</div><div class="bd-value">{{ facies_val }}</div></div>
+                {% endfor %}
+                {% elif gls_por is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Porosity</div><div class="bd-value">{{ gls_por }}</div></div>
+                {% endif %}
+                {% if gls_props.get('Permeability') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Avg. Permeability</div><div class="bd-value">{{ gls_props.get('Permeability') }} mD</div></div>
+                {% endif %}
+                {% if gls_props.get('OilWaterContact') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">OWC (TVDSS)</div><div class="bd-value">{{ gls_props.get('OilWaterContact') }} m</div></div>
+                {% endif %}
+                {% if gls_props.get('Viscosity') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Oil Viscosity</div><div class="bd-value">{{ gls_props.get('Viscosity') }} cP</div></div>
+                {% endif %}
+                {% if gls_props.get('FormationVolumeFactor') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Bo Factor</div><div class="bd-value">{{ gls_props.get('FormationVolumeFactor') }}</div></div>
+                {% endif %}
+                {% if gls_props.get('GasOilRatio') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">GOR</div><div class="bd-value">{{ gls_props.get('GasOilRatio') }} Sm³/Sm³</div></div>
+                {% endif %}
+              </div>
+              </details>
+              {% endif %}
+
+              {# ── Key Economics ── #}
+              {% set proj_specs = (rec.data or {}).get('ProjectSpecifications') or [] %}
+              {% set econ = ext_eq.get('KeyEconomics') or {} %}
+              {% if proj_specs %}
+              <div class="bd-section-title">Key Economics</div>
+              <div class="bd-econ-row">
+                {% for ps in proj_specs if ps is mapping %}
+                {% set pt_raw = ps.get('ParameterTypeID', '') %}
+                {% set pt_name = pt_raw.split(':')[-2] if ':' in pt_raw else pt_raw %}
+                {% set unit_raw = ps.get('UnitOfMeasureID', '') %}
+                {% set unit = unit_raw.split(':')[-2] if ':' in unit_raw else unit_raw %}
+                {% set val = ps.get('DataQuantityParameter') %}
+                {% if val is not none %}
+                <div class="bd-econ">
+                  <div class="bd-econ-label">{{ pt_name | replace('_', ' ') }}</div>
+                  <div class="bd-econ-num">{% if 'USD' in unit or 'MUSD' in unit %}${% endif %}{{ val }}{% if 'percent' in unit %}%{% elif unit %} {{ unit }}{% endif %}</div>
+                </div>
+                {% endif %}
+                {% endfor %}
+              </div>
+              {% elif econ and (econ.get('NPV_10pct_MUSD') is not none or econ.get('CAPEX_MNOK') is not none) %}
+              <div class="bd-section-title">Key Economics</div>
+              {% if econ.get('Note') %}<div style="font-size:.82rem;color:#718096;margin-bottom:.4rem;">{{ econ.get('Note') }}</div>{% endif %}
+              <div class="bd-econ-row">
+                {% if econ.get('NPV_10pct_MUSD') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">NPV (10%)</div><div class="bd-econ-num">${{ econ.get('NPV_10pct_MUSD') }}M</div></div>
+                {% endif %}
+                {% if econ.get('IRR_pct') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">IRR</div><div class="bd-econ-num">{{ econ.get('IRR_pct') }}%</div></div>
+                {% endif %}
+                {% if econ.get('CAPEX_MNOK') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">CAPEX</div><div class="bd-econ-num">{{ econ.get('CAPEX_MNOK') }} MNOK</div></div>
+                {% endif %}
+                {% if econ.get('OPEX_MNOK_pa') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">OPEX / yr</div><div class="bd-econ-num">{{ econ.get('OPEX_MNOK_pa') }} MNOK</div></div>
+                {% endif %}
+                {% if econ.get('BreakevenOilPrice_USDperbbl') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">Breakeven</div><div class="bd-econ-num">${{ econ.get('BreakevenOilPrice_USDperbbl') }}/bbl</div></div>
+                {% endif %}
+                {% if econ.get('Payback_years') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">Payback</div><div class="bd-econ-num">{{ econ.get('Payback_years') }} yr</div></div>
+                {% endif %}
+                {% if econ.get('OilPriceAssumption_USDperbbl') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">Oil Price</div><div class="bd-econ-num">${{ econ.get('OilPriceAssumption_USDperbbl') }}/bbl</div></div>
+                {% endif %}
+              </div>
+              {% if econ.get('Currency') %}<div style="font-size:.78rem;color:#a0aec0;margin-top:.2rem;">{{ econ.get('Currency') }}</div>{% endif %}
+              {% elif econ and econ.get('Note') %}
+              <div class="bd-section-title">Key Economics</div>
+              <div style="font-size:.88rem;color:#718096;">{{ econ.get('Note') }}</div>
+              {% endif %}
+
+              {# ── Schedule Milestones ── #}
+              {% set act_states = (rec.data or {}).get('ActivityStates') or [] %}
+              {% set sched = ext_eq.get('ScheduleMilestones') or [] %}
+              {% if act_states %}
+              <div class="bd-section-title">Schedule</div>
+              <div class="bd-schedule">
+                {% for st in act_states if st is mapping %}
+                <div class="sched-ms">{{ st.get('Remark') or '—' }}</div>
+                <div class="sched-date">{{ st.get('EffectiveDateTime') or '—' }}</div>
+                {% set st_raw = st.get('ActivityStatusID', '') %}
+                {% set st_label = st_raw.split(':')[-2] if ':' in st_raw else (st_raw or 'Planned') %}
+                <div class="sched-status {{ st_label | lower }}">{{ st_label }}</div>
+                {% endfor %}
+              </div>
+              {% elif sched %}
+              <div class="bd-section-title">Schedule</div>
+              <div class="bd-schedule">
+                {% for ms in sched if ms is mapping %}
+                <div class="sched-ms">{{ ms.get('Milestone') or '—' }}</div>
+                <div class="sched-date">{{ ms.get('Date') or '—' }}</div>
+                <div class="sched-status {{ (ms.get('Status') or 'planned') | lower }}">{{ ms.get('Status') or '—' }}</div>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              {# ── Alternatives ── #}
+              {% if ext_eq.get('Alternatives') %}
+              <div class="bd-section-title">Alternatives</div>
+              <ul class="bd-alt-list">
+                {% for alt in ext_eq.get('Alternatives') or [] %}
+                <li class="rank-{{ alt.get('Rank', 0) }}">
+                  <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;">
+                    <span class="bd-alt-name">{{ alt.get('Name') or 'Alternative' }}</span>
+                    {% if alt.get('Rank') is not none %}<span class="bd-alt-rank">Rank {{ alt.get('Rank') }}</span>{% endif %}
+                    {% if alt.get('RecommendedAction') %}<span class="bd-alt-rank" style="background:#e6fffa;color:#276749;">{{ alt.get('RecommendedAction') }}</span>{% endif %}
+                  </div>
+                  {% if alt.get('Rationale') %}<div class="bd-alt-rationale">{{ alt.get('Rationale') }}</div>{% endif %}
+                  {% if alt.get('NPV_10pct_MUSD') is not none or alt.get('CAPEX_MNOK') is not none or alt.get('IRR_pct') is not none %}
+                  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.3rem;">
+                    {% if alt.get('NPV_10pct_MUSD') is not none %}<span class="bd-alt-rank" style="background:#f0fff4;color:#276749;">NPV ${{ alt.get('NPV_10pct_MUSD') }}M</span>{% endif %}
+                    {% if alt.get('CAPEX_MNOK') is not none %}<span class="bd-alt-rank" style="background:#ebf8ff;color:#2b6cb0;">CAPEX {{ alt.get('CAPEX_MNOK') }} MNOK</span>{% endif %}
+                    {% if alt.get('IRR_pct') is not none %}<span class="bd-alt-rank" style="background:#fefcbf;color:#975a16;">IRR {{ alt.get('IRR_pct') }}%</span>{% endif %}
+                  </div>
+                  {% endif %}
+                </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+
+              {# ── Risks ── #}
+              {% if (rec.data or {}).get('RiskIDs') %}
+              <div class="bd-section-title">Risks</div>
+              <div class="bd-risk-chips">
+                {% for rid in (rec.data or {}).get('RiskIDs') or [] %}
+                  {% set rinfo = (rec.linked_labels or {}).get(rid, {}) %}
+                  <a class="bd-risk-chip" href="/search/view/{{ rid }}" title="{{ rid }}">{{ rinfo.name or rid.split(':')[-2] if ':' in rid else rid }}</a>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              {# ── Uncertainty Summary (methodology + P10/P50/P90 volume ranges) ── #}
+              {% set usumm = ext_eq.get('UncertaintySummary') or {} %}
+              {% if usumm %}
+              <details class="bd-collapse" open>
+              <summary class="bd-section-title" style="cursor:pointer;">Uncertainty Summary ▸</summary>
+              <div style="font-size:.86rem;color:#4a5568;line-height:1.5;">
+                {% if usumm.get('Basis') %}<div style="margin-bottom:.4rem;">{{ usumm.get('Basis') }}</div>{% endif %}
+                {% if usumm.get('MethodologyReference') %}<div style="margin-bottom:.4rem;color:#718096;">Method: {{ usumm.get('MethodologyReference') }}</div>{% endif %}
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.4rem;">
+                  {% if usumm.get('TotalRealisations') is not none %}<span class="bd-alt-rank" style="background:#ebf4ff;color:#2b6cb0;">{{ usumm.get('TotalRealisations') }} realisations</span>{% endif %}
+                  {% set sel = usumm.get('SelectedRealisations') or {} %}
+                  {% if sel %}
+                  {% for key, val in sel.items() %}<span class="bd-alt-rank" style="background:#f0fff4;color:#276749;">{{ key }}: {{ val }}</span>{% endfor %}
+                  {% endif %}
+                </div>
+                {% if usumm.get('Note') %}<div style="font-size:.82rem;color:#a0aec0;margin-bottom:.4rem;">{{ usumm.get('Note') }}</div>{% endif %}
+                {# P-value volume table (if any volume data exists) #}
+                {% set stoiip = usumm.get('StaticInPlace_Oil_MSm3') or {} %}
+                {% set recov = usumm.get('Recoverable_Oil_MSm3') or {} %}
+                {% set rf = usumm.get('RecoveryFactor_pct') or {} %}
+                {% set tstoiip = usumm.get('TargetSTOIIP_MSm3') or {} %}
+                {% if stoiip or recov or rf or tstoiip %}
+                <table style="width:100%;border-collapse:collapse;margin-top:.4rem;font-size:.84rem;">
+                  <thead>
+                    <tr style="border-bottom:1px solid #e2e8f0;color:#718096;">
+                      <th style="text-align:left;padding:.25rem .4rem;">Metric</th>
+                      <th style="text-align:right;padding:.25rem .4rem;">P90</th>
+                      <th style="text-align:right;padding:.25rem .4rem;">{% if stoiip.get('REF') is not none or tstoiip.get('REF') is not none %}REF{% else %}P50{% endif %}</th>
+                      <th style="text-align:right;padding:.25rem .4rem;">P10</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if stoiip %}
+                    <tr style="border-bottom:1px solid #f7fafc;">
+                      <td style="padding:.25rem .4rem;">STOIIP (MSm³)</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ stoiip.get('P90', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ stoiip.get('REF') or stoiip.get('P50', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ stoiip.get('P10', '—') }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if tstoiip %}
+                    <tr style="border-bottom:1px solid #f7fafc;">
+                      <td style="padding:.25rem .4rem;">Target STOIIP (MSm³)</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ tstoiip.get('P90', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ tstoiip.get('REF') or tstoiip.get('P50', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ tstoiip.get('P10', '—') }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if recov %}
+                    <tr style="border-bottom:1px solid #f7fafc;">
+                      <td style="padding:.25rem .4rem;">Recoverable (MSm³)</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ recov.get('P90', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ recov.get('REF') or recov.get('P50', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ recov.get('P10', '—') }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if rf %}
+                    <tr>
+                      <td style="padding:.25rem .4rem;">Recovery Factor (%)</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ rf.get('P90', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ rf.get('REF') or rf.get('P50', '—') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ rf.get('P10', '—') }}</td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+                {% if tstoiip.get('Note') %}<div style="font-size:.78rem;color:#a0aec0;margin-top:.2rem;">{{ tstoiip.get('Note') }}</div>{% endif %}
+                {% endif %}
+              </div>
+              </details>
+              {% endif %}
+
+              {# ── Input Parameters ── #}
+              {% set bd_params = (rec.data or {}).get('Parameters') or [] %}
+              {% if bd_params %}
+              <details class="bd-collapse">
+              <summary class="bd-section-title" style="cursor:pointer;">Input Parameters ▸</summary>
+              <ul class="bd-param-list">
+                {% for p in bd_params if p is mapping %}
+                {# Skip GeoModelDataspace — shown in Data Sources section below #}
+                {% if 'etpdataspace' not in ((p.get('DataObjectParameter') or '')|lower) and p.get('Title') != 'GeoModelDataspace' %}
+                <li>
+                  <div>
+                    <div class="bd-param-title">{{ p.get('Title') or 'Parameter' }}</div>
+                    {% if p.get('Selection') %}<div class="bd-param-desc">{{ p.get('Selection') }}</div>{% endif %}
+                  </div>
+                  {% set pkeys = p.get('Keys') or [] %}
+                  {% if pkeys is mapping %}{% set pkeys = [pkeys] %}{% endif %}
+                  {% if pkeys and pkeys is iterable and pkeys|length > 0 %}
+                    {% set pk0 = pkeys[0] if pkeys[0] is mapping else {} %}
+                    <span class="bd-param-tag">{{ pk0.get('StringParameterKey') or pk0.get('ParameterKey') or '' }}</span>
+                  {% endif %}
+                </li>
+                {% endif %}
+                {% endfor %}
+              </ul>
+              </details>
+              {% endif %}
+
+              {# ── Data Sources (ETPDataspace / RDDMS geomodel) ── #}
+              {% if ds_params %}
+              <div class="bd-section-title">Data Sources</div>
+              {% for p in ds_params %}
+                {% set ds_id   = p.get('DataObjectParameter') or '' %}
+                {% set ds_info = (rec.linked_labels or {}).get(ds_id) or {} %}
+                {% set ds_data = ds_info.get('data') or {} %}
+                {% set raw_uri = (ds_data.get('DatasetProperties') or {}).get('URI') or ds_data.get('DatasetProperties.URI') or '' %}
+                {% set srv_url = (ds_data.get('DatasetProperties') or {}).get('ServerURL') or '' %}
+                <div class="ds-entry">
+                  <div class="ds-name">
+                    {% if ds_id %}<a href="/search/view/{{ ds_id }}">{{ ds_info.name or p.get('Title') or 'Dataspace' }}</a>{% else %}{{ p.get('Title') or 'Dataspace' }}{% endif %}
+                    <span style="font-size:.78rem;background:#bee3f8;border-radius:999px;padding:.1rem .4rem;color:#2b6cb0;margin-left:.4rem;font-weight:400;">Reservoir DDMS</span>
+                  </div>
+                  {% if p.get('Selection') or p.get('Description') %}
+                  <div style="font-size:.82rem;color:#718096;margin-top:.1rem;">{{ p.get('Selection') or p.get('Description') }}</div>
+                  {% endif %}
+                  {% if ds_id %}<div class="ds-id">OSDU: {{ ds_id }}</div>{% endif %}
+                  {% if raw_uri %}
+                  <div style="margin-top:.4rem;font-size:.82rem;color:#4a5568;">EML URI:</div>
+                  <div class="eml-block">
+                    {{ raw_uri }}
+                    <button class="eml-copy-btn" onclick="navigator.clipboard.writeText('{{ raw_uri }}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})" type="button">Copy</button>
+                  </div>
+                  {% endif %}
+                  {% if srv_url %}<div class="ds-server">Server: <code>{{ srv_url }}</code></div>{% endif %}
+                  {% if raw_uri %}{% set ds_link_name = raw_uri | replace('eml:///dataspace(', '') | replace(')', '') %}
+                  <div style="margin-top:.4rem;"><a href="/keys?ds={{ ds_link_name }}">Browse in RDDMS →</a></div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+              {% endif %}
+
+              {# ── Authors & Review Team ── #}
+              {% set personnel = (rec.data or {}).get('Personnel') or [] %}
+              {% set authors = ext_eq.get('Authors') or [] %}
+              {% set d_owners = (rec.data or {}).get('DecisionOwners') or [] %}
+              {% set d_makers = (rec.data or {}).get('DecisionMakers') or [] %}
+              {% set contribs = (rec.data or {}).get('Contributors') or [] %}
+              {% set rt = ext_eq.get('ReviewTeam') or {} %}
+              {% if personnel or authors or d_owners or d_makers or contribs or rt %}
+              <details class="bd-collapse">
+              <summary class="bd-section-title" style="cursor:pointer;">Authors & Governance ▸</summary>
+              <div class="bd-meta-grid">
+                {# Prefer canonical Personnel[], fall back to ext.equinor Authors #}
+                {% if personnel %}
+                {% for p in personnel %}
+                <div class="bd-meta-item">
+                  <div class="bd-label">{{ p.get('ProjectRoleID', '').split(':')[-2] | replace('_', ' ') if p.get('ProjectRoleID') and ':' in p.get('ProjectRoleID', '') else 'Author' }}</div>
+                  <div class="bd-value">{{ p.get('Name') or '—' }}</div>
+                  {% if p.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ p.get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% else %}
+                {% for a in authors %}
+                <div class="bd-meta-item">
+                  <div class="bd-label">{{ a.get('Role') or 'Author' }}</div>
+                  <div class="bd-value">{{ a.get('Name') or '—' }}</div>
+                  {% if a.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ a.get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {# Governance: prefer canonical DecisionMakers → ApprovedBy #}
+                {% if d_makers %}
+                {% for m in d_makers %}
+                <div class="bd-meta-item" style="border-left:2px solid #68d391;">
+                  <div class="bd-label">Approved By</div>
+                  <div class="bd-value">{{ m.get('Name') }}</div>
+                  {% if m.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ m.get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% elif rt.get('ApprovedBy') %}
+                <div class="bd-meta-item" style="border-left:2px solid #68d391;">
+                  <div class="bd-label">Approved By</div>
+                  <div class="bd-value">{{ rt['ApprovedBy'].get('Name') }}</div>
+                  {% if rt['ApprovedBy'].get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ rt['ApprovedBy'].get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endif %}
+                {# Decision Owners #}
+                {% if d_owners %}
+                {% for o in d_owners %}
+                <div class="bd-meta-item" style="border-left:2px solid #d69e2e;">
+                  <div class="bd-label">Decision Owner</div>
+                  <div class="bd-value">{{ o.get('Name') or '—' }}</div>
+                  {% if o.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ o.get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {# Contributors: show all with role label (QA highlighted, others labelled by role/org) #}
+                {% if contribs %}
+                {% for c in contribs %}
+                {% set c_org = c.get('Organisation') or '' %}
+                {% set c_role = 'QA Recommender' if 'QA' in c_org else (c.get('ProjectRoleID', '').split(':')[-2] | replace('_', ' ') if c.get('ProjectRoleID') and ':' in c.get('ProjectRoleID', '') else 'Contributor') %}
+                {% set c_color = '#90cdf4' if 'QA' in c_org else '#e2e8f0' %}
+                <div class="bd-meta-item" style="border-left:2px solid {{ c_color }};">
+                  <div class="bd-label">{{ c_role }}</div>
+                  <div class="bd-value">{{ c.get('Name') or '—' }}</div>
+                  {% if c_org %}<div style="font-size:.75rem;color:#a0aec0;">{{ c_org }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% elif rt.get('QARecommender') %}
+                <div class="bd-meta-item" style="border-left:2px solid #90cdf4;">
+                  <div class="bd-label">QA Recommender</div>
+                  <div class="bd-value">{{ rt['QARecommender'].get('Name') }}</div>
+                  {% if rt['QARecommender'].get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ rt['QARecommender'].get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endif %}
+              </div>
+              </details>
+              {% endif %}
+
+              {# ── Recommendations ── #}
+              {% set remarks = (rec.data or {}).get('Remarks') or [] %}
+              {% set recos = ext_eq.get('Recommendations') or ext_eq.get('DG2Recommendations') or ext_eq.get('DG3Recommendations') or [] %}
+              {% if remarks or recos %}
+              <div class="bd-section-title">Recommendations for Next Gate</div>
+              <ol style="margin:0 0 0 1.2rem;padding:0;color:#4a5568;font-size:.88rem;line-height:1.5;">
+                {% if remarks %}
+                {% for rm in remarks %}
+                <li style="margin-bottom:.25rem;">{{ rm.get('Remark') if rm is mapping else rm }}</li>
+                {% endfor %}
+                {% else %}
+                {% for r in recos %}
+                <li style="margin-bottom:.25rem;">{{ r }}</li>
+                {% endfor %}
+                {% endif %}
+              </ol>
+              {% endif %}
+
+            </div>{# /bd-body #}
+          </div>{# /bd-card #}
+          {% endif %}
+
+          {% if is_rev %}
+          {# ══════════ RESERVOIR ESTIMATED VOLUMES CARD ══════════ #}
+          <div class="rev-card">
+            <div class="rev-header">
+              <h4>{{ name or 'Reservoir Estimated Volumes' }}</h4>
+              <div class="rev-subtitle">{{ (rec.data or {}).get('Description') or rec.kind or '' }}</div>
+            </div>
+            <div class="rev-body">
+              {# ── Volume headline KPIs ── #}
+              {% if volns.has_o10 or volns.has_o50 or volns.has_o90 or volns.has_g10 or volns.has_g50 or volns.has_g90 %}
+              <div class="bd-section-title">Volume Totals</div>
+              <div class="bd-kpi-row">
+                {% if volns.has_o10 or volns.has_o50 or volns.has_o90 %}
+                <div class="bd-kpi oil">
+                  <div class="bd-kpi-label">Oil in Place</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o10 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o50 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o90 / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                {% endif %}
+                {% if volns.has_g10 or volns.has_g50 or volns.has_g90 %}
+                <div class="bd-kpi gas">
+                  <div class="bd-kpi-label">Gas in Place</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g10 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g50 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g90 / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                {% endif %}
+                <div class="bd-kpi total">
+                  <div class="bd-kpi-label">Total</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o10 + volns.g10) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o50 + volns.g50) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o90 + volns.g90) / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+              </div>
+              {% endif %}
+
+              {# ── Metadata highlights ── #}
+              <div class="bd-meta-grid" style="margin-top:.6rem;">
+                {% set rev_data = rec.data or {} %}
+                {% if rev_data.get('ParentObjectID') %}
+                <div class="bd-meta-item"><div class="bd-label">Parent</div><div class="bd-value"><a href="/search/view/{{ rev_data.get('ParentObjectID') }}">{{ rev_data.get('ParentObjectID','').split(':')[-2] if ':' in (rev_data.get('ParentObjectID') or '') else rev_data.get('ParentObjectID') }}</a></div></div>
+                {% endif %}
+                {% if rev_data.get('ReservoirIDs') %}
+                <div class="bd-meta-item"><div class="bd-label">Reservoir(s)</div><div class="bd-value">{{ rev_data.get('ReservoirIDs')|join(', ') if rev_data.get('ReservoirIDs') is iterable else rev_data.get('ReservoirIDs') }}</div></div>
+                {% endif %}
+              </div>
+            </div>
+          </div>{# /rev-card #}
+          {% endif %}
+
+          <section class="section-card">
+            <h5>Relationships</h5>
+            <pre class="mermaid">
 graph LR
 REC{{ rec_index }}["{{ esc_label(label) }} ({{ esc_label(rec.id) }})"]
+click REC{{ rec_index }} href "/search/view/{{ rec.id }}" "Open record"
 {% for p in rec.ancestry_parents or [] %}
-P{{ rec_index }}a{{ loop.index0 }}["{{ esc_label(p) }}"]
+{% set pinfo = (rec.linked_labels or {}).get(p, {}) %}
+{% set pname = pinfo.name or p %}
+P{{ rec_index }}a{{ loop.index0 }}["{{ esc_label(pname) }} ({{ esc_label(p) }})"]
 P{{ rec_index }}a{{ loop.index0 }} --> REC{{ rec_index }}:::ancestry_parent
+click P{{ rec_index }}a{{ loop.index0 }} href "/search/view/{{ p }}" "Open parent"
 {% endfor %}
 {% for ch in rec.ancestry_children or [] %}
-C{{ rec_index }}c{{ loop.index0 }}["{{ esc_label(ch) }}"]
+{% set cinfo = (rec.linked_labels or {}).get(ch, {}) %}
+{% set cname = cinfo.name or ch %}
+C{{ rec_index }}c{{ loop.index0 }}["{{ esc_label(cname) }} ({{ esc_label(ch) }})"]
 REC{{ rec_index }} --> C{{ rec_index }}c{{ loop.index0 }}:::ancestry_child
+click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open child"
 {% endfor %}
 {% for l in rec.links or [] %}
 {% set lid = l.id %}
+{% if lid not in (rec.ancestry_parents or []) and lid not in (rec.ancestry_children or []) %}
 {% set info = (rec.linked_labels or {}).get(lid, {}) %}
 {% set lname = info.name or lid %}
 L{{ rec_index }}x{{ loop.index0 }}["{{ esc_label(lname) }} ({{ esc_label(lid) }})"]
+{% if l.role == 'referenced-by' %}
+L{{ rec_index }}x{{ loop.index0 }} --> REC{{ rec_index }}:::referenced_by
+{% else %}
 REC{{ rec_index }} --> L{{ rec_index }}x{{ loop.index0 }}:::{{ (l.role or 'ref') | replace('-','_') }}
+{% endif %}
+click L{{ rec_index }}x{{ loop.index0 }} href "/search/view/{{ lid }}" "Open linked object"
+{% endif %}
 {% endfor %}
 classDef prior_activity fill:#fff3cd,stroke:#d39e00,color:#222;
 classDef parameter_object fill:#d1ecf1,stroke:#0c5460,color:#222;
 classDef parent_object fill:#f8d7da,stroke:#721c24,color:#222;
 classDef parent_work_product fill:#f8d7da,stroke:#721c24,color:#222;
 classDef risk fill:#f5c6cb,stroke:#721c24,color:#222;
+classDef referenced_by fill:#d4edda,stroke:#155724,color:#222;
 classDef ancestry_parent fill:#cfe2ff,stroke:#084298,color:#222;
 classDef ancestry_child fill:#e2e3e5,stroke:#6c757d,color:#222;
 classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
-        </pre>
+            </pre>
 
-        <!-- Metadata (generic, all object types) -->
-        <h4 style="margin-top:.75rem">Metadata</h4>
-        <div class="meta-container">
-          <div class="meta-toolbar" style="display:flex;gap:.5rem;align-items:center;margin:.25rem 0;">
-            <input type="text" class="meta-filter" placeholder="Filter names…" style="flex:1;max-width:20rem;">
-            <button type="button" class="meta-copy" title="Copy table as CSV">Copy (CSV)</button>
-          </div>
-
-          <table class="meta-table" data-sortable="true" style="width:100%;border-collapse:collapse">
-            <thead>
-              <tr>
-                <th data-col="name" style="text-align:left;border-bottom:1px solid #ddd;">Name</th>
-                <th data-col="value" style="text-align:left;border-bottom:1px solid #ddd;">Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% set src = {
-                'id': rec.id,
-                'kind': rec.kind,
-                'version': rec.version if rec.version is not none else '',
-                'acl': rec.acl or {},
-                'legal': rec.legal or {},
-                'data': rec.data or {},
-                'ext': rec.ext or {},
-                'links': rec.links or [],
-                'ancestry.parents': rec.ancestry_parents or [],
-                'ancestry.children': rec.ancestry_children or []
-              } %}
-              {{ render_pairs(src) }}
-            </tbody>
-          </table>
-
-          <div class="muted" style="font-size:.85rem;margin-top:.25rem;">
-            Tip: click “Name” or “Value” to sort; use the filter to narrow rows.
-          </div>
-        </div>
-
-        <!-- Volumes table (ColumnBasedTable) -->
-        {% if has_volumes %}
-          <h4 style="margin-top:.5rem">{{ label }} — Volumes</h4>
-          <table>
-            <tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr>
-            {% for i in range(nrows) %}
-              <tr>
-                {% for h in headers %}
-                  {% set col_vals = vmap.get(h) or [] %}
-                  <td>{% if (col_vals|length) > i %}{{ col_vals[i] }}{% else %}—{% endif %}</td>
+            <div class="rel-links">
+              <b>Linked objects</b>
+              <ul>
+                {% for l in rec.links or [] %}
+                  {% set lid = l.id %}
+                  {% if lid not in (rec.ancestry_parents or []) and lid not in (rec.ancestry_children or []) %}
+                  {% set info = (rec.linked_labels or {}).get(lid, {}) %}
+                  <li>
+                    <a href="/search/view/{{ lid }}" title="Role: {{ l.role or 'ref' }}{% if info.kind %} · Kind: {{ info.kind }}{% endif %}">
+                      {{ info.name or lid }}
+                    </a>
+                    <span class="muted">({{ l.role or 'ref' }})</span>
+                  </li>
+                  {% endif %}
                 {% endfor %}
-              </tr>
-            {% endfor %}
-          </table>
-        {% endif %}
+                {% if not (rec.links or []) %}<li class="muted">No linked objects.</li>{% endif %}
+              </ul>
+            </div>
+          </section>
+
+          <section class="section-card">
+            <h5>Metadata</h5>
+            <div class="meta-container">
+              <div class="meta-toolbar" style="display:flex;gap:.5rem;align-items:center;margin:.25rem 0;">
+                <input type="text" class="meta-filter" placeholder="Filter metadata names…" style="flex:1;max-width:20rem;">
+                <button type="button" class="meta-copy" title="Copy table as CSV">Copy (CSV)</button>
+              </div>
+              <table class="meta-table" style="width:100%;border-collapse:collapse">
+                <thead>
+                  <tr><th class="meta-name">Name</th><th>Value</th></tr>
+                </thead>
+                <tbody>
+                  {% set rendered_count = namespace(v=0) %}
+                  {% for p in rec.metadata_pairs or [] %}
+                    {% set n = (p.name or '') %}
+                    {% set nl = n|lower %}
+                    {% if ('volumes' in nl)
+                          or ('columnvalues' in nl)
+                          or ('columnbasedtable' in nl)
+                          or ('reservoirestimatedvolumes' in nl)
+                          or ('[0]' in n) or ('[1]' in n) or ('[2]' in n) or ('[3]' in n) or ('[4]' in n)
+                          or ('.0.' in n) or ('.1.' in n) or ('.2.' in n) or ('.3.' in n) or ('.4.' in n)
+                    %}
+                    {% else %}
+                      {% set rendered_count.v = rendered_count.v + 1 %}
+                      <tr>
+                        <td class="meta-name">{{ n }}</td>
+                        <td>{{ p.value if p.value is not none else '—' }}</td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                  {% if rendered_count.v == 0 %}
+                    <tr><td colspan="2" class="muted">No non-tabular metadata to display.</td></tr>
+                  {% endif %}
+                </tbody>
+              </table>
+              <div class="muted" style="font-size:.85rem;margin-top:.25rem;">Tabular volume arrays are intentionally hidden here and shown only in the reconstructed table below.</div>
+            </div>
+          </section>
+
+          {% if has_volumes %}
+          <section class="section-card">
+            <h5>{% if is_business_decision %}Volume Breakdown (Statistical REV){% elif is_rev %}Reservoir Estimated Volumes{% else %}Reconstructed Table{% endif %}</h5>
+            {# ── REV headline summaries (totals from column sums) ── #}
+            {% if (volns.has_o10 or volns.has_o50 or volns.has_o90 or volns.has_g10 or volns.has_g50 or volns.has_g90) and not is_business_decision %}
+            <div class="kpi-grid" style="margin-bottom:.75rem;">
+              {% if volns.has_o10 or volns.has_o50 or volns.has_o90 %}
+              <div style="background:#fef3e2;border:1px solid #fbd38d;border-radius:8px;padding:.5rem .75rem;text-align:center;">
+                <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#718096;">Oil (sum)</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;margin-top:.2rem;">
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P10</div><div style="font-weight:700;">{{ '%.2f'|format(volns.o10 / 1000000) }}</div></div>
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P50</div><div style="font-weight:700;">{{ '%.2f'|format(volns.o50 / 1000000) }}</div></div>
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P90</div><div style="font-weight:700;">{{ '%.2f'|format(volns.o90 / 1000000) }}</div></div>
+                </div>
+                <div style="font-size:.65rem;color:#a0aec0;margin-top:.15rem;">Mm³</div>
+              </div>
+              {% endif %}
+              {% if volns.has_g10 or volns.has_g50 or volns.has_g90 %}
+              <div style="background:#e6f7f1;border:1px solid #9ae6b4;border-radius:8px;padding:.5rem .75rem;text-align:center;">
+                <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#718096;">Gas (sum)</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;margin-top:.2rem;">
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P10</div><div style="font-weight:700;">{{ '%.2f'|format(volns.g10 / 1000000) }}</div></div>
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P50</div><div style="font-weight:700;">{{ '%.2f'|format(volns.g50 / 1000000) }}</div></div>
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P90</div><div style="font-weight:700;">{{ '%.2f'|format(volns.g90 / 1000000) }}</div></div>
+                </div>
+                <div style="font-size:.65rem;color:#a0aec0;margin-top:.15rem;">Mm³</div>
+              </div>
+              {% endif %}
+              <div style="background:#ebf4ff;border:1px solid #90cdf4;border-radius:8px;padding:.5rem .75rem;text-align:center;">
+                <div style="font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#718096;">Total (sum)</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;margin-top:.2rem;">
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P10</div><div style="font-weight:700;">{{ '%.2f'|format((volns.o10 + volns.g10) / 1000000) }}</div></div>
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P50</div><div style="font-weight:700;">{{ '%.2f'|format((volns.o50 + volns.g50) / 1000000) }}</div></div>
+                  <div><div style="font-size:.65rem;color:#a0aec0;">P90</div><div style="font-weight:700;">{{ '%.2f'|format((volns.o90 + volns.g90) / 1000000) }}</div></div>
+                </div>
+                <div style="font-size:.65rem;color:#a0aec0;margin-top:.15rem;">Mm³</div>
+              </div>
+            </div>
+            {% endif %}
+            <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;">
+              <button type="button" class="btn-histogram" onclick="openVolHistogram(this)" title="Show volume histogram">📊 Histogram</button>
+              {% if nrows > 4 %}
+              <button type="button" class="btn-vol-expand" onclick="openVolTable(this)" title="Show full volume table">🗗 Expand Table ({{ nrows }} rows)</button>
+              {% endif %}
+            </div>
+            {# Show compact preview: first 3 rows + grand total row when table is large #}
+            <div class="table-scroll">
+            <table class="vol-data-table">
+              <tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr>
+              {% if nrows > 4 %}
+                {% for i in range(3) %}
+                {% set rit = namespace(total=false) %}
+                {% for kn in key_names %}
+                  {% set kv = (vmap.get(kn) or []) %}
+                  {% if kv|length > i and (kv[i]|string) == 'TOTAL' %}{% set rit.total = true %}{% endif %}
+                {% endfor %}
+                <tr{% if rit.total %} class="vol-total-row"{% endif %}>
+                  {% for h in headers %}
+                    {% set col_vals = vmap.get(h) or [] %}
+                    <td>{% if (col_vals|length) > i %}{{ col_vals[i] }}{% else %}—{% endif %}</td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+                <tr class="vol-ellipsis-row"><td colspan="{{ headers|length }}" style="text-align:center;color:#a0aec0;font-size:.82rem;padding:.35rem;">… {{ nrows - 4 }} more rows — click <em>Expand Table</em> to see all</td></tr>
+                {# Always show grand total row (last row) in preview #}
+                {% if volns.grand_idx >= 0 %}
+                {% set gi = volns.grand_idx %}
+                <tr class="vol-total-row vol-grand-total">
+                  {% for h in headers %}
+                    {% set col_vals = vmap.get(h) or [] %}
+                    <td>{% if (col_vals|length) > gi %}{{ col_vals[gi] }}{% else %}—{% endif %}</td>
+                  {% endfor %}
+                </tr>
+                {% endif %}
+              {% else %}
+                {% for i in range(nrows) %}
+                {% set rit = namespace(total=false) %}
+                {% for kn in key_names %}
+                  {% set kv = (vmap.get(kn) or []) %}
+                  {% if kv|length > i and (kv[i]|string) == 'TOTAL' %}{% set rit.total = true %}{% endif %}
+                {% endfor %}
+                <tr{% if rit.total %} class="vol-total-row"{% endif %}>
+                  {% for h in headers %}
+                    {% set col_vals = vmap.get(h) or [] %}
+                    <td>{% if (col_vals|length) > i %}{{ col_vals[i] }}{% else %}—{% endif %}</td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              {% endif %}
+            </table>
+            </div>
+            <script type="application/json" class="vol-full-data">
+            {"keyNames": {{ key_names | tojson }}, "headers": {{ headers | tojson }}, "rows": [{% for i in range(nrows) %}[{% for h in headers %}{% set col_vals = vmap.get(h) or [] %}{% if (col_vals|length) > i %}{{ col_vals[i] | tojson }}{% else %}null{% endif %}{% if not loop.last %},{% endif %}{% endfor %}]{% if not loop.last %},{% endif %}{% endfor %}]}
+            </script>
+          </section>
+          {% endif %}
+
+          {# ── Production Profile (prefer ColumnBasedTable, fall back to ext.equinor) ── #}
+          {% set prod_profile = ext_eq.get('ProductionProfile') or {} %}
+          {% set pp_src = bd_prod if (bd_prod and bd_prod.get('Years')) else {} %}
+          {% set pp_fallback = prod_profile if (not pp_src and prod_profile.get('Years')) else {} %}
+          {% set pp = pp_src or pp_fallback %}
+          {% set prod_years = pp.get('Years') or [] %}
+          {% if prod_years %}
+          {# If from CBT, summary may be in pp.summary; from ext, directly in prod_profile #}
+          {% set pp_summary = pp.get('summary') or {} %}
+          {% set pp_eur = pp_summary.get('EUR_MSm3') or prod_profile.get('EUR_MSm3') %}
+          {% set pp_peak = pp_summary.get('PeakOilRate_kSm3d') or prod_profile.get('PeakOilRate_kSm3d') %}
+          {% set pp_stoiip = pp_summary.get('STOIIP_P50_MSm3') or prod_profile.get('STOIIP_P50_MSm3') %}
+          <section class="section-card">
+            <h5>Production Forecast</h5>
+            {% if pp_eur is not none or pp_peak is not none or pp_stoiip is not none %}
+            <div class="bd-econ-row" style="margin-bottom:.5rem;">
+              {% if pp_stoiip is not none %}<div class="bd-econ"><div class="bd-econ-label">STOIIP P50</div><div class="bd-econ-num">{{ pp_stoiip }} MSm³</div></div>{% endif %}
+              {% if pp_eur is not none %}<div class="bd-econ"><div class="bd-econ-label">EUR</div><div class="bd-econ-num">{{ pp_eur }} MSm³</div></div>{% endif %}
+              {% if pp_peak is not none %}<div class="bd-econ"><div class="bd-econ-label">Peak Oil Rate</div><div class="bd-econ-num">{{ pp_peak }} kSm³/d</div></div>{% endif %}
+            </div>
+            {% endif %}
+            {% set pp_note = pp.get('Note') or prod_profile.get('Note') %}
+            {% if pp_note %}<div style="font-size:.82rem;color:#718096;margin-bottom:.4rem;">{{ pp_note }}</div>{% endif %}
+            <div class="prod-legend">
+              <span class="leg-oil">Oil Rate (kSm³/d)</span>
+              <span class="leg-water">Water Rate (kSm³/d)</span>
+              <span class="leg-gas" style="border-bottom:2px dashed rgba(56,161,105,.85);background:none;padding-bottom:1px;">Gas Rate (kSm³/d)</span>
+              <span class="leg-cum">Cum. Oil (MSm³)</span>
+            </div>
+            <div class="prod-chart-wrap">
+              <canvas id="prodChart{{ rec_index }}"></canvas>
+            </div>
+            <details>
+              <summary style="cursor:pointer;font-size:.85rem;color:#4a5568;">Show production table</summary>
+              <div class="table-scroll" style="margin-top:.4rem;">
+              <table>
+                <tr>
+                  <th>Year</th><th>Wells</th>
+                  <th>Oil Rate (kSm³/d)</th><th>Gas Rate (kSm³/d)</th><th>Water Rate (kSm³/d)</th>
+                  <th>Yearly Oil (MSm³)</th><th>Cum. Oil (MSm³)</th>
+                  <th>Water Cut (%)</th><th>RF (%)</th>
+                </tr>
+                {% set pp_oil = pp.get('OilRate_kSm3d') or [] %}
+                {% set pp_gas = pp.get('GasRate_kSm3d') or [] %}
+                {% set pp_water = pp.get('WaterRate_kSm3d') or [] %}
+                {% set pp_yearly = pp.get('YearlyOil_MSm3') or [] %}
+                {% set pp_cum = pp.get('CumOil_MSm3') or [] %}
+                {% set pp_wcut = pp.get('WaterCut_pct') or [] %}
+                {% set pp_rf = pp.get('RecoveryFactor_pct') or [] %}
+                {% set pp_wells = pp.get('WellsOnline') or [] %}
+                {% for yr in prod_years %}
+                <tr>
+                  <td>{{ yr }}</td>
+                  <td>{{ pp_wells[loop.index0] if pp_wells|length > loop.index0 else '—' }}</td>
+                  <td>{{ pp_oil[loop.index0] if pp_oil|length > loop.index0 else '—' }}</td>
+                  <td>{{ pp_gas[loop.index0] if pp_gas|length > loop.index0 else '—' }}</td>
+                  <td>{{ pp_water[loop.index0] if pp_water|length > loop.index0 else '—' }}</td>
+                  <td>{{ pp_yearly[loop.index0] if pp_yearly|length > loop.index0 else '—' }}</td>
+                  <td>{{ pp_cum[loop.index0] if pp_cum|length > loop.index0 else '—' }}</td>
+                  <td>{{ pp_wcut[loop.index0] if pp_wcut|length > loop.index0 else '—' }}</td>
+                  <td>{{ pp_rf[loop.index0] if pp_rf|length > loop.index0 else '—' }}</td>
+                </tr>
+                {% endfor %}
+              </table>
+              </div>
+            </details>
+          </section>
+          {% endif %}
+        </div>
       </div>
     {% endfor %}
 
-    <!-- JS: selection toggles visibility and re-renders Mermaid safely -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <script>
+    /* ── Volume histogram popup ── */
+    (function(){
+      let activeModal = null;
+      let activeChart = null;
+
+      window.openVolHistogram = function(btn) {
+        const section = btn.closest('.section-card');
+        if (!section) return;
+
+        // ── Read data from embedded JSON (full data, not truncated DOM) ──
+        const dataEl = section.querySelector('.vol-full-data');
+        let headers = [], keyNameSet = new Set(), allRows = [];
+        if (dataEl) {
+          try {
+            const d = JSON.parse(dataEl.textContent);
+            headers = d.headers || [];
+            (d.keyNames || []).forEach(k => keyNameSet.add(k));
+            allRows = d.rows || [];
+          } catch(e) { /* fall through to DOM */ }
+        }
+        // Fallback: parse DOM table
+        if (!headers.length) {
+          const tbl = section.querySelector('table.vol-data-table');
+          if (!tbl) return;
+          headers = Array.from(tbl.querySelectorAll('tr:first-child th')).map(th => th.textContent.trim());
+          const domRows = Array.from(tbl.querySelectorAll('tr')).slice(1);
+          domRows.forEach(r => {
+            if (r.classList.contains('vol-ellipsis-row')) return;
+            allRows.push(Array.from(r.cells).map(c => {
+              const t = c.textContent.trim(); const n = parseFloat(t); return isNaN(n) ? t : n;
+            }));
+          });
+          // Heuristic: columns without a dot are keys
+          headers.forEach(h => { if (!h.includes('.')) keyNameSet.add(h); });
+        }
+        if (!headers.length || !allRows.length) return;
+
+        // Classify key vs value columns
+        const keyCols = [], valCols = [];
+        headers.forEach((h, i) => {
+          if (keyNameSet.has(h)) keyCols.push({name: h, idx: i});
+          else valCols.push({name: h, idx: i});
+        });
+        if (!valCols.length) { alert('No numeric volume columns found.'); return; }
+
+        // Build segment labels + column data
+        const segments = [];
+        const colData = {};
+        valCols.forEach(c => { colData[c.name] = []; });
+        allRows.forEach((row, ri) => {
+          const segParts = keyCols.map(k => row[k.idx] != null ? String(row[k.idx]) : '').filter(Boolean);
+          segments.push(segParts.join(' / ') || ('Row ' + (ri + 1)));
+          valCols.forEach(c => {
+            colData[c.name].push(typeof row[c.idx] === 'number' ? row[c.idx] : (parseFloat(row[c.idx]) || 0));
+          });
+        });
+
+        // Group columns by fluid (Oil, Gas, etc.)
+        const groups = {};
+        valCols.forEach(c => {
+          const parts = c.name.split('.');
+          const fluid = parts.length > 1 ? parts[0] : 'Value';
+          const stat = parts.length > 1 ? parts.slice(1).join('.') : c.name;
+          if (!groups[fluid]) groups[fluid] = [];
+          groups[fluid].push({stat, col: c.name});
+        });
+
+        // Build modal
+        if (activeModal) { activeModal.remove(); activeModal = null; }
+        if (activeChart) { activeChart.destroy(); activeChart = null; }
+
+        const overlay = document.createElement('div');
+        overlay.className = 'vol-modal-overlay';
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeVolModal(); });
+
+        const modal = document.createElement('div');
+        modal.className = 'vol-modal';
+
+        // Fluid selector
+        const fluidNames = Object.keys(groups);
+        // Default to 'Oil' if present, else first
+        const defaultFluid = fluidNames.includes('Oil') ? 'Oil' : fluidNames[0];
+        let controlsHTML = '<div class="vol-chart-controls">';
+        controlsHTML += '<label>Fluid: <select id="volFluidSel">';
+        fluidNames.forEach(f => {
+          controlsHTML += '<option value="' + f + '"' + (f===defaultFluid?' selected':'') + '>' + f + '</option>';
+        });
+        controlsHTML += '</select></label>';
+        controlsHTML += '<label style="margin-left:auto;"><input type="checkbox" id="volLogScale"> Log scale</label>';
+        controlsHTML += '</div>';
+
+        modal.innerHTML = '<button class="vol-modal-close" onclick="closeVolModal()" title="Close">&times;</button>'
+          + '<h4>Volume Histogram — per Segment</h4>'
+          + controlsHTML
+          + '<div class="vol-chart-wrap"><canvas id="volHistCanvas"></canvas></div>';
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        activeModal = overlay;
+
+        // Esc key to close
+        const escHandler = e => { if (e.key === 'Escape') closeVolModal(); };
+        document.addEventListener('keydown', escHandler);
+        overlay._escHandler = escHandler;
+
+        // Color: one hue per fluid, dark→light by statistic
+        // Base HSL hues per fluid property
+        const fluidHSL = {
+          'Oil':              [28, 82],   // warm orange
+          'Gas':              [153, 55],  // green
+          'Total':            [211, 65],  // blue
+          'AssociatedLiquid': [263, 55],  // purple
+          'AssociatedGas':    [0, 55],    // red
+          'BulkOil':          [35, 60],   // tan-orange
+          'BulkGas':          [145, 45],  // sage green
+          'PoreOil':          [30, 50],   // muted orange
+          'PoreGas':          [155, 40],  // muted green
+          'HydrocarbonPoreOil': [20, 55], // rust
+          'HydrocarbonPoreGas': [160, 50],// teal
+          'Bulk':             [230, 40],  // slate blue
+          'Pore':             [270, 45],  // violet
+        };
+        const defaultHSL = [0, 0];       // grey
+
+        // Stat → lightness level (dark = small L → light = large L)
+        const statLevel = {
+          'P10': 35, 'P50': 50, 'P90': 65,
+          'ArithmeticMean': 42, 'Minimum': 72, 'Maximum': 78, 'StandardDeviation': 82
+        };
+        const defaultLevel = 55;
+
+        function fluidColor(fluid, stat) {
+          const [h, s] = fluidHSL[fluid] || defaultHSL;
+          const l = statLevel[stat] || defaultLevel;
+          return 'hsl(' + h + ',' + s + '%,' + l + '%)';
+        }
+
+        function buildChart(fluid){
+          if (activeChart) activeChart.destroy();
+          const cols = groups[fluid] || [];
+          const datasets = cols.map(c => ({
+            label: c.stat || c.col,
+            data: colData[c.col],
+            backgroundColor: fluidColor(fluid, c.stat),
+            borderColor: fluidColor(fluid, 'P10'),
+            borderWidth: 1,
+            borderRadius: 3,
+          }));
+          const logScale = document.getElementById('volLogScale')?.checked;
+          activeChart = new Chart(document.getElementById('volHistCanvas').getContext('2d'), {
+            type: 'bar',
+            data: { labels: segments, datasets },
+            options: {
+              responsive: true, maintainAspectRatio: false,
+              interaction: { mode: 'index', intersect: false },
+              plugins: {
+                legend: { position: 'top', labels: { boxWidth: 14, font: { size: 11 } } },
+                tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + (ctx.parsed.y != null ? ctx.parsed.y.toLocaleString(undefined, {maximumFractionDigits: 2}) : '—') } }
+              },
+              scales: {
+                x: {
+                  grid: { display: false },
+                  ticks: { maxRotation: 45, minRotation: 0, font: { size: 10 },
+                    callback: function(val) {
+                      const lbl = this.getLabelForValue(val);
+                      return lbl.length > 18 ? lbl.slice(0,16) + '…' : lbl;
+                    }
+                  }
+                },
+                y: {
+                  type: logScale ? 'logarithmic' : 'linear',
+                  beginAtZero: !logScale,
+                  title: { display: true, text: fluid + ' volume' },
+                  ticks: { callback: v => v >= 1e6 ? (v/1e6).toFixed(1) + 'M' : v >= 1e3 ? (v/1e3).toFixed(1) + 'k' : v }
+                }
+              }
+            }
+          });
+        }
+
+        buildChart(defaultFluid);
+
+        document.getElementById('volFluidSel')?.addEventListener('change', e => buildChart(e.target.value));
+        document.getElementById('volLogScale')?.addEventListener('change', () => {
+          const sel = document.getElementById('volFluidSel');
+          buildChart(sel ? sel.value : fluidNames[0]);
+        });
+      };
+
+      window.closeVolModal = function(){
+        if (activeChart) { activeChart.destroy(); activeChart = null; }
+        if (activeModal) {
+          if (activeModal._escHandler) document.removeEventListener('keydown', activeModal._escHandler);
+          activeModal.remove();
+          activeModal = null;
+        }
+      };
+
+      /* ── Full volume table popup ── */
+      window.openVolTable = function(btn) {
+        const section = btn.closest('.section-card');
+        if (!section) return;
+        const tbl = section.querySelector('table.vol-data-table');
+        if (!tbl) return;
+
+        // Parse full table (including the ellipsis row we'll skip)
+        const ths = Array.from(tbl.querySelectorAll('tr:first-child th'));
+        const headers = ths.map(th => th.textContent.trim());
+        if (!headers.length) return;
+
+        // We need the full data — read from the Jinja-embedded data attributes
+        // Actually, the preview table only has 3 rows. We'll rebuild from the hidden full data.
+        // Strategy: find ALL vol-data-table rows (skip ellipsis), but full data is in the DOM
+        //   We'll use a data attribute approach — embed full JSON in a hidden element.
+        //   Simpler: the full data is available in the hidden sibling.
+        // Best approach: clone the preview table and populate from data attributes.
+
+        // Look for the full-data script tag next to the table
+        const dataEl = section.querySelector('.vol-full-data');
+        if (!dataEl) return;
+        let fullData;
+        try { fullData = JSON.parse(dataEl.textContent); } catch(e) { return; }
+
+        if (activeModal) { activeModal.remove(); activeModal = null; }
+
+        const overlay = document.createElement('div');
+        overlay.className = 'vol-modal-overlay';
+        overlay.addEventListener('click', e => { if (e.target === overlay) closeVolModal(); });
+
+        const modal = document.createElement('div');
+        modal.className = 'vol-modal';
+
+        let h = '<button class="vol-modal-close" onclick="closeVolModal()" title="Close">&times;</button>';
+        h += '<h4>Volume Table — ' + fullData.rows.length + ' rows</h4>';
+        h += '<div style="margin-bottom:.5rem;display:flex;gap:.5rem;align-items:center;"><input type="text" id="volTblFilter" placeholder="Filter rows…" style="flex:1;max-width:20rem;font-size:.85rem;padding:.25rem .5rem;border:1px solid #cbd5e0;border-radius:4px;"><button type="button" class="btn-vol-expand" onclick="copyVolTableCSV()" title="Copy as CSV">📋 Copy CSV</button></div>';
+        h += '<div class="table-scroll" style="max-height:60vh;overflow:auto;"><table class="vol-data-table" id="volFullTable">';
+        h += '<tr>' + fullData.headers.map(hd => '<th>' + hd + '</th>').join('') + '</tr>';
+        const keySet = new Set(fullData.keyNames || []);
+        fullData.rows.forEach(row => {
+          // Detect total rows: any key column has value 'TOTAL'
+          let isTotal = false, isGrand = true;
+          fullData.headers.forEach((hd, ci) => {
+            if (keySet.has(hd) && String(row[ci]) === 'TOTAL') isTotal = true;
+            if (keySet.has(hd) && String(row[ci]) !== 'TOTAL') isGrand = false;
+          });
+          const cls = (isTotal && isGrand) ? ' class="vol-grand-total"' : isTotal ? ' class="vol-total-row"' : '';
+          h += '<tr' + cls + '>' + row.map(v => '<td>' + (v != null ? v : '—') + '</td>').join('') + '</tr>';
+        });
+        h += '</table></div>';
+
+        modal.innerHTML = h;
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        activeModal = overlay;
+
+        const escHandler = e => { if (e.key === 'Escape') closeVolModal(); };
+        document.addEventListener('keydown', escHandler);
+        overlay._escHandler = escHandler;
+
+        // Filter
+        document.getElementById('volTblFilter')?.addEventListener('input', function() {
+          const q = this.value.toLowerCase();
+          const rows = document.querySelectorAll('#volFullTable tr');
+          rows.forEach((r, i) => {
+            if (i === 0) return; // header
+            r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+          });
+        });
+      };
+
+      window.copyVolTableCSV = function() {
+        const tbl = document.getElementById('volFullTable');
+        if (!tbl) return;
+        const rows = Array.from(tbl.querySelectorAll('tr'));
+        const csv = rows.map(r => Array.from(r.querySelectorAll('th,td')).map(c => c.textContent.trim()).join('\t')).join('\n');
+        navigator.clipboard.writeText(csv).then(() => {
+          const btn = document.querySelector('.vol-modal .btn-vol-expand');
+          if (btn) { const orig = btn.textContent; btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = orig, 1500); }
+        });
+      };
+    })();
+    </script>
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
@@ -271,13 +1700,73 @@ classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
         nodes.forEach(n => { if (n.dataset.src) n.textContent = n.dataset.src; n.removeAttribute('data-processed'); });
         try { mermaid.init(undefined, nodes); } catch (e) { console.warn('Mermaid re-init failed:', e); }
       }
+
+      /* ── Production profile Chart.js rendering ── */
+      const chartInstances = {};
+      function renderProdChart(container) {
+        container.querySelectorAll('canvas[id^="prodChart"]').forEach(cv => {
+          if (chartInstances[cv.id]) return; // already rendered
+          const wrap = cv.closest('.section-card');
+          if (!wrap) return;
+          // Read data from the table inside the same section
+          const tbl = wrap.querySelector('table');
+          if (!tbl) return;
+          const rows = Array.from(tbl.querySelectorAll('tbody tr, tr')).slice(1); // skip header
+          const years=[], oil=[], gas=[], water=[], cum=[];
+          rows.forEach(r => {
+            const cells = Array.from(r.cells);
+            if (cells.length < 7) return;
+            years.push(cells[0].textContent.trim());
+            oil.push(parseFloat(cells[2].textContent) || 0);
+            gas.push(parseFloat(cells[3].textContent) || 0);
+            water.push(parseFloat(cells[4].textContent) || 0);
+            cum.push(parseFloat(cells[6].textContent) || 0);
+          });
+          if (!years.length) return;
+          const hasGas = gas.some(v => v > 0);
+          const datasets = [
+            { label: 'Oil Rate (kSm³/d)', data: oil, backgroundColor: 'rgba(221,107,32,.75)', order: 3, yAxisID: 'y', stack: 'rates' },
+            { label: 'Water Rate (kSm³/d)', data: water, backgroundColor: 'rgba(49,130,206,.40)', order: 4, yAxisID: 'y', stack: 'rates' },
+            { label: 'Cum. Oil (MSm³)', data: cum, type: 'line', borderColor: '#805ad5', backgroundColor: 'transparent', borderWidth: 2, pointRadius: 2, order: 1, yAxisID: 'y1' }
+          ];
+          const scales = {
+            x: { grid: { display: false } },
+            y:  { position: 'left', title: { display: true, text: 'Liquid Rate (kSm³/d)' }, stacked: true, beginAtZero: true },
+            y1: { position: 'right', title: { display: true, text: 'Cum Oil (MSm³)' }, grid: { drawOnChartArea: false }, beginAtZero: true }
+          };
+          if (hasGas) {
+            datasets.splice(2, 0, {
+              label: 'Gas Rate (kSm³/d)', data: gas, type: 'line',
+              borderColor: 'rgba(56,161,105,.85)', backgroundColor: 'transparent',
+              borderWidth: 2, borderDash: [6, 3], pointRadius: 1.5,
+              order: 2, yAxisID: 'y2'
+            });
+            scales.y2 = { position: 'right', title: { display: true, text: 'Gas Rate (kSm³/d)' },
+                          grid: { drawOnChartArea: false }, beginAtZero: true };
+          }
+          chartInstances[cv.id] = new Chart(cv.getContext('2d'), {
+            type: 'bar',
+            data: { labels: years, datasets },
+            options: {
+              responsive: true, maintainAspectRatio: false,
+              interaction: { mode: 'index', intersect: false },
+              plugins: { legend: { display: false } },
+              scales
+            }
+          });
+        });
+      }
+
       function showBlock(idx) {
         blocks.forEach(b => { b.style.display = 'none'; });
         const el = document.getElementById('rec-' + idx);
-        if (el) { el.style.display = ''; renderMermaidIn(el); }
+        if (el) { el.style.display = ''; renderMermaidIn(el); renderProdChart(el); }
       }
       if (sel && sel.options.length > 0) sel.value = sel.options[0].value;
       sel?.addEventListener('change', (e) => { const idx = e.target.value; if (idx) showBlock(idx); });
+
+      // Initial render of first visible block's charts
+      blocks.forEach(b => { if (b.style.display !== 'none') renderProdChart(b); });
     </script>
   {% endif %}
 {% endif %}

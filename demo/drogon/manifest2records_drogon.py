@@ -26,6 +26,7 @@ MANIFEST_ORDER = [
     "manifest_wpcraw_drogon.json",          # RAW volumes
     "manifest_wpcstat_drogon.json",         # statistics
     "manifest_wpcparams_drogon.json",       # input parameters (ColumnBasedTable)
+    "manifest_activity_drogon.json",        # ActivityTemplate + Activity (merged workflow)
     "manifest_risk_drogon.json",            # Risk
     "manifest_bd_drogon.json",              # BusinessDecision (references everything)
 ]
@@ -43,7 +44,7 @@ def _flatten_manifest(man: Dict[str, Any]) -> List[Dict[str, Any]]:
             if isinstance(r, dict) and "data" in r:
                 out.append(r)
     data = man.get("Data", {})
-    for grp_key in ("WorkProductComponents", "WorkProducts"):
+    for grp_key in ("Datasets", "WorkProductComponents", "WorkProducts"):
         for r in data.get(grp_key, []):
             if isinstance(r, dict) and "data" in r:
                 out.append(r)

@@ -25,13 +25,11 @@ import numpy as np
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
-SCRIPT_DIR = Path(__file__).resolve().parent
-JSON_DIR   = SCRIPT_DIR.parent / "json"
+SCRIPT_DIR = Path(__file__).resolve().parent          # demo/drogon
+JSON_DIR   = SCRIPT_DIR                               # demo/drogon
 
 # ── Helpers ─────────────────────────────────────────────────────────────
-def load_json(path: str) -> Dict[str, Any]:
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+from _shared import load_json  # noqa: E402
 
 def ref_id(prefix: str, entity: str, name: str) -> str:
     """Reference-data ID WITH trailing colon (for PropertyTypeID)."""
@@ -60,6 +58,7 @@ FACETS = ("P10", "P50", "P90", "ArithmeticMean", "Minimum", "Maximum", "Standard
 
 
 def _compute_stats(rows: List[Dict], properties: List[str]) -> Dict[str, float]:
+    """Compute P10/P50/P90/Mean/Min/Max/Std across rows (one value per row)."""
     out: Dict[str, float] = {}
     for p in properties:
         arr = [r.get(p, float("nan")) for r in rows]
@@ -71,6 +70,32 @@ def _compute_stats(rows: List[Dict], properties: List[str]) -> Dict[str, float]:
         out[f"{p}.Maximum"]           = float(max(arr)) if arr else float("nan")
         out[f"{p}.StandardDeviation"] = _std(arr)
     return out
+
+
+def _compute_total_stats(rows: List[Dict], properties: List[str]) -> Dict[str, float]:
+    """Compute statistics for TOTAL rows: SUM per-realisation first, then
+    compute P10/P50/P90 across those realisation-level sums.
+
+    This is the correct volumetric aggregation — field-level totals must be
+    formed by summing zone/segment/facies volumes within each realisation,
+    then deriving statistics across realisations.
+    """
+    # Group by Realisation
+    reals: Dict[Any, List[Dict]] = {}
+    for r in rows:
+        reals.setdefault(r.get("Realisation"), []).append(r)
+
+    # Sum each property per realisation → one synthetic row per realisation
+    real_sums: List[Dict] = []
+    for real_id, grp in sorted(reals.items()):
+        summed: Dict[str, float] = {}
+        for p in properties:
+            vals = [r.get(p, 0.0) or 0.0 for r in grp]
+            summed[p] = sum(vals)
+        real_sums.append(summed)
+
+    # Now compute stats across the realisation sums
+    return _compute_stats(real_sums, properties)
 
 
 def build_statistics(raw_manifest: Dict, facet_roles: Dict, id_prefix: str) -> Dict:
@@ -110,7 +135,7 @@ def build_statistics(raw_manifest: Dict, facet_roles: Dict, id_prefix: str) -> D
     for seg in seg_set:
         grp = [r for k, v in groups.items() if k[0] == seg for r in v]
         rec = {"SegmentID": seg, "Zone": "TOTAL", "Facies": "TOTAL"}
-        rec.update(_compute_stats(grp, properties))
+        rec.update(_compute_total_stats(grp, properties))
         agg_rows.append(rec)
 
     # Per-facies TOTALs (across segments & zones)
@@ -118,12 +143,12 @@ def build_statistics(raw_manifest: Dict, facet_roles: Dict, id_prefix: str) -> D
     for fac in fac_set:
         grp = [r for k, v in groups.items() if k[2] == fac for r in v]
         rec = {"SegmentID": "TOTAL", "Zone": "TOTAL", "Facies": fac}
-        rec.update(_compute_stats(grp, properties))
+        rec.update(_compute_total_stats(grp, properties))
         agg_rows.append(rec)
 
     # Grand TOTAL
     rec = {"SegmentID": "TOTAL", "Zone": "TOTAL", "Facies": "TOTAL"}
-    rec.update(_compute_stats(rows, properties))
+    rec.update(_compute_total_stats(rows, properties))
     agg_rows.append(rec)
 
     # ── Build ColumnValues ──────────────────────────────────────────────

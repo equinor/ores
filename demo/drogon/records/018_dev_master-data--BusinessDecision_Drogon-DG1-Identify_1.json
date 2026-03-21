@@ -1,0 +1,274 @@
+{
+  "id": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
+  "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon — Decision Gate 1 DG1 Identify & Assess",
+    "Description": "DG1 evaluation of the Valysar fluvial formation in the Drogon field, covering static in-place volume estimation across 7 reservoir segments (NorthSea, NorthHorst, CentralHorst, CentralFlanks, CentralSouth, SouthWing, EastLobe) with three facies types (Channel, Crevasse, Floodplain). The assessment uses FMU-driven uncertainty realisations to derive P10/P50/P90 oil and gas volumes, forming the basis for the DG2 Concept Select recommendation.",
+    "ProjectName": "Drogon Field Development",
+    "DecisionLevelID": "dev:reference-data--DecisionLevel:DG1:1",
+    "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:1",
+    "DecisionDueDate": "2026-03-15",
+    "DecisionDate": "2026-02-28",
+    "DecisionSummary": "Evaluate the Valysar formation of the Drogon field. Assess in-place volumes (oil + gas) across 7 reservoir segments with facies-dependent porosity uncertainty. Determine whether to proceed to DG2 Concept Select.",
+    "RiskIDs": [
+      "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+      "dev:master-data--Risk:Drogon-FaultCompartment:1"
+    ],
+    "PriorActivityIDs": [
+      "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1"
+    ],
+    "Parameters": [
+      {
+        "Title": "Raw volumes (per realisation)",
+        "Selection": "Raw per-realisation volumes feeding the statistical summary",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:6a436525-7f21-43ce-84f2-c0a3a130fb73:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "REV-raw"
+          }
+        ]
+      },
+      {
+        "Title": "Statistical volumes (P10/P50/P90)",
+        "Selection": "Aggregated statistics used for the DG1 assessment",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:2a6251f6-4f3f-4734-9471-c9506e866da2:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "REV-stats"
+          }
+        ]
+      },
+      {
+        "Title": "Valysar parameters (OWC, porosity)",
+        "Selection": "Per-segment, per-facies input parameters",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:44675061-ae97-458b-b6b8-5b5ffedbe9e2:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "ColumnBasedTable-params"
+          }
+        ]
+      },
+      {
+        "Title": "Reservoir scope",
+        "Selection": "Master-data context for the decision",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+        "DataObjectParameter": "dev:master-data--Reservoir:224d8c55-4316-4df8-9a3a-21e22250d00c:1"
+      },
+      {
+        "Title": "GeoModelDataspace",
+        "Selection": "RDDMS ETP dataspace with the Drogon DG2 geomodel EPC files (RMS export)",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:1",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "ETPDataspace"
+          }
+        ]
+      },
+      {
+        "Title": "Key Uncertainties",
+        "Selection": "DG1 subsurface uncertainty factors (High/Medium impact)",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:1",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG1-KeyUncertainties:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "KeyUncertainties"
+          }
+        ]
+      }
+    ],
+    "Personnel": [
+      {
+        "Name": "Kristin Haugen",
+        "ProjectRoleID": "dev:reference-data--ProjectRole:GeoscienceLead:1",
+        "Organisation": "Drogon Subsurface"
+      },
+      {
+        "Name": "Henrik Bjørnstad",
+        "ProjectRoleID": "dev:reference-data--ProjectRole:ReservoirEngineer:1",
+        "Organisation": "Drogon Reservoir Management"
+      },
+      {
+        "Name": "Anna-Lise Tveit",
+        "ProjectRoleID": "dev:reference-data--ProjectRole:Petrophysicist:1",
+        "Organisation": "Drogon Petec"
+      },
+      {
+        "Name": "Erik Stensrud",
+        "ProjectRoleID": "dev:reference-data--ProjectRole:FMULead:1",
+        "Organisation": "Drogon Geomodelling"
+      }
+    ],
+    "DecisionOwners": [
+      {
+        "Name": "Kristin Haugen",
+        "Organisation": "Drogon Subsurface Lead"
+      }
+    ],
+    "DecisionMakers": [
+      {
+        "Name": "Lars Kongsvik",
+        "Organisation": "Drogon Project Director"
+      }
+    ],
+    "Contributors": [
+      {
+        "Name": "Erik Stensrud",
+        "Organisation": "Drogon Geomodelling"
+      },
+      {
+        "Name": "Marte Nygaard",
+        "Organisation": "ST MSU Subsurface QA"
+      }
+    ],
+    "Remarks": [
+      {
+        "Remark": "Implement Level 3 FMU uncertainty workflow with increased realisation count (target 50+) for DG2",
+        "RemarkSource": "DG1 Recommendations"
+      },
+      {
+        "Remark": "Acquire additional core data from NorthSea and EastLobe segments to reduce porosity uncertainty",
+        "RemarkSource": "DG1 Recommendations"
+      },
+      {
+        "Remark": "Evaluate seismic reprocessing for improved depth conversion of Valysar top reservoir",
+        "RemarkSource": "DG1 Recommendations"
+      },
+      {
+        "Remark": "Conduct cross-discipline review of OWC sensitivity on recovery factor estimates",
+        "RemarkSource": "DG1 Recommendations"
+      },
+      {
+        "Remark": "Execute production testing programme across suspected fault blocks to establish pressure connectivity and constrain dynamic simulation models (target DG2 input, 2027-Q2)",
+        "RemarkSource": "DG1 Recommendations"
+      },
+      {
+        "Remark": "Plan up to 4 additional infill wells targeting isolated fault compartments; include CAPEX range 50–150 MUSD in DG2 cost estimate and sensitivity analysis",
+        "RemarkSource": "DG1 Recommendations"
+      }
+    ],
+    "ancestry": {
+      "parents": [
+        "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1"
+      ],
+      "children": []
+    },
+    "ext": {
+      "equinor": {
+        "Authors": [
+          {
+            "Name": "Kristin Haugen",
+            "Role": "Geoscience Lead",
+            "Organisation": "Drogon Subsurface"
+          },
+          {
+            "Name": "Henrik Bjørnstad",
+            "Role": "Reservoir Engineer",
+            "Organisation": "Drogon Reservoir Management"
+          },
+          {
+            "Name": "Anna-Lise Tveit",
+            "Role": "Petrophysicist",
+            "Organisation": "Drogon Petec"
+          },
+          {
+            "Name": "Erik Stensrud",
+            "Role": "Geologist / FMU Lead",
+            "Organisation": "Drogon Geomodelling"
+          }
+        ],
+        "ReviewTeam": {
+          "PreparedBy": {
+            "Name": "Erik Stensrud",
+            "Organisation": "Drogon Geomodelling"
+          },
+          "Responsible": {
+            "Name": "Kristin Haugen",
+            "Organisation": "Drogon Subsurface Lead"
+          },
+          "QARecommender": {
+            "Name": "Marte Nygaard",
+            "Organisation": "ST MSU Subsurface QA"
+          },
+          "ApprovedBy": {
+            "Name": "Lars Kongsvik",
+            "Organisation": "Drogon Project Director"
+          }
+        },
+        "Alternatives": [
+          {
+            "Name": "Proceed to DG2 with full 7-segment development",
+            "Rank": 1,
+            "Rationale": "Static in-place volumes support commercial viability across all 7 segments; porosity risk manageable with appraisal data. Full scope maximises resource capture from CentralHorst (highest Oil concentration) through EastLobe.",
+            "RecommendedAction": "Approve"
+          },
+          {
+            "Name": "Reduced scope — focus on CentralHorst and CentralSouth",
+            "Rank": 2,
+            "Rationale": "CentralHorst and CentralSouth carry the highest Oil density and lowest porosity uncertainty (Channel facies dominant). De-risks early production but leaves ~40% of upside for later phases.",
+            "RecommendedAction": "Consider"
+          },
+          {
+            "Name": "Defer — acquire additional appraisal data",
+            "Rank": 3,
+            "Rationale": "Floodplain facies porosity (avg 0.10) and cementation effects in deeper segments remain poorly constrained. Additional core data from NorthSea and EastLobe segments would reduce volume uncertainty range before committing to DG2.",
+            "RecommendedAction": "Fallback"
+          }
+        ],
+        "DevelopmentConcept": {
+          "Summary": "Subsea development with tie-back to existing host facility. Valysar formation at ~1700 m TVD MSL in the Drogon area, Norwegian North Sea.",
+          "WellCount": 12,
+          "TemplateSlots": 16,
+          "ReservoirFormation": "Valysar",
+          "FieldArea": "Drogon",
+          "WaterDepth_m": 108,
+          "TargetStartUp": "2028-H1"
+        },
+        "UncertaintySummary": {
+          "Basis": "FMU static in-place volumes from 3 uncertainty realisations across 7 segments and 3 facies types",
+          "Note": "See stat WPC for full P10/P50/P90 breakdown per segment & facies. Volume Unit: m³.",
+          "TotalRealisations": 3,
+          "MethodologyReference": "FMU Level 2 static uncertainty workflow (Valysar geomodel v1)"
+        },
+        "Recommendations": [
+          "Implement Level 3 FMU uncertainty workflow with increased realisation count (target 50+) for DG2",
+          "Acquire additional core data from NorthSea and EastLobe segments to reduce porosity uncertainty",
+          "Evaluate seismic reprocessing for improved depth conversion of Valysar top reservoir",
+          "Conduct cross-discipline review of OWC sensitivity on recovery factor estimates",
+          "Execute production testing programme across suspected fault blocks to establish pressure connectivity and constrain dynamic simulation models (target DG2 input, 2027-Q2)",
+          "Plan up to 4 additional infill wells targeting isolated fault compartments; include CAPEX range 50–150 MUSD in DG2 cost estimate and sensitivity analysis"
+        ]
+      }
+    }
+  }
+}

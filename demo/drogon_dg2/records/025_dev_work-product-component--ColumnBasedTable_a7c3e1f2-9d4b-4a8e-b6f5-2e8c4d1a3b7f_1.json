@@ -1,0 +1,388 @@
+{
+  "id": "dev:work-product-component--ColumnBasedTable:a7c3e1f2-9d4b-4a8e-b6f5-2e8c4d1a3b7f:1",
+  "kind": "osdu:wks:work-product-component--ColumnBasedTable:1.4.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon Valysar \u2014 DG2 Production Forecast (Reference Case)",
+    "Description": "DG2 reference case production forecast from dynamic simulation. 12 producers, Valysar formation, Drogon FPSO host. Revised porosity \u00d70.8. Arps hyperbolic decline (b=0.7, Di=18%/y) with Buckley-Leverett water cut model. Water production capped at FPSO treatment capacity (4800 Sm\u00b3/d).",
+    "ParentObjectID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "ParentWorkProductID": "dev:work-product:37dcb76b-e388-4dbf-9940-9ed277418543:1",
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+      ],
+      "children": []
+    },
+    "Table": {
+      "ColumnBasedTableTypeID": "dev:reference-data--ColumnBasedTableType:ProductionForecast",
+      "ColumnSize": 20,
+      "KeyColumns": [
+        {
+          "ColumnName": "Year",
+          "ColumnRole": "Key",
+          "ValueType": "integer"
+        }
+      ],
+      "Columns": [
+        {
+          "ColumnName": "WellsOnline",
+          "ColumnRole": "Value",
+          "ValueType": "integer",
+          "Description": "Number of production wells online"
+        },
+        {
+          "ColumnName": "OilRate",
+          "ColumnRole": "Value",
+          "ValueType": "number",
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:kSm3.d-1",
+          "FacetIDs": [
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:product",
+              "FacetRoleID": "dev:reference-data--FacetRole:oil"
+            },
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:condition",
+              "FacetRoleID": "dev:reference-data--FacetRole:forecast"
+            }
+          ]
+        },
+        {
+          "ColumnName": "GasRate",
+          "ColumnRole": "Value",
+          "ValueType": "number",
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:kSm3.d-1",
+          "FacetIDs": [
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:product",
+              "FacetRoleID": "dev:reference-data--FacetRole:gas"
+            },
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:condition",
+              "FacetRoleID": "dev:reference-data--FacetRole:forecast"
+            }
+          ]
+        },
+        {
+          "ColumnName": "WaterRate",
+          "ColumnRole": "Value",
+          "ValueType": "number",
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:kSm3.d-1",
+          "FacetIDs": [
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:product",
+              "FacetRoleID": "dev:reference-data--FacetRole:water"
+            },
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:condition",
+              "FacetRoleID": "dev:reference-data--FacetRole:forecast"
+            }
+          ]
+        },
+        {
+          "ColumnName": "YearlyOil",
+          "ColumnRole": "Value",
+          "ValueType": "number",
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MSm3",
+          "FacetIDs": [
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:product",
+              "FacetRoleID": "dev:reference-data--FacetRole:oil"
+            },
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:condition",
+              "FacetRoleID": "dev:reference-data--FacetRole:forecast"
+            },
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:statistics",
+              "FacetRoleID": "dev:reference-data--FacetRole:annual"
+            }
+          ]
+        },
+        {
+          "ColumnName": "CumulativeOil",
+          "ColumnRole": "Value",
+          "ValueType": "number",
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MSm3",
+          "FacetIDs": [
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:product",
+              "FacetRoleID": "dev:reference-data--FacetRole:oil"
+            },
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:condition",
+              "FacetRoleID": "dev:reference-data--FacetRole:cumulative"
+            }
+          ]
+        },
+        {
+          "ColumnName": "WaterCut",
+          "ColumnRole": "Value",
+          "ValueType": "number",
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:pct",
+          "FacetIDs": [
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:product",
+              "FacetRoleID": "dev:reference-data--FacetRole:water"
+            }
+          ]
+        },
+        {
+          "ColumnName": "RecoveryFactor",
+          "ColumnRole": "Value",
+          "ValueType": "number",
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:pct",
+          "FacetIDs": [
+            {
+              "FacetTypeID": "dev:reference-data--FacetType:condition",
+              "FacetRoleID": "dev:reference-data--FacetRole:cumulative"
+            }
+          ]
+        }
+      ],
+      "ColumnValues": [
+        {
+          "IntegerColumn": [
+            2028,
+            2029,
+            2030,
+            2031,
+            2032,
+            2033,
+            2034,
+            2035,
+            2036,
+            2037,
+            2038,
+            2039,
+            2040,
+            2041,
+            2042,
+            2043,
+            2044,
+            2045,
+            2046,
+            2047
+          ]
+        },
+        {
+          "IntegerColumn": [
+            3,
+            8,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12,
+            12
+          ]
+        },
+        {
+          "NumberColumn": [
+            0.52,
+            2.77,
+            5.2,
+            4.39,
+            3.77,
+            3.29,
+            2.9,
+            2.59,
+            2.33,
+            2.11,
+            1.92,
+            1.76,
+            1.62,
+            1.5,
+            1.39,
+            1.3,
+            1.22,
+            0.22,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "NumberColumn": [
+            44.2,
+            236.4,
+            444.7,
+            376.4,
+            324.5,
+            283.8,
+            251.2,
+            224.6,
+            202.5,
+            183.9,
+            168.2,
+            154.6,
+            142.9,
+            132.6,
+            123.5,
+            115.5,
+            108.4,
+            19.9,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "NumberColumn": [
+            0.01,
+            0.09,
+            0.25,
+            0.31,
+            0.39,
+            0.49,
+            0.63,
+            0.83,
+            1.09,
+            1.44,
+            1.92,
+            2.57,
+            3.47,
+            4.69,
+            4.8,
+            4.8,
+            4.8,
+            0.89,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "NumberColumn": [
+            0.09,
+            1.01,
+            1.9,
+            1.6,
+            1.38,
+            1.2,
+            1.06,
+            0.94,
+            0.85,
+            0.77,
+            0.7,
+            0.64,
+            0.59,
+            0.55,
+            0.51,
+            0.47,
+            0.44,
+            0.08,
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "NumberColumn": [
+            0.09,
+            1.11,
+            3.01,
+            4.61,
+            5.98,
+            7.18,
+            8.24,
+            9.19,
+            10.04,
+            10.81,
+            11.51,
+            12.15,
+            12.74,
+            13.29,
+            13.8,
+            14.27,
+            14.72,
+            14.8,
+            14.8,
+            14.8
+          ]
+        },
+        {
+          "NumberColumn": [
+            2.2,
+            3.2,
+            4.6,
+            6.5,
+            9.3,
+            13.0,
+            17.9,
+            24.2,
+            31.9,
+            40.6,
+            50.0,
+            59.4,
+            68.1,
+            75.8,
+            77.5,
+            78.7,
+            79.8,
+            80.0,
+            0,
+            0
+          ]
+        },
+        {
+          "NumberColumn": [
+            0.2,
+            2.4,
+            6.6,
+            10.1,
+            13.2,
+            15.8,
+            18.2,
+            20.2,
+            22.1,
+            23.8,
+            25.3,
+            26.8,
+            28.1,
+            29.3,
+            30.4,
+            31.4,
+            32.4,
+            32.6,
+            32.6,
+            32.6
+          ]
+        }
+      ]
+    },
+    "ext": {
+      "equinor": {
+        "ForecastSummary": {
+          "STOIIP_P50_MSm3": 45.4,
+          "EUR_MSm3": 14.8,
+          "PeakOilRate_kSm3d": 5.2,
+          "RecoveryFactor_pct": 32.6,
+          "ForecastBasis": "Reference case"
+        }
+      }
+    }
+  }
+}

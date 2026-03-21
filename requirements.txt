@@ -1,15 +1,24 @@
-# Minimal requirements for running the OSDU RDDMS admin UI demo
-fastapi>=0.95.0
-uvicorn[standard]>=0.21.0
+# Minimal requirements for running the OSDU RDDMS admin UI demo (Python 3.12)
+# Pinned FastAPI/Pydantic/Starlette to avoid IncEx import errors and ensure reproducible env
+fastapi==0.115.6
+starlette==0.41.3
+pydantic==2.10.6
+uvicorn[standard]==0.32.1
+
+# HTTP client / templating
 httpx>=0.24.0
+httpx[http2]
 jinja2>=3.1.0
-numpy>=1.24.0
+aiofiles>=23.1.0  # static file serving
 python-multipart>=0.0.6
+
+# Utilities
 python-dotenv>=1.0.0
-# aiofiles>=23.1.0  # static file serving
-# pydantic>=1.10.10 # if extra validation is used
+authlib>=1.3.0  # Azure AD refresh-token & PKCE auth flows in auth.py
+itsdangerous>=2.0  # Starlette SessionMiddleware cookie signing
 requests>=2.31.0  # used by demo scripts (4ingest.py, 7gendataspacemanifest.py, 6query.py, etc.)
-dotenv
+# numpy needed for array handling in search/strat pages and notebooks
+numpy>=1.26.0
 
 # PyQt GeoModeller (RESQML viewer + geostatistics)
 PyQt6>=6.6.0
@@ -26,3 +35,17 @@ rasterio>=1.3.0
 pyproj>=3.5.0
 # fiona>=1.9.0  # optional: for Shapefile (.shp) import
 
+# --- Notebook / ETP demo extras (used by 9bootcamp.json) ---
+# Pandas for tabular summaries; ipykernel makes this venv show up in VS Code/Jupyter pickers
+pandas>=2.2.0
+ipykernel>=6.29.0
+# Plotly for 3D surface visualization in the notebook
+plotly>=5.18.0
+# Optional: IPython pretty display (pulled transitively by ipykernel, listed for clarity)
+IPython>=8.18.0
+
+# --- OSDU / subsurface libs (platform-specific wheels; leave unpinned) ---
+osdu-client
+fesapi
+fetpapi
+xtgeo

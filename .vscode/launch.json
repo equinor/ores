@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run ORES (uvicorn)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--reload",
+        "--port", "8000",
+        "--host", "0.0.0.0",
+        "--env-file", ".env"
+      ],
+      "jinja": true,
+      "envFile": "${workspaceFolder}/.env",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

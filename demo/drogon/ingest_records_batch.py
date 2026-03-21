@@ -29,52 +29,8 @@ RECORDS_DIR = SCRIPT_DIR / "records"
 REPO_ROOT = SCRIPT_DIR.parent.parent  # ores/
 
 
-# ──────────────── .env loader (reuses 4ingest.py logic inline) ──────────────── #
-def _parse_dotenv(path: Path) -> Dict[str, str]:
-    vals: Dict[str, str] = {}
-    for line in path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, v = line.split("=", 1)
-        k, v = k.strip(), v.strip()
-        if len(v) >= 2 and v[0] == v[-1] and v[0] in ('"', "'"):
-            v = v[1:-1]
-        vals[k] = v
-    return vals
-
-
-def _first(env: Dict[str, str], keys: List[str]) -> Optional[str]:
-    for k in keys:
-        v = (env.get(k) or "").strip()
-        if v:
-            return v
-    return None
-
-
-def load_env(paths: List[str]) -> Dict[str, str]:
-    merged: Dict[str, str] = {}
-    for p in paths:
-        fp = Path(p).expanduser().resolve()
-        if not fp.exists():
-            raise SystemExit(f"env file not found: {p}")
-        merged.update(_parse_dotenv(fp))
-
-    env: Dict[str, str] = {}
-    env["refresh_token"] = _first(merged, ["refresh_token", "REFRESH_TOKEN"]) or ""
-    env["tenant"]        = _first(merged, ["OSDU_TENANT_ID", "AZURE_TENANT_ID"]) or ""
-    env["client_id"]     = _first(merged, ["OSDU_CLIENT_ID", "AZURE_CLIENT_ID"]) or ""
-    env["scope"]         = _first(merged, ["OSDU_SCOPE", "AZURE_SCOPE"]) or ""
-    host                 = _first(merged, ["OSDU_HOST", "OSDU_BASE_URL"]) or ""
-    if host and not host.startswith("http"):
-        host = "https://" + host.lstrip("/")
-    env["host"]          = host
-    env["partition"]     = _first(merged, ["OSDU_PARTITION", "DATA_PARTITION_ID"]) or ""
-
-    missing = [k for k in ("refresh_token", "tenant", "client_id", "scope", "host", "partition") if not env[k]]
-    if missing:
-        raise SystemExit(f"Missing keys in .env: {', '.join(missing)}")
-    return env
+# ──────────────── .env loader (reuses _shared) ──────────────── #
+from _shared import parse_dotenv as _parse_dotenv, first_env as _first, load_env  # noqa: E402
 
 
 # ──────────────── Auth (httpx — same transport as app/auth.py) ──────────────── #
@@ -116,6 +72,16 @@ def load_records(records_dir: Path) -> List[Dict[str, Any]]:
 # ──────────────── Storage API ──────────────── #
 MAX_RETRIES = 4          # retry up to 4 times on transient 404 (eventual consistency)
 RETRY_BACKOFF = [3, 6, 10, 15]  # seconds between retries
+
+
+def put_records_batch(env: Dict[str, str], records: List[Dict[str, Any]],
+                      client: httpx.Client) -> Dict[str, Any]:
+    """PUT all records in a single call (up to 500 per OSDU limit)."""
+    url = f"{env['host']}/api/storage/v2/records"
+    r = client.put(url, json=records, timeout=120)
+    if r.is_success:
+        return r.json()
+    raise RuntimeError(f"Batch PUT failed ({r.status_code}): {r.text[:1000]}")
 
 
 def put_one_record(env: Dict[str, str], record: Dict[str, Any],
@@ -180,30 +146,60 @@ def main():
     skipped: List[str] = []
     failed:  List[str] = []
 
-    print(f"\nIngesting {len(records)} records sequentially (delay={args.delay}s, start={args.start}) …")
+    active = records[args.start:]
+    print(f"\nIngesting {len(active)} records …")
     with httpx.Client(headers=headers) as client:
-        for i, rec in enumerate(records):
-            rid = rec.get("id", "?")
-            short = rid.split(":")[-1][:30] if ":" in rid else rid[:40]
-            if i < args.start:
-                print(f"  [{i+1:02d}/{len(records)}] SKIP (--start {args.start}) {short}")
-                continue
+        # ── Try a single batch PUT first ──────────────────────────────────────
+        if args.start == 0:
+            print(f"  Attempting single batch PUT ({len(active)} records) …")
             try:
-                resp = put_one_record(env, rec, client)
-                ids = resp.get("recordIds", [])
-                sk  = resp.get("skippedRecordIds", [])
-                if ids:
-                    created.extend(ids)
-                    print(f"  [{i+1:02d}/{len(records)}] OK  {short}")
-                if sk:
-                    skipped.extend(sk)
-                    print(f"  [{i+1:02d}/{len(records)}] SKIP {short}")
+                resp = put_records_batch(env, active, client)
+                created.extend(resp.get("recordIds", []))
+                skipped.extend(resp.get("skippedRecordIds", []))
+                print(f"  Batch OK — created={len(resp.get('recordIds',[]))}  "
+                      f"skipped={len(resp.get('skippedRecordIds',[]))}")
             except RuntimeError as e:
-                failed.append(f"{rid}: {e}")
-                print(f"  [{i+1:02d}/{len(records)}] FAIL {short}: {e}")
-            # Wait between records so the index catches up
-            if i < len(records) - 1:
-                time.sleep(args.delay)
+                print(f"  Batch PUT failed ({e}); falling back to sequential …")
+                # Fall through to sequential below
+                args.start = 0   # reset so sequential loop covers all
+                for i, rec in enumerate(active):
+                    rid = rec.get("id", "?")
+                    short = rid.split(":")[-1][:30] if ":" in rid else rid[:40]
+                    try:
+                        r = put_one_record(env, rec, client)
+                        ids = r.get("recordIds", [])
+                        sk  = r.get("skippedRecordIds", [])
+                        created.extend(ids)
+                        skipped.extend(sk)
+                        tag = "OK  " if ids else "SKIP"
+                        print(f"  [{i+1:02d}/{len(active)}] {tag} {short}")
+                    except RuntimeError as e2:
+                        failed.append(f"{rid}: {e2}")
+                        print(f"  [{i+1:02d}/{len(active)}] FAIL {short}: {e2}")
+                    if i < len(active) - 1:
+                        time.sleep(args.delay)
+        else:
+            # --start was specified: sequential only
+            print(f"  Sequential mode (--start {args.start}, delay={args.delay}s) …")
+            for i, rec in enumerate(records):
+                rid = rec.get("id", "?")
+                short = rid.split(":")[-1][:30] if ":" in rid else rid[:40]
+                if i < args.start:
+                    print(f"  [{i+1:02d}/{len(records)}] SKIP (--start) {short}")
+                    continue
+                try:
+                    r = put_one_record(env, rec, client)
+                    ids = r.get("recordIds", [])
+                    sk  = r.get("skippedRecordIds", [])
+                    created.extend(ids)
+                    skipped.extend(sk)
+                    tag = "OK  " if ids else "SKIP"
+                    print(f"  [{i+1:02d}/{len(records)}] {tag} {short}")
+                except RuntimeError as e:
+                    failed.append(f"{rid}: {e}")
+                    print(f"  [{i+1:02d}/{len(records)}] FAIL {short}: {e}")
+                if i < len(records) - 1:
+                    time.sleep(args.delay)
 
     print(f"\n--- Summary ---")
     print(f"  created/updated : {len(created)}")

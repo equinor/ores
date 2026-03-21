@@ -1,0 +1,49 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [
+      {
+        "id": "dev:work-product-component--DevelopmentConcept:Drogon-DG1:1",
+        "kind": "dev:wks:work-product-component--DevelopmentConcept:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon DG1 \u2014 Development Concept",
+          "Description": "Early-stage development concept for Drogon DG1 Identify & Assess. Subsea tie-back to host facility targeting Valysar formation.",
+          "ParentObjectID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+          "ancestry": {
+            "parents": [
+              "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+            ],
+            "children": []
+          },
+          "Summary": "Subsea development with tie-back to existing host facility. Valysar formation at ~1700 m TVD MSL in the Drogon area, Norwegian North Sea.",
+          "WellCount": 12,
+          "TemplateSlots": 16,
+          "ReservoirFormation": "Valysar",
+          "FieldArea": "Drogon",
+          "WaterDepth_m": 108,
+          "TargetStartUp": "2028-H1"
+        }
+      }
+    ],
+    "WorkProducts": []
+  }
+}

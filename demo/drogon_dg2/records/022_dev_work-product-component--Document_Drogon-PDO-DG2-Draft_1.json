@@ -1,0 +1,26 @@
+{
+  "id": "dev:work-product-component--Document:Drogon-PDO-DG2-Draft:1",
+  "kind": "osdu:wks:work-product-component--Document:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon — Plan for Development and Operation (PDO) DG2 Draft",
+    "Description": "Draft PDO for the Drogon DG2 Concept Select gate. Covers field description, selected development concept (subsea tie-back to FPSO, 2×4-slot templates, 12 wells), preliminary environmental impact assessment, well planning, production forecasts, and regulatory framework alignment with PSA and MPE requirements. Basis for DG3 FEED scope definition.",
+    "DocumentType": "PDO",
+    "DocumentDate": "2026-03-01"
+  }
+}

@@ -1,646 +1,443 @@
-
 {% extends "base.html" %}
-{% block title %}OSDU Record Explorer{% endblock %}
-
+{% block title %}Stratigraphy{% endblock %}
 {% block content %}
-
+<h2>Stratigraphy — Stratigraphic Column Viewer</h2>
 <style>
-/* ── Explorer layout ────────────────────────────────────────────────── */
-.ex-wrap        { max-width: 96rem; }
-.ex-panel       { border: 1px solid #e1dfdd; border-radius: 8px; background: #fff; padding: .75rem 1rem; margin-bottom: 1rem; }
-.ex-panel h3    { margin: 0 0 .5rem 0; font-size: 1.05rem; color: #323130; }
-.ex-row         { display: flex; gap: .75rem; align-items: end; flex-wrap: wrap; }
-.ex-row label   { font-size: .85rem; color: #605e5c; display: block; margin-bottom: 2px; }
-.ex-row .field  { display: flex; flex-direction: column; }
-.muted          { color: #605e5c; }
-.btn            { display: inline-block; padding: .35rem .7rem; border: 1px solid #605e5c;
-                  border-radius: 3px; background: #fff; cursor: pointer; font-size: .9rem; }
-.btn:hover      { background: #f3f2f1; }
-.btn-primary    { background: #0078d4; color: #fff; border-color: #0078d4; }
-.btn-primary:hover { background: #106ebe; }
-.error          { background: #fde7e9; border-left: 4px solid #d13438; padding: .5rem .75rem; border-radius: 4px; margin: .5rem 0; }
-
-/* Search results list */
-#results-list   { list-style: none; padding: 0; margin: .5rem 0 0 0; max-height: 14rem; overflow-y: auto;
-                  border: 1px solid #e1dfdd; border-radius: 4px; }
-#results-list li { padding: .4rem .6rem; cursor: pointer; border-bottom: 1px solid #f3f2f1;
-                   display: flex; justify-content: space-between; align-items: center; }
-#results-list li:last-child { border-bottom: none; }
-#results-list li:hover { background: #f3f2f1; }
-#results-list li.active { background: #deecf9; }
-#results-list .res-name  { font-weight: 600; }
-#results-list .res-kind  { font-size: .8rem; color: #605e5c; background: #f3f2f1;
-                           padding: 1px 6px; border-radius: 10px; white-space: nowrap; }
-
-/* Detail section */
-#detail-section { display: none; }
-.detail-title   { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; }
-.detail-title h2 { margin: 0; }
-.detail-title .kind-badge { font-size: .85rem; color: #605e5c; background: #f3f2f1;
-                            padding: 2px 8px; border-radius: 10px; }
-
-/* Graph */
-.graph-wrap     { overflow-x: auto; background: #fafafa; border: 1px solid #e1dfdd; border-radius: 6px; padding: .5rem; }
-.graph-wrap svg { max-width: 100%; height: auto; }
-
-/* Metadata */
-.meta-sections  { display: grid; grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr)); gap: .75rem; }
-.meta-card      { border: 1px solid #e1dfdd; border-radius: 6px; padding: .5rem .75rem; background: #fff; }
-.meta-card h4   { margin: 0 0 .35rem; font-size: .95rem; color: #323130; border-bottom: 1px solid #edebe9; padding-bottom: .25rem; }
-.meta-card table { width: 100%; }
-.meta-card td   { padding: 3px 6px; vertical-align: top; word-break: break-all; }
-.meta-card .mk  { font-weight: 600; color: #323130; white-space: nowrap; width: 14rem; }
-.meta-card .mv  { color: #605e5c; }
-.meta-card .mv a { color: #0078d4; cursor: pointer; text-decoration: underline; }
-.meta-card .mv a:hover { color: #106ebe; }
-
-/* Data table */
-.data-table-wrap { overflow-x: auto; }
-.data-table     { border-collapse: collapse; width: 100%; font-size: .85rem; }
-.data-table th  { background: #f3f2f1; position: sticky; top: 0; z-index: 1;
-                  border-bottom: 2px solid #999; padding: 4px 8px; text-align: left; white-space: nowrap; }
-.data-table td  { padding: 3px 8px; border-bottom: 1px solid #edebe9; }
-.data-table tr:hover { background: #f9f9f9; }
-.data-table .key-col { background: #fafafa; font-weight: 500; }
-
-/* Toolbar row */
-.toolbar { display: flex; gap: .5rem; align-items: center; margin: .35rem 0; flex-wrap: wrap; }
-.toolbar input[type=text] { flex: 1; max-width: 20rem; padding: 4px 8px; }
+/* ---- Hierarchy-based stratigraphic column ---- */
+.sc-wrap { max-width: 96rem; }
+.sc-panel { border:1px solid #e1dfdd; border-radius:8px; background:#fff; padding:.75rem; }
+.muted { color:#605e5c; }
+.btn { display:inline-block; padding:.35rem .6rem; border:1px solid #605e5c; border-radius:3px; background:#fff; cursor:pointer; }
+.btn:hover { background:#f3f2f1; }
+#matrix-root { overflow:auto; max-height: 78vh; border:1px solid #ccc; border-radius:6px; }
+.sc-table { border-collapse: collapse; width: 100%; }
+.sc-table th, .sc-table td { padding: 4px 7px; text-align: left; vertical-align: middle; }
+.sc-table thead th { position: sticky; top: 0; z-index: 2; font-size: .9rem;
+  border-bottom: 2px solid rgba(0,0,0,.25); letter-spacing: .02em; }
+.sc-cell { border: 1px solid rgba(0,0,0,.12); }
+.sc-cell strong { display: block; font-size: .88rem; line-height: 1.25; }
+.sc-age { font-size: .78rem; opacity: .75; margin-top: 1px; }
+.sc-empty { background: #f8f8f8; border: 1px solid rgba(0,0,0,.06); }
+.sc-footnote { font-size: .85rem; color: #605e5c; margin-top:.35rem; }
+.legend { display:flex; gap:.5rem; flex-wrap:wrap; margin:.35rem 0 .6rem; }
+.rank-col { min-width: 8rem; }
 </style>
 
-<div class="ex-wrap">
-  <h2>Record Explorer</h2>
-
-  <!-- ═══════════ SEARCH ═══════════ -->
-  <section class="ex-panel">
-    <h3>Search OSDU Records</h3>
-    <div class="ex-row">
-      <div class="field">
-        <label for="kind-select">Type</label>
-        <select id="kind-select" style="min-width:18rem">
-          {% for t in types %}
-            <option value="{{ t.kind }}">{{ t.label }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="field" style="flex:1;min-width:10rem">
-        <label for="search-q">Query</label>
-        <input id="search-q" type="text" value="*" placeholder="e.g. data.Name:Drogon OR *">
-      </div>
-      <div class="field" style="width:5rem">
-        <label for="search-limit">Limit</label>
-        <input id="search-limit" type="number" value="50" min="1" max="500">
-      </div>
-      <button class="btn btn-primary" id="btn-search" type="button">Search</button>
+<!-- Search -->
+<section class="sc-wrap sc-panel" style="margin-bottom:1rem;">
+  <h3 style="margin:0 0 .5rem 0;">Find Stratigraphic Columns</h3>
+  <div class="row" style="grid-template-columns:160px 1fr;">
+    <label for="strat-q">Query</label>
+    <input id="strat-q" type="text" value="*" placeholder="e.g., data.Name:Gudrun OR *" />
+    <label for="strat-limit">Limit</label>
+    <input id="strat-limit" type="number" value="50" min="1" max="1000" />
+  </div>
+  <div style="display:flex;gap:.5rem;align-items:center;">
+    <button class="btn" id="btn-search" type="button">Search Columns</button>
+    <span id="search-status" class="muted"></span>
+  </div>
+  <div style="margin-top:.5rem;">
+    <label for="strat-results">Results</label>
+    <select id="strat-results" size="7" style="width:100%;">
+      <option value="">— no results —</option>
+    </select>
+    <div class="muted" style="font-size:.85rem;margin-top:.25rem;">
+      Select a record to render the hierarchical stratigraphic column.
     </div>
-    <div id="search-status" class="muted" style="margin-top:.35rem;font-size:.85rem;"></div>
-    <ul id="results-list">
-      <li class="muted" style="justify-content:center;cursor:default;">No results yet</li>
-    </ul>
-  </section>
+  </div>
+</section>
 
-  <!-- ═══════════ DETAIL ═══════════ -->
-  <section id="detail-section">
+<!-- Legend + Matrix -->
+<section class="sc-wrap sc-panel">
+  <span id="load-status" class="muted" style="display:inline-block;margin-bottom:.5rem;"></span>
+  <div id="legend" class="legend"></div>
+  <div id="matrix-root"></div>
+  <div class="sc-footnote">
+    Columns represent rank levels (coarsest left, finest right).
+    Cells span rows to show the hierarchical nesting of stratigraphic units.
+    Ages displayed as supplementary information within each cell.
+  </div>
+  <details style="margin-top:.75rem;">
+    <summary class="muted">Raw metadata</summary>
+    <table class="sc-table" style="font-size:13px;">
+      <tbody id="meta-body"></tbody>
+    </table>
+  </details>
+</section>
 
-    <!-- Title bar -->
-    <div class="detail-title" style="margin-bottom:.5rem;">
-      <h2 id="detail-name">—</h2>
-      <span class="kind-badge" id="detail-kind"></span>
-    </div>
-    <div class="muted" style="font-size:.8rem;margin-bottom:.75rem;" id="detail-id"></div>
+<script>
+(function(){
+  'use strict';
 
-    <!-- Relationship graph -->
-    <div class="ex-panel">
-      <h3>Relationships</h3>
-      <div class="graph-wrap">
-        <div id="mermaid-container"></div>
-      </div>
-    </div>
+  const $ = (sel, root=document) => root.querySelector(sel);
+  const qInput     = $('#strat-q');
+  const limitInput = $('#strat-limit');
+  const btnSearch  = $('#btn-search');
+  const resSelect  = $('#strat-results');
+  const searchStat = $('#search-status');
+  const statusBox  = $('#load-status');
+  const legendBox  = $('#legend');
+  const matrixRoot = $('#matrix-root');
+  const metaBody   = $('#meta-body');
 
-    <!-- Metadata -->
-    <div class="ex-panel">
-      <h3>Properties</h3>
-      <div class="toolbar">
-        <input type="text" id="meta-filter" placeholder="Filter properties...">
-        <button class="btn" id="meta-copy" type="button">Copy CSV</button>
-      </div>
-      <div class="meta-sections" id="meta-container"></div>
-    </div>
+  const setStatus = (msg) => { if (statusBox) statusBox.textContent = msg || ''; };
+  const clear = (el) => { if (el) el.innerHTML=''; };
 
-    <!-- Table data (Volumes / ColumnBasedTable) -->
-    <div class="ex-panel" id="table-section" style="display:none;">
-      <h3 id="table-title">Table Data</h3>
-      <div class="toolbar">
-        <input type="text" id="table-filter" placeholder="Filter rows...">
-        <span class="muted" id="table-info"></span>
-      </div>
-      <div class="data-table-wrap" style="max-height:60vh;overflow:auto;">
-        <table class="data-table" id="data-table">
-          <thead id="table-head"></thead>
-          <tbody id="table-body"></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-</div>
-
-<!-- ═══════════ JAVASCRIPT ═══════════ -->
-<script type="module">
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
-
-const $ = (s, r = document) => r.querySelector(s);
-const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-
-const kindSel    = $('#kind-select');
-const qInput     = $('#search-q');
-const limitInput = $('#search-limit');
-const btnSearch  = $('#btn-search');
-const statusEl   = $('#search-status');
-const resultsList = $('#results-list');
-const detailSec  = $('#detail-section');
-
-// ── Color map for type-based Mermaid styling ──
-const TYPE_COLORS = {
-  'Reservoir':                   { fill: '#cfe2ff', stroke: '#084298' },
-  'ReservoirSegment':            { fill: '#d1ecf1', stroke: '#0c5460' },
-  'work-product':                { fill: '#fff3cd', stroke: '#d39e00' },
-  'ReservoirEstimatedVolumes':   { fill: '#d4edda', stroke: '#155724' },
-  'ColumnBasedTable':            { fill: '#d1ecf1', stroke: '#0c5460' },
-  'Risk':                        { fill: '#f5c6cb', stroke: '#721c24' },
-  'BusinessDecision':            { fill: '#e2d9f3', stroke: '#5a3e85' },
-  'StratigraphicColumn':         { fill: '#fce4ec', stroke: '#880e4f' },
-};
-const ROLE_COLORS = {
-  'ancestry-parent':    { fill: '#cfe2ff', stroke: '#084298' },
-  'ancestry-child':     { fill: '#e2e3e5', stroke: '#6c757d' },
-  'prior-activity':     { fill: '#fff3cd', stroke: '#d39e00' },
-  'parameter-object':   { fill: '#d1ecf1', stroke: '#0c5460' },
-  'parent-object':      { fill: '#f8d7da', stroke: '#721c24' },
-  'parent-work-product':{ fill: '#f8d7da', stroke: '#721c24' },
-  'risk':               { fill: '#f5c6cb', stroke: '#721c24' },
-  'ref':                { fill: '#e9ecef', stroke: '#6c757d' },
-};
-
-function escMermaid(s) {
-  return (s || '').replace(/[\[\]"{}|<>\\]/g, c => '&#' + c.charCodeAt(0) + ';')
-                  .replace(/\n/g, ' ').replace(/\r/g, '');
-}
-
-function shortId(id) {
-  // "dev:master-data--Reservoir:5b8dc759-...:1" → last UUID segment
-  if (!id) return '';
-  const parts = id.split(':');
-  if (parts.length >= 3) {
-    const uuid = parts[parts.length - 2] || parts[parts.length - 1];
-    return uuid.length > 12 ? uuid.substring(0, 8) + '…' : uuid;
-  }
-  return id.length > 20 ? id.substring(0, 18) + '…' : id;
-}
-
-// ── SEARCH ──
-let currentItems = [];
-
-async function doSearch() {
-  const kind = kindSel.value;
-  const q = (qInput.value || '*').trim();
-  const limit = Math.max(1, Math.min(500, parseInt(limitInput.value || '50', 10)));
-  statusEl.textContent = 'Searching…';
-  resultsList.innerHTML = '<li class="muted" style="justify-content:center;cursor:default">Searching…</li>';
-  detailSec.style.display = 'none';
-  statusEl.textContent = 'Searching…';
-
-  try {
-    const url = `/api/strat/search.json?kind=${encodeURIComponent(kind)}&q=${encodeURIComponent(q)}&limit=${limit}`;
-    const r = await fetch(url, { headers: { 'Cache-Control': 'no-store' } });
-    if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-    const data = await r.json();
-    currentItems = data.items || [];
-    statusEl.textContent = `Found ${data.total ?? currentItems.length} record(s)`;
-
-    if (!currentItems.length) {
-      resultsList.innerHTML = '<li class="muted" style="justify-content:center;cursor:default">No results</li>';
-      return;
+  /* ------------------------------------------------------------------ */
+  /*  METADATA helper                                                   */
+  /* ------------------------------------------------------------------ */
+  function renderMetaPairs(obj){
+    if (!metaBody) return;
+    function flt(val, path='', out=[]){
+      if (val && typeof val === 'object' && !Array.isArray(val))
+        for (const [k,v] of Object.entries(val)) flt(v, path ? `${path}.${k}` : k, out);
+      else if (Array.isArray(val)) val.forEach((v,i)=>flt(v, path?`${path}.${i}`:`${i}`, out));
+      else out.push({name:path, value:(val===null||val===undefined)?'—':String(val)});
+      return out;
     }
-    resultsList.innerHTML = '';
-    for (const it of currentItems) {
-      const li = document.createElement('li');
-      li.dataset.id = it.id;
-      li.innerHTML = `<span class="res-name">${esc(it.name)}</span><span class="res-kind">${esc(it.short_kind)}</span>`;
-      li.addEventListener('click', () => selectResult(it.id, li));
-      resultsList.appendChild(li);
+    const pairs = flt(obj);
+    clear(metaBody);
+    if (!pairs.length){ metaBody.innerHTML='<tr><td class="muted">No metadata</td><td></td></tr>'; return; }
+    for (const p of pairs){
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td class="meta-name">${p.name}</td><td>${p.value}</td>`;
+      metaBody.appendChild(tr);
     }
-    // Auto-select first
-    const first = resultsList.querySelector('li');
-    if (first) selectResult(currentItems[0].id, first);
-  } catch (e) {
-    console.warn(e);
-    statusEl.textContent = 'Search failed: ' + e.message;
-    resultsList.innerHTML = '<li class="muted" style="justify-content:center;cursor:default">Error</li>';
-  }
-}
-
-function selectResult(id, li) {
-  $$('#results-list li').forEach(el => el.classList.remove('active'));
-  if (li) li.classList.add('active');
-  loadRecord(id);
-}
-
-btnSearch?.addEventListener('click', doSearch);
-qInput?.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
-
-function esc(s) {
-  const d = document.createElement('div');
-  d.textContent = s || '';
-  return d.innerHTML;
-}
-
-// ── LOAD RECORD ──
-let currentRecord = null;
-
-async function loadRecord(id) {
-  detailSec.style.display = 'none';
-  statusEl.textContent = 'Loading record…';
-  try {
-    const url = `/api/strat/record.json?id=${encodeURIComponent(id)}`;
-    const r = await fetch(url, { headers: { 'Cache-Control': 'no-store' } });
-    if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-    currentRecord = await r.json();
-    await renderDetail(currentRecord);
-    detailSec.style.display = 'block';
-    statusEl.textContent = '';
-  } catch (e) {
-    console.warn('loadRecord error:', e);
-    statusEl.textContent = 'Load failed: ' + e.message;
-  }
-}
-
-async function renderDetail(rec) {
-  // Title
-  $('#detail-name').textContent = rec.name || rec.id;
-  $('#detail-kind').textContent = rec.short_kind || rec.kind;
-  $('#detail-id').textContent = rec.id + (rec.version ? '  v' + rec.version : '');
-
-  // Graph
-  await renderGraph(rec);
-
-  // Metadata
-  renderMetadata(rec);
-
-  // Table
-  renderTable(rec.table_data);
-}
-
-
-// ══════════════════ MERMAID GRAPH ══════════════════
-
-async function renderGraph(rec) {
-  const nodes = new Map();  // id → { label, type, role }
-  const edges = [];         // { from, to, label }
-
-  // Center node
-  const centerId = 'REC';
-  const centerLabel = rec.name || shortId(rec.id);
-  nodes.set(centerId, { label: centerLabel, type: rec.short_kind || 'ref', isSelf: true });
-
-  // Build unique node id from OSDU record id
-  function nodeKey(osduId) {
-    return 'N' + Math.abs(hashCode(osduId));
-  }
-  function hashCode(s) {
-    let h = 0;
-    for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
-    return h;
   }
 
-  // Ancestry parents
-  for (const pid of (rec.ancestry_parents || [])) {
-    const key = nodeKey(pid);
-    const info = (rec.linked_labels || {})[pid] || {};
-    nodes.set(key, { label: info.name || shortId(pid), type: info.short_kind || 'ref', osduId: pid });
-    edges.push({ from: key, to: centerId, label: 'parent' });
-  }
-
-  // Ancestry children
-  for (const cid of (rec.ancestry_children || [])) {
-    const key = nodeKey(cid);
-    const info = (rec.linked_labels || {})[cid] || {};
-    nodes.set(key, { label: info.name || shortId(cid), type: info.short_kind || 'ref', osduId: cid });
-    edges.push({ from: centerId, to: key, label: 'child' });
-  }
-
-  // Data links (skip duplicates already in ancestry)
-  const ancestrySet = new Set([...(rec.ancestry_parents || []), ...(rec.ancestry_children || [])]);
-  for (const lnk of (rec.links || [])) {
-    if (lnk.role === 'ancestry-parent' || lnk.role === 'ancestry-child') continue;
-    const lid = lnk.id;
-    const key = nodeKey(lid);
-    if (!nodes.has(key)) {
-      const info = (rec.linked_labels || {})[lid] || {};
-      nodes.set(key, { label: info.name || shortId(lid), type: info.short_kind || lnk.role || 'ref', osduId: lid });
+  /* ------------------------------------------------------------------ */
+  /*  CONTAINMENT helpers                                               */
+  /* ------------------------------------------------------------------ */
+  function isContainedIn(child, parent) {
+    // Age containment: topMa = older (bigger), baseMa = younger (smaller)
+    // Use 0.5 Ma tolerance for boundary rounding between geological schemes
+    if (child.topMa != null && child.baseMa != null &&
+        parent.topMa != null && parent.baseMa != null) {
+      return child.topMa <= parent.topMa + 0.5 &&
+             child.baseMa >= parent.baseMa - 0.5;
     }
-    const roleLabel = (lnk.role || 'ref').replace(/-/g, ' ');
-    edges.push({ from: centerId, to: key, label: roleLabel });
-  }
-
-  // Remove duplicate edges
-  const edgeSet = new Set();
-  const uniqueEdges = edges.filter(e => {
-    const k = `${e.from}->${e.to}:${e.label}`;
-    if (edgeSet.has(k)) return false;
-    edgeSet.add(k);
-    return true;
-  });
-
-  // Build Mermaid markup
-  let md = 'graph LR\n';
-
-  // classDefs
-  const allTypes = new Set();
-  nodes.forEach(n => allTypes.add(n.type));
-  for (const t of allTypes) {
-    const c = TYPE_COLORS[t] || ROLE_COLORS[t] || { fill: '#e9ecef', stroke: '#6c757d' };
-    md += `classDef ${t.replace(/[^a-zA-Z0-9_]/g, '_')} fill:${c.fill},stroke:${c.stroke},color:#222\n`;
-  }
-  // Self highlight
-  md += `classDef self_node fill:#0078d4,stroke:#005a9e,color:#fff,stroke-width:2px\n`;
-
-  // Nodes
-  nodes.forEach((n, key) => {
-    const cls = n.isSelf ? 'self_node' : t2class(n.type);
-    md += `${key}["${escMermaid(n.label)}"]:::${cls}\n`;
-  });
-
-  // Edges
-  for (const e of uniqueEdges) {
-    md += `${e.from} -->|${escMermaid(e.label)}| ${e.to}\n`;
-  }
-
-  // Click handlers for navigation
-  nodes.forEach((n, key) => {
-    if (n.osduId) {
-      md += `click ${key} callback "${n.osduId}"\n`;
+    // Chrono Code hierarchy (e.g. "Phanerozoic.Paleozoic.Silurian")
+    if (child.code && parent.code) {
+      return child.code.startsWith(parent.code + '.') || child.code === parent.code;
     }
-  });
-
-  const container = $('#mermaid-container');
-  container.innerHTML = '';
-
-  try {
-    const graphId = 'graph_' + Date.now();
-    const { svg } = await mermaid.render(graphId, md);
-    container.innerHTML = svg;
-    // Wire up click handlers
-    container.querySelectorAll('.node').forEach(node => {
-      node.style.cursor = 'pointer';
-    });
-  } catch (e) {
-    console.warn('Mermaid render failed:', e);
-    container.innerHTML = '<pre style="color:#666;font-size:.85rem">' + esc(md) + '</pre>';
+    return false;
   }
 
-  // Handle clicks on graph nodes → navigate to that record
-  container.addEventListener('click', (e) => {
-    const node = e.target.closest('.node');
-    if (!node) return;
-    const nodeId = node.id?.replace(/^flowchart-/, '').replace(/-\d+$/, '');
-    // Find which node was clicked
-    for (const [key, n] of nodes) {
-      if (n.osduId && nodeId && nodeId.startsWith(key)) {
-        loadRecord(n.osduId);
-        // Update results list selection
-        $$('#results-list li').forEach(li => li.classList.remove('active'));
-        break;
+  /* ------------------------------------------------------------------ */
+  /*  BUILD HIERARCHY TREE                                              */
+  /*  Ranks kept in original OSDU order (coarsest → finest).            */
+  /*  Parent–child via age/code containment; leaf nodes get colSpan     */
+  /*  to fill remaining columns.  Row count = number of leaves.         */
+  /* ------------------------------------------------------------------ */
+  function buildHierarchy(model) {
+    const ranks = (model.ranks || []).map((rk, ri) => ({
+      rankName: rk.rankName || 'Unspecified',
+      units: (rk.units || []).map(u => ({
+        name:   u.name   || '(unit)',
+        topMa:  (u.topMa  != null) ? u.topMa  : null,
+        baseMa: (u.baseMa != null) ? u.baseMa : null,
+        color:  u.color  || null,
+        code:   u.code   || '',
+      }))
+    })).filter(rk => rk.units.length > 0);
+
+    if (!ranks.length) return null;
+    const nRanks = ranks.length;
+
+    // Create tree nodes
+    const levels = ranks.map((rk, ri) =>
+      rk.units.map(u => ({
+        ...u,
+        rankIdx:   ri,
+        rankName:  rk.rankName,
+        children:  [],
+        parent:    null,
+        leafCount: 0,
+        rowStart:  0,
+        isLeaf:    false,
+        colSpan:   1,
+      }))
+    );
+
+    // Assign parents: for each node at rank ri, find nearest ancestor with tightest fit
+    for (let ri = 1; ri < nRanks; ri++) {
+      for (const child of levels[ri]) {
+        let bestParent = null;
+        let bestRange  = Infinity;    // narrowest age-span wins
+        let bestRank   = -1;
+        for (let pi = ri - 1; pi >= 0; pi--) {
+          for (const p of levels[pi]) {
+            if (!isContainedIn(child, p)) continue;
+            const range = (p.topMa != null && p.baseMa != null)
+              ? (p.topMa - p.baseMa) : Infinity;
+            // Prefer nearest rank; within same rank, prefer narrowest range
+            if (pi > bestRank || (pi === bestRank && range < bestRange)) {
+              bestParent = p;
+              bestRange  = range;
+              bestRank   = pi;
+            }
+          }
+          if (bestParent && bestRank === pi) break;   // found at nearest possible rank
+        }
+        if (bestParent) {
+          bestParent.children.push(child);
+          child.parent = bestParent;
+        }
       }
     }
-  });
-}
 
-function t2class(type) {
-  return (type || 'ref').replace(/[^a-zA-Z0-9_]/g, '_');
-}
+    // Collect roots (no parent) — rank-0 nodes + orphans from deeper ranks
+    const roots = [];
+    for (let ri = 0; ri < nRanks; ri++)
+      for (const n of levels[ri])
+        if (!n.parent) roots.push(n);
 
+    // Sort roots older-first (bigger topMa first)
+    roots.sort((a, b) => (b.topMa || 0) - (a.topMa || 0));
 
-// ══════════════════ METADATA ══════════════════
-
-// Keys that go in the table, not in metadata
-const TABLE_KEYS = new Set(['Volumes', 'Table', 'ColumnValues', 'ancestry']);
-// Keys to organize into sections
-const SECTION_MAP = {
-  'Identity':     ['Name', 'Description', 'Summary', 'ProjectName', 'id', 'kind', 'version'],
-  'Classification': ['TypeID', 'ApprovalStatusID', 'DecisionLevelID', 'Status'],
-  'Dates':        ['EffectiveDateTime', 'DecisionDueDate', 'CreationDateTime', 'EndDateTime'],
-};
-
-function renderMetadata(rec) {
-  const container = $('#meta-container');
-  container.innerHTML = '';
-
-  const data = rec.data || {};
-  const labels = rec.linked_labels || {};
-
-  // Flatten data to key-value pairs, skipping table data and ancestry
-  const pairs = [];
-  flattenObj(data, '', pairs);
-
-  // Group into sections
-  const sections = {
-    'Identity':       [],
-    'Details':        [],
-    'References':     [],
-    'Extensions':     [],
-  };
-
-  for (const p of pairs) {
-    const topKey = p.name.split('.')[0];
-    if (TABLE_KEYS.has(topKey)) continue;  // skip table data
-
-    if (isOsduId(p.rawValue)) {
-      sections['References'].push(p);
-    } else if (p.name.startsWith('ext.') || p.name.startsWith('ext[')) {
-      sections['Extensions'].push(p);
-    } else if (['Name', 'Description', 'Summary', 'ProjectName'].includes(topKey)) {
-      sections['Identity'].push(p);
-    } else {
-      sections['Details'].push(p);
+    // Compute leaf counts + colSpan
+    function computeLeaf(node) {
+      if (node.children.length === 0) {
+        node.isLeaf = true;
+        node.leafCount = 1;
+        node.colSpan = nRanks - node.rankIdx;   // span to rightmost column
+      } else {
+        node.isLeaf = false;
+        node.children.sort((a, b) => (b.topMa || 0) - (a.topMa || 0));
+        node.leafCount = 0;
+        for (const c of node.children) {
+          computeLeaf(c);
+          node.leafCount += c.leafCount;
+        }
+        const minChildRank = Math.min(...node.children.map(c => c.rankIdx));
+        node.colSpan = minChildRank - node.rankIdx;
+      }
     }
-  }
+    for (const r of roots) computeLeaf(r);
 
-  // Add record-level identity
-  sections['Identity'].unshift(
-    { name: 'Record ID', value: rec.id, rawValue: rec.id },
-    { name: 'Kind', value: rec.kind, rawValue: rec.kind },
-    { name: 'Version', value: rec.version ?? '—', rawValue: rec.version },
-  );
-
-  // Render each non-empty section
-  for (const [title, items] of Object.entries(sections)) {
-    if (!items.length) continue;
-    const card = document.createElement('div');
-    card.className = 'meta-card';
-    let html = `<h4>${esc(title)}</h4><table>`;
-    for (const p of items) {
-      const val = formatValue(p.rawValue, p.name, labels);
-      html += `<tr><td class="mk">${esc(p.name)}</td><td class="mv">${val}</td></tr>`;
+    // Assign row starts via DFS
+    let rowIdx = 0;
+    function assignRows(nodes) {
+      for (const n of nodes) {
+        n.rowStart = rowIdx;
+        if (n.isLeaf) rowIdx++;
+        else assignRows(n.children);
+      }
     }
-    html += '</table>';
-    card.innerHTML = html;
-    container.appendChild(card);
-  }
+    assignRows(roots);
 
-  // Wire up OSDU link clicks in metadata
-  container.querySelectorAll('a[data-osdu-id]').forEach(a => {
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      loadRecord(a.dataset.osduId);
+    const totalRows = rowIdx;
+
+    // Column metadata: rank-level gradient dark → light
+    const columns = ranks.map((rk, ri) => {
+      const t = nRanks === 1 ? 0.5 : ri / (nRanks - 1);
+      const lightness  = Math.round(36 + t * 50);    // 36% → 86%
+      const saturation = Math.round(46 - t * 16);    // 46% → 30%
+      const bg = `hsl(210, ${saturation}%, ${lightness}%)`;
+      const fg = lightness < 55 ? '#fff' : '#222';
+      return { rankName: rk.rankName, bg, fg, nodes: levels[ri] };
     });
-  });
-}
 
-function flattenObj(obj, prefix, out) {
-  if (obj === null || obj === undefined) return;
-  if (typeof obj !== 'object') {
-    out.push({ name: prefix, value: String(obj), rawValue: obj });
-    return;
+    return { columns, totalRows, nRanks };
   }
-  if (Array.isArray(obj)) {
-    // Skip large numerical arrays (ColumnValues etc.)
-    if (obj.length > 20 && obj.every(x => typeof x === 'number')) {
-      out.push({ name: prefix, value: `[${obj.length} numbers]`, rawValue: obj });
+
+  /* ------------------------------------------------------------------ */
+  /*  RENDER LEGEND                                                     */
+  /* ------------------------------------------------------------------ */
+  function renderLegend(columns) {
+    clear(legendBox);
+    if (!columns) return;
+    for (const col of columns) {
+      const wrap = document.createElement('span');
+      wrap.style.cssText = 'display:inline-flex;align-items:center;gap:.3rem;margin-right:.75rem;';
+      const sw = document.createElement('i');
+      sw.style.cssText = `width:14px;height:14px;display:inline-block;border-radius:3px;border:1px solid rgba(0,0,0,.18);background:${col.bg};`;
+      wrap.appendChild(sw);
+      const lbl = document.createElement('span');
+      lbl.textContent = `${col.rankName} (${col.nodes.length})`;
+      wrap.appendChild(lbl);
+      legendBox.appendChild(wrap);
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  RENDER HIERARCHY TABLE                                            */
+  /* ------------------------------------------------------------------ */
+  function fmtAge(v) {
+    if (v == null) return '';
+    return Math.round(v * 100) / 100;
+  }
+  function isLightColor(hex) {
+    if (!hex || hex[0] !== '#') return true;
+    const r = parseInt(hex.substr(1,2),16),
+          g = parseInt(hex.substr(3,2),16),
+          b = parseInt(hex.substr(5,2),16);
+    return (0.299*r + 0.587*g + 0.114*b) > 155;
+  }
+
+  function renderHierarchy(hierarchy) {
+    clear(matrixRoot);
+    if (!hierarchy || hierarchy.totalRows === 0) {
+      matrixRoot.innerHTML = '<p class="muted" style="padding:.5rem;">No stratigraphic units to display.</p>';
       return;
     }
-    // If array of scalars, join them
-    if (obj.length <= 10 && obj.every(x => typeof x !== 'object')) {
-      out.push({ name: prefix, value: obj.join(', '), rawValue: obj });
-      return;
-    }
-    // Otherwise recurse
-    for (let i = 0; i < obj.length; i++) {
-      flattenObj(obj[i], prefix ? `${prefix}[${i}]` : `[${i}]`, out);
-    }
-    return;
-  }
-  // Object
-  for (const [k, v] of Object.entries(obj)) {
-    flattenObj(v, prefix ? `${prefix}.${k}` : k, out);
-  }
-}
+    const { columns, totalRows, nRanks } = hierarchy;
 
-function isOsduId(val) {
-  if (typeof val !== 'string') return false;
-  return /^[\w\-.]+:(?:(?:work-product(?:-component)?)|master-data)--[\w\-]+:[\w\-.:%]+:\d+$/.test(val.trim());
-}
-
-function formatValue(raw, name, labels) {
-  if (raw === null || raw === undefined) return '<span class="muted">—</span>';
-  if (typeof raw === 'boolean') return raw ? 'true' : 'false';
-  if (typeof raw === 'number') return String(raw);
-  if (typeof raw === 'string') {
-    // OSDU ID → clickable link
-    if (isOsduId(raw)) {
-      const info = labels[raw] || {};
-      const display = info.name || raw;
-      const badge = info.short_kind ? ` <span class="res-kind" style="font-size:.7rem">${esc(info.short_kind)}</span>` : '';
-      return `<a data-osdu-id="${esc(raw)}" href="#">${esc(display)}</a>${badge}`;
-    }
-    // URL
-    if (/^https?:\/\//.test(raw)) {
-      return `<a href="${esc(raw)}" target="_blank">${esc(raw.length > 80 ? raw.substring(0, 78) + '…' : raw)}</a>`;
-    }
-    return esc(raw);
-  }
-  if (Array.isArray(raw)) {
-    return esc(raw.join(', '));
-  }
-  return esc(JSON.stringify(raw));
-}
-
-
-// ══════════════════ TABLE DATA ══════════════════
-
-function renderTable(td) {
-  const sec = $('#table-section');
-  if (!td || !td.headers || !td.nrows) {
-    sec.style.display = 'none';
-    return;
-  }
-  sec.style.display = '';
-  $('#table-title').textContent = td.source === 'Volumes' ? 'Volumes (ColumnBasedTable)' : 'Table Data (ColumnBasedTable)';
-  $('#table-info').textContent = `${td.nrows} rows × ${td.headers.length} columns`;
-
-  const thead = $('#table-head');
-  const tbody = $('#table-body');
-  const keySet = new Set(td.key_names || []);
-
-  // Header row
-  thead.innerHTML = '<tr>' + td.headers.map(h =>
-    `<th>${esc(h)}</th>`
-  ).join('') + '</tr>';
-
-  // Column metadata row (UoM if available)
-  const allCols = [...(td.KeyColumns || []), ...(td.Columns || [])];
-  const colMeta = {};
-  for (const c of allCols) {
-    if (c.ColumnName) colMeta[c.ColumnName] = c;
-  }
-  const hasUom = td.headers.some(h => colMeta[h]?.UnitOfMeasure);
-  if (hasUom) {
-    thead.innerHTML += '<tr>' + td.headers.map(h => {
-      const uom = colMeta[h]?.UnitOfMeasure || '';
-      return `<th style="font-weight:normal;font-size:.75rem;color:#605e5c">${esc(uom)}</th>`;
-    }).join('') + '</tr>';
-  }
-
-  // Data rows
-  const cv = td.ColumnValues || {};
-  let html = '';
-  for (let i = 0; i < td.nrows; i++) {
-    html += '<tr>';
-    for (const h of td.headers) {
-      const vals = cv[h] || [];
-      const v = i < vals.length ? vals[i] : '—';
-      const cls = keySet.has(h) ? ' class="key-col"' : '';
-      html += `<td${cls}>${v ?? '—'}</td>`;
-    }
-    html += '</tr>';
-  }
-  tbody.innerHTML = html;
-
-  // Table filter
-  const filterInput = $('#table-filter');
-  filterInput.value = '';
-  filterInput.oninput = () => {
-    const q = filterInput.value.toLowerCase();
-    const rows = tbody.querySelectorAll('tr');
-    rows.forEach(r => {
-      r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+    // Build start-map per column:  row → node
+    const startMap = columns.map(col => {
+      const m = new Map();
+      for (const node of col.nodes) m.set(node.rowStart, node);
+      return m;
     });
-  };
-}
 
+    const table = document.createElement('table');
+    table.className = 'sc-table';
 
-// ══════════════════ METADATA FILTER & COPY ══════════════════
-
-$('#meta-filter')?.addEventListener('input', (e) => {
-  const q = e.target.value.toLowerCase();
-  $$('.meta-card tr').forEach(tr => {
-    tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
-  });
-});
-
-$('#meta-copy')?.addEventListener('click', () => {
-  const rows = [];
-  $$('.meta-card tr').forEach(tr => {
-    const cells = tr.querySelectorAll('td');
-    if (cells.length >= 2) {
-      rows.push(`"${cells[0].textContent}","${cells[1].textContent}"`);
+    //  Header
+    const thead = document.createElement('thead');
+    const hr = document.createElement('tr');
+    for (const col of columns) {
+      const th = document.createElement('th');
+      th.textContent = col.rankName;
+      th.className = 'rank-col';
+      th.style.background = col.bg;
+      th.style.color = col.fg;
+      hr.appendChild(th);
     }
-  });
-  navigator.clipboard?.writeText(rows.join('\n'))
-    .then(() => { $('#meta-copy').textContent = 'Copied!'; setTimeout(() => { $('#meta-copy').textContent = 'Copy CSV'; }, 1500); })
-    .catch(() => {});
-});
+    thead.appendChild(hr);
+    table.appendChild(thead);
 
+    //  Body
+    const tbody = document.createElement('tbody');
+    const coveredUntil = new Array(nRanks).fill(-1);
+
+    for (let r = 0; r < totalRows; r++) {
+      const tr = document.createElement('tr');
+
+      for (let c = 0; c < nRanks; c++) {
+        if (r <= coveredUntil[c]) continue;           // covered by rowspan / colspan
+
+        const node = startMap[c].get(r);
+        if (node) {
+          const td = document.createElement('td');
+          td.className = 'sc-cell';
+          if (node.leafCount > 1)  td.rowSpan = node.leafCount;
+          if (node.colSpan  > 1)   td.colSpan = node.colSpan;
+
+          // Background: prefer ICS chrono colour; else rank gradient
+          const bgColor = node.color || columns[c].bg;
+          td.style.background = bgColor;
+          td.style.color = node.color ? (isLightColor(node.color) ? '#222' : '#fff') : columns[c].fg;
+
+          // Name
+          const nameEl = document.createElement('strong');
+          nameEl.textContent = node.name;
+          td.appendChild(nameEl);
+
+          // Age (supplementary info)
+          if (node.topMa != null && node.baseMa != null) {
+            const ageEl = document.createElement('div');
+            ageEl.className = 'sc-age';
+            ageEl.textContent = `${fmtAge(node.topMa)}\u2013${fmtAge(node.baseMa)} Ma`;
+            td.appendChild(ageEl);
+          }
+
+          td.title = node.name
+            + (node.topMa != null ? `\n${node.topMa}\u2013${node.baseMa} Ma` : '')
+            + (node.code  ? `\n${node.code}` : '');
+
+          tr.appendChild(td);
+
+          // Mark coverage
+          const endRow = r + node.leafCount - 1;
+          for (let cc = c; cc < Math.min(c + node.colSpan, nRanks); cc++)
+            coveredUntil[cc] = Math.max(coveredUntil[cc], endRow);
+        } else {
+          // Uncovered empty cell (rare with colSpan logic)
+          const td = document.createElement('td');
+          td.className = 'sc-cell sc-empty';
+          tr.appendChild(td);
+        }
+      }
+      tbody.appendChild(tr);
+    }
+
+    table.appendChild(tbody);
+    matrixRoot.appendChild(table);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /*  LOAD + SEARCH                                                     */
+  /* ------------------------------------------------------------------ */
+  async function loadColumnById(id){
+    const rid = (id||'').trim();
+    if (!rid) { setStatus('Select a StratigraphicColumn.'); return; }
+    setStatus('Loading\u2026');
+    try {
+      const url = `/api/strat/column.json?id=${encodeURIComponent(rid)}&enrich=true`;
+      const res = await fetch(url, { headers:{'Cache-Control':'no-store'} });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      const model = await res.json();
+      const hierarchy = buildHierarchy(model);
+      renderLegend(hierarchy ? hierarchy.columns : []);
+      renderHierarchy(hierarchy);
+      renderMetaPairs({
+        column: model.column || {},
+        ranks: (model.ranks || []).map(r => ({
+          rankName: r.rankName,
+          unitCount: r.unitCount || (r.units||[]).length
+        }))
+      });
+      const info = hierarchy
+        ? `${hierarchy.totalRows} rows \u00d7 ${hierarchy.nRanks} ranks`
+        : 'empty';
+      setStatus(`OK \u2014 ${info}`);
+    } catch(e) {
+      console.warn(e);
+      setStatus('Load failed: ' + e.message);
+    }
+  }
+
+  async function doSearch(){
+    const q = (qInput.value||'*').trim();
+    const lim = Math.max(1, Math.min(200, parseInt(limitInput.value||'20', 10)));
+    searchStat.textContent = 'Searching\u2026';
+    resSelect.innerHTML = '<option value="">— searching —</option>';
+    try {
+      const url = `/api/strat/search.json?q=${encodeURIComponent(q)}&limit=${lim}`;
+      const r = await fetch(url, { headers:{'Cache-Control':'no-store'} });
+      if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+      const data = await r.json();
+      const items = data.items || [];
+      resSelect.innerHTML = '';
+      if (!items.length) {
+        resSelect.innerHTML = '<option value="">— no results —</option>';
+        searchStat.textContent = 'No results';
+        clear(legendBox); clear(matrixRoot);
+        return;
+      }
+      for (const it of items) {
+        const opt = document.createElement('option');
+        opt.value = it.id;
+        opt.textContent = `[StratigraphicColumn] ${it.name||it.id} — ${it.id}`;
+        resSelect.appendChild(opt);
+      }
+      resSelect.selectedIndex = 0;
+      searchStat.textContent = `Found ${data.total ?? items.length}`;
+      loadColumnById(resSelect.value);
+    } catch(e) {
+      console.warn(e);
+      resSelect.innerHTML = '<option value="">— error —</option>';
+      searchStat.textContent = 'Search failed: ' + e.message;
+    }
+  }
+
+  btnSearch?.addEventListener('click', doSearch);
+  resSelect?.addEventListener('change', () => {
+    const id = resSelect.value || '';
+    if (id) loadColumnById(id);
+  });
+
+})();
 </script>
-
 {% endblock %}

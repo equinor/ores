@@ -1,0 +1,827 @@
+{% extends "base.html" %}
+{% block title %}Analyse — Reservoir Decision Tracking{% endblock %}
+
+{% block head %}
+<style>
+  /* ── Page layout ── */
+  .analyse-wrap { max-width: 96rem; }
+  .analyse-panel { border: 1px solid var(--eq-border); border-radius: 8px; background: var(--eq-white); padding: .85rem 1rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm); }
+  .analyse-panel h3 { margin: 0 0 .6rem; font-size: 15px; }
+  .search-row { display: flex; gap: .5rem; align-items: center; margin-bottom: .5rem; }
+  .search-row input { max-width: 28rem; }
+  #reservoir-results { width: 100%; }
+  #reservoir-results option { padding: 2px 4px; font-family: monospace; font-size: .82rem; }
+
+  /* ── Status / loading ── */
+  .status-msg { font-size: .85rem; color: var(--eq-grey); margin-top: .3rem; }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--eq-border); border-top-color: var(--eq-red); border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; margin-right: .3rem; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Reservoir header ── */
+  .res-header { background: linear-gradient(135deg, #e8f0fa 0%, #f0e8f5 100%); border: 1px solid #c5d5e4; border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .res-header h3 { margin: 0 0 .2rem; font-size: 1.2rem; color: #1a3a5c; }
+  .res-header .res-id { font-size: .78rem; color: var(--eq-grey); font-family: monospace; }
+
+  /* ── Gate timeline ── */
+  .gate-timeline { display: flex; gap: 0; margin-bottom: 1.2rem; align-items: stretch; overflow-x: auto; }
+  .gate-pill { flex: 1; min-width: 140px; max-width: 260px; text-align: center; padding: .5rem .7rem; border: 1px solid #c5d5e4; background: #f7f8fa; position: relative; cursor: default; }
+  .gate-pill:first-child { border-radius: 8px 0 0 8px; }
+  .gate-pill:last-child { border-radius: 0 8px 8px 0; }
+  .gate-pill .gate-name { font-weight: 700; font-size: 1rem; color: #1a3a5c; }
+  .gate-pill .gate-date { font-size: .78rem; color: var(--eq-grey); }
+  .gate-pill .gate-status { font-size: .72rem; border-radius: 999px; padding: .1rem .45rem; display: inline-block; margin-top: .2rem; }
+  .gate-status.approved { background: #c6f6d5; color: #22543d; }
+  .gate-status.pending { background: #fefcbf; color: #975a16; }
+  .gate-pill::after { content: '→'; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: #a0aec0; z-index: 1; }
+  .gate-pill:last-child::after { content: ''; }
+
+  /* ── Comparison table ── */
+  .cmp-section { margin-bottom: 1.2rem; }
+  .cmp-title { font-size: .88rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #4a5568; margin-bottom: .5rem; padding-bottom: .3rem; border-bottom: 2px solid var(--eq-red); }
+  .cmp-table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  .cmp-table th, .cmp-table td { padding: .4rem .6rem; border-bottom: 1px solid var(--eq-border); text-align: center; }
+  .cmp-table th:first-child, .cmp-table td:first-child { text-align: left; font-weight: 500; color: #2d3748; min-width: 160px; }
+  .cmp-table thead th { background: var(--eq-light); font-weight: 600; color: var(--eq-slate); font-size: .82rem; text-transform: uppercase; letter-spacing: .03em; position: sticky; top: 0; }
+  .cmp-table .delta { font-size: .75rem; display: block; margin-top: .1rem; }
+  .delta.up { color: #38a169; }
+  .delta.down { color: #e53e3e; }
+  .delta.neutral { color: var(--eq-grey); }
+  .delta.new-val { color: #3182ce; font-style: italic; }
+  .cmp-val { font-weight: 600; color: #2d3748; }
+  .cmp-empty { color: #cbd5e0; }
+
+  /* ── Risk diff chips ── */
+  .risk-row { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; }
+  .risk-chip { border-radius: 999px; padding: .15rem .55rem; font-size: .8rem; }
+  .risk-chip.kept { background: #e2e8f0; color: #4a5568; }
+  .risk-chip.added { background: #fed7d7; color: #c53030; border: 1px solid #feb2b2; }
+  .risk-chip.removed { background: #c6f6d5; color: #276749; text-decoration: line-through; border: 1px solid #9ae6b4; }
+  .risk-chip.mitigated { background: #c6f6d5; color: #276749; border: 1px solid #9ae6b4; }
+  .risk-chip.reduced { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+  .risk-sev { font-size: .7rem; opacity: .8; margin-left: .2rem; }
+  .risk-status { font-size: .65rem; font-weight: 600; margin-left: .15rem; text-transform: uppercase; }
+
+  /* ── Synthesis card ── */
+  .synthesis-card { border: 1px solid #b2d8d8; border-radius: 10px; padding: 0; overflow: hidden; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+  .synthesis-header { background: linear-gradient(135deg, #e8faf5 0%, #ebf4ff 100%); padding: .75rem 1.25rem; border-bottom: 1px solid #b2d8d8; }
+  .synthesis-header h4 { margin: 0; font-size: 1rem; color: #1a365d; font-weight: 700; }
+  .synthesis-body { padding: .85rem 1.25rem; }
+  .insight-item { background: #f7faff; border-radius: 6px; border-left: 3px solid #90cdf4; padding: .5rem .7rem; margin-bottom: .4rem; font-size: .88rem; color: #2d3748; line-height: 1.5; }
+  .insight-item.warning { border-left-color: #f6ad55; background: #fffaf0; }
+  .insight-item.positive { border-left-color: #68d391; background: #f0fff4; }
+
+  /* ── No-results ── */
+  .no-gates { text-align: center; padding: 2rem; color: var(--eq-grey); font-size: .95rem; }
+
+  /* ── Charts ── */
+  .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  @media (max-width: 900px) { .chart-row { grid-template-columns: 1fr; } }
+  .chart-card { border: 1px solid var(--eq-border); border-radius: 8px; background: var(--eq-white); padding: .75rem 1rem; box-shadow: var(--shadow-sm); }
+  .chart-card h4 { margin: 0 0 .5rem; font-size: .88rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: #4a5568; }
+  .chart-wrap { position: relative; height: 280px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="analyse-wrap">
+  <h2>Analyse — Reservoir Decision Gate Tracking</h2>
+  <p class="muted" style="margin-top:-.5rem;margin-bottom:.75rem;">
+    Select a reservoir to compare Business Decisions across decision gates.
+    Track how input parameters, volumes, economics, and risks evolve from early screening to concept selection.
+  </p>
+
+  <!-- ══════ Step 1: Find & select a reservoir ══════ -->
+  <section class="analyse-panel" id="step-search">
+    <h3>1 &mdash; Select Reservoir</h3>
+    <div class="search-row">
+      <input id="res-query" type="text" value="*" placeholder="e.g. Drogon or *" />
+      <button class="btn btn-primary" id="btn-res-search" type="button">Search</button>
+    </div>
+    <select id="reservoir-results" size="8">
+      {% if reservoirs %}
+        {% for res in reservoirs %}
+        <option value="{{ res.id }}" title="{{ res.id }}">{{ res.name }}  —  {{ res.id }}</option>
+        {% endfor %}
+      {% else %}
+      <option value="">— no reservoirs found —</option>
+      {% endif %}
+    </select>
+    <div id="res-status" class="status-msg"></div>
+    <div style="margin-top:.5rem;">
+      <button class="btn btn-primary" id="btn-compare" type="button" disabled>Load Decision Gates</button>
+    </div>
+  </section>
+
+  <!-- ══════ Step 2: Comparison dashboard (populated by JS) ══════ -->
+  <section id="comparison-area" style="display:none;">
+    <div id="res-header-box" class="res-header" style="display:none;">
+      <h3 id="res-name-title"></h3>
+      <div id="res-id-sub" class="res-id"></div>
+    </div>
+    <div id="gate-timeline" class="gate-timeline"></div>
+    <div id="comparison-content"></div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const $ = (sel) => document.querySelector(sel);
+  const resQuery   = $('#res-query');
+  const btnSearch  = $('#btn-res-search');
+  const resSel     = $('#reservoir-results');
+  const resStatus  = $('#res-status');
+  const btnCompare = $('#btn-compare');
+  const compArea   = $('#comparison-area');
+
+  // ── Search reservoirs ──
+  btnSearch.addEventListener('click', searchReservoirs);
+  resQuery.addEventListener('keydown', e => { if (e.key === 'Enter') searchReservoirs(); });
+
+  async function searchReservoirs() {
+    resStatus.innerHTML = '<span class="spinner"></span> Searching…';
+    resSel.innerHTML = '';
+    btnCompare.disabled = true;
+    try {
+      const q = encodeURIComponent(resQuery.value || '*');
+      const r = await fetch(`/analyse/reservoirs?query=${q}&limit=30`);
+      const j = await r.json();
+      if (j.error) { resStatus.textContent = 'Error: ' + j.error; return; }
+      const list = j.reservoirs || [];
+      if (!list.length) { resStatus.textContent = 'No reservoirs found.'; return; }
+      resStatus.textContent = list.length + ' reservoir(s) found.';
+      list.forEach(res => {
+        const o = document.createElement('option');
+        o.value = res.id;
+        o.title = res.id;
+        o.textContent = res.name + '  —  ' + res.id;
+        resSel.appendChild(o);
+      });
+    } catch (e) {
+      resStatus.textContent = 'Search failed: ' + e.message;
+    }
+  }
+
+  // Auto-enable compare button if reservoirs were pre-populated by server
+  if (resSel.options.length > 0 && resSel.options[0].value) {
+    resStatus.textContent = resSel.options.length + ' reservoir(s) loaded.';
+  }
+
+  resSel.addEventListener('change', () => {
+    btnCompare.disabled = !resSel.value;
+  });
+
+  // ── Compare BDs for selected reservoir ──
+  btnCompare.addEventListener('click', runComparison);
+
+  async function runComparison() {
+    const rid = resSel.value;
+    if (!rid) return;
+    resStatus.innerHTML = '<span class="spinner"></span> Loading decision gates & enrichment data…';
+    btnCompare.disabled = true;
+    compArea.style.display = 'none';
+
+    try {
+      const fd = new FormData();
+      fd.append('reservoir_id', rid);
+      const r = await fetch('/analyse/compare', { method: 'POST', body: fd });
+      const j = await r.json();
+      if (j.error) { resStatus.textContent = 'Error: ' + j.error; btnCompare.disabled = false; return; }
+      resStatus.textContent = 'Loaded ' + (j.gates || []).length + ' decision gate(s).';
+      btnCompare.disabled = false;
+      renderComparison(j);
+    } catch (e) {
+      resStatus.textContent = 'Failed: ' + e.message;
+      btnCompare.disabled = false;
+    }
+  }
+
+  // ── Render the full comparison dashboard ──
+  function renderComparison(data) {
+    compArea.style.display = '';
+    const gates = data.gates || [];
+    const deltas = data.metric_deltas || [];
+    const riskDiffs = data.risk_diffs || [];
+    const propDiffs = data.property_diffs || [];
+
+    // Header
+    const hdr = $('#res-header-box');
+    hdr.style.display = '';
+    $('#res-name-title').textContent = data.reservoir_name || data.reservoir_id;
+    $('#res-id-sub').textContent = data.reservoir_id;
+
+    // Timeline
+    const tl = $('#gate-timeline');
+    tl.innerHTML = '';
+    gates.forEach((g, i) => {
+      const pill = document.createElement('div');
+      pill.className = 'gate-pill';
+      const statusCls = (g.status || '').toLowerCase().includes('approved') ? 'approved' : 'pending';
+      pill.innerHTML = `
+        <div class="gate-name">${esc(g.gate_label)}</div>
+        <div class="gate-date">${esc(g.decision_date || '—')}</div>
+        <span class="gate-status ${statusCls}">${esc(g.status || '—')}</span>`;
+      tl.appendChild(pill);
+    });
+
+    if (!gates.length) {
+      $('#comparison-content').innerHTML = '<div class="no-gates">No Business Decision records found referencing this reservoir.</div>';
+      return;
+    }
+
+    // Build comparison content
+    let html = '';
+
+    // ── VOLUMES ──
+    // Volume keys whose values are in m³ (display as MSm³)
+    const volKeys = new Set(['stoiip_p90','stoiip_p50','stoiip_p10','recoverable_p90','recoverable_p50','recoverable_p10']);
+    const fmtMetric = (v, key) => volKeys.has(key) ? fmtVol(v) : fmtNum(v);
+    html += buildMetricTable('Volumes (MSm³)', gates, deltas, [
+      ['stoiip_p90', 'STOIIP P90'], ['stoiip_p50', 'STOIIP P50'], ['stoiip_p10', 'STOIIP P10'],
+      ['recoverable_p90', 'Recoverable P90'], ['recoverable_p50', 'Recoverable P50'], ['recoverable_p10', 'Recoverable P10'],
+      ['rf_p90', 'Rec. Factor P90 (%)'], ['rf_p50', 'Rec. Factor P50 (%)'], ['rf_p10', 'Rec. Factor P10 (%)'],
+    ], fmtMetric);
+
+    // ── PER-SEGMENT STOIIP P50 ──
+    const segKeys = collectSegmentKeys(gates);
+    if (segKeys.length) {
+      html += '<div class="cmp-section"><div class="cmp-title">STOIIP by Segment — P50 (MSm³)</div>';
+      html += '<div style="overflow-x:auto;"><table class="cmp-table"><thead><tr><th>Segment</th>';
+      gates.forEach(g => { html += `<th>${esc(g.gate_label)}</th>`; });
+      if (gates.length > 1) html += '<th>Δ Last</th>';
+      html += '</tr></thead><tbody>';
+      segKeys.forEach(seg => {
+        html += `<tr><td>${esc(seg)}</td>`;
+        let prev = null;
+        gates.forEach((g, i) => {
+          const v = ((g.gls_volumes || {})[seg] || {})['Oil.P50'];
+          html += `<td class="${v != null ? 'cmp-val' : 'cmp-empty'}">${v != null ? fmtVol(v) : '—'}</td>`;
+          if (i === gates.length - 1 && gates.length > 1) {
+            const pv = ((gates[i-1].gls_volumes || {})[seg] || {})['Oil.P50'];
+            if (pv != null && v != null) {
+              const dv = v - pv;
+              const sign = dv > 0 ? '+' : '';
+              const cls = dv > 0 ? 'up' : dv < 0 ? 'down' : 'neutral';
+              const pct = pv !== 0 ? Math.round(dv / pv * 100) : null;
+              html += `<td><span class="delta ${cls}">${sign}${fmtVol(dv)}${pct != null ? ' (' + sign + pct + '%)' : ''}</span></td>`;
+            } else {
+              html += '<td>' + deltaCell(pv, v) + '</td>';
+            }
+          }
+          prev = v;
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table></div></div>';
+    }
+
+    // ── CHARTS — visual comparison of key metrics ──
+    html += '<div class="chart-row">';
+    html += '<div class="chart-card"><h4>STOIIP Uncertainty Range by Gate</h4><div class="chart-wrap"><canvas id="chartVolRange"></canvas></div></div>';
+    html += '<div class="chart-card"><h4>Oil in Place by Segment</h4><div class="chart-wrap"><canvas id="chartSegBar"></canvas></div></div>';
+    html += '</div>';
+    html += '<div class="chart-row">';
+    html += '<div class="chart-card"><h4>Delta Tornado — Last Gate Change</h4><div class="chart-wrap"><canvas id="chartTornado"></canvas></div></div>';
+    html += '<div class="chart-card"><h4>Risk Evolution</h4><div class="chart-wrap"><canvas id="chartRiskEvo"></canvas></div></div>';
+    html += '</div>';
+
+    // ── ECONOMICS ──
+    html += buildMetricTable('Economics', gates, deltas, [
+      ['npv', 'NPV (MUSD)'], ['capex', 'CAPEX (MNOK)'], ['opex', 'OPEX (MNOK/yr)'],
+      ['irr', 'IRR (%)'], ['breakeven', 'Breakeven ($/bbl)'],
+    ]);
+
+    // ── DEVELOPMENT CONCEPT ──
+    html += buildDevConceptSection(gates);
+
+    // ── RESERVOIR PROPERTIES ──
+    html += buildPropertiesSection(gates, propDiffs);
+
+    // ── RISKS ──
+    html += buildRiskSection(gates, riskDiffs);
+
+    // ── KEY UNCERTAINTIES ──
+    html += buildUncertaintiesSection(gates);
+
+    // ── SYNTHESIS ──
+    html += buildSynthesis(gates, deltas, riskDiffs, propDiffs);
+
+    $('#comparison-content').innerHTML = html;
+    renderCharts(gates, deltas, riskDiffs);
+  }
+
+  // ── Table builders ──
+
+  function buildMetricTable(title, gates, deltas, rows, fmt) {
+    fmt = fmt || fmtNum;
+    // Check if any row has data
+    const hasData = rows.some(([key]) => gates.some(g => (g.metrics || {})[key] != null));
+    if (!hasData) return '';
+
+    let h = '<div class="cmp-section"><div class="cmp-title">' + esc(title) + '</div>';
+    h += '<div style="overflow-x:auto;"><table class="cmp-table"><thead><tr><th>Metric</th>';
+    gates.forEach(g => { h += `<th>${esc(g.gate_label)}</th>`; });
+    if (gates.length > 1) h += '<th>Δ (last step)</th>';
+    h += '</tr></thead><tbody>';
+
+    rows.forEach(([key, label]) => {
+      const anyVal = gates.some(g => (g.metrics || {})[key] != null);
+      if (!anyVal) return;
+      h += `<tr><td>${esc(label)}</td>`;
+      gates.forEach((g, i) => {
+        const v = (g.metrics || {})[key];
+        h += `<td class="${v != null ? 'cmp-val' : 'cmp-empty'}">${v != null ? fmt(v, key) : '—'}</td>`;
+      });
+      if (gates.length > 1) {
+        const lastD = deltas[deltas.length - 1] || {};
+        const d = lastD[key];
+        if (d) {
+          if (d.new) {
+            h += '<td><span class="delta new-val">new</span></td>';
+          } else {
+            const sign = d.abs > 0 ? '+' : '';
+            const cls = d.abs > 0 ? 'up' : d.abs < 0 ? 'down' : 'neutral';
+            h += `<td><span class="delta ${cls}">${sign}${fmt(d.abs, key)}${d.pct != null ? ' (' + sign + d.pct + '%)' : ''}</span></td>`;
+          }
+        } else {
+          h += '<td></td>';
+        }
+      }
+      h += '</tr>';
+    });
+    h += '</tbody></table></div></div>';
+    return h;
+  }
+
+  function collectSegmentKeys(gates) {
+    const seen = new Set();
+    const ordered = [];
+    gates.forEach(g => {
+      Object.keys(g.gls_volumes || {}).forEach(seg => {
+        if (seg !== 'TOTAL' && !seen.has(seg)) { seen.add(seg); ordered.push(seg); }
+      });
+    });
+    // Put TOTAL first if any gate has it
+    if (gates.some(g => (g.gls_volumes || {}).TOTAL)) ordered.unshift('TOTAL');
+    return ordered;
+  }
+
+  function buildDevConceptSection(gates) {
+    const hasAny = gates.some(g => Object.keys(g.development_concept || {}).length > 0);
+    if (!hasAny) return '';
+
+    const fields = [
+      ['WellCount', 'Wells'], ['MultilateralWells', 'Multilateral Wells'], ['TemplateSlots', 'Template Slots'],
+      ['DrillingCentres', 'Drilling Centres'], ['HostFacility', 'Host Facility'],
+      ['DistanceToHost_km', 'Distance to Host (km)'], ['WaterDepth_m', 'Water Depth (m)'],
+      ['ReservoirFormation', 'Formation'], ['FieldArea', 'Field Area'], ['TargetStartUp', 'Target Start-up'],
+      ['InjectionStrategy', 'Injection Strategy'], ['Summary', 'Summary'],
+    ];
+
+    let h = '<div class="cmp-section"><div class="cmp-title">Development Concept</div>';
+    h += '<div style="overflow-x:auto;"><table class="cmp-table"><thead><tr><th>Parameter</th>';
+    gates.forEach(g => { h += `<th>${esc(g.gate_label)}</th>`; });
+    h += '</tr></thead><tbody>';
+
+    fields.forEach(([key, label]) => {
+      const anyVal = gates.some(g => (g.development_concept || {})[key] != null);
+      if (!anyVal) return;
+      h += `<tr><td>${esc(label)}</td>`;
+      gates.forEach(g => {
+        const v = (g.development_concept || {})[key];
+        const s = v != null ? String(v) : '—';
+        h += `<td class="${v != null ? 'cmp-val' : 'cmp-empty'}">${esc(s)}</td>`;
+      });
+      h += '</tr>';
+    });
+    h += '</tbody></table></div></div>';
+    return h;
+  }
+
+  function buildPropertiesSection(gates, propDiffs) {
+    const allKeys = new Set();
+    gates.forEach(g => { Object.keys(g.properties || {}).forEach(k => allKeys.add(k)); });
+    if (!allKeys.size) return '';
+
+    let h = '<div class="cmp-section"><div class="cmp-title">Reservoir Properties (GeoLabelSet)</div>';
+    h += '<div style="overflow-x:auto;"><table class="cmp-table"><thead><tr><th>Property</th>';
+    gates.forEach(g => { h += `<th>${esc(g.gate_label)}</th>`; });
+    if (gates.length > 1) h += '<th>Δ Last</th>';
+    h += '</tr></thead><tbody>';
+
+    const sorted = Array.from(allKeys).sort();
+    sorted.forEach(key => {
+      // Check if it's a per-facies dict
+      const isFacies = gates.some(g => typeof (g.properties || {})[key] === 'object' && (g.properties || {})[key] !== null);
+      if (isFacies) {
+        const faciesKeys = new Set();
+        gates.forEach(g => {
+          const v = (g.properties || {})[key];
+          if (v && typeof v === 'object') Object.keys(v).forEach(fk => faciesKeys.add(fk));
+        });
+        Array.from(faciesKeys).sort().forEach(fk => {
+          h += `<tr><td>${esc(key)} (${esc(fk)})</td>`;
+          gates.forEach(g => {
+            const obj = (g.properties || {})[key];
+            const v = (obj && typeof obj === 'object') ? obj[fk] : null;
+            h += `<td class="${v != null ? 'cmp-val' : 'cmp-empty'}">${v != null ? fmtNum(v) : '—'}</td>`;
+          });
+          if (gates.length > 1) {
+            const lastPD = propDiffs[propDiffs.length - 1] || {};
+            const kd = lastPD[key];
+            const fd = (kd && typeof kd === 'object') ? kd[fk] : null;
+            h += '<td>' + (fd ? deltaSpan(fd) : '') + '</td>';
+          }
+          h += '</tr>';
+        });
+      } else {
+        h += `<tr><td>${esc(key)}</td>`;
+        gates.forEach(g => {
+          const v = (g.properties || {})[key];
+          h += `<td class="${v != null ? 'cmp-val' : 'cmp-empty'}">${v != null ? fmtNum(v) : '—'}</td>`;
+        });
+        if (gates.length > 1) {
+          const lastPD = propDiffs[propDiffs.length - 1] || {};
+          const pd = lastPD[key];
+          h += '<td>' + (pd ? deltaSpan(pd) : '') + '</td>';
+        }
+        h += '</tr>';
+      }
+    });
+    h += '</tbody></table></div></div>';
+    return h;
+  }
+
+  function buildRiskSection(gates, riskDiffs) {
+    const hasRisks = gates.some(g => (g.risk_ids || []).length > 0);
+    if (!hasRisks) return '';
+
+    let h = '<div class="cmp-section"><div class="cmp-title">Risk Evolution</div>';
+    h += '<div style="overflow-x:auto;"><table class="cmp-table"><thead><tr><th>Gate</th><th>Risks</th><th>Changes</th></tr></thead><tbody>';
+
+    gates.forEach((g, i) => {
+      const rd = riskDiffs[i] || {};
+      const details = g.risk_details || {};
+      h += `<tr><td class="cmp-val">${esc(g.gate_label)}</td><td><div class="risk-row">`;
+      (g.risk_ids || []).forEach(rid => {
+        const nm = (g.risk_names || {})[rid] || rid.split(':').slice(-2, -1)[0] || rid;
+        const det = details[rid] || {};
+        const isNew = (rd.added || []).includes(rid);
+        const st = (det.status || '').toLowerCase();
+        const cls = st === 'mitigated' ? 'mitigated' : (isNew ? 'added' : 'kept');
+        const sev = det.residual_severity && det.residual_probability
+          ? ` <span class="risk-sev">${esc(det.residual_severity)}/${esc(det.residual_probability)}</span>` : '';
+        const stBadge = st === 'mitigated'
+          ? ' <span class="risk-status" style="color:#276749;">✓</span>' : '';
+        h += `<span class="risk-chip ${cls}" title="${esc(rid)}">${esc(nm)}${sev}${stBadge}</span>`;
+      });
+      h += '</div></td><td><div class="risk-row">';
+      if (i > 0) {
+        // Severity changes (kept risks that changed)
+        (rd.severity_changes || []).forEach(ch => {
+          const cls = ch.direction === 'mitigated' ? 'mitigated' : (ch.direction === 'reduced' ? 'reduced' : 'added');
+          const arrow = ch.direction === 'increased' ? '↑' : '↓';
+          const label = ch.direction === 'mitigated' ? '✓ Mitigated' : `${arrow} ${ch.prev_sev} → ${ch.curr_sev}`;
+          const shortNm = ch.name.split(' — ').pop() || ch.name;
+          h += `<span class="risk-chip ${cls}">${esc(shortNm)}: ${label}</span>`;
+        });
+        // Newly added risks
+        (rd.added || []).forEach(rid => {
+          const nm = (g.risk_names || {})[rid] || rid.split(':').slice(-2, -1)[0] || rid;
+          h += `<span class="risk-chip added">+ ${esc(nm)}</span>`;
+        });
+        // Removed risks
+        (rd.removed || []).forEach(rid => {
+          const prevG = gates[i - 1];
+          const nm = (prevG.risk_names || {})[rid] || rid.split(':').slice(-2, -1)[0] || rid;
+          h += `<span class="risk-chip removed">− ${esc(nm)}</span>`;
+        });
+        if (!(rd.added || []).length && !(rd.removed || []).length && !(rd.severity_changes || []).length) {
+          h += '<span class="muted" style="font-size:.8rem;">No change</span>';
+        }
+      } else {
+        h += '<span class="muted" style="font-size:.8rem;">Baseline</span>';
+      }
+      h += '</div></td></tr>';
+    });
+    h += '</tbody></table></div></div>';
+    return h;
+  }
+
+  function buildUncertaintiesSection(gates) {
+    const hasAny = gates.some(g => (g.key_uncertainties || []).length > 0);
+    if (!hasAny) return '';
+
+    let h = '<div class="cmp-section"><div class="cmp-title">Key Uncertainties</div>';
+    h += '<div style="overflow-x:auto;"><table class="cmp-table"><thead><tr><th>Gate</th><th>Uncertainties</th></tr></thead><tbody>';
+    gates.forEach(g => {
+      h += `<tr><td class="cmp-val">${esc(g.gate_label)}</td><td style="text-align:left;">`;
+      (g.key_uncertainties || []).forEach(ku => {
+        const impact = (ku.Impact || '').toLowerCase();
+        const color = impact === 'high' ? '#c53030' : impact === 'medium' ? '#c05621' : '#276749';
+        h += `<div style="margin-bottom:.3rem;"><strong style="color:${color};">[${esc(ku.Impact || '?')}]</strong> ${esc(ku.Factor || '')}`;
+        if (ku.Description) h += ` — <span class="muted">${esc(ku.Description)}</span>`;
+        h += '</div>';
+      });
+      if (!(g.key_uncertainties || []).length) h += '<span class="muted">None recorded</span>';
+      h += '</td></tr>';
+    });
+    h += '</tbody></table></div></div>';
+    return h;
+  }
+
+  function buildSynthesis(gates, deltas, riskDiffs, propDiffs) {
+    if (gates.length < 2) return '';
+
+    let insights = [];
+    const last = deltas[deltas.length - 1] || {};
+    const prevG = gates[gates.length - 2];
+    const currG = gates[gates.length - 1];
+    const lastRD = riskDiffs[riskDiffs.length - 1] || {};
+    const lastPD = propDiffs[propDiffs.length - 1] || {};
+
+    // Volume changes
+    if (last.stoiip_p50 && !last.stoiip_p50.new) {
+      const pct = last.stoiip_p50.pct;
+      const dir = pct > 0 ? 'increased' : 'decreased';
+      insights.push({
+        text: `STOIIP P50 ${dir} by ${Math.abs(pct)}% (${fmtVol(last.stoiip_p50.abs)} MSm³) from ${prevG.gate_label} to ${currG.gate_label}.`,
+        cls: pct > 0 ? 'positive' : 'warning'
+      });
+    }
+    if (last.recoverable_p50 && !last.recoverable_p50.new) {
+      const pct = last.recoverable_p50.pct;
+      const dir = pct > 0 ? 'increased' : 'decreased';
+      insights.push({
+        text: `Recoverable oil P50 ${dir} by ${Math.abs(pct)}% from ${prevG.gate_label} to ${currG.gate_label}.`,
+        cls: pct > 0 ? 'positive' : 'warning'
+      });
+    }
+
+    // Economics
+    if (last.npv && last.npv.new) {
+      insights.push({ text: `NPV first quantified at ${currG.gate_label}: $${currG.metrics.npv}M.`, cls: '' });
+    } else if (last.npv && !last.npv.new) {
+      const dir = last.npv.abs > 0 ? 'improved' : 'declined';
+      insights.push({ text: `NPV ${dir} by $${Math.abs(last.npv.abs)}M (${last.npv.pct > 0 ? '+' : ''}${last.npv.pct}%).`, cls: last.npv.abs > 0 ? 'positive' : 'warning' });
+    }
+
+    // Property-driven cause/effect
+    const porDiffs = lastPD['Porosity'];
+    if (porDiffs && typeof porDiffs === 'object') {
+      const facies = Object.keys(porDiffs);
+      if (facies.length) {
+        const sample = porDiffs[facies[0]];
+        if (sample && sample.pct != null && sample.pct !== 0) {
+          const dir = sample.pct < 0 ? 'reduced' : 'increased';
+          insights.push({
+            text: `Porosity ${dir} (${facies[0]}: ${sample.pct > 0 ? '+' : ''}${sample.pct}%) — this likely explains the proportional change in STOIIP volumes.`,
+            cls: 'warning'
+          });
+        }
+      }
+    }
+
+    // Risks
+    const addedCount = (lastRD.added || []).length;
+    const removedCount = (lastRD.removed || []).length;
+    const sevChanges = (lastRD.severity_changes || []);
+    const mitigatedCount = sevChanges.filter(c => c.direction === 'mitigated').length;
+    const reducedCount = sevChanges.filter(c => c.direction === 'reduced').length;
+    if (addedCount > 0 || removedCount > 0 || mitigatedCount > 0 || reducedCount > 0) {
+      let parts = [];
+      if (mitigatedCount > 0) parts.push(`${mitigatedCount} risk(s) mitigated`);
+      if (reducedCount > 0) parts.push(`${reducedCount} risk(s) reduced in severity`);
+      if (removedCount > 0) parts.push(`${removedCount} risk(s) removed`);
+      if (addedCount > 0) parts.push(`${addedCount} new risk(s) identified`);
+      let riskText = parts.join(', ') + ` between ${prevG.gate_label} and ${currG.gate_label}.`;
+      const isPositive = (mitigatedCount + reducedCount + removedCount) > addedCount;
+      insights.push({ text: riskText, cls: isPositive ? 'positive' : 'warning' });
+    }
+
+    // Mitigation suggestion
+    if (addedCount > 0 || (last.stoiip_p50 && last.stoiip_p50.pct < -10)) {
+      insights.push({
+        text: `Mitigation focus for next gate: address new risks and validate subsurface model assumptions to reduce volume uncertainty.`,
+        cls: 'warning'
+      });
+    }
+
+    if (!insights.length) {
+      insights.push({ text: 'No significant cross-gate changes detected.', cls: '' });
+    }
+
+    let h = '<div class="cmp-section"><div class="synthesis-card">';
+    h += '<div class="synthesis-header"><h4>Synthesis — Cross-Gate Change Analysis</h4></div>';
+    h += '<div class="synthesis-body">';
+    insights.forEach(ins => {
+      h += `<div class="insight-item ${ins.cls}">${esc(ins.text)}</div>`;
+    });
+    h += '</div></div></div>';
+    return h;
+  }
+
+  // ── Chart rendering ──
+
+  const GATE_COLORS = ['#3182ce', '#e53e3e', '#38a169', '#d69e2e', '#805ad5', '#dd6b20'];
+  const GATE_COLORS_40 = ['rgba(49,130,206,.4)', 'rgba(229,62,62,.4)', 'rgba(56,161,105,.4)', 'rgba(214,158,46,.4)', 'rgba(128,90,213,.4)', 'rgba(221,107,32,.4)'];
+  let _activeCharts = [];
+
+  function renderCharts(gates, deltas, riskDiffs) {
+    // Destroy previous charts
+    _activeCharts.forEach(c => c.destroy());
+    _activeCharts = [];
+
+    if (typeof Chart === 'undefined' || !gates.length) return;
+
+    // 1. STOIIP Uncertainty Range — grouped bar with error-bar feel (P10 / P50 / P90)
+    const volCtx = document.getElementById('chartVolRange');
+    if (volCtx) {
+      const labels = gates.map(g => g.gate_label);
+      const p10 = gates.map(g => ((g.metrics || {}).stoiip_p10 || 0) / 1e6);
+      const p50 = gates.map(g => ((g.metrics || {}).stoiip_p50 || 0) / 1e6);
+      const p90 = gates.map(g => ((g.metrics || {}).stoiip_p90 || 0) / 1e6);
+      _activeCharts.push(new Chart(volCtx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            { label: 'P10', data: p10, backgroundColor: 'rgba(229,62,62,.65)', borderColor: '#c53030', borderWidth: 1 },
+            { label: 'P50', data: p50, backgroundColor: 'rgba(49,130,206,.75)', borderColor: '#2b6cb0', borderWidth: 1 },
+            { label: 'P90', data: p90, backgroundColor: 'rgba(56,161,105,.55)', borderColor: '#276749', borderWidth: 1 },
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'top', labels: { boxWidth: 14, font: { size: 11 } } } },
+          scales: {
+            y: { title: { display: true, text: 'MSm³', font: { size: 11 } }, ticks: { callback: v => v.toFixed(1) } },
+            x: { ticks: { font: { size: 12, weight: 'bold' } } }
+          }
+        }
+      }));
+    }
+
+    // 2. Oil by Segment — stacked bar per gate
+    const segCtx = document.getElementById('chartSegBar');
+    if (segCtx) {
+      const segKeys = collectSegmentKeys(gates).filter(s => s !== 'TOTAL');
+      if (segKeys.length) {
+        const segColors = ['#3182ce','#e53e3e','#38a169','#d69e2e','#805ad5','#dd6b20','#319795','#b83280','#5a67d8','#718096'];
+        const datasets = segKeys.map((seg, si) => ({
+          label: seg,
+          data: gates.map(g => (((g.gls_volumes || {})[seg] || {})['Oil.P50'] || 0) / 1e6),
+          backgroundColor: segColors[si % segColors.length] + 'cc',
+          borderColor: segColors[si % segColors.length],
+          borderWidth: 1,
+        }));
+        _activeCharts.push(new Chart(segCtx, {
+          type: 'bar',
+          data: { labels: gates.map(g => g.gate_label), datasets },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } } },
+            scales: {
+              x: { stacked: true, ticks: { font: { size: 12, weight: 'bold' } } },
+              y: { stacked: true, title: { display: true, text: 'Oil P50 (MSm³)', font: { size: 11 } }, ticks: { callback: v => v.toFixed(1) } }
+            }
+          }
+        }));
+      }
+    }
+
+    // 3. Delta Tornado — horizontal bar showing metric changes (last gate step)
+    const torCtx = document.getElementById('chartTornado');
+    if (torCtx && deltas.length > 1) {
+      const lastD = deltas[deltas.length - 1] || {};
+      const items = Object.entries(lastD)
+        .filter(([k, v]) => v && v.abs != null && !v.new)
+        .map(([k, v]) => ({ key: v.label || k, abs: v.abs, pct: v.pct }))
+        .sort((a, b) => Math.abs(b.abs) - Math.abs(a.abs))
+        .slice(0, 10);
+      if (items.length) {
+        // Normalize large values: show in MSm³ for volumes, raw for others
+        const labels = items.map(i => i.key);
+        const vals = items.map(i => {
+          const a = i.abs;
+          return (Math.abs(a) > 1e4) ? +(a / 1e6).toFixed(3) : +a.toFixed(2);
+        });
+        const colors = vals.map(v => v >= 0 ? 'rgba(56,161,105,.7)' : 'rgba(229,62,62,.7)');
+        const borders = vals.map(v => v >= 0 ? '#276749' : '#c53030');
+        _activeCharts.push(new Chart(torCtx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              data: vals,
+              backgroundColor: colors,
+              borderColor: borders,
+              borderWidth: 1,
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false },
+              tooltip: { callbacks: { label: ctx => {
+                const i = ctx.dataIndex;
+                const p = items[i].pct;
+                return ctx.formattedValue + (p != null ? ` (${p > 0 ? '+' : ''}${p}%)` : '');
+              }}}
+            },
+            scales: {
+              x: { title: { display: true, text: 'Change', font: { size: 11 } }, grid: { color: '#e2e8f0' } },
+              y: { ticks: { font: { size: 11 } } }
+            }
+          }
+        }));
+      }
+    }
+
+    // 4. Risk Evolution — bar chart showing risk changes per gate
+    const riskCtx = document.getElementById('chartRiskEvo');
+    if (riskCtx && gates.length > 0) {
+      const labels = gates.map(g => g.gate_label);
+      const riskCounts = gates.map(g => (g.risk_ids || []).length);
+      const openCounts = gates.map(g => {
+        const dets = g.risk_details || {};
+        return (g.risk_ids || []).filter(rid => (dets[rid]||{}).status !== 'Mitigated').length;
+      });
+      const mitigatedCounts = gates.map(g => {
+        const dets = g.risk_details || {};
+        return (g.risk_ids || []).filter(rid => (dets[rid]||{}).status === 'Mitigated').length;
+      });
+      _activeCharts.push(new Chart(riskCtx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [
+            { label: 'Open Risks', data: openCounts, backgroundColor: 'rgba(229,62,62,.6)', borderColor: '#c53030', borderWidth: 1, yAxisID: 'y' },
+            { label: 'Mitigated', data: mitigatedCounts, backgroundColor: 'rgba(56,161,105,.6)', borderColor: '#276749', borderWidth: 1, yAxisID: 'y' },
+            { label: 'Total', data: riskCounts, type: 'line', borderColor: '#3182ce', backgroundColor: 'rgba(49,130,206,.1)', fill: false, tension: .3, pointRadius: 5, pointBackgroundColor: '#3182ce', yAxisID: 'y' },
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 10 } } } },
+          scales: {
+            y: { beginAtZero: true, stacked: true, title: { display: true, text: 'Count', font: { size: 11 } }, ticks: { stepSize: 1 } },
+            x: { stacked: true, ticks: { font: { size: 12, weight: 'bold' } } }
+          }
+        }
+      }));
+    }
+  }
+
+  // ── Utilities ──
+
+  function deltaCell(prev, curr) {
+    if (prev == null || curr == null) return '';
+    try {
+      const pf = parseFloat(prev), cf = parseFloat(curr);
+      const abs = cf - pf;
+      const pct = pf !== 0 ? ((cf - pf) / pf * 100) : null;
+      const sign = abs > 0 ? '+' : '';
+      const cls = abs > 0 ? 'up' : abs < 0 ? 'down' : 'neutral';
+      return `<span class="delta ${cls}">${sign}${fmtNum(abs)}${pct != null ? ' (' + sign + pct.toFixed(1) + '%)' : ''}</span>`;
+    } catch { return ''; }
+  }
+
+  function deltaSpan(d) {
+    if (!d) return '';
+    if (d.new) return '<span class="delta new-val">new</span>';
+    if (d.abs == null) return '';
+    const sign = d.abs > 0 ? '+' : '';
+    const cls = d.abs > 0 ? 'up' : d.abs < 0 ? 'down' : 'neutral';
+    return `<span class="delta ${cls}">${sign}${fmtNum(d.abs)}${d.pct != null ? ' (' + sign + d.pct + '%)' : ''}</span>`;
+  }
+
+  function fmtNum(v) {
+    if (v == null) return '—';
+    const n = parseFloat(v);
+    if (isNaN(n)) return String(v);
+    if (Number.isInteger(n)) return n.toLocaleString();
+    return n.toFixed(Math.abs(n) >= 10 ? 1 : Math.abs(n) >= 1 ? 2 : 4);
+  }
+
+  /** Format a volume value stored in m³ as MSm³ (divide by 1e6) */
+  function fmtVol(v) {
+    if (v == null) return '—';
+    const n = parseFloat(v);
+    if (isNaN(n)) return '—';
+    const msm3 = n / 1e6;
+    return msm3.toFixed(Math.abs(msm3) >= 10 ? 1 : Math.abs(msm3) >= 1 ? 2 : 3);
+  }
+
+  function esc(s) {
+    if (s == null) return '';
+    const d = document.createElement('div');
+    d.textContent = String(s);
+    return d.innerHTML;
+  }
+
+})();
+</script>
+{% endblock %}

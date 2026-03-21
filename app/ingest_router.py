@@ -168,6 +168,9 @@ async def ingest_manifest(
     base_url = _get_env("OSDU_BASE_URL")
     if not base_url:
         raise HTTPException(status_code=500, detail="OSDU_BASE_URL is not configured in the environment")
+    # Normalise: osdu.py stores bare hostname; ensure we have a scheme for URL construction.
+    if not base_url.startswith("http"):
+        base_url = f"https://{base_url}"
     partition = body.get("partition") or _get_env("DATA_PARTITION_ID", "data")
     app_key = body.get("appKey") or _get_env("APP_KEY")
     run_id = body.get("runId") or str(uuid.uuid4())
