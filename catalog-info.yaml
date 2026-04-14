@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ores
+  annotations:
+    github.com/project-slug: equinor/ores
+spec:
+  type: other
+  lifecycle: unknown
+  owner: osdu-data-application-team
