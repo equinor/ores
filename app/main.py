@@ -541,19 +541,20 @@ async def dataspaces_create(
         cache_invalidate("list_dataspaces")
     except HTTPStatusError as e:
         r = e.response
-        return templates.TemplateResponse(
-            request, "admin.html",
-            {
-                "view": "home",
-                "dataspaces": [],
-                "ds_default": os.getenv("DEFAULT_DATASPACE", ""),
-                "default_legal_tag": osdu.DEFAULT_LEGAL_TAG,
-                "default_owners": ",".join(osdu.DEFAULT_OWNERS),
-                "default_viewers": ",".join(osdu.DEFAULT_VIEWERS),
-                "default_countries": ",".join(osdu.DEFAULT_COUNTRIES),
-                "error": f"Create failed: {r.status_code} {r.reason_phrase}",
-                "error_detail": (r.text[:2000] if r.text else ""),
-            },
-            status_code=400,
+        # Extract a clean error message from the RDDMS response
+        detail = ""
+        try:
+            body = r.json()
+            detail = body.get("message") or body.get("detail") or body.get("error") or ""
+        except Exception:
+            pass
+        if not detail:
+            detail = (r.text or "")[:500]
+            # Strip HTML if the RDDMS returned an HTML page
+            if "<html" in detail.lower():
+                detail = f"{r.status_code} {r.reason_phrase}"
+        return JSONResponse(
+            {"detail": f"Create failed: {detail}"},
+            status_code=r.status_code or 400,
         )
     return RedirectResponse(url=f"/keys?ds={urllib.parse.quote(path, safe='')}", status_code=302)

@@ -483,10 +483,14 @@
             return;
           }
           if (!res.ok) {
-            // Try to capture content for troubleshooting (HTML or JSON)
-            let txt = '';
-            try { txt = await res.text(); } catch { /* ignore */ }
-            throw new Error('HTTP ' + res.status + (txt ? (': ' + txt.substring(0, 300)) : ''));
+            let errMsg = 'HTTP ' + res.status;
+            try {
+              const j = await res.json();
+              errMsg = j.detail || j.message || j.error || errMsg;
+            } catch {
+              try { const t = await res.text(); if (t && !t.startsWith('<')) errMsg += ': ' + t.substring(0, 300); } catch {}
+            }
+            throw new Error(errMsg);
           }
 
           msg.style.display = 'block';
