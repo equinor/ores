@@ -29,27 +29,28 @@ _MD_DIR = _Path(__file__).resolve().parent.parent / "md"
 # Each section has a title and a list of items.
 # Items can optionally carry ``children`` (sub-articles shown indented).
 _HOWTO_SECTIONS: list[dict] = [
+    # ── Getting Started ───────────────────────────────────────────────
     {
-        "title": "HowTo",
+        "title": "Getting Started",
         "items": [
             {
                 "slug": "ores-overview",
                 "file": "Readme.md",
-                "title": "ORES OSDU Client - Overview",
+                "title": "ORES Overview",
                 "desc": "Web client capabilities, project layout & pipeline guide",
             },
             {
                 "slug": "query-guide",
                 "file": "Query.md",
                 "title": "Querying Data",
-                "desc": "REST, ETP, GraphQL & OSDU Search - all query paths explained",
+                "desc": "REST, ETP, GraphQL & OSDU Search – all query paths explained",
             },
-            {
-                "slug": "activity",
-                "file": "Activity.md",
-                "title": "Activity & Provenance",
-                "desc": "ActivityTemplate + Activity records for workflow provenance",
-            },
+        ],
+    },
+    # ── Subsurface Data Models ────────────────────────────────────────
+    {
+        "title": "Subsurface Data Models",
+        "items": [
             {
                 "slug": "business-decision",
                 "file": "BusinessDecision.md",
@@ -70,22 +71,40 @@ _HOWTO_SECTIONS: list[dict] = [
                 "desc": "M27 data model, RDDMS patterns & Drogon demo",
             },
             {
-                "slug": "crs-guide",
-                "file": "CrsGuide.md",
-                "title": "CRS Guide",
-                "desc": "RESQML ⇄ OSDU coordinate reference systems",
-            },
-            {
                 "slug": "strat-column",
                 "file": "StratColumn.md",
                 "title": "Stratigraphy",
                 "desc": "Data model, tooling & workflow",
             },
             {
+                "slug": "activity",
+                "file": "Activity.md",
+                "title": "Activity & Provenance",
+                "desc": "ActivityTemplate + Activity records for workflow provenance",
+            },
+        ],
+    },
+    # ── Infrastructure & Tooling ──────────────────────────────────────
+    {
+        "title": "Infrastructure & Tooling",
+        "items": [
+            {
                 "slug": "pws",
                 "file": "PWS.md",
                 "title": "Project & Workflow Service",
                 "desc": "P&WS lifecycle, endpoints & RDDMS integration",
+            },
+        ],
+    },
+    # ── Reference ─────────────────────────────────────────────────────
+    {
+        "title": "Reference",
+        "items": [
+            {
+                "slug": "crs-guide",
+                "file": "CrsGuide.md",
+                "title": "CRS Guide",
+                "desc": "RESQML ⇄ OSDU coordinate reference systems",
             },
         ],
     },
