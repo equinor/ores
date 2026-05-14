@@ -37,6 +37,14 @@ def _access_token(request: Request) -> str:
     from .common import access_token as _at
     return _at(request)
 
+def _sanitize(r) -> str:
+    from .common import sanitize_upstream_error
+    return sanitize_upstream_error(r)
+
+def _safe_detail(e: Exception) -> str:
+    from .common import safe_error_detail
+    return safe_error_detail(e)
+
 async def _osdu_get_record(request: Request, record_id: str) -> dict:
     at = _access_token(request)
     base = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
@@ -1246,11 +1254,11 @@ async def storage_put_strat_records(
                     results["errors"].append({
                         "batch": i,
                         "httpStatus": r.status_code,
-                        "detail": r.text[:1000],
+                        "detail": _sanitize(r),
                     })
             except Exception as e:
                 log.error("Storage PUT batch %d exception: %s", i, e)
-                results["errors"].append({"batch": i, "error": str(e)})
+                results["errors"].append({"batch": i, "error": _safe_detail(e)})
 
     log.info("Storage PUT done: %d created, %d errors", results["created"], len(results["errors"]))
 
@@ -1492,10 +1500,10 @@ async def generate_horizons(request: Request):
                     else:
                         ingest_result["errors"].append({
                             "batch": i, "httpStatus": r.status_code,
-                            "detail": r.text[:1000],
+                            "detail": _sanitize(r),
                         })
                 except Exception as e:
-                    ingest_result["errors"].append({"batch": i, "error": str(e)})
+                    ingest_result["errors"].append({"batch": i, "error": _safe_detail(e)})
 
     return JSONResponse({
         **result,
@@ -1719,10 +1727,10 @@ async def generate_units(request: Request):
                     else:
                         ingest_result["errors"].append({
                             "batch": i, "httpStatus": r.status_code,
-                            "detail": r.text[:1000],
+                            "detail": _sanitize(r),
                         })
                 except Exception as e:
-                    ingest_result["errors"].append({"batch": i, "error": str(e)})
+                    ingest_result["errors"].append({"batch": i, "error": _safe_detail(e)})
 
     return JSONResponse({
         **result,
@@ -2099,7 +2107,7 @@ async def _push_resqml_to_rddms(
     except httpx.HTTPStatusError as e:
         err = {
             "httpStatus": e.response.status_code,
-            "detail": e.response.text[:1000],
+            "detail": _sanitize(e.response),
         }
         errors.append(err)
         log.error("[RDDMS] Transaction write failed: %s", err)
@@ -2111,7 +2119,7 @@ async def _push_resqml_to_rddms(
             except Exception:
                 log.warning("[RDDMS] Rollback failed for tx %s", tx_id)
     except Exception as e:
-        errors.append({"error": str(e)})
+        errors.append({"error": _safe_detail(e)})
         log.error("[RDDMS] Transaction write exception: %s", e)
         if tx_id:
             try:
@@ -2361,7 +2369,7 @@ async def list_strat_dataspaces(request: Request):
         return JSONResponse({"dataspaces": items})
     except Exception as e:
         log.warning("[RDDMS] List dataspaces failed: %s", e)
-        return JSONResponse({"dataspaces": [], "error": str(e)})
+        return JSONResponse({"dataspaces": [], "error": _safe_detail(e)})
 
 
 # =====================================================================

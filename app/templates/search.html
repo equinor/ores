@@ -2353,6 +2353,12 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
     <script>
+    /* ── Shared HTML escape helper ── */
+    function escHtml(s) {
+      if (s == null) return '';
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
     /* ── BD map selector (switch between maps in the dataspace) ── */
     window.switchBdMap = function(sel, recIdx) {
       var opt = sel.options[sel.selectedIndex];
@@ -2396,8 +2402,9 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
         })
         .catch(function(err) {
           clearTimeout(timer);
-          var msg = err.name === 'AbortError' ? 'Timed out after 90s' : err.message;
-          imgDiv.innerHTML = '<div style="color:#e53e3e;font-size:.85rem;padding:.5rem;">Failed to load map: ' + msg + '</div>';
+          var msg = err.name === 'AbortError' ? 'Timed out after 90s' : (err.message || 'Unknown error');
+          var safe = msg.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          imgDiv.innerHTML = '<div style="color:#e53e3e;font-size:.85rem;padding:.5rem;">Failed to load map: ' + safe + '</div>';
         });
 
       /* Update links */
@@ -2892,13 +2899,13 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
           .then(r => r.json())
           .then(data => {
             if (data.error) {
-              schemaPanel.innerHTML = '<strong>Error:</strong> ' + data.error;
+              schemaPanel.textContent = 'Error: ' + data.error;
               return;
             }
             renderSchemaDetail(kind, data, schemaPanel);
           })
           .catch(err => {
-            schemaPanel.innerHTML = '<strong>Fetch error:</strong> ' + err.message;
+            schemaPanel.textContent = 'Fetch error: ' + err.message;
           });
       });
     });
@@ -2917,7 +2924,7 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
 
     // Properties tab
     html += '<div class="tab-content" data-tab="properties">';
-    html += '<h5>Schema: ' + kind + '</h5>';
+    html += '<h5>Schema: ' + escHtml(kind) + '</h5>';
     const propKeys = Object.keys(dataProps);
     if (propKeys.length > 0) {
       html += '<table class="schema-props-table"><thead><tr><th>Property</th><th>Type</th><th>Description</th><th>Req</th></tr></thead><tbody>';
@@ -2929,9 +2936,9 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
           ptype = 'array&lt;' + itemType.split('/').pop() + '&gt;';
         }
         if (p['$ref']) ptype = p['$ref'].split('/').pop();
-        const desc = (p.description || p.title || '').substring(0, 120);
+        const desc = escHtml((p.description || p.title || '').substring(0, 120));
         const isReq = required.includes(key) ? '✓' : '';
-        html += '<tr><td><strong>' + key + '</strong></td><td>' + ptype + '</td><td>' + desc + '</td><td>' + isReq + '</td></tr>';
+        html += '<tr><td><strong>' + escHtml(key) + '</strong></td><td>' + escHtml(ptype) + '</td><td>' + desc + '</td><td>' + isReq + '</td></tr>';
       });
       html += '</tbody></table>';
     } else {
@@ -2978,13 +2985,13 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
           .then(r => r.json())
           .then(data => {
             if (data.error) {
-              refdataPanel.innerHTML = '<strong>Error:</strong> ' + data.error;
+              refdataPanel.textContent = 'Error: ' + data.error;
               return;
             }
             renderRecordDetail(data, refdataPanel);
           })
           .catch(err => {
-            refdataPanel.innerHTML = '<strong>Fetch error:</strong> ' + err.message;
+            refdataPanel.textContent = 'Fetch error: ' + err.message;
           });
       });
     });
@@ -3002,15 +3009,15 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
 
     // Overview tab
     html += '<div class="tab-content" data-tab="overview">';
-    html += '<h5>' + (d.Name || rec.id || 'Record') + '</h5>';
+    html += '<h5>' + escHtml(d.Name || rec.id || 'Record') + '</h5>';
     html += '<div class="detail-kv">';
-    html += '<div class="k">ID</div><div class="v">' + (rec.id || '-') + '</div>';
-    html += '<div class="k">Kind</div><div class="v">' + (rec.kind || '-') + '</div>';
-    html += '<div class="k">Version</div><div class="v">' + (rec.version || '-') + '</div>';
-    if (d.Name) html += '<div class="k">Name</div><div class="v">' + d.Name + '</div>';
-    if (d.Code) html += '<div class="k">Code</div><div class="v">' + d.Code + '</div>';
-    if (d.Description) html += '<div class="k">Description</div><div class="v">' + d.Description + '</div>';
-    if (d.Source) html += '<div class="k">Source</div><div class="v">' + d.Source + '</div>';
+    html += '<div class="k">ID</div><div class="v">' + escHtml(rec.id || '-') + '</div>';
+    html += '<div class="k">Kind</div><div class="v">' + escHtml(rec.kind || '-') + '</div>';
+    html += '<div class="k">Version</div><div class="v">' + escHtml(rec.version || '-') + '</div>';
+    if (d.Name) html += '<div class="k">Name</div><div class="v">' + escHtml(d.Name) + '</div>';
+    if (d.Code) html += '<div class="k">Code</div><div class="v">' + escHtml(d.Code) + '</div>';
+    if (d.Description) html += '<div class="k">Description</div><div class="v">' + escHtml(d.Description) + '</div>';
+    if (d.Source) html += '<div class="k">Source</div><div class="v">' + escHtml(d.Source) + '</div>';;
     html += '</div>';
     html += '<p style="margin-top:.5rem;"><a href="/search/view/' + encodeURIComponent(rec.id) + '">Open full page view →</a></p>';
     html += '</div>';
@@ -3022,8 +3029,8 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
       let val = d[key];
       if (val === null || val === undefined) val = '-';
       else if (typeof val === 'object') val = '<code>' + JSON.stringify(val, null, 1).replace(/</g, '&lt;').substring(0, 300) + '</code>';
-      else val = String(val);
-      html += '<tr><td><strong>' + key + '</strong></td><td>' + val + '</td></tr>';
+      else val = escHtml(val);
+      html += '<tr><td><strong>' + escHtml(key) + '</strong></td><td>' + val + '</td></tr>';
     });
     html += '</tbody></table></div>';
 

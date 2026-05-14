@@ -118,19 +118,70 @@ def normalize_obj(raw: Any, uuid: str) -> Dict[str, Any]:
     return {}
 
 
+def sanitize_upstream_error(response) -> str:
+    """Extract a clean, user-safe error message from an upstream HTTP response.
+
+    Tries to parse a JSON body and extract ``message``, ``detail``, or
+    ``error`` fields.  Falls back to the HTTP reason phrase if the body
+    is HTML or unparseable.  Never returns raw HTML.
+    """
+    body = response.text or ""
+    # Try JSON first
+    if body.strip().startswith("{"):
+        try:
+            import json as _json
+            j = _json.loads(body)
+            msg = (
+                j.get("message")
+                or j.get("detail")
+                or j.get("error")
+                or j.get("reason")
+                or ""
+            )
+            if isinstance(msg, dict):
+                msg = msg.get("message") or msg.get("detail") or str(msg)
+            if msg:
+                return str(msg)[:500]
+        except Exception:
+            pass
+    # Reject HTML bodies
+    if "<html" in body[:200].lower() or "<!doctype" in body[:200].lower():
+        return f"{response.status_code} {response.reason_phrase}"
+    # Plain text fallback (capped)
+    clean = body.strip()[:300]
+    return clean if clean else f"{response.status_code} {response.reason_phrase}"
+
+
+def safe_error_detail(e: Exception) -> str:
+    """Return a clean, user-safe string from *any* exception.
+
+    * ``httpx.HTTPStatusError`` → delegates to :func:`sanitize_upstream_error`
+      so that raw HTML / huge JSON bodies are never surfaced.
+    * Other exceptions → ``str(e)`` capped at 300 chars.
+    """
+    if isinstance(e, httpx.HTTPStatusError) and hasattr(e, "response"):
+        return sanitize_upstream_error(e.response)
+    msg = str(e)
+    if "<html" in msg[:200].lower() or "<!doctype" in msg[:200].lower():
+        return type(e).__name__
+    return msg[:300] if msg else type(e).__name__
+
+
 def http_error_response(e) -> _JSONResponse:
     """Build a standard JSON error response from an ``httpx.HTTPStatusError``.
 
     Used by route handlers to avoid repeating the same 5-line
-    ``except HTTPStatusError`` block.
+    ``except HTTPStatusError`` block.  Always returns a clean,
+    user-safe error message (no raw HTML from upstream).
     """
     r = e.response
+    detail = sanitize_upstream_error(r)
     return _JSONResponse(
         {
             "status": "error",
             "code": r.status_code,
             "reason": r.reason_phrase,
-            "detail": (r.text[:2000] if r.text else ""),
+            "detail": detail,
         },
         status_code=r.status_code or 500,
     )

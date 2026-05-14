@@ -381,11 +381,13 @@ async def create_bd(request: Request):
         async with osdu.http_client(timeout=30) as client:
             r = await client.put(storage_url, json=[bd_record], headers=hdr)
             status = r.status_code
-            resp_body = r.text[:2000]
+            from .common import sanitize_upstream_error
+            resp_body = sanitize_upstream_error(r) if status >= 400 else r.text[:2000]
     except Exception as e:
         log.error("Storage API PUT failed: %s", e)
+        from .common import safe_error_detail
         return JSONResponse(
-            {"ok": False, "error": str(e)},
+            {"ok": False, "error": safe_error_detail(e)},
             status_code=502,
         )
 
@@ -577,11 +579,13 @@ async def create_cp(request: Request):
         async with osdu.http_client(timeout=30) as client:
             r = await client.put(storage_url, json=[cp_record], headers=hdr)
             status = r.status_code
-            resp_body = r.text[:2000]
+            from .common import sanitize_upstream_error
+            resp_body = sanitize_upstream_error(r) if status >= 400 else r.text[:2000]
     except Exception as e:
         log.error("Storage API PUT (CP) failed: %s", e)
+        from .common import safe_error_detail
         return JSONResponse(
-            {"ok": False, "error": str(e)},
+            {"ok": False, "error": safe_error_detail(e)},
             status_code=502,
         )
 

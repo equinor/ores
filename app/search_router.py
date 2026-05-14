@@ -736,11 +736,13 @@ async def search_run(
     except httpx.HTTPStatusError as e:
         r = e.response
         log.warning("[SEARCH] HTTP error: %s %s", r.status_code, r.text[:512] if r.text else "")
+        from .common import sanitize_upstream_error
+        error_detail = sanitize_upstream_error(r)
         return templates.TemplateResponse(
             request, "search.html",
             {
                 "error": f"Search failed: {r.status_code} {r.reason_phrase}",
-                "error_detail": (r.text[:2000] if r.text else ""),
+                "error_detail": error_detail,
                 "kind": kind,
                 "kinds_extra": kinds_extra,
                 "kind_options": _MANIFEST_KINDS,
@@ -895,11 +897,12 @@ async def search_schemas(
         )
     except httpx.HTTPStatusError as e:
         r = e.response
+        from .common import sanitize_upstream_error
         return templates.TemplateResponse(
             request, "search.html",
             {
                 "error": f"Schema search failed: {r.status_code} {r.reason_phrase}",
-                "error_detail": (r.text[:2000] if r.text else ""),
+                "error_detail": sanitize_upstream_error(r),
                 "search_mode": "schemas",
                 "kind": "",
                 "kinds_extra": "",
@@ -1016,11 +1019,12 @@ async def search_refdata(
         )
     except httpx.HTTPStatusError as e:
         r = e.response
+        from .common import sanitize_upstream_error
         return templates.TemplateResponse(
             request, "search.html",
             {
                 "error": f"Reference data search failed: {r.status_code} {r.reason_phrase}",
-                "error_detail": (r.text[:2000] if r.text else ""),
+                "error_detail": sanitize_upstream_error(r),
                 "search_mode": "refdata",
                 "kind": search_kind,
                 "kinds_extra": "",
@@ -1177,11 +1181,12 @@ async def view_record(request: Request, record_id: str):
             },
         )
     except HTTPStatusError as e:
+        from .common import sanitize_upstream_error
         return templates.TemplateResponse(
             request, "search.html",
             {
                 "error": f"Record fetch failed: {e.response.status_code}",
-                "error_detail": (e.response.text[:2000] if e.response.text else ""),
+                "error_detail": sanitize_upstream_error(e.response),
                 "kind": "",
                 "kinds_extra": "",
                 "kind_options": _MANIFEST_KINDS,

@@ -31,6 +31,7 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException, Request
 from fastapi.responses import JSONResponse
 import httpx
 from . import osdu as _osdu_mod
+from .common import sanitize_upstream_error
 
 router = APIRouter()
 
@@ -116,14 +117,14 @@ async def _post_workflow_run(
             detail = {
                 "status": r.status_code,
                 "reason": r.reason_phrase,
-                "text": r.text[:2000],  # cap for safety
+                "text": sanitize_upstream_error(r),
                 "url": url,
             }
             raise HTTPException(status_code=502, detail={"message": "Workflow run failed", **detail})
         try:
             return r.json()
         except Exception:
-            return {"status_code": r.status_code, "text": r.text}
+            return {"status_code": r.status_code, "text": r.reason_phrase}
 
 
 def _find_access_token(request: Request) -> Optional[str]:
@@ -312,7 +313,7 @@ async def _build_rddms_manifest(
                     "message": "RDDMS manifests/build failed",
                     "status": r.status_code,
                     "reason": r.reason_phrase,
-                    "text": r.text[:2000],
+                    "text": sanitize_upstream_error(r),
                 },
             )
         return r.json() or {}
@@ -361,13 +362,13 @@ async def _ingest_via_storage(
                     "message": "Storage API PUT failed",
                     "status": r.status_code,
                     "reason": r.reason_phrase,
-                    "text": r.text[:2000],
+                    "text": sanitize_upstream_error(r),
                 },
             )
         try:
             body = r.json()
         except Exception:
-            body = {"text": r.text[:500]}
+            body = {"text": sanitize_upstream_error(r)}
 
         # Normalise: OSDU Storage returns {"recordCount": N, "recordIds": [...], ...}
         record_ids = body.get("recordIds") or body.get("recordIdVersions") or []
@@ -593,7 +594,7 @@ async def delete_record(request: Request) -> JSONResponse:
                 "id": rid,
                 "status": r.status_code,
                 "ok": r.status_code < 400,
-                "detail": r.text[:500] if r.status_code >= 400 else "deleted",
+                "detail": sanitize_upstream_error(r) if r.status_code >= 400 else "deleted",
             })
 
     return JSONResponse({"results": results})
@@ -647,10 +648,10 @@ async def ingest_records(request: Request) -> JSONResponse:
                 detail={
                     "message": "Storage API PUT failed",
                     "status": r.status_code,
-                    "text": r.text[:2000],
+                    "text": sanitize_upstream_error(r),
                 },
             )
         try:
             return JSONResponse(r.json())
         except Exception:
-            return JSONResponse({"status_code": r.status_code, "text": r.text[:500]})
+            return JSONResponse({"status_code": r.status_code, "text": sanitize_upstream_error(r)})

@@ -507,7 +507,8 @@ async def put_resources(
     try:
         return r.json() or {}
     except Exception:
-        return {"status": r.status_code, "text": r.text[:500]}
+        from .common import sanitize_upstream_error
+        return {"status": r.status_code, "text": sanitize_upstream_error(r)}
 
 
 # ======================================================================

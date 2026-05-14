@@ -36,7 +36,7 @@ from fastapi.templating import Jinja2Templates
 from . import osdu
 from . import resqml_viz
 from . import structuremap as smap_mod
-from .common import access_token as _access_token, normalize_obj as _normalize_resource_obj, http_error_response
+from .common import access_token as _access_token, normalize_obj as _normalize_resource_obj, http_error_response, safe_error_detail
 from .schemahandler import extract_metadata_generic
 
 router = APIRouter()
@@ -1310,7 +1310,7 @@ async def keys_object_map_png(
                      typ_s, uuid_s, _t1 - _t0)
         except Exception as e:
             log.exception("map.png(triset): fetch_geometry_3d failed: %s", e)
-            raise HTTPException(502, f"Failed to fetch geometry: {e}")
+            raise HTTPException(502, f"Failed to fetch geometry: {safe_error_detail(e)}")
 
         positions = geo.get("positions") or []
         indices = geo.get("indices") or []
@@ -1330,7 +1330,7 @@ async def keys_object_map_png(
                      n_verts, _t3 - _t2, len(png_bytes))
         except Exception as e:
             log.exception("map.png(triset): render failed: %s", e)
-            raise HTTPException(500, f"Render failed: {e}")
+            raise HTTPException(500, f"Render failed: {safe_error_detail(e)}")
 
         return Response(content=png_bytes, media_type="image/png")
 
@@ -1342,7 +1342,7 @@ async def keys_object_map_png(
         log.info("map.png: fetch ds=%s uuid=%s took %.1fs", ds, uuid, _t1 - _t0)
     except Exception as e:
         log.exception("map.png: fetch_grid2d_surface failed for ds=%s uuid=%s: %s", ds, uuid, e)
-        raise HTTPException(502, f"Failed to fetch surface from RDDMS (ds={ds}, uuid={uuid}): {e}")
+        raise HTTPException(502, f"Failed to fetch surface from RDDMS: {safe_error_detail(e)}")
 
     grid = surface["grid"]
     title = (grid.get("Citation") or {}).get("Title") or uuid
@@ -1382,7 +1382,7 @@ async def keys_object_map_png(
         log.info("map.png: render %dx%d took %.1fs (%d bytes)", dims[0], dims[1], _t3 - _t2, len(png_bytes))
     except Exception as e:
         log.exception("map.png: render failed for %dx%d grid: %s", dims[0], dims[1], e)
-        raise HTTPException(500, f"Render failed ({dims[0]}x{dims[1]} grid): {e}")
+        raise HTTPException(500, f"Render failed ({dims[0]}x{dims[1]} grid): {safe_error_detail(e)}")
 
     return Response(content=png_bytes, media_type="image/png")
 
@@ -1408,7 +1408,7 @@ async def keys_object_map_json(
         try:
             geo = await resqml_viz.fetch_geometry_3d(at, ds, typ_s, uuid_s)
         except Exception as e:
-            raise HTTPException(502, f"Failed to fetch geometry: {e}")
+            raise HTTPException(502, f"Failed to fetch geometry: {safe_error_detail(e)}")
 
         positions = geo.get("positions") or []
         indices = geo.get("indices") or []
@@ -1438,7 +1438,7 @@ async def keys_object_map_json(
     try:
         surface = await resqml_viz.fetch_grid2d_surface(at, ds, uuid_s)
     except Exception as e:
-        raise HTTPException(502, f"Failed to fetch surface: {e}")
+        raise HTTPException(502, f"Failed to fetch surface: {safe_error_detail(e)}")
 
     grid = surface["grid"]
     zvalues = surface["zvalues"]
@@ -1543,10 +1543,10 @@ async def keys_object_geometry3d(
     try:
         result = await resqml_viz.fetch_geometry_3d(at, ds, typ_s, uuid_s)
     except ValueError as e:
-        raise HTTPException(400, str(e))
+        raise HTTPException(400, safe_error_detail(e))
     except Exception as e:
         log.exception("geometry3d: fetch failed for %s/%s: %s", typ_s, uuid_s, e)
-        raise HTTPException(502, f"Failed to fetch 3D geometry: {e}")
+        raise HTTPException(502, f"Failed to fetch 3D geometry: {safe_error_detail(e)}")
 
     _t1 = time.monotonic()
     n_verts = len(result.get("positions", [])) // 3
