@@ -195,6 +195,8 @@ async def dataspaces_delete(request: Request, path: str = Form(...)):
     at = _access_token(request)
     try:
         await osdu.delete_dataspace(at, path)
+        from .cache import cache_invalidate
+        cache_invalidate("list_dataspaces")
     except HTTPStatusError as e:
         return http_error_response(e)
     return JSONResponse({"status": "ok"})

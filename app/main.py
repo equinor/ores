@@ -536,6 +536,9 @@ async def dataspaces_create(
             countries=[x.strip() for x in countries.split(",") if x.strip()],
             extra_custom=extra_custom,
         )
+        # Invalidate cached dataspace list so the new one appears immediately
+        from .cache import cache_invalidate
+        cache_invalidate("list_dataspaces")
     except HTTPStatusError as e:
         r = e.response
         return templates.TemplateResponse(
