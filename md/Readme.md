@@ -1,6 +1,9 @@
-# ORES - Architecture & Operations Guide
+# ORES - User & Admin Guide
 
-> Comprehensive reference for the ORES web client, demo pipelines, authentication, deployment and internals.
+> What the web client does, how to use each page, authentication for users and admins,
+> and the RESQML 3D data viewer.
+>
+> For development setup, demo pipelines, deployment, and internals see [Dev.md](Dev.md).
 > For quick-start instructions see the [root readme](../readme.md).
 
 ---
@@ -28,56 +31,38 @@
 
 ---
 
-## Requirements
-
-| Requirement | Version | Notes |
-|-------------|---------|-------|
-| Python | 3.11+ | 3.12 recommended |
-| FastAPI | 0.115+ | |
-| uvicorn | 0.32+ | |
-| httpx | latest | |
-| strawberry-graphql | 0.220+ | GraphQL schema + FastAPI integration |
-| asyncpg | 0.29+ | Direct PostgreSQL (optional, for GraphQL deep-search) |
-| Chart.js 4 | CDN | No npm install |
-| Mermaid 10 | CDN | No npm install |
-
-### Configuration (k8s YAML)
-
-| File | In git? | Content |
-|------|---------|---------|
-| `k8s/configmap.yaml` | Yes | Hostnames, partitions, legal tags, app settings |
-| `k8s/secret.yaml` | **No** (gitignored) | Tenant IDs, client IDs, tokens, API keys |
-| `k8s/secret.yaml.template` | Yes | Empty template - copy to `secret.yaml` and fill in |
-
-Each OSDU instance is defined by `INSTANCE_<NAME>_*` env vars split across both files.
-
----
-
 ## Authentication & sessions
 
 The auth middleware resolves an access token for every request using a **fallback chain**. Each step is tried in order; the first to succeed wins:
 
 | Priority | Strategy | Source | When it kicks in |
 |----------|----------|--------|------------------|
-| 0 | **Instance token** | `INSTANCE_<NAME>_REFRESH_TOKEN` or `_CLIENT_SECRET` | Always tried first - zero-click, shared across all browser sessions |
-| 1 | **Env token** | Top-level `REFRESH_TOKEN` env var | Legacy single-instance setups (migration aid) |
-| 2 | **Per-user PKCE** | User's own Azure AD sign-in | Fallback when steps 0 & 1 fail - user clicks "Sign in with Microsoft" |
-| 3 | **Redirect** | - | No token at all - browser gets `/login-page`, API gets `401` |
+| 0 | **Per-user session** | User's own PKCE sign-in (session cookie → server-side tokens) | When user has an active session **for the current instance** |
+| 1 | **Instance token** | `INSTANCE_<NAME>_REFRESH_TOKEN` or `_CLIENT_SECRET` | Zero-click, shared across all browser sessions |
+| 2 | **Env token** | Top-level `REFRESH_TOKEN` env var | Legacy single-instance setups (migration aid) |
+| 3 | **Redirect** | — | No token at all — browser gets `/login-page`, API gets `401` |
+
+> **Instance-switch guard:** If the user's session was created for instance A but the
+> active instance has since switched to B, the session token is **skipped** (wrong
+> tenant / scope) and the middleware falls through to step 1.
 
 ### Per-instance flexibility
 
-Different instances can use different credentials. The middleware doesn't care - it calls `inst.get_access_token()` which tries `refresh_token` first, then `client_credentials`.
+Different instances can use different credentials. The middleware doesn't care — it calls `inst.get_access_token()` which tries `refresh_token` first, then `client_credentials`.
 
 | Instance | Secrets configured | `auth_mode` | Behaviour |
 |----------|-------------------|-------------|----------|
-| `eqndev` | `_REFRESH_TOKEN` | `refresh_token` | Auto-token via shared RT; PKCE fallback if RT expires |
-| `eqndev` | `_CLIENT_SECRET` | `client_credentials` | Auto-token via service principal; PKCE fallback if secret expires |
-| `eqndev` | Both | `refresh_token+client_credentials` | Tries RT first, then SP, then PKCE |
+| `eqndev` | `_CLIENT_SECRET` only | `per_user_pkce` | Every user signs in individually; `CLIENT_SECRET` is needed for the confidential-client PKCE exchange |
+| `eqndeva` | `_REFRESH_TOKEN` + `_CLIENT_SECRET` | `refresh_token+client_credentials` | Zero-click via shared RT; client_credentials fallback; PKCE fallback |
 | `preship` | `_CLIENT_SECRET` | `client_credentials` | Service principal only; PKCE fallback if secret expires |
 
 > **Key point:** PKCE login is **always available** regardless of the instance's primary auth mode.
 > The "Sign in with Microsoft" button appears on every page and on the login page.
-> This means an expired client secret doesn't lock users out - they can still sign in with their own Equinor account.
+> An expired client secret or refresh token doesn't lock users out — they can still sign in with their own Equinor account.
+
+> **Confidential client:** When a `CLIENT_SECRET` is configured, it must be included in **every** OAuth2 request
+> (authorize, token exchange, refresh). Omitting it causes Azure AD error `AADSTS7000218`.
+> This is handled automatically by the code — just make sure the secret is set in `k8s/secret.yaml` or Radix Console.
 
 ### For admins - minting & rotating the shared refresh token
 
@@ -97,9 +82,13 @@ The script prints the refresh token. Update the secrets:
 ```yaml
 # k8s/secret.yaml
 INSTANCE_EQNDEV_CLIENT_ID:      "21b442a9-6c1c-4551-b234-afdf010dd3be"
-INSTANCE_EQNDEV_SCOPE:          "https://energy.azure.com/.default openid offline_access"
+INSTANCE_EQNDEV_SCOPE:          "bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc/.default openid offline_access"
 INSTANCE_EQNDEV_REFRESH_TOKEN:  "<token from script>"
 ```
+
+> **Scope:** Use the ADME App ID scope `bd0c9d90-.../.default` for per-user delegated access.
+> Do **not** use `https://energy.azure.com/.default` — that old scope only works for
+> application-level grants (client_credentials / shared refresh_token) and will fail for PKCE.
 
 For Radix deployments, set the same values in **Radix Console → ores → dev → Secrets**.
 
@@ -117,11 +106,17 @@ old token no longer works, re-run `mint_refresh_token.py`.
 |  | `https://web-ores-dev.c3.radix.equinor.com/auth/callback` (Radix dev) |
 |  | `https://web-ores.c3.radix.equinor.com/auth/callback` (Radix prod) |
 | Supported account types | Accounts in this organizational directory only (Equinor) |
-| Allow public client flows | Yes (recommended, but optional if `client_secret` is always supplied) |
-| API permissions | `https://energy.azure.com/.default` (Energy Platform) |
+| Allow public client flows | No — `CLIENT_SECRET` is always supplied (confidential client) |
+| API permissions (delegated) | `bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc` → `access_as_user` (ADME resource app) |
+| Scopes | `bd0c9d90-.../.default openid offline_access` |
 
 > **Tip:** CLI arguments `--client-id`, `--tenant`, `--scope` let you mint
 > tokens for any app registration, not just the default `21b442a9` app.
+>
+> **ADME vs old scope:** The old `https://energy.azure.com/.default` scope only works for
+> application-level grants (client_credentials). For per-user PKCE, use the ADME App ID
+> `bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc/.default` — admin consent must be granted for
+> the `access_as_user` permission in the Enterprise Application blade.
 
 ---
 
@@ -179,185 +174,6 @@ When no shared instance token is configured (or it fails), the app performs an O
 - Session cookie expired (>30 days) → user must log in again.
 
 Users only re-authenticate if their Azure AD refresh token expires (90 days inactivity) or they click **Logout**.
-
-### Token database
-
-| Setting | Default | Override |
-|---------|---------|----------|
-| DB path (k8s) | `/data/ores_tokens.db` | `TOKEN_DB_PATH` env var |
-| DB path (local) | `./ores_tokens.db` | `TOKEN_DB_PATH` env var |
-| Encryption | Fernet (derived from `SECRET_KEY`) | Automatic when `cryptography` installed |
-
-Schema: `sessions(oid, instance_name, refresh_token_enc, upn, updated_at)` with PK `(oid, instance_name)`.
-Refresh tokens encrypted at rest. Access tokens cached in-memory only. Session cookie carries only `oid` + `instance_name`.
-
----
-
-## Kubernetes deployment
-
-```bash
-kubectl apply -k k8s/
-```
-
-### Required secrets
-
-| Key | Purpose |
-|-----|---------|
-| `SECRET_KEY` | Signs session cookies and encrypts refresh tokens - must be identical across replicas |
-| `INSTANCE_<NAME>_TENANT_ID` | AD tenant for the OSDU instance |
-| `INSTANCE_<NAME>_CLIENT_ID` | App registration client ID |
-| `INSTANCE_<NAME>_REFRESH_TOKEN` | Shared refresh token (optional - enables zero-click mode) |
-| `INSTANCE_<NAME>_CLIENT_SECRET` | Service principal secret (alternative to refresh token) |
-
-### Persisting the token database
-
-Mount a PVC at `/data` so refresh tokens survive pod restarts:
-
-```yaml
-# PVC (add to k8s/)
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: ores-data
-  namespace: ores
-spec:
-  accessModes: [ReadWriteOnce]
-  resources:
-    requests:
-      storage: 100Mi
-```
-
-```yaml
-# In deployment.yaml
-volumeMounts:
-  - name: ores-data
-    mountPath: /data
-volumes:
-  - name: ores-data
-    persistentVolumeClaim:
-      claimName: ores-data
-```
-
-> `replicas: 1` because SQLite does not support concurrent writers across pods.
-> For multi-replica HA, replace SQLite with PostgreSQL or Redis.
->
-> Set `HTTPS_ONLY=true` in production behind TLS to mark cookies as `Secure`.
-
----
-
-## Project layout
-
-```text
-app/
-  main.py              # FastAPI app: routes, BD enrichment, volume helpers
-  auth.py              # PKCE sign-in, token exchange & refresh
-  tokenstore.py        # SQLite-backed persistent refresh-token store
-  common.py            # Shared helpers (access_token, search_reservoirs)
-  osdu.py              # OSDU API client (Search, Storage, Workflow)
-  cache.py             # Async TTL cache with thundering-herd protection
-  instances.py         # OsduInstance dataclass & instance resolution
-  ingest_router.py     # Manifest ingestion endpoints
-  keys_router.py       # /keys page: browse dataspaces, types, objects
-  resqml_viz.py        # RESQML 3D: PG SQL → XML/array → geometry JSON
-  graphql_router.py    # GraphQL deep-search: PG-native + REST fallback
-  analyse.py           # Analyse page: reservoir comparison across DGs
-  addgate.py           # Add DG page: create new BusinessDecision records
-  strat.py             # Stratigraphy manifest builders
-  templates/           # Jinja2 HTML templates
-  static/              # JS/CSS assets
-
-demo/
-  _auth.py             # Central auth module - token minting for all scripts
-  gettoken.py          # CLI: mint token, list instances
-  run_pipeline.py      # Generic cross-platform pipeline runner
-  drogon/              # Drogon DG1 pipeline
-  drogon_dg2/          # Drogon DG2 pipeline
-  seisint/             # Volantis seismic interpretation pipeline
-  strat/               # Stratigraphic column manifests and tools
-
-test/                  # pytest test suite (147 tests)
-md/                    # Documentation guides (rendered via /howto)
-k8s/                   # Kubernetes manifests
-```
-
----
-
-## Demo pipelines
-
-The Drogon pipeline (`demo/drogon/`) generates ~19 OSDU records from a single FMU export CSV:
-
-| Step | Script | Output |
-|------|--------|--------|
-| 0 | `split_valysar.py` | Split CSV - volumes + parameters |
-| 0b | `genrefpropertytypes_drogon.py` | Reference data (PropertyTypes, FacetRoles) |
-| 1 | `genmaster_drogon.py` | Reservoir + Segments + WorkProduct |
-| 2-3 | `genrawmanifest` / `genstatmanifest` | Raw & Stat REV |
-| 4 | `genparamsmanifest_drogon.py` | Parameters ColumnBasedTable |
-| 5 | `gen_risk_drogon.py` + `gen_activity_drogon.py` | Risk + Activity records |
-| 6 | `gen_businessdecision_drogon.py` | BusinessDecision (DG1) with full linkage |
-| 7-8 | `gengeolabelset` / `manifest2records` | GeoLabelSet + split to individual files |
-| 9 | `ingest_records_batch.py` | PUT to OSDU Storage API |
-
-```bash
-python demo/run_pipeline.py                          # default: drogon_dg2
-python demo/run_pipeline.py demo/drogon               # DG1 full pipeline
-python demo/run_pipeline.py demo/drogon --skip-ingest  # generate only
-python demo/run_pipeline.py demo/drogon --dry-run      # preview commands
-python demo/run_pipeline.py --show demo/drogon_dg2     # show steps
-python demo/run_pipeline.py --list                     # list profiles
-```
-
-The runner auto-discovers generator scripts by naming convention.
-
----
-
-## Demo datasets
-
-| Dataset | Pipeline | Records | Purpose |
-|---------|----------|---------|---------|
-| **Drogon DG1** | `demo/drogon/` | ~19 | Identify & Assess (7 segments, 3 facies) |
-| **Drogon DG2** | `demo/drogon_dg2/` | ~31 | Concept Select (porosity scenario, PersistedCollection) |
-| **Volantis SeisInt** | `demo/seisint/` | 66 | Seismic interpretation (faults, HCP, StructureMaps via RDDMS) |
-
----
-
-## Token tools
-
-Token minting is centralised in `demo/_auth.py` - single source of truth for
-k8s YAML loading, instance resolution, and OAuth2 token exchange.
-
-| File | Purpose |
-|------|---------|
-| `demo/_auth.py` | `get_token()`, `load_instance()`, `api_headers()`, `base_url()` |
-| `demo/gettoken.py` | CLI: `--from-k8s`, `--list`, `--export`, `--json` |
-| `app/get_token.py` | Minimal CLI: `--shell bash\|pwsh`, `--instance` |
-
-```bash
-python demo/gettoken.py eqndev --from-k8s      # mint a token
-python demo/gettoken.py --list                  # list instances
-```
-
----
-
-## Performance & caching
-
-| Feature | Module | Detail |
-|---------|--------|--------|
-| TTL cache | `app/cache.py` | `ttl_cache` decorator with per-key `asyncio.Lock` |
-| Dataspace list | `app/osdu.py` | Cached 120 s |
-| Reservoir search | `app/common.py` | Cached 90 s |
-| API concurrency | `app/osdu.py` | Semaphore (default 20, `OSDU_MAX_CONCURRENT`) |
-| Parallel fetches | analyse, addgate, keys | `asyncio.gather` for independent calls |
-
----
-
-## BD enrichment overlay
-
-OSDU's `BusinessDecision` schema drops custom `ext.equinor` keys during workflow ingestion.
-
-**Workaround** (`app/main.py`):
-1. `_load_bd_enrichments()` scans BD manifests at startup, caches `ext.equinor` data by record ID.
-2. `_apply_bd_local_enrichment()` merges cached fields into OSDU-fetched records at render time. OSDU data wins for keys that exist in both.
 
 ---
 
@@ -462,31 +278,24 @@ The viewer is a self-contained page with:
 
 ---
 
-```bash
-python -m pytest test/ -v
-```
+## Documentation guides
 
-147 tests covering: auth modes, PKCE flow, token refresh, routes, k8s loading, instance discovery, token minting, caching, tokenstore, multiuser sessions.
+These articles are also available in the app at `/howto`:
 
----
+| Guide | Topic |
+|-------|-------|
+| [Activity](Activity.md) | Activity & ActivityTemplate records |
+| [BdDemo](BdDemo.md) | Business Decision data model walkthrough |
+| [BusinessDecision](BusinessDecision.md) | BD schema patterns (Parameters vs Collections) |
+| [DevConcept](DevConcept.md) | DevelopmentConcept custom WPC schema |
+| [SeisInt](SeisInt.md) | Seismic interpretation OSDU/RESQML model |
+| [StratColumn](StratColumn.md) | Stratigraphic column data model |
+| [CrsGuide](CrsGuide.md) | CRS mapping RESQML ↔ OSDU |
+| [FmuOsdu](FmuOsdu.md) | FMU-to-OSDU workflow |
+| [Risk](Risk.md) | Risk register modelling |
+| [Uncertainty](Uncertainty.md) | Uncertainty & volumes workflow |
+| [Volumes](Volumes.md) | ReservoirEstimatedVolumes schema |
+| [GeoLabelSet](GeoLabelSet.md) | GeoLabelSet headline KPIs |
+| [Query](Query.md) | Querying data: REST, ETP, GraphQL & OSDU Search |
 
-## Links
-
-| Resource | Path |
-|----------|------|
-| App entry | `app/main.py` |
-| Auth | `app/auth.py` |
-| Token store | `app/tokenstore.py` |
-| OSDU client | `app/osdu.py` |
-| Demo auth | `demo/_auth.py` |
-| Pipeline runner | `demo/run_pipeline.py` |
-| Activity guide | [/howto/activity](/howto/activity) |
-| BD guide | [/howto/bd-demo](/howto/bd-demo) |
-| SeisInt guide | [/howto/seismic-interp](/howto/seismic-interp) |
-| Strat guide | [/howto/strat-column](/howto/strat-column) |
-| CRS guide | [/howto/crs-guide](/howto/crs-guide) |
-| Risk guide | [/howto/risk](/howto/risk) |
-| Uncertainty | [/howto/uncertainty](/howto/uncertainty) |
-| Volumes | [/howto/volumes](/howto/volumes) |
-| GeoLabelSet | [/howto/geolabelset](/howto/geolabelset) |
-| Query guide | [/howto/query-guide](/howto/query-guide) |
+**Developer docs:** [Dev.md](Dev.md) — environment setup, project layout, demo pipelines, deployment, caching, testing.

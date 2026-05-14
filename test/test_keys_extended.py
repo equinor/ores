@@ -225,8 +225,12 @@ class TestHelpers:
 
     def test_sanitize_uuid_strips_quotes(self):
         from app.keys_router import _sanitize_uuid
-        assert _sanitize_uuid("'abc-123')") == "abc-123"
+        # Standard quoted UUID
         assert _sanitize_uuid('"abc-123"') == "abc-123"
+        # Trailing paren stripped
+        assert _sanitize_uuid("abc-123)") == "abc-123"
+        # RDDMS-style UUID with outer wrapping
+        assert _sanitize_uuid("'abc-123'") == "abc-123"
 
     def test_sanitize_uuid_empty(self):
         from app.keys_router import _sanitize_uuid
