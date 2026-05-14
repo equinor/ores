@@ -84,15 +84,27 @@ _HOWTO_SECTIONS: list[dict] = [
             },
         ],
     },
-    # ── Infrastructure & Tooling ──────────────────────────────────────
+    # ── Infrastructure ─────────────────────────────────────────────
     {
-        "title": "Infrastructure & Tooling",
+        "title": "Infrastructure",
         "items": [
             {
                 "slug": "pws",
                 "file": "PWS.md",
                 "title": "Project & Workflow Service",
                 "desc": "P&WS lifecycle, endpoints & RDDMS integration",
+            },
+            {
+                "slug": "_ext_rddms_home",
+                "external_url": "https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/home/-/blob/main/README.md",
+                "title": "Reservoir DDMS Home ↗",
+                "desc": "Official OSDU Reservoir DDMS documentation – data model, ETP protocol, deployment & API reference",
+            },
+            {
+                "slug": "_ext_etp_best",
+                "external_url": "https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/open-etp-server/-/blob/main/docs/bestPracticesForClients.md",
+                "title": "ETP Client Best Practices ↗",
+                "desc": "Transactions, large arrays, dataspace creation & locking – recommended patterns for ETP clients",
             },
         ],
     },
@@ -114,9 +126,11 @@ _HOWTO_SECTIONS: list[dict] = [
 _HOWTO_FLAT: dict[str, tuple[str, str]] = {}
 for _sec in _HOWTO_SECTIONS:
     for _item in _sec["items"]:
-        _HOWTO_FLAT[_item["slug"]] = (_item["file"], _item["title"])
+        if "file" in _item:
+            _HOWTO_FLAT[_item["slug"]] = (_item["file"], _item["title"])
         for _child in _item.get("children", []):
-            _HOWTO_FLAT[_child["slug"]] = (_child["file"], _child["title"])
+            if "file" in _child:
+                _HOWTO_FLAT[_child["slug"]] = (_child["file"], _child["title"])
 
 _md_extensions = [
     "tables",

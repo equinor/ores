@@ -216,6 +216,12 @@
   <h3>{{ section.title }}</h3>
   <div class="howto-grid">
     {% for item in section["items"] %}
+    {% if item.external_url %}
+    <a class="howto-card" href="{{ item.external_url }}" target="_blank" rel="noopener">
+      <h4>{{ item.title }}</h4>
+      {% if item.desc %}<p>{{ item.desc }}</p>{% endif %}
+    </a>
+    {% else %}
     <div class="howto-card" onclick="window.location='/howto/{{ item.slug }}'">
       <h4>{{ item.title }}</h4>
       {% if item.desc %}<p>{{ item.desc }}</p>{% endif %}
@@ -227,25 +233,11 @@
       </div>
       {% endif %}
     </div>
+    {% endif %}
     {% endfor %}
   </div>
 </div>
 {% endfor %}
-
-<!-- External documentation links -->
-<div class="howto-section">
-  <h3>OSDU Reservoir DDMS Documentation</h3>
-  <div class="howto-grid">
-    <a class="howto-card" href="https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/home/-/blob/main/README.md" target="_blank" rel="noopener">
-      <h4>Reservoir DDMS Home ↗</h4>
-      <p>Official OSDU Reservoir DDMS documentation - data model, ETP protocol, deployment & API reference</p>
-    </a>
-    <a class="howto-card" href="https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/open-etp-server/-/blob/main/docs/bestPracticesForClients.md" target="_blank" rel="noopener">
-      <h4>ETP Client Best Practices ↗</h4>
-      <p>Transactions, large arrays, dataspace creation & locking - recommended patterns for ETP clients</p>
-    </a>
-  </div>
-</div>
 
 <!-- Footer: repo + feedback links -->
 <div style="margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--eq-border);display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
