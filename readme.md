@@ -175,7 +175,8 @@ Detailed guides live in [`md/`](md/Readme.md):
 
 | Guide | Topic |
 |-------|-------|
-| [Readme](md/Readme.md) | Full architecture, auth, k8s deployment, project layout, caching |
+| [Readme](md/Readme.md) | User & admin guide: pages, auth, RESQML 3D viewer |
+| [Dev](md/Dev.md) | Developer guide: env setup, project layout, demo pipelines, deployment, caching, API reference |
 | [BdDemo](md/BdDemo.md) | Business Decision data model & pipeline walkthrough |
 | [BusinessDecision](md/BusinessDecision.md) | BD schema patterns (Parameters vs Collections) |
 | [DevConcept](md/DevConcept.md) | DevelopmentConcept custom WPC schema |
