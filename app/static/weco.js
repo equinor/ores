@@ -220,8 +220,8 @@
   // ── Demo datasets ─────────────────────────────────────────────────
   async function loadDemos() {
     try {
-      const demos = await api('GET', '/demos');
-      const items = Array.isArray(demos) ? demos : (demos.demos || []);
+      const resp = await api('GET', '/demos');
+      const items = Array.isArray(resp) ? resp : (resp.demos || []);
       if (!items.length) {
         demoGrid.innerHTML = '<div class="muted">No demos available</div>';
         return;
@@ -229,8 +229,11 @@
       demoGrid.innerHTML = items.map(d => `
         <div class="demo-card" data-id="${esc(d.id || d.demo_id || '')}">
           <h4>${esc(d.title || d.name || d.id || '?')}</h4>
-          <p>${esc(d.description || '')}</p>
-          <div class="demo-meta">${d.n_wells || '?'} wells | ${d.group || ''}</div>
+          <p>${esc(d.description || d.geology || '')}</p>
+          <div class="demo-meta">
+            ${d.n_wells || '?'} wells | ${d.group || ''}
+            ${d.data_names && d.data_names.length ? ' | Logs: ' + d.data_names.join(', ') : ''}
+          </div>
         </div>
       `).join('');
     } catch(e) {
@@ -246,6 +249,14 @@
     selectedDemo = card.dataset.id;
     btnRunDemo.style.display = 'inline-block';
     btnRunDemo.textContent = `\u25B6 Run "${selectedDemo}"`;
+
+    // Also check if this can be imported from RDDMS
+    const btnRddms = $('#btn-import-demo-rddms');
+    if (btnRddms) {
+      btnRddms.style.display = 'inline-block';
+      btnRddms.textContent = `Import "${selectedDemo}" from RDDMS`;
+      btnRddms.onclick = () => importDemoFromRddms(selectedDemo);
+    }
   });
   loadDemos();
 
@@ -419,8 +430,10 @@
       engineLog.textContent += `Options: ${JSON.stringify(options)}\nN-best: ${nBest}\n`;
       const data = await api('POST', '/run', { options, n_best: nBest });
       correlationResult = data;
+      if (data.wells_plot_data) wellDetails = data.wells_plot_data;
       engineLog.textContent += `\nCompleted: ${data.n_results} solutions in ${data.elapsed_ms} ms\n`;
       engineLog.textContent += `Mode: ${data.mode || 'in-process'}\n`;
+      if (data.options_used) engineLog.textContent += `Options applied: ${JSON.stringify(data.options_used)}\n`;
       showResults(data);
       enableResultsTabs();
       switchTab('results');
@@ -448,7 +461,22 @@
     try {
       const data = await api('POST', `/run/demo?demo_id=${encodeURIComponent(selectedDemo)}&n_best=${nBest}`);
       correlationResult = data;
-      engineLog.textContent += `\nCompleted: ${data.n_results || '?'} solutions\n`;
+      // Cache well details from demo response
+      if (data.wells_plot_data) wellDetails = data.wells_plot_data;
+      engineLog.textContent += `\nCompleted: ${data.n_results || '?'} solutions in ${data.elapsed_ms} ms\n`;
+      engineLog.textContent += `Options: ${JSON.stringify(data.options_used || {})}\n`;
+
+      // Also populate the wells/params UI from demo data
+      if (data.well_names) {
+        importedWells = data;
+        showWellsSummary({
+          well_count: data.n_wells,
+          well_names: data.well_names,
+          data_names: [], region_names: []
+        });
+        enableAfterImport();
+      }
+
       showResults(data);
       enableResultsTabs();
       switchTab('results');
@@ -459,6 +487,24 @@
       runSpin.style.display = 'none';
       runProgress.style.display = 'none';
       runProgress.classList.remove('indeterminate');
+    }
+  }
+
+  // ── Import demo from RDDMS ─────────────────────────────────────────
+  async function importDemoFromRddms(demoId) {
+    importSpin.style.display = 'inline';
+    setStatus(importStat, 'info', `Importing "${demoId}" from RDDMS...`);
+    const ds = dsInput.value.trim() || 'maap/weco';
+    try {
+      const data = await api('POST', `/import/demo?demo_id=${encodeURIComponent(demoId)}&dataspace=${encodeURIComponent(ds)}`);
+      importedWells = data;
+      showWellsSummary(data);
+      setStatus(importStat, 'ok', `Imported ${data.well_count} wells from RDDMS (demo: ${demoId})`);
+      enableAfterImport();
+    } catch(e) {
+      setStatus(importStat, 'err', `RDDMS import failed: ${e.message}. Try running local demo instead.`);
+    } finally {
+      importSpin.style.display = 'none';
     }
   }
 
@@ -494,6 +540,20 @@
   }
 
   // ── Results display ───────────────────────────────────────────────
+  const corrCanvas = $('#corr-canvas');
+  const resultsPlot = $('#results-plot');
+  const btnViewPlot = $('#btn-view-plot');
+  const btnViewTable = $('#btn-view-table');
+
+  btnViewPlot.addEventListener('click', () => {
+    resultsPlot.style.display = 'block';
+    resCards.style.display = 'none';
+  });
+  btnViewTable.addEventListener('click', () => {
+    resultsPlot.style.display = 'none';
+    resCards.style.display = 'block';
+  });
+
   function showResults(data) {
     resEmpty.style.display = 'none';
     resSummary.style.display = 'block';
@@ -503,56 +563,213 @@
     resMode.textContent = data.mode || 'in-process';
 
     const results = data.results || [];
-    // Populate selector
     resSelector.innerHTML = results.map((r, i) =>
       `<option value="${i}">#${i+1} (cost: ${r.cost != null ? r.cost.toFixed(4) : '-'})</option>`
     ).join('');
 
+    // Show both plot and table for the first result
     renderResultCard(results, 0, data.well_names);
-    resSelector.addEventListener('change', () => {
-      renderResultCard(results, parseInt(resSelector.value), data.well_names);
-    });
+    drawCorrelationPlot(data, 0);
+
+    resSelector.onchange = () => {
+      const idx = parseInt(resSelector.value);
+      renderResultCard(results, idx, data.well_names);
+      drawCorrelationPlot(data, idx);
+    };
   }
 
   function renderResultCard(results, idx, wellNames) {
     if (!results[idx]) { resCards.innerHTML = ''; return; }
     const r = results[idx];
-    let html = `
-      <div class="result-card">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <span class="result-rank">#${idx+1}</span>
-          <span class="result-cost">Total Cost: ${r.cost != null ? r.cost.toFixed(4) : '-'}</span>
-        </div>
-        ${renderCorrelationTable(r, wellNames)}
-      </div>
-    `;
-    resCards.innerHTML = html;
-  }
-
-  function renderCorrelationTable(result, wellNames) {
-    if (!result.markers && !result.correlation) return '';
-    const markers = result.markers || result.correlation || [];
+    // lines[] format: each line has markers[] array
+    const lines = r.lines || [];
     const names = wellNames || [];
-    if (!markers.length) return '';
 
-    let html = '<table class="corr-table"><thead><tr><th>Marker</th>';
-    names.forEach(n => { html += `<th>${esc(n)}</th>`; });
-    html += '</tr></thead><tbody>';
+    let html = `<div class="result-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="result-rank">#${idx+1}</span>
+        <span class="result-cost">Cost: ${r.cost != null ? r.cost.toFixed(4) : '-'} | ${lines.length} correlation lines</span>
+      </div>`;
 
-    if (Array.isArray(markers)) {
-      markers.forEach((row, mi) => {
-        html += '<tr>';
-        html += `<td style="font-weight:600;">${mi + 1}</td>`;
-        if (Array.isArray(row)) {
-          row.forEach(v => { html += `<td>${v != null ? v : '-'}</td>`; });
-        } else {
-          html += `<td colspan="${names.length}">${esc(String(row))}</td>`;
+    if (lines.length && names.length) {
+      html += '<table class="corr-table"><thead><tr><th>Line</th>';
+      names.forEach(n => { html += `<th>${esc(n)}</th>`; });
+      html += '</tr></thead><tbody>';
+      lines.forEach((line, li) => {
+        const markers = line.markers || line;
+        html += `<tr><td style="font-weight:600;">${li+1}</td>`;
+        if (Array.isArray(markers)) {
+          markers.forEach(v => { html += `<td>${v != null ? v : '-'}</td>`; });
         }
         html += '</tr>';
       });
+      html += '</tbody></table>';
     }
-    html += '</tbody></table>';
-    return html;
+    html += '</div>';
+    resCards.innerHTML = html;
+  }
+
+  // ── Correlation Plot (canvas-based) ───────────────────────────────
+  async function drawCorrelationPlot(data, resultIdx) {
+    const canvas = corrCanvas;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, rect.width, rect.height);
+
+    const nWells = data.n_wells || 0;
+    const wellNames = data.well_names || [];
+    const results = data.results || [];
+    const result = results[resultIdx];
+    if (!result || !nWells) return;
+
+    // Get well plot data (depths + logs)
+    let plotData = data.wells_plot_data;
+    if (!plotData) {
+      // Fetch from /plot-data endpoint
+      try {
+        const pd = await api('GET', '/plot-data');
+        plotData = pd.wells;
+      } catch(e) {
+        ctx.fillStyle = '#c62828';
+        ctx.font = '13px sans-serif';
+        ctx.fillText('Could not load plot data: ' + e.message, 10, 30);
+        return;
+      }
+    }
+
+    // Layout
+    const margin = {top: 35, bottom: 25, left: 15, right: 15};
+    const W = rect.width - margin.left - margin.right;
+    const H = rect.height - margin.top - margin.bottom;
+    const wellWidth = 60;  // pixels per well column
+    const wellSpacing = Math.min((W - wellWidth) / Math.max(nWells - 1, 1), 180);
+    const totalWidth = wellSpacing * (nWells - 1) + wellWidth;
+    const offsetX = margin.left + (W - totalWidth) / 2;
+
+    // Find global depth range
+    let minDepth = Infinity, maxDepth = -Infinity;
+    for (const wd of plotData) {
+      if (wd.depth && wd.depth.length) {
+        minDepth = Math.min(minDepth, wd.depth[0]);
+        maxDepth = Math.max(maxDepth, wd.depth[wd.depth.length - 1]);
+      } else {
+        minDepth = Math.min(minDepth, 0);
+        maxDepth = Math.max(maxDepth, wd.size);
+      }
+    }
+    if (!isFinite(minDepth)) { minDepth = 0; maxDepth = 100; }
+
+    const depthToY = (d) => margin.top + ((d - minDepth) / (maxDepth - minDepth)) * H;
+    const wellX = (i) => offsetX + i * wellSpacing + wellWidth / 2;
+
+    // Draw well columns (log traces)
+    const logColors = ['#1565c0', '#2e7d32', '#c62828', '#6a1b9a', '#e65100'];
+    for (let i = 0; i < nWells; i++) {
+      const wd = plotData[i];
+      const cx = wellX(i);
+
+      // Well name header
+      ctx.fillStyle = '#333';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(wd.name, cx, margin.top - 8);
+
+      // Draw well column background
+      const y0 = depthToY(wd.depth ? wd.depth[0] : 0);
+      const y1 = depthToY(wd.depth ? wd.depth[wd.depth.length-1] : wd.size);
+      ctx.strokeStyle = '#e1dfdd';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(cx - wellWidth/2, y0, wellWidth, y1 - y0);
+
+      // Draw log trace if available
+      const logVals = wd.log_values;
+      if (logVals && logVals.length > 1) {
+        let lMin = Infinity, lMax = -Infinity;
+        for (const v of logVals) { if (v != null) { lMin = Math.min(lMin, v); lMax = Math.max(lMax, v); } }
+        if (lMax === lMin) lMax = lMin + 1;
+
+        ctx.beginPath();
+        ctx.strokeStyle = logColors[i % logColors.length];
+        ctx.lineWidth = 1.2;
+        let started = false;
+        for (let s = 0; s < wd.size && s < logVals.length; s++) {
+          if (logVals[s] == null) continue;
+          const y = depthToY(wd.depth ? wd.depth[s] : s);
+          const x = cx - wellWidth/2 + ((logVals[s] - lMin) / (lMax - lMin)) * wellWidth;
+          if (!started) { ctx.moveTo(x, y); started = true; }
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+
+    // Draw correlation lines
+    const lines = result.lines || [];
+    const lineColors = ['#FF6B35', '#004E89', '#7B2D8B', '#1B998B', '#F5A623', '#D64045'];
+    ctx.textAlign = 'left';
+
+    for (let li = 0; li < lines.length; li++) {
+      const markers = lines[li].markers || lines[li];
+      if (!Array.isArray(markers)) continue;
+
+      ctx.strokeStyle = lineColors[li % lineColors.length];
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.7;
+      ctx.setLineDash([]);
+
+      // Draw line connecting marker positions across wells
+      ctx.beginPath();
+      let first = true;
+      for (let w = 0; w < nWells && w < markers.length; w++) {
+        const markerIdx = markers[w];
+        if (markerIdx == null || markerIdx < 0) continue;
+        const wd = plotData[w];
+        const depth = wd.depth ? (wd.depth[markerIdx] || markerIdx) : markerIdx;
+        const y = depthToY(depth);
+        const x = wellX(w);
+        if (first) { ctx.moveTo(x, y); first = false; }
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Draw marker dots
+      ctx.globalAlpha = 1.0;
+      for (let w = 0; w < nWells && w < markers.length; w++) {
+        const markerIdx = markers[w];
+        if (markerIdx == null || markerIdx < 0) continue;
+        const wd = plotData[w];
+        const depth = wd.depth ? (wd.depth[markerIdx] || markerIdx) : markerIdx;
+        const y = depthToY(depth);
+        const x = wellX(w);
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, 2 * Math.PI);
+        ctx.fillStyle = lineColors[li % lineColors.length];
+        ctx.fill();
+      }
+    }
+
+    ctx.globalAlpha = 1.0;
+
+    // Depth axis labels
+    ctx.fillStyle = '#605e5c';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    const nTicks = 5;
+    for (let t = 0; t <= nTicks; t++) {
+      const d = minDepth + (maxDepth - minDepth) * t / nTicks;
+      const y = depthToY(d);
+      ctx.fillText(d.toFixed(1), margin.left - 2, y + 3);
+      ctx.strokeStyle = '#f3f2f1';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(margin.left, y);
+      ctx.lineTo(rect.width - margin.right, y);
+      ctx.stroke();
+    }
   }
 
   // ── Export ────────────────────────────────────────────────────────

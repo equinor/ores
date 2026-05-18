@@ -212,6 +212,23 @@ def new_uuid() -> str:
     return str(uuid_mod.uuid4())
 
 
+# Deterministic UUID namespace for WeCo demo data
+# Using UUID5 so objects can be reliably found by demo_key + well_name
+WECO_NAMESPACE = uuid_mod.UUID("a3f8c1e0-7b2d-4e5f-9a1c-6d8e0f2b4a7c")
+
+
+def demo_uuid(demo_key: str, well_name: str, suffix: str = "") -> str:
+    """Generate a deterministic UUID5 for a demo object.
+
+    This ensures the same demo+well always gets the same UUID,
+    allowing the web GUI to find ingested data without a lookup table.
+    """
+    seed = f"{demo_key}/{well_name}"
+    if suffix:
+        seed += f"/{suffix}"
+    return str(uuid_mod.uuid5(WECO_NAMESPACE, seed))
+
+
 def build_trajectory(well_name: str, well_uuid: str,
                      x: float, y: float, size: int,
                      md_values: list, dataset_tag: str) -> dict:
@@ -380,9 +397,9 @@ async def ingest_dataset(client: RDDMSClient, ds_path: str,
         for i in range(n_wells):
             w = wl.get_well(i)
 
-            # Generate UUIDs
-            traj_uuid = new_uuid()
-            frame_uuid = new_uuid()
+            # Generate deterministic UUIDs (same demo+well → same UUID)
+            traj_uuid = demo_uuid(ds_key, w.name, "traj")
+            frame_uuid = demo_uuid(ds_key, w.name, "frame")
 
             # Depth/MD
             md_values = list(w.data.get("Depth", w.data.get("DEPTH", [])))
@@ -415,7 +432,7 @@ async def ingest_dataset(client: RDDMSClient, ds_path: str,
                 if not values:
                     continue
 
-                prop_uuid = new_uuid()
+                prop_uuid = demo_uuid(ds_key, w.name, f"cont_{log_name}")
                 prop_obj = build_continuous_property(
                     w.name, prop_uuid, frame_uuid, log_name,
                     [float(v) if v is not None else 0.0 for v in values[:w.size]]
@@ -432,7 +449,7 @@ async def ingest_dataset(client: RDDMSClient, ds_path: str,
 
             # Discrete properties (regions/facies)
             for region_name, intervals in w.region.items():
-                prop_uuid = new_uuid()
+                prop_uuid = demo_uuid(ds_key, w.name, f"disc_{region_name}")
                 prop_obj = build_discrete_property(
                     w.name, prop_uuid, frame_uuid,
                     region_name, intervals, w.size

@@ -258,9 +258,10 @@
     <section class="wc-panel">
       <h3 style="margin:0 0 .5rem;">Run Correlation</h3>
       <div style="margin-bottom:.5rem; font-size:13px; color:#605e5c;" id="run-summary">No wells loaded.</div>
-      <div style="display:flex; gap:.5rem; align-items:center;">
+      <div style="display:flex; gap:.5rem; align-items:center; flex-wrap:wrap;">
         <button class="btn btn-run" id="btn-run" disabled>&#9654; Run Correlation</button>
         <button class="btn btn-demo btn-sm" id="btn-run-demo" style="display:none;">&#9654; Run Demo</button>
+        <button class="btn btn-outline btn-sm" id="btn-import-demo-rddms" style="display:none;">Import from RDDMS</button>
         <span id="run-spinner" style="display:none; font-size:13px;">&#9203; Running...</span>
       </div>
       <div class="progress-bar" id="run-progress" style="display:none;"><div class="fill"></div></div>
@@ -284,10 +285,20 @@
           <span class="muted" style="font-size:12px;">Elapsed: <span id="res-elapsed">-</span> ms</span>
           <span class="muted" style="font-size:12px;">Mode: <span id="res-mode">-</span></span>
         </div>
-        <div style="margin-bottom:.5rem;">
+        <div style="margin-bottom:.5rem; display:flex; gap:.5rem; align-items:center;">
           <label style="font-size:12.5px; font-weight:500;">Solution:</label>
           <select id="res-selector" style="font-size:12.5px; padding:2px 6px;"></select>
+          <label style="font-size:12.5px; font-weight:500; margin-left:.5rem;">View:</label>
+          <button class="btn btn-sm btn-outline" id="btn-view-plot">Correlation Plot</button>
+          <button class="btn btn-sm btn-outline" id="btn-view-table">Table</button>
         </div>
+        <!-- Correlation Plot -->
+        <div id="results-plot" style="margin-bottom:.5rem;">
+          <div style="border:1px solid #e1dfdd; border-radius:4px; overflow-x:auto; background:#fff;">
+            <canvas id="corr-canvas" style="display:block; width:100%; height:420px;"></canvas>
+          </div>
+        </div>
+        <!-- Table view -->
         <div id="results-cards"></div>
       </div>
     </section>

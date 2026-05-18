@@ -94,7 +94,19 @@ _cached_well_list = None
 # ═══════════════════════════════════════════════════════════════════════════
 
 import urllib.parse
+import uuid as uuid_mod
 import numpy as np
+
+# Deterministic UUID namespace — must match demo/ingest_weco_demos.py
+_WECO_NS = uuid_mod.UUID("a3f8c1e0-7b2d-4e5f-9a1c-6d8e0f2b4a7c")
+
+
+def _demo_uuid(demo_key: str, well_name: str, suffix: str = "") -> str:
+    """Deterministic UUID5 for a demo object (same as ingestion script)."""
+    seed = f"{demo_key}/{well_name}"
+    if suffix:
+        seed += f"/{suffix}"
+    return str(uuid_mod.uuid5(_WECO_NS, seed))
 
 
 async def _rddms_import_wells(token: str, dataspace: str):
@@ -573,6 +585,23 @@ async def weco_run(req: WecoRunRequest, request: Request):
         raise HTTPException(500, f"Correlation engine error: {e}")
 
     well_names = [w.name for w in _cached_well_list.wells]
+
+    # Include plot data for visualization
+    wells_plot_data = []
+    for w in _cached_well_list.wells:
+        depth = list(w.data.get("Depth", w.data.get("DEPTH", range(w.size))))[:w.size]
+        # Find primary log for display
+        skip = {"Depth", "DEPTH", "X", "Y", "Z", "MD"}
+        log_vals = None
+        for k, v in w.data.items():
+            if k not in skip:
+                log_vals = list(v)[:w.size]
+                break
+        wells_plot_data.append({
+            "name": w.name, "size": w.size, "depth": depth,
+            "log_values": log_vals, "x": w.x, "y": w.y,
+        })
+
     return {
         "status": "ok",
         "elapsed_ms": round(elapsed, 2),
@@ -581,6 +610,8 @@ async def weco_run(req: WecoRunRequest, request: Request):
         "n_results": len(results),
         "results": [r.model_dump() if hasattr(r, "model_dump") else r.dict()
                     for r in results],
+        "wells_plot_data": wells_plot_data,
+        "options_used": safe_opts,
     }
 
 
@@ -762,38 +793,240 @@ def weco_options():
 
 @router.get("/demos")
 def weco_demos():
-    """List available demo datasets."""
+    """List available demo datasets with well counts for the GUI."""
     try:
-        from weco.api import list_demos
-        return list_demos()
+        from weco.api import list_demos, _load_well_list
+        demo_resp = list_demos()
+        # Enrich with well counts
+        enriched = []
+        for d in demo_resp.demos:
+            info = {
+                "id": d.id,
+                "title": d.title,
+                "group": d.group,
+                "geology": d.geology,
+            }
+            try:
+                wl = _load_well_list(d.wells)
+                info["n_wells"] = wl.nbr_wells()
+                info["data_names"] = list(wl.get_data_names())[:5]
+                info["region_names"] = list(wl.get_region_names())[:3]
+            except Exception:
+                info["n_wells"] = "?"
+            enriched.append(info)
+        return {"demos": enriched}
     except Exception as e:
         raise HTTPException(500, str(e))
 
 
 @router.post("/run/demo")
 def weco_run_demo(demo_id: str, n_best: int = 5):
-    """Run a demo dataset on the WeCo engine (in-process)."""
+    """Run a demo dataset on the WeCo engine (in-process).
+
+    Returns full correlation results including well data for plotting.
+    """
+    global _cached_well_list
     try:
-        from weco.api import run_demo, DemoRunRequest
-        req = DemoRunRequest(demo_id=demo_id, n_best=n_best)
-        return run_demo(req)
+        from weco.api import run_demo, DemoRunRequest, _load_well_list, list_demos
+        from weco.api import _suggest_defaults_for_wells, _run_engine, _extract_results
+
+        # Find the demo
+        demo_list = list_demos().demos
+        demo = None
+        for d in demo_list:
+            if d.id == demo_id:
+                demo = d
+                break
+        if demo is None:
+            raise HTTPException(404, f"Demo '{demo_id}' not found")
+
+        # Load wells
+        wl = _load_well_list(demo.wells)
+        _cached_well_list = wl  # cache for subsequent operations
+
+        # Suggest + run
+        options, reasoning = _suggest_defaults_for_wells(wl)
+        rf, data, elapsed = _run_engine(wl, options)
+        results = _extract_results(rf, data, n_best)
+
+        well_names = [w.name for w in wl.wells]
+
+        # Build well data for plotting (sizes + log values)
+        wells_plot_data = []
+        for w in wl.wells:
+            depth = list(w.data.get("Depth", w.data.get("DEPTH", range(w.size))))
+            wells_plot_data.append({
+                "name": w.name,
+                "size": w.size,
+                "depth": depth[:w.size],
+                "x": w.x, "y": w.y,
+            })
+
+        return {
+            "status": "ok",
+            "demo_id": demo_id,
+            "elapsed_ms": round(elapsed, 2),
+            "n_wells": len(well_names),
+            "well_names": well_names,
+            "n_results": len(results),
+            "results": [r.model_dump() if hasattr(r, "model_dump") else r.dict()
+                        for r in results],
+            "options_used": options,
+            "wells_plot_data": wells_plot_data,
+        }
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(500, str(e))
 
 
+@router.post("/import/demo")
+async def weco_import_demo_from_rddms(demo_id: str, request: Request,
+                                       dataspace: str = "maap/weco"):
+    """Import a specific demo's wells from RDDMS using deterministic UUIDs.
+
+    The ingestion script writes wells with deterministic UUID5 keys based
+    on (demo_key + well_name). This endpoint uses the same formula to
+    directly fetch the correct objects without searching.
+    """
+    global _cached_well_list
+
+    token = _get_token(request)
+    if not token:
+        raise HTTPException(401, "Not authenticated.")
+
+    # Get demo well names from the WeCo catalogue
+    try:
+        from weco.api import list_demos, _load_well_list
+        demo_list = list_demos().demos
+        demo = None
+        for d in demo_list:
+            if d.id == demo_id:
+                demo = d
+                break
+        if demo is None:
+            raise HTTPException(404, f"Demo '{demo_id}' not found")
+
+        # Load from local file to get well names
+        wl_local = _load_well_list(demo.wells)
+        well_names = [w.name for w in wl_local.wells]
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"Cannot load demo catalogue: {e}")
+
+    # Import each well from RDDMS using deterministic UUIDs
+    from . import osdu
+    from weco.data import Well, WellList
+
+    ds_enc = urllib.parse.quote(dataspace, safe="")
+    TRAJ_TYPE = "resqml20.obj_WellboreTrajectoryRepresentation"
+    FRAME_TYPE = "resqml20.obj_WellboreFrameRepresentation"
+    CONT_PROP_TYPE = "resqml20.obj_ContinuousProperty"
+
+    wells = []
+    for wname in well_names:
+        traj_uuid = _demo_uuid(demo_id, wname, "traj")
+        frame_uuid = _demo_uuid(demo_id, wname, "frame")
+
+        try:
+            # Read trajectory (geometry + MD)
+            arrays_meta = await osdu.list_arrays(token, ds_enc, TRAJ_TYPE, traj_uuid)
+            mds = None
+            points = None
+            for arr in arrays_meta:
+                path = arr.get("PathInResource") or arr.get("path") or ""
+                if "Geometry" in path or "ControlPoints" in path:
+                    arr_data = await osdu.read_array(
+                        token, ds_enc, TRAJ_TYPE, traj_uuid, path_in_resource=path)
+                    values = arr_data.get("values") or arr_data.get("Values") or []
+                    if values:
+                        points = np.array(values, dtype=np.float64).reshape(-1, 3)
+                elif "md" in path.lower() or "MdValues" in path:
+                    arr_data = await osdu.read_array(
+                        token, ds_enc, TRAJ_TYPE, traj_uuid, path_in_resource=path)
+                    values = arr_data.get("values") or arr_data.get("Values") or []
+                    if values:
+                        mds = np.array(values, dtype=np.float64)
+
+            w = Well()
+            w.name = wname
+            if points is not None and len(points) > 0:
+                w.size = len(points)
+                w.x = float(points[0, 0])
+                w.y = float(points[0, 1])
+                w.z = float(points[0, 2])
+            elif mds is not None:
+                w.size = len(mds)
+                w.x = w.y = w.z = 0.0
+            else:
+                log.warning(f"  Demo RDDMS: '{wname}' has no geometry, skipping")
+                continue
+
+            if mds is not None:
+                w.data["Depth"] = list(mds[:w.size])
+            elif points is not None:
+                diffs = np.diff(points, axis=0)
+                segs = np.sqrt(np.sum(diffs ** 2, axis=1))
+                w.data["Depth"] = list(np.concatenate([[0.0], np.cumsum(segs)]))
+
+            # Read log properties from frame
+            frame_arrays = await osdu.list_arrays(token, ds_enc, FRAME_TYPE, frame_uuid)
+            # Read all continuous properties for this well
+            for log_name in wl_local.get_data_names():
+                if log_name in ("Depth", "DEPTH", "X", "Y", "Z", "MD"):
+                    continue
+                prop_uuid = _demo_uuid(demo_id, wname, f"cont_{log_name}")
+                try:
+                    p_arrays = await osdu.list_arrays(
+                        token, ds_enc, CONT_PROP_TYPE, prop_uuid)
+                    for pa in p_arrays:
+                        pa_path = pa.get("PathInResource") or pa.get("path") or ""
+                        if "values" in pa_path.lower() or "Values" in pa_path or "patch" in pa_path.lower():
+                            arr_data = await osdu.read_array(
+                                token, ds_enc, CONT_PROP_TYPE, prop_uuid,
+                                path_in_resource=pa_path)
+                            vals = arr_data.get("values") or arr_data.get("Values") or []
+                            if vals:
+                                w.data[log_name] = list(np.array(vals, dtype=np.float64)[:w.size])
+                                break
+                except Exception:
+                    pass
+
+            wells.append(w)
+            log.info(f"  RDDMS demo import: '{wname}' OK ({w.size} pts, {len(w.data)-1} logs)")
+
+        except Exception as e:
+            log.warning(f"  RDDMS demo import: '{wname}' failed: {e}")
+            continue
+
+    if not wells:
+        raise HTTPException(404,
+            f"Demo '{demo_id}' not found in RDDMS dataspace '{dataspace}'. "
+            "Run the ingestion script first: python demo/ingest_weco_demos.py")
+
+    wl = WellList.__new__(WellList)
+    wl.wells = wells
+    _cached_well_list = wl
+
+    return {
+        "status": "ok",
+        "source": "rddms",
+        "demo_id": demo_id,
+        "dataspace": dataspace,
+        "well_count": len(wells),
+        "well_names": [w.name for w in wells],
+        "data_names": list(wl.get_data_names()) if hasattr(wl, "get_data_names") else [],
+        "region_names": list(wl.get_region_names()) if hasattr(wl, "get_region_names") else [],
+    }
+
+
 @router.get("/strat-column")
 async def weco_strat_column(request: Request):
-    """Fetch stratigraphic column from active RDDMS instance.
-
-    Uses ORES's existing /strat infrastructure (no gocad).
-    """
+    """Fetch stratigraphic column from active RDDMS instance."""
     token = _get_token(request)
     if not token:
         raise HTTPException(400, "Not authenticated.")
-
-    # Redirect to the existing ORES strat search (already implemented)
     return {"redirect": "/strat", "note": "Use the Stratigraphy tab for column browsing"}
 
 
@@ -847,4 +1080,87 @@ async def weco_wells_info():
             }
             for w in wl.wells
         ],
+    }
+
+
+@router.get("/well-data/{well_idx}")
+async def weco_well_data(well_idx: int, channel: Optional[str] = None):
+    """Return actual log values for a loaded well (for plotting).
+
+    If channel is specified, returns only that channel.
+    Otherwise returns all channels (for correlation plot).
+    """
+    if _cached_well_list is None:
+        raise HTTPException(400, "No wells loaded")
+    if well_idx < 0 or well_idx >= len(_cached_well_list.wells):
+        raise HTTPException(404, f"Well index {well_idx} out of range")
+
+    w = _cached_well_list.wells[well_idx]
+    skip = {"X", "Y", "Z"}
+
+    if channel:
+        if channel not in w.data:
+            raise HTTPException(404, f"Channel '{channel}' not found in well '{w.name}'")
+        return {
+            "name": w.name,
+            "size": w.size,
+            "channel": channel,
+            "values": list(w.data[channel])[:w.size],
+            "depth": list(w.data.get("Depth", w.data.get("DEPTH", range(w.size))))[:w.size],
+        }
+
+    # Return all channels
+    data = {}
+    for k, v in w.data.items():
+        if k not in skip:
+            data[k] = list(v)[:w.size]
+
+    return {
+        "name": w.name,
+        "size": w.size,
+        "data": data,
+        "regions": {k: list(v) for k, v in w.region.items()},
+    }
+
+
+@router.get("/plot-data")
+async def weco_plot_data():
+    """Return all data needed to render the correlation plot.
+
+    Includes: well depths, primary log values, and correlation lines
+    from the last run. This is the single endpoint the JS plot needs.
+    """
+    if _cached_well_list is None:
+        raise HTTPException(400, "No wells loaded")
+
+    wl = _cached_well_list
+    # Determine primary log (first common data channel)
+    data_names = list(wl.get_data_names()) if hasattr(wl, "get_data_names") else []
+    skip = {"Depth", "DEPTH", "X", "Y", "Z", "MD"}
+    primary_log = None
+    for n in data_names:
+        if n not in skip:
+            primary_log = n
+            break
+
+    wells_data = []
+    for w in wl.wells:
+        depth = list(w.data.get("Depth", w.data.get("DEPTH", range(w.size))))[:w.size]
+        log_values = None
+        if primary_log and primary_log in w.data:
+            log_values = list(w.data[primary_log])[:w.size]
+        wells_data.append({
+            "name": w.name,
+            "size": w.size,
+            "depth": depth,
+            "log_values": log_values,
+            "x": w.x, "y": w.y,
+        })
+
+    return {
+        "n_wells": len(wl.wells),
+        "well_names": [w.name for w in wl.wells],
+        "primary_log": primary_log,
+        "data_names": [n for n in data_names if n not in skip],
+        "wells": wells_data,
     }
