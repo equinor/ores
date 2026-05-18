@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block title %}Well Correlation{% endblock %}
+{% block content %}
+<h2>Well Correlation <span class="muted" style="font-size:.75em;">(WeCo Engine)</span></h2>
+<style>
+.wc-wrap { max-width: 96rem; }
+.wc-panel { border:1px solid #e1dfdd; border-radius:8px; background:#fff; padding:.75rem; margin-bottom:.75rem; }
+.muted { color:#605e5c; }
+.btn { display:inline-block; padding:.35rem .6rem; border:1px solid #0d6efd; border-radius:3px; background:#0d6efd; color:#fff; cursor:pointer; font-size:13px; }
+.btn:hover { background:#0b5ed7; }
+.btn:disabled { opacity:.5; cursor:not-allowed; }
+.btn-run { background:#4BB748; border-color:#4BB748; font-weight:600; }
+.btn-run:hover { background:#3da63a; }
+.btn-export { background:#007079; border-color:#007079; }
+.btn-export:hover { background:#004f55; }
+.btn-demo { background:#6c757d; border-color:#6c757d; font-size:12px; }
+.btn-demo:hover { background:#5a6268; }
+
+/* Tabs */
+.wc-tabs { display:flex; gap:0; border-bottom:2px solid #e1dfdd; margin-bottom:.75rem; }
+.wc-tab { padding:.45rem .9rem; cursor:pointer; font-weight:500; font-size:13.5px;
+  border:none; border-bottom:2px solid transparent;
+  color:#605e5c; background:transparent; margin-bottom:-2px; }
+.wc-tab:hover { background:#f3f2f1; }
+.wc-tab.active { color:var(--eq-red); font-weight:600; border-bottom-color:var(--eq-red); }
+.wc-body { display:none; }
+.wc-body.active { display:block; }
+
+/* Status badges */
+.wc-status { font-size:13px; margin-top:.5rem; padding:6px 10px; border-radius:4px; display:none; }
+.wc-status.ok { display:block; background:#e6f9e6; color:#2e7d32; }
+.wc-status.err { display:block; background:#ffeaea; color:#c62828; }
+.wc-status.info { display:block; background:#e3f2fd; color:#1565c0; }
+.wc-status.warn { display:block; background:#fff8e1; color:#e65100; }
+
+/* Well list */
+.well-list { max-height:200px; overflow-y:auto; border:1px solid #e1dfdd; border-radius:4px; padding:.3rem; }
+.well-chip { display:inline-block; padding:2px 8px; margin:2px; border-radius:12px;
+  background:#e3f2fd; color:#1565c0; font-size:12px; }
+
+/* Params */
+.param-grid { display:grid; grid-template-columns: 180px 1fr; gap:.3rem .5rem; align-items:center; }
+.param-grid label { font-size:13px; font-weight:500; }
+.param-grid input, .param-grid select { font-size:13px; padding:3px 6px; }
+.param-section { font-weight:600; font-size:13px; color:var(--eq-red); margin-top:.6rem; grid-column:1/-1; border-bottom:1px solid #eee; padding-bottom:.2rem; }
+
+/* Results */
+.result-card { border:1px solid #e1dfdd; border-radius:6px; padding:.5rem; margin-bottom:.5rem; background:#fafafa; }
+.result-card:first-child { border-color:#4BB748; background:#f6fff6; }
+.result-rank { font-weight:700; font-size:1.1rem; color:#333; }
+.result-cost { font-size:.85rem; color:#605e5c; }
+.corr-table { border-collapse:collapse; width:100%; font-size:12px; margin-top:.4rem; }
+.corr-table th, .corr-table td { padding:3px 6px; border:1px solid #e1dfdd; text-align:center; }
+.corr-table th { background:#f3f2f1; font-weight:600; }
+
+/* Health dot */
+.health-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; }
+.health-dot.ok { background:#4BB748; }
+.health-dot.err { background:#c62828; }
+</style>
+
+<!-- Health indicator -->
+<div class="wc-wrap" style="margin-bottom:.5rem;">
+  <span id="weco-health" class="muted" style="font-size:12px;">
+    <span class="health-dot" id="health-dot"></span>
+    <span id="health-text">Checking engine...</span>
+  </span>
+</div>
+
+<!-- Main tabs -->
+<div class="wc-wrap">
+  <div class="wc-tabs">
+    <span class="wc-tab active" data-tab="wells">1. Wells</span>
+    <span class="wc-tab" data-tab="params">2. Parameters</span>
+    <span class="wc-tab" data-tab="results">3. Results</span>
+  </div>
+
+  <!-- Tab: Wells (RDDMS import) -->
+  <div class="wc-body active" id="tab-wells">
+    <section class="wc-panel">
+      <h3 style="margin:0 0 .5rem;">Import Wells from RDDMS</h3>
+      <p class="muted" style="font-size:13px; margin:0 0 .5rem;">
+        Wells are loaded from the active OSDU/RDDMS instance. All well logs in the current dataspace will be imported.
+      </p>
+      <div class="param-grid" style="max-width:500px;">
+        <label for="wc-dataspace">Dataspace</label>
+        <input id="wc-dataspace" type="text" value="{{ dataspace }}" placeholder="e.g. maap/drogon" />
+      </div>
+      <div style="margin-top:.6rem; display:flex; gap:.5rem; align-items:center;">
+        <button class="btn" id="btn-import">Import Wells</button>
+        <button class="btn btn-demo" id="btn-demo">Run Demo Dataset</button>
+        <span id="import-spinner" style="display:none;">⏳</span>
+      </div>
+      <div id="import-status" class="wc-status"></div>
+
+      <!-- Imported wells summary -->
+      <div id="wells-summary" style="display:none; margin-top:.75rem;">
+        <div style="font-weight:600; font-size:13px; margin-bottom:.3rem;">
+          Loaded Wells (<span id="well-count">0</span>)
+        </div>
+        <div id="well-chips" class="well-list"></div>
+        <div style="margin-top:.4rem;">
+          <span class="muted" style="font-size:12px;">Data logs: </span>
+          <span id="data-names" class="muted" style="font-size:12px;"></span>
+        </div>
+        <div>
+          <span class="muted" style="font-size:12px;">Regions: </span>
+          <span id="region-names" class="muted" style="font-size:12px;"></span>
+        </div>
+        <div style="margin-top:.5rem;">
+          <button class="btn" id="btn-next-params" style="font-size:12px;">Next → Parameters</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Tab: Parameters -->
+  <div class="wc-body" id="tab-params">
+    <section class="wc-panel">
+      <h3 style="margin:0 0 .5rem;">Correlation Parameters</h3>
+      <div style="display:flex; gap:1rem; align-items:center; margin-bottom:.6rem;">
+        <label style="font-size:13px;">
+          <input type="checkbox" id="show-advanced" /> Show advanced parameters
+        </label>
+        <button class="btn" id="btn-suggest" style="font-size:12px;">Auto-suggest from data</button>
+        <span id="suggest-status" class="muted" style="font-size:12px;"></span>
+      </div>
+
+      <div id="params-form" class="param-grid">
+        <!-- Essential parameters -->
+        <div class="param-section">Essential</div>
+        <label for="p-var-data">Variance Data</label>
+        <select id="p-var-data"><option value="">-- select --</option></select>
+
+        <label for="p-var-weight">Variance Weight</label>
+        <input id="p-var-weight" type="number" value="1.0" step="0.1" min="0" />
+
+        <label for="p-no-crossing">No-Crossing Region</label>
+        <select id="p-no-crossing"><option value="">-- none --</option></select>
+
+        <label for="p-same-region">Same-Region</label>
+        <select id="p-same-region"><option value="">-- none --</option></select>
+
+        <label for="p-n-best">N-Best Results</label>
+        <input id="p-n-best" type="number" value="5" min="1" max="100" />
+
+        <!-- Advanced parameters (hidden by default) -->
+        <div class="param-section advanced-param" style="display:none;">Advanced</div>
+
+        <label for="p-var-data2" class="advanced-param" style="display:none;">Variance Data 2</label>
+        <select id="p-var-data2" class="advanced-param" style="display:none;"><option value="">-- none --</option></select>
+
+        <label for="p-var-weight2" class="advanced-param" style="display:none;">Weight 2</label>
+        <input id="p-var-weight2" class="advanced-param" style="display:none;" type="number" value="1.0" step="0.1" min="0" />
+
+        <label for="p-gap-cost" class="advanced-param" style="display:none;">Gap Cost</label>
+        <input id="p-gap-cost" class="advanced-param" style="display:none;" type="number" value="0" step="0.1" />
+
+        <label for="p-polarity-region" class="advanced-param" style="display:none;">Polarity Region</label>
+        <select id="p-polarity-region" class="advanced-param" style="display:none;"><option value="">-- none --</option></select>
+
+        <label for="p-dist-distal" class="advanced-param" style="display:none;">Distality Region</label>
+        <select id="p-dist-distal" class="advanced-param" style="display:none;"><option value="">-- none --</option></select>
+
+        <label for="p-dist-facies" class="advanced-param" style="display:none;">Facies Region</label>
+        <select id="p-dist-facies" class="advanced-param" style="display:none;"><option value="">-- none --</option></select>
+      </div>
+
+      <div style="margin-top:.75rem; display:flex; gap:.5rem; align-items:center;">
+        <button class="btn btn-run" id="btn-run" disabled>▶ Run Correlation</button>
+        <span id="run-spinner" style="display:none;">⏳ Running...</span>
+        <span id="run-status" class="muted" style="font-size:12px;"></span>
+      </div>
+      <div id="run-error" class="wc-status"></div>
+    </section>
+  </div>
+
+  <!-- Tab: Results -->
+  <div class="wc-body" id="tab-results">
+    <section class="wc-panel">
+      <h3 style="margin:0 0 .5rem;">Correlation Results</h3>
+      <div id="results-empty" class="muted">No results yet. Import wells and run correlation first.</div>
+
+      <div id="results-summary" style="display:none;">
+        <div style="display:flex; gap:1rem; align-items:center; margin-bottom:.5rem;">
+          <span style="font-size:13px;"><strong id="res-n-wells">0</strong> wells, <strong id="res-n-results">0</strong> solutions</span>
+          <span class="muted" style="font-size:12px;">Elapsed: <span id="res-elapsed">-</span> ms</span>
+          <button class="btn btn-export" id="btn-export">Export to RDDMS</button>
+          <span id="export-status" class="muted" style="font-size:12px;"></span>
+        </div>
+        <div id="results-cards"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="/static/weco.js"></script>
+{% endblock %}

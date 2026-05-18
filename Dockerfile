@@ -1,6 +1,11 @@
 # ── Build stage: install Python deps into a virtual-env ──────────────
 FROM python:3.12-slim AS builder
 
+# Build tools needed for WeCo C++ extension
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential g++ cmake ninja-build git \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /build
 COPY requirements.txt .
 
@@ -8,11 +13,21 @@ RUN python -m venv /opt/venv \
     && /opt/venv/bin/pip install --no-cache-dir --upgrade pip \
     && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
+# Build WeCo from submodule (C++ engine compiled here)
+COPY weco_engine/ /build/weco_engine/
+RUN /opt/venv/bin/pip install --no-cache-dir scikit-build-core pybind11 \
+    && /opt/venv/bin/pip install --no-cache-dir /build/weco_engine/
+
 # ── Runtime stage ────────────────────────────────────────────────────
 FROM python:3.12-slim
 
 # Security: non-root user (numeric UID required by Radix runAsNonRoot policy)
 RUN groupadd -g 1001 ores && useradd -u 1001 -g 1001 -r -d /app -s /sbin/nologin ores
+
+# Runtime: libgomp needed by WeCo C++ engine (OpenMP)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

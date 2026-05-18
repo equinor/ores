@@ -1,0 +1,3 @@
+[submodule "weco_engine"]
+	path = weco_engine
+	url = https://github.com/equinor/weco
