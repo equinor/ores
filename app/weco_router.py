@@ -58,6 +58,7 @@ class WecoRunRequest(BaseModel):
     """Run correlation on previously imported wells."""
     options: Dict[str, Any] = Field(default_factory=dict)
     n_best: int = Field(5, ge=1, le=100)
+    well_names: Optional[List[str]] = None  # subset of wells to correlate
 
 
 class WecoFullRequest(BaseModel):
@@ -576,7 +577,17 @@ async def weco_run(req: WecoRunRequest, request: Request):
     if _cached_well_list is None:
         raise HTTPException(400, "No wells loaded. Call /weco/import first.")
 
-    n_wells = len(_cached_well_list.wells)
+    # Filter wells by selection (if provided)
+    wl = _cached_well_list
+    if req.well_names:
+        from weco.data import WellList
+        selected = set(req.well_names)
+        filtered = [w for w in wl.wells if w.name in selected]
+        if not filtered:
+            raise HTTPException(400, "No matching wells found in selection.")
+        wl = WellList(filtered)
+
+    n_wells = len(wl.wells)
 
     # Auto-route large datasets to job component
     if n_wells > _JOB_WELL_THRESHOLD:
@@ -586,18 +597,18 @@ async def weco_run(req: WecoRunRequest, request: Request):
     try:
         from weco.api import _run_engine, _extract_results
         safe_opts = _apply_memory_guards(req.options, n_wells)
-        rf, data, elapsed = _run_engine(_cached_well_list, safe_opts)
+        rf, data, elapsed = _run_engine(wl, safe_opts)
         results = _extract_results(rf, data, req.n_best)
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(500, f"Correlation engine error: {e}")
 
-    well_names = [w.name for w in _cached_well_list.wells]
+    well_names = [w.name for w in wl.wells]
 
     # Include plot data for visualization
     wells_plot_data = []
-    for w in _cached_well_list.wells:
+    for w in wl.wells:
         depth = list(w.data.get("Depth", w.data.get("DEPTH", range(w.size))))[:w.size]
         # Find primary log for display
         skip = {"Depth", "DEPTH", "X", "Y", "Z", "MD"}

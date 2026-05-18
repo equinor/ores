@@ -8,6 +8,7 @@
   let importedWells = null;
   let correlationResult = null;
   let selectedDemo = null;
+  let currentDemoId = '';
   let wellDetails = [];  // per-well data for log preview
 
   // ── DOM refs ──────────────────────────────────────────────────────
@@ -17,9 +18,10 @@
   const healthTxt = $('#health-text');
 
   // Data tab
-  const dsFilterInput = $('#ds-filter-input');
-  const dsList = $('#ds-list');
-  const dsInput = $('#wc-dataspace');
+  const dsF1 = $('#ds-f1');
+  const dsF2 = $('#ds-f2');
+  const dsCount = $('#ds-count');
+  const dsSel = $('#ds-select');
   const btnImport = $('#btn-import');
   const btnRefreshDs = $('#btn-refresh-ds');
   const importSpin = $('#import-spinner');
@@ -30,6 +32,8 @@
   const dataNames = $('#data-names');
   const regionNames = $('#region-names');
   const demoGrid = $('#demo-grid');
+  const btnSelectAll = $('#btn-select-all-wells');
+  const btnSelectNone = $('#btn-select-none-wells');
 
   // Log tab
   const logWellList = $('#log-well-list');
@@ -127,47 +131,55 @@
 
   // ── Dataspace list ────────────────────────────────────────────────
   let allDataspaces = [];
+  let selectedWells = new Set(); // well names currently selected
 
   async function loadDataspaces() {
     try {
       const d = await api('GET', '/dataspaces');
-      allDataspaces = (d.dataspaces || []).map(ds =>
-        typeof ds === 'string' ? ds : (ds.DataspaceId || ds.id || ds.name || JSON.stringify(ds))
-      );
-      renderDataspaces();
+      allDataspaces = (d.dataspaces || []).map(ds => {
+        if (typeof ds === 'string') return ds;
+        return ds.path || ds.DataspaceId || ds.id || ds.name || '';
+      }).filter(Boolean);
+      applyDsFilter();
     } catch(e) {
-      dsList.innerHTML = '<div class="muted" style="padding:4px; font-size:12px;">Could not load dataspaces</div>';
+      dsSel.innerHTML = '<option disabled>Could not load dataspaces</option>';
     }
   }
 
-  function renderDataspaces(filter) {
-    const filt = (filter || '').toLowerCase();
-    const items = filt ? allDataspaces.filter(d => d.toLowerCase().includes(filt)) : allDataspaces;
-    dsList.innerHTML = items.map(d =>
-      `<div class="ds-item" data-ds="${esc(d)}">${esc(d)}</div>`
-    ).join('') || '<div class="muted" style="padding:4px; font-size:12px;">No dataspaces</div>';
+  function applyDsFilter() {
+    const q1 = (dsF1.value || '').trim().toLowerCase();
+    const q2 = (dsF2.value || '').trim().toLowerCase();
+    dsSel.innerHTML = '';
+    let matched = 0;
+    allDataspaces.forEach(path => {
+      const lp = path.toLowerCase();
+      const parts = lp.split('/');
+      const seg1 = parts[0] || '';
+      const seg2 = parts.slice(1).join('/');
+      if (q1 && !seg1.includes(q1)) return;
+      if (q2 && !seg2.includes(q2)) return;
+      const o = document.createElement('option');
+      o.value = path;
+      o.textContent = path;
+      dsSel.appendChild(o);
+      matched++;
+    });
+    dsCount.textContent = (q1 || q2) ? `${matched}/${allDataspaces.length}` : `${allDataspaces.length}`;
   }
 
-  dsList.addEventListener('click', e => {
-    const item = e.target.closest('.ds-item');
-    if (!item) return;
-    dsInput.value = item.dataset.ds;
-    $$('.ds-item', dsList).forEach(i => i.classList.remove('active'));
-    item.classList.add('active');
-  });
-
-  dsFilterInput.addEventListener('input', () => renderDataspaces(dsFilterInput.value));
+  dsF1.addEventListener('input', applyDsFilter);
+  dsF2.addEventListener('input', applyDsFilter);
   btnRefreshDs.addEventListener('click', loadDataspaces);
   loadDataspaces();
 
   // ── Import wells ──────────────────────────────────────────────────
   btnImport.addEventListener('click', async () => {
+    const ds = dsSel.value;
+    if (!ds) { setStatus(importStat, 'warn', 'Select a dataspace first'); return; }
     importSpin.style.display = 'inline';
     setStatus(importStat, '', '');
     try {
-      const data = await api('POST', '/import', {
-        dataspace: dsInput.value.trim() || null
-      });
+      const data = await api('POST', '/import', { dataspace: ds });
       importedWells = data;
       showWellsSummary(data);
       setStatus(importStat, 'ok', `Imported ${data.well_count} wells (${(data.data_names||[]).length} logs, ${(data.region_names||[]).length} regions)`);
@@ -181,16 +193,58 @@
 
   function showWellsSummary(data) {
     wellsSumm.style.display = 'block';
-    wellCount.textContent = data.well_count;
-    wellChips.innerHTML = (data.well_names || [])
-      .map(n => `<span class="well-chip">${esc(n)}</span>`).join('');
+    const names = data.well_names || [];
+    wellCount.textContent = names.length;
+    selectedWells = new Set(names); // select all by default
+    renderWellChips(names);
     dataNames.textContent = (data.data_names || []).join(', ') || '(none)';
     regionNames.textContent = (data.region_names || []).join(', ') || '(none)';
     populateDropdowns(data.data_names || [], data.region_names || []);
     populateLogSelectors(data.data_names || [], data.region_names || []);
-    updateLogWellList(data.well_names || []);
-    runSummary.textContent = `${data.well_count} wells loaded | Logs: ${(data.data_names||[]).join(', ')} | Regions: ${(data.region_names||[]).join(', ')}`;
+    updateLogWellList(names);
+    runSummary.textContent = `${names.length} wells loaded | Logs: ${(data.data_names||[]).join(', ')} | Regions: ${(data.region_names||[]).join(', ')}`;
   }
+
+  function renderWellChips(names) {
+    wellChips.innerHTML = names.map(n => {
+      const sel = selectedWells.has(n);
+      return `<span class="well-chip ${sel ? 'selected' : 'excluded'}" data-name="${esc(n)}">${esc(n)}</span>`;
+    }).join('');
+    // Click to toggle selection
+    wellChips.querySelectorAll('.well-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const name = chip.dataset.name;
+        if (selectedWells.has(name)) {
+          selectedWells.delete(name);
+          chip.classList.remove('selected');
+          chip.classList.add('excluded');
+        } else {
+          selectedWells.add(name);
+          chip.classList.add('selected');
+          chip.classList.remove('excluded');
+        }
+        wellCount.textContent = selectedWells.size;
+      });
+    });
+  }
+
+  btnSelectAll.addEventListener('click', () => {
+    wellChips.querySelectorAll('.well-chip').forEach(c => {
+      selectedWells.add(c.dataset.name);
+      c.classList.add('selected');
+      c.classList.remove('excluded');
+    });
+    wellCount.textContent = selectedWells.size;
+  });
+
+  btnSelectNone.addEventListener('click', () => {
+    selectedWells.clear();
+    wellChips.querySelectorAll('.well-chip').forEach(c => {
+      c.classList.remove('selected');
+      c.classList.add('excluded');
+    });
+    wellCount.textContent = 0;
+  });
 
   function enableAfterImport() {
     btnRun.disabled = false;
@@ -252,6 +306,7 @@
     $$('.demo-card', demoGrid).forEach(c => c.classList.remove('active'));
     card.classList.add('active');
     selectedDemo = card.dataset.id;
+    currentDemoId = selectedDemo;
     btnRunDemo.style.display = 'inline-block';
     btnRunDemo.textContent = `\u25B6 Run "${selectedDemo}"`;
 
@@ -430,10 +485,12 @@
 
     const options = gatherOptions();
     const nBest = parseInt($('#p-n-best').value) || 5;
+    const wellNamesList = selectedWells.size > 0 ? Array.from(selectedWells) : null;
 
     try {
       engineLog.textContent += `Options: ${JSON.stringify(options)}\nN-best: ${nBest}\n`;
-      const data = await api('POST', '/run', { options, n_best: nBest });
+      if (wellNamesList) engineLog.textContent += `Wells: ${wellNamesList.length} selected\n`;
+      const data = await api('POST', '/run', { options, n_best: nBest, well_names: wellNamesList });
       correlationResult = data;
       if (data.wells_plot_data) wellDetails = data.wells_plot_data;
       engineLog.textContent += `\nCompleted: ${data.n_results} solutions in ${data.elapsed_ms} ms\n`;
@@ -499,7 +556,7 @@
   async function importDemoFromRddms(demoId) {
     importSpin.style.display = 'inline';
     setStatus(importStat, 'info', `Importing "${demoId}" from RDDMS...`);
-    const ds = dsInput.value.trim() || 'maap/weco';
+    const ds = dsSel.value || 'maap/weco';
     try {
       const data = await api('POST', `/import/demo?demo_id=${encodeURIComponent(demoId)}&dataspace=${encodeURIComponent(ds)}`);
       importedWells = data;
@@ -833,9 +890,9 @@
     const body = {
       name,
       demo_id: currentDemoId || '',
-      dataspace: $('#sel-dataspace') ? $('#sel-dataspace').value || '' : '',
+      dataspace: dsSel.value || '',
       options: gatherOptions(),
-      n_best: parseInt($('#sel-nbest')?.value || '5', 10),
+      n_best: parseInt($('#p-n-best')?.value || '5', 10),
       well_ids: [],
       notes: '',
     };
@@ -891,7 +948,7 @@
       if (wf.options && typeof wf.options === 'object') {
         applyOptions(wf.options);
       }
-      if (wf.n_best && $('#sel-nbest')) $('#sel-nbest').value = wf.n_best;
+      if (wf.n_best && $('#p-n-best')) $('#p-n-best').value = wf.n_best;
       if (wf.demo_id) currentDemoId = wf.demo_id;
       setStatus(workflowStatus, 'ok', `Loaded "${wf.name}"`);
     } catch(e) {

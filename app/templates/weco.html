@@ -96,6 +96,9 @@
 .ds-item:hover { background:#e3f2fd; }
 .ds-item.active { background:#1565c0; color:#fff; }
 
+/* Well chip selection */
+.well-chip.excluded { background:#f3f2f1; color:#a19f9d; text-decoration:line-through; }
+
 /* Export */
 .export-option { display:flex; align-items:center; gap:.5rem; padding:.4rem 0; }
 </style>
@@ -126,24 +129,26 @@
       <div class="cols">
         <div class="col-half">
           <div style="font-weight:600; font-size:12.5px; margin-bottom:.3rem;">Dataspace</div>
-          <input id="ds-filter-input" type="text" placeholder="Filter dataspaces..." style="width:100%; font-size:12px; padding:3px 6px; border:1px solid #ccc; border-radius:3px; margin-bottom:.3rem;" />
-          <div class="ds-list" id="ds-list"></div>
-          <div style="margin-top:.4rem;">
-            <input id="wc-dataspace" type="text" value="{{ dataspace }}"
-              style="width:100%; font-size:13px; padding:4px 6px; border:1px solid #ccc; border-radius:3px;"
-              placeholder="Or type dataspace path (e.g. maap/weco)" />
+          <div style="display:flex; gap:.3rem; align-items:center; margin-bottom:.3rem;">
+            <input id="ds-f1" type="text" placeholder="First segment..." style="flex:1; font-size:12px; padding:3px 6px; border:1px solid #ccc; border-radius:3px;">
+            <span style="color:#999;">/</span>
+            <input id="ds-f2" type="text" placeholder="Second segment..." style="flex:1; font-size:12px; padding:3px 6px; border:1px solid #ccc; border-radius:3px;">
+            <span id="ds-count" style="font-size:11px; color:#999; white-space:nowrap;"></span>
+          </div>
+          <select id="ds-select" size="6" style="width:100%; font-size:12.5px; border:1px solid #ccc; border-radius:3px;"></select>
+          <div style="margin-top:.3rem; display:flex; gap:.4rem; align-items:center;">
+            <button class="btn btn-sm" id="btn-import">Import Wells</button>
+            <button class="btn btn-outline btn-sm" id="btn-refresh-ds">Refresh</button>
+            <span id="import-spinner" style="display:none; font-size:12px;">&#9203;</span>
           </div>
         </div>
         <div class="col-half">
-          <div style="margin-bottom:.6rem; display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;">
-            <button class="btn" id="btn-import">Import Wells</button>
-            <button class="btn btn-outline btn-sm" id="btn-refresh-ds">Refresh</button>
-            <span id="import-spinner" style="display:none;">&#9203;</span>
-          </div>
           <div id="import-status" class="wc-status"></div>
           <div id="wells-summary" style="display:none; margin-top:.5rem;">
             <div style="font-weight:600; font-size:13px; margin-bottom:.3rem;">
               Loaded Wells (<span id="well-count">0</span>)
+              <button class="btn btn-outline btn-sm" id="btn-select-all-wells" style="margin-left:.4rem;">All</button>
+              <button class="btn btn-outline btn-sm" id="btn-select-none-wells">None</button>
             </div>
             <div id="well-chips" class="well-list"></div>
             <div style="margin-top:.4rem; font-size:12px; color:#605e5c;">
