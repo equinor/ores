@@ -73,6 +73,17 @@ spec:
             INSTANCE_PRESHIP_DEFAULT_OWNERS: "data.default.owners@opendes.contoso.com"
             INSTANCE_PRESHIP_DEFAULT_VIEWERS: "data.default.viewers@opendes.contoso.com"
             INSTANCE_PRESHIP_DEFAULT_COUNTRIES: "US"
+            # interop - ADME Interop (client_credentials)
+            INSTANCE_INTEROP_AUTH_MODE: "client_credentials"
+            INSTANCE_INTEROP_HOSTNAME: "admeinterop.energy.azure.com"
+            INSTANCE_INTEROP_DATA_PARTITION_ID: "opendes"
+            INSTANCE_INTEROP_AUTHORITY: "osdu"
+            INSTANCE_INTEROP_SCHEMA_SOURCE: "wks"
+            INSTANCE_INTEROP_TOKEN_URL: "https://login.microsoftonline.com/58975fd3-4977-44d0-bea8-37af0baac100/oauth2/v2.0/token"
+            INSTANCE_INTEROP_DEFAULT_LEGAL_TAG: "opendes-private-default"
+            INSTANCE_INTEROP_DEFAULT_OWNERS: "data.default.owners@opendes.dataservices.energy"
+            INSTANCE_INTEROP_DEFAULT_VIEWERS: "data.default.viewers@opendes.dataservices.energy"
+            INSTANCE_INTEROP_DEFAULT_COUNTRIES: "NO"
           monitoring: true
 
         - environment: prod
@@ -103,6 +114,17 @@ spec:
             INSTANCE_PRESHIP_DEFAULT_OWNERS: "data.default.owners@opendes.contoso.com"
             INSTANCE_PRESHIP_DEFAULT_VIEWERS: "data.default.viewers@opendes.contoso.com"
             INSTANCE_PRESHIP_DEFAULT_COUNTRIES: "US"
+            # interop - ADME Interop (client_credentials)
+            INSTANCE_INTEROP_AUTH_MODE: "client_credentials"
+            INSTANCE_INTEROP_HOSTNAME: "admeinterop.energy.azure.com"
+            INSTANCE_INTEROP_DATA_PARTITION_ID: "opendes"
+            INSTANCE_INTEROP_AUTHORITY: "osdu"
+            INSTANCE_INTEROP_SCHEMA_SOURCE: "wks"
+            INSTANCE_INTEROP_TOKEN_URL: "https://login.microsoftonline.com/58975fd3-4977-44d0-bea8-37af0baac100/oauth2/v2.0/token"
+            INSTANCE_INTEROP_DEFAULT_LEGAL_TAG: "opendes-private-default"
+            INSTANCE_INTEROP_DEFAULT_OWNERS: "data.default.owners@opendes.dataservices.energy"
+            INSTANCE_INTEROP_DEFAULT_VIEWERS: "data.default.viewers@opendes.dataservices.energy"
+            INSTANCE_INTEROP_DEFAULT_COUNTRIES: "NO"
           monitoring: true
           horizontalScaling:
             minReplicas: 2
@@ -125,6 +147,11 @@ spec:
         - INSTANCE_PRESHIP_CLIENT_ID
         - INSTANCE_PRESHIP_CLIENT_SECRET
         - INSTANCE_PRESHIP_SCOPE
+        # interop - ADME Interop (client_credentials)
+        - INSTANCE_INTEROP_TENANT_ID
+        - INSTANCE_INTEROP_CLIENT_ID
+        - INSTANCE_INTEROP_CLIENT_SECRET
+        - INSTANCE_INTEROP_SCOPE
         # Uncomment when SMDA integration is needed
         # - SMDA_CLIENT_ID
         # - SMDA_SCOPE
