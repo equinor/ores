@@ -101,50 +101,93 @@ async def _rddms_import_wells(token: str, dataspace: str):
     """Fetch wells from RDDMS using ORES's own osdu client → WeCo WellList.
 
     Flow:
-    1. List WellboreTrajectoryRepresentation resources in dataspace
-    2. For each trajectory: get arrays (XYZ, MD, properties)
-    3. Build WeCo Well objects
-    4. Return WellList
+    1. List WellboreTrajectoryRepresentation → geometry (MD, XYZ)
+    2. List WellboreFrameRepresentation → log frames (MD sample grid)
+    3. List ContinuousProperty → log data (GR, RT, DEN, etc.)
+    4. List DiscreteProperty → regions (facies, seam, biozone)
+    5. Build WeCo Well objects with all data/regions
     """
     from . import osdu
     from weco.data import Well, WellList
 
     ds_enc = urllib.parse.quote(dataspace, safe="")
-    traj_type = "resqml20.obj_WellboreTrajectoryRepresentation"
 
-    # Step 1: list trajectories
-    resources = await osdu.list_resources(token, ds_enc, traj_type)
-    if not resources:
+    # RESQML object types
+    TRAJ_TYPE = "resqml20.obj_WellboreTrajectoryRepresentation"
+    FRAME_TYPE = "resqml20.obj_WellboreFrameRepresentation"
+    CONT_PROP_TYPE = "resqml20.obj_ContinuousProperty"
+    DISC_PROP_TYPE = "resqml20.obj_DiscreteProperty"
+
+    # Step 1: list trajectories (defines well geometry)
+    trajectories = await osdu.list_resources(token, ds_enc, TRAJ_TYPE)
+    if not trajectories:
         raise HTTPException(404, f"No wells found in dataspace '{dataspace}'")
 
+    # Step 2: list frames & properties (will be matched to wells by reference)
+    frames = await osdu.list_resources(token, ds_enc, FRAME_TYPE)
+    cont_props = await osdu.list_resources(token, ds_enc, CONT_PROP_TYPE)
+    disc_props = await osdu.list_resources(token, ds_enc, DISC_PROP_TYPE)
+
+    # Build lookup: trajectory UUID → frame UUIDs
+    # Frames reference their parent trajectory via RepresentedInterpretation or SupportingRepresentation
+    traj_to_frames: dict = {}
+    frame_by_uuid: dict = {}
+    for fr in frames:
+        fr_uuid = fr.get("UUID") or fr.get("Uuid") or ""
+        frame_by_uuid[fr_uuid] = fr
+        # RESQML links frame→trajectory via title naming convention or reference
+        # Common patterns: frame title = "well_name frame" or explicit ref
+        parent_ref = _extract_parent_uuid(fr)
+        if parent_ref:
+            traj_to_frames.setdefault(parent_ref, []).append(fr_uuid)
+
+    # Build lookup: frame UUID → property UUIDs
+    frame_to_cont: dict = {}
+    frame_to_disc: dict = {}
+    for prop in cont_props:
+        p_uuid = prop.get("UUID") or prop.get("Uuid") or ""
+        parent = _extract_parent_uuid(prop)
+        if parent:
+            frame_to_cont.setdefault(parent, []).append((p_uuid, prop))
+    for prop in disc_props:
+        p_uuid = prop.get("UUID") or prop.get("Uuid") or ""
+        parent = _extract_parent_uuid(prop)
+        if parent:
+            frame_to_disc.setdefault(parent, []).append((p_uuid, prop))
+
+    # If no explicit parent references found, try matching by title prefix
+    if not traj_to_frames:
+        _match_by_title(trajectories, frames, traj_to_frames, frame_by_uuid)
+    if not frame_to_cont and not frame_to_disc:
+        _match_props_by_title(frames, cont_props, disc_props, frame_to_cont, frame_to_disc)
+
     wells = []
-    for res in resources:
-        uuid = res.get("UUID") or res.get("Uuid") or ""
-        name = res.get("Citation", {}).get("Title") or res.get("Title") or uuid[:8]
+    for res in trajectories:
+        traj_uuid = res.get("UUID") or res.get("Uuid") or ""
+        name = res.get("Citation", {}).get("Title") or res.get("Title") or traj_uuid[:8]
 
         try:
-            # Step 2: get array data for this trajectory
-            arrays_meta = await osdu.list_arrays(token, ds_enc, traj_type, uuid)
-            
-            # Read the geometry (control points)
+            # Read trajectory arrays (geometry)
+            arrays_meta = await osdu.list_arrays(token, ds_enc, TRAJ_TYPE, traj_uuid)
+
             points = None
             mds = None
             for arr in arrays_meta:
                 path = arr.get("PathInResource") or arr.get("path") or ""
                 if "Geometry" in path or "ControlPoints" in path or "controlPoints" in path:
                     arr_data = await osdu.read_array(
-                        token, ds_enc, traj_type, uuid, path_in_resource=path)
+                        token, ds_enc, TRAJ_TYPE, traj_uuid, path_in_resource=path)
                     values = arr_data.get("values") or arr_data.get("Values") or []
                     if values:
                         points = np.array(values, dtype=np.float64).reshape(-1, 3)
                 elif "MdValues" in path or "md" in path.lower():
                     arr_data = await osdu.read_array(
-                        token, ds_enc, traj_type, uuid, path_in_resource=path)
+                        token, ds_enc, TRAJ_TYPE, traj_uuid, path_in_resource=path)
                     values = arr_data.get("values") or arr_data.get("Values") or []
                     if values:
                         mds = np.array(values, dtype=np.float64)
 
-            # Build WeCo Well
+            # Build Well geometry
             w = Well()
             w.name = name
 
@@ -168,13 +211,68 @@ async def _rddms_import_wells(token: str, dataspace: str):
             if mds is not None:
                 w.data["Depth"] = list(mds[:w.size])
             elif points is not None:
-                # Compute MD from cumulative distance
                 diffs = np.diff(points, axis=0)
                 segs = np.sqrt(np.sum(diffs ** 2, axis=1))
                 w.data["Depth"] = list(np.concatenate([[0.0], np.cumsum(segs)]))
 
+            # Step 3: Read log data (ContinuousProperty) from associated frames
+            frame_uuids = traj_to_frames.get(traj_uuid, [])
+            for fr_uuid in frame_uuids:
+                # Read frame MD values (the sample grid for properties)
+                frame_mds = await _read_frame_mds(token, ds_enc, FRAME_TYPE, fr_uuid)
+
+                # Read continuous properties (log curves)
+                for p_uuid, prop_meta in frame_to_cont.get(fr_uuid, []):
+                    prop_name = (prop_meta.get("Citation", {}).get("Title")
+                                 or prop_meta.get("Title") or p_uuid[:8])
+                    try:
+                        p_arrays = await osdu.list_arrays(
+                            token, ds_enc, CONT_PROP_TYPE, p_uuid)
+                        for pa in p_arrays:
+                            pa_path = pa.get("PathInResource") or pa.get("path") or ""
+                            if "Values" in pa_path or "values" in pa_path or "PatchOf" in pa_path:
+                                arr_data = await osdu.read_array(
+                                    token, ds_enc, CONT_PROP_TYPE, p_uuid,
+                                    path_in_resource=pa_path)
+                                vals = arr_data.get("values") or arr_data.get("Values") or []
+                                if vals:
+                                    # Resample to well grid if lengths differ
+                                    log_vals = _resample_to_well(
+                                        vals, frame_mds, w.size, w.data.get("Depth"))
+                                    w.data[prop_name] = log_vals
+                                    break
+                    except Exception as e:
+                        log.debug(f"  Skip property '{prop_name}' for '{name}': {e}")
+
+                # Read discrete properties (regions)
+                for p_uuid, prop_meta in frame_to_disc.get(fr_uuid, []):
+                    prop_name = (prop_meta.get("Citation", {}).get("Title")
+                                 or prop_meta.get("Title") or p_uuid[:8])
+                    try:
+                        p_arrays = await osdu.list_arrays(
+                            token, ds_enc, DISC_PROP_TYPE, p_uuid)
+                        for pa in p_arrays:
+                            pa_path = pa.get("PathInResource") or pa.get("path") or ""
+                            if "Values" in pa_path or "values" in pa_path or "PatchOf" in pa_path:
+                                arr_data = await osdu.read_array(
+                                    token, ds_enc, DISC_PROP_TYPE, p_uuid,
+                                    path_in_resource=pa_path)
+                                vals = arr_data.get("values") or arr_data.get("Values") or []
+                                if vals:
+                                    # Convert discrete values to WeCo region format
+                                    # (start_idx, end_idx, value) tuples
+                                    regions = _discrete_to_regions(
+                                        vals, frame_mds, w.size, w.data.get("Depth"))
+                                    if regions:
+                                        w.region[prop_name] = tuple(regions)
+                                    break
+                    except Exception as e:
+                        log.debug(f"  Skip region '{prop_name}' for '{name}': {e}")
+
             wells.append(w)
-            log.info(f"  Imported well '{name}': {w.size} pts")
+            data_names = [k for k in w.data if k not in ("X", "Y", "Z", "Depth")]
+            log.info(f"  Imported well '{name}': {w.size} pts, "
+                     f"{len(data_names)} logs, {len(w.region)} regions")
 
         except Exception as e:
             log.warning(f"  Skipping well '{name}': {e}")
@@ -188,6 +286,147 @@ async def _rddms_import_wells(token: str, dataspace: str):
     wl.wells = wells
     log.info(f"Imported {len(wells)} wells from RDDMS '{dataspace}'")
     return wl
+
+
+def _extract_parent_uuid(resource: dict) -> str:
+    """Extract parent object UUID from RESQML resource references."""
+    # Check common RESQML reference patterns
+    for key in ("SupportingRepresentation", "RepresentedInterpretation",
+                "Representation", "Frame"):
+        ref = resource.get(key)
+        if isinstance(ref, dict):
+            uid = ref.get("UUID") or ref.get("Uuid") or ref.get("uuid")
+            if uid:
+                return uid
+    # Check nested Citation or References
+    refs = resource.get("References") or resource.get("DataObjectReference") or []
+    if isinstance(refs, list):
+        for r in refs:
+            if isinstance(r, dict):
+                uid = r.get("UUID") or r.get("Uuid")
+                if uid:
+                    return uid
+    return ""
+
+
+def _match_by_title(trajectories, frames, traj_to_frames, frame_by_uuid):
+    """Fallback: match frames to trajectories by title prefix."""
+    traj_names = {}
+    for t in trajectories:
+        uid = t.get("UUID") or t.get("Uuid") or ""
+        title = t.get("Citation", {}).get("Title") or t.get("Title") or ""
+        if title:
+            traj_names[title.lower().split()[0]] = uid
+
+    for fr in frames:
+        fr_uuid = fr.get("UUID") or fr.get("Uuid") or ""
+        fr_title = fr.get("Citation", {}).get("Title") or fr.get("Title") or ""
+        prefix = fr_title.lower().split()[0] if fr_title else ""
+        if prefix in traj_names:
+            traj_to_frames.setdefault(traj_names[prefix], []).append(fr_uuid)
+
+
+def _match_props_by_title(frames, cont_props, disc_props, frame_to_cont, frame_to_disc):
+    """Fallback: match properties to frames by title prefix."""
+    frame_names = {}
+    for fr in frames:
+        uid = fr.get("UUID") or fr.get("Uuid") or ""
+        title = fr.get("Citation", {}).get("Title") or fr.get("Title") or ""
+        if title:
+            frame_names[title.lower().split()[0]] = uid
+
+    for prop in cont_props:
+        p_uuid = prop.get("UUID") or prop.get("Uuid") or ""
+        title = prop.get("Citation", {}).get("Title") or prop.get("Title") or ""
+        prefix = title.lower().split()[0] if title else ""
+        if prefix in frame_names:
+            frame_to_cont.setdefault(frame_names[prefix], []).append((p_uuid, prop))
+
+    for prop in disc_props:
+        p_uuid = prop.get("UUID") or prop.get("Uuid") or ""
+        title = prop.get("Citation", {}).get("Title") or prop.get("Title") or ""
+        prefix = title.lower().split()[0] if title else ""
+        if prefix in frame_names:
+            frame_to_disc.setdefault(frame_names[prefix], []).append((p_uuid, prop))
+
+
+async def _read_frame_mds(token: str, ds_enc: str, frame_type: str, frame_uuid: str):
+    """Read MD values from a WellboreFrameRepresentation."""
+    from . import osdu
+    try:
+        arrays = await osdu.list_arrays(token, ds_enc, frame_type, frame_uuid)
+        for arr in arrays:
+            path = arr.get("PathInResource") or arr.get("path") or ""
+            if "NodeMd" in path or "nodeMd" in path or "MdValues" in path or "md" in path.lower():
+                arr_data = await osdu.read_array(
+                    token, ds_enc, frame_type, frame_uuid, path_in_resource=path)
+                vals = arr_data.get("values") or arr_data.get("Values") or []
+                if vals:
+                    return np.array(vals, dtype=np.float64)
+    except Exception:
+        pass
+    return None
+
+
+def _resample_to_well(values, frame_mds, well_size: int, well_depth) -> list:
+    """Resample property values to the well's depth grid.
+
+    If frame has same size as well, use directly. Otherwise interpolate.
+    """
+    vals = np.array(values, dtype=np.float64)
+    if len(vals) == well_size:
+        return list(vals)
+
+    # Need interpolation
+    if frame_mds is not None and well_depth is not None:
+        well_md = np.array(well_depth, dtype=np.float64)
+        # Interpolate property onto well depth grid
+        resampled = np.interp(well_md, frame_mds[:len(vals)], vals,
+                              left=vals[0], right=vals[-1])
+        return list(resampled)
+
+    # Fallback: truncate or pad
+    if len(vals) > well_size:
+        return list(vals[:well_size])
+    padded = np.full(well_size, vals[-1] if len(vals) > 0 else 0.0)
+    padded[:len(vals)] = vals
+    return list(padded)
+
+
+def _discrete_to_regions(values, frame_mds, well_size: int, well_depth) -> list:
+    """Convert discrete property array to WeCo region format.
+
+    WeCo regions are tuples of (start_idx, end_idx, value).
+    """
+    # Resample to well grid first
+    vals = np.array(values, dtype=np.int32)
+    if len(vals) != well_size:
+        if frame_mds is not None and well_depth is not None:
+            well_md = np.array(well_depth, dtype=np.float64)
+            # Nearest-neighbor interpolation for discrete values
+            indices = np.searchsorted(frame_mds[:len(vals)], well_md, side="right") - 1
+            indices = np.clip(indices, 0, len(vals) - 1)
+            vals = vals[indices]
+        elif len(vals) > well_size:
+            vals = vals[:well_size]
+        else:
+            padded = np.full(well_size, vals[-1] if len(vals) > 0 else 0, dtype=np.int32)
+            padded[:len(vals)] = vals
+            vals = padded
+
+    # Run-length encode into (start, end, value) tuples
+    regions = []
+    if len(vals) == 0:
+        return regions
+    start = 0
+    current = int(vals[0])
+    for i in range(1, len(vals)):
+        if int(vals[i]) != current:
+            regions.append((start, i - 1, current))
+            start = i
+            current = int(vals[i])
+    regions.append((start, len(vals) - 1, current))
+    return regions
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -569,3 +808,43 @@ def weco_depenv_suggest(environment: Optional[str] = None):
         raise
     except Exception as e:
         raise HTTPException(500, str(e))
+
+
+@router.get("/dataspaces")
+async def weco_dataspaces(request: Request):
+    """List available dataspaces from the RDDMS instance."""
+    token = _get_token(request)
+    if not token:
+        raise HTTPException(401, "Not authenticated.")
+    try:
+        from . import osdu
+        dataspaces = await osdu.list_dataspaces(token)
+        return {"dataspaces": dataspaces}
+    except Exception as e:
+        raise HTTPException(500, f"Cannot list dataspaces: {e}")
+
+
+@router.get("/wells")
+async def weco_wells_info():
+    """Return info about currently loaded wells (without re-importing)."""
+    if _cached_well_list is None:
+        return {"loaded": False, "well_count": 0}
+
+    wl = _cached_well_list
+    return {
+        "loaded": True,
+        "well_count": len(wl.wells),
+        "well_names": [w.name for w in wl.wells],
+        "data_names": list(wl.get_data_names()) if hasattr(wl, "get_data_names") else [],
+        "region_names": list(wl.get_region_names()) if hasattr(wl, "get_region_names") else [],
+        "wells": [
+            {
+                "name": w.name,
+                "size": w.size,
+                "x": w.x, "y": w.y, "z": w.z, "h": w.h,
+                "data_names": list(w.data.keys()),
+                "region_names": list(w.region.keys()),
+            }
+            for w in wl.wells
+        ],
+    }

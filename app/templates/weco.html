@@ -3,26 +3,30 @@
 {% block content %}
 <h2>Well Correlation <span class="muted" style="font-size:.75em;">(WeCo Engine)</span></h2>
 <style>
-.wc-wrap { max-width: 96rem; }
+.wc-wrap { max-width: 98rem; }
 .wc-panel { border:1px solid #e1dfdd; border-radius:8px; background:#fff; padding:.75rem; margin-bottom:.75rem; }
 .muted { color:#605e5c; }
-.btn { display:inline-block; padding:.35rem .6rem; border:1px solid #0d6efd; border-radius:3px; background:#0d6efd; color:#fff; cursor:pointer; font-size:13px; }
+.btn { display:inline-block; padding:.35rem .7rem; border:1px solid #0d6efd; border-radius:3px; background:#0d6efd; color:#fff; cursor:pointer; font-size:13px; }
 .btn:hover { background:#0b5ed7; }
 .btn:disabled { opacity:.5; cursor:not-allowed; }
 .btn-run { background:#4BB748; border-color:#4BB748; font-weight:600; }
 .btn-run:hover { background:#3da63a; }
 .btn-export { background:#007079; border-color:#007079; }
 .btn-export:hover { background:#004f55; }
-.btn-demo { background:#6c757d; border-color:#6c757d; font-size:12px; }
+.btn-outline { background:transparent; color:#0d6efd; border-color:#0d6efd; }
+.btn-outline:hover { background:#e3f2fd; }
+.btn-sm { font-size:12px; padding:.25rem .5rem; }
+.btn-demo { background:#6c757d; border-color:#6c757d; }
 .btn-demo:hover { background:#5a6268; }
 
 /* Tabs */
 .wc-tabs { display:flex; gap:0; border-bottom:2px solid #e1dfdd; margin-bottom:.75rem; }
 .wc-tab { padding:.45rem .9rem; cursor:pointer; font-weight:500; font-size:13.5px;
   border:none; border-bottom:2px solid transparent;
-  color:#605e5c; background:transparent; margin-bottom:-2px; }
+  color:#605e5c; background:transparent; margin-bottom:-2px; transition:all .15s; }
 .wc-tab:hover { background:#f3f2f1; }
 .wc-tab.active { color:var(--eq-red); font-weight:600; border-bottom-color:var(--eq-red); }
+.wc-tab.disabled { opacity:.4; pointer-events:none; }
 .wc-body { display:none; }
 .wc-body.active { display:block; }
 
@@ -33,16 +37,24 @@
 .wc-status.info { display:block; background:#e3f2fd; color:#1565c0; }
 .wc-status.warn { display:block; background:#fff8e1; color:#e65100; }
 
-/* Well list */
+/* Layout */
+.row { display:grid; grid-template-columns:200px 1fr; gap:.3rem .6rem; align-items:center; }
+.row label { font-size:13px; font-weight:500; }
+.row input, .row select { font-size:13px; padding:3px 6px; border:1px solid #ccc; border-radius:3px; }
+.row-section { font-weight:600; font-size:13px; color:var(--eq-red); margin-top:.6rem; grid-column:1/-1; border-bottom:1px solid #eee; padding-bottom:.2rem; }
+.cols { display:flex; gap:1rem; }
+.col-half { flex:1; min-width:0; }
+
+/* Well list & chips */
 .well-list { max-height:200px; overflow-y:auto; border:1px solid #e1dfdd; border-radius:4px; padding:.3rem; }
 .well-chip { display:inline-block; padding:2px 8px; margin:2px; border-radius:12px;
-  background:#e3f2fd; color:#1565c0; font-size:12px; }
+  background:#e3f2fd; color:#1565c0; font-size:12px; cursor:pointer; }
+.well-chip.selected { background:#1565c0; color:#fff; }
+.well-chip:hover { opacity:.8; }
 
-/* Params */
-.param-grid { display:grid; grid-template-columns: 180px 1fr; gap:.3rem .5rem; align-items:center; }
-.param-grid label { font-size:13px; font-weight:500; }
-.param-grid input, .param-grid select { font-size:13px; padding:3px 6px; }
-.param-section { font-weight:600; font-size:13px; color:var(--eq-red); margin-top:.6rem; grid-column:1/-1; border-bottom:1px solid #eee; padding-bottom:.2rem; }
+/* Log preview */
+.log-canvas-wrap { border:1px solid #e1dfdd; border-radius:4px; overflow:hidden; }
+.log-canvas-wrap canvas { display:block; width:100%; height:320px; }
 
 /* Results */
 .result-card { border:1px solid #e1dfdd; border-radius:6px; padding:.5rem; margin-bottom:.5rem; background:#fafafa; }
@@ -53,10 +65,39 @@
 .corr-table th, .corr-table td { padding:3px 6px; border:1px solid #e1dfdd; text-align:center; }
 .corr-table th { background:#f3f2f1; font-weight:600; }
 
+/* Demo cards */
+.demo-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:.5rem; }
+.demo-card { border:1px solid #e1dfdd; border-radius:6px; padding:.6rem; cursor:pointer; transition:all .15s; }
+.demo-card:hover { border-color:#0d6efd; background:#f8faff; }
+.demo-card.active { border-color:#4BB748; background:#f6fff6; }
+.demo-card h4 { margin:0 0 .3rem; font-size:13.5px; }
+.demo-card p { margin:0; font-size:12px; color:#605e5c; }
+.demo-card .demo-meta { font-size:11px; color:#999; margin-top:.3rem; }
+
 /* Health dot */
 .health-dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:4px; }
 .health-dot.ok { background:#4BB748; }
 .health-dot.err { background:#c62828; }
+
+/* Progress */
+.progress-bar { height:4px; background:#e1dfdd; border-radius:2px; overflow:hidden; margin:.5rem 0; }
+.progress-bar .fill { height:100%; background:#4BB748; transition:width .3s; }
+.progress-bar.indeterminate .fill { width:30%; animation:indeterminate 1.5s infinite linear; }
+@keyframes indeterminate { 0%{transform:translateX(-100%)} 100%{transform:translateX(400%)} }
+
+/* Engine log */
+.engine-log { font-family:monospace; font-size:11.5px; background:#1e1e1e; color:#d4d4d4;
+  padding:.5rem; border-radius:4px; max-height:200px; overflow-y:auto; white-space:pre-wrap; }
+
+/* Dataspace selector */
+.ds-filter input { width:100%; font-size:12px; padding:3px 6px; border:1px solid #ccc; border-radius:3px; margin-bottom:.3rem; }
+.ds-list { max-height:120px; overflow-y:auto; border:1px solid #e1dfdd; border-radius:4px; }
+.ds-item { padding:3px 8px; font-size:12.5px; cursor:pointer; }
+.ds-item:hover { background:#e3f2fd; }
+.ds-item.active { background:#1565c0; color:#fff; }
+
+/* Export */
+.export-option { display:flex; align-items:center; gap:.5rem; padding:.4rem 0; }
 </style>
 
 <!-- Health indicator -->
@@ -70,126 +111,205 @@
 <!-- Main tabs -->
 <div class="wc-wrap">
   <div class="wc-tabs">
-    <span class="wc-tab active" data-tab="wells">1. Wells</span>
-    <span class="wc-tab" data-tab="params">2. Parameters</span>
-    <span class="wc-tab" data-tab="results">3. Results</span>
+    <span class="wc-tab active" data-tab="data">1. Data</span>
+    <span class="wc-tab" data-tab="logs">2. Logs</span>
+    <span class="wc-tab" data-tab="params">3. Parameters</span>
+    <span class="wc-tab" data-tab="run">4. Run</span>
+    <span class="wc-tab disabled" data-tab="results">5. Results</span>
+    <span class="wc-tab disabled" data-tab="export">6. Export</span>
   </div>
 
-  <!-- Tab: Wells (RDDMS import) -->
-  <div class="wc-body active" id="tab-wells">
+  <!-- Tab 1: Data -->
+  <div class="wc-body active" id="tab-data">
     <section class="wc-panel">
       <h3 style="margin:0 0 .5rem;">Import Wells from RDDMS</h3>
-      <p class="muted" style="font-size:13px; margin:0 0 .5rem;">
-        Wells are loaded from the active OSDU/RDDMS instance. All well logs in the current dataspace will be imported.
-      </p>
-      <div class="param-grid" style="max-width:500px;">
-        <label for="wc-dataspace">Dataspace</label>
-        <input id="wc-dataspace" type="text" value="{{ dataspace }}" placeholder="e.g. maap/drogon" />
+      <div class="cols">
+        <div class="col-half">
+          <div style="font-weight:600; font-size:12.5px; margin-bottom:.3rem;">Dataspace</div>
+          <input id="ds-filter-input" type="text" placeholder="Filter dataspaces..." style="width:100%; font-size:12px; padding:3px 6px; border:1px solid #ccc; border-radius:3px; margin-bottom:.3rem;" />
+          <div class="ds-list" id="ds-list"></div>
+          <div style="margin-top:.4rem;">
+            <input id="wc-dataspace" type="text" value="{{ dataspace }}"
+              style="width:100%; font-size:13px; padding:4px 6px; border:1px solid #ccc; border-radius:3px;"
+              placeholder="Or type dataspace path (e.g. maap/weco)" />
+          </div>
+        </div>
+        <div class="col-half">
+          <div style="margin-bottom:.6rem; display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;">
+            <button class="btn" id="btn-import">Import Wells</button>
+            <button class="btn btn-outline btn-sm" id="btn-refresh-ds">Refresh</button>
+            <span id="import-spinner" style="display:none;">&#9203;</span>
+          </div>
+          <div id="import-status" class="wc-status"></div>
+          <div id="wells-summary" style="display:none; margin-top:.5rem;">
+            <div style="font-weight:600; font-size:13px; margin-bottom:.3rem;">
+              Loaded Wells (<span id="well-count">0</span>)
+            </div>
+            <div id="well-chips" class="well-list"></div>
+            <div style="margin-top:.4rem; font-size:12px; color:#605e5c;">
+              <span>Logs: <strong id="data-names">-</strong></span> |
+              <span>Regions: <strong id="region-names">-</strong></span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div style="margin-top:.6rem; display:flex; gap:.5rem; align-items:center;">
-        <button class="btn" id="btn-import">Import Wells</button>
-        <button class="btn btn-demo" id="btn-demo">Run Demo Dataset</button>
-        <span id="import-spinner" style="display:none;">⏳</span>
-      </div>
-      <div id="import-status" class="wc-status"></div>
+    </section>
 
-      <!-- Imported wells summary -->
-      <div id="wells-summary" style="display:none; margin-top:.75rem;">
-        <div style="font-weight:600; font-size:13px; margin-bottom:.3rem;">
-          Loaded Wells (<span id="well-count">0</span>)
+    <section class="wc-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem;">
+        <h3 style="margin:0;">Demo Datasets</h3>
+        <span class="muted" style="font-size:12px;">Click a demo to auto-configure and run</span>
+      </div>
+      <div id="demo-grid" class="demo-grid">
+        <div class="muted" style="font-size:13px;">Loading demos...</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Tab 2: Logs -->
+  <div class="wc-body" id="tab-logs">
+    <section class="wc-panel">
+      <h3 style="margin:0 0 .5rem;">Well Log Preview</h3>
+      <div class="cols">
+        <div style="width:180px;">
+          <div style="font-weight:600; font-size:12.5px; margin-bottom:.3rem;">Wells</div>
+          <div id="log-well-list" class="well-list" style="max-height:320px;"></div>
         </div>
-        <div id="well-chips" class="well-list"></div>
-        <div style="margin-top:.4rem;">
-          <span class="muted" style="font-size:12px;">Data logs: </span>
-          <span id="data-names" class="muted" style="font-size:12px;"></span>
-        </div>
-        <div>
-          <span class="muted" style="font-size:12px;">Regions: </span>
-          <span id="region-names" class="muted" style="font-size:12px;"></span>
-        </div>
-        <div style="margin-top:.5rem;">
-          <button class="btn" id="btn-next-params" style="font-size:12px;">Next → Parameters</button>
+        <div style="flex:1; min-width:0;">
+          <div style="display:flex; gap:.5rem; align-items:center; margin-bottom:.4rem;">
+            <label style="font-size:12.5px; font-weight:500;">Log:</label>
+            <select id="log-channel-select" style="font-size:12.5px; padding:2px 6px;"></select>
+            <label style="font-size:12.5px; font-weight:500; margin-left:.5rem;">Region:</label>
+            <select id="log-region-select" style="font-size:12.5px; padding:2px 6px;"></select>
+          </div>
+          <div class="log-canvas-wrap">
+            <canvas id="log-canvas"></canvas>
+          </div>
+          <div class="muted" style="font-size:11px; margin-top:.3rem;">
+            Click a well to preview its log data. Depth on Y-axis, value on X-axis.
+          </div>
         </div>
       </div>
     </section>
   </div>
 
-  <!-- Tab: Parameters -->
+  <!-- Tab 3: Parameters -->
   <div class="wc-body" id="tab-params">
     <section class="wc-panel">
-      <h3 style="margin:0 0 .5rem;">Correlation Parameters</h3>
-      <div style="display:flex; gap:1rem; align-items:center; margin-bottom:.6rem;">
-        <label style="font-size:13px;">
-          <input type="checkbox" id="show-advanced" /> Show advanced parameters
-        </label>
-        <button class="btn" id="btn-suggest" style="font-size:12px;">Auto-suggest from data</button>
-        <span id="suggest-status" class="muted" style="font-size:12px;"></span>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem;">
+        <h3 style="margin:0;">Correlation Parameters</h3>
+        <div style="display:flex; gap:.5rem; align-items:center;">
+          <select id="param-preset" style="font-size:12px; padding:2px 6px;">
+            <option value="">Custom</option>
+            <option value="simple">Simple log correlation</option>
+            <option value="constrained">Constrained (biozone)</option>
+            <option value="distality">Distality-aware</option>
+            <option value="multi-log">Multi-log weighted</option>
+          </select>
+          <button class="btn btn-outline btn-sm" id="btn-suggest">Auto-suggest</button>
+          <span id="suggest-status" class="muted" style="font-size:12px;"></span>
+        </div>
       </div>
-
-      <div id="params-form" class="param-grid">
-        <!-- Essential parameters -->
-        <div class="param-section">Essential</div>
-        <label for="p-var-data">Variance Data</label>
+      <div style="margin-bottom:.5rem;">
+        <label style="font-size:12.5px;"><input type="checkbox" id="show-advanced" /> Show advanced</label>
+      </div>
+      <div id="params-form" class="row" style="max-width:600px;">
+        <div class="row-section">Variance (cost function)</div>
+        <label for="p-var-data">Primary Log</label>
         <select id="p-var-data"><option value="">-- select --</option></select>
-
-        <label for="p-var-weight">Variance Weight</label>
+        <label for="p-var-weight">Weight</label>
         <input id="p-var-weight" type="number" value="1.0" step="0.1" min="0" />
+        <label for="p-var-data2" class="adv" style="display:none;">Secondary Log</label>
+        <select id="p-var-data2" class="adv" style="display:none;"><option value="">-- none --</option></select>
+        <label for="p-var-weight2" class="adv" style="display:none;">Weight 2</label>
+        <input id="p-var-weight2" class="adv" style="display:none;" type="number" value="1.0" step="0.1" min="0" />
 
+        <div class="row-section">Constraints</div>
         <label for="p-no-crossing">No-Crossing Region</label>
         <select id="p-no-crossing"><option value="">-- none --</option></select>
-
         <label for="p-same-region">Same-Region</label>
         <select id="p-same-region"><option value="">-- none --</option></select>
 
+        <div class="row-section adv" style="display:none;">Distality</div>
+        <label for="p-dist-distal" class="adv" style="display:none;">Distality Region</label>
+        <select id="p-dist-distal" class="adv" style="display:none;"><option value="">-- none --</option></select>
+        <label for="p-dist-facies" class="adv" style="display:none;">Facies Region</label>
+        <select id="p-dist-facies" class="adv" style="display:none;"><option value="">-- none --</option></select>
+
+        <div class="row-section adv" style="display:none;">Advanced</div>
+        <label for="p-gap-cost" class="adv" style="display:none;">Gap Cost</label>
+        <input id="p-gap-cost" class="adv" style="display:none;" type="number" value="0" step="0.1" />
+        <label for="p-polarity-region" class="adv" style="display:none;">Polarity Region</label>
+        <select id="p-polarity-region" class="adv" style="display:none;"><option value="">-- none --</option></select>
+        <label for="p-band-width" class="adv" style="display:none;">Band Width</label>
+        <input id="p-band-width" class="adv" style="display:none;" type="number" value="0" min="0" placeholder="0=full" />
+        <label for="p-max-cor" class="adv" style="display:none;">Max Correlations</label>
+        <input id="p-max-cor" class="adv" style="display:none;" type="number" value="50" min="1" max="200" />
+
+        <div class="row-section">Output</div>
         <label for="p-n-best">N-Best Results</label>
         <input id="p-n-best" type="number" value="5" min="1" max="100" />
-
-        <!-- Advanced parameters (hidden by default) -->
-        <div class="param-section advanced-param" style="display:none;">Advanced</div>
-
-        <label for="p-var-data2" class="advanced-param" style="display:none;">Variance Data 2</label>
-        <select id="p-var-data2" class="advanced-param" style="display:none;"><option value="">-- none --</option></select>
-
-        <label for="p-var-weight2" class="advanced-param" style="display:none;">Weight 2</label>
-        <input id="p-var-weight2" class="advanced-param" style="display:none;" type="number" value="1.0" step="0.1" min="0" />
-
-        <label for="p-gap-cost" class="advanced-param" style="display:none;">Gap Cost</label>
-        <input id="p-gap-cost" class="advanced-param" style="display:none;" type="number" value="0" step="0.1" />
-
-        <label for="p-polarity-region" class="advanced-param" style="display:none;">Polarity Region</label>
-        <select id="p-polarity-region" class="advanced-param" style="display:none;"><option value="">-- none --</option></select>
-
-        <label for="p-dist-distal" class="advanced-param" style="display:none;">Distality Region</label>
-        <select id="p-dist-distal" class="advanced-param" style="display:none;"><option value="">-- none --</option></select>
-
-        <label for="p-dist-facies" class="advanced-param" style="display:none;">Facies Region</label>
-        <select id="p-dist-facies" class="advanced-param" style="display:none;"><option value="">-- none --</option></select>
       </div>
-
-      <div style="margin-top:.75rem; display:flex; gap:.5rem; align-items:center;">
-        <button class="btn btn-run" id="btn-run" disabled>▶ Run Correlation</button>
-        <span id="run-spinner" style="display:none;">⏳ Running...</span>
-        <span id="run-status" class="muted" style="font-size:12px;"></span>
-      </div>
-      <div id="run-error" class="wc-status"></div>
     </section>
   </div>
 
-  <!-- Tab: Results -->
+  <!-- Tab 4: Run -->
+  <div class="wc-body" id="tab-run">
+    <section class="wc-panel">
+      <h3 style="margin:0 0 .5rem;">Run Correlation</h3>
+      <div style="margin-bottom:.5rem; font-size:13px; color:#605e5c;" id="run-summary">No wells loaded.</div>
+      <div style="display:flex; gap:.5rem; align-items:center;">
+        <button class="btn btn-run" id="btn-run" disabled>&#9654; Run Correlation</button>
+        <button class="btn btn-demo btn-sm" id="btn-run-demo" style="display:none;">&#9654; Run Demo</button>
+        <span id="run-spinner" style="display:none; font-size:13px;">&#9203; Running...</span>
+      </div>
+      <div class="progress-bar" id="run-progress" style="display:none;"><div class="fill"></div></div>
+      <div id="run-error" class="wc-status"></div>
+      <div style="margin-top:.5rem;">
+        <div style="font-weight:600; font-size:12.5px; margin-bottom:.2rem;">Engine Log</div>
+        <div class="engine-log" id="engine-log">Waiting for run...</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Tab 5: Results -->
   <div class="wc-body" id="tab-results">
     <section class="wc-panel">
       <h3 style="margin:0 0 .5rem;">Correlation Results</h3>
-      <div id="results-empty" class="muted">No results yet. Import wells and run correlation first.</div>
-
+      <div id="results-empty" class="muted">No results yet.</div>
       <div id="results-summary" style="display:none;">
-        <div style="display:flex; gap:1rem; align-items:center; margin-bottom:.5rem;">
-          <span style="font-size:13px;"><strong id="res-n-wells">0</strong> wells, <strong id="res-n-results">0</strong> solutions</span>
+        <div style="display:flex; gap:1rem; align-items:center; margin-bottom:.6rem; flex-wrap:wrap;">
+          <span style="font-size:13px;"><strong id="res-n-wells">0</strong> wells</span>
+          <span style="font-size:13px;"><strong id="res-n-results">0</strong> solutions</span>
           <span class="muted" style="font-size:12px;">Elapsed: <span id="res-elapsed">-</span> ms</span>
-          <button class="btn btn-export" id="btn-export">Export to RDDMS</button>
-          <span id="export-status" class="muted" style="font-size:12px;"></span>
+          <span class="muted" style="font-size:12px;">Mode: <span id="res-mode">-</span></span>
+        </div>
+        <div style="margin-bottom:.5rem;">
+          <label style="font-size:12.5px; font-weight:500;">Solution:</label>
+          <select id="res-selector" style="font-size:12.5px; padding:2px 6px;"></select>
         </div>
         <div id="results-cards"></div>
       </div>
+    </section>
+  </div>
+
+  <!-- Tab 6: Export -->
+  <div class="wc-body" id="tab-export">
+    <section class="wc-panel">
+      <h3 style="margin:0 0 .5rem;">Export Results</h3>
+      <div class="export-option">
+        <button class="btn btn-export" id="btn-export-rddms">Export to RDDMS</button>
+        <span class="muted" style="font-size:12px;">Write markers back to dataspace</span>
+      </div>
+      <div class="export-option">
+        <button class="btn btn-outline" id="btn-export-json">Download JSON</button>
+        <span class="muted" style="font-size:12px;">Full results as JSON file</span>
+      </div>
+      <div class="export-option">
+        <button class="btn btn-outline" id="btn-export-csv">Download CSV</button>
+        <span class="muted" style="font-size:12px;">Marker table as CSV</span>
+      </div>
+      <div id="export-status" class="wc-status"></div>
     </section>
   </div>
 </div>
