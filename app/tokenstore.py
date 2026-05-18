@@ -131,6 +131,20 @@ def _get_conn() -> sqlite3.Connection:
                created_at      REAL NOT NULL
            )"""
     )
+    _conn.execute(
+        """CREATE TABLE IF NOT EXISTS weco_workflows (
+               id              INTEGER PRIMARY KEY AUTOINCREMENT,
+               oid             TEXT NOT NULL DEFAULT '',
+               name            TEXT NOT NULL,
+               demo_id         TEXT NOT NULL DEFAULT '',
+               dataspace       TEXT NOT NULL DEFAULT '',
+               options         TEXT NOT NULL DEFAULT '{}',
+               n_best          INTEGER NOT NULL DEFAULT 5,
+               well_ids        TEXT NOT NULL DEFAULT '[]',
+               notes           TEXT NOT NULL DEFAULT '',
+               updated_at      REAL NOT NULL
+           )"""
+    )
     _conn.commit()
     log.info("tokenstore: opened %s", _db_path)
     return _conn
@@ -278,6 +292,106 @@ def delete_query(query_id: int, oid: str = "") -> bool:
             return True
     except Exception as exc:
         log.warning("tokenstore.delete_query failed: %s", exc)
+        return False
+
+
+# ── WeCo workflow storage ─────────────────────────────────────────────────────
+
+def save_workflow(oid: str, name: str, demo_id: str = "", dataspace: str = "",
+                  options: str = "{}", n_best: int = 5,
+                  well_ids: str = "[]", notes: str = "",
+                  workflow_id: Optional[int] = None) -> Optional[int]:
+    """Save or update a WeCo workflow configuration. Returns row id."""
+    try:
+        with _lock:
+            conn = _get_conn()
+            if workflow_id:
+                conn.execute(
+                    """UPDATE weco_workflows
+                       SET name=?, demo_id=?, dataspace=?, options=?,
+                           n_best=?, well_ids=?, notes=?, updated_at=?
+                       WHERE id=? AND oid=?""",
+                    (name, demo_id, dataspace, options, n_best,
+                     well_ids, notes, time.time(), workflow_id, oid or ""),
+                )
+                conn.commit()
+                return workflow_id
+            else:
+                cur = conn.execute(
+                    """INSERT INTO weco_workflows
+                       (oid, name, demo_id, dataspace, options, n_best, well_ids, notes, updated_at)
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                    (oid or "", name, demo_id, dataspace, options, n_best,
+                     well_ids, notes, time.time()),
+                )
+                conn.commit()
+                return cur.lastrowid
+    except Exception as exc:
+        log.warning("tokenstore.save_workflow failed: %s", exc)
+        return None
+
+
+def list_workflows(oid: str) -> list[dict]:
+    """Return all saved WeCo workflows for the user, newest first."""
+    try:
+        with _lock:
+            conn = _get_conn()
+            rows = conn.execute(
+                """SELECT id, name, demo_id, dataspace, options, n_best,
+                          well_ids, notes, updated_at
+                   FROM weco_workflows
+                   WHERE oid = ?
+                   ORDER BY updated_at DESC""",
+                (oid or "",),
+            ).fetchall()
+        return [
+            {"id": r[0], "name": r[1], "demo_id": r[2], "dataspace": r[3],
+             "options": r[4], "n_best": r[5], "well_ids": r[6],
+             "notes": r[7], "updated_at": r[8]}
+            for r in rows
+        ]
+    except Exception as exc:
+        log.warning("tokenstore.list_workflows failed: %s", exc)
+        return []
+
+
+def get_workflow(workflow_id: int, oid: str = "") -> Optional[dict]:
+    """Get a single workflow by id, enforcing ownership."""
+    try:
+        with _lock:
+            conn = _get_conn()
+            row = conn.execute(
+                """SELECT id, name, demo_id, dataspace, options, n_best,
+                          well_ids, notes, updated_at
+                   FROM weco_workflows
+                   WHERE id = ? AND oid = ?""",
+                (workflow_id, oid or ""),
+            ).fetchone()
+        if row:
+            return {"id": row[0], "name": row[1], "demo_id": row[2],
+                    "dataspace": row[3], "options": row[4], "n_best": row[5],
+                    "well_ids": row[6], "notes": row[7], "updated_at": row[8]}
+    except Exception as exc:
+        log.warning("tokenstore.get_workflow failed: %s", exc)
+    return None
+
+
+def delete_workflow(workflow_id: int, oid: str = "") -> bool:
+    """Delete a saved workflow by id, enforcing ownership."""
+    try:
+        with _lock:
+            conn = _get_conn()
+            if oid:
+                conn.execute(
+                    "DELETE FROM weco_workflows WHERE id = ? AND oid = ?",
+                    (workflow_id, oid),
+                )
+            else:
+                conn.execute("DELETE FROM weco_workflows WHERE id = ?", (workflow_id,))
+            conn.commit()
+            return True
+    except Exception as exc:
+        log.warning("tokenstore.delete_workflow failed: %s", exc)
         return False
 
 

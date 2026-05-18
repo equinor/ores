@@ -51,6 +51,11 @@
   const runProgress = $('#run-progress');
   const runError = $('#run-error');
   const engineLog = $('#engine-log');
+  const workflowName = $('#workflow-name');
+  const btnSaveWorkflow = $('#btn-save-workflow');
+  const btnLoadWorkflows = $('#btn-load-workflows');
+  const workflowStatus = $('#workflow-status');
+  const workflowList = $('#workflow-list');
 
   // Results tab
   const resEmpty = $('#results-empty');
@@ -820,5 +825,88 @@
     URL.revokeObjectURL(url);
     setStatus(exportStatus, 'ok', 'CSV downloaded');
   });
+
+  // ── Workflow save/load ────────────────────────────────────────────────
+  btnSaveWorkflow.addEventListener('click', async () => {
+    const name = (workflowName.value || '').trim();
+    if (!name) { setStatus(workflowStatus, 'err', 'Enter a workflow name'); return; }
+    const body = {
+      name,
+      demo_id: currentDemoId || '',
+      dataspace: $('#sel-dataspace') ? $('#sel-dataspace').value || '' : '',
+      options: gatherOptions(),
+      n_best: parseInt($('#sel-nbest')?.value || '5', 10),
+      well_ids: [],
+      notes: '',
+    };
+    try {
+      const res = await api('POST', '/workflows', body);
+      setStatus(workflowStatus, 'ok', `Saved "${res.name}" (id=${res.id})`);
+      loadWorkflowList();
+    } catch(e) {
+      setStatus(workflowStatus, 'err', 'Save failed: ' + e.message);
+    }
+  });
+
+  btnLoadWorkflows.addEventListener('click', () => loadWorkflowList());
+
+  async function loadWorkflowList() {
+    try {
+      const list = await api('GET', '/workflows');
+      if (!list.length) {
+        workflowList.innerHTML = '<span class="muted">No saved workflows</span>';
+        return;
+      }
+      workflowList.innerHTML = list.map(wf => {
+        const d = new Date(wf.updated_at * 1000).toLocaleDateString();
+        return `<div style="display:flex; justify-content:space-between; align-items:center; padding:2px 0; border-bottom:1px solid #f3f2f1;">
+          <span><a href="#" class="wf-load" data-id="${wf.id}" style="font-weight:500;">${esc(wf.name)}</a>
+            <span class="muted" style="font-size:11px;"> ${wf.demo_id ? '(' + wf.demo_id + ')' : ''} ${d}</span></span>
+          <a href="#" class="wf-delete" data-id="${wf.id}" style="color:#a4262c; font-size:11px;">del</a>
+        </div>`;
+      }).join('');
+      // Bind load links
+      workflowList.querySelectorAll('.wf-load').forEach(a => {
+        a.addEventListener('click', async (e) => {
+          e.preventDefault();
+          await loadWorkflow(parseInt(a.dataset.id, 10));
+        });
+      });
+      // Bind delete links
+      workflowList.querySelectorAll('.wf-delete').forEach(a => {
+        a.addEventListener('click', async (e) => {
+          e.preventDefault();
+          await deleteWorkflow(parseInt(a.dataset.id, 10));
+        });
+      });
+    } catch(e) {
+      workflowList.innerHTML = '<span class="muted">Failed to load</span>';
+    }
+  }
+
+  async function loadWorkflow(id) {
+    try {
+      const wf = await api('GET', '/workflows/' + id);
+      workflowName.value = wf.name;
+      if (wf.options && typeof wf.options === 'object') {
+        applyOptions(wf.options);
+      }
+      if (wf.n_best && $('#sel-nbest')) $('#sel-nbest').value = wf.n_best;
+      if (wf.demo_id) currentDemoId = wf.demo_id;
+      setStatus(workflowStatus, 'ok', `Loaded "${wf.name}"`);
+    } catch(e) {
+      setStatus(workflowStatus, 'err', 'Load failed: ' + e.message);
+    }
+  }
+
+  async function deleteWorkflow(id) {
+    try {
+      await api('DELETE', '/workflows/' + id);
+      setStatus(workflowStatus, 'ok', 'Deleted');
+      loadWorkflowList();
+    } catch(e) {
+      setStatus(workflowStatus, 'err', 'Delete failed: ' + e.message);
+    }
+  }
 
 })();

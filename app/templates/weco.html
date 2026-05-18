@@ -266,6 +266,16 @@
       </div>
       <div class="progress-bar" id="run-progress" style="display:none;"><div class="fill"></div></div>
       <div id="run-error" class="wc-status"></div>
+      <!-- Workflow save/load -->
+      <div style="margin-top:.75rem; padding-top:.5rem; border-top:1px solid #eee;">
+        <div style="display:flex; gap:.4rem; align-items:center; flex-wrap:wrap; margin-bottom:.4rem;">
+          <input type="text" id="workflow-name" placeholder="Workflow name..." style="flex:1; min-width:120px; padding:3px 6px; font-size:12.5px; border:1px solid #d2d0ce; border-radius:3px;">
+          <button class="btn btn-outline btn-sm" id="btn-save-workflow">Save</button>
+          <button class="btn btn-outline btn-sm" id="btn-load-workflows">Load</button>
+        </div>
+        <div id="workflow-status" class="wc-status"></div>
+        <div id="workflow-list" style="font-size:12.5px; max-height:120px; overflow-y:auto;"></div>
+      </div>
       <div style="margin-top:.5rem;">
         <div style="font-weight:600; font-size:12.5px; margin-bottom:.2rem;">Engine Log</div>
         <div class="engine-log" id="engine-log">Waiting for run...</div>

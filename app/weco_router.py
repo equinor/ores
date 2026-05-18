@@ -17,13 +17,22 @@ Usage in ORES main.py::
 
 from __future__ import annotations
 
+import json
 import os
 import logging
 import tempfile
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
+
+from .tokenstore import (
+    save_workflow as _ts_save_workflow,
+    list_workflows as _ts_list_workflows,
+    get_workflow as _ts_get_workflow,
+    delete_workflow as _ts_delete_workflow,
+)
 
 log = logging.getLogger("ores.weco")
 
@@ -1164,3 +1173,95 @@ async def weco_plot_data():
         "data_names": [n for n in data_names if n not in skip],
         "wells": wells_data,
     }
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  Per-user workflow storage (save/load named correlation configurations)
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _weco_user_oid(request: Request) -> str:
+    """Extract user OID from the session (same pattern as search_router)."""
+    if hasattr(request, "session"):
+        return request.session.get("oid", "")
+    return ""
+
+
+@router.get("/workflows")
+async def weco_list_workflows(request: Request):
+    """List all saved workflows for the current user."""
+    oid = _weco_user_oid(request)
+    workflows = _ts_list_workflows(oid)
+    # Parse JSON fields for the response
+    for wf in workflows:
+        try:
+            wf["options"] = json.loads(wf["options"])
+        except (json.JSONDecodeError, TypeError):
+            wf["options"] = {}
+        try:
+            wf["well_ids"] = json.loads(wf["well_ids"])
+        except (json.JSONDecodeError, TypeError):
+            wf["well_ids"] = []
+    return workflows
+
+
+@router.post("/workflows")
+async def weco_save_workflow(request: Request):
+    """Save or update a workflow configuration.
+
+    Body: {name, demo_id?, dataspace?, options?, n_best?, well_ids?, notes?, id?}
+    If 'id' is provided, updates existing workflow; otherwise creates new.
+    """
+    oid = _weco_user_oid(request)
+    try:
+        body = await request.json()
+    except Exception:
+        return JSONResponse({"error": "Invalid JSON"}, status_code=400)
+
+    name = (body.get("name") or "").strip()
+    if not name:
+        return JSONResponse({"error": "name is required"}, status_code=400)
+
+    demo_id = (body.get("demo_id") or "").strip()
+    dataspace = (body.get("dataspace") or "").strip()
+    options = json.dumps(body.get("options") or {})
+    n_best = int(body.get("n_best", 5))
+    well_ids = json.dumps(body.get("well_ids") or [])
+    notes = (body.get("notes") or "").strip()
+    workflow_id = body.get("id")
+
+    row_id = _ts_save_workflow(
+        oid=oid, name=name, demo_id=demo_id, dataspace=dataspace,
+        options=options, n_best=n_best, well_ids=well_ids, notes=notes,
+        workflow_id=int(workflow_id) if workflow_id else None,
+    )
+    if row_id is None:
+        return JSONResponse({"error": "Failed to save"}, status_code=500)
+    return {"id": row_id, "name": name, "demo_id": demo_id}
+
+
+@router.get("/workflows/{workflow_id}")
+async def weco_get_workflow(workflow_id: int, request: Request):
+    """Get a single saved workflow by id."""
+    oid = _weco_user_oid(request)
+    wf = _ts_get_workflow(workflow_id, oid)
+    if not wf:
+        raise HTTPException(404, "Workflow not found")
+    try:
+        wf["options"] = json.loads(wf["options"])
+    except (json.JSONDecodeError, TypeError):
+        wf["options"] = {}
+    try:
+        wf["well_ids"] = json.loads(wf["well_ids"])
+    except (json.JSONDecodeError, TypeError):
+        wf["well_ids"] = []
+    return wf
+
+
+@router.delete("/workflows/{workflow_id}")
+async def weco_delete_workflow(workflow_id: int, request: Request):
+    """Delete a saved workflow by id."""
+    oid = _weco_user_oid(request)
+    ok = _ts_delete_workflow(workflow_id, oid=oid)
+    if not ok:
+        return JSONResponse({"error": "Failed to delete"}, status_code=500)
+    return {"deleted": workflow_id}
