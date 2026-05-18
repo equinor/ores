@@ -285,6 +285,26 @@ def weco_suggest_defaults(request: Request):
         return {"options": {}, "reasoning": {"error": str(e)}}
 
 
+def _apply_memory_guards(options: dict, n_wells: int) -> dict:
+    """Enforce safe parameter limits to prevent OOM on Radix (2Gi container)."""
+    opts = dict(options)
+    # Force single-thread to limit peak memory (one correlator buffer at a time)
+    opts.setdefault("thread", 1)
+    # Scale limits by dataset size
+    if n_wells > 50:
+        opts["max-cor"] = min(int(opts.get("max-cor", 20)), 20)
+        opts["nbr-cor"] = min(int(opts.get("nbr-cor", 3)), 5)
+        opts.setdefault("band-width", 30)
+    elif n_wells > 10:
+        opts["max-cor"] = min(int(opts.get("max-cor", 30)), 30)
+        opts["nbr-cor"] = min(int(opts.get("nbr-cor", 5)), 10)
+        opts.setdefault("band-width", 30)
+    else:
+        opts["max-cor"] = min(int(opts.get("max-cor", 50)), 50)
+        opts["nbr-cor"] = min(int(opts.get("nbr-cor", 10)), 20)
+    return opts
+
+
 @router.post("/run")
 def weco_run(req: WecoRunRequest, request: Request):
     """Run correlation on previously imported wells (in-process C++ engine)."""
@@ -295,7 +315,8 @@ def weco_run(req: WecoRunRequest, request: Request):
 
     try:
         from weco.api import _run_engine, _extract_results
-        rf, data, elapsed = _run_engine(_cached_well_list, req.options)
+        safe_opts = _apply_memory_guards(req.options, len(_cached_well_list.wells))
+        rf, data, elapsed = _run_engine(_cached_well_list, safe_opts)
         results = _extract_results(rf, data, req.n_best)
     except HTTPException:
         raise
@@ -374,9 +395,10 @@ async def weco_full_workflow(req: WecoFullRequest, request: Request):
     except Exception:
         merged_options = req.options
 
-    # Step 3: Run correlation
+    # Step 3: Apply memory guards and run correlation
+    safe_opts = _apply_memory_guards(merged_options, len(wl.wells))
     try:
-        rf, data, elapsed = _run_engine(wl, merged_options)
+        rf, data, elapsed = _run_engine(wl, safe_opts)
         results = _extract_results(rf, data, req.n_best)
     except HTTPException:
         raise
@@ -394,7 +416,7 @@ async def weco_full_workflow(req: WecoFullRequest, request: Request):
     return {
         "import": import_summary,
         "correlation": run_summary,
-        "options_used": merged_options,
+        "options_used": safe_opts,
     }
 
 

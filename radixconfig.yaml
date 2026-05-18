@@ -31,14 +31,14 @@ spec:
       monitoringConfig:
         portName: http
 
-      # Resource limits matching k8s/deployment.yaml
+      # Resource limits — bumped for in-process WeCo C++ correlation engine
       resources:
         requests:
-          cpu: "100m"
-          memory: "256Mi"
-        limits:
-          cpu: "500m"
+          cpu: "250m"
           memory: "512Mi"
+        limits:
+          cpu: "2000m"
+          memory: "2Gi"
 
       # Replicas per environment
       environmentConfig:
