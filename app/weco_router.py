@@ -306,16 +306,26 @@ def _apply_memory_guards(options: dict, n_wells: int) -> dict:
 
 
 @router.post("/run")
-def weco_run(req: WecoRunRequest, request: Request):
-    """Run correlation on previously imported wells (in-process C++ engine)."""
+async def weco_run(req: WecoRunRequest, request: Request):
+    """Run correlation on previously imported wells.
+
+    Auto-routes to Radix job component for large datasets (>WECO_JOB_WELL_THRESHOLD wells).
+    """
     global _cached_well_list
 
     if _cached_well_list is None:
         raise HTTPException(400, "No wells loaded. Call /weco/import first.")
 
+    n_wells = len(_cached_well_list.wells)
+
+    # Auto-route large datasets to job component
+    if n_wells > _JOB_WELL_THRESHOLD:
+        log.info(f"Auto-routing {n_wells} wells to job component (threshold={_JOB_WELL_THRESHOLD})")
+        return await weco_run_job(req, request)
+
     try:
         from weco.api import _run_engine, _extract_results
-        safe_opts = _apply_memory_guards(req.options, len(_cached_well_list.wells))
+        safe_opts = _apply_memory_guards(req.options, n_wells)
         rf, data, elapsed = _run_engine(_cached_well_list, safe_opts)
         results = _extract_results(rf, data, req.n_best)
     except HTTPException:
@@ -333,6 +343,87 @@ def weco_run(req: WecoRunRequest, request: Request):
         "results": [r.model_dump() if hasattr(r, "model_dump") else r.dict()
                     for r in results],
     }
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+#  Radix Job dispatch (heavy correlations → dedicated 8Gi pod)
+# ═══════════════════════════════════════════════════════════════════════════
+
+# Radix job scheduler URL (internal service discovery)
+_RADIX_JOB_URL = os.getenv(
+    "WECO_JOB_SCHEDULER_URL",
+    "http://weco-correlation:8001"
+)
+# Threshold: datasets above this go to job component
+_JOB_WELL_THRESHOLD = int(os.getenv("WECO_JOB_WELL_THRESHOLD", "15"))
+
+
+@router.post("/run-job")
+async def weco_run_job(req: WecoRunRequest, request: Request):
+    """Submit correlation to the Radix job component (async, for large datasets).
+
+    Automatically used when well count exceeds threshold, or can be called
+    explicitly for heavy workloads that need more memory/CPU.
+    """
+    global _cached_well_list
+
+    if _cached_well_list is None:
+        raise HTTPException(400, "No wells loaded. Call /weco/import first.")
+
+    n_wells = len(_cached_well_list.wells)
+
+    try:
+        import json
+        import httpx
+
+        # Serialize well data for the job
+        wells_json = json.dumps(_cached_well_list.to_dict())
+
+        payload = {
+            "wells_json": wells_json,
+            "options": req.options,
+            "n_best": req.n_best,
+        }
+
+        async with httpx.AsyncClient(timeout=600.0) as client:
+            resp = await client.post(f"{_RADIX_JOB_URL}/run", json=payload)
+            resp.raise_for_status()
+            result = resp.json()
+
+        if result.get("status") == "error":
+            raise HTTPException(500, f"Job failed: {result.get('error')}")
+
+        return {
+            "status": "ok",
+            "mode": "job",
+            "n_wells": n_wells,
+            "elapsed_ms": result.get("elapsed_ms", 0),
+            "n_results": result.get("n_results", 0),
+            "results": result.get("results", []),
+            "options_used": result.get("options_used", {}),
+        }
+
+    except httpx.HTTPError as e:
+        # Job component not available — fall back to in-process with guards
+        log.warning(f"Job scheduler unavailable ({e}), falling back to in-process")
+        from weco.api import _run_engine, _extract_results
+        safe_opts = _apply_memory_guards(req.options, n_wells)
+        rf, data, elapsed = _run_engine(_cached_well_list, safe_opts)
+        results = _extract_results(rf, data, req.n_best)
+        return {
+            "status": "ok",
+            "mode": "in-process-fallback",
+            "n_wells": n_wells,
+            "elapsed_ms": round(elapsed, 2),
+            "n_results": len(results),
+            "results": [r.model_dump() if hasattr(r, "model_dump") else r.dict()
+                        for r in results],
+            "options_used": safe_opts,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, f"Job dispatch error: {e}")
 
 
 @router.post("/export")

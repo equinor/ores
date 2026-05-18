@@ -51,6 +51,9 @@ spec:
             DEFAULT_DATASPACE: "maap/drogon"
             APP_KEY: "ores"
             DEFAULT_INSTANCE: "eqndev"
+            # WeCo job routing: datasets above this well count → job pod
+            WECO_JOB_WELL_THRESHOLD: "15"
+            WECO_JOB_SCHEDULER_URL: "http://weco-correlation:8001"
             # eqndev - Equinor SWE dev, per-user PKCE (default)
             INSTANCE_EQNDEV_AUTH_MODE: "per_user_pkce"
             INSTANCE_EQNDEV_HOSTNAME: "equinorswedev.energy.azure.com"
@@ -145,6 +148,35 @@ spec:
   # dnsAppAlias:
   #   environment: prod
   #   component: web
+
+  # ── Jobs: heavy WeCo correlation (offloaded from web component) ────
+  jobs:
+    - name: weco-correlation
+      src: "."
+      dockerfileName: Dockerfile.weco-job
+      schedulerPort: 8001
+      payload:
+        path: /input
+      resources:
+        requests:
+          cpu: "1000m"
+          memory: "2Gi"
+        limits:
+          cpu: "4000m"
+          memory: "8Gi"
+      environmentConfig:
+        - environment: dev
+          variables:
+            LOG_LEVEL: "INFO"
+            WECO_MAX_COR: "50"
+            WECO_THREAD: "4"
+        - environment: prod
+          variables:
+            LOG_LEVEL: "WARNING"
+            WECO_MAX_COR: "50"
+            WECO_THREAD: "4"
+      # Radix auto-stops idle jobs after timeLimitSeconds
+      timeLimitSeconds: 600
 
   # ── Private image hubs (not needed - Radix builds from source) ─────
   # privateImageHubs: {}

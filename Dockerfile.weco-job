@@ -1,0 +1,52 @@
+# ── WeCo Correlation Job ─────────────────────────────────────────────
+# Dedicated container for heavy correlation workloads (>10 wells, high max_cor).
+# Runs as a Radix scheduled job with 8Gi memory / 4 CPU.
+# ─────────────────────────────────────────────────────────────────────
+FROM python:3.12-slim AS builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential g++ cmake ninja-build git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+COPY requirements.txt .
+
+RUN python -m venv /opt/venv \
+    && /opt/venv/bin/pip install --no-cache-dir --upgrade pip \
+    && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
+
+# Build WeCo C++ engine (with OpenMP for multi-threading)
+COPY weco_engine/ /build/weco_engine/
+RUN /opt/venv/bin/pip install --no-cache-dir scikit-build-core pybind11 \
+    && /opt/venv/bin/pip install --no-cache-dir /build/weco_engine/
+
+# ── Runtime ──────────────────────────────────────────────────────────
+FROM python:3.12-slim
+
+RUN groupadd -g 1001 ores && useradd -u 1001 -g 1001 -r -d /app -s /sbin/nologin ores
+
+# OpenMP runtime for C++ engine multi-threading
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    # Job-specific: allow higher limits than the web component
+    WECO_MAX_COR=50 \
+    WECO_THREAD=4
+
+COPY app/ ./app/
+
+RUN mkdir -p /data /input && chown -R ores:ores /app /data /input
+
+USER 1001
+
+EXPOSE 8001
+
+# Job scheduler endpoint (receives payload from web component)
+CMD ["uvicorn", "app.weco_job:app", "--host", "0.0.0.0", "--port", "8001", "--workers", "1"]
