@@ -253,6 +253,32 @@ async def read_array(
         r.raise_for_status()
         return r.json() or {}
 
+
+async def write_array(
+    access_token: str,
+    ds_enc: str,
+    typ: str,
+    uuid: str,
+    *,
+    path_in_resource: str,
+    values: list,
+    tx_id: str,
+) -> dict[str, Any]:
+    """PUT array data for a resource (within a transaction)."""
+    async with _http(timeout=120) as client:
+        r = await client.put(
+            _rddms_url(f"/dataspaces/{ds_enc}/resources/{typ}/{uuid}/arrays/{path_in_resource}"),
+            headers=headers(access_token),
+            json={"values": values},
+            params={"transactionId": tx_id},
+        )
+        r.raise_for_status()
+        try:
+            return r.json() or {}
+        except Exception:
+            return {"status": r.status_code}
+
+
 # ----------------------------------------------------------------------
 # Helpers for UI features
 # ----------------------------------------------------------------------
