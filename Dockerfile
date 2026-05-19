@@ -13,7 +13,8 @@ RUN python -m venv /opt/venv \
     && /opt/venv/bin/pip install --no-cache-dir --upgrade pip \
     && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# Build WeCo C++ engine from subtree
+# Build WeCo C++ engine from subtree (v0.9.31)
+COPY weco_engine/pyproject.toml /build/weco_engine/pyproject.toml
 COPY weco_engine/ /build/weco_engine/
 RUN /opt/venv/bin/pip install --no-cache-dir scikit-build-core pybind11 \
     && /opt/venv/bin/pip install --no-cache-dir /build/weco_engine/
