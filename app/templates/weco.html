@@ -347,13 +347,18 @@
           <span class="muted" style="font-size:12px;">Elapsed: <span id="res-elapsed">-</span> ms</span>
           <span class="muted" style="font-size:12px;">Mode: <span id="res-mode">-</span></span>
         </div>
-        <div style="margin-bottom:.5rem; display:flex; gap:.5rem; align-items:center;">
+        <div style="margin-bottom:.5rem; display:flex; gap:.5rem; align-items:center; flex-wrap:wrap;">
           <label style="font-size:12.5px; font-weight:500;">Solution:</label>
+          <button class="btn btn-sm btn-outline" id="btn-res-prev" title="Previous (lower rank)">◀</button>
           <select id="res-selector" style="font-size:12.5px; padding:2px 6px;"></select>
-          <label style="font-size:12.5px; font-weight:500; margin-left:.5rem;">View:</label>
+          <button class="btn btn-sm btn-outline" id="btn-res-next" title="Next (higher rank)">▶</button>
+          <span id="res-cost-label" style="font-size:12px; color:#605e5c; margin-left:.5rem;"></span>
+          <label style="font-size:12.5px; font-weight:500; margin-left:auto;">View:</label>
           <button class="btn btn-sm btn-outline" id="btn-view-plot">Correlation Plot</button>
           <button class="btn btn-sm btn-outline" id="btn-view-table">Table</button>
         </div>
+        <!-- Cost ranking bar -->
+        <div id="res-ranking" style="margin-bottom:.5rem; padding:6px 8px; background:#fafafa; border:1px solid #e1dfdd; border-radius:4px; font-size:11px; font-family:monospace; display:none; max-height:120px; overflow-y:auto;"></div>
         <!-- Correlation Plot -->
         <div id="results-plot" style="margin-bottom:.5rem;">
           <div style="border:1px solid #e1dfdd; border-radius:4px; overflow-x:auto; background:#fff;">

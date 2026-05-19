@@ -70,6 +70,10 @@
   const resMode = $('#res-mode');
   const resSelector = $('#res-selector');
   const resCards = $('#results-cards');
+  const btnResPrev = $('#btn-res-prev');
+  const btnResNext = $('#btn-res-next');
+  const resCostLabel = $('#res-cost-label');
+  const resRanking = $('#res-ranking');
 
   // Export tab
   const btnExportRddms = $('#btn-export-rddms');
@@ -712,15 +716,62 @@
       `<option value="${i}">#${i+1} (cost: ${r.cost != null ? r.cost.toFixed(4) : '-'})</option>`
     ).join('');
 
-    // Show both plot and table for the first result
-    renderResultCard(results, 0, data.well_names);
-    drawCorrelationPlot(data, 0);
+    // Build cost ranking display
+    if (results.length > 1) {
+      const maxCost = Math.max(...results.map(r => r.cost || 0));
+      let rankHtml = '<strong>Cost Ranking (lowest = best):</strong><br>';
+      results.forEach((r, i) => {
+        const pct = maxCost > 0 ? ((r.cost || 0) / maxCost * 100) : 0;
+        const sel = i === 0 ? ' style="background:#e3f2fd; font-weight:bold;"' : '';
+        rankHtml += `<div class="rank-row" data-idx="${i}"${sel}>` +
+          `#${i+1} cost=${(r.cost != null ? r.cost.toFixed(4) : '-')} ` +
+          `<span style="display:inline-block;height:8px;width:${Math.max(pct, 2)}%;background:#1565c0;border-radius:2px;vertical-align:middle;"></span></div>`;
+      });
+      resRanking.innerHTML = rankHtml;
+      resRanking.style.display = 'block';
+
+      // Clickable ranking rows
+      resRanking.querySelectorAll('.rank-row').forEach(row => {
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', () => {
+          const idx = parseInt(row.dataset.idx);
+          resSelector.value = idx;
+          resSelector.dispatchEvent(new Event('change'));
+        });
+      });
+    } else {
+      resRanking.style.display = 'none';
+    }
+
+    // Show first result
+    updateResultView(results, 0, data);
 
     resSelector.onchange = () => {
       const idx = parseInt(resSelector.value);
-      renderResultCard(results, idx, data.well_names);
-      drawCorrelationPlot(data, idx);
+      updateResultView(results, idx, data);
     };
+
+    btnResPrev.onclick = () => {
+      const idx = parseInt(resSelector.value) || 0;
+      if (idx > 0) { resSelector.value = idx - 1; resSelector.dispatchEvent(new Event('change')); }
+    };
+    btnResNext.onclick = () => {
+      const idx = parseInt(resSelector.value) || 0;
+      if (idx < results.length - 1) { resSelector.value = idx + 1; resSelector.dispatchEvent(new Event('change')); }
+    };
+  }
+
+  function updateResultView(results, idx, data) {
+    renderResultCard(results, idx, data.well_names);
+    drawCorrelationPlot(data, idx);
+    // Update cost label and highlight in ranking
+    const r = results[idx];
+    resCostLabel.textContent = r ? `Cost: ${r.cost != null ? r.cost.toFixed(4) : '-'} | ${(r.lines||[]).length} lines` : '';
+    // Highlight active row in ranking
+    resRanking.querySelectorAll('.rank-row').forEach((row, i) => {
+      row.style.background = i === idx ? '#e3f2fd' : '';
+      row.style.fontWeight = i === idx ? 'bold' : '';
+    });
   }
 
   function renderResultCard(results, idx, wellNames) {
