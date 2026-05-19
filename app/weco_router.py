@@ -653,6 +653,44 @@ def _apply_memory_guards(options: dict, n_wells: int) -> dict:
     return opts
 
 
+def _build_wells_plot_data(wl) -> list:
+    """Build rich plot data including all logs and region bands for visualization."""
+    _SKIP = {"Depth", "DEPTH", "X", "Y", "Z", "MD", "TVD", "TVDSS"}
+    wells_plot_data = []
+    for w in wl.wells:
+        depth = list(w.data.get("Depth", w.data.get("DEPTH", range(w.size))))[:w.size]
+        # All log channels (up to 5)
+        logs = {}
+        for k, v in w.data.items():
+            if k not in _SKIP and len(logs) < 5:
+                logs[k] = list(v)[:w.size]
+        # First log for backward-compat "log_values" field
+        log_values = list(logs.values())[0] if logs else None
+        # Region/zone data — expand RLE (value, start, count) to per-sample
+        regions = {}
+        if hasattr(w, 'region') and w.region:
+            for rname, rvals in w.region.items():
+                expanded = [None] * w.size
+                for entry in rvals:
+                    if isinstance(entry, (list, tuple)) and len(entry) >= 3:
+                        val, start, count = entry[0], entry[1], entry[2]
+                        for s in range(start, min(start + count, w.size)):
+                            expanded[s] = val
+                    else:
+                        break  # not RLE format, skip
+                regions[rname] = expanded
+        wells_plot_data.append({
+            "name": w.name, "size": w.size, "depth": depth,
+            "log_values": log_values,
+            "logs": logs,
+            "log_names": list(logs.keys()),
+            "regions": regions,
+            "region_names": list(regions.keys()),
+            "x": w.x, "y": w.y,
+        })
+    return wells_plot_data
+
+
 @router.post("/run")
 async def weco_run(req: WecoRunRequest, request: Request):
     """Run correlation on previously imported wells.
@@ -697,20 +735,7 @@ async def weco_run(req: WecoRunRequest, request: Request):
     well_names = [w.name for w in wl.wells]
 
     # Include plot data for visualization
-    wells_plot_data = []
-    for w in wl.wells:
-        depth = list(w.data.get("Depth", w.data.get("DEPTH", range(w.size))))[:w.size]
-        # Find primary log for display
-        skip = {"Depth", "DEPTH", "X", "Y", "Z", "MD"}
-        log_vals = None
-        for k, v in w.data.items():
-            if k not in skip:
-                log_vals = list(v)[:w.size]
-                break
-        wells_plot_data.append({
-            "name": w.name, "size": w.size, "depth": depth,
-            "log_values": log_vals, "x": w.x, "y": w.y,
-        })
+    wells_plot_data = _build_wells_plot_data(wl)
 
     return {
         "status": "ok",
@@ -1016,16 +1041,8 @@ def weco_run_demo(demo_id: str, n_best: int = 5):
 
         well_names = [w.name for w in wl.wells]
 
-        # Build well data for plotting (sizes + log values)
-        wells_plot_data = []
-        for w in wl.wells:
-            depth = list(w.data.get("Depth", w.data.get("DEPTH", range(w.size))))
-            wells_plot_data.append({
-                "name": w.name,
-                "size": w.size,
-                "depth": depth[:w.size],
-                "x": w.x, "y": w.y,
-            })
+        # Build well data for plotting
+        wells_plot_data = _build_wells_plot_data(wl)
 
         return {
             "status": "ok",
@@ -1349,41 +1366,33 @@ async def weco_well_data(well_idx: int, channel: Optional[str] = None):
 async def weco_plot_data():
     """Return all data needed to render the correlation plot.
 
-    Includes: well depths, primary log values, and correlation lines
+    Includes: well depths, all log values, regions/zones, and correlation lines
     from the last run. This is the single endpoint the JS plot needs.
     """
     if _cached_well_list is None:
         raise HTTPException(400, "No wells loaded")
 
     wl = _cached_well_list
-    # Determine primary log (first common data channel)
-    data_names = list(wl.get_data_names()) if hasattr(wl, "get_data_names") else []
-    skip = {"Depth", "DEPTH", "X", "Y", "Z", "MD"}
-    primary_log = None
-    for n in data_names:
-        if n not in skip:
-            primary_log = n
-            break
+    wells_data = _build_wells_plot_data(wl)
 
-    wells_data = []
-    for w in wl.wells:
-        depth = list(w.data.get("Depth", w.data.get("DEPTH", range(w.size))))[:w.size]
-        log_values = None
-        if primary_log and primary_log in w.data:
-            log_values = list(w.data[primary_log])[:w.size]
-        wells_data.append({
-            "name": w.name,
-            "size": w.size,
-            "depth": depth,
-            "log_values": log_values,
-            "x": w.x, "y": w.y,
-        })
+    # Determine available data/region names
+    _SKIP = {"Depth", "DEPTH", "X", "Y", "Z", "MD", "TVD", "TVDSS"}
+    data_names = []
+    if hasattr(wl, "get_data_names"):
+        data_names = [n for n in wl.get_data_names() if n not in _SKIP]
+    elif wl.wells:
+        data_names = [n for n in wl.wells[0].data.keys() if n not in _SKIP]
+
+    region_names = []
+    if wl.wells and hasattr(wl.wells[0], 'region') and wl.wells[0].region:
+        region_names = list(wl.wells[0].region.keys())
 
     return {
         "n_wells": len(wl.wells),
         "well_names": [w.name for w in wl.wells],
-        "primary_log": primary_log,
-        "data_names": [n for n in data_names if n not in skip],
+        "primary_log": data_names[0] if data_names else None,
+        "data_names": data_names,
+        "region_names": region_names,
         "wells": wells_data,
     }
 

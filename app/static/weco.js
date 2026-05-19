@@ -822,10 +822,9 @@
     const result = results[resultIdx];
     if (!result || !nWells) return;
 
-    // Get well plot data (depths + logs)
+    // Get well plot data (depths + logs + regions)
     let plotData = data.wells_plot_data;
     if (!plotData) {
-      // Fetch from /plot-data endpoint
       try {
         const pd = await api('GET', '/plot-data');
         plotData = pd.wells;
@@ -838,11 +837,11 @@
     }
 
     // Layout
-    const margin = {top: 35, bottom: 25, left: 15, right: 15};
+    const margin = {top: 35, bottom: 25, left: 40, right: 15};
     const W = rect.width - margin.left - margin.right;
     const H = rect.height - margin.top - margin.bottom;
-    const wellWidth = 60;  // pixels per well column
-    const wellSpacing = Math.min((W - wellWidth) / Math.max(nWells - 1, 1), 180);
+    const wellWidth = 70;
+    const wellSpacing = Math.min((W - wellWidth) / Math.max(nWells - 1, 1), 200);
     const totalWidth = wellSpacing * (nWells - 1) + wellWidth;
     const offsetX = margin.left + (W - totalWidth) / 2;
 
@@ -851,7 +850,7 @@
     for (const wd of plotData) {
       if (wd.depth && wd.depth.length) {
         minDepth = Math.min(minDepth, wd.depth[0]);
-        maxDepth = Math.max(maxDepth, wd.depth[wd.depth.length - 1]);
+        maxDepth = Math.max(maxDepth, wd.depth[wd.depth.length-1]);
       } else {
         minDepth = Math.min(minDepth, 0);
         maxDepth = Math.max(maxDepth, wd.size);
@@ -862,51 +861,117 @@
     const depthToY = (d) => margin.top + ((d - minDepth) / (maxDepth - minDepth)) * H;
     const wellX = (i) => offsetX + i * wellSpacing + wellWidth / 2;
 
-    // Draw well columns (log traces)
-    const logColors = ['#1565c0', '#2e7d32', '#c62828', '#6a1b9a', '#e65100'];
+    // Zone color palette (Set3-like pastels)
+    const zonePalette = [
+      '#8dd3c7','#ffffb3','#bebada','#fb8072','#80b1d3',
+      '#fdb462','#b3de69','#fccde5','#d9d9d9','#bc80bd','#ccebc5','#ffed6f'
+    ];
+
+    // Log trace colors
+    const logColors = ['#1565c0', '#c62828', '#2e7d32', '#6a1b9a', '#e65100'];
+
+    // ── Draw each well column ───────────────────────────────────────
     for (let i = 0; i < nWells; i++) {
       const wd = plotData[i];
       const cx = wellX(i);
+      const halfW = wellWidth / 2;
 
       // Well name header
       ctx.fillStyle = '#333';
       ctx.font = 'bold 11px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(wd.name, cx, margin.top - 8);
+      ctx.fillText(wd.name, cx, margin.top - 10);
 
-      // Draw well column background
+      // Draw well column border
       const y0 = depthToY(wd.depth ? wd.depth[0] : 0);
       const y1 = depthToY(wd.depth ? wd.depth[wd.depth.length-1] : wd.size);
-      ctx.strokeStyle = '#e1dfdd';
+      ctx.strokeStyle = '#ccc';
       ctx.lineWidth = 1;
-      ctx.strokeRect(cx - wellWidth/2, y0, wellWidth, y1 - y0);
+      ctx.strokeRect(cx - halfW, y0, wellWidth, y1 - y0);
 
-      // Draw log trace if available
-      const logVals = wd.log_values;
-      if (logVals && logVals.length > 1) {
+      // ── Zone/region background bands ─────────────────────────────
+      const regions = wd.regions || {};
+      const regionNames = wd.region_names || Object.keys(regions);
+      if (regionNames.length > 0) {
+        const rname = regionNames[0];  // primary region for bands
+        const rvals = regions[rname];
+        if (rvals && rvals.length) {
+          // Build unique zone list for color mapping
+          const uniqueZones = [...new Set(rvals.filter(v => v != null && v !== ''))];
+          const zoneColorMap = {};
+          uniqueZones.forEach((z, zi) => { zoneColorMap[z] = zonePalette[zi % zonePalette.length]; });
+
+          // Draw contiguous zone spans
+          let prevVal = rvals[0], startIdx = 0;
+          for (let s = 1; s <= rvals.length; s++) {
+            if (s === rvals.length || rvals[s] !== prevVal) {
+              if (prevVal && zoneColorMap[prevVal]) {
+                const yt = depthToY(wd.depth ? wd.depth[startIdx] : startIdx);
+                const yb = depthToY(wd.depth ? (wd.depth[Math.min(s-1, wd.depth.length-1)]) : s-1);
+                ctx.fillStyle = zoneColorMap[prevVal];
+                ctx.globalAlpha = 0.3;
+                ctx.fillRect(cx - halfW, yt, wellWidth, yb - yt);
+                ctx.globalAlpha = 1.0;
+
+                // Zone label
+                const ymid = (yt + yb) / 2;
+                if (yb - yt > 12) {
+                  ctx.fillStyle = '#444';
+                  ctx.font = '8px sans-serif';
+                  ctx.textAlign = 'left';
+                  ctx.fillText(String(prevVal).slice(0, 10), cx - halfW + 2, ymid + 3);
+                }
+              }
+              if (s < rvals.length) { prevVal = rvals[s]; startIdx = s; }
+            }
+          }
+        }
+      }
+
+      // ── Multi-log traces ─────────────────────────────────────────
+      const logs = wd.logs || {};
+      const logNames = wd.log_names || Object.keys(logs);
+      const maxLogs = Math.min(logNames.length, 3);  // show up to 3 logs
+
+      for (let li = 0; li < maxLogs; li++) {
+        const lname = logNames[li];
+        const logVals = logs[lname] || (li === 0 ? wd.log_values : null);
+        if (!logVals || logVals.length < 2) continue;
+
         let lMin = Infinity, lMax = -Infinity;
         for (const v of logVals) { if (v != null) { lMin = Math.min(lMin, v); lMax = Math.max(lMax, v); } }
         if (lMax === lMin) lMax = lMin + 1;
 
         ctx.beginPath();
-        ctx.strokeStyle = logColors[i % logColors.length];
-        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = logColors[li % logColors.length];
+        ctx.lineWidth = li === 0 ? 1.4 : 0.9;
+        ctx.globalAlpha = li === 0 ? 1.0 : 0.6;
         let started = false;
         for (let s = 0; s < wd.size && s < logVals.length; s++) {
           if (logVals[s] == null) continue;
           const y = depthToY(wd.depth ? wd.depth[s] : s);
-          const x = cx - wellWidth/2 + ((logVals[s] - lMin) / (lMax - lMin)) * wellWidth;
+          const x = cx - halfW + ((logVals[s] - lMin) / (lMax - lMin)) * wellWidth;
           if (!started) { ctx.moveTo(x, y); started = true; }
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
+        ctx.globalAlpha = 1.0;
+      }
+
+      // Log legend below well name
+      if (maxLogs > 0) {
+        ctx.font = '8px sans-serif';
+        ctx.textAlign = 'center';
+        const legendY = margin.top - 2;
+        let legendText = logNames.slice(0, maxLogs).map((n, li) => n).join(' / ');
+        ctx.fillStyle = '#666';
+        ctx.fillText(legendText.slice(0, 20), cx, legendY);
       }
     }
 
-    // Draw correlation lines
+    // ── Draw correlation lines ──────────────────────────────────────
     const lines = result.lines || [];
     const lineColors = ['#FF6B35', '#004E89', '#7B2D8B', '#1B998B', '#F5A623', '#D64045'];
-    ctx.textAlign = 'left';
 
     for (let li = 0; li < lines.length; li++) {
       const markers = lines[li].markers || lines[li];
@@ -917,7 +982,6 @@
       ctx.globalAlpha = 0.7;
       ctx.setLineDash([]);
 
-      // Draw line connecting marker positions across wells
       ctx.beginPath();
       let first = true;
       for (let w = 0; w < nWells && w < markers.length; w++) {
@@ -932,7 +996,7 @@
       }
       ctx.stroke();
 
-      // Draw marker dots
+      // Marker dots
       ctx.globalAlpha = 1.0;
       for (let w = 0; w < nWells && w < markers.length; w++) {
         const markerIdx = markers[w];
@@ -950,21 +1014,29 @@
 
     ctx.globalAlpha = 1.0;
 
-    // Depth axis labels
+    // ── Depth axis labels ───────────────────────────────────────────
     ctx.fillStyle = '#605e5c';
     ctx.font = '10px sans-serif';
     ctx.textAlign = 'right';
-    const nTicks = 5;
+    const nTicks = 6;
     for (let t = 0; t <= nTicks; t++) {
       const d = minDepth + (maxDepth - minDepth) * t / nTicks;
       const y = depthToY(d);
-      ctx.fillText(d.toFixed(1), margin.left - 2, y + 3);
+      ctx.fillText(d.toFixed(1), margin.left - 4, y + 3);
       ctx.strokeStyle = '#f3f2f1';
       ctx.lineWidth = 0.5;
       ctx.beginPath();
       ctx.moveTo(margin.left, y);
       ctx.lineTo(rect.width - margin.right, y);
       ctx.stroke();
+    }
+
+    // ── Region legend (bottom) ──────────────────────────────────────
+    if (plotData[0] && plotData[0].region_names && plotData[0].region_names.length) {
+      ctx.font = '9px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#555';
+      ctx.fillText('Zones: ' + plotData[0].region_names.join(', '), margin.left, rect.height - 6);
     }
   }
 
