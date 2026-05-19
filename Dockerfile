@@ -3,7 +3,7 @@ FROM python:3.12-slim AS builder
 
 # Build tools needed for WeCo C++ extension
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential g++ cmake ninja-build git \
+        build-essential g++ cmake ninja-build \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
@@ -13,10 +13,9 @@ RUN python -m venv /opt/venv \
     && /opt/venv/bin/pip install --no-cache-dir --upgrade pip \
     && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# Build WeCo from git (submodules not available during Radix build)
-ARG WECO_DEPLOY_KEY
-RUN git clone --depth 1 https://x-access-token:${WECO_DEPLOY_KEY}@github.com/equinor/weco.git /build/weco_engine \
-    && /opt/venv/bin/pip install --no-cache-dir scikit-build-core pybind11 \
+# Build WeCo C++ engine from subtree
+COPY weco_engine/ /build/weco_engine/
+RUN /opt/venv/bin/pip install --no-cache-dir scikit-build-core pybind11 \
     && /opt/venv/bin/pip install --no-cache-dir /build/weco_engine/
 
 # ── Runtime stage ────────────────────────────────────────────────────
@@ -47,8 +46,8 @@ COPY app/          ./app/
 COPY demo/         ./demo/
 COPY md/           ./md/
 
-# Copy WeCo demo datasets from builder (for /demos API endpoint)
-COPY --from=builder /build/weco_engine/demo/data/ ./demo/data/
+# Copy WeCo demo datasets (for /demos API endpoint)
+COPY weco_engine/demo/data/ ./demo/data/
 
 # Own everything by the non-root user
 RUN mkdir -p /data && chown -R ores:ores /app /data
