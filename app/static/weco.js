@@ -208,7 +208,11 @@
   function renderWellChips(names) {
     wellChips.innerHTML = names.map(n => {
       const sel = selectedWells.has(n);
-      return `<span class="well-chip ${sel ? 'selected' : 'excluded'}" data-name="${esc(n)}">${esc(n)}</span>`;
+      // Show log availability indicator if wellDetails loaded
+      const wd = wellDetails.find(w => w.name === n);
+      const logCount = wd ? wd.data_names.length : 0;
+      const logBadge = logCount ? `<span class="log-badge">${logCount} logs</span>` : '';
+      return `<span class="well-chip ${sel ? 'selected' : 'excluded'}" data-name="${esc(n)}">${esc(n)} ${logBadge}</span>`;
     }).join('');
     // Click to toggle selection
     wellChips.querySelectorAll('.well-chip').forEach(chip => {
@@ -300,7 +304,7 @@
     }
   }
 
-  demoGrid.addEventListener('click', e => {
+  demoGrid.addEventListener('click', async e => {
     const card = e.target.closest('.demo-card');
     if (!card) return;
     $$('.demo-card', demoGrid).forEach(c => c.classList.remove('active'));
@@ -316,6 +320,25 @@
       btnRddms.style.display = 'inline-block';
       btnRddms.textContent = `Import "${selectedDemo}" from RDDMS`;
       btnRddms.onclick = () => importDemoFromRddms(selectedDemo);
+    }
+
+    // Load wells for this demo (new: shows well/log matrix before running)
+    setStatus(importStat, 'info', `Loading wells for "${selectedDemo}"...`);
+    try {
+      const data = await api('GET', `/demos/${encodeURIComponent(selectedDemo)}/wells`);
+      importedWells = data;
+      showWellsSummary({
+        well_count: data.n_wells,
+        well_names: data.wells.map(w => w.name),
+        data_names: data.all_data_names || [],
+        region_names: data.all_region_names || [],
+      });
+      // Show per-well log availability
+      wellDetails = data.wells;
+      enableAfterImport();
+      setStatus(importStat, 'ok', `${data.n_wells} wells loaded from demo "${selectedDemo}" — select wells & logs, then Run`);
+    } catch(e) {
+      setStatus(importStat, 'warn', `Could not pre-load demo wells: ${e.message}`);
     }
   });
   loadDemos();
@@ -384,38 +407,69 @@
       ctx.fillStyle = '#605e5c';
       ctx.font = '13px sans-serif';
       ctx.fillText(`No "${channel}" data for ${well.name}`, 10, 30);
+      // Show available logs for this well
+      ctx.fillText(`Available: ${well.data_names.join(', ')}`, 10, 50);
       return;
     }
 
-    // We need actual values — request from a lightweight endpoint
-    // For now show placeholder with well info
-    ctx.fillStyle = '#333';
-    ctx.font = 'bold 13px sans-serif';
-    ctx.fillText(`${well.name} — ${channel}`, 10, 20);
-    ctx.font = '12px sans-serif';
-    ctx.fillStyle = '#605e5c';
-    ctx.fillText(`${well.size} samples | Depth range available`, 10, 38);
-    ctx.fillText(`Available logs: ${well.data_names.join(', ')}`, 10, 55);
-    if (well.region_names.length)
-      ctx.fillText(`Regions: ${well.region_names.join(', ')}`, 10, 72);
+    // Fetch actual log values
+    try {
+      const resp = await api('GET', `/well-data/${wellIdx}?channel=${encodeURIComponent(channel)}`);
+      const values = resp.values || [];
+      const depth = resp.depth || [];
 
-    // Draw a simple representation
-    const margin = {top:85, bottom:20, left:40, right:20};
-    const w = rect.width - margin.left - margin.right;
-    const h = rect.height - margin.top - margin.bottom;
+      ctx.fillStyle = '#333';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText(`${well.name} — ${channel} (${values.length} samples)`, 10, 20);
 
-    // Axes
-    ctx.strokeStyle = '#e1dfdd';
-    ctx.beginPath();
-    ctx.moveTo(margin.left, margin.top);
-    ctx.lineTo(margin.left, margin.top + h);
-    ctx.lineTo(margin.left + w, margin.top + h);
-    ctx.stroke();
+      if (!values.length) return;
 
-    ctx.fillStyle = '#605e5c';
-    ctx.font = '10px sans-serif';
-    ctx.fillText('Depth', 5, margin.top + h/2);
-    ctx.fillText(channel, margin.left + w/2 - 10, margin.top + h + 15);
+      const margin = {top: 40, bottom: 20, left: 50, right: 20};
+      const w = rect.width - margin.left - margin.right;
+      const h = rect.height - margin.top - margin.bottom;
+
+      // Scale
+      const vMin = Math.min(...values.filter(v => v !== null && isFinite(v)));
+      const vMax = Math.max(...values.filter(v => v !== null && isFinite(v)));
+      const dMin = depth.length ? depth[0] : 0;
+      const dMax = depth.length ? depth[depth.length - 1] : values.length;
+
+      // Draw axes
+      ctx.strokeStyle = '#e1dfdd';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(margin.left, margin.top);
+      ctx.lineTo(margin.left, margin.top + h);
+      ctx.lineTo(margin.left + w, margin.top + h);
+      ctx.stroke();
+
+      // Axis labels
+      ctx.fillStyle = '#605e5c';
+      ctx.font = '10px sans-serif';
+      ctx.fillText(dMin.toFixed(1), 2, margin.top + 10);
+      ctx.fillText(dMax.toFixed(1), 2, margin.top + h);
+      ctx.fillText(vMin.toFixed(1), margin.left, margin.top + h + 14);
+      ctx.fillText(vMax.toFixed(1), margin.left + w - 20, margin.top + h + 14);
+
+      // Draw curve (depth on Y-axis, value on X-axis)
+      ctx.strokeStyle = '#0078d4';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      let started = false;
+      for (let i = 0; i < values.length; i++) {
+        if (values[i] === null || !isFinite(values[i])) continue;
+        const x = margin.left + ((values[i] - vMin) / (vMax - vMin || 1)) * w;
+        const y = margin.top + ((i) / (values.length - 1 || 1)) * h;
+        if (!started) { ctx.moveTo(x, y); started = true; }
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    } catch(e) {
+      ctx.fillStyle = '#605e5c';
+      ctx.font = '13px sans-serif';
+      ctx.fillText(`${well.name} — ${channel}`, 10, 20);
+      ctx.fillText(`(preview not available: ${e.message})`, 10, 38);
+    }
   }
 
   // ── Advanced toggle ───────────────────────────────────────────────
@@ -519,25 +573,20 @@
     engineLog.textContent = `Running demo "${selectedDemo}"...\n`;
     switchTab('run');
 
+    const options = gatherOptions();
     const nBest = parseInt($('#p-n-best').value) || 5;
+    const wellNamesList = selectedWells.size > 0 ? Array.from(selectedWells) : null;
+
     try {
-      const data = await api('POST', `/run/demo?demo_id=${encodeURIComponent(selectedDemo)}&n_best=${nBest}`);
+      // Use /run (with user options + well selection) since wells are pre-loaded
+      engineLog.textContent += `Options: ${JSON.stringify(options)}\nN-best: ${nBest}\n`;
+      if (wellNamesList) engineLog.textContent += `Wells: ${wellNamesList.length} selected\n`;
+      const data = await api('POST', '/run', { options, n_best: nBest, well_names: wellNamesList });
       correlationResult = data;
-      // Cache well details from demo response
       if (data.wells_plot_data) wellDetails = data.wells_plot_data;
       engineLog.textContent += `\nCompleted: ${data.n_results || '?'} solutions in ${data.elapsed_ms} ms\n`;
+      engineLog.textContent += `Mode: ${data.mode || 'in-process'}\n`;
       engineLog.textContent += `Options: ${JSON.stringify(data.options_used || {})}\n`;
-
-      // Also populate the wells/params UI from demo data
-      if (data.well_names) {
-        importedWells = data;
-        showWellsSummary({
-          well_count: data.n_wells,
-          well_names: data.well_names,
-          data_names: [], region_names: []
-        });
-        enableAfterImport();
-      }
 
       showResults(data);
       enableResultsTabs();

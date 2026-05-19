@@ -839,6 +839,61 @@ def weco_demos():
         raise HTTPException(500, str(e))
 
 
+@router.get("/demos/{demo_id}/wells")
+def weco_demo_wells(demo_id: str):
+    """Load a demo dataset and return well metadata (without running correlation).
+
+    Returns wells with their available logs, regions, sizes — so the UI can
+    present a well/log selection matrix before running.
+    """
+    global _cached_well_list
+    try:
+        from weco.api import list_demos, _load_well_list
+
+        demo_list = list_demos().demos
+        demo = None
+        for d in demo_list:
+            if d.id == demo_id:
+                demo = d
+                break
+        if demo is None:
+            raise HTTPException(404, f"Demo '{demo_id}' not found")
+
+        wl = _load_well_list(demo.wells)
+        _cached_well_list = wl  # cache for subsequent /run calls
+
+        # All unique log/region names across all wells
+        all_data_names = sorted(set(
+            name for w in wl.wells for name in w.data.keys()
+        ))
+        all_region_names = sorted(set(
+            name for w in wl.wells for name in w.region.keys()
+        ))
+
+        wells = []
+        for w in wl.wells:
+            wells.append({
+                "name": w.name,
+                "size": w.size,
+                "x": w.x, "y": w.y, "z": w.z, "h": w.h,
+                "data_names": sorted(w.data.keys()),
+                "region_names": sorted(w.region.keys()),
+            })
+
+        return {
+            "demo_id": demo_id,
+            "title": demo.title,
+            "n_wells": len(wells),
+            "wells": wells,
+            "all_data_names": all_data_names,
+            "all_region_names": all_region_names,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
 @router.post("/run/demo")
 def weco_run_demo(demo_id: str, n_best: int = 5):
     """Run a demo dataset on the WeCo engine (in-process).
