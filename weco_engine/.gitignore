@@ -1,0 +1,56 @@
+/venv/
+/.venv/
+/.idea/
+/.pytest_cache/
+/include/weco/config.h
+/build/
+/WeCo.egg-info/
+**/__pycache__/
+/weco/engine.cpython*
+/dist/
+/.eggs/
+/.vscode/
+/weco/weco.code-workspace
+out.txt
+result.txt
+chat.txt
+
+# Temp directory (test/demo results)
+/tmp/*
+!/tmp/.gitkeep
+
+# Engine-generated stray files at top level
+*.dot
+test.txt*
+/doc/html/
+/doc/doxyfile
+.python_build/
+.doc_build/
+/doc/python
+/weco/libplugin_example.so
+/weco/plugin_example.dll
+/workbench
+/doc/WeCo-*-doc.zip
+/test.cpp
+/doc/cpp/
+
+# Generated payloads (regenerate with generate_payloads.py)
+/demo/resqml/payloads/
+
+# Backup files
+*.bak
+*.orig
+*.swp
+*~
+
+# Build artifacts
+/doc/doc/
+*.o
+*.so
+*.dll
+*.pyc
+*.egg-info/
+
+# OS-specific
+Thumbs.db
+.DS_Store

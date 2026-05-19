@@ -1,0 +1,15 @@
+# Config: CONSTRAINED -- GR+RT + HYDRO region as same-region
+# Use case: enforce aquifer/aquitard grouping
+# NB: same-region requires matching HYDRO IDs across wells.
+#      This works because HYDRO has only 3 broad classes.
+#
+var-data GR
+var-weight 0.50
+var-data2 RT
+var-weight2 0.30
+var-data3 SPT
+var-weight3 0.20
+same-region HYDRO
+order position
+max-cor 80
+const-gap-cost 2.0

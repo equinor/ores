@@ -1,0 +1,89 @@
+[build-system]
+requires = ["scikit-build-core", "pybind11"]
+build-backend = "scikit_build_core.build"
+
+[tool.scikit-build]
+wheel.packages = ['weco']
+cmake.define = { GEN_PYBINDING = "ON" }
+cmake.build-type = "Release"
+build-dir = ".python_build"
+# wheel.packages = ["src/<package>", "python/<package>", "<package>"]
+
+[project]
+name = 'WeCo'
+version = '0.9.31'
+requires-python = ">=3.12"
+description = 'Multi well correlation'
+
+# project authors
+authors = [
+    { name = "Christophe Antoine", email = "christophe.antoine@univ-lorraine.fr" },
+    { name = "Guillaume Caumon", email = "guillaume.caumon@univ-lorraine.fr" },
+    { name = "Paul Baville", email = "paul.baville@kit.edu" },
+]
+dependencies = ['matplotlib', 'h5py', 'scipy', 'numpy']
+
+# readme file
+readme = "ReadMe.md"
+
+# keywords
+keywords = ["well", "ring-team"]
+
+# license
+license = { file = "doc/license.txt" }
+
+# classifier
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+
+[project.scripts]
+WeCoRes2Las = 'weco.res2las:main'
+WeCoRes2Csv = 'weco.res2csv:main'
+WeCoCheck = 'weco.check:main'
+WeCoAddRegion = 'weco.addregion:main'
+WeCoCM2Csv = "weco.data:weco_cm2csv_main"
+WeCoWellList = "weco.dump_well_list:main"
+WeCoRegion2Data = 'weco.misc_cmd:region2data'
+WeCoData2Region = 'weco.misc_cmd:data2region'
+WeCoConvert = 'weco.convert:main'
+WeCoBatch = 'weco.batch:main'
+
+[project.optional-dependencies]
+
+gui = ["PyQt6"]
+
+studio = ["PyQt6"]
+
+ai = ["scikit-learn>=1.3"]
+
+cython = ["cython>=3.0", "numpy"]
+
+devel = ["sphinx", 'sphinx_rtd_theme', 'pytest', 'pybind11[global]', "typing-extensions", "pybind11-stubgen"]
+
+api = ["fastapi", "uvicorn"]
+
+[project.gui-scripts]
+WeCoResView = "weco.resview:main"
+WeCoStudio = 'weco.studio:main'
+
+[tool.pytest.ini_options]
+testpaths = ["pytest"]
+
+# §8.5 — Pre-built wheels via cibuildwheel
+[tool.cibuildwheel]
+build = "cp312-*"
+skip = "*-musllinux_*"
+test-command = "pytest -v {project}/pytest -x --ignore={project}/pytest/test_rddms.py"
+test-requires = ["pytest"]
+manylinux-x86_64-image = "manylinux2014"
+
+[tool.cibuildwheel.linux]
+before-build = "pip install pybind11 scikit-build-core cmake ninja"
+archs = "x86_64"
+
+[tool.cibuildwheel.macos]
+archs = "x86_64 arm64"
+
+[tool.cibuildwheel.windows]
+archs = "AMD64"

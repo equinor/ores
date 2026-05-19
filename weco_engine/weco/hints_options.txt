@@ -1,0 +1,273 @@
+# WeCo Engine Option Hints (v0.9.31)
+# Used by weco.hints module for GUI tooltips
+# Format:  === option-name\n description lines
+#
+# Note: The authoritative parameter database is now in weco/studio.py
+# (PARAM_HELP dict). This file is kept for backwards compatibility
+# with the weco.hints module.
+
+# ============== GLOBAL OPTIONS
+
+=== cost-function
+Cost framework to use. 'composite' combines multiple cost components
+(variance, gap, distality, polarity, constraints) into a single
+objective that the engine minimises.
+Only built-in option; custom cost functions via C plugin API.
+
+=== order
+Controls how wells are paired and merged in the task tree.
+The merge order affects which information is available at each sub-problem.
+Merging geologically adjacent wells first gives better results.
+- linear    : Sequential left-to-right. Best for simple transects.
+- pyramidal : Balanced binary tree. Best quality for 4+ wells (default).
+- position  : Nearest-pair by (x,y) via BSP trees. For scattered wells.
+- distality : Orders by palaeo-distality, most-distal first.
+- inverse   : Reverse of linear.
+
+=== thread (Int)
+Number of CPU threads for parallel execution.
+0 = auto-detect (use all cores). 1 = deterministic single-threaded.
+
+# ============== GRAPH / DTW OPTIONS
+
+=== max-cor
+Maximum n-best correlations kept during each DTW merge step.
+The "k" in k-best graph-DTW. Higher = better quality, O(k) slower.
+Typical: 10-20 (fast demo), 50 (good default), 200+ (production).
+Rule of thumb: if best cost seems high, double this before tuning other params.
+
+=== nbr-cor (Int)
+Number of correlations kept after a merge step for use in subsequent steps.
+Should be <= max-cor. Prunes before the next merge.
+Setting nbr-cor < max-cor saves memory at cost of discarding sub-optimal paths.
+
+=== min-dist (Float)
+Minimum cost-distance between two kept correlations for diversity filtering.
+0 = no filtering (keep the k cheapest regardless of similarity).
+Use > 0 to avoid storing many nearly-identical solutions.
+
+=== out-nbr-cor (Int)
+Number of alternative correlations in the final output.
+1 = single best. 5-10 = good for uncertainty analysis.
+Examining alternatives reveals which parts of the section are well-constrained
+(same across all) vs. ambiguous (differ between solutions).
+
+=== out-min-dist (Float)
+Minimum cost-distance between two output correlations.
+Ensures output solutions are meaningfully different.
+
+# ============== VARIANCE COST
+
+=== var-data
+Primary well-log property for variance cost.
+The engine minimises the variance of this property across correlated positions.
+Common choices: GR (gamma ray), acoustic impedance, resistivity.
+Geological meaning: aligns similar log signatures between wells.
+
+=== var-weight
+Weight for variance log 1 in the composite cost (0-100, default 1.0).
+When using two logs, the ratio var-weight / var-weight2 controls
+which log dominates. Start with equal weights, then favour the more reliable log.
+
+=== var-data2
+Secondary well-log property for variance cost.
+Use a complementary curve (e.g. GR for lithology + density for porosity).
+
+=== var-weight2
+Weight for variance log 2. Same semantics as var-weight.
+
+=== var-data3
+Optional third log for multi-attribute variance cost.
+
+=== var-weight3
+Weight for variance log 3.
+
+=== var-data4
+Optional fourth log for multi-attribute variance cost.
+
+=== var-weight4
+Weight for variance log 4.
+
+=== var-data5
+Optional fifth log for multi-attribute variance cost.
+
+=== var-weight5
+Weight for variance log 5.
+
+=== var-region
+Region for variance-based boundary cost bonus.
+Correlated points near matching region boundaries get a cost reduction,
+encouraging the correlation to honour known stratigraphic surfaces.
+
+# ============== CONSTRAINTS
+
+=== no-crossing
+Hard constraint: correlation lines cannot cross zone boundaries.
+Geological meaning: enforces known stratigraphic surfaces (sequence
+boundaries, flooding surfaces, dated ash beds, biostratigraphic datums).
+Important: region IDs must be consistent across wells (same ID = same unit).
+
+=== no-crossing2
+Second no-crossing region. Use when multiple independent zone
+hierarchies must be honoured simultaneously.
+
+=== no-crossing3
+Third no-crossing region.
+
+=== same-region
+Soft constraint: correlated positions must share the same region label.
+Geological meaning: encourages matching lithostratigraphic units.
+CAUTION: Can be very restrictive. If region picks are slightly inconsistent
+across wells, it may cause "no correlation possible." Start without it.
+
+=== same-region2
+Second same-region constraint. Use for a different zonation.
+
+=== same-region3
+Third same-region constraint.
+
+# ============== GAP COST
+
+=== const-gap-cost
+Flat penalty applied when the engine introduces a stratigraphic gap
+(hiatus, condensation, or erosion). Default 0.0 = gaps are free.
+0.05-0.2 = mild (normal sections), 0.5-1.0 = moderate (aggradation),
+5-10+ = strong (force layer-cake). Higher values produce more continuous
+correlations with fewer hiatuses.
+
+=== const-gap-cost-start
+Gap penalty at the top of a well (start of section). -1 = use const-gap-cost.
+Set lower when the top of section is poorly constrained (unconformity).
+
+=== const-gap-cost-end
+Gap penalty at the base of a well (end of section). -1 = use const-gap-cost.
+Set lower when TD is in an expanded section.
+
+=== gap-cost-func
+Data property providing a per-sample gap cost curve.
+Overrides const-gap-cost at each sample position.
+Use for spatially varying gap penalties (e.g. higher in condensed sections,
+lower in expanded intervals).
+
+=== gap-cost-func-mult
+Multiplier applied to gap-cost-func values (default 1.0).
+Use to globally scale the gap cost curve.
+
+# ============== POLARITY
+
+=== polarity-region
+Region encoding stratigraphic polarity (e.g. transgressive vs regressive,
+or magnetic polarity). Required to activate polarity cost.
+
+=== polarity-cost-diff
+Gap cost when polarity differs between the two sides of a gap (default 0.5).
+Higher values force the engine to respect polarity reversals more strictly.
+
+=== polarity-cost-same
+Gap cost when polarity is the same on both sides (default 0.5).
+Set lower than cost-diff to favour gaps within the same polarity trend.
+
+=== polarity-cost-start
+Gap cost at the top of a well (default 0.5).
+
+=== polarity-cost-end
+Gap cost at the base of a well (default 0.5).
+
+# ============== DISTALITY / WALTHER'S LAW
+
+=== dist-distal
+Region encoding palaeo-distality. Values: distal(1) to proximal(n).
+Together with dist-facies, models thickness wedging due to lateral
+facies belt migration (Walther's Law).
+Both dist-distal and dist-facies must be set to activate.
+
+=== dist-facies
+Palaeo-bathymetric facies region. Values: deepest(1) to shallowest(n).
+Example: 1=basinal, 2=outer shelf, 3=inner shelf, 4=coastal.
+
+=== dist-scaling
+Scaling coefficient for the wedge model (-1.0 to 1.0, default 1.0).
+1.0 = strong wedge (clinoforms, progradation).
+0.5 = moderate wedge.
+0.0 = tabular (aggradation, platform interiors).
+
+# ============== MULTI-DISTALITY
+
+=== multi-dist-distal
+File path listing all possible palaeo-distality scenarios.
+Each scenario is a different ranking of wells from distal to proximal.
+The engine evaluates all and picks the lowest-cost combination.
+Use when palaeo-geography is uncertain.
+
+=== multi-dist-facies
+Facies log for multi-distality. Same semantics as dist-facies.
+
+=== multi-dist-scaling
+Scaling coefficient for multi-distality cost (default 1.0).
+
+# ============== B3D CURVE
+
+=== b3d-curve-dip
+Dip angle data (degrees) for Bezier-3D curve cost.
+Fits 3D Bezier curves to correlated horizons using structural dip.
+All 4 data (dip, azimuth, depth, facies) required to activate.
+
+=== b3d-curve-azimuth
+Strike orientation data (degrees) for B3D curve cost.
+
+=== b3d-curve-depth
+True vertical depth (TVD) data for B3D curve cost.
+
+=== b3d-curve-facies
+Palaeo-depth facies data for B3D curve cost.
+
+=== b3d-curve-write-bezier
+Generate Bezier curve point set files (for 3D visualisation).
+
+=== b3d-curve-write-profile
+Generate depositional profile point sets as output.
+
+=== b3d-curve-bezier-folder
+Output folder for Bezier interpolation files.
+
+=== b3d-curve-profile-folder
+Output folder for depositional profile files.
+
+=== b3d-curve-dep-facies-file
+Depositional facies configuration file (describes facies ordering and properties).
+
+=== b3d-curve-dep-profile-file
+Depositional profile configuration file.
+
+# ============== OUTPUT
+
+=== out-file (String)
+Output result file path in WeCo DAG format.
+Contains correlated nodes with matched positions across all wells and edge costs.
+
+=== out-dot
+Output result as Graphviz DOT graph for visualisation.
+
+=== step-dot
+Base name for per-step DOT files (e.g. 'step' produces step_0.dot).
+Captures the DAG at each correlation step for debugging.
+
+=== step-file (String)
+Base name for per-step result files in WeCo format.
+Captures intermediate correlation states.
+
+=== cost-matrix (String)
+Output cost-matrix file for QC/debug.
+WARNING: consumes significant time and disk space.
+
+=== order-dot
+Write the task-ordering (merge tree) as a Graphviz DOT file.
+Useful for understanding how wells are paired.
+
+=== order-only
+Stop after generating the task ordering (no correlation run).
+Useful for inspecting the merge tree before committing.
+
+=== debug-cor-info
+Print detailed correlation statistics after each merge step.
+Shows number of nodes, edges, and costs for QC.

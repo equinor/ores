@@ -1,0 +1,432 @@
+{
+  "kind": "weco:wbs:WellList:1.0.0",
+  "id": "02d9d638-9303-4a13-b726-ef77cea81e9e",
+  "version": "1.0.0",
+  "createTime": "2026-05-18T08:29:10+00:00",
+  "meta": {
+    "dataChannels": [
+      "Depth",
+      "Distality",
+      "Facies"
+    ],
+    "regionNames": [
+      "Distality",
+      "Facies"
+    ],
+    "wellCount": 5,
+    "sourceFile": "wells_A.txt",
+    "convertedAt": "2026-05-18T08:29:10+00:00"
+  },
+  "wells": [
+    {
+      "name": "Well_01",
+      "size": 5,
+      "location": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0,
+        "h": 5.0
+      },
+      "data": [
+        {
+          "name": "Depth",
+          "size": 5,
+          "values": [
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0
+          ]
+        },
+        {
+          "name": "Distality",
+          "size": 5,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "name": "Facies",
+          "size": 5,
+          "values": [
+            4.0,
+            3.0,
+            3.0,
+            2.0,
+            1.0
+          ]
+        }
+      ],
+      "regions": [
+        {
+          "name": "Distality",
+          "intervals": [
+            {
+              "id": 1,
+              "start": 0,
+              "length": 5
+            }
+          ]
+        },
+        {
+          "name": "Facies",
+          "intervals": [
+            {
+              "id": 4,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 2
+            },
+            {
+              "id": 2,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 4,
+              "length": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Well_02",
+      "size": 5,
+      "location": {
+        "x": 2.0,
+        "y": 2.0,
+        "z": 1.0,
+        "h": 5.0
+      },
+      "data": [
+        {
+          "name": "Depth",
+          "size": 5,
+          "values": [
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0
+          ]
+        },
+        {
+          "name": "Distality",
+          "size": 5,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "name": "Facies",
+          "size": 5,
+          "values": [
+            4.0,
+            3.0,
+            3.0,
+            2.0,
+            1.0
+          ]
+        }
+      ],
+      "regions": [
+        {
+          "name": "Distality",
+          "intervals": [
+            {
+              "id": 1,
+              "start": 0,
+              "length": 5
+            }
+          ]
+        },
+        {
+          "name": "Facies",
+          "intervals": [
+            {
+              "id": 4,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 2
+            },
+            {
+              "id": 2,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 4,
+              "length": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Well_03",
+      "size": 5,
+      "location": {
+        "x": 3.0,
+        "y": 3.0,
+        "z": 1.0,
+        "h": 5.0
+      },
+      "data": [
+        {
+          "name": "Depth",
+          "size": 5,
+          "values": [
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0
+          ]
+        },
+        {
+          "name": "Distality",
+          "size": 5,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "name": "Facies",
+          "size": 5,
+          "values": [
+            4.0,
+            3.0,
+            3.0,
+            2.0,
+            1.0
+          ]
+        }
+      ],
+      "regions": [
+        {
+          "name": "Distality",
+          "intervals": [
+            {
+              "id": 1,
+              "start": 0,
+              "length": 5
+            }
+          ]
+        },
+        {
+          "name": "Facies",
+          "intervals": [
+            {
+              "id": 4,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 2
+            },
+            {
+              "id": 2,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 4,
+              "length": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Well_04",
+      "size": 5,
+      "location": {
+        "x": 4.0,
+        "y": 4.0,
+        "z": 1.0,
+        "h": 5.0
+      },
+      "data": [
+        {
+          "name": "Depth",
+          "size": 5,
+          "values": [
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0
+          ]
+        },
+        {
+          "name": "Distality",
+          "size": 5,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "name": "Facies",
+          "size": 5,
+          "values": [
+            4.0,
+            3.0,
+            3.0,
+            2.0,
+            1.0
+          ]
+        }
+      ],
+      "regions": [
+        {
+          "name": "Distality",
+          "intervals": [
+            {
+              "id": 1,
+              "start": 0,
+              "length": 5
+            }
+          ]
+        },
+        {
+          "name": "Facies",
+          "intervals": [
+            {
+              "id": 4,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 2
+            },
+            {
+              "id": 2,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 4,
+              "length": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Well_05",
+      "size": 5,
+      "location": {
+        "x": 5.0,
+        "y": 5.0,
+        "z": 1.0,
+        "h": 5.0
+      },
+      "data": [
+        {
+          "name": "Depth",
+          "size": 5,
+          "values": [
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0
+          ]
+        },
+        {
+          "name": "Distality",
+          "size": 5,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "name": "Facies",
+          "size": 5,
+          "values": [
+            4.0,
+            3.0,
+            3.0,
+            2.0,
+            1.0
+          ]
+        }
+      ],
+      "regions": [
+        {
+          "name": "Distality",
+          "intervals": [
+            {
+              "id": 1,
+              "start": 0,
+              "length": 5
+            }
+          ]
+        },
+        {
+          "name": "Facies",
+          "intervals": [
+            {
+              "id": 4,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 2
+            },
+            {
+              "id": 2,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 4,
+              "length": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

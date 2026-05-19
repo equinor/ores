@@ -1,0 +1,1446 @@
+{
+  "kind": "weco:wbs:WellList:1.0.0",
+  "id": "e5ce46b2-8c2a-4e16-affd-a58aa07a386f",
+  "version": "1.0.0",
+  "createTime": "2026-05-18T08:29:10+00:00",
+  "meta": {
+    "dataChannels": [
+      "DEPTH",
+      "DISTAL",
+      "FACIES_1",
+      "FACIES_2",
+      "FACIES_3",
+      "FACIES_4"
+    ],
+    "regionNames": [
+      "BIOZONES",
+      "DISTAL",
+      "FACIES_1",
+      "FACIES_2",
+      "FACIES_3",
+      "FACIES_4",
+      "SEQUENCE"
+    ],
+    "wellCount": 2,
+    "sourceFile": "wells.txt",
+    "convertedAt": "2026-05-18T08:29:10+00:00"
+  },
+  "wells": [
+    {
+      "name": "A",
+      "size": 26,
+      "location": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 3913.95,
+        "h": 23.0
+      },
+      "data": [
+        {
+          "name": "DEPTH",
+          "size": 26,
+          "values": [
+            3913.95,
+            3915.56,
+            3915.95,
+            3916.47,
+            3916.69,
+            3917.45,
+            3917.62,
+            3919.25,
+            3919.78,
+            3920.61,
+            3920.88,
+            3922.06,
+            3922.6,
+            3922.86,
+            3923.6,
+            3929.9,
+            3930.91,
+            3931.12,
+            3931.72,
+            3932.54,
+            3932.75,
+            3934.3,
+            3935.45,
+            3936.44,
+            3937.83,
+            3938.46
+          ]
+        },
+        {
+          "name": "DISTAL",
+          "size": 26,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "name": "FACIES_1",
+          "size": 26,
+          "values": [
+            5.0,
+            7.0,
+            6.0,
+            5.0,
+            7.0,
+            6.0,
+            7.0,
+            6.0,
+            5.0,
+            6.0,
+            5.0,
+            4.0,
+            1.0,
+            6.0,
+            7.0,
+            6.0,
+            5.0,
+            4.0,
+            3.0,
+            1.0,
+            2.0,
+            4.0,
+            2.0,
+            1.0,
+            4.0,
+            1.0
+          ]
+        },
+        {
+          "name": "FACIES_2",
+          "size": 26,
+          "values": [
+            2.0,
+            3.0,
+            2.0,
+            2.0,
+            3.0,
+            2.0,
+            3.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            1.0,
+            2.0,
+            3.0,
+            2.0,
+            2.0,
+            2.0,
+            1.0,
+            1.0,
+            1.0,
+            2.0,
+            1.0,
+            1.0,
+            2.0,
+            1.0
+          ]
+        },
+        {
+          "name": "FACIES_3",
+          "size": 26,
+          "values": [
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            2.0,
+            1.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            2.0,
+            1.0,
+            1.0,
+            1.0,
+            2.0,
+            1.0,
+            1.0,
+            2.0,
+            1.0
+          ]
+        },
+        {
+          "name": "FACIES_4",
+          "size": 26,
+          "values": [
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            1.0,
+            1.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      ],
+      "regions": [
+        {
+          "name": "DISTAL",
+          "intervals": [
+            {
+              "id": 1,
+              "start": 0,
+              "length": 26
+            }
+          ]
+        },
+        {
+          "name": "FACIES_1",
+          "intervals": [
+            {
+              "id": 5,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 19,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 20,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 21,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 22,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 23,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 24,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 25,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "name": "FACIES_2",
+          "intervals": [
+            {
+              "id": 2,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 19,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 20,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 21,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 22,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 23,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 24,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 25,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "name": "FACIES_3",
+          "intervals": [
+            {
+              "id": 3,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 19,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 20,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 21,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 22,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 23,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 24,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 25,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "name": "FACIES_4",
+          "intervals": [
+            {
+              "id": 2,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 19,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 20,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 21,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 22,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 23,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 24,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 25,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "name": "BIOZONES",
+          "intervals": [
+            {
+              "id": 3841,
+              "start": 10,
+              "length": 16
+            }
+          ]
+        },
+        {
+          "name": "SEQUENCE",
+          "intervals": [
+            {
+              "id": 65,
+              "start": 0,
+              "length": 10
+            },
+            {
+              "id": 55,
+              "start": 10,
+              "length": 4
+            },
+            {
+              "id": 45,
+              "start": 14,
+              "length": 13
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "B",
+      "size": 20,
+      "location": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 3821.99,
+        "h": 25.0
+      },
+      "data": [
+        {
+          "name": "DEPTH",
+          "size": 20,
+          "values": [
+            3821.99,
+            3823.32,
+            3824.53,
+            3825.35,
+            3826.16,
+            3828.34,
+            3828.82,
+            3830.06,
+            3830.18,
+            3830.49,
+            3832.0,
+            3832.22,
+            3832.36,
+            3832.9,
+            3833.02,
+            3834.2,
+            3834.64,
+            3835.13,
+            3835.81,
+            3836.73
+          ]
+        },
+        {
+          "name": "DISTAL",
+          "size": 20,
+          "values": [
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0
+          ]
+        },
+        {
+          "name": "FACIES_1",
+          "size": 20,
+          "values": [
+            6.0,
+            7.0,
+            6.0,
+            8.0,
+            6.0,
+            5.0,
+            4.0,
+            3.0,
+            1.0,
+            3.0,
+            2.0,
+            1.0,
+            6.0,
+            2.0,
+            1.0,
+            3.0,
+            2.0,
+            5.0,
+            4.0,
+            1.0
+          ]
+        },
+        {
+          "name": "FACIES_2",
+          "size": 20,
+          "values": [
+            2.0,
+            3.0,
+            2.0,
+            3.0,
+            2.0,
+            2.0,
+            2.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            2.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            2.0,
+            2.0,
+            1.0
+          ]
+        },
+        {
+          "name": "FACIES_3",
+          "size": 20,
+          "values": [
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            2.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            3.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            3.0,
+            2.0,
+            1.0
+          ]
+        },
+        {
+          "name": "FACIES_4",
+          "size": 20,
+          "values": [
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            2.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            2.0,
+            1.0
+          ]
+        }
+      ],
+      "regions": [
+        {
+          "name": "DISTAL",
+          "intervals": [
+            {
+              "id": 5,
+              "start": 0,
+              "length": 20
+            }
+          ]
+        },
+        {
+          "name": "FACIES_1",
+          "intervals": [
+            {
+              "id": 6,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 8,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 19,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "name": "FACIES_2",
+          "intervals": [
+            {
+              "id": 2,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 19,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "name": "FACIES_3",
+          "intervals": [
+            {
+              "id": 3,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 19,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "name": "FACIES_4",
+          "intervals": [
+            {
+              "id": 2,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 19,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "name": "BIOZONES",
+          "intervals": [
+            {
+              "id": 3841,
+              "start": 0,
+              "length": 20
+            }
+          ]
+        },
+        {
+          "name": "SEQUENCE",
+          "intervals": [
+            {
+              "id": 65,
+              "start": 0,
+              "length": 12
+            },
+            {
+              "id": 55,
+              "start": 12,
+              "length": 5
+            },
+            {
+              "id": 45,
+              "start": 17,
+              "length": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

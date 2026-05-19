@@ -1,0 +1,1406 @@
+{
+  "kind": "weco:wbs:WellList:1.0.0",
+  "id": "8867eff9-617d-4f40-99c8-96f2a12bbfb6",
+  "version": "1.0.0",
+  "createTime": "2026-05-18T08:29:10+00:00",
+  "meta": {
+    "dataChannels": [
+      "BIOZONE",
+      "DISTALITY",
+      "FACIES6",
+      "MD",
+      "SEQUENCE"
+    ],
+    "regionNames": [
+      "BIOZONE",
+      "FACIES6",
+      "SEQUENCE"
+    ],
+    "wellCount": 3,
+    "sourceFile": "wells.txt",
+    "convertedAt": "2026-05-18T08:29:10+00:00"
+  },
+  "wells": [
+    {
+      "name": "M41",
+      "size": 24,
+      "location": {
+        "x": 532880.54,
+        "y": 6755547.76,
+        "z": 1480.0,
+        "h": 160.0
+      },
+      "data": [
+        {
+          "name": "MD",
+          "size": 24,
+          "values": [
+            1492.0,
+            1500.8,
+            1505.1,
+            1508.0,
+            1508.9,
+            1539.4,
+            1551.6,
+            1553.3,
+            1555.9,
+            1560.6,
+            1572.7,
+            1573.5,
+            1577.0,
+            1581.6,
+            1588.2,
+            1591.7,
+            1592.1,
+            1594.5,
+            1595.1,
+            1597.4,
+            1599.9,
+            1601.8,
+            1624.1,
+            1630.7
+          ]
+        },
+        {
+          "name": "SEQUENCE",
+          "size": 24,
+          "values": [
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            4.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            2.0,
+            2.0,
+            2.0
+          ]
+        },
+        {
+          "name": "FACIES6",
+          "size": 24,
+          "values": [
+            5.0,
+            4.0,
+            4.0,
+            6.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            1.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            1.0,
+            2.0,
+            2.0,
+            2.0
+          ]
+        },
+        {
+          "name": "DISTALITY",
+          "size": 24,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "name": "BIOZONE",
+          "size": 24,
+          "values": [
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            4.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            6.0,
+            6.0,
+            6.0
+          ]
+        }
+      ],
+      "regions": [
+        {
+          "name": "SEQUENCE",
+          "intervals": [
+            {
+              "id": 5,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 19,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 20,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 21,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 22,
+              "length": 2
+            }
+          ]
+        },
+        {
+          "name": "BIOZONE",
+          "intervals": [
+            {
+              "id": 3,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 19,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 20,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 21,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 22,
+              "length": 2
+            }
+          ]
+        },
+        {
+          "name": "FACIES6",
+          "intervals": [
+            {
+              "id": 3,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 19,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 20,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 21,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 22,
+              "length": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "8",
+      "size": 20,
+      "location": {
+        "x": 526905.95,
+        "y": 6758499.38,
+        "z": 1830.0,
+        "h": 170.0
+      },
+      "data": [
+        {
+          "name": "MD",
+          "size": 20,
+          "values": [
+            1841.8,
+            1851.5,
+            1852.5,
+            1854.8,
+            1856.1,
+            1859.5,
+            1861.6,
+            1865.9,
+            1866.2,
+            1867.1,
+            1867.6,
+            1868.8,
+            1869.7,
+            1870.0,
+            1872.0,
+            1873.6,
+            1874.1,
+            1875.8,
+            1876.6,
+            1882.5
+          ]
+        },
+        {
+          "name": "SEQUENCE",
+          "size": 20,
+          "values": [
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            7.0,
+            6.0
+          ]
+        },
+        {
+          "name": "FACIES6",
+          "size": 20,
+          "values": [
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            1.0,
+            2.0,
+            2.0,
+            1.0,
+            1.0,
+            2.0,
+            1.0,
+            2.0,
+            1.0,
+            2.0,
+            1.0,
+            2.0
+          ]
+        },
+        {
+          "name": "DISTALITY",
+          "size": 20,
+          "values": [
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0
+          ]
+        },
+        {
+          "name": "BIOZONE",
+          "size": 20,
+          "values": [
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0
+          ]
+        }
+      ],
+      "regions": [
+        {
+          "name": "SEQUENCE",
+          "intervals": [
+            {
+              "id": 7,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 7,
+              "start": 18,
+              "length": 2
+            },
+            {
+              "id": 6,
+              "start": 19,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "name": "BIOZONE",
+          "intervals": [
+            {
+              "id": 3,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 18,
+              "length": 2
+            },
+            {
+              "id": 3,
+              "start": 19,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "name": "FACIES6",
+          "intervals": []
+        }
+      ]
+    },
+    {
+      "name": "22S",
+      "size": 22,
+      "location": {
+        "x": 527602.25,
+        "y": 6760875.88,
+        "z": 1910.0,
+        "h": 180.0
+      },
+      "data": [
+        {
+          "name": "MD",
+          "size": 22,
+          "values": [
+            1915.6,
+            1927.0,
+            1934.0,
+            1935.0,
+            1945.0,
+            1946.0,
+            1948.0,
+            1953.0,
+            1962.0,
+            1963.0,
+            1979.0,
+            1980.0,
+            1984.0,
+            1996.0,
+            1997.0,
+            2025.0,
+            2036.0,
+            2037.5,
+            2054.5,
+            2057.0,
+            2062.0,
+            2078.0
+          ]
+        },
+        {
+          "name": "SEQUENCE",
+          "size": 22,
+          "values": [
+            6.0,
+            6.0,
+            6.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            5.0,
+            4.0,
+            4.0,
+            4.0,
+            4.0,
+            4.0,
+            4.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "name": "FACIES6",
+          "size": 22,
+          "values": [
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            1.0,
+            1.0,
+            2.0,
+            2.0,
+            2.0,
+            1.0,
+            1.0,
+            2.0,
+            2.0,
+            2.0,
+            1.0,
+            2.0,
+            1.0,
+            2.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "name": "DISTALITY",
+          "size": 22,
+          "values": [
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0
+          ]
+        },
+        {
+          "name": "BIOZONE",
+          "size": 22,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            2.0,
+            3.0,
+            3.0,
+            3.0,
+            3.0,
+            4.0,
+            4.0,
+            4.0,
+            4.0,
+            4.0,
+            4.0,
+            4.0,
+            4.0
+          ]
+        }
+      ],
+      "regions": [
+        {
+          "name": "SEQUENCE",
+          "intervals": [
+            {
+              "id": 6,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 6,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 5,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 19,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 20,
+              "length": 2
+            },
+            {
+              "id": 3,
+              "start": 21,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "name": "BIOZONE",
+          "intervals": [
+            {
+              "id": 1,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 19,
+              "length": 1
+            },
+            {
+              "id": 4,
+              "start": 20,
+              "length": 2
+            },
+            {
+              "id": 4,
+              "start": 21,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "name": "FACIES6",
+          "intervals": [
+            {
+              "id": 2,
+              "start": 0,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 1,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 2,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 3,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 4,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 5,
+              "length": 1
+            },
+            {
+              "id": 3,
+              "start": 6,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 7,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 8,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 9,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 10,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 11,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 12,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 13,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 14,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 15,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 16,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 17,
+              "length": 1
+            },
+            {
+              "id": 2,
+              "start": 18,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 19,
+              "length": 1
+            },
+            {
+              "id": 1,
+              "start": 20,
+              "length": 2
+            },
+            {
+              "id": 1,
+              "start": 21,
+              "length": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

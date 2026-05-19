@@ -1,0 +1,15 @@
+# Config: DEFAULT — GR+RHOB+DT variance for shoreface correlation
+# Shallow marine: use GR (lithology) + RHOB (porosity) + DT (compaction)
+# Hugin Formation analogue, 5 parasequences
+#
+cost-function=composite
+var-data=GR
+var-weight=0.5
+var-data2=RHOB
+var-weight2=0.3
+var-data3=DT
+var-weight3=0.2
+order=position
+max-cor=80
+const-gap-cost=2.0
+out-file=result.txt

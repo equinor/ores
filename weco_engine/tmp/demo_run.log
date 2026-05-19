@@ -1,0 +1,44 @@
+/home/maap/.local/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+Running 16 demos -> /home/maap/weco/tmp/demo_plots/
+
+  [1.1                 ] Variance Weight Sweep               OK  3 wells,  80 cor -> 1.1.png
+  [1.2                 ] No-Crossing Constraint              OK  3 wells,  16 cor -> 1.2.png
+  [3                   ] Distality-Facies Cost               OK  2 wells, 2892 cor -> 3.png
+  [4                   ] Gap Cost Exploration                OK  2 wells, 2892 cor -> 4.png
+  [5                   ] Ordering Strategies                 OK  3 wells,  48 cor -> 5.png
+  [quat-basic          ] Quaternary — Basic (GR+RT)          OK 20 wells, 320 cor -> quat-basic.png
+  [quat-hydro          ] Quaternary — Hydrogeological        OK 20 wells, 2048 cor -> quat-hydro.png
+  [quat-constrained    ] Quaternary — Constrained            *WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: empty parent
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: empty parent
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: empty parent
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: empty parent
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: empty parent
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: empty parent
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: empty parent
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: empty parent
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: empty parent
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: empty parent
+*WRN* Correlation failure: no correlation possible
+*WRN* Correlation failure: empty parent
+*WRN* Correlation failure: no correlation possible
+OK 20 wells,   0 cor -> quat-constrained.png
+  [coal-basic          ] Coal — Basic (GR+DEN)               TIMEOUT
+  [coal-full           ] Coal — Multi-Log (5 logs)           

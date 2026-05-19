@@ -1,0 +1,8 @@
+digraph test {
+n0 [ label = " 0 0 0" ];
+n1 [ label = " 0 1 1" ];
+n0 -> n1 [ label = "14.2" ]
+n2 [ label = " 1 1 1" ];
+n0 -> n2 [ label = "2.3" ]
+n1 -> n2 [ label = "4.2" ]
+}

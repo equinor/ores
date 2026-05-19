@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"remote.autoForwardPorts": true,
+		"remote.autoForwardPortsSource": "process"
+	}
+}

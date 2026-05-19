@@ -1,0 +1,11 @@
+# Config: BASIC -- GR+DEN variance for coal seam tracing
+# Use case: quick seam correlation using two logs
+# Coal has very low GR and very low density
+#
+var-data GR
+var-weight 0.5
+var-data2 DEN
+var-weight2 0.5
+order position
+max-cor 50
+const-gap-cost 3.0

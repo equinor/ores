@@ -1,0 +1,15 @@
+# Config: HYDRO -- three logs + gap cost for aquifer mapping
+# Use case: hydrogeological aquifer/aquitard bed tracing
+# Logs: GR (50%), RT (25%), SPT (25%)  +  gap cost
+#
+var-data GR
+var-weight 0.50
+var-data2 RT
+var-weight2 0.25
+var-data3 SPT
+var-weight3 0.25
+order position
+max-cor 80
+const-gap-cost 2.0
+const-gap-cost-start 0.0
+const-gap-cost-end 0.5

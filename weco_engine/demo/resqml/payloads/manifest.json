@@ -1,0 +1,30 @@
+[
+  {
+    "generated": "2026-05-19T06:24:03.129665+00:00",
+    "generator": "demo/resqml/generate_payloads.py",
+    "target_dataspace": "maap/weco",
+    "datasets": {
+      "shallow_marine": {
+        "dataset": "shallow_marine",
+        "wells": 10,
+        "well_objects": 10,
+        "log_objects": 50,
+        "region_objects": 10
+      },
+      "coal": {
+        "dataset": "coal",
+        "wells": 10,
+        "well_objects": 10,
+        "log_objects": 60,
+        "region_objects": 10
+      },
+      "quaternary": {
+        "dataset": "quaternary",
+        "wells": 20,
+        "well_objects": 20,
+        "log_objects": 120,
+        "region_objects": 20
+      }
+    }
+  }
+]

@@ -1,0 +1,11 @@
+# Config: BASIC -- GR+RT variance only (fastest, no constraints)
+# Use case: quick overview, first-pass aquifer mapping
+# Logs: GR (70%), RT (30%)
+#
+var-data GR
+var-weight 0.7
+var-data2 RT
+var-weight2 0.3
+order position
+max-cor 50
+const-gap-cost 1.5

@@ -1,0 +1,41 @@
+# Docker ignore — exclude build artifacts, docs, IDE config
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+*.egg
+dist/
+build/
+.python_build/
+.pytest_cache/
+.tox/
+*.so
+*.o
+*.a
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Old / duplicate source trees
+WeCo-0.9.24/
+WeCo-master/
+examples/
+html/
+
+# Documentation source (not needed at runtime)
+doc_src/
+doc/doc/
+
+# Misc
+*.bat
+*.sh
+*.log
+bin/
+output/

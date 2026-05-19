@@ -1,0 +1,32 @@
+# §5.4 — Radix deployment workflow
+name: Radix Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "radixconfig.yaml"
+      - "Dockerfile"
+      - "weco/**"
+      - "src/**"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: radix
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Trigger Radix build-deploy pipeline
+        run: |
+          curl -s -X POST \
+            -H "Authorization: Bearer ${{ secrets.RADIX_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.RADIX_WEBHOOK_URL }}" \
+            -d '{"branch": "${{ github.ref_name }}"}'
+        env:
+          RADIX_TOKEN: ${{ secrets.RADIX_TOKEN }}
+          RADIX_WEBHOOK_URL: ${{ secrets.RADIX_WEBHOOK_URL }}

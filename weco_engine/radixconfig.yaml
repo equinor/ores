@@ -1,0 +1,55 @@
+# §8.4 — Radix job component for WeCo correlation
+# Equinor Radix deployment configuration
+apiVersion: radix.equinor.com/v1
+kind: RadixApplication
+metadata:
+  name: weco
+spec:
+  environments:
+    - name: dev
+      build:
+        from: main
+    - name: prod
+      build:
+        from: release
+  components:
+    - name: weco-api
+      src: "."
+      dockerfileName: Dockerfile
+      ports:
+        - name: http
+          port: 8000
+      publicPort: http
+      environmentConfig:
+        - environment: dev
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "2Gi"
+              cpu: "2000m"
+          replicas: 1
+        - environment: prod
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "4000m"
+          replicas: 2
+  jobs:
+    - name: weco-correlation
+      src: "."
+      dockerfileName: Dockerfile
+      schedulerPort: 8001
+      payload:
+        path: /input
+      resources:
+        requests:
+          memory: "1Gi"
+          cpu: "1000m"
+        limits:
+          memory: "8Gi"
+          cpu: "4000m"

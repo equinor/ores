@@ -1,0 +1,16 @@
+# Config: BIOZONES — GR+RHOB+DT constrained by biozone markers
+# no-crossing=BIOZONE prevents correlation across biozones
+# Two biozones: BZ1 (base PS2) and BZ2 (base PS4)
+#
+cost-function=composite
+var-data=GR
+var-weight=0.5
+var-data2=RHOB
+var-weight2=0.3
+var-data3=DT
+var-weight3=0.2
+no-crossing=BIOZONE
+order=position
+max-cor=80
+const-gap-cost=2.0
+out-file=result_biozones.txt

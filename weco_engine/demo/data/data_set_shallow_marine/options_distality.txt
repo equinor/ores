@@ -1,0 +1,16 @@
+# Config: DISTALITY — GR+RHOB+DT with distality cost
+# Uses FACIES region for lateral equivalence (dist-facies)
+# Transport direction: along Y (dip direction)
+#
+cost-function=composite
+var-data=GR
+var-weight=0.4
+var-data2=RHOB
+var-weight2=0.3
+var-data3=DT
+var-weight3=0.2
+dist-facies=FACIES
+order=position
+max-cor=80
+const-gap-cost=2.0
+out-file=result_distality.txt

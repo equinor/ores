@@ -1,0 +1,5 @@
+ include src/*.cpp include/weco/config.h.in binding/*.cpp plugin/*.cpp
+ recursive-include include *.h
+ exclude include/weco/config.h
+ include CMakeLists.txt
+ include doc_src/figures/*.png doc_src/*.rst doc_src/conf.py
