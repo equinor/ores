@@ -13,9 +13,14 @@ RUN python -m venv /opt/venv \
     && /opt/venv/bin/pip install --no-cache-dir --upgrade pip \
     && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# Build WeCo from submodule (C++ engine compiled here)
-COPY weco_engine/ /build/weco_engine/
-RUN /opt/venv/bin/pip install --no-cache-dir scikit-build-core pybind11 \
+# Build WeCo from git (submodules not available during Radix build)
+RUN --mount=type=secret,id=WECO_DEPLOY_KEY \
+    mkdir -p /root/.ssh && cp /run/secrets/WECO_DEPLOY_KEY /root/.ssh/id_ed25519 \
+    && chmod 600 /root/.ssh/id_ed25519 \
+    && ssh-keyscan github.com >> /root/.ssh/known_hosts \
+    && git clone --depth 1 git@github.com:equinor/weco.git /build/weco_engine \
+    && rm -rf /root/.ssh \
+    && /opt/venv/bin/pip install --no-cache-dir scikit-build-core pybind11 \
     && /opt/venv/bin/pip install --no-cache-dir /build/weco_engine/
 
 # ── Runtime stage ────────────────────────────────────────────────────
@@ -45,6 +50,9 @@ ENV PATH="/opt/venv/bin:$PATH" \
 COPY app/          ./app/
 COPY demo/         ./demo/
 COPY md/           ./md/
+
+# Copy WeCo demo datasets from builder (for /demos API endpoint)
+COPY --from=builder /build/weco_engine/demo/data/ ./demo/data/
 
 # Own everything by the non-root user
 RUN mkdir -p /data && chown -R ores:ores /app /data

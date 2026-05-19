@@ -10,6 +10,8 @@ spec:
   # ── Build ─────────────────────────────────────────────────────────
   build:
     useBuildKit: true
+    secrets:
+      - WECO_DEPLOY_KEY
 
   environments:
     - name: dev

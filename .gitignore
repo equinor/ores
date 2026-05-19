@@ -36,3 +36,6 @@ ores_tokens.db-shm
 ores_tokens.db-wal
 log.txt
 Readme.comm.md
+# Deploy keys (never commit)
+weco_deploy_key
+weco_deploy_key.pub
