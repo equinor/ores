@@ -3,7 +3,7 @@ FROM python:3.12-slim AS builder
 
 # Build tools needed for WeCo C++ extension
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential g++ cmake ninja-build git \
+        build-essential g++ cmake ninja-build git openssh-client \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
