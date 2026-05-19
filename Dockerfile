@@ -14,8 +14,8 @@ RUN python -m venv /opt/venv \
     && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
 # Build WeCo from git (submodules not available during Radix build)
-RUN --mount=type=secret,id=WECO_DEPLOY_KEY \
-    git clone --depth 1 https://x-access-token:$(cat /run/secrets/WECO_DEPLOY_KEY)@github.com/equinor/weco.git /build/weco_engine \
+ARG WECO_DEPLOY_KEY
+RUN git clone --depth 1 https://x-access-token:${WECO_DEPLOY_KEY}@github.com/equinor/weco.git /build/weco_engine \
     && /opt/venv/bin/pip install --no-cache-dir scikit-build-core pybind11 \
     && /opt/venv/bin/pip install --no-cache-dir /build/weco_engine/
 
