@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Well Correlation{% endblock %}
 {% block content %}
-<h2>Well Correlation <span class="muted" style="font-size:.75em;">(WeCo Engine)</span></h2>
+<h2>Well Correlation <span class="muted" style="font-size:.75em;">(WeCo Engine)</span>
+  <a href="/howto" target="_blank" style="font-size:12px; margin-left:.8rem; color:#0d6efd; text-decoration:none;" title="Documentation & Guides">&#128218; Docs</a>
+</h2>
 <style>
 .wc-wrap { max-width: 98rem; }
 .wc-panel { border:1px solid #e1dfdd; border-radius:8px; background:#fff; padding:.75rem; margin-bottom:.75rem; }
@@ -103,6 +105,23 @@
 
 /* Export */
 .export-option { display:flex; align-items:center; gap:.5rem; padding:.4rem 0; }
+
+/* Object browser */
+.obj-row { display:flex; align-items:center; gap:.4rem; padding:3px 6px; border-bottom:1px solid #f3f2f1; cursor:pointer; }
+.obj-row:hover { background:#f3f2f1; }
+.obj-row.selected { background:#e3f2fd; }
+.obj-row input[type="checkbox"] { margin:0; }
+.obj-row .obj-name { flex:1; font-size:12.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.obj-row .obj-uuid { font-size:10.5px; color:#999; font-family:monospace; }
+.obj-row .obj-date { font-size:10.5px; color:#999; }
+.obj-type-chip { display:inline-block; padding:2px 8px; border-radius:12px; font-size:11.5px; cursor:pointer; border:1px solid #ccc; background:#fff; }
+.obj-type-chip:hover { background:#e3f2fd; border-color:#0d6efd; }
+.obj-type-chip.active { background:#1565c0; color:#fff; border-color:#1565c0; }
+.obj-type-chip .type-count { font-size:10px; opacity:.7; margin-left:3px; }
+
+/* Well chip tooltip */
+.well-chip { position:relative; }
+.well-chip[title] { cursor:pointer; }
 </style>
 
 <!-- Health indicator -->
@@ -152,6 +171,7 @@
               <button class="btn btn-outline btn-sm" id="btn-select-all-wells" style="margin-left:.4rem;">All</button>
               <button class="btn btn-outline btn-sm" id="btn-select-none-wells">None</button>
             </div>
+            <input type="text" id="well-filter" placeholder="Filter wells by name..." style="width:100%; font-size:12px; padding:3px 6px; border:1px solid #ccc; border-radius:3px; margin-bottom:.3rem;">
             <div id="well-chips" class="well-list"></div>
             <div style="margin-top:.4rem; font-size:12px; color:#605e5c;">
               <span>Logs: <strong id="data-names">-</strong></span> |
@@ -160,6 +180,31 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <section class="wc-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:.5rem;">
+        <h3 style="margin:0;">RESQML Object Browser</h3>
+        <span class="muted" style="font-size:12px;">Browse &amp; multi-select objects in the active dataspace</span>
+      </div>
+      <div id="obj-browser" style="display:none;">
+        <div style="display:flex; gap:.5rem; align-items:center; margin-bottom:.4rem; flex-wrap:wrap;">
+          <select id="obj-type-select" style="font-size:12.5px; padding:3px 6px; min-width:200px;">
+            <option value="">-- Select type --</option>
+          </select>
+          <button class="btn btn-outline btn-sm" id="btn-obj-load">Load</button>
+          <input type="text" id="obj-filter" placeholder="Filter by name / UUID..." style="flex:1; min-width:120px; font-size:12px; padding:3px 6px; border:1px solid #ccc; border-radius:3px;">
+          <span id="obj-count" class="muted" style="font-size:12px;"></span>
+        </div>
+        <div id="obj-type-chips" style="margin-bottom:.4rem; display:flex; gap:.3rem; flex-wrap:wrap;"></div>
+        <div id="obj-list" class="well-list" style="max-height:220px; font-size:12.5px;"></div>
+        <div style="margin-top:.3rem; display:flex; gap:.4rem; align-items:center;">
+          <button class="btn btn-outline btn-sm" id="btn-obj-select-all">All</button>
+          <button class="btn btn-outline btn-sm" id="btn-obj-select-none">None</button>
+          <span id="obj-selected-count" class="muted" style="font-size:12px;"></span>
+        </div>
+      </div>
+      <div id="obj-browser-hint" class="muted" style="font-size:12.5px;">Select a dataspace above, then click Import or browse objects here.</div>
     </section>
 
     <section class="wc-panel">

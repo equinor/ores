@@ -272,6 +272,8 @@ async def _rddms_import_wells(token: str, dataspace: str):
             # Build Well geometry
             w = Well()
             w.name = name
+            w.meta["uuid"] = traj_uuid
+            w.meta["dataspace"] = dataspace
 
             if points is not None and len(points) > 0:
                 w.size = len(points)
@@ -1095,22 +1097,25 @@ async def weco_import_demo_from_rddms(demo_id: str, request: Request,
             mds = None
             points = None
             for arr in arrays_meta:
-                path = arr.get("PathInResource") or arr.get("path") or ""
-                if "Geometry" in path or "ControlPoints" in path:
+                path = _arr_path(arr)
+                if "controlPointParameters" in path or "MdValues" in path or "mdValues" in path:
                     arr_data = await osdu.read_array(
                         token, ds_enc, TRAJ_TYPE, traj_uuid, path_in_resource=path)
-                    values = arr_data.get("values") or arr_data.get("Values") or []
-                    if values:
-                        points = np.array(values, dtype=np.float64).reshape(-1, 3)
-                elif "md" in path.lower() or "MdValues" in path:
-                    arr_data = await osdu.read_array(
-                        token, ds_enc, TRAJ_TYPE, traj_uuid, path_in_resource=path)
-                    values = arr_data.get("values") or arr_data.get("Values") or []
+                    values = _arr_values(arr_data)
                     if values:
                         mds = np.array(values, dtype=np.float64)
+                elif "controlPoints" in path or "ControlPoints" in path or "Geometry" in path:
+                    arr_data = await osdu.read_array(
+                        token, ds_enc, TRAJ_TYPE, traj_uuid, path_in_resource=path)
+                    values = _arr_values(arr_data)
+                    if values:
+                        points = np.array(values, dtype=np.float64).reshape(-1, 3)
 
             w = Well()
             w.name = wname
+            w.meta["uuid"] = traj_uuid
+            w.meta["demo"] = demo_id
+            w.meta["dataspace"] = dataspace
             if points is not None and len(points) > 0:
                 w.size = len(points)
                 w.x = float(points[0, 0])
@@ -1141,12 +1146,12 @@ async def weco_import_demo_from_rddms(demo_id: str, request: Request,
                     p_arrays = await osdu.list_arrays(
                         token, ds_enc, CONT_PROP_TYPE, prop_uuid)
                     for pa in p_arrays:
-                        pa_path = pa.get("PathInResource") or pa.get("path") or ""
-                        if "values" in pa_path.lower() or "Values" in pa_path or "patch" in pa_path.lower():
+                        pa_path = _arr_path(pa)
+                        if "values" in pa_path.lower() or "patch" in pa_path.lower():
                             arr_data = await osdu.read_array(
                                 token, ds_enc, CONT_PROP_TYPE, prop_uuid,
                                 path_in_resource=pa_path)
-                            vals = arr_data.get("values") or arr_data.get("Values") or []
+                            vals = _arr_values(arr_data)
                             if vals:
                                 w.data[log_name] = list(np.array(vals, dtype=np.float64)[:w.size])
                                 break
@@ -1217,6 +1222,58 @@ async def weco_dataspaces(request: Request):
         raise HTTPException(500, f"Cannot list dataspaces: {e}")
 
 
+# RESQML types relevant for WeCo correlation workflows
+WECO_OBJECT_TYPES = [
+    {"type": "resqml20.obj_WellboreTrajectoryRepresentation", "label": "Trajectories", "group": "wells"},
+    {"type": "resqml20.obj_WellboreFrameRepresentation", "label": "Log Frames", "group": "wells"},
+    {"type": "resqml20.obj_ContinuousProperty", "label": "Continuous Logs", "group": "wells"},
+    {"type": "resqml20.obj_DiscreteProperty", "label": "Discrete/Facies", "group": "wells"},
+    {"type": "resqml20.obj_WellboreMarkerFrameRepresentation", "label": "Markers", "group": "strat"},
+    {"type": "resqml20.obj_StratigraphicColumn", "label": "Strat Columns", "group": "strat"},
+    {"type": "resqml20.obj_StratigraphicColumnRankInterpretation", "label": "Strat Ranks", "group": "strat"},
+    {"type": "resqml20.obj_WellboreFeature", "label": "Wellbore Features", "group": "meta"},
+    {"type": "resqml20.obj_WellboreInterpretation", "label": "Wellbore Interp.", "group": "meta"},
+    {"type": "resqml20.obj_MdDatum", "label": "MD Datums", "group": "meta"},
+    {"type": "resqml20.obj_LocalDepth3dCrs", "label": "CRS", "group": "meta"},
+    {"type": "eml20.obj_EpcExternalPartReference", "label": "HDF Proxy", "group": "meta"},
+]
+
+
+@router.get("/objects/types")
+async def weco_object_types():
+    """Return the list of supported RESQML/EML types for the object browser."""
+    return {"types": WECO_OBJECT_TYPES}
+
+
+@router.get("/objects")
+async def weco_list_objects(request: Request, dataspace: str, type: str):
+    """List RESQML objects of a given type in a dataspace.
+
+    Returns name, uuid, lastChanged for multi-select in the UI.
+    """
+    token = _get_token(request)
+    if not token:
+        raise HTTPException(401, "Not authenticated.")
+    from . import osdu
+    ds_enc = urllib.parse.quote(dataspace, safe="")
+    try:
+        raw = await osdu.list_resources(token, ds_enc, type)
+    except Exception as e:
+        raise HTTPException(502, f"RDDMS error: {e}")
+    objects = []
+    for r in raw:
+        uuid = _uuid_from_uri(r.get("uri", "")) if r.get("uri") else r.get("Uuid", "")
+        name = r.get("name") or r.get("title") or (r.get("Citation") or {}).get("Title") or uuid[:12]
+        objects.append({
+            "uuid": uuid,
+            "name": name,
+            "lastChanged": r.get("lastChanged", ""),
+            "storeCreated": r.get("storeCreated", ""),
+        })
+    objects.sort(key=lambda o: o["name"])
+    return {"type": type, "count": len(objects), "objects": objects}
+
+
 @router.get("/wells")
 async def weco_wells_info():
     """Return info about currently loaded wells (without re-importing)."""
@@ -1237,6 +1294,8 @@ async def weco_wells_info():
                 "x": w.x, "y": w.y, "z": w.z, "h": w.h,
                 "data_names": list(w.data.keys()),
                 "region_names": list(w.region.keys()),
+                "uuid": (w.meta or {}).get("uuid", ""),
+                "demo": (w.meta or {}).get("demo", ""),
             }
             for w in wl.wells
         ],

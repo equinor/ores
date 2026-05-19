@@ -206,13 +206,25 @@
   }
 
   function renderWellChips(names) {
+    const filter = (($('#well-filter') || {}).value || '').toLowerCase();
     wellChips.innerHTML = names.map(n => {
       const sel = selectedWells.has(n);
+      if (filter && !n.toLowerCase().includes(filter)) return '';
       // Show log availability indicator if wellDetails loaded
       const wd = wellDetails.find(w => w.name === n);
       const logCount = wd ? wd.data_names.length : 0;
       const logBadge = logCount ? `<span class="log-badge">${logCount} logs</span>` : '';
-      return `<span class="well-chip ${sel ? 'selected' : 'excluded'}" data-name="${esc(n)}">${esc(n)} ${logBadge}</span>`;
+      // Tooltip with metadata
+      let tip = n;
+      if (wd) {
+        tip = `${n}\nSize: ${wd.size} pts`;
+        if (wd.x !== undefined) tip += `\nX: ${wd.x.toFixed(1)}, Y: ${wd.y.toFixed(1)}, Z: ${wd.z.toFixed(1)}`;
+        if (wd.data_names) tip += `\nLogs: ${wd.data_names.join(', ')}`;
+        if (wd.region_names && wd.region_names.length) tip += `\nRegions: ${wd.region_names.join(', ')}`;
+        if (wd.uuid) tip += `\nUUID: ${wd.uuid}`;
+        if (wd.demo) tip += `\nDemo: ${wd.demo}`;
+      }
+      return `<span class="well-chip ${sel ? 'selected' : 'excluded'}" data-name="${esc(n)}" title="${esc(tip)}">${esc(n)} ${logBadge}</span>`;
     }).join('');
     // Click to toggle selection
     wellChips.querySelectorAll('.well-chip').forEach(chip => {
@@ -229,6 +241,15 @@
         }
         wellCount.textContent = selectedWells.size;
       });
+    });
+  }
+
+  // Well filter input
+  const wellFilter = $('#well-filter');
+  if (wellFilter) {
+    wellFilter.addEventListener('input', () => {
+      const names = importedWells ? (importedWells.well_names || []) : [];
+      renderWellChips(names);
     });
   }
 
@@ -1014,5 +1035,146 @@
       setStatus(workflowStatus, 'err', 'Delete failed: ' + e.message);
     }
   }
+
+  // ── RESQML Object Browser ──────────────────────────────────────────
+  const objBrowser = $('#obj-browser');
+  const objBrowserHint = $('#obj-browser-hint');
+  const objTypeSelect = $('#obj-type-select');
+  const objTypeChips = $('#obj-type-chips');
+  const objFilter = $('#obj-filter');
+  const objList = $('#obj-list');
+  const objCount = $('#obj-count');
+  const objSelectedCount = $('#obj-selected-count');
+  const btnObjLoad = $('#btn-obj-load');
+  const btnObjSelectAll = $('#btn-obj-select-all');
+  const btnObjSelectNone = $('#btn-obj-select-none');
+
+  let objTypes = [];
+  let objCache = {}; // type -> [{uuid, name, lastChanged, storeCreated}]
+  let objSelected = new Set(); // "type::uuid" keys
+
+  async function loadObjectTypes() {
+    try {
+      const resp = await api('GET', '/objects/types');
+      objTypes = resp.types || [];
+      objTypeSelect.innerHTML = '<option value="">-- Select type --</option>' +
+        objTypes.map(t => `<option value="${esc(t.type)}">${esc(t.label)} (${esc(t.group)})</option>`).join('');
+    } catch(e) { /* silent */ }
+  }
+  loadObjectTypes();
+
+  // Show browser when a dataspace is selected
+  dsSel.addEventListener('change', () => {
+    if (dsSel.value) {
+      objBrowser.style.display = 'block';
+      objBrowserHint.style.display = 'none';
+      objCache = {};
+      objTypeChips.innerHTML = '';
+      objList.innerHTML = '';
+      objCount.textContent = '';
+    }
+  });
+
+  btnObjLoad.addEventListener('click', async () => {
+    const ds = dsSel.value;
+    const typ = objTypeSelect.value;
+    if (!ds || !typ) return;
+    objCount.textContent = 'Loading...';
+    try {
+      const resp = await api('GET', `/objects?dataspace=${encodeURIComponent(ds)}&type=${encodeURIComponent(typ)}`);
+      objCache[typ] = resp.objects || [];
+      renderObjTypeChips();
+      renderObjList(typ);
+    } catch(e) {
+      objCount.textContent = 'Error: ' + e.message;
+    }
+  });
+
+  function renderObjTypeChips() {
+    objTypeChips.innerHTML = Object.keys(objCache).map(typ => {
+      const info = objTypes.find(t => t.type === typ);
+      const label = info ? info.label : typ.split('.').pop();
+      const count = objCache[typ].length;
+      return `<span class="obj-type-chip active" data-type="${esc(typ)}">${esc(label)}<span class="type-count">(${count})</span></span>`;
+    }).join('');
+    objTypeChips.querySelectorAll('.obj-type-chip').forEach(chip => {
+      chip.addEventListener('click', () => renderObjList(chip.dataset.type));
+    });
+  }
+
+  function renderObjList(typ) {
+    const objects = objCache[typ] || [];
+    const filter = (objFilter.value || '').toLowerCase();
+    const filtered = objects.filter(o =>
+      !filter || o.name.toLowerCase().includes(filter) || o.uuid.toLowerCase().includes(filter)
+    );
+    objCount.textContent = `${filtered.length}/${objects.length} objects`;
+    objList.innerHTML = filtered.map(o => {
+      const key = `${typ}::${o.uuid}`;
+      const checked = objSelected.has(key) ? 'checked' : '';
+      const date = o.lastChanged ? new Date(o.lastChanged).toLocaleDateString() : '';
+      return `<div class="obj-row ${checked ? 'selected' : ''}" data-key="${esc(key)}">
+        <input type="checkbox" ${checked}>
+        <span class="obj-name" title="${esc(o.name)}">${esc(o.name)}</span>
+        <span class="obj-uuid">${esc(o.uuid.slice(0,8))}…</span>
+        <span class="obj-date">${esc(date)}</span>
+      </div>`;
+    }).join('');
+    // Click to toggle
+    objList.querySelectorAll('.obj-row').forEach(row => {
+      row.addEventListener('click', (e) => {
+        if (e.target.tagName === 'INPUT') return; // handled by checkbox
+        const key = row.dataset.key;
+        const cb = row.querySelector('input[type="checkbox"]');
+        if (objSelected.has(key)) {
+          objSelected.delete(key);
+          cb.checked = false;
+          row.classList.remove('selected');
+        } else {
+          objSelected.add(key);
+          cb.checked = true;
+          row.classList.add('selected');
+        }
+        updateObjSelectedCount();
+      });
+      const cb = row.querySelector('input[type="checkbox"]');
+      cb.addEventListener('change', () => {
+        const key = row.dataset.key;
+        if (cb.checked) { objSelected.add(key); row.classList.add('selected'); }
+        else { objSelected.delete(key); row.classList.remove('selected'); }
+        updateObjSelectedCount();
+      });
+    });
+    updateObjSelectedCount();
+  }
+
+  function updateObjSelectedCount() {
+    objSelectedCount.textContent = objSelected.size ? `${objSelected.size} selected` : '';
+  }
+
+  if (objFilter) objFilter.addEventListener('input', () => {
+    const typ = objTypeSelect.value;
+    if (typ && objCache[typ]) renderObjList(typ);
+  });
+
+  btnObjSelectAll.addEventListener('click', () => {
+    objList.querySelectorAll('.obj-row').forEach(row => {
+      const key = row.dataset.key;
+      objSelected.add(key);
+      row.classList.add('selected');
+      row.querySelector('input[type="checkbox"]').checked = true;
+    });
+    updateObjSelectedCount();
+  });
+
+  btnObjSelectNone.addEventListener('click', () => {
+    objList.querySelectorAll('.obj-row').forEach(row => {
+      const key = row.dataset.key;
+      objSelected.delete(key);
+      row.classList.remove('selected');
+      row.querySelector('input[type="checkbox"]').checked = false;
+    });
+    updateObjSelectedCount();
+  });
 
 })();
