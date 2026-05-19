@@ -5,7 +5,7 @@
 FROM python:3.12-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential g++ cmake ninja-build git openssh-client \
+        build-essential g++ cmake ninja-build git \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
@@ -17,11 +17,7 @@ RUN python -m venv /opt/venv \
 
 # Build WeCo C++ engine (submodules not available during Radix build)
 RUN --mount=type=secret,id=WECO_DEPLOY_KEY \
-    mkdir -p /root/.ssh && cp /run/secrets/WECO_DEPLOY_KEY /root/.ssh/id_ed25519 \
-    && chmod 600 /root/.ssh/id_ed25519 \
-    && ssh-keyscan github.com >> /root/.ssh/known_hosts \
-    && git clone --depth 1 git@github.com:equinor/weco.git /build/weco_engine \
-    && rm -rf /root/.ssh \
+    git clone --depth 1 https://x-access-token:$(cat /run/secrets/WECO_DEPLOY_KEY)@github.com/equinor/weco.git /build/weco_engine \
     && /opt/venv/bin/pip install --no-cache-dir scikit-build-core pybind11 \
     && /opt/venv/bin/pip install --no-cache-dir /build/weco_engine/
 
