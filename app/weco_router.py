@@ -481,11 +481,11 @@ def weco_page(request: Request):
 def weco_health():
     """Check if WeCo correlation engine is available (in-process)."""
     try:
-        from weco.api import __version__ as weco_version
+        from importlib.metadata import version as pkg_version
         from weco.ext import ProjectExt
         # Quick sanity: can we instantiate the engine?
         _p = ProjectExt()
-        return WecoStatusResponse(connected=True, version=weco_version, engine=True)
+        return WecoStatusResponse(connected=True, version=pkg_version("weco"), engine=True)
     except Exception as e:
         log.warning(f"WeCo engine not available: {e}")
         return WecoStatusResponse(connected=False)
