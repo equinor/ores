@@ -672,7 +672,8 @@ async def weco_run(req: WecoRunRequest, request: Request):
         filtered = [w for w in wl.wells if w.name in selected]
         if not filtered:
             raise HTTPException(400, "No matching wells found in selection.")
-        wl = WellList(filtered)
+        wl = WellList.__new__(WellList)
+        wl.wells = filtered
 
     n_wells = len(wl.wells)
 
@@ -684,11 +685,13 @@ async def weco_run(req: WecoRunRequest, request: Request):
     try:
         from weco.api import _run_engine, _extract_results
         safe_opts = _apply_memory_guards(req.options, n_wells)
+        log.info(f"Running correlation: {n_wells} wells, options={safe_opts}, n_best={req.n_best}")
         rf, data, elapsed = _run_engine(wl, safe_opts)
         results = _extract_results(rf, data, req.n_best)
     except HTTPException:
         raise
     except Exception as e:
+        log.exception(f"Correlation engine error: options={req.options}, n_wells={n_wells}")
         raise HTTPException(500, f"Correlation engine error: {e}")
 
     well_names = [w.name for w in wl.wells]
