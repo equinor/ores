@@ -169,6 +169,10 @@
       matched++;
     });
     dsCount.textContent = (q1 || q2) ? `${matched}/${allDataspaces.length}` : `${allDataspaces.length}`;
+    // Auto-select first available dataspace
+    if (dsSel.options.length > 0 && !dsSel.value) {
+      dsSel.selectedIndex = 0;
+    }
   }
 
   dsF1.addEventListener('input', applyDsFilter);
@@ -763,7 +767,14 @@
 
   function updateResultView(results, idx, data) {
     renderResultCard(results, idx, data.well_names);
-    drawCorrelationPlot(data, idx);
+    // Ensure plot container is visible before measuring canvas
+    resultsPlot.style.display = 'block';
+    // Defer drawing until the browser has laid out the canvas
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        drawCorrelationPlot(data, idx);
+      });
+    });
     // Update cost label and highlight in ranking
     const r = results[idx];
     resCostLabel.textContent = r ? `Cost: ${r.cost != null ? r.cost.toFixed(4) : '-'} | ${(r.lines||[]).length} lines` : '';
@@ -811,10 +822,13 @@
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
+    // Fallback if canvas not yet laid out (tab just became visible)
+    const cw = rect.width > 0 ? rect.width : canvas.parentElement.clientWidth || 800;
+    const ch = rect.height > 0 ? rect.height : 420;
+    canvas.width = cw * dpr;
+    canvas.height = ch * dpr;
     ctx.scale(dpr, dpr);
-    ctx.clearRect(0, 0, rect.width, rect.height);
+    ctx.clearRect(0, 0, cw, ch);
 
     const nWells = data.n_wells || 0;
     const wellNames = data.well_names || [];
@@ -838,8 +852,8 @@
 
     // Layout
     const margin = {top: 35, bottom: 25, left: 40, right: 15};
-    const W = rect.width - margin.left - margin.right;
-    const H = rect.height - margin.top - margin.bottom;
+    const W = cw - margin.left - margin.right;
+    const H = ch - margin.top - margin.bottom;
     const wellWidth = 70;
     const wellSpacing = Math.min((W - wellWidth) / Math.max(nWells - 1, 1), 200);
     const totalWidth = wellSpacing * (nWells - 1) + wellWidth;
@@ -1027,7 +1041,7 @@
       ctx.lineWidth = 0.5;
       ctx.beginPath();
       ctx.moveTo(margin.left, y);
-      ctx.lineTo(rect.width - margin.right, y);
+      ctx.lineTo(cw - margin.right, y);
       ctx.stroke();
     }
 
@@ -1036,7 +1050,7 @@
       ctx.font = '9px sans-serif';
       ctx.textAlign = 'left';
       ctx.fillStyle = '#555';
-      ctx.fillText('Zones: ' + plotData[0].region_names.join(', '), margin.left, rect.height - 6);
+      ctx.fillText('Zones: ' + plotData[0].region_names.join(', '), margin.left, ch - 6);
     }
   }
 
