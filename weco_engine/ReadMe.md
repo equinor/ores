@@ -262,6 +262,7 @@ For development iteration without reinstalling:
 ```bash
 pip install -e . --no-build-isolation
 ```
+git subtree pull --prefix weco_engine https://github.com/equinor/weco.git main --squash
 
 ---
 
