@@ -245,9 +245,11 @@ async def read_array(
     path_in_resource: str,
 ) -> dict[str, Any]:
     """GET content of an array."""
+    import urllib.parse
+    encoded_path = urllib.parse.quote(path_in_resource, safe="")
     async with _http() as client:
         r = await client.get(
-            _rddms_url(f"/dataspaces/{ds_enc}/resources/{typ}/{uuid}/arrays/{path_in_resource}"),
+            _rddms_url(f"/dataspaces/{ds_enc}/resources/{typ}/{uuid}/arrays/{encoded_path}"),
             headers=headers(access_token),
         )
         r.raise_for_status()

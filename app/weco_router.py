@@ -103,6 +103,7 @@ _cached_well_list = None
 #  RDDMS → WeCo Well conversion (uses ORES native osdu.py, no gocad)
 # ═══════════════════════════════════════════════════════════════════════════
 
+import re as _re
 import urllib.parse
 import uuid as uuid_mod
 import numpy as np
@@ -117,6 +118,67 @@ def _demo_uuid(demo_key: str, well_name: str, suffix: str = "") -> str:
     if suffix:
         seed += f"/{suffix}"
     return str(uuid_mod.uuid5(_WECO_NS, seed))
+
+
+def _uuid_from_uri(uri: str) -> str:
+    """Extract UUID from an EML resource URI.
+
+    'eml:///dataspace('x')/resqml20.obj_Foo(uuid-here)' → 'uuid-here'
+    """
+    m = _re.search(r"\(([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\)", uri)
+    return m.group(1) if m else ""
+
+
+def _normalize_summaries(summaries: list) -> list:
+    """Normalize RDDMS resource summaries to have 'uuid' and 'title' keys.
+
+    list_resources returns: {uri, name, lastChanged, ...}
+    We add: uuid (parsed from uri), title (from name field).
+    """
+    for s in summaries:
+        if "uuid" not in s and "Uuid" not in s and "UUID" not in s:
+            s["uuid"] = _uuid_from_uri(s.get("uri", ""))
+        if "title" not in s:
+            s["title"] = s.get("name", "")
+    return summaries
+
+
+def _get_uuid(res: dict) -> str:
+    """Get UUID from a resource (works for both summaries and full objects)."""
+    return (res.get("uuid") or res.get("Uuid") or res.get("UUID")
+            or _uuid_from_uri(res.get("uri", "")))
+
+
+def _get_title(res: dict) -> str:
+    """Get title from a resource (works for both summaries and full objects)."""
+    return (res.get("title") or res.get("name")
+            or (res.get("Citation") or {}).get("Title") or "")
+
+
+def _arr_path(arr_meta: dict) -> str:
+    """Extract pathInResource from an array metadata entry.
+
+    list_arrays returns: {uid: {uri, pathInResource}, dimensions, ...}
+    """
+    uid = arr_meta.get("uid") or {}
+    if isinstance(uid, dict):
+        return uid.get("pathInResource", "")
+    return arr_meta.get("PathInResource") or arr_meta.get("path") or ""
+
+
+def _arr_values(arr_data: dict) -> list:
+    """Extract flat values from a read_array response.
+
+    read_array returns: {uid: {...}, data: {data: [values...]}}
+    """
+    # New format: {data: {data: [...]}}
+    data_wrapper = arr_data.get("data")
+    if isinstance(data_wrapper, dict):
+        vals = data_wrapper.get("data")
+        if vals is not None:
+            return vals
+    # Fallback: direct keys
+    return arr_data.get("values") or arr_data.get("Values") or []
 
 
 async def _rddms_import_wells(token: str, dataspace: str):
@@ -141,24 +203,23 @@ async def _rddms_import_wells(token: str, dataspace: str):
     DISC_PROP_TYPE = "resqml20.obj_DiscreteProperty"
 
     # Step 1: list trajectories (defines well geometry)
-    trajectories = await osdu.list_resources(token, ds_enc, TRAJ_TYPE)
+    trajectories = _normalize_summaries(await osdu.list_resources(token, ds_enc, TRAJ_TYPE))
     if not trajectories:
         raise HTTPException(404, f"No wells found in dataspace '{dataspace}'")
 
     # Step 2: list frames & properties (will be matched to wells by reference)
-    frames = await osdu.list_resources(token, ds_enc, FRAME_TYPE)
-    cont_props = await osdu.list_resources(token, ds_enc, CONT_PROP_TYPE)
-    disc_props = await osdu.list_resources(token, ds_enc, DISC_PROP_TYPE)
+    frames = _normalize_summaries(await osdu.list_resources(token, ds_enc, FRAME_TYPE))
+    cont_props = _normalize_summaries(await osdu.list_resources(token, ds_enc, CONT_PROP_TYPE))
+    disc_props = _normalize_summaries(await osdu.list_resources(token, ds_enc, DISC_PROP_TYPE))
 
     # Build lookup: trajectory UUID → frame UUIDs
-    # Frames reference their parent trajectory via RepresentedInterpretation or SupportingRepresentation
+    # Match by title convention: frame "Well_01_Logs" → traj "Well_01"
     traj_to_frames: dict = {}
     frame_by_uuid: dict = {}
     for fr in frames:
-        fr_uuid = fr.get("UUID") or fr.get("Uuid") or ""
+        fr_uuid = _get_uuid(fr)
         frame_by_uuid[fr_uuid] = fr
-        # RESQML links frame→trajectory via title naming convention or reference
-        # Common patterns: frame title = "well_name frame" or explicit ref
+        # Try explicit parent ref (only available in full objects)
         parent_ref = _extract_parent_uuid(fr)
         if parent_ref:
             traj_to_frames.setdefault(parent_ref, []).append(fr_uuid)
@@ -167,26 +228,24 @@ async def _rddms_import_wells(token: str, dataspace: str):
     frame_to_cont: dict = {}
     frame_to_disc: dict = {}
     for prop in cont_props:
-        p_uuid = prop.get("UUID") or prop.get("Uuid") or ""
+        p_uuid = _get_uuid(prop)
         parent = _extract_parent_uuid(prop)
         if parent:
             frame_to_cont.setdefault(parent, []).append((p_uuid, prop))
     for prop in disc_props:
-        p_uuid = prop.get("UUID") or prop.get("Uuid") or ""
+        p_uuid = _get_uuid(prop)
         parent = _extract_parent_uuid(prop)
         if parent:
             frame_to_disc.setdefault(parent, []).append((p_uuid, prop))
 
-    # If no explicit parent references found, try matching by title prefix
-    if not traj_to_frames:
-        _match_by_title(trajectories, frames, traj_to_frames, frame_by_uuid)
-    if not frame_to_cont and not frame_to_disc:
-        _match_props_by_title(frames, cont_props, disc_props, frame_to_cont, frame_to_disc)
+    # Always use title-matching for summaries (they don't have parent refs)
+    _match_by_title(trajectories, frames, traj_to_frames, frame_by_uuid)
+    _match_props_by_title(frames, cont_props, disc_props, frame_to_cont, frame_to_disc)
 
     wells = []
     for res in trajectories:
-        traj_uuid = res.get("UUID") or res.get("Uuid") or ""
-        name = res.get("Citation", {}).get("Title") or res.get("Title") or traj_uuid[:8]
+        traj_uuid = _get_uuid(res)
+        name = _get_title(res) or traj_uuid[:8]
 
         try:
             # Read trajectory arrays (geometry)
@@ -195,19 +254,20 @@ async def _rddms_import_wells(token: str, dataspace: str):
             points = None
             mds = None
             for arr in arrays_meta:
-                path = arr.get("PathInResource") or arr.get("path") or ""
-                if "Geometry" in path or "ControlPoints" in path or "controlPoints" in path:
+                path = _arr_path(arr)
+                # Check MD/parameters first (more specific match)
+                if "controlPointParameters" in path or "MdValues" in path or "mdValues" in path:
                     arr_data = await osdu.read_array(
                         token, ds_enc, TRAJ_TYPE, traj_uuid, path_in_resource=path)
-                    values = arr_data.get("values") or arr_data.get("Values") or []
-                    if values:
-                        points = np.array(values, dtype=np.float64).reshape(-1, 3)
-                elif "MdValues" in path or "md" in path.lower():
-                    arr_data = await osdu.read_array(
-                        token, ds_enc, TRAJ_TYPE, traj_uuid, path_in_resource=path)
-                    values = arr_data.get("values") or arr_data.get("Values") or []
+                    values = _arr_values(arr_data)
                     if values:
                         mds = np.array(values, dtype=np.float64)
+                elif "controlPoints" in path or "ControlPoints" in path or "Geometry" in path:
+                    arr_data = await osdu.read_array(
+                        token, ds_enc, TRAJ_TYPE, traj_uuid, path_in_resource=path)
+                    values = _arr_values(arr_data)
+                    if values:
+                        points = np.array(values, dtype=np.float64).reshape(-1, 3)
 
             # Build Well geometry
             w = Well()
@@ -245,20 +305,21 @@ async def _rddms_import_wells(token: str, dataspace: str):
 
                 # Read continuous properties (log curves)
                 for p_uuid, prop_meta in frame_to_cont.get(fr_uuid, []):
-                    prop_name = (prop_meta.get("Citation", {}).get("Title")
-                                 or prop_meta.get("Title") or p_uuid[:8])
+                    prop_name = _get_title(prop_meta) or p_uuid[:8]
+                    # Strip well name prefix: "Well_01_GR" → "GR"
+                    if '_' in prop_name and prop_name.startswith(name):
+                        prop_name = prop_name[len(name)+1:]
                     try:
                         p_arrays = await osdu.list_arrays(
                             token, ds_enc, CONT_PROP_TYPE, p_uuid)
                         for pa in p_arrays:
-                            pa_path = pa.get("PathInResource") or pa.get("path") or ""
-                            if "Values" in pa_path or "values" in pa_path or "PatchOf" in pa_path:
+                            pa_path = _arr_path(pa)
+                            if "values" in pa_path.lower() or "patch" in pa_path.lower():
                                 arr_data = await osdu.read_array(
                                     token, ds_enc, CONT_PROP_TYPE, p_uuid,
                                     path_in_resource=pa_path)
-                                vals = arr_data.get("values") or arr_data.get("Values") or []
+                                vals = _arr_values(arr_data)
                                 if vals:
-                                    # Resample to well grid if lengths differ
                                     log_vals = _resample_to_well(
                                         vals, frame_mds, w.size, w.data.get("Depth"))
                                     w.data[prop_name] = log_vals
@@ -268,21 +329,20 @@ async def _rddms_import_wells(token: str, dataspace: str):
 
                 # Read discrete properties (regions)
                 for p_uuid, prop_meta in frame_to_disc.get(fr_uuid, []):
-                    prop_name = (prop_meta.get("Citation", {}).get("Title")
-                                 or prop_meta.get("Title") or p_uuid[:8])
+                    prop_name = _get_title(prop_meta) or p_uuid[:8]
+                    if '_' in prop_name and prop_name.startswith(name):
+                        prop_name = prop_name[len(name)+1:]
                     try:
                         p_arrays = await osdu.list_arrays(
                             token, ds_enc, DISC_PROP_TYPE, p_uuid)
                         for pa in p_arrays:
-                            pa_path = pa.get("PathInResource") or pa.get("path") or ""
-                            if "Values" in pa_path or "values" in pa_path or "PatchOf" in pa_path:
+                            pa_path = _arr_path(pa)
+                            if "values" in pa_path.lower() or "patch" in pa_path.lower():
                                 arr_data = await osdu.read_array(
                                     token, ds_enc, DISC_PROP_TYPE, p_uuid,
                                     path_in_resource=pa_path)
-                                vals = arr_data.get("values") or arr_data.get("Values") or []
+                                vals = _arr_values(arr_data)
                                 if vals:
-                                    # Convert discrete values to WeCo region format
-                                    # (start_idx, end_idx, value) tuples
                                     regions = _discrete_to_regions(
                                         vals, frame_mds, w.size, w.data.get("Depth"))
                                     if regions:
@@ -332,42 +392,67 @@ def _extract_parent_uuid(resource: dict) -> str:
 
 
 def _match_by_title(trajectories, frames, traj_to_frames, frame_by_uuid):
-    """Fallback: match frames to trajectories by title prefix."""
+    """Fallback: match frames to trajectories by title prefix.
+
+    Frame title "Well_01_Logs" matches traj title "Well_01".
+    """
     traj_names = {}
     for t in trajectories:
-        uid = t.get("UUID") or t.get("Uuid") or ""
-        title = t.get("Citation", {}).get("Title") or t.get("Title") or ""
-        if title:
-            traj_names[title.lower().split()[0]] = uid
+        uid = _get_uuid(t)
+        title = _get_title(t)
+        if title and uid:
+            # Use full title as key (lowered) for matching
+            traj_names[title.lower()] = uid
 
     for fr in frames:
-        fr_uuid = fr.get("UUID") or fr.get("Uuid") or ""
-        fr_title = fr.get("Citation", {}).get("Title") or fr.get("Title") or ""
-        prefix = fr_title.lower().split()[0] if fr_title else ""
-        if prefix in traj_names:
-            traj_to_frames.setdefault(traj_names[prefix], []).append(fr_uuid)
+        fr_uuid = _get_uuid(fr)
+        if not fr_uuid or fr_uuid in [u for uuids in traj_to_frames.values() for u in uuids]:
+            continue  # already matched
+        fr_title = _get_title(fr)
+        if not fr_title:
+            continue
+        # Strip common suffixes: "_Logs", "_Frame", " frame", etc.
+        base = _re.sub(r'[_\s](?:Logs|Frame|frame|logs)$', '', fr_title).lower()
+        if base in traj_names:
+            traj_to_frames.setdefault(traj_names[base], []).append(fr_uuid)
 
 
 def _match_props_by_title(frames, cont_props, disc_props, frame_to_cont, frame_to_disc):
-    """Fallback: match properties to frames by title prefix."""
+    """Fallback: match properties to frames by title prefix.
+
+    Property title "Well_01_GR" matches frame title "Well_01_Logs" via common prefix "Well_01".
+    """
     frame_names = {}
     for fr in frames:
-        uid = fr.get("UUID") or fr.get("Uuid") or ""
-        title = fr.get("Citation", {}).get("Title") or fr.get("Title") or ""
-        if title:
-            frame_names[title.lower().split()[0]] = uid
+        uid = _get_uuid(fr)
+        title = _get_title(fr)
+        if title and uid:
+            # Strip "_Logs" suffix to get well name
+            base = _re.sub(r'[_\s](?:Logs|Frame|frame|logs)$', '', title).lower()
+            frame_names[base] = uid
 
     for prop in cont_props:
-        p_uuid = prop.get("UUID") or prop.get("Uuid") or ""
-        title = prop.get("Citation", {}).get("Title") or prop.get("Title") or ""
-        prefix = title.lower().split()[0] if title else ""
+        p_uuid = _get_uuid(prop)
+        if not p_uuid:
+            continue
+        title = _get_title(prop)
+        if not title:
+            continue
+        # Property title "Well_01_GR" → prefix "well_01"
+        parts = title.rsplit('_', 1)
+        prefix = parts[0].lower() if len(parts) > 1 else title.lower()
         if prefix in frame_names:
             frame_to_cont.setdefault(frame_names[prefix], []).append((p_uuid, prop))
 
     for prop in disc_props:
-        p_uuid = prop.get("UUID") or prop.get("Uuid") or ""
-        title = prop.get("Citation", {}).get("Title") or prop.get("Title") or ""
-        prefix = title.lower().split()[0] if title else ""
+        p_uuid = _get_uuid(prop)
+        if not p_uuid:
+            continue
+        title = _get_title(prop)
+        if not title:
+            continue
+        parts = title.rsplit('_', 1)
+        prefix = parts[0].lower() if len(parts) > 1 else title.lower()
         if prefix in frame_names:
             frame_to_disc.setdefault(frame_names[prefix], []).append((p_uuid, prop))
 
@@ -378,11 +463,11 @@ async def _read_frame_mds(token: str, ds_enc: str, frame_type: str, frame_uuid: 
     try:
         arrays = await osdu.list_arrays(token, ds_enc, frame_type, frame_uuid)
         for arr in arrays:
-            path = arr.get("PathInResource") or arr.get("path") or ""
-            if "NodeMd" in path or "nodeMd" in path or "MdValues" in path or "md" in path.lower():
+            path = _arr_path(arr)
+            if "nodeMd" in path or "NodeMd" in path or "MdValues" in path or "md" in path.lower():
                 arr_data = await osdu.read_array(
                     token, ds_enc, frame_type, frame_uuid, path_in_resource=path)
-                vals = arr_data.get("values") or arr_data.get("Values") or []
+                vals = _arr_values(arr_data)
                 if vals:
                     return np.array(vals, dtype=np.float64)
     except Exception:
