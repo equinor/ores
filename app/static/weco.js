@@ -983,18 +983,25 @@
       }
     }
 
-    // ── Draw correlation lines ──────────────────────────────────────
+    // ── Draw correlation lines (typed: boundary/gap/framework) ────────
     const lines = result.lines || [];
-    const lineColors = ['#FF6B35', '#004E89', '#7B2D8B', '#1B998B', '#F5A623', '#D64045'];
+    const lineStyles = {
+      boundary: { color: '#D32F2F', width: 1.8, alpha: 0.85, dash: [] },
+      gap:      { color: '#1565C0', width: 1.2, alpha: 0.6, dash: [4, 3] },
+      framework:{ color: '#999999', width: 0.6, alpha: 0.3, dash: [] },
+    };
 
     for (let li = 0; li < lines.length; li++) {
-      const markers = lines[li].markers || lines[li];
+      const line = lines[li];
+      const markers = line.markers || line;
       if (!Array.isArray(markers)) continue;
+      const lt = line.line_type || 'framework';
+      const style = lineStyles[lt] || lineStyles.framework;
 
-      ctx.strokeStyle = lineColors[li % lineColors.length];
-      ctx.lineWidth = 1.5;
-      ctx.globalAlpha = 0.7;
-      ctx.setLineDash([]);
+      ctx.strokeStyle = style.color;
+      ctx.lineWidth = style.width;
+      ctx.globalAlpha = style.alpha;
+      ctx.setLineDash(style.dash);
 
       ctx.beginPath();
       let first = true;
@@ -1010,23 +1017,27 @@
       }
       ctx.stroke();
 
-      // Marker dots
-      ctx.globalAlpha = 1.0;
-      for (let w = 0; w < nWells && w < markers.length; w++) {
-        const markerIdx = markers[w];
-        if (markerIdx == null || markerIdx < 0) continue;
-        const wd = plotData[w];
-        const depth = wd.depth ? (wd.depth[markerIdx] || markerIdx) : markerIdx;
-        const y = depthToY(depth);
-        const x = wellX(w);
-        ctx.beginPath();
-        ctx.arc(x, y, 3, 0, 2 * Math.PI);
-        ctx.fillStyle = lineColors[li % lineColors.length];
-        ctx.fill();
+      // Marker dots only for boundary lines
+      if (lt === 'boundary') {
+        ctx.globalAlpha = 1.0;
+        ctx.setLineDash([]);
+        for (let w = 0; w < nWells && w < markers.length; w++) {
+          const markerIdx = markers[w];
+          if (markerIdx == null || markerIdx < 0) continue;
+          const wd = plotData[w];
+          const depth = wd.depth ? (wd.depth[markerIdx] || markerIdx) : markerIdx;
+          const y = depthToY(depth);
+          const x = wellX(w);
+          ctx.beginPath();
+          ctx.arc(x, y, 2.5, 0, 2 * Math.PI);
+          ctx.fillStyle = style.color;
+          ctx.fill();
+        }
       }
     }
 
     ctx.globalAlpha = 1.0;
+    ctx.setLineDash([]);
 
     // ── Depth axis labels ───────────────────────────────────────────
     ctx.fillStyle = '#605e5c';
@@ -1052,6 +1063,25 @@
       ctx.fillStyle = '#555';
       ctx.fillText('Zones: ' + plotData[0].region_names.join(', '), margin.left, ch - 6);
     }
+
+    // ── Correlation line legend ─────────────────────────────────────
+    const legendY = ch - 6;
+    const legendX = cw / 2;
+    ctx.font = '9px sans-serif';
+    ctx.textAlign = 'left';
+    // Boundary
+    ctx.strokeStyle = '#D32F2F'; ctx.lineWidth = 2; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(legendX, legendY - 3); ctx.lineTo(legendX + 20, legendY - 3); ctx.stroke();
+    ctx.fillStyle = '#D32F2F'; ctx.fillText('Boundary', legendX + 23, legendY);
+    // Gap
+    ctx.strokeStyle = '#1565C0'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
+    ctx.beginPath(); ctx.moveTo(legendX + 85, legendY - 3); ctx.lineTo(legendX + 105, legendY - 3); ctx.stroke();
+    ctx.fillStyle = '#1565C0'; ctx.fillText('Gap/hiatus', legendX + 108, legendY);
+    // Framework
+    ctx.strokeStyle = '#999'; ctx.lineWidth = 0.8; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(legendX + 180, legendY - 3); ctx.lineTo(legendX + 200, legendY - 3); ctx.stroke();
+    ctx.fillStyle = '#999'; ctx.fillText('Framework', legendX + 203, legendY);
+    ctx.setLineDash([]);
   }
 
   // ── Export ────────────────────────────────────────────────────────
