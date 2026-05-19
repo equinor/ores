@@ -279,6 +279,8 @@
   }
 
   function populateDropdowns(dataLogs, regions) {
+    const skip = new Set(['Depth', 'DEPTH', 'MD', 'X', 'Y', 'Z']);
+    const usableLogs = dataLogs.filter(n => !skip.has(n));
     const dataSelects = ['#p-var-data', '#p-var-data2'];
     const regionSelects = ['#p-no-crossing', '#p-same-region', '#p-polarity-region',
                            '#p-dist-distal', '#p-dist-facies'];
@@ -294,11 +296,22 @@
       el.innerHTML = '<option value="">-- none --</option>';
       regions.forEach(n => { el.innerHTML += `<option value="${esc(n)}">${esc(n)}</option>`; });
     });
-    // Auto-select first data log
-    if (dataLogs.length > 0) {
+    // Auto-select first usable log (skip Depth/X/Y/Z)
+    if (usableLogs.length > 0) {
       const el = $('#p-var-data');
-      if (el) el.value = dataLogs[0];
+      if (el) el.value = usableLogs[0];
     }
+    // Auto-suggest best parameters from the backend
+    autoSuggest();
+  }
+
+  async function autoSuggest() {
+    try {
+      const data = await api('POST', '/suggest-defaults');
+      if (data.options && Object.keys(data.options).length > 0) {
+        applyOptions(data.options);
+      }
+    } catch(e) { /* silent fallback to manual selection */ }
   }
 
   // ── Demo datasets ─────────────────────────────────────────────────
