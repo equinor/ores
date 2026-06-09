@@ -100,12 +100,7 @@ _HOWTO_SECTIONS: list[dict] = [
                 "title": "Reservoir DDMS Home ↗",
                 "desc": "Official OSDU Reservoir DDMS documentation – data model, ETP protocol, deployment & API reference",
             },
-            {
-                "slug": "_ext_etp_best",
-                "external_url": "https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/open-etp-server/-/blob/main/docs/bestPracticesForClients.md",
-                "title": "ETP Client Best Practices ↗",
-                "desc": "Transactions, large arrays, dataspace creation & locking – recommended patterns for ETP clients",
-            },
+
         ],
     },
     # ── Reference ─────────────────────────────────────────────────────
