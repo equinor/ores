@@ -113,6 +113,12 @@ _HOWTO_SECTIONS: list[dict] = [
                 "title": "CRS Guide",
                 "desc": "RESQML ⇄ OSDU coordinate reference systems",
             },
+            {
+                "slug": "strategy",
+                "file": "Strategy.md",
+                "title": "Reservoir DDMS Project Collaboration and Governance",
+                "desc": "A sketch for a strategy",
+            },
         ],
     },
 ]
