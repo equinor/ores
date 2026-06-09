@@ -38,11 +38,11 @@ import h5py
 import numpy as np
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-SRC_EPC = SCRIPT_DIR / "drogon.epc"
+SRC_EPC = SCRIPT_DIR / "drogon_demo_repackaged_geosiris.epc"
 SRC_H5 = SCRIPT_DIR / "drogon.h5"
-OUT_EPC = SCRIPT_DIR / "drogon_demo.epc"
-OUT_H5 = SCRIPT_DIR / "drogon_demo.h5"
-OUT_JSON = SCRIPT_DIR / "drogon_demo_records.json"
+OUT_EPC = SCRIPT_DIR / "drogon.epc"
+OUT_H5 = SCRIPT_DIR / "drogon.h5"
+OUT_JSON = SCRIPT_DIR / "drogon_records.json"
 
 # Regex
 H5_PATH_RE = re.compile(r"<eml:PathInHdfFile[^>]*>([^<]+)</eml:PathInHdfFile>")
@@ -101,6 +101,30 @@ POINTSET_SKIP_PATTERNS = [
 ]
 
 
+def _fix_namespaces(content: str) -> str:
+    """Normalize namespace prefixes from geosiris repack format.
+
+    The source EPC uses 'resqml:' prefix and 'obj_' in root element names.
+    Normalize to 'resqml2:' prefix and strip 'obj_' from root element opening tag.
+    """
+    content = content.replace(
+        'xmlns:resqml="http://www.energistics.org/energyml/data/resqmlv2"',
+        'xmlns:resqml2="http://www.energistics.org/energyml/data/resqmlv2"')
+    content = content.replace('xmlns:prodml="http://www.energistics.org/energyml/data/prodmlv2" ', '')
+    content = content.replace('xmlns:witsml="http://www.energistics.org/energyml/data/witsmlv2" ', '')
+    content = content.replace('<resqml:', '<resqml2:')
+    content = content.replace('</resqml:', '</resqml2:')
+    content = content.replace('resqml:obj_', 'resqml2:obj_')
+    content = content.replace('resqml:Domain', 'resqml2:Domain')
+    content = content.replace('resqml:Resqml', 'resqml2:Resqml')
+    # Strip obj_ from root element opening tag: <resqml2:obj_TypeName → <resqml2:TypeName
+    content = re.sub(r'<resqml2:obj_([A-Za-z0-9]+)', r'<resqml2:\1', content, count=1)
+    # Same for eml: namespace (EpcExternalPartReference)
+    content = re.sub(r'<eml:obj_([A-Za-z0-9]+)', r'<eml:\1', content, count=1)
+    content = re.sub(r'</eml:obj_([A-Za-z0-9]+)>', r'</eml:\1>', content)
+    return content
+
+
 def _sanitize_xml(content: str) -> str:
     """Fix XSD validation issues in RESQML 2.0.1 XML.
 
@@ -114,7 +138,16 @@ def _sanitize_xml(content: str) -> str:
       7. Remove DisabledMarkers vendor extension (empty uuid violates pattern facet)
       8. Fix StratigraphicColumn in CustomData (use ext: namespace to avoid lax validation)
       9. Add missing Domain element before InterpretedFeature in StructuralOrganizationInterpretation
+     10. Fix mismatched obj_ prefix on root element closing tags
+     11. Add xsi:type on root element (required by fesapi for object type identification)
     """
+    # 10. Fix closing tag obj_ mismatch (from geosiris repack)
+    #     Opening: <resqml2:Grid2dRepresentation ...>  Closing: </resqml2:obj_Grid2dRepresentation>
+    content = re.sub(
+        r'</resqml2:obj_([A-Za-z0-9]+)>\s*$',
+        r'</resqml2:\1>',
+        content)
+
     # 1. Add xmlns:xsd if xsd: prefix is used but namespace undeclared
     if 'xsd:' in content and 'xmlns:xsd=' not in content:
         content = content.replace(
@@ -169,24 +202,22 @@ def _sanitize_xml(content: str) -> str:
             f'<resqml2:Kind>{invalid}</resqml2:Kind>',
             f'<resqml2:Kind>{valid}</resqml2:Kind>')
 
-    # 5. Fix ExtraMetadata position: XSD requires ExtraMetadata immediately after Citation,
-    #    before Count/IndexableElement/etc.  Our source has them appended at end of root element.
+    # 5. Fix ExtraMetadata position: fesapi requires ExtraMetadata AFTER all type-specific
+    #    elements, just before the closing root tag.  Move them there unconditionally.
     extra_metadata_blocks = re.findall(
         r'<resqml2:ExtraMetadata[^>]*>.*?</resqml2:ExtraMetadata>', content, re.DOTALL)
     if extra_metadata_blocks:
-        # Check if ExtraMetadata appears AFTER Count/IndexableElement (wrong)
-        citation_end = content.find('</eml:Citation>')
-        first_em = content.find('<resqml2:ExtraMetadata')
-        count_pos = content.find('<resqml2:Count')
-        if citation_end > 0 and first_em > 0 and count_pos > 0 and first_em > count_pos:
-            # ExtraMetadata is in wrong position - move it after Citation
-            for block in extra_metadata_blocks:
-                content = content.replace(block, '')
-            # Clean up any trailing whitespace/newlines from removal
-            content = re.sub(r'\n\s*\n', '\n', content)
-            # Insert all ExtraMetadata blocks after </eml:Citation>
-            em_text = '\n' + '\n'.join(extra_metadata_blocks)
-            content = content.replace('</eml:Citation>', '</eml:Citation>' + em_text, 1)
+        # Remove all ExtraMetadata blocks from current positions
+        for block in extra_metadata_blocks:
+            content = content.replace(block, '')
+        # Clean up any trailing whitespace/newlines from removal
+        content = re.sub(r'\n\s*\n', '\n', content)
+        # Insert all ExtraMetadata blocks just before the closing root element
+        # Find the last closing tag (</resqml2:...> or </eml:...>)
+        close_tag_m = re.search(r'(</(?:resqml2|eml):\w+>)\s*$', content)
+        if close_tag_m:
+            em_text = '\n  ' + '\n  '.join(extra_metadata_blocks) + '\n'
+            content = content[:close_tag_m.start()] + em_text + close_tag_m.group(0)
 
     # 6. Fix ExtraMetadata values to match corrected UOM/PropertyKind
     content = content.replace(
@@ -232,6 +263,15 @@ def _sanitize_xml(content: str) -> str:
             content = content.replace(
                 '<resqml2:InterpretedFeature',
                 '<resqml2:Domain>depth</resqml2:Domain>\n  <resqml2:InterpretedFeature')
+
+    # 11. Add xsi:type on root element (required by fesapi for object type identification).
+    #     Pattern: <ns:TypeName ...> → <ns:TypeName xsi:type="ns:obj_TypeName" ...>
+    m = re.match(r'(<\?xml[^>]+\?>\s*<(resqml2|eml):(\w+)\s)', content)
+    if m and 'xsi:type=' not in content.split('\n')[1]:
+        ns_prefix = m.group(2)
+        type_name = m.group(3)
+        insert_pos = m.end()
+        content = content[:insert_pos] + f'xsi:type="{ns_prefix}:obj_{type_name}" ' + content[insert_pos:]
 
     return content
 
@@ -293,27 +333,34 @@ def build_demo_epc():
         all_names = src.namelist()
 
         # 1. Filter objects
-        include_xmls = set()
+        include_xmls = {}  # flat_name -> zip_path
         skip_log = []
         for name in all_names:
-            if name.endswith(".xml") and name.startswith("obj_"):
-                content = src.read(name).decode("utf-8")
-                if should_include(name, content):
-                    include_xmls.add(name)
-                else:
-                    skip_log.append((_get_obj_type(name), _get_title(content)))
+            if not name.endswith(".xml") or "obj_" not in name or "/_rels/" in name:
+                continue
+            # Extract flat filename (strip namespace_resqml20/ or similar prefix)
+            flat_name = name.split("/")[-1]
+            if not flat_name.startswith("obj_"):
+                continue
+            content = src.read(name).decode("utf-8")
+            if should_include(flat_name, content):
+                include_xmls[flat_name] = name
+            else:
+                skip_log.append((_get_obj_type(flat_name), _get_title(content)))
 
-        # 2. Collect .rels
-        include_rels = set()
-        for xml_name in include_xmls:
-            rel_name = f"_rels/{xml_name}.rels"
+        # 2. Collect .rels (look in namespace folders too)
+        include_rels = {}  # flat_rels_name -> zip_path
+        for flat_name, zip_path in include_xmls.items():
+            # Try both flat and prefixed paths
+            prefix = zip_path.rsplit("/", 1)[0] + "/" if "/" in zip_path else ""
+            rel_name = f"{prefix}_rels/{flat_name}.rels"
             if rel_name in all_names:
-                include_rels.add(rel_name)
+                include_rels[f"_rels/{flat_name}.rels"] = rel_name
 
         # 3. Collect H5 paths
         h5_paths = set()
-        for name in include_xmls:
-            content = src.read(name).decode("utf-8")
+        for flat_name, zip_path in include_xmls.items():
+            content = src.read(zip_path).decode("utf-8")
             for path in H5_PATH_RE.findall(content):
                 h5_paths.add(path)
 
@@ -345,12 +392,24 @@ def build_demo_epc():
         with zipfile.ZipFile(OUT_EPC, "w", zipfile.ZIP_DEFLATED) as dst:
             dst.writestr("[Content_Types].xml", content_types_xml)
             dst.writestr("_rels/.rels", root_rels)
-            for name in sorted(include_xmls):
-                xml_content = src.read(name).decode("utf-8")
+            for flat_name in sorted(include_xmls):
+                zip_path = include_xmls[flat_name]
+                xml_content = src.read(zip_path).decode("utf-8")
+                xml_content = _fix_namespaces(xml_content)
                 xml_content = _sanitize_xml(xml_content)
-                dst.writestr(name, xml_content.encode("utf-8"))
-            for name in sorted(include_rels):
-                dst.writestr(name, src.read(name))
+                dst.writestr(flat_name, xml_content.encode("utf-8"))
+            for flat_rels, zip_rels in sorted(include_rels.items()):
+                # For EPR, write a proper rels pointing to the HDF5 file
+                if "EpcExternalPartReference" in flat_rels:
+                    epr_rels = (
+                        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
+                        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">\n'
+                        f'  <Relationship Id="Hdf5File" Type="http://schemas.energistics.org/package/2012/relationships/externalResource"'
+                        f' Target="{OUT_H5.name}" TargetMode="External"/>\n'
+                        '</Relationships>')
+                    dst.writestr(flat_rels, epr_rels.encode("utf-8"))
+                else:
+                    dst.writestr(flat_rels, src.read(zip_rels))
 
     # 7. Build H5 subset
     print(f"\nBuilding demo H5: {OUT_H5}")
@@ -527,9 +586,9 @@ def main():
     print(f"  demo_records/ ({len(include_xmls)-1} files)")
     print(f"\nTest with local RDDMS:")
     print(f"  openETPServer space -S ws://localhost:9002 --auth none \\")
-    print(f"    -s maap/drogon_demo --new")
+    print(f"    -s maap/drogon --new")
     print(f"  openETPServer space -S ws://localhost:9002 --auth none \\")
-    print(f"    -s maap/drogon_demo --import-epc /data/drogon_demo.epc")
+    print(f"    -s maap/drogon --import-epc /data/drogon.epc")
     print(f"{'='*60}")
 
 

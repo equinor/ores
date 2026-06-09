@@ -152,7 +152,7 @@ def _convert_property_kind(xml: str) -> str:
         pk_uuid = _pk_uuid(kind_name)
         return (
             '<resqml2:PropertyKind xsi:type="eml:DataObjectReference">\n'
-            '\t\t<eml:QualifiedType xsi:type="xsd:string">eml22.PropertyKind</eml:QualifiedType>\n'
+            '\t\t<eml:QualifiedType xsi:type="xsd:string">eml23.PropertyKind</eml:QualifiedType>\n'
             f'\t\t<eml:Title xsi:type="eml:DescriptionString">{kind_name}</eml:Title>\n'
             f'\t\t<eml:Uuid xsi:type="eml:UuidString">{pk_uuid}</eml:Uuid>\n'
             '\t</resqml2:PropertyKind>'
@@ -301,6 +301,23 @@ def _remove_disabled_markers(xml: str) -> str:
     return xml
 
 
+def _remove_inline_markers(xml: str) -> str:
+    """Remove inline WellboreMarker elements from WellboreFrameRepresentation.
+
+    In RESQML 2.2, the WellboreMarker type does NOT exist in the RESQML namespace.
+    WellboreFrameRepresentation only contains: NodeCount, NodeMd, Trajectory,
+    and optionally WitsmlLog, CellFluidPhaseUnits, IntervalStratigraphicUnits.
+
+    The 2.0.1 WellboreMarkerFrameRepresentation nested WellboreMarker elements
+    inside the frame, but this is invalid in the 2.2 XSD schema.
+    Marker metadata is preserved implicitly through the NodeMd positions.
+    """
+    xml = re.sub(
+        r'\s*<resqml2:WellboreMarker[^>]*>.*?</resqml2:WellboreMarker>',
+        '', xml, flags=re.DOTALL)
+    return xml
+
+
 def _determine_object_category(type_name: str) -> str:
     """Determine if a type is an interpretation or representation."""
     bare = _convert_type_name(type_name.replace("obj_", ""))
@@ -444,6 +461,8 @@ def _convert_content(xml: str, old_type: str, new_type: str) -> str:
         xml = xml.replace('<resqml2:PatchOfValues', '<resqml2:ValuesForPatch')
         xml = xml.replace('</resqml2:PatchOfValues>', '</resqml2:ValuesForPatch>')
         # UOM -> Uom (standalone element, not part of other words)
+        # Also fix invalid value v/v -> m3/m3
+        xml = xml.replace('>v/v</resqml2:UOM>', '>m3/m3</resqml2:UOM>')
         xml = re.sub(
             r'<resqml2:UOM([^>]*)>([^<]+)</resqml2:UOM>',
             r'<resqml2:Uom\1>\2</resqml2:Uom>',
@@ -463,6 +482,10 @@ def _convert_content(xml: str, old_type: str, new_type: str) -> str:
     # 10. Remove DisabledMarkers
     xml = _remove_disabled_markers(xml)
 
+    # 10b. Remove inline WellboreMarker elements (invalid in RESQML 2.2 XSD)
+    if "WellboreFrame" in new_type:
+        xml = _remove_inline_markers(xml)
+
     # 11. Update Format citation
     xml = xml.replace(
         'RESQML v2.0 (Drogon Demo)',
@@ -475,6 +498,25 @@ def _convert_content(xml: str, old_type: str, new_type: str) -> str:
                 r'(</eml:Citation>)',
                 r'\1\n\t<resqml2:IsWellKnown xsi:type="xsd:boolean">true</resqml2:IsWellKnown>',
                 xml, count=1)
+
+    # 13. Fix ExtraMetadata ordering (must be after Citation, before Count/IndexableElement)
+    extra_metadata_blocks = re.findall(
+        r'<resqml2:ExtraMetadata[^>]*>.*?</resqml2:ExtraMetadata>', xml, re.DOTALL)
+    if extra_metadata_blocks:
+        citation_end = xml.find('</eml:Citation>')
+        first_em = xml.find('<resqml2:ExtraMetadata')
+        count_pos = xml.find('<resqml2:ValueCountPerIndexableElement')
+        if count_pos < 0:
+            count_pos = xml.find('<resqml2:Count')
+        if citation_end > 0 and first_em > 0 and count_pos > 0 and first_em > count_pos:
+            for block in extra_metadata_blocks:
+                xml = xml.replace(block, '')
+            xml = re.sub(r'\n\s*\n', '\n', xml)
+            em_text = '\n' + '\n'.join(extra_metadata_blocks)
+            xml = xml.replace('</eml:Citation>', '</eml:Citation>' + em_text, 1)
+
+    # 14. Fix v/v in ExtraMetadata values
+    xml = xml.replace('>v/v</resqml2:Value>', '>m3/m3</resqml2:Value>')
 
     return xml
 
@@ -522,7 +564,7 @@ def _generate_property_kind_objects_from_names(kinds: set) -> dict:
         pk_uuid = str(_uuid.uuid5(_NS, kind_name))
         quantity_class = _QUANTITY_CLASS_MAP.get(kind_name, "dimensionless")
         pk_xml = f"""<?xml version='1.0' encoding='UTF-8'?>
-<eml:PropertyKind xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" schemaVersion="2.2" uuid="{pk_uuid}" xsi:type="eml:PropertyKind">
+<eml:PropertyKind xmlns:eml="http://www.energistics.org/energyml/data/commonv2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" schemaVersion="2.3" uuid="{pk_uuid}" xsi:type="eml:PropertyKind">
 \t<eml:Citation xsi:type="eml:Citation">
 \t\t<eml:Title xsi:type="eml:DescriptionString">{kind_name}</eml:Title>
 \t\t<eml:Originator xsi:type="eml:NameString">Energistics</eml:Originator>
@@ -536,6 +578,49 @@ def _generate_property_kind_objects_from_names(kinds: set) -> dict:
         pk_objects[filename] = pk_xml
     
     return pk_objects
+
+
+def _cleanup_broken_rels(epc_path: Path):
+    """Remove .rels Relationship entries whose Target doesn't exist in the EPC."""
+    import shutil, tempfile
+    with zipfile.ZipFile(epc_path, 'r') as z:
+        all_files = set(z.namelist())
+        entries = {}
+        for name in z.namelist():
+            entries[name] = z.read(name)
+
+    # Find and fix broken .rels
+    fixed = 0
+    for name in list(entries.keys()):
+        if not name.endswith('.rels'):
+            continue
+        content = entries[name].decode('utf-8')
+        original = content
+        # Remove Relationship entries whose Target isn't in the EPC
+        def _keep_rel(m):
+            nonlocal fixed
+            target_m = re.search(r'Target="([^"]+)"', m.group(0))
+            if not target_m:
+                return m.group(0)
+            target = target_m.group(1)
+            if target.endswith('.h5') or target.startswith('http'):
+                return m.group(0)
+            if target in all_files:
+                return m.group(0)
+            fixed += 1
+            return ''
+        content = re.sub(r'\s*<Relationship[^>]*/>', _keep_rel, content)
+        if content != original:
+            entries[name] = content.encode('utf-8')
+
+    if fixed > 0:
+        # Rewrite the EPC
+        tmp = epc_path.with_suffix('.tmp')
+        with zipfile.ZipFile(tmp, 'w', zipfile.ZIP_DEFLATED) as zout:
+            for name, data in entries.items():
+                zout.writestr(name, data)
+        tmp.replace(epc_path)
+        print(f"  Cleaned {fixed} broken .rels entries")
 
 
 def main():
@@ -674,6 +759,11 @@ def main():
                     for excl_uuid in EXCLUDED_UUIDS:
                         rels_xml = re.sub(
                             rf'<Relationship[^>]*Target="[^"]*{excl_uuid}[^"]*"[^>]*/>\s*', '', rels_xml)
+                    # Remove stale PropertyKind .rels entries whose targets don't
+                    # exist (the v2.0.1 source had broken PropertyKind references
+                    # that are now replaced by DOR-based references with new UUIDs)
+                    rels_xml = re.sub(
+                        r'\s*<Relationship[^>]*Target="PropertyKind_934c5a04-db08-4a31-9cb1-48046d4f7843\.xml"[^>]*/>', '', rels_xml)
                     # Keep EpcExternalPartReference .rels filename with obj_ prefix
                     if 'EpcExternalPartReference' in old_name:
                         new_rels_name = old_name
@@ -700,7 +790,7 @@ def main():
                 for pk_filename in pk_objects:
                     pk_ct_entries += (
                         f'\n <Override PartName="/{pk_filename}" '
-                        f'ContentType="application/x-eml+xml;version=2.2;type=PropertyKind"/>'
+                        f'ContentType="application/x-eml+xml;version=2.3;type=PropertyKind"/>'
                     )
                 # Insert before closing </Types>
                 ct_xml_deferred = ct_xml_deferred.replace(
@@ -708,6 +798,12 @@ def main():
 
             # Write [Content_Types].xml
             dst.writestr(ct_name_deferred, ct_xml_deferred.encode("utf-8"))
+
+    # ── Post-process: remove broken .rels entries ──────────────────────────
+    # Some .rels entries reference targets that don't exist in the final EPC
+    # (e.g. Geosiris objects excluded during merge, stale PropertyKind refs).
+    # The ETP server rejects imports with unresolved .rels targets.
+    _cleanup_broken_rels(OUT_EPC)
 
     print(f"\n  Converted {sum(type_counts.values())} objects ({renamed_count} type renames, {excluded_count} excluded)")
     print(f"  Types:")

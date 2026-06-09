@@ -8,7 +8,7 @@ Supports:  interop, eqndev  (any instance configured in k8s/configmap.yaml)
 Steps:
   1. Authenticate (reads auth mode from instance config)
   2. Create dataspace demo/drogon on target RDDMS
-  3. Import drogon_demo.epc via ETP (osdu-etp-sslclient Docker image)
+  3. Import drogon.epc via ETP (osdu-etp-sslclient Docker image)
   4. Verify import via REST
   5. Build/load OSDU manifest (comprehensive, from EPC)
   6. Patch manifest with target instance ACLs/partition
@@ -45,7 +45,7 @@ from _auth import get_token, load_instance  # noqa: E402
 # ── Constants ─────────────────────────────────────────────────────────────
 DATASPACE_DEFAULT = "maap/drogon"
 DATASPACE_OVERRIDE = {}
-EPC_FILE = SCRIPT_DIR / "drogon_demo.epc"
+EPC_FILE = SCRIPT_DIR / "drogon.epc"
 IMAGE_SSL = "osdu-etp-sslclient"
 
 
@@ -176,7 +176,7 @@ def create_dataspace_etp(token: str, cfg: InstanceConfig) -> bool:
 # ═══════════════════════════════════════════════════════════════════════════
 
 def import_epc(token: str, cfg: InstanceConfig) -> bool:
-    """Import drogon_demo.epc into the target RDDMS via ETP."""
+    """Import drogon.epc into the target RDDMS via ETP."""
     print(f"\n=== 3. Import EPC via ETP ===")
 
     tok_file = SCRIPT_DIR / ".etp_token"
