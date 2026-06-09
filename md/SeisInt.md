@@ -156,7 +156,7 @@ LocalBoundaryFeature → HorizonInterpretation → HorizonControlPoints (picks)
 
 ## 5. Object Classification
 
-Interpretation data follows a naming convention:
+FMU interpretation data follow a naming convention:
 
 | Prefix | Meaning | OSDU schema |
 |---|---|---|
@@ -171,7 +171,7 @@ Interpretation data follows a naming convention:
 
 Workflow suffixes: `_interp` (initial), `_filter` (QC'd), `_filter_from_time` (depth-converted).
 
-**Rule**: Only manual interpretation objects are cataloged. Algorithmic outputs from FMU/HUM runs are excluded.
+**Rule**: Only manual interpretation objects are cataloged. Algorithmically reproducible outputs from FMU/HUM runs are excluded.
 
 ---
 
