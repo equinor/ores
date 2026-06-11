@@ -356,19 +356,19 @@ def _derive_domain_role(rel_type_names: List[str]) -> Tuple[Optional[str], Optio
             domain = "Time"
         if "Interpretation" in tn:
             if "Horizon" in tn:
-                role = "horizon"
+                role = "Horizon"
             elif "Fault" in tn:
-                role = "fault"
+                role = "Fault"
             elif "GeobodyBoundary" in tn:
-                role = "geobody boundary"
+                role = "GeobodyBoundary"
             elif "Geobody" in tn:
-                role = "geobody"
+                role = "Geobody"
             elif "StratigraphicUnit" in tn:
-                role = "strat unit"
+                role = "StratigraphicUnit"
             elif "StratigraphicColumnRank" in tn:
-                role = "strat column"
+                role = "StratigraphicColumnRank"
             elif "Structural" in tn or "Earth" in tn:
-                role = role or "structural"
+                role = role or "Structural"
             else:
                 base = tn.split(".")[-1].replace("obj_", "").replace("Interpretation", "")
                 role = base or role
