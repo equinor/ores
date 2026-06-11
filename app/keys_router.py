@@ -331,6 +331,55 @@ def _extract_refs_any(x: Any) -> List[Dict[str, Any]]:
     return []
 
 
+# Representation objects frequently share a title (e.g. a depth vs a time surface
+# both named after the same horizon). Resolving one relationship hop to the CRS
+# (Depth/Time domain) and the Interpretation (horizon/fault/…) disambiguates them
+# in the object picker without requiring a GraphQL deep search.
+def _is_representation_type(typ: Optional[str]) -> bool:
+    return bool(typ) and "Representation" in typ
+
+
+def _derive_domain_role(rel_type_names: List[str]) -> Tuple[Optional[str], Optional[str]]:
+    """From related object type names, derive (domain, role).
+
+    domain: 'Depth' | 'Time' | None  – from the referenced Local3dCrs.
+    role:   short geological role (horizon/fault/…) – from the referenced Interpretation.
+    """
+    domain: Optional[str] = None
+    role: Optional[str] = None
+    for tn in rel_type_names:
+        if not tn:
+            continue
+        if "LocalDepth3dCrs" in tn:
+            domain = "Depth"
+        elif "LocalTime3dCrs" in tn:
+            domain = "Time"
+        if "Interpretation" in tn:
+            if "Horizon" in tn:
+                role = "horizon"
+            elif "Fault" in tn:
+                role = "fault"
+            elif "GeobodyBoundary" in tn:
+                role = "geobody boundary"
+            elif "Geobody" in tn:
+                role = "geobody"
+            elif "StratigraphicUnit" in tn:
+                role = "strat unit"
+            elif "StratigraphicColumnRank" in tn:
+                role = "strat column"
+            elif "Structural" in tn or "Earth" in tn:
+                role = role or "structural"
+            else:
+                base = tn.split(".")[-1].replace("obj_", "").replace("Interpretation", "")
+                role = base or role
+    return domain, role
+
+
+def _enrich_label(title: str, domain: Optional[str], role: Optional[str]) -> str:
+    bits = [b for b in (domain, role) if b]
+    return f"{title} · {' · '.join(bits)}" if bits else title
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Object detail
 # ──────────────────────────────────────────────────────────────────────────────
@@ -598,6 +647,64 @@ async def keys_objects(
             "type": r.get("$type") or r.get("type") or "",
             "typePath": type_path,  # canonical for graph/manifest routes
         })
+
+    # ── Disambiguate representation labels with domain (Depth/Time) + role ──────
+    # e.g. two "TopVolantis" Grid2dRepresentations become
+    #   "TopVolantis · Depth · horizon"  and  "TopVolantis · Time · horizon"
+    # by resolving one relationship hop (CRS + Interpretation). Only applied when a
+    # specific representation type is selected (the ambiguous case).
+    if typ and _is_representation_type(typ) and out:
+        try:
+            rel_types_by_uuid: Dict[str, List[str]] = {}
+            if pg_done:
+                # PG: one batched relation query for all listed objects (no N+1).
+                from .pg_backend import get_pool, pg_batch_relations
+                pool = await get_pool()
+                if pool:
+                    objid_to_uuid = {
+                        r.get("obj_id"): str(r.get("uuid"))
+                        for r in rows if r.get("obj_id") is not None
+                    }
+                    obj_ids = [oid for oid in objid_to_uuid if oid is not None]
+                    rel_map = await pg_batch_relations(pool, ds, obj_ids)
+                    for oid, rels in rel_map.items():
+                        u = objid_to_uuid.get(oid)
+                        if u:
+                            rel_types_by_uuid[u] = [rel.get("type_name", "") for rel in rels]
+            else:
+                # REST: bounded-concurrency /targets lookups (remote dataspaces).
+                typ_clean = _sanitize_type(typ)
+                sem = asyncio.Semaphore(8)
+
+                async def _targets_for(u: str) -> Tuple[str, List[str]]:
+                    async with sem:
+                        try:
+                            tg = await osdu.list_targets(at, enc, typ_clean, u)
+                        except Exception:
+                            return u, []
+                    tns: List[str] = []
+                    for t in tg or []:
+                        tn = _infer_type_path(t) or (t.get("contentType") or "")
+                        if tn:
+                            tns.append(tn)
+                    return u, tns
+
+                uuids = [it["uuid"] for it in out if it.get("uuid")][:200]
+                pairs = await asyncio.gather(*[_targets_for(u) for u in uuids])
+                rel_types_by_uuid = {u: tns for u, tns in pairs}
+
+            for it in out:
+                tns = rel_types_by_uuid.get(it.get("uuid") or "")
+                if not tns:
+                    continue
+                domain, role = _derive_domain_role(tns)
+                if domain or role:
+                    it["domain"] = domain
+                    it["role"] = role
+                    it["label"] = _enrich_label(it.get("title") or it.get("uuid") or "", domain, role)
+        except Exception as e:
+            log.debug("keys_objects label enrichment failed for %s/%s: %s", ds, typ, e)
+
     return JSONResponse({"items": out})
 
 

@@ -1293,7 +1293,7 @@
         (js.items || []).forEach(x => {
           const o = document.createElement('option');
           o.value = x.uuid;
-          o.textContent = `${x.title || x.uuid} - ${x.uuid}`;
+          o.textContent = `${x.label || x.title || x.uuid} - ${x.uuid}`;
           o.setAttribute('data-uri', x.uri || '');
           objSel.appendChild(o);
         });
