@@ -377,7 +377,7 @@ def _derive_domain_role(rel_type_names: List[str]) -> Tuple[Optional[str], Optio
 
 def _enrich_label(title: str, domain: Optional[str], role: Optional[str]) -> str:
     bits = [b for b in (domain, role) if b]
-    return f"{title} · {' · '.join(bits)}" if bits else title
+    return f"{title} . {' . '.join(bits)}" if bits else title
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -650,7 +650,7 @@ async def keys_objects(
 
     # ── Disambiguate representation labels with domain (Depth/Time) + role ──────
     # e.g. two "TopVolantis" Grid2dRepresentations become
-    #   "TopVolantis · Depth · horizon"  and  "TopVolantis · Time · horizon"
+    #   "TopVolantis . Depth . horizon"  and  "TopVolantis . Time . horizon"
     # by resolving one relationship hop (CRS + Interpretation). Only applied when a
     # specific representation type is selected (the ambiguous case).
     if typ and _is_representation_type(typ) and out:
