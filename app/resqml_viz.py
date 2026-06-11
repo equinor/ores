@@ -897,10 +897,23 @@ async def _build_geometry_result(
 
     # ── PolylineSetRepresentation ─────────────────────────────────────
     if "polylineset" in tl:
-        positions = await _find_read("points", "node", "coordinates")
+        # Read counts first so we can exclude the count array from positions.
         counts = await _find_read_int("count", "nodecount")
+        # Positions: prefer explicit point/coordinate arrays; never pick a
+        # "count" array (e.g. node_counts also contains the token "node").
+        positions: list[float] = []
+        for lk, rp in arr_paths.items():
+            if "count" in lk:
+                continue
+            if any(kw in lk for kw in ("points", "coordinates", "node")):
+                positions = [float(v) for v in await read_fn(rp)]
+                break
         if not positions:
-            positions = await _fallback_read(0)
+            # Positional fallback: first non-count array.
+            for rp in fallback_paths:
+                if "count" not in rp.lower():
+                    positions = [float(v) for v in await read_fn(rp)]
+                    break
         zmin, zmax = _z_stats(positions)
         return {"kind": "polylines", "title": title, "positions": positions,
                 "counts": counts, "zmin": zmin, "zmax": zmax}
@@ -1143,6 +1156,23 @@ async def _rest_geometry3d(
             p = uid.get("pathInResource", "")
             arr_paths[p.lower()] = p
             fallback_paths.append(p)
+
+        # Fallback: if array listing is empty, extract PathInHdfFile from object JSON
+        if not arr_paths:
+            def _extract_hdf_paths(node: Any, paths: list[str]) -> None:
+                if isinstance(node, dict):
+                    if "PathInHdfFile" in node:
+                        paths.append(node["PathInHdfFile"])
+                    for v in node.values():
+                        _extract_hdf_paths(v, paths)
+                elif isinstance(node, list):
+                    for item in node:
+                        _extract_hdf_paths(item, paths)
+            hdf_paths: list[str] = []
+            _extract_hdf_paths(obj, hdf_paths)
+            for p in hdf_paths:
+                arr_paths[p.lower()] = p
+                fallback_paths.append(p)
 
         # Marker labels from REST JSON object
         marker_labels: list[str] | None = None
