@@ -377,7 +377,7 @@ def _derive_domain_role(rel_type_names: List[str]) -> Tuple[Optional[str], Optio
 
 def _enrich_label(title: str, domain: Optional[str], role: Optional[str]) -> str:
     bits = [b for b in (domain, role) if b]
-    return f"{title} . {' . '.join(bits)}" if bits else title
+    return f"{title}.{'.'.join(bits)}" if bits else title
 
 
 # ──────────────────────────────────────────────────────────────────────────────
