@@ -16,6 +16,7 @@
 | 4 | **Versions via Activities + CollaborationProject** | RDDMS has no native versioning — mimic it using Activity provenance, CollaborationProject lifecycle events, and dataspace snapshots. |
 | 5 | **ACL = data room boundary** | Access is governed per dataspace + OSDU ACL group. Sharing = ACL grant, not data copy. |
 | 6 | **Copies are explicit and traceable** | Any SoR→SoE or SoE→SoR transition is recorded with lineage (ancestry.parents, Activity parameters). |
+| 7 | **Identity is deterministic** | Catalog records derived from RDDMS (CollaborationProject, ETPDataspace, derived WPCs) use stable, content-derived IDs (e.g. UUID v5 of the dataspace path) so repeated manifest builds are idempotent and never create duplicates. |
 
 ---
 
@@ -113,7 +114,7 @@ OpenWorks Project
 
 ## 4. Versioning Strategy (No Native RDDMS Versions)
 
-RDDMS dataspaces are **mutable** and have **no version history**. We mimic versioning with three complementary mechanisms:
+RDDMS dataspaces are **mutable** and have **no version history**. We mimic versioning with four complementary mechanisms:
 
 ### 4.1 Dataspace Snapshots (Clone + Lock)
 
@@ -174,6 +175,19 @@ GET /dataspaces?filter=path:startsWith('project-alpha/v')&locked=true
 
 Map to OSDU: search Activities where `Parameters[InputDataspace]` or `Parameters[OutputDataspace]` match the project prefix.
 
+### 4.5 Gate Evidence Snapshots (PersistedCollection)
+
+A `CollaborationProjectCollection` is a **living** trusted set — it grows across gates. For an **immutable snapshot of exactly what backed one gate**, bundle the relevant WPCs into a versioned `PersistedCollection` and reference it from that gate's `BusinessDecision`.
+
+| | CollaborationProjectCollection | PersistedCollection |
+|---|---|---|
+| Kind | WPC (`TrustedCollectionID` target) | WPC (gate evidence) |
+| Scope | Cross-gate, cumulative | Single gate, frozen |
+| Mutates | Yes — `ResourceIDs[]` accumulates | No — snapshot per version |
+| Referenced by | `CollaborationProject` | `BusinessDecision.Parameters[]` |
+
+**Rule**: accumulate trusted refs in the CollaborationProjectCollection; freeze gate evidence in a PersistedCollection so a decision's basis stays reproducible even after the trusted set moves on.
+
 ---
 
 ## 5. SoR vs SoE — When to Copy, When to Reference
@@ -211,6 +225,10 @@ sequenceDiagram
   end
 ```
 
+**Conflict handling**: when concurrent edits target the same object, the SoR copy/publish step fails (e.g. HTTP 409). Resolve by re-cloning the latest SoR baseline into WIP, re-applying changes, and re-running QC — never force-overwrite.
+
+**Rollback**: SoR snapshots are immutable locked dataspaces, so recovery = re-point catalog WPCs (`DDMSDatasets[]`) and `CollaborationProjectCollection.ResourceIDs` back to the previous locked version, then log a `Rolled back to v<n>` lifecycle event. Never mutate a locked SoR dataspace in place.
+
 ### 5.2 Baseline Provisioning (SoR → SoE)
 
 When starting a new project or study iteration:
@@ -235,6 +253,8 @@ When starting a new project or study iteration:
 | Depth surface (grid) | `Grid2dRepresentation` | `StructureMap:1.0.0` | BinGridID, InterpretationID |
 | TWT surface | `Grid2dRepresentation` | `SeismicHorizon:2.1.0` | InterpretationID |
 | Velocity model | `IjkGridRepresentation` or property | Velocity WPC | CRS, domain |
+| Seismic volume (SEG-Y) | Seismic DDMS / bulk store | `SeismicTraceData:2.x` | `BinGridID`, `SeismicProcessingProjectID` |
+| Bin grid geometry | `Grid2dRepresentation` (geometry) | `SeismicBinGrid` / `BinGrid` | CRS, inline/xline ranges |
 
 ### 6.2 FMU/ERT → OSDU
 
@@ -293,6 +313,22 @@ For joint ventures or cross-asset collaboration:
 4. Record in CollaborationProject with `ProjectContributorACL` set
 5. At completion: publish agreed records back to each party's SoR
 
+### 7.4 Legal Tags, Classification & Data Residency
+
+ACLs control *who* can access; legal tags and classification control *under what terms*. Every governed record and dataspace must carry both.
+
+| Attribute | Where | Governance |
+|---|---|---|
+| `legal.legaltags[]` | OSDU record + dataspace `customData` | Defines contract/ownership; required for ingestion |
+| `legal.otherRelevantDataCountries[]` | OSDU record | Data residency / export-control scope |
+| Security classification | `data.Classification` or tag | Public / Internal / Confidential / Restricted |
+| Personal data flag | Legal tag policy | Triggers GDPR handling |
+
+**Rules**:
+- A dataspace and the WPCs cataloged from it must share a **consistent** legal tag — never publish SoR data under a more permissive tag than its WIP source.
+- Cross-border or partner sharing (§7.3) must validate `otherRelevantDataCountries` before granting the partner ACL.
+- Reference/master data inherits enterprise legal tags; projects never relax them.
+
 ---
 
 ## 8. Collaboration Patterns in RDDMS
@@ -337,6 +373,20 @@ OSDU catalog:
   Activity records per major iteration
   BusinessDecision at each gate → references WorkProduct + Activity + REV stats
 ```
+
+### 8.4 Snapshot Retention & Cleanup
+
+Locked `/v<n>` snapshots accumulate indefinitely. Define a retention policy so storage and ACL surface stay bounded:
+
+| Snapshot class | Retain | Action when superseded |
+|---|---|---|
+| Gate snapshots (DG1…FID) | Permanently | Keep — decision provenance |
+| Interim QC snapshots | Until next gate | Archive or delete after gate sign-off |
+| Rejected / abandoned WIP | Short window | Delete at project closure |
+
+- Tie cleanup to lifecycle events — never delete a snapshot referenced by a `BusinessDecision` or a `CollaborationProjectCollection`.
+- On project closure, archive gate snapshots (export EPC to cold storage) and delete interim/WIP dataspaces.
+- Audit orphaned dataspaces (no catalog reference) periodically and purge after a grace period.
 
 ---
 
@@ -403,6 +453,8 @@ flowchart TD
 | Large ensembles (1000+ realizations) overwhelm RDDMS | Store raw realizations in Sumo; promote only P10/P50/P90 statistics to RDDMS/OSDU |
 | ACL sprawl across many projects | Standardize group naming; automate creation/cleanup via project lifecycle |
 | Cross-platform interpretation tools (OW vs Petrel) create duplicate objects | Use `osduAlias` and `InterpretationID` to de-duplicate at catalog level |
+| Locked `/v<n>` snapshots accumulate without bound | Apply retention policy (§8.4); archive gate snapshots, purge orphaned/interim dataspaces |
+| Inconsistent legal tags between WIP and published SoR | Validate legal tag + `otherRelevantDataCountries` at publish (§7.4); block more-permissive promotion |
 
 ---
 
