@@ -1,10 +1,10 @@
-# WeCo Improvement Plan — Workflow, Diversity, Visualisation, OSDU
+# WeCo Improvement Plan - Workflow, Diversity, Visualisation, OSDU
 
 > Working document. Priority: P0 (immediate), P1 (next sprint), P2 (roadmap).
 
 ---
 
-## 1. Workflow — Minimum Clicks to Best Results
+## 1. Workflow - Minimum Clicks to Best Results
 
 ### Current State
 - **Demo GUI**: 2–3 clicks (select demo → run → view). Pre-canned datasets, hardcoded params.
@@ -22,7 +22,7 @@
 
 ---
 
-## 2. Result Diversity — Avoid All Realisations Looking Alike
+## 2. Result Diversity - Avoid All Realisations Looking Alike
 
 ### Current State
 - Engine has `min_dist` / `out_min_dist` (geometric path distance filter).
@@ -42,7 +42,7 @@
 
 ---
 
-## 3. Visualisation — Convincing Data-to-Result Causation
+## 3. Visualisation - Convincing Data-to-Result Causation
 
 ### Current State
 
@@ -79,7 +79,7 @@
 ## 4. Facies Dictionary & OSDU Reference Data
 
 ### Current State
-- `Well.region` stores `(zone_id, start_index, length)` — integer IDs only.
+- `Well.region` stores `(zone_id, start_index, length)` - integer IDs only.
 - No mapping from zone_id → name/color/description.
 - `doc/rddms_stratcolumn.md` documents StratColumn model (Column → Rank → Unit → Horizon).
 - 11 depositional environment presets exist (mapping OSDU vocabulary → engine params).
@@ -114,7 +114,7 @@ SingleWellStratColumn (has gaps = non-penetrated units)
 | F4 | **OSDU facies lookup**: given a `LithostratigraphicUnit` record bundle, build FaciesDictionary automatically | P1 | Parse OSDU `kind=osdu:wks:master-data--LithostratigraphicUnit:1.0.0` records | ✅ Done |
 | F5 | **Global StratColumn integration**: display chronostrat column alongside wells (absolute time axis) | P2 | Requires age model; map zone depths → global column positions. Backend ready (`/strat-column` endpoint). | ✅ Done |
 | F6 | **Lithostratigraphic column from OSDU**: populate named formations, members, groups from OSDU hierarchy | P2 | Auto-build no-crossing constraints from formation boundaries | ✅ Done |
-| F7 | **SingleWell → GlobalColumn gap display**: show which global units are missing in each well (non-penetrated / eroded) | P2 | Wheeler diagram concept — highlight stratigraphic gaps explicitly | ✅ Done |
+| F7 | **SingleWell → GlobalColumn gap display**: show which global units are missing in each well (non-penetrated / eroded) | P2 | Wheeler diagram concept - highlight stratigraphic gaps explicitly | ✅ Done |
 
 ---
 
@@ -148,40 +148,40 @@ User uploads wells (or selects demo)
 
 ## 6. Priority Summary
 
-### P0 — Immediate (this week)
-- ~~D1: Default diversity on (`min_dist=0.1` always)~~ ✅ Done — RESET_OPTS + suggest-defaults
-- ~~V1: Facies track in PyQt GUI~~ ✅ Done — discrete coloured strip from FaciesDictionary
-- ~~V5: Depth axis ticks + log labels~~ ✅ Done — MaxNLocator + log name headers with units
-- ~~F1: FaciesDictionary class~~ ✅ Done — `weco/facies_dict.py`
-- ~~F2: Standard facies colour palette~~ ✅ Done — STANDARD_LITHO_PALETTE + ZONE_COLORS
-- ~~A5: Auto-enable distality when FACIES region present~~ ✅ Done — in `_suggest_defaults_for_wells`
+### P0 - Immediate (this week)
+- ~~D1: Default diversity on (`min_dist=0.1` always)~~ ✅ Done - RESET_OPTS + suggest-defaults
+- ~~V1: Facies track in PyQt GUI~~ ✅ Done - discrete coloured strip from FaciesDictionary
+- ~~V5: Depth axis ticks + log labels~~ ✅ Done - MaxNLocator + log name headers with units
+- ~~F1: FaciesDictionary class~~ ✅ Done - `weco/facies_dict.py`
+- ~~F2: Standard facies colour palette~~ ✅ Done - STANDARD_LITHO_PALETTE + ZONE_COLORS
+- ~~A5: Auto-enable distality when FACIES region present~~ ✅ Done - in `_suggest_defaults_for_wells`
 
-### P1 — Next Sprint
-- ~~V3: Uncertainty overlay~~ ✅ Done — top-N results drawn with decreasing alpha (show_uncertainty=True)
-- ~~V7: Export plot as PNG~~ ✅ Done — "📥 PNG" button on web client toolbar (canvas.toBlob)
-- ~~D2: Structural diversity filter~~ ✅ Done — `_diverse_results()` clusters by topology signature
-- ~~W1: Quick Run mode~~ ✅ Done — "⚡ Quick Run" button calls `/auto` endpoint, skips Params tab
-- ~~W2: Auto-run on demo select~~ ✅ Done — demo card click triggers `quickRun()` immediately after loading wells
-- ~~W3: Iterative auto-refinement~~ ✅ Done — built into `/auto` endpoint quality-gate logic
-- ~~D3: Diversity score column~~ ✅ Done — `diversity_score` field in RunResult (topology distance)
-- ~~V2: Zone name labels~~ ✅ Done — `from_region_auto()` + get_label() shows lithology names in facies strip
-- ~~V4: Composite 3-result view~~ ✅ Done — "Composite (3)" button shows 3 diverse results side-by-side on canvas
-- ~~F3: Auto-detect facies from region values~~ ✅ Done — `from_region_auto()` matches NPD/CGD/simple code tables
-- ~~F4: OSDU facies lookup~~ ✅ Done — `/facies-dict/{region}` endpoint + `from_osdu_units()` classmethod ready
-- ~~A1: Unified `/auto` endpoint~~ ✅ Done — suggest→run→quality-gate→diversify pipeline
-- ~~A2: Environment detection from logs~~ ✅ Done — `detect_environment_from_logs()` in depenv.py
-- ~~A4: Quality threshold gate~~ ✅ Done — integrated in `/auto` endpoint
+### P1 - Next Sprint
+- ~~V3: Uncertainty overlay~~ ✅ Done - top-N results drawn with decreasing alpha (show_uncertainty=True)
+- ~~V7: Export plot as PNG~~ ✅ Done - "📥 PNG" button on web client toolbar (canvas.toBlob)
+- ~~D2: Structural diversity filter~~ ✅ Done - `_diverse_results()` clusters by topology signature
+- ~~W1: Quick Run mode~~ ✅ Done - "⚡ Quick Run" button calls `/auto` endpoint, skips Params tab
+- ~~W2: Auto-run on demo select~~ ✅ Done - demo card click triggers `quickRun()` immediately after loading wells
+- ~~W3: Iterative auto-refinement~~ ✅ Done - built into `/auto` endpoint quality-gate logic
+- ~~D3: Diversity score column~~ ✅ Done - `diversity_score` field in RunResult (topology distance)
+- ~~V2: Zone name labels~~ ✅ Done - `from_region_auto()` + get_label() shows lithology names in facies strip
+- ~~V4: Composite 3-result view~~ ✅ Done - "Composite (3)" button shows 3 diverse results side-by-side on canvas
+- ~~F3: Auto-detect facies from region values~~ ✅ Done - `from_region_auto()` matches NPD/CGD/simple code tables
+- ~~F4: OSDU facies lookup~~ ✅ Done - `/facies-dict/{region}` endpoint + `from_osdu_units()` classmethod ready
+- ~~A1: Unified `/auto` endpoint~~ ✅ Done - suggest→run→quality-gate→diversify pipeline
+- ~~A2: Environment detection from logs~~ ✅ Done - `detect_environment_from_logs()` in depenv.py
+- ~~A4: Quality threshold gate~~ ✅ Done - integrated in `/auto` endpoint
 
-### P2 — Roadmap
-- ~~W4: Deposit environment detection from strat metadata~~ ✅ Done — `detect_environment_from_metadata()` in depenv.py
-- ~~D4: Force-diverse mode~~ ✅ Done — `_force_diverse_run()` runs 3 gap-cost configs, deduplicates by topology
-- ~~D5: Interpretation scenario naming~~ ✅ Done — `_label_scenario()` classifies as Layer-cake/Pinch-out/Unconformity/etc.
-- ~~V6: Log-scale for RT~~ ✅ Done — auto-applies log10 to RT/RDEEP/RSHAL logs in web client canvas
-- ~~V8: Well spacing from coordinates~~ ✅ Done — gap widths proportional to well X/Y distance
-- ~~F5: Global StratColumn integration~~ ✅ Done — "Global" toggle in toolbar renders reference strip from `/strat-column`
-- ~~F6: Lithostratigraphic column from OSDU~~ ✅ Done — `StratColumn.from_osdu_bundle()` + `/strat-column/import` endpoint
-- ~~F7: SingleWell→Global gap display~~ ✅ Done — `/wheeler/{result_idx}` endpoint returns per-well gap analysis
-- ~~A3: Scenario labelling~~ ✅ Done — `/auto` endpoint returns "scenario" field per result
+### P2 - Roadmap
+- ~~W4: Deposit environment detection from strat metadata~~ ✅ Done - `detect_environment_from_metadata()` in depenv.py
+- ~~D4: Force-diverse mode~~ ✅ Done - `_force_diverse_run()` runs 3 gap-cost configs, deduplicates by topology
+- ~~D5: Interpretation scenario naming~~ ✅ Done - `_label_scenario()` classifies as Layer-cake/Pinch-out/Unconformity/etc.
+- ~~V6: Log-scale for RT~~ ✅ Done - auto-applies log10 to RT/RDEEP/RSHAL logs in web client canvas
+- ~~V8: Well spacing from coordinates~~ ✅ Done - gap widths proportional to well X/Y distance
+- ~~F5: Global StratColumn integration~~ ✅ Done - "Global" toggle in toolbar renders reference strip from `/strat-column`
+- ~~F6: Lithostratigraphic column from OSDU~~ ✅ Done - `StratColumn.from_osdu_bundle()` + `/strat-column/import` endpoint
+- ~~F7: SingleWell→Global gap display~~ ✅ Done - `/wheeler/{result_idx}` endpoint returns per-well gap analysis
+- ~~A3: Scenario labelling~~ ✅ Done - `/auto` endpoint returns "scenario" field per result
 
 ---
 
@@ -189,7 +189,7 @@ User uploads wells (or selects demo)
 
 - The engine's diversity mechanism (`path_distance` + `min_dist`) is powerful but inactive by default.
   Turning it on (D1) is the single highest-impact change for result quality.
-- The web client already has discrete log tracks and strat strips — much more advanced than the PyQt demo.
+- The web client already has discrete log tracks and strat strips - much more advanced than the PyQt demo.
   The PyQt demo is for offline/developer use; web client is the production UI.
 - OSDU integration (F4–F7) requires the RDDMS connection to be active. For demos and offline use,
   FaciesDictionary (F1) with hardcoded standard palettes (F2) is sufficient.
@@ -211,7 +211,7 @@ derived from a GR cutoff and correlation runs on GR, both signals contain identi
 information → double-counting → artificially inflated confidence.
 
 **Implemented guard:** `_check_facies_independence(wl, facies_region, var_data)` in
-`weco/api.py` — 3 heuristics:
+`weco/api.py` - 3 heuristics:
 1. Binary (≤2 values) + GR var-data → dependent (skip)
 2. ≥4 unique facies classes → likely expert interpretation (allow)
 3. Low coefficient of variation at facies transitions → single-threshold derived (skip)
@@ -219,20 +219,20 @@ information → double-counting → artificially inflated confidence.
 `_suggest_defaults_for_wells()` now checks before auto-enabling `dist-facies`.
 Documented in `doc/parameters.md` §6 "⚠️ Circularity warning".
 
-### W2 — Auto-Run on Demo Select (done)
+### W2 - Auto-Run on Demo Select (done)
 
 Clicking a demo card now triggers `quickRun()` immediately after wells are loaded.
 Flow: click card → load wells → auto-detect params → run → show results.
 Single click = full result.
 
-### P3 — Integration Tests vs Large Datasets (lesson)
+### P3 - Integration Tests vs Large Datasets (lesson)
 
 Parametrized integration tests over ALL demo datasets fail on large datasets
 (e.g. coal: 30 wells, >60s). Solution: filter to demos with ≤10 wells for CI,
 keep large datasets for manual benchmarking only. Also reduce `max-cor` from 50
-to 30 for test speed — still validates the full pipeline.
+to 30 for test speed - still validates the full pipeline.
 
-### P3 — Accessibility Retrofitting (lesson)
+### P3 - Accessibility Retrofitting (lesson)
 
 Adding WAI-ARIA to an existing HTML/JS app requires:
 1. **Roles**: tablist/tab/tabpanel for wizard-style navigation
@@ -241,7 +241,7 @@ Adding WAI-ARIA to an existing HTML/JS app requires:
 4. **Focus styles**: visible `:focus` outlines (not just `:hover`)
 5. **Well chips**: `role="checkbox"` + `aria-checked` tracks toggle state
 
-Key: the `pointer-events:none` CSS for disabled tabs blocks mouse but not keyboard —
+Key: the `pointer-events:none` CSS for disabled tabs blocks mouse but not keyboard -
 also needs `aria-disabled="true"` and `tabindex="-1"`.
 
 ### AI Module API Mismatch (bugfix 2026-05-21)
@@ -259,7 +259,7 @@ actual class signatures when integrating.
 
 ---
 
-## 8. P3 — Quality & Robustness
+## 8. P3 - Quality & Robustness
 
 | ID | Task | Priority | Notes |
 |----|------|----------|-------|

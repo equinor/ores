@@ -63,7 +63,7 @@ weco/                   # Python package
 ├── cost_functions.py   # Python-side cost function definitions
 ├── data.py             # Well, WellList, ResFile core data model
 ├── export.py           # Zonation log + horizon pick + CSV/JSON/LAS export
-├── ext.py              # ProjectExt — Python engine wrapper
+├── ext.py              # ProjectExt - Python engine wrapper
 ├── preprocessing.py    # Data conditioning (Vshale, biozones, electrofacies, ...)
 ├── rddms.py            # Universal data bridge (RESQML, LAS, CSV, RMS)
 ├── sensitivity.py      # Well-order sensitivity analysis
@@ -86,7 +86,7 @@ output/                 # Generated outputs (gitignored)
 # Python docs (Sphinx)
 ./weco.sh doc
 
-# C++ docs (Doxygen) — requires doxygen
+# C++ docs (Doxygen) - requires doxygen
 ./weco.sh cppdoc
 ```
 
@@ -126,7 +126,7 @@ complexity analysis, and format/output artifact matrices.
 
 ---
 
-## Changelog — Completed Work (v0.9.31)
+## Changelog - Completed Work (v0.9.31)
 
 ### Codebase (11 items)
 
@@ -180,8 +180,8 @@ complexity analysis, and format/output artifact matrices.
 - C++ optional at import time → pure Python slow mode.
 
 **Assessment:** 50-200× slowdown for naive Python on the hot loop.
-Small projects (2-3 wells, <100 markers, k=50): ~7 s — acceptable for
-prototyping. Production (10+ wells, 200+ markers, k=200): minutes — too slow.
+Small projects (2-3 wells, <100 markers, k=50): ~7 s - acceptable for
+prototyping. Production (10+ wells, 200+ markers, k=200): minutes - too slow.
 The hybrid approach (C++ kernel + Python everything else) is optimal.
 
 ### Python Modules

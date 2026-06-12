@@ -31,12 +31,12 @@ different channel systems at the same depth.
 
 ## Data Channels
 
-- **GR**: Gamma ray (API) — sole correlation log
-- Regions: none (unconstrained — reflects real-world fluvial data poverty)
+- **GR**: Gamma ray (API) - sole correlation log
+- Regions: none (unconstrained - reflects real-world fluvial data poverty)
 
 ## Correlation Strategy
 
-### `options.txt` — GR variance only
+### `options.txt` - GR variance only
 Low `const-gap-cost` (0.5) allows isolated sand lenses that don't correlate.
 High `min-dist` (0.4) forces genuinely different geometric interpretations:
 - Connected-sheet scenario (all channels correlate → one reservoir unit)
@@ -46,7 +46,7 @@ High `min-dist` (0.4) forces genuinely different geometric interpretations:
 
 1. **No unique solution**: The same GR pattern can be matched in multiple
    stratigraphically valid ways
-2. **Lateral discontinuity**: Channels pinch out between wells — gap cost
+2. **Lateral discontinuity**: Channels pinch out between wells - gap cost
    controls whether the engine "jumps" across or respects the discontinuity
 3. **Amalgamation ambiguity**: Multiple stacked channels with thin mud
    between them could be one amalgamated body or separate events
@@ -59,7 +59,7 @@ Fluvial reservoirs are notoriously difficult for correlation:
 
 > "In channelised fluvial systems, traditional marker-bed correlation
 > is impossible because no single bed is laterally continuous."
-> — Bridge & Leeder (1979)
+> - Bridge & Leeder (1979)
 
 The n-best diverse outputs represent fundamentally different reservoir
 connectivity models, each with different implications for fluid flow.

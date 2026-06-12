@@ -8,7 +8,7 @@ field area, Norwegian North Sea) with interpreted depositional facies.
 
 ## Wells: 2
 
-Well_11, Well_04 — extracted from Equinor ASA subsurface database.
+Well_11, Well_04 - extracted from Equinor ASA subsurface database.
 
 ## Data Channels
 

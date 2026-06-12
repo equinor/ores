@@ -1,8 +1,8 @@
-# WeCo — Multi-Well Stratigraphic Correlation
+# WeCo - Multi-Well Stratigraphic Correlation
 
 WeCo is a stratigraphic correlation engine that finds the *n*-best correlation
 scenarios between wells using graph-based Dynamic Time Warping (DTW).
-Unlike single-answer approaches, WeCo explores the full solution space —
+Unlike single-answer approaches, WeCo explores the full solution space -
 honouring log similarity, facies architecture, structural dip, biostratigraphy,
 and depositional constraints simultaneously.
 
@@ -161,14 +161,14 @@ WeCo includes 19 datasets in `data/`:
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `cost-function` | `composite` | Cost function type |
-| `var-data` | — | Primary log variable (GR, RT, DEN, …) |
+| `var-data` | - | Primary log variable (GR, RT, DEN, …) |
 | `var-weight` | 1.0 | Primary log weight |
 | `max-cor` | 50 | Max correlation paths to track per cell |
 | `nbr-cor` | 10 | Number of correlations in output |
 | `out-nbr-cor` | 5 | Best results to keep |
 | `order` | `position` | Well ordering strategy |
-| `same-region` | — | Constrain to same facies zone |
-| `no-crossing` | — | Prevent marker crossing |
+| `same-region` | - | Constrain to same facies zone |
+| `no-crossing` | - | Prevent marker crossing |
 | `band-width` | 0 | Sakoe-Chiba band (0 = unlimited) |
 | `thread` | 0 | Thread count (0 = auto) |
 | `const-gap-cost` | 1.0 | Gap penalty weight |

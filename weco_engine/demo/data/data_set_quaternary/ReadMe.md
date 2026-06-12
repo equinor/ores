@@ -58,7 +58,7 @@ Dutch/German/Danish glacial stratigraphy (Weichselian/Saalian/Elsterian).
 - **Per-well GR calibration shift** (±5 API) for realism
 
 ### Recommended WeCo Parameters
-See `options.txt` — optimised for this dataset.
+See `options.txt` - optimised for this dataset.
 
 ### Facies Groups for `remap_facies_groups()`
 Aquifer: 1,2,7,9 | Leaky: 3,8 | Aquitard: 4,5,6
@@ -79,10 +79,10 @@ Spec string: `"1,2,7;3,8,9;4,5,6"`
   look at chronology, ice dynamics, and landforms. *Developments in
   Quaternary Sciences* 15, 47–58.
 - Jørgensen, F. & Sandersen, P.B.E. (2006) Buried and open tunnel valleys
-  in Denmark — erosion beneath multiple ice sheets. *Quat. Sci. Rev.* 25,
+  in Denmark - erosion beneath multiple ice sheets. *Quat. Sci. Rev.* 25,
   1339–1363.
 - Kessler, T.C. et al. (2012) Modeling fine-scale geological heterogeneity
-  — examples of sand lenses in tills. *Groundwater* 50, 781–792.
+  - examples of sand lenses in tills. *Groundwater* 50, 781–792.
 - Wierzbicki, G. et al. (2021) Quaternary hydrogeological modelling:
   Challenges and methods. *Hydrogeol. J.* 29, 1545–1567.
 - Berg, R.C. et al. (2011) Surficial geology and hydrogeology decision

@@ -1,6 +1,6 @@
 # Subsurface Project Data Governance Strategy
 
-> **Scope**: End-to-end governance for subsurface projects spanning wellbore master data, OpenWorks/DecisionSpace interpretation sets, SDMA reference data, FMU ensembles, and RDDMS content storage — with versioning, SoR/SoE separation, and cross-discipline collaboration.
+> **Scope**: End-to-end governance for subsurface projects spanning wellbore master data, OpenWorks/DecisionSpace interpretation sets, SDMA reference data, FMU ensembles, and RDDMS content storage - with versioning, SoR/SoE separation, and cross-discipline collaboration.
 >
 > **Related**: [PWS](PWS.md) · [Activity](Activity.md) · [FmuOsdu](FmuOsdu.md) · [Uncertainty](Uncertainty.md) · [SeisInt](SeisInt.md)
 
@@ -10,10 +10,10 @@
 
 | # | Principle | Rationale |
 |---|-----------|-----------|
-| 1 | **Master data is sacred** | Wells, wellbores, reservoirs, stratigraphy are system-of-record (SoR) anchored in SDMA. Never duplicate — only reference. |
+| 1 | **Master data is sacred** | Wells, wellbores, reservoirs, stratigraphy are system-of-record (SoR) anchored in SDMA. Never duplicate - only reference. |
 | 2 | **Reference data is governed centrally** | CRS, units, facets, strat columns, fluid contacts come from the enterprise catalog. Projects consume, never fork. |
 | 3 | **Work-in-progress is isolated** | Each project/study operates in a WIP namespace until QC and publish. |
-| 4 | **Versions via Activities + CollaborationProject** | RDDMS has no native versioning — mimic it using Activity provenance, CollaborationProject lifecycle events, and dataspace snapshots. |
+| 4 | **Versions via Activities + CollaborationProject** | RDDMS has no native versioning - mimic it using Activity provenance, CollaborationProject lifecycle events, and dataspace snapshots. |
 | 5 | **ACL = data room boundary** | Access is governed per dataspace + OSDU ACL group. Sharing = ACL grant, not data copy. |
 | 6 | **Copies are explicit and traceable** | Any SoR→SoE or SoE→SoR transition is recorded with lineage (ancestry.parents, Activity parameters). |
 | 7 | **Identity is deterministic** | Catalog records derived from RDDMS (CollaborationProject, ETPDataspace, derived WPCs) use stable, content-derived IDs (e.g. UUID v5 of the dataspace path) so repeated manifest builds are idempotent and never create duplicates. |
@@ -27,7 +27,7 @@ flowchart TD
   %% ── SoE Tools ──
   OW["OpenWorks / DecisionSpace<br/>Interpretation projects"]
   RMS["RMS / Petrel<br/>Geomodelling"]
-  FMU["FMU — ERT + fmu-dataio<br/>Ensembles"]
+  FMU["FMU - ERT + fmu-dataio<br/>Ensembles"]
 
   %% ── RDDMS Layer ──
   WIP["RDDMS WIP Dataspaces<br/>(unlocked · draft objects)"]
@@ -98,7 +98,7 @@ flowchart TD
 | CRS definitions | `CoordinateReferenceSystem` | Never project-local; always enterprise catalog |
 | Units of measure | `UnitOfMeasure` | Enterprise catalog |
 
-### 3.3 Interpretation Sets (WPC — OpenWorks/DecisionSpace)
+### 3.3 Interpretation Sets (WPC - OpenWorks/DecisionSpace)
 
 Interpretation sets (horizon picks, fault sticks, velocity models) live in the application project but must be **cataloged** in OSDU and **stored** in RDDMS for persistence:
 
@@ -137,7 +137,7 @@ Each significant model update creates an Activity that serves as a **version rec
 {
   "kind": "osdu:wks:work-product-component--Activity:1.0.0",
   "data": {
-    "Name": "Geomodel v3 — post-well-tie update",
+    "Name": "Geomodel v3 - post-well-tie update",
     "WorkflowStatus": "Completed",
     "CreationDateTime": "2026-03-15T10:00:00Z",
     "Parameters": [
@@ -161,7 +161,7 @@ Each significant model update creates an Activity that serves as a **version rec
   {"EventID": "1", "Name": "Created", "DateTime": "2026-01-15T09:00:00Z", "Remark": "Initial SoR baseline locked"},
   {"EventID": "2", "Name": "v1 Snapshot", "DateTime": "2026-02-01T14:00:00Z", "Remark": "Pre-DG1 structural model"},
   {"EventID": "3", "Name": "v2 Snapshot", "DateTime": "2026-03-10T11:00:00Z", "Remark": "Post well-tie, 4 new picks"},
-  {"EventID": "4", "Name": "v3 Snapshot", "DateTime": "2026-04-20T09:30:00Z", "Remark": "DG2 final — published to SoR"}
+  {"EventID": "4", "Name": "v3 Snapshot", "DateTime": "2026-04-20T09:30:00Z", "Remark": "DG2 final - published to SoR"}
 ]
 ```
 
@@ -177,20 +177,20 @@ Map to OSDU: search Activities where `Parameters[InputDataspace]` or `Parameters
 
 ### 4.5 Gate Evidence Snapshots (PersistedCollection)
 
-A `CollaborationProjectCollection` is a **living** trusted set — it grows across gates. For an **immutable snapshot of exactly what backed one gate**, bundle the relevant WPCs into a versioned `PersistedCollection` and reference it from that gate's `BusinessDecision`.
+A `CollaborationProjectCollection` is a **living** trusted set - it grows across gates. For an **immutable snapshot of exactly what backed one gate**, bundle the relevant WPCs into a versioned `PersistedCollection` and reference it from that gate's `BusinessDecision`.
 
 | | CollaborationProjectCollection | PersistedCollection |
 |---|---|---|
 | Kind | WPC (`TrustedCollectionID` target) | WPC (gate evidence) |
 | Scope | Cross-gate, cumulative | Single gate, frozen |
-| Mutates | Yes — `ResourceIDs[]` accumulates | No — snapshot per version |
+| Mutates | Yes - `ResourceIDs[]` accumulates | No - snapshot per version |
 | Referenced by | `CollaborationProject` | `BusinessDecision.Parameters[]` |
 
 **Rule**: accumulate trusted refs in the CollaborationProjectCollection; freeze gate evidence in a PersistedCollection so a decision's basis stays reproducible even after the trusted set moves on.
 
 ---
 
-## 5. SoR vs SoE — When to Copy, When to Reference
+## 5. SoR vs SoE - When to Copy, When to Reference
 
 | Scenario | Pattern | Mechanism |
 |---|---|---|
@@ -225,7 +225,7 @@ sequenceDiagram
   end
 ```
 
-**Conflict handling**: when concurrent edits target the same object, the SoR copy/publish step fails (e.g. HTTP 409). Resolve by re-cloning the latest SoR baseline into WIP, re-applying changes, and re-running QC — never force-overwrite.
+**Conflict handling**: when concurrent edits target the same object, the SoR copy/publish step fails (e.g. HTTP 409). Resolve by re-cloning the latest SoR baseline into WIP, re-applying changes, and re-running QC - never force-overwrite.
 
 **Rollback**: SoR snapshots are immutable locked dataspaces, so recovery = re-point catalog WPCs (`DDMSDatasets[]`) and `CollaborationProjectCollection.ResourceIDs` back to the previous locked version, then log a `Rolled back to v<n>` lifecycle event. Never mutate a locked SoR dataspace in place.
 
@@ -273,12 +273,12 @@ When starting a new project or study iteration:
 
 Every published WPC **must** carry:
 
-- [ ] `ancestry.parents[]` — lineage to input WPCs
-- [ ] `DDMSDatasets[]` — link to RDDMS content (if applicable)
-- [ ] `InterpretationID` or `ParentObjectID` — semantic anchor
+- [ ] `ancestry.parents[]` - lineage to input WPCs
+- [ ] `DDMSDatasets[]` - link to RDDMS content (if applicable)
+- [ ] `InterpretationID` or `ParentObjectID` - semantic anchor
 - [ ] CRS reference (explicit or via RDDMS LocalCrs)
-- [ ] `Source` — originating system/user
-- [ ] ACL — appropriate data.acl viewers/owners groups
+- [ ] `Source` - originating system/user
+- [ ] ACL - appropriate data.acl viewers/owners groups
 
 ---
 
@@ -325,7 +325,7 @@ ACLs control *who* can access; legal tags and classification control *under what
 | Personal data flag | Legal tag policy | Triggers GDPR handling |
 
 **Rules**:
-- A dataspace and the WPCs cataloged from it must share a **consistent** legal tag — never publish SoR data under a more permissive tag than its WIP source.
+- A dataspace and the WPCs cataloged from it must share a **consistent** legal tag - never publish SoR data under a more permissive tag than its WIP source.
 - Cross-border or partner sharing (§7.3) must validate `otherRelevantDataCountries` before granting the partner ACL.
 - Reference/master data inherits enterprise legal tags; projects never relax them.
 
@@ -342,16 +342,16 @@ project-x/wip (interpreter works here)
   ↓ QC + approve
 project-x/v1 (clone + lock = version snapshot)
   ↓ publish selected objects
-enterprise/sor (updated — new version of catalog WPCs)
+enterprise/sor (updated - new version of catalog WPCs)
 ```
 
 ### 8.2 Multi-Discipline (geology + geophysics + reservoir)
 
 ```
-project-x/sor         — shared locked baseline (wells, strat, seismic)
-project-x/geo-wip     — geologist: picks, surfaces
-project-x/gph-wip     — geophysicist: velocity, TWT horizons  
-project-x/res-wip     — reservoir engineer: grid, properties
+project-x/sor         - shared locked baseline (wells, strat, seismic)
+project-x/geo-wip     - geologist: picks, surfaces
+project-x/gph-wip     - geophysicist: velocity, TWT horizons  
+project-x/res-wip     - reservoir engineer: grid, properties
 
 Integration points:
   geo-wip surfaces → res-wip grid (copy specific objects)
@@ -363,10 +363,10 @@ Each sub-discipline has its own WIP dataspace but shares the same CollaborationP
 ### 8.3 FMU Ensemble Iteration
 
 ```
-project-x/sor          — curated static model (grid, properties, contacts)
-project-x/fmu-wip      — ERT writes per-realization outputs here
-project-x/fmu-v1       — DG1 snapshot (clone + lock)
-project-x/fmu-v2       — DG2 snapshot (clone + lock after 250 realizations)
+project-x/sor          - curated static model (grid, properties, contacts)
+project-x/fmu-wip      - ERT writes per-realization outputs here
+project-x/fmu-v1       - DG1 snapshot (clone + lock)
+project-x/fmu-v2       - DG2 snapshot (clone + lock after 250 realizations)
 
 OSDU catalog:
   WorkProduct (case package) → IjkGrid + property WPCs → DDMSDatasets[] → project-x/fmu-v<n>
@@ -380,11 +380,11 @@ Locked `/v<n>` snapshots accumulate indefinitely. Define a retention policy so s
 
 | Snapshot class | Retain | Action when superseded |
 |---|---|---|
-| Gate snapshots (DG1…FID) | Permanently | Keep — decision provenance |
+| Gate snapshots (DG1…FID) | Permanently | Keep - decision provenance |
 | Interim QC snapshots | Until next gate | Archive or delete after gate sign-off |
 | Rejected / abandoned WIP | Short window | Delete at project closure |
 
-- Tie cleanup to lifecycle events — never delete a snapshot referenced by a `BusinessDecision` or a `CollaborationProjectCollection`.
+- Tie cleanup to lifecycle events - never delete a snapshot referenced by a `BusinessDecision` or a `CollaborationProjectCollection`.
 - On project closure, archive gate snapshots (export EPC to cold storage) and delete interim/WIP dataspaces.
 - Audit orphaned dataspaces (no catalog reference) periodically and purge after a grace period.
 
@@ -401,7 +401,7 @@ flowchart TD
   QC -->|Pass| SNAPSHOT[Clone WIP → v_n, Lock]
   QC -->|Fail| WORK
   SNAPSHOT --> CATALOG[Manifest build → update OSDU WPCs]
-  CATALOG --> ACTIVITY[Create Activity — version provenance]
+  CATALOG --> ACTIVITY[Create Activity - version provenance]
   ACTIVITY --> READY{Gate ready?}
   READY -->|No| WORK
   READY -->|Yes| BD[Create BusinessDecision<br/>Link Activity, REV, Risks, Docs]
@@ -449,7 +449,7 @@ flowchart TD
 |---|---|
 | RDDMS dataspace drift (objects modified without Activity record) | Enforce manifest builds at regular intervals; audit via `storeLastWrite` timestamp |
 | No atomic multi-dataspace transaction | Accept eventual consistency; use lifecycle events as sync checkpoints |
-| P&WS not yet on Azure ADME | Use Storage API patterns (§8 of PWS.md) — forward-compatible |
+| P&WS not yet on Azure ADME | Use Storage API patterns (§8 of PWS.md) - forward-compatible |
 | Large ensembles (1000+ realizations) overwhelm RDDMS | Store raw realizations in Sumo; promote only P10/P50/P90 statistics to RDDMS/OSDU |
 | ACL sprawl across many projects | Standardize group naming; automate creation/cleanup via project lifecycle |
 | Cross-platform interpretation tools (OW vs Petrel) create duplicate objects | Use `osduAlias` and `InterpretationID` to de-duplicate at catalog level |

@@ -19,9 +19,9 @@ complete data pipeline.
 | 15_3-4 | 1 (proximal) | ✓ | ✓ | ✓ | ✓ |
 | 15_3-5 | 2 | ✓ | ✓ | ✓ | ✓ |
 | 15_3-9_T2 | 3 | ✓ | ✓ | GR-derived | ✓ |
-| 15_3-7 | 3 | ✓ | — | GR-derived | ✓ |
-| 15_3-3 | 3 | ✓ | — | GR-derived | ✓ |
-| 15_3-1_S | 4 (distal) | ✓ | — | GR-derived | ✓ |
+| 15_3-7 | 3 | ✓ | - | GR-derived | ✓ |
+| 15_3-3 | 3 | ✓ | - | GR-derived | ✓ |
+| 15_3-1_S | 4 (distal) | ✓ | - | GR-derived | ✓ |
 
 Sampling: ~1.5 m (resampled from 0.15 m wireline resolution for
 sequence-scale correlation).
@@ -38,7 +38,7 @@ sequence-scale correlation).
 | SEQUENCE | Sequence zone (1–4) | Common flooding surface picks |
 | FACIES | 5-class depositional facies | Core in 15_3-4/5; GR-derived elsewhere |
 | FACIES3 | 3-class consolidation (Sand/Mixed/Shale) | Simplified from FACIES |
-| ZONELOG_REF | Existing zone interpretation | RMS ZONELOG — for validation only |
+| ZONELOG_REF | Existing zone interpretation | RMS ZONELOG - for validation only |
 
 ## Regions (5)
 
@@ -146,7 +146,7 @@ n-best solutions in Scenarios 2 or 6 (which use the same flooding surfaces as
 constraints). The remaining solutions represent genuine geological uncertainty.
 
 **ZONELOG_REF** (existing zone log) is included as a data channel for
-post-hoc validation — it is NEVER used as an input constraint.
+post-hoc validation - it is NEVER used as an input constraint.
 
 ---
 

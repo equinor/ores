@@ -2,7 +2,7 @@
 
 ## Source
 Neslen Formation (Upper Cretaceous), Bryson Canyon, Book Cliffs, Utah.
-Coastal plain to estuarine deposits — coal-bearing sequences.
+Coastal plain to estuarine deposits - coal-bearing sequences.
 Exported from IC (Integrated Correlation) software as discrete facies logs.
 
 ## Wells: 7
@@ -41,7 +41,7 @@ B10, B11, B3, B5, B6, B7, B9
 | 9 | Corcoran-SB | 4th |
 
 ## Correlation Strategy
-1. **options_distal.txt**: Distal CCF — facies + distality (Walther's Law)
+1. **options_distal.txt**: Distal CCF - facies + distality (Walther's Law)
 2. **options_seqstrat.txt**: Variance + SEQSTRAT same-region constraint
 3. **options_basic.txt**: Unconstrained (shows ambiguity from coal seam repetition)
 
@@ -72,4 +72,4 @@ sequence boundaries constrain valid correlations.
 
 ## Authors
 
-Christophe Antoine, Guillaume Caumon, Paul Baville — ASGA/RING, Université de Lorraine.
+Christophe Antoine, Guillaume Caumon, Paul Baville - ASGA/RING, Université de Lorraine.

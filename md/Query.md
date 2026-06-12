@@ -1,6 +1,6 @@
 # Querying OSDU & Reservoir Data
 
-ORES provides multiple ways to search and explore reservoir data — from a visual point-and-click builder to raw GraphQL queries. This guide starts with common tasks and works down to technical details.
+ORES provides multiple ways to search and explore reservoir data - from a visual point-and-click builder to raw GraphQL queries. This guide starts with common tasks and works down to technical details.
 
 ---
 
@@ -51,7 +51,7 @@ Results render as **colored cards** with type-category badges, sparkline statist
 
 | Mode | Behaviour |
 |------|-----------|
-| **Loose** (default) | Substring match — `poro` finds "PORO", "porosity_v1", etc. |
+| **Loose** (default) | Substring match - `poro` finds "PORO", "porosity_v1", etc. |
 | **Strict** | Exact match on canonical RESQML property kind |
 
 Click **"Show generated GraphQL"** to see the raw query and switch to Advanced Mode for tweaking.
@@ -82,7 +82,7 @@ Start here to understand what data is available:
 }
 ```
 
-> **Tip:** Use `category` to search all related types at once — e.g. `category: "well"` covers WellboreFeature, Trajectory, Frame, MarkerFrame, DeviationSurvey, BlockedWellbore (10 types).
+> **Tip:** Use `category` to search all related types at once - e.g. `category: "well"` covers WellboreFeature, Trajectory, Frame, MarkerFrame, DeviationSurvey, BlockedWellbore (10 types).
 
 ---
 
@@ -116,7 +116,7 @@ Find objects where a numerical property meets a threshold:
 }
 ```
 
-**Common filter recipes** (same query structure — swap `titleContains`, `threshold`, `operator`):
+**Common filter recipes** (same query structure - swap `titleContains`, `threshold`, `operator`):
 
 | Use case | titleContains | threshold | operator |
 |----------|--------------|-----------|----------|
@@ -145,7 +145,7 @@ For **well logs**, use `typeName: "resqml20.obj_WellboreFrameRepresentation"` wi
 ```
 
 ```graphql
-# Search by category — find all structural objects with relations
+# Search by category - find all structural objects with relations
 {
   deepSearch(
     dataspace: "demo/drogon"
@@ -242,7 +242,7 @@ Every RESQML object has typed links to other objects. Use `objectRelations` to t
 
 ### Federated Search (OSDU + RDDMS)
 
-Search the OSDU catalog and RDDMS simultaneously — results are merged by UUID:
+Search the OSDU catalog and RDDMS simultaneously - results are merged by UUID:
 
 ```graphql
 # Search both catalog and RDDMS for "grid"
@@ -291,7 +291,7 @@ Search the OSDU catalog and RDDMS simultaneously — results are merged by UUID:
 ```
 
 ```graphql
-# Catalog-only — search by OSDU kind
+# Catalog-only - search by OSDU kind
 {
   federatedSearch(
     text: "Drogon"
@@ -362,7 +362,7 @@ For metadata lookups, spatial queries, and kind-based searches:
 }
 ```
 
-Works with any object type — swap `typeName` + `uuid` for IjkGrids, WellboreFrames, etc.
+Works with any object type - swap `typeName` + `uuid` for IjkGrids, WellboreFrames, etc.
 
 ---
 
@@ -460,7 +460,7 @@ The `backend` field in `DeepSearchResult` tells you which path was used:
 | `GET .../resources/{uuid}/arrays` | List arrays |
 | `GET .../resources/{uuid}/arrays/{path}` | Read array data |
 
-> **Performance note:** Each REST call carries ~40–100 ms overhead (TLS, Azure gateway, JSON serialization). Deep queries that touch N objects × M properties × K arrays result in (N+M+K) serial HTTP calls — the _N+1 problem_. Prefer GraphQL+PG when available.
+> **Performance note:** Each REST call carries ~40–100 ms overhead (TLS, Azure gateway, JSON serialization). Deep queries that touch N objects × M properties × K arrays result in (N+M+K) serial HTTP calls - the _N+1 problem_. Prefer GraphQL+PG when available.
 
 ---
 
@@ -513,7 +513,7 @@ The `backend` field in `DeepSearchResult` tells you which path was used:
 1. Selected dataspaces are classified as _local_ (present in PG) or _remote_ (only on OSDU RDDMS).
 2. Local dataspaces are queried via direct PostgreSQL; remote ones go through the REST API.
 3. The OSDU catalog is searched independently (by `kind` + free-text).
-4. Results are **merged by UUID** — if the same object appears in multiple sources, flags indicate where it was found: `foundInCatalog`, `foundInLocalRddms`, `foundInRemoteRddms`.
+4. Results are **merged by UUID** - if the same object appears in multiple sources, flags indicate where it was found: `foundInCatalog`, `foundInLocalRddms`, `foundInRemoteRddms`.
 
 ---
 
@@ -530,8 +530,8 @@ The `backend` field in `DeepSearchResult` tells you which path was used:
 | Seismic | SeismicLatticeFeature, SeismicLineFeature | `"seismic"` |
 | CRS | LocalDepth3dCrs, LocalTime3dCrs | `"crs"` |
 | Representation | IjkGrid, UnstructuredGrid, Grid2d, TriangulatedSet, PolylineSet, PointSet, Trajectory, Frame | `"representation"` |
-| Provenance | Activity, ActivityTemplate | — |
-| Container | EpcExternalPartReference | — |
+| Provenance | Activity, ActivityTemplate | - |
+| Container | EpcExternalPartReference | - |
 
 > `typeName` also accepts wildcards: `"*Grid*"` matches all grid types.
 
@@ -599,23 +599,23 @@ _Measured on `maap/drogon` data (swedev). ETP values are reasoned estimates._
 
 | Factor | REST | GraphQL + PG |
 |--------|------|-------------|
-| **N+1 queries** | Deep search = `O(G × P × A)` serial HTTP calls | `O(1)` — batch SQL with `ANY($1::int[])` on the `rel` adjacency table |
+| **N+1 queries** | Deep search = `O(G × P × A)` serial HTTP calls | `O(1)` - batch SQL with `ANY($1::int[])` on the `rel` adjacency table |
 | **Array transfer** | JSON text (`[0.123, …]`) ~1.5 MB per 100K floats | Binary `bytea` ~800 KB, decoded via `struct.unpack` in ~5 ms |
 | **Network hops** | 2–3 (TLS → Azure Front Door → NestJS → PG) | 0 (co-located asyncpg → PG, binary wire protocol) |
 | **Per-call overhead** | ~40–100 ms (TLS amortised, gateway, JSON serialization) | ~1–5 ms (binary protocol, connection pool) |
 
 ### Performance Tips
 
-1. **Always prefer GraphQL + PG** when `GRAPHQL_PG_CONN_STRING` is set — the resolver auto-selects the fastest backend.
-2. **Enable Discovery** (`RDDMS_DISCOVERY=1`) on ADME/remote deployments where PG is not available — it replaces N+1 REST calls with a single batch graph call.
-3. **Use `category` for broad searches** — `category: "well"` searches all 10 well-related types in one query.
-4. **Avoid REST for deep queries** — 10 grids × 3 properties = ~80 serial HTTP calls (~5 s). Discovery: ~0.5 s. PG: ~0.2 s.
+1. **Always prefer GraphQL + PG** when `GRAPHQL_PG_CONN_STRING` is set - the resolver auto-selects the fastest backend.
+2. **Enable Discovery** (`RDDMS_DISCOVERY=1`) on ADME/remote deployments where PG is not available - it replaces N+1 REST calls with a single batch graph call.
+3. **Use `category` for broad searches** - `category: "well"` searches all 10 well-related types in one query.
+4. **Avoid REST for deep queries** - 10 grids × 3 properties = ~80 serial HTTP calls (~5 s). Discovery: ~0.5 s. PG: ~0.2 s.
 5. **Batch optimization (PG):** Deep search of 20 objects with properties requires ~6 SQL round-trips instead of ~80.
-6. **Batch optimization (Discovery):** `POST /query/graph/search` sends all candidate URIs in a single ETP session — no N+1.
+6. **Batch optimization (Discovery):** `POST /query/graph/search` sends all candidate URIs in a single ETP session - no N+1.
 7. **Concurrent REST:** The REST fallback fetches sources for up to 10 objects in parallel via `asyncio.gather`.
 8. **Schema cache:** Dataspace→schema lookups are cached in-memory. Use `limit` and `dataspaces:[...]` instead of per-object loops.
 9. **Large arrays:** PG binary transfer is 5–10× faster than JSON. Avoid reading arrays > 100K elements in tight loops via REST.
-10. **Federated search** runs sources in parallel — enable only the ones you need to cut latency.
+10. **Federated search** runs sources in parallel - enable only the ones you need to cut latency.
 11. **Connection pooling** is automatic: `httpx.AsyncClient` for REST/Discovery, `asyncpg` pool (min=2, max=10) for PG.
 
 ---

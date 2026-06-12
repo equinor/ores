@@ -39,8 +39,8 @@ Returns JSON with options, warnings, and reasoning.
 
 | Wells | max_cor | nbr_cor | band_width | Notes |
 |-------|---------|---------|------------|-------|
-| ≤ 10  | 50      | 5       | —          | Full resolution safe |
-| 11–50 | 30      | 5       | —          | Balanced quality/memory |
+| ≤ 10  | 50      | 5       | -          | Full resolution safe |
+| 11–50 | 30      | 5       | -          | Balanced quality/memory |
 | > 50  | 20      | 3       | 30         | Memory protection essential |
 
 ### 2. Geological Environment Detection

@@ -97,12 +97,12 @@ opts = suggest_options(env, data_names=wl.get_data_names())
 from weco.osdu_auth import get_token, osdu_headers
 
 # Environment variables:
-#   OSDU_TOKEN           — static bearer token
-#   OSDU_TOKEN_URL       — OAuth2 token endpoint
-#   OSDU_CLIENT_ID       — OAuth2 client ID
-#   OSDU_CLIENT_SECRET   — OAuth2 client secret
-#   OSDU_REFRESH_TOKEN   — OAuth2 refresh token
-#   OSDU_SCOPE           — OAuth2 scope
+#   OSDU_TOKEN           - static bearer token
+#   OSDU_TOKEN_URL       - OAuth2 token endpoint
+#   OSDU_CLIENT_ID       - OAuth2 client ID
+#   OSDU_CLIENT_SECRET   - OAuth2 client secret
+#   OSDU_REFRESH_TOKEN   - OAuth2 refresh token
+#   OSDU_SCOPE           - OAuth2 scope
 
 token = get_token()
 headers = osdu_headers(token, data_partition="my-partition")

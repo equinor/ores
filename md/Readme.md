@@ -40,7 +40,7 @@ The auth middleware resolves an access token for every request using a **fallbac
 | 0 | **Per-user session** | User's own PKCE sign-in (session cookie → server-side tokens) | When user has an active session **for the current instance** |
 | 1 | **Instance token** | `INSTANCE_<NAME>_REFRESH_TOKEN` or `_CLIENT_SECRET` | Zero-click, shared across all browser sessions |
 | 2 | **Env token** | Top-level `REFRESH_TOKEN` env var | Legacy single-instance setups (migration aid) |
-| 3 | **Redirect** | — | No token at all — browser gets `/login-page`, API gets `401` |
+| 3 | **Redirect** | - | No token at all - browser gets `/login-page`, API gets `401` |
 
 > **Instance-switch guard:** If the user's session was created for instance A but the
 > active instance has since switched to B, the session token is **skipped** (wrong
@@ -48,7 +48,7 @@ The auth middleware resolves an access token for every request using a **fallbac
 
 ### Per-instance flexibility
 
-Different instances can use different credentials. The middleware doesn't care — it calls `inst.get_access_token()` which tries `refresh_token` first, then `client_credentials`.
+Different instances can use different credentials. The middleware doesn't care - it calls `inst.get_access_token()` which tries `refresh_token` first, then `client_credentials`.
 
 | Instance | Secrets configured | `auth_mode` | Behaviour |
 |----------|-------------------|-------------|----------|
@@ -58,11 +58,11 @@ Different instances can use different credentials. The middleware doesn't care �
 
 > **Key point:** PKCE login is **always available** regardless of the instance's primary auth mode.
 > The "Sign in with Microsoft" button appears on every page and on the login page.
-> An expired client secret or refresh token doesn't lock users out — they can still sign in with their own Equinor account.
+> An expired client secret or refresh token doesn't lock users out - they can still sign in with their own Equinor account.
 
 > **Confidential client:** When a `CLIENT_SECRET` is configured, it must be included in **every** OAuth2 request
 > (authorize, token exchange, refresh). Omitting it causes Azure AD error `AADSTS7000218`.
-> This is handled automatically by the code — just make sure the secret is set in `k8s/secret.yaml` or Radix Console.
+> This is handled automatically by the code - just make sure the secret is set in `k8s/secret.yaml` or Radix Console.
 
 ### For admins - minting & rotating the shared refresh token
 
@@ -87,7 +87,7 @@ INSTANCE_EQNDEV_REFRESH_TOKEN:  "<token from script>"
 ```
 
 > **Scope:** Use the ADME App ID scope `bd0c9d90-.../.default` for per-user delegated access.
-> Do **not** use `https://energy.azure.com/.default` — that old scope only works for
+> Do **not** use `https://energy.azure.com/.default` - that old scope only works for
 > application-level grants (client_credentials / shared refresh_token) and will fail for PKCE.
 
 For Radix deployments, set the same values in **Radix Console → ores → dev → Secrets**.
@@ -106,7 +106,7 @@ old token no longer works, re-run `mint_refresh_token.py`.
 |  | `https://web-ores-dev.c3.radix.equinor.com/auth/callback` (Radix dev) |
 |  | `https://web-ores.c3.radix.equinor.com/auth/callback` (Radix prod) |
 | Supported account types | Accounts in this organizational directory only (Equinor) |
-| Allow public client flows | No — `CLIENT_SECRET` is always supplied (confidential client) |
+| Allow public client flows | No - `CLIENT_SECRET` is always supplied (confidential client) |
 | API permissions (delegated) | `bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc` → `access_as_user` (ADME resource app) |
 | Scopes | `bd0c9d90-.../.default openid offline_access` |
 
@@ -115,7 +115,7 @@ old token no longer works, re-run `mint_refresh_token.py`.
 >
 > **ADME vs old scope:** The old `https://energy.azure.com/.default` scope only works for
 > application-level grants (client_credentials). For per-user PKCE, use the ADME App ID
-> `bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc/.default` — admin consent must be granted for
+> `bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc/.default` - admin consent must be granted for
 > the `access_as_user` permission in the Enterprise Application blade.
 
 ---
@@ -298,4 +298,4 @@ These articles are also available in the app at `/howto`:
 | [GeoLabelSet](GeoLabelSet.md) | GeoLabelSet headline KPIs |
 | [Query](Query.md) | Querying data: REST, ETP, GraphQL & OSDU Search |
 
-**Developer docs:** [Dev.md](Dev.md) — environment setup, project layout, demo pipelines, deployment, caching, testing.
+**Developer docs:** [Dev.md](Dev.md) - environment setup, project layout, demo pipelines, deployment, caching, testing.

@@ -1,6 +1,6 @@
-# ORES Authentication — Internal Developer Reference
+# ORES Authentication - Internal Developer Reference
 
-> **Not exposed** — this file sits at the repo root, not in `md/`, so it is
+> **Not exposed** - this file sits at the repo root, not in `md/`, so it is
 > not served via `/howto`. It documents the auth implementation, pitfalls
 > discovered during development, and guidance for future maintainers.
 >
@@ -20,11 +20,11 @@ with its own tenant, client registration, and token strategy.
 |------|------|
 | `app/auth.py` | All auth routes (`/login`, `/auth/callback`, `/logout`, `/auth`), env-token minting, PKCE flow, SMDA token |
 | `app/instances.py` | `OsduInstance` dataclass, multi-instance registry, `_apply_instance()` which pushes config to module globals |
-| `app/main.py` | Auth middleware `inject_access_token` — resolves tokens with fallback chain |
+| `app/main.py` | Auth middleware `inject_access_token` - resolves tokens with fallback chain |
 | `app/tokenstore.py` | Fernet-encrypted SQLite store for per-user refresh tokens, in-memory AT cache |
 | `k8s/secret.yaml.template` | Template for instance secrets with inline documentation |
 | `k8s/configmap.yaml` | Non-secret instance config (hostnames, partitions, auth_mode flags) |
-| `radixconfig.yaml` | Radix deployment config — env vars inline, secrets in Radix Console |
+| `radixconfig.yaml` | Radix deployment config - env vars inline, secrets in Radix Console |
 
 ---
 
@@ -36,8 +36,8 @@ Four modes, determined per-instance:
 |------|-------------|-------------|
 | `per_user_pkce` | Each user authenticates individually via OAuth2 Authorization Code + PKCE. No shared token. | **Primary mode for ADME.** Per-user audit trail, permissions, and token isolation. |
 | `refresh_token` (env_token) | Shared refresh token from env var, auto-minted at startup. All visitors share one identity. | Quick demos, dev environments where individual identity doesn't matter. |
-| `client_credentials` | Service principal — `CLIENT_ID` + `CLIENT_SECRET` → app-level token. No user identity. | Service-to-service, test environments (e.g. preship). |
-| `az_cli` | `az account get-access-token --resource <audience>`. Uses Microsoft's first-party app. | SMDA only — separate audience, Equinor tenant-wide consent. |
+| `client_credentials` | Service principal - `CLIENT_ID` + `CLIENT_SECRET` → app-level token. No user identity. | Service-to-service, test environments (e.g. preship). |
+| `az_cli` | `az account get-access-token --resource <audience>`. Uses Microsoft's first-party app. | SMDA only - separate audience, Equinor tenant-wide consent. |
 
 ### Auto-detection logic (`instances.py`)
 
@@ -50,7 +50,7 @@ neither                        →  none (PKCE fallback)
 ```
 
 **Important:** `AUTH_MODE=per_user_pkce` can be set **even when `CLIENT_SECRET` is present**.
-This is the correct configuration for confidential-client PKCE on ADME — the secret is
+This is the correct configuration for confidential-client PKCE on ADME - the secret is
 needed for the PKCE exchange itself, but no shared instance-level token is minted.
 
 ---
@@ -85,7 +85,7 @@ causing 401s or data from the wrong OSDU backend.
 2. Store both in the session (server-side, signed cookie).
 3. Build authorize URL with `code_challenge_method=S256`.
 4. **If `CLIENT_SECRET` exists** → include it in the `AsyncOAuth2Client` kwargs.
-   This is required for confidential clients — Azure AD validates the secret
+   This is required for confidential clients - Azure AD validates the secret
    at every step.
 5. Ensure `offline_access` and `openid` are in the scope list:
    - `offline_access` → Azure AD returns a refresh token
@@ -101,10 +101,10 @@ causing 401s or data from the wrong OSDU backend.
 3. Extract user identity:
    - **Primary:** Parse `id_token` JWT → extract `oid` (Object ID) and `preferred_username`.
    - **Fallback:** If no `id_token` (some configs don't return one), parse the `access_token`
-     JWT — Azure AD access tokens are also JWTs containing `oid`/`upn`.
+     JWT - Azure AD access tokens are also JWTs containing `oid`/`upn`.
 4. Persist tokens server-side:
-   - `tokenstore.set_cached_at(oid, instance, AT, expiry)` — in-memory only
-   - `tokenstore.upsert(oid, instance, RT, upn)` — encrypted in SQLite
+   - `tokenstore.set_cached_at(oid, instance, AT, expiry)` - in-memory only
+   - `tokenstore.upsert(oid, instance, RT, upn)` - encrypted in SQLite
 5. Set session: `oid` + `instance_name` only (no tokens in cookie).
 6. Set `ores_user` marker cookie (httponly=False) for nav-bar JS green/grey dot.
 7. Redirect to `/`.
@@ -126,7 +126,7 @@ If all steps fail → return `None` → middleware falls through to instance tok
 
 ---
 
-## Scopes — the ADME pitfall
+## Scopes - the ADME pitfall
 
 ### The problem
 
@@ -161,13 +161,13 @@ The old scope is still valid for shared-token instances (eqndeva) that use
 
 ---
 
-## Confidential client — AADSTS7000218
+## Confidential client - AADSTS7000218
 
 ### The problem
 
 When an app registration has a `CLIENT_SECRET`, Azure AD treats it as a
 **confidential client**. Confidential clients must include the secret in
-**every** OAuth2 request — not just `client_credentials` grants:
+**every** OAuth2 request - not just `client_credentials` grants:
 
 - `/authorize` (via the authlib client constructor)
 - `/token` (code exchange)
@@ -193,10 +193,10 @@ if client_secret:
 ```
 
 This pattern appears in:
-- `tokens_from_env()` — shared refresh_token mint
-- `/login` — PKCE authorize URL construction
-- `/auth/callback` — code exchange
-- `OsduInstance._refresh_token_flow()` — instance-level RT refresh
+- `tokens_from_env()` - shared refresh_token mint
+- `/login` - PKCE authorize URL construction
+- `/auth/callback` - code exchange
+- `OsduInstance._refresh_token_flow()` - instance-level RT refresh
 
 ### Why this is subtle
 
@@ -221,7 +221,7 @@ Both the env-token path and the per-user PKCE path handle this:
 **Caveat:** If a pod restarts, the in-memory rotated token is lost. The original
 token from `secret.yaml` / Radix Console is used again. If Azure AD has already
 invalidated the old token, the RT flow fails and falls through to PKCE login.
-This is by design — re-run `mint_refresh_token.py` to mint a fresh one.
+This is by design - re-run `mint_refresh_token.py` to mint a fresh one.
 
 ---
 
@@ -233,14 +233,14 @@ This is by design — re-run `mint_refresh_token.py` to mint a fresh one.
 2. Calls `_apply_instance(inst)` which:
    - Updates `osdu.py` globals: `OSDU_BASE_URL`, `DATA_PARTITION_ID`, `SSL_VERIFY`,
      legal tags, owners, viewers, countries.
-   - **Closes the shared httpx client** — SSL verify is a client-level setting,
+   - **Closes the shared httpx client** - SSL verify is a client-level setting,
      so switching from `ssl_verify=True` to `False` (e.g. preship) requires a new client.
-   - Clears the TTL cache (`cache_clear()`) — stale RDDMS/search results from the
+   - Clears the TTL cache (`cache_clear()`) - stale RDDMS/search results from the
      previous instance must not bleed through.
    - Switches the PG connection pool (`notify_instance_changed()`).
    - Updates `auth.py` globals: `TENANT`, `CLIENT_ID`, `SCOPES`, `TOKEN_URL`,
      `ENV_REFRESH_TOKEN`, `AUTH_MODE`.
-   - **Clears the cached env token** — prevents reuse of a token from the previous instance.
+   - **Clears the cached env token** - prevents reuse of a token from the previous instance.
 
 ---
 
@@ -305,7 +305,7 @@ under `environmentConfig.[].variables`.
 
 ### Health probes
 
-Both readiness and liveness probe `/login-page` — a lightweight HTML page that
+Both readiness and liveness probe `/login-page` - a lightweight HTML page that
 doesn't require auth and doesn't hit OSDU APIs.
 
 ### SECRET_KEY
@@ -337,9 +337,9 @@ The `smda_access_token()` function in `auth.py` shells out to `az` asynchronousl
 caches the result, and returns `None` if `az` is unavailable or not logged in.
 
 Relevant env vars:
-- `SMDA_CLIENT_ID` — the SMDA API resource app ID (audience)
-- `SMDA_SCOPE` — optional scope override
-- `SMDA_API_KEY` — optional API key for SMDA endpoints
+- `SMDA_CLIENT_ID` - the SMDA API resource app ID (audience)
+- `SMDA_SCOPE` - optional scope override
+- `SMDA_API_KEY` - optional API key for SMDA endpoints
 
 ---
 
@@ -367,7 +367,7 @@ This endpoint is useful for debugging auth issues without exposing tokens.
 
 ---
 
-## Common pitfalls — summary
+## Common pitfalls - summary
 
 | Pitfall | Symptom | Fix |
 |---------|---------|-----|

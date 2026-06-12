@@ -398,10 +398,10 @@ graph TD
 |---|---|---|---|---|
 | TopVolantis | TopVolantis | ✓ Interpreted | ✓ Interpreted | ✓ Depth + Time |
 | BaseVolantis | BaseVolantis | ✓ Interpreted + VelModel | ✓ Interpreted | ✓ Depth + Time |
-| TopTherys | TopTherys | ✓ Interpreted + VelModel | — | ✓ Depth + Time |
-| TopVolon | TopVolon | ✓ Interpreted | — | ✓ Depth + Time |
-| BaseVelmodel | BaseVelmodel | ✓ Interpreted | — | ✓ Depth + Time |
-| MSL | MSL | ✓ Interpreted | — | ✓ Depth |
+| TopTherys | TopTherys | ✓ Interpreted + VelModel | - | ✓ Depth + Time |
+| TopVolon | TopVolon | ✓ Interpreted | - | ✓ Depth + Time |
+| BaseVelmodel | BaseVelmodel | ✓ Interpreted | - | ✓ Depth + Time |
+| MSL | MSL | ✓ Interpreted | - | ✓ Depth |
 
 ### 5.2 Faults (6)
 
@@ -444,9 +444,9 @@ The RDDMS stores 254 individual property arrays (multiple realizations, variants
 
 | Well | Trajectories | Log Curves | Markers |
 |---|---|---|---|
-| 55/33-1, -2, -3 | ✓ | — | — |
+| 55/33-1, -2, -3 | ✓ | - | - |
 | 55/33-A-1 to A-6 | ✓ | ✓ (~24 curves each) | ✓ |
-| OP5_Y1, OP5_Y2, OP6 | ✓ | — | — |
+| OP5_Y1, OP5_Y2, OP6 | ✓ | - | - |
 
 Well log curves include: Total Porosity, Horizontal Permeability, Acoustic/Shear Impedance, Vp/Vs, Bulk Density, Seismic Amplitude, Facies, Shale Volume, Water Saturation, Zone Index.
 

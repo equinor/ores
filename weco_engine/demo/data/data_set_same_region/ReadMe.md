@@ -1,4 +1,4 @@
-# Data Set 1.3 — Distality Cost Function Test (Walther's Law)
+# Data Set 1.3 - Distality Cost Function Test (Walther's Law)
 
 ## Purpose
 
@@ -68,4 +68,4 @@ must also occur as lateral transitions at the same time-horizon.
 
 ## Authors
 
-Christophe Antoine, Guillaume Caumon, Paul Baville — ASGA/RING, Université de Lorraine.
+Christophe Antoine, Guillaume Caumon, Paul Baville - ASGA/RING, Université de Lorraine.

@@ -6,7 +6,7 @@
 
 ---
 
-## Part I — Uncertainty Concepts
+## Part I - Uncertainty Concepts
 
 ### 1. Taxonomy of Subsurface Uncertainty
 
@@ -19,11 +19,11 @@
 
 A complete assessment at DG2+ typically runs **N scenarios × M realisations each**, producing N×M raw volume records but N aggregated statistics sets (one P10/P50/P90 per scenario).
 
-### 2. Scenarios — Alternative Interpretations
+### 2. Scenarios - Alternative Interpretations
 
 #### 2.1 Why Scenarios Differ from Parameter Variation
 
-The design matrix captures **continuous parameter uncertainty** — multipliers, shifts, family selectors applied to a *single structural/property model*. **Scenarios** capture **discrete geological ambiguity** — fundamentally different interpretations of the subsurface where no parameter sweep connects one to another.
+The design matrix captures **continuous parameter uncertainty** - multipliers, shifts, family selectors applied to a *single structural/property model*. **Scenarios** capture **discrete geological ambiguity** - fundamentally different interpretations of the subsurface where no parameter sweep connects one to another.
 
 | Aspect | Parameter variation | Scenario |
 |---|---|---|
@@ -37,12 +37,12 @@ The design matrix captures **continuous parameter uncertainty** — multipliers,
 
 Inspired by geological ambiguity mechanisms (cf. WeCo scenario engine):
 
-1. **Connectivity** — are sand bodies one connected sheet or isolated lenses?
-2. **Stacking pattern** — amalgamated channel belt vs separate avulsion events
-3. **Geometry** — layer-cake vs clinoform/wedge (parasequence pinch-out)
-4. **Cycle counting** — more cycles present in one well than another; which are "missing"?
-5. **Fault juxtaposition** — which layers correlate across a fault with growth expansion?
-6. **Fluid contact** — single OWC vs tilted/compartmentalised contacts
+1. **Connectivity** - are sand bodies one connected sheet or isolated lenses?
+2. **Stacking pattern** - amalgamated channel belt vs separate avulsion events
+3. **Geometry** - layer-cake vs clinoform/wedge (parasequence pinch-out)
+4. **Cycle counting** - more cycles present in one well than another; which are "missing"?
+5. **Fault juxtaposition** - which layers correlate across a fault with growth expansion?
+6. **Fluid contact** - single OWC vs tilted/compartmentalised contacts
 
 #### 2.3 Scenario vs Sensitivity vs Ensemble
 
@@ -68,7 +68,7 @@ Inspired by geological ambiguity mechanisms (cf. WeCo scenario engine):
 
 #### 3.2 Specifying Uncertainty: Range, Distribution, Parameters
 
-**Range (min/max bounds)** — physical or geological limits:
+**Range (min/max bounds)** - physical or geological limits:
 
 ```yaml
 KxMultiplier:
@@ -93,27 +93,27 @@ NTG_Shift:
 
 #### 3.3 Common Use Cases
 
-**A. Porosity and NTG — direct volume impact**
+**A. Porosity and NTG - direct volume impact**
 
 Setup: Well data gives mean porosity = 0.22 with std = 0.03. NTG from core is 0.65 ± 0.08.
 
-- `PORO_Mult`: Triangular(0.85, 1.0, 1.15) — applied to deterministic PORO field
-- `NTG_Mult`: Normal(1.0, 0.12) — applied to NTG cube
+- `PORO_Mult`: Triangular(0.85, 1.0, 1.15) - applied to deterministic PORO field
+- `NTG_Mult`: Normal(1.0, 0.12) - applied to NTG cube
 - Volume impact: STOIIP ∝ PORO × NTG × (1 − Sw) × BulkVolume → ±15–25% spread
 
-**B. Permeability — flow and recovery impact**
+**B. Permeability - flow and recovery impact**
 
 Setup: Log-derived perm has factor-3 uncertainty; core shows geometric mean 150 mD, sigma_ln = 1.1.
 
-- `PERMX_Mult`: LogNormal(0, 0.8) — multiplicative factor on base perm field
-- `Kv_Kh_Ratio`: Uniform(0.01, 0.3) — vertical-to-horizontal ratio
+- `PERMX_Mult`: LogNormal(0, 0.8) - multiplicative factor on base perm field
+- `Kv_Kh_Ratio`: Uniform(0.01, 0.3) - vertical-to-horizontal ratio
 - Impact: Recovery factor and plateau rate; typically DG3+ (dynamic simulation)
 
-**C. Relative permeability — discrete family uncertainty**
+**C. Relative permeability - discrete family uncertainty**
 
 Setup: Three candidate SCAL curves: water-wet (A), mixed-wet (B), oil-wet (C).
 
-- `RelPermFamily`: Discrete{A: 0.4, B: 0.35, C: 0.25} — weighted by plausibility
+- `RelPermFamily`: Discrete{A: 0.4, B: 0.35, C: 0.25} - weighted by plausibility
 - Impact: Step-change in recovery factor (10–30% variation); often the single largest dynamic uncertainty
 
 **D. Saturation function and contacts**
@@ -121,7 +121,7 @@ Setup: Three candidate SCAL curves: water-wet (A), mixed-wet (B), oil-wet (C).
 Setup: OWC from pressure data = 1693 m ± 10 m. Transition zone height uncertain.
 
 - `OWC_Depth`: Triangular(1680, 1693, 1710)
-- `CapPressure_Mult`: Uniform(0.5, 2.0) — scales J-function
+- `CapPressure_Mult`: Uniform(0.5, 2.0) - scales J-function
 - Impact: STOIIP (pore volume above OWC) + early water production risk
 
 #### 3.4 Correlation Between Properties
@@ -130,7 +130,7 @@ Properties are often correlated (high PORO → high PERMX; low NTG → different
 
 ---
 
-## Part II — Experimental Design (Inputs)
+## Part II - Experimental Design (Inputs)
 
 ### 4. Design Matrix
 
@@ -169,19 +169,19 @@ Properties are often correlated (high PORO → high PERMX; low NTG → different
     ],
     "Columns": [
       {"ColumnName": "PORO_Mult", "ValueType": "number",
-       "Remark": "Triangular(0.8, 1.0, 1.3) — porosity multiplier on Tarbert Fm"},
+       "Remark": "Triangular(0.8, 1.0, 1.3) - porosity multiplier on Tarbert Fm"},
       {"ColumnName": "PERMX_Mult", "ValueType": "number",
-       "Remark": "LogNormal(mu=0, sigma=0.7) — horizontal perm multiplier"},
+       "Remark": "LogNormal(mu=0, sigma=0.7) - horizontal perm multiplier"},
       {"ColumnName": "NTG_Shift", "ValueType": "number",
-       "Remark": "Uniform(-0.08, +0.08) — additive NTG adjustment"},
+       "Remark": "Uniform(-0.08, +0.08) - additive NTG adjustment"},
       {"ColumnName": "SW_Init_Mult", "ValueType": "number",
-       "Remark": "Normal(1.0, 0.05) — Sw initialisation multiplier"},
+       "Remark": "Normal(1.0, 0.05) - Sw initialisation multiplier"},
       {"ColumnName": "RelPermFamily", "ValueType": "string",
-       "Remark": "Discrete{A:0.4, B:0.35, C:0.25} — relative permeability set"},
+       "Remark": "Discrete{A:0.4, B:0.35, C:0.25} - relative permeability set"},
       {"ColumnName": "FaciesProb_Sand", "ValueType": "number",
-       "Remark": "Beta(2,5) on [0.3, 0.8] — sand proportion in Ness Fm"},
+       "Remark": "Beta(2,5) on [0.3, 0.8] - sand proportion in Ness Fm"},
       {"ColumnName": "OWC_Depth", "ValueType": "number",
-       "Remark": "Triangular(1680, 1693, 1710) — oil-water contact depth [m]"}
+       "Remark": "Triangular(1680, 1693, 1710) - oil-water contact depth [m]"}
     ]
   }
 }
@@ -204,13 +204,13 @@ Represent each artifact as a WPC and group the choice for a scenario into **one 
 
 ---
 
-## Part III — OSDU Data Model
+## Part III - OSDU Data Model
 
 ### 7. Building Blocks
 
 #### 7.1 Master‑data (anchors for scope)
-- `master-data--Reservoir` — the reservoir entity of interest.
-- `master-data--ReservoirSegment` — segments or compartments under the reservoir.
+- `master-data--Reservoir` - the reservoir entity of interest.
+- `master-data--ReservoirSegment` - segments or compartments under the reservoir.
 
 *Why:* `ReservoirEstimatedVolumes` is scoped by `ParentObjectID` to Field/Reservoir/ReservoirSegment.
 
@@ -221,14 +221,14 @@ Represent each artifact as a WPC and group the choice for a scenario into **one 
 - **Canonical volume property types**: `reference-data--ReservoirEstimatedVolumePropertyType:{Bulk,Net,Pore,HydrocarbonPore,Oil,AssociatedGas}`.
 
 #### 7.3 Work‑product components (WPCs)
-- **Design Matrix** — `work-product-component--ColumnBasedTable` (CBT).
-- **Static bundles** — grids, properties, velocity as WPCs (e.g., `GenericRepresentation`, `VelocityModeling`).
-- **Output volumes** — `work-product-component--ReservoirEstimatedVolumes` (REV), raw per‑realisation and aggregated statistics.
-- **Optional KPIs** — `work-product-component--ColumnBasedTable` for generic KPI/time series.
+- **Design Matrix** - `work-product-component--ColumnBasedTable` (CBT).
+- **Static bundles** - grids, properties, velocity as WPCs (e.g., `GenericRepresentation`, `VelocityModeling`).
+- **Output volumes** - `work-product-component--ReservoirEstimatedVolumes` (REV), raw per‑realisation and aggregated statistics.
+- **Optional KPIs** - `work-product-component--ColumnBasedTable` for generic KPI/time series.
 
 #### 7.4 Collections and scenario packaging
-- **WorkProduct** — versioned case package (design + static bundle + chosen outputs). One per scenario.
-- **CollaborationProjectCollection** — curated working set while iterating.
+- **WorkProduct** - versioned case package (design + static bundle + chosen outputs). One per scenario.
+- **CollaborationProjectCollection** - curated working set while iterating.
 
 #### 7.5 Activity semantics (`AbstractProjectActivity`)
 Use `Parameters[]` with `ParameterRole = input|output|context` and `ObjectParameterKey` to enumerate run inputs/outputs and context. Keys (e.g., `realisation-index`, `seed`, `scenario-id`) keep the mapping explicit.
@@ -287,7 +287,7 @@ Use Activity `Parameters[]` with a `scenario-id` key to trace which scenario pro
 
 ---
 
-## Part IV — Workflow & Provenance
+## Part IV - Workflow & Provenance
 
 ### 9. Run Bookkeeping with Activity Parameters
 
@@ -330,7 +330,7 @@ flowchart TD
   DM[Design Matrix<br/>Multipliers and distribution samples]
   ERT[ERT Orchestrator]
   REAL[Per-realisation property set<br/>PORO_r, NTG_r, PERMX_r]
-  SIM[Simulator — Eclipse / OPM / Flow]
+  SIM[Simulator - Eclipse / OPM / Flow]
   REV[Raw volumes per realisation]
   STATS[Aggregated P10/P50/P90]
 
@@ -345,7 +345,7 @@ flowchart TD
 **Key points**:
 - The base-case property model is a **single WPC** (or set of WPCs for grid + properties)
 - Multipliers/shifts from the design matrix are applied **at runtime** by ERT/RMS
-- Each realisation produces a modified property field — typically NOT stored individually (too large); only the multipliers and resulting volumes are persisted
+- Each realisation produces a modified property field - typically NOT stored individually (too large); only the multipliers and resulting volumes are persisted
 - Statistics (P10/P50/P90 of volumes) capture the aggregate effect of property uncertainty
 
 ### 12. Scenario Workflow
@@ -361,24 +361,24 @@ flowchart TD
 
 ---
 
-## Part V — Outputs
+## Part V - Outputs
 
 ### 13. Volumes
 
 #### 13.1 Raw per‑realisation (REV)
 Keys: `Realisation`, `Zone`, `SegmentID` (with `KindID = master-data--ReservoirSegment:2.0.0`).
-Columns: `Bulk`, `Net`, `Pore`, `HydrocarbonPore`, `Oil`, `AssociatedGas` — each with `PropertyTypeID` and `UnitOfMeasureID: m3`.
+Columns: `Bulk`, `Net`, `Pore`, `HydrocarbonPore`, `Oil`, `AssociatedGas` - each with `PropertyTypeID` and `UnitOfMeasureID: m3`.
 
 #### 13.2 Aggregated statistics (REV)
-Keys: `Zone`, `SegmentID` (no Realisation — aggregated across runs).
-Columns: dot notation `<Property>.<Statistic>` — e.g. `Bulk.P10`, `Oil.ArithmeticMean`.
+Keys: `Zone`, `SegmentID` (no Realisation - aggregated across runs).
+Columns: dot notation `<Property>.<Statistic>` - e.g. `Bulk.P10`, `Oil.ArithmeticMean`.
 Each column carries `FacetIDs` with `FacetType:statistics` + `FacetRole:<P10|P50|P90|ArithmeticMean|...>`.
 
 > See [Volumes](/howto/volumes) for full JSON examples of both raw and aggregated REV records, column mapping from fmu-dataio, and naming conventions.
 
 ---
 
-## Part VI — Diagrams
+## Part VI - Diagrams
 
 ### 14.1 Data flow
 ```mermaid
@@ -404,10 +404,10 @@ flowchart LR
 ```mermaid
 flowchart LR
   CP[CollaborationProject]
-  WP_BASE[WorkProduct — BASE scenario]
-  WP_LOW[WorkProduct — LOW scenario]
-  WP_HIGH[WorkProduct — HIGH scenario]
-  BD[BusinessDecision — DG2]
+  WP_BASE[WorkProduct - BASE scenario]
+  WP_LOW[WorkProduct - LOW scenario]
+  WP_HIGH[WorkProduct - HIGH scenario]
+  BD[BusinessDecision - DG2]
 
   CP --- WP_BASE
   CP --- WP_LOW
@@ -450,7 +450,7 @@ erDiagram
 
 ---
 
-## Part VII — Reference
+## Part VII - Reference
 
 ### 15. Conventions and Tips
 - **Column names**: use dot notation for statistics; avoid spaces and parentheses in labels.

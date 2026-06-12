@@ -1,4 +1,4 @@
-# Shallow Marine Dataset — Hugin Formation Analogue
+# Shallow Marine Dataset - Hugin Formation Analogue
 
 ## Geological Setting
 
@@ -39,21 +39,21 @@ standard layer-cake correlation.
 
 Two biostratigraphic markers subdivide the section:
 
-- **BZ1** — base of PS2 (separates PS1 from PS2–PS5)
-- **BZ2** — base of PS4 (separates PS2–PS3 from PS4–PS5)
+- **BZ1** - base of PS2 (separates PS1 from PS2–PS5)
+- **BZ2** - base of PS4 (separates PS2–PS3 from PS4–PS5)
 
 ## Correlation Strategy
 
-### `options.txt` — default
+### `options.txt` - default
 Uses **GR** (50%) + **RHOB** (30%) + **DT** (20%) variance cost functions.
 Works well for clean sand/shale discrimination.
 
-### `options_distality.txt` — with distality cost
+### `options_distality.txt` - with distality cost
 Adds the **distality** cost function (FACIES channel) at 10% weight.
 Facies groups encode lateral equivalence:
-`1,6; 2,8; 3,7; 4,5` — onshore mud ↔ offshore mud, etc.
+`1,6; 2,8; 3,7; 4,5` - onshore mud ↔ offshore mud, etc.
 
-### `options_with_biozones.txt` — biozone constraints
+### `options_with_biozones.txt` - biozone constraints
 Uses biozone region as `no_crossing` constraint, preventing
 correlations from crossing BZ1 or BZ2 boundaries. This dramatically
 reduces the search space and improves accuracy.
@@ -89,5 +89,5 @@ weco wells.txt -o options_with_biozones.txt  # run with biozones
 
 ## Authors
 
-Christophe Antoine, Guillaume Caumon, Paul Baville — ASGA/RING, Université de Lorraine.
+Christophe Antoine, Guillaume Caumon, Paul Baville - ASGA/RING, Université de Lorraine.
 

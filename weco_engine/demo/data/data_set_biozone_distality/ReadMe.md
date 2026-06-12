@@ -1,4 +1,4 @@
-# Data Set 4 — Hugin Formation, Sigrun Field (2 wells, facies grouping)
+# Data Set 4 - Hugin Formation, Sigrun Field (2 wells, facies grouping)
 
 ## Source
 
@@ -38,7 +38,7 @@ treated as the same category for Walther's Law purposes:
 | C     | Prodelta + Offshore   | Distal low-energy system     |
 
 Different grouping schemes (Facies_1, Facies_2, ...) produce different
-correlation results — demonstrating the **sensitivity of distality-based
+correlation results - demonstrating the **sensitivity of distality-based
 correlation to the geological interpretation**.
 
 ## Correlation Strategy
@@ -61,11 +61,11 @@ to demonstrate how gap penalty affects discontinuity handling.
 - Baville, P. (2022) *Stratigraphic correlation of well logs using
   graph-based dynamic time warping*, PhD Thesis, Université de Lorraine, §5.
 - Ainsworth, R.B. (2005) Sequence stratigraphic-based analysis of
-  reservoir connectivity: influence of sealing faults — a case study
+  reservoir connectivity: influence of sealing faults - a case study
   from a marginal marine depositional setting. *Petroleum Geoscience*
   11, 257–276.
 
 ## Authors
 
-Christophe Antoine, Guillaume Caumon, Paul Baville — ASGA/RING, Université de Lorraine.
+Christophe Antoine, Guillaume Caumon, Paul Baville - ASGA/RING, Université de Lorraine.
 Well data courtesy of Equinor ASA.

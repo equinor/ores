@@ -45,7 +45,7 @@ dominated by shoal/lagoon facies; distal wells by slope/basinal marls.
 
 ## Correlation Strategy
 
-Multi-log approach essential — GR alone cannot discriminate facies:
+Multi-log approach essential - GR alone cannot discriminate facies:
 - **DEN** + **SON** + **GR** + **NEU** composite cost
 - FACIES region with distality cost for Walther's Law enforcement
 - Biozone no-crossing where available

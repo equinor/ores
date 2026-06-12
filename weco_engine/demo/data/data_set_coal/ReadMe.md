@@ -44,7 +44,7 @@ Cyclic coal-bearing sequences (cyclothems) with 6 named seams.
 ### Geological Features
 - **Seam splitting**: Thick seams split into upper/lower splits with dirt parting
 - **Washout zones**: Fluvial channels locally erode and replace seams
-- **Tonstein (volcanic ash)**: Isochronous marker within coal — best correlation tool
+- **Tonstein (volcanic ash)**: Isochronous marker within coal - best correlation tool
 - **Marine bands (Goniatitenschicht)**: Basin-wide shale markers above major seams
 - **Brandschiefer (burnt shale)**: Thermally altered roof from ancient seam fires
 - **Ironstone nodules (Toneisenstein)**: Siderite concretions in roof shale
@@ -62,14 +62,14 @@ Cyclic coal-bearing sequences (cyclothems) with 6 named seams.
 | NEU  | Neutron porosity         | %       | Very high (55)       |
 
 ### Recommended WeCo Parameters
-See `options_coal.txt` — optimised for multi-log seam correlation.
+See `options_coal.txt` - optimised for multi-log seam correlation.
 
 ### Correlation Strategy
-1. **Primary indicator**: DEN (bulk density) — coal at 1.3 g/cc is uniquely low
-2. **Secondary**: GR — coal has very low radioactivity
-3. **Supporting**: SON, RT — coal shows extreme values in both
-4. **QC**: CAL — coal washout confirms seam identification
-5. **Constraint**: SEAM region with `same-region` — if seam IDs are available
+1. **Primary indicator**: DEN (bulk density) - coal at 1.3 g/cc is uniquely low
+2. **Secondary**: GR - coal has very low radioactivity
+3. **Supporting**: SON, RT - coal shows extreme values in both
+4. **QC**: CAL - coal washout confirms seam identification
+5. **Constraint**: SEAM region with `same-region` - if seam IDs are available
 
 ### Generation
 - Wells: 30 (6×5 grid with jitter)

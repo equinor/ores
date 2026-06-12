@@ -18,15 +18,15 @@ python demo/resqml/ingest_wells.py --all --token-file ~/.azure/token.json
 ## Target Dataspace
 
 All demo data goes into `maap/weco` on each instance:
-- **eqndev** (default) — development
-- **preship** — pre-ship testing
-- **interop** — interoperability testing
+- **eqndev** (default) - development
+- **preship** - pre-ship testing
+- **interop** - interoperability testing
 
 ## Datasets
 
 | Dataset | Wells | Logs | Description |
 |---------|-------|------|-------------|
-| shallow_marine | 10 | GR, RT, RHOB, NPHI, DT | Hugin Fm analogue — prograding shoreface |
+| shallow_marine | 10 | GR, RT, RHOB, NPHI, DT | Hugin Fm analogue - prograding shoreface |
 | coal | 10 | GR, RT, RHOB | Coal basin seam correlation |
 | quaternary | 20 | GR, RT | Glacial/hydrogeology wells |
 
@@ -38,7 +38,7 @@ demo/resqml/payloads/
 ├── shallow_marine/
 │   ├── wells.json      (WellboreTrajectoryRepresentation)
 │   ├── logs.json       (ContinuousProperty per well/log)
-│   └── regions.json    (DiscreteProperty — facies, biozones)
+│   └── regions.json    (DiscreteProperty - facies, biozones)
 ├── coal/
 │   ├── wells.json
 │   ├── logs.json

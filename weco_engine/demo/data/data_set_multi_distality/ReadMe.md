@@ -1,4 +1,4 @@
-# Data Set 1.4 — Multi-Distality Cost Function Test
+# Data Set 1.4 - Multi-Distality Cost Function Test
 
 ## Purpose
 
@@ -10,7 +10,7 @@ the one producing the best correlation.
 ## Wells: 5
 
 Five wells with interpreted **sedimentary facies**. No single distality
-ordering is imposed on the wells — instead, several candidate transport
+ordering is imposed on the wells - instead, several candidate transport
 directions are evaluated during the correlation search.
 
 ## External Data
@@ -56,4 +56,4 @@ For each candidate transport direction $\mathbf{t}_k$:
 
 ## Authors
 
-Christophe Antoine, Guillaume Caumon, Paul Baville — ASGA/RING, Université de Lorraine.
+Christophe Antoine, Guillaume Caumon, Paul Baville - ASGA/RING, Université de Lorraine.

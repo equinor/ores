@@ -95,7 +95,7 @@ LocalModelFeature ◄── StructuralModel
 **Why "Mixed" on interpretations?**  
 A `HorizonInterpretation` for TopVolantis has representations in *both* domains:
 a StructureMap (depth) and a SeismicHorizon (time). The interpretation itself is
-domain-agnostic — it describes the geologic meaning. The domain is a property of
+domain-agnostic - it describes the geologic meaning. The domain is a property of
 each representation, not the interpretation. OSDU uses `DomainTypeID: Mixed` to
 indicate that the interpretation spans both depth and time.
 
@@ -294,10 +294,10 @@ Each `WellLog:1.2.0` record groups ~24 curves from a `WellboreFrameRepresentatio
 |---|---|---|---|
 | TopVolantis | TopVolantis | ✓ Interpreted | ✓ Interpreted |
 | BaseVolantis | BaseVolantis | ✓ Interpreted + Velocity Model | ✓ Interpreted |
-| TopTherys | TopTherys | ✓ Interpreted + Velocity Model | — |
-| TopVolon | TopVolon | ✓ Interpreted | — |
-| BaseVelmodel | BaseVelmodel | ✓ Interpreted | — |
-| MSL | MSL | ✓ Interpreted | — |
+| TopTherys | TopTherys | ✓ Interpreted + Velocity Model | - |
+| TopVolon | TopVolon | ✓ Interpreted | - |
+| BaseVelmodel | BaseVelmodel | ✓ Interpreted | - |
+| MSL | MSL | ✓ Interpreted | - |
 
 ### 7.2 Faults (6)
 
@@ -321,11 +321,11 @@ and 6 faults into a single structural organization, ordered by geologic age.
 
 | Issue | Impact | Status |
 |---|---|---|
-| No `SpatialArea` (bounding box) | Map-based spatial search won't find records | **Open** — needs CRS→WGS84 transform |
-| ~~No inline grid geometry on StructureMap~~ | ~~App can't render without RDDMS call~~ | **Fixed** — NodeCount, spacing, origin populated |
-| ~~StructureMap names not horizon-specific~~ | ~~Multiple generic names~~ | **Fixed** — "Depth Surface - Interpreted (TopVolantis)" |
-| ~~SeismicHorizon names not specific~~ | ~~"Time Surface - Interpreted" ×2~~ | **Fixed** — "Time Surface - Interpreted (BaseVolantis)" |
-| ~~No `DomainTypeID` on HorizonInterpretation~~ | ~~Can't filter by domain~~ | **Fixed** — `Mixed` on all 6 |
-| ~~No `StratigraphicRoleTypeID`~~ | ~~Missing role~~ | **Fixed** — `Chronostratigraphic` on all 6 |
-| ~~WellLog names generic~~ | ~~Not useful~~ | **Fixed** — "Well Log (55/33-A-1)" |
-| ~~No shared BinGrid~~ | ~~Grid geometry duplicated/missing~~ | **Fixed** — 1 GenericBinGrid, all surfaces reference via BinGridID |
+| No `SpatialArea` (bounding box) | Map-based spatial search won't find records | **Open** - needs CRS→WGS84 transform |
+| ~~No inline grid geometry on StructureMap~~ | ~~App can't render without RDDMS call~~ | **Fixed** - NodeCount, spacing, origin populated |
+| ~~StructureMap names not horizon-specific~~ | ~~Multiple generic names~~ | **Fixed** - "Depth Surface - Interpreted (TopVolantis)" |
+| ~~SeismicHorizon names not specific~~ | ~~"Time Surface - Interpreted" ×2~~ | **Fixed** - "Time Surface - Interpreted (BaseVolantis)" |
+| ~~No `DomainTypeID` on HorizonInterpretation~~ | ~~Can't filter by domain~~ | **Fixed** - `Mixed` on all 6 |
+| ~~No `StratigraphicRoleTypeID`~~ | ~~Missing role~~ | **Fixed** - `Chronostratigraphic` on all 6 |
+| ~~WellLog names generic~~ | ~~Not useful~~ | **Fixed** - "Well Log (55/33-A-1)" |
+| ~~No shared BinGrid~~ | ~~Grid geometry duplicated/missing~~ | **Fixed** - 1 GenericBinGrid, all surfaces reference via BinGridID |

@@ -1,4 +1,4 @@
-# Seismic Interpretation — Data Model & Workflow Guide
+# Seismic Interpretation - Data Model & Workflow Guide
 
 ---
 
@@ -70,10 +70,10 @@ classDiagram
 ```
 
 **Key patterns:**
-- **AbstractInterpretation** = geologic meaning (the "what") — no geometry
-- **AbstractRepresentation** = geometry metadata (the "how") — linked via `InterpretationID`
+- **AbstractInterpretation** = geologic meaning (the "what") - no geometry
+- **AbstractRepresentation** = geometry metadata (the "how") - linked via `InterpretationID`
 - **StructureMap** has **dual inheritance**: Representation + GenericBinGrid
-- `DDMSDatasets[]` links to RDDMS — no OSDU schema carries actual values
+- `DDMSDatasets[]` links to RDDMS - no OSDU schema carries actual values
 
 ---
 
@@ -117,7 +117,7 @@ LocalBoundaryFeature → HorizonInterpretation → HorizonControlPoints (picks)
 
 ## 4. Record Types
 
-### 4.1 Fault Polylines — `GenericRepresentation:1.2.0`
+### 4.1 Fault Polylines - `GenericRepresentation:1.2.0`
 
 | Field | Value |
 |---|---|
@@ -129,7 +129,7 @@ LocalBoundaryFeature → HorizonInterpretation → HorizonControlPoints (picks)
 
 **Classification**: Only objects with `FaultInterpretation` content type and manual-pick naming (e.g. `DL_*`, `TL_*`). Excludes algorithmic extractions.
 
-### 4.2 Horizon Control Points — `HorizonControlPoints:1.0.0`
+### 4.2 Horizon Control Points - `HorizonControlPoints:1.0.0`
 
 | Field | Value |
 |---|---|
@@ -141,7 +141,7 @@ LocalBoundaryFeature → HorizonInterpretation → HorizonControlPoints (picks)
 
 **Classification**: Only objects linked to `HorizonInterpretation`. Excludes model-extracted points (`*_extracted`).
 
-### 4.3 Structure Maps — `StructureMap:1.0.0`
+### 4.3 Structure Maps - `StructureMap:1.0.0`
 
 | Field | Value |
 |---|---|
@@ -208,11 +208,11 @@ Workflow suffixes: `_interp` (initial), `_filter` (QC'd), `_filter_from_time` (d
 
 ## 7. Grid Strategy
 
-### Pattern A — Inline Grid
+### Pattern A - Inline Grid
 
 StructureMap carries its own geometry (Origin, BinWidth, NodeCount). Self-contained; use for unique one-off grids.
 
-### Pattern B — External BinGrid Reference
+### Pattern B - External BinGrid Reference
 
 StructureMap references a shared `GenericBinGrid` via `BinGridID`. One grid definition, many surfaces. Use when multiple horizons share the same lattice.
 
@@ -231,9 +231,9 @@ Each RDDMS object should have **both** a universal and a specialised catalog ent
 | Layer | Schema | Purpose |
 |---|---|---|
 | Universal | `GenericRepresentation:1.2.0` | "This object exists" |
-| Specialised | `StructureMap:1.0.0` | Depth map — searchable by grid |
-| Specialised | `HorizonControlPoints:1.0.0` | Picks — searchable by horizon |
-| Specialised | `SeismicHorizon:2.1.0` | TWT — searchable by survey |
+| Specialised | `StructureMap:1.0.0` | Depth map - searchable by grid |
+| Specialised | `HorizonControlPoints:1.0.0` | Picks - searchable by horizon |
+| Specialised | `SeismicHorizon:2.1.0` | TWT - searchable by survey |
 
 ---
 
@@ -297,11 +297,11 @@ sequenceDiagram
 ### Collaboration dataspace pattern
 
 ```
-<project>/sor       — locked baseline
-<project>/wip       — interpreter works here
-<project>/v1        — first QC'd snapshot (clone + lock)
-<project>/v2        — post-well-tie update
-enterprise/sor      — approved results published here
+<project>/sor       - locked baseline
+<project>/wip       - interpreter works here
+<project>/v1        - first QC'd snapshot (clone + lock)
+<project>/v2        - post-well-tie update
+enterprise/sor      - approved results published here
 ```
 
 ---
@@ -313,5 +313,5 @@ enterprise/sor      — approved results published here
 - [HorizonControlPoints:1.0.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/HorizonControlPoints.1.0.0.md)
 - [HorizonInterpretation:1.2.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/HorizonInterpretation.1.2.0.md)
 - [GenericRepresentation:1.2.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/GenericRepresentation.1.2.0.md)
-- [P&WS Guide](PWS.md) — Project lifecycle for interpretation workspaces
-- [Governance Strategy](STRATEGY.md) — SoR/SoE, versioning, ACL patterns
+- [P&WS Guide](PWS.md) - Project lifecycle for interpretation workspaces
+- [Governance Strategy](STRATEGY.md) - SoR/SoE, versioning, ACL patterns

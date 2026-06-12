@@ -1,4 +1,4 @@
-# WeCo Validation Report — Truth Recovery at Scale
+# WeCo Validation Report - Truth Recovery at Scale
 
 ## Overview
 
@@ -56,10 +56,10 @@ monotonic depth correspondence is strained.  For operational use:
 
 1. Use `generate_parallel` / `generate_clinoform` tests as regression checks
 2. Use `generate_shallow_marine` as the primary validation target
-3. Use `generate_fluvial` as a stress test — expect degraded performance
+3. Use `generate_fluvial` as a stress test - expect degraded performance
 
 ## References
 
-- Baville (2022) — Graph-DTW validation methodology
-- `pytest/test_truth.py::TestRoundtripGenerators` — Automated tests
-- `doc/validation_report.ipynb` — Interactive visualisation
+- Baville (2022) - Graph-DTW validation methodology
+- `pytest/test_truth.py::TestRoundtripGenerators` - Automated tests
+- `doc/validation_report.ipynb` - Interactive visualisation

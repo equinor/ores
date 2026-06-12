@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Traditional well correlation via graph-DTW treats all markers equally —
+Traditional well correlation via graph-DTW treats all markers equally -
 it finds the globally optimal n-best paths through a cost graph where
 every transition has the same structural weight.  This works well for
 sub-seismic correlations where intervals are relatively uniform, but
@@ -22,9 +22,9 @@ and higher-order surfaces should be established first*.
 
 Using GR log patterns, WeCo automatically detects:
 
-- **MFS** (Maximum Flooding Surfaces) — GR peaks (high gamma = shale)
-- **SB** (Sequence Boundaries) — GR troughs with sharp base (low gamma)
-- **TS** (Transgressive Surfaces) — GR inflection points
+- **MFS** (Maximum Flooding Surfaces) - GR peaks (high gamma = shale)
+- **SB** (Sequence Boundaries) - GR troughs with sharp base (low gamma)
+- **TS** (Transgressive Surfaces) - GR inflection points
 
 ```python
 from weco.sequence_strat import detect_mfs, detect_sb, add_sequence_boundaries
@@ -75,6 +75,6 @@ With hierarchical constraints:
 
 ## Reference
 
-- Baville (2022) §6.3.5 — Multi-scale correlation
-- Catuneanu (2006) — *Principles of Sequence Stratigraphy*
-- Van Wagoner et al. (1990) — *Siliciclastic Sequence Stratigraphy*
+- Baville (2022) §6.3.5 - Multi-scale correlation
+- Catuneanu (2006) - *Principles of Sequence Stratigraphy*
+- Van Wagoner et al. (1990) - *Siliciclastic Sequence Stratigraphy*

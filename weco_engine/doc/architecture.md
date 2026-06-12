@@ -107,8 +107,8 @@ classDiagram
 | Option | Description | Expected Speedup |
 |--------|-------------|:----------------:|
 | `band-width` | Sakoe-Chiba band constraint on graph-DTW | 3-10× |
-| `beam-width` | Beam search — top-B nodes per column | 5-20× |
-| `cost-floor` | Minimum cost per transition (noise suppression) | — |
+| `beam-width` | Beam search - top-B nodes per column | 5-20× |
+| `cost-floor` | Minimum cost per transition (noise suppression) | - |
 
 Implementation: `include/weco.h` (`Correlator::run`, `run_wavefront`, `run_dest_only`, `run_dest_opt`), `src/correlator.cpp` (`finish_path` beam pruning), `src/corgraph.cpp` (`CorGraph::compact()`).
 
@@ -118,12 +118,12 @@ Implementation: `include/weco.h` (`Correlator::run`, `run_wavefront`, `run_dest_
 |--------|:----:|:-----:|-------|
 | WeCo native | ✓ | ✓ | |
 | LAS 2.0 / 3.0 | ✓ | ✓ | |
-| RESQML v2 — RDDMS REST | ✓ | ✓ | via `weco/rddms.py` |
-| RESQML v2 — EPC file | ✓ | ✓ | offline fallback |
+| RESQML v2 - RDDMS REST | ✓ | ✓ | via `weco/rddms.py` |
+| RESQML v2 - EPC file | ✓ | ✓ | offline fallback |
 | CSV | ✓ | ✓ | |
 | GOCAD .wl / .vs / .ts / .pl | ✓ | ✓ | via `resqml.gocad_io` |
-| DLIS / WITSML | ✓ | — | |
-| RMS ASCII | — | ✓ | picks, points, code tables |
+| DLIS / WITSML | ✓ | - | |
+| RMS ASCII | - | ✓ | picks, points, code tables |
 
 ## Output Artifacts
 
@@ -132,12 +132,12 @@ Implementation: `include/weco.h` (`Correlator::run`, `run_wavefront`, `run_dest_
 | Marker sets | `.wl` MRKR | WellboreMarkerFrame | well_picks.txt | CSV, JSON |
 | Zonation logs | `.wl` LOG | DiscreteProperty | discrete LAS | LAS 2.0 |
 | Horizon picks | `.vs` | HorizonInterpretation | IRAP points | CSV, JSON |
-| Zone thickness | — | — | zone_picks.txt | CSV |
-| Correlation polylines | `.pl` | PolylineSetRepresentation | — | — |
-| Correlation surfaces | `.ts` | Grid2dRepresentation | IRAP surface | — |
+| Zone thickness | - | - | zone_picks.txt | CSV |
+| Correlation polylines | `.pl` | PolylineSetRepresentation | - | - |
+| Correlation surfaces | `.ts` | Grid2dRepresentation | IRAP surface | - |
 | Stratigraphic column | `.wl` header | StratigraphicColumn | code table | JSON |
-| Seam table (coal) | `.wl` MRKR | — | — | CSV |
-| MODFLOW layers | — | — | — | CSV (FloPy) |
+| Seam table (coal) | `.wl` MRKR | - | - | CSV |
+| MODFLOW layers | - | - | - | CSV (FloPy) |
 | N-best ensemble | N × `.wl` | N × Property sets | N × pick files | N × CSV |
 
 ## Output Flow
@@ -163,10 +163,10 @@ flowchart TB
     end
 
     subgraph GOCAD["GOCAD"]
-        WL[".wl — wells + markers + logs"]
-        VS[".vs — horizon point sets"]
-        TSG[".ts — triangulated surfaces"]
-        PLG[".pl — correlation polylines"]
+        WL[".wl - wells + markers + logs"]
+        VS[".vs - horizon point sets"]
+        TSG[".ts - triangulated surfaces"]
+        PLG[".pl - correlation polylines"]
     end
 
     subgraph RESQML["RESQML v2"]
@@ -192,7 +192,7 @@ flowchart TB
 
 ## Hierarchical Correlation
 
-Multi-scale cascade inspired by sequence stratigraphy — correlate large-scale
+Multi-scale cascade inspired by sequence stratigraphy - correlate large-scale
 boundaries first, then refine within those bounds.
 
 | Order | Surface Type | Typical Spacing | WeCo Mapping |
@@ -306,10 +306,10 @@ Load Wells → Detect Environment → Recommend Preprocessing → Apply Conditio
 ### Environment Detection (`weco.decision_tree`)
 
 The system auto-detects the geological environment from:
-1. **Region names** — FACIES, BIOZONE, SEAM, COAL, DISTAL → strong environment signal
-2. **Data channels** — log combination fingerprints (GR+DEN+RT vs GR+NPHI+RHOB)
-3. **GR statistics** — mean, std, modality discriminate marine/fluvial/carbonate
-4. **Formation metadata** — OSDU vocabulary or name pattern matching
+1. **Region names** - FACIES, BIOZONE, SEAM, COAL, DISTAL → strong environment signal
+2. **Data channels** - log combination fingerprints (GR+DEN+RT vs GR+NPHI+RHOB)
+3. **GR statistics** - mean, std, modality discriminate marine/fluvial/carbonate
+4. **Formation metadata** - OSDU vocabulary or name pattern matching
 
 ### Preprocessing Recommendation (`recommend_preprocessing()`)
 
@@ -317,14 +317,14 @@ Per-environment profiles specify which transforms to apply:
 
 | Environment | Normalise | Vshale | Stacking | Electrofacies | AI Facies | Smooth | Log QC |
 |-------------|:---------:|:------:|:--------:|:-------------:|:---------:|:------:|:------:|
-| shallow_marine | ✓ | ✓ | ✓ | — | ✓ | — | — |
-| deep_marine | ✓ | ✓ (Clavier) | ✓ | ✓ (k=4) | ✓ | — | — |
-| fluvial_deltaic | ✓ | ✓ (Steiber) | — | ✓ (k=5) | ✓ | ✓ (w=3) | — |
-| coal_basin | ✓ (minmax) | — | — | — | — | — | ✓ |
-| carbonate | ✓ (zscore) | — | — | ✓ (k=8) | ✓ | — | — |
-| quaternary | ✓ | ✓ | — | ✓ (k=4) | — | ✓ (w=7) | — |
+| shallow_marine | ✓ | ✓ | ✓ | - | ✓ | - | - |
+| deep_marine | ✓ | ✓ (Clavier) | ✓ | ✓ (k=4) | ✓ | - | - |
+| fluvial_deltaic | ✓ | ✓ (Steiber) | - | ✓ (k=5) | ✓ | ✓ (w=3) | - |
+| coal_basin | ✓ (minmax) | - | - | - | - | - | ✓ |
+| carbonate | ✓ (zscore) | - | - | ✓ (k=8) | ✓ | - | - |
+| quaternary | ✓ | ✓ | - | ✓ (k=4) | - | ✓ (w=7) | - |
 
-Each decision includes geological reasoning (e.g., "Vshale meaningless in carbonates — GR
+Each decision includes geological reasoning (e.g., "Vshale meaningless in carbonates - GR
 has no clay baseline").
 
 ### Postprocessing Recommendation (`recommend_postprocessing()`)

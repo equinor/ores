@@ -1,4 +1,4 @@
-# Seismic Tiles Constraint — Algorithm & User Guide
+# Seismic Tiles Constraint - Algorithm & User Guide
 
 > **Module:** `weco.seistiles_constraint`
 > **API route:** `POST /run/seistiles`
@@ -15,7 +15,7 @@ penalising marker ties whose implied inter-well geometry contradicts the local
 seismic tile dip and azimuth. This is analogous to how the distality/facies cost
 (`ccf_distal.cpp`) penalises geologically inconsistent lateral transitions.
 
-## Background — Seismic Tiles
+## Background - Seismic Tiles
 
 Seismic Tiles represent seismic data as tables of piecewise planar reflector
 segments rather than as images. The concept was developed by Equinor and is
@@ -41,7 +41,7 @@ Each tile has:
 For each candidate marker tie `(i_a, i_b)` connecting well A (depth `z_a`) to
 well B (depth `z_b`):
 
-### Step 1 — Tile Lookup
+### Step 1 - Tile Lookup
 
 Find the nearest tile to each well at the marker depth using spatial binning:
 
@@ -53,7 +53,7 @@ tile_b = find_nearest(well_b.x, well_b.y, z_b, max_h_dist, max_v_dist)
 The lookup uses a 2-D grid index (binned by x, y) for O(1) horizontal lookup
 plus a depth filter within each bin.
 
-### Step 2 — Dip Consistency Penalty
+### Step 2 - Dip Consistency Penalty
 
 The expected depth shift between wells is derived from the tile's dip (θ)
 and azimuth (φ):
@@ -74,7 +74,7 @@ $$
 correlation tries to tie shallow markers in well A to deep markers in well B
 (against the dip), this penalty increases.
 
-### Step 3 — Azimuth Consistency Penalty
+### Step 3 - Azimuth Consistency Penalty
 
 If tiles at both wells have azimuth data, a penalty for angular mismatch
 is added:
@@ -89,7 +89,7 @@ where Δφ is the minimum angular difference (wrapping at 360°).
 at both well locations. A large azimuth difference suggests a fault,
 unconformity, or different reflector.
 
-### Step 4 — Amplitude Similarity Penalty
+### Step 4 - Amplitude Similarity Penalty
 
 Matched reflectors should have comparable amplitude:
 
@@ -257,6 +257,6 @@ python examples/python/demo_seistiles.py --output output/seistiles_demo
 ```
 
 This generates:
-- `wells.txt` — 4-well synthetic transect
-- `tiles.csv` — synthetic tiles along the transect
-- `summary.txt` — penalty statistics and coverage
+- `wells.txt` - 4-well synthetic transect
+- `tiles.csv` - synthetic tiles along the transect
+- `summary.txt` - penalty statistics and coverage

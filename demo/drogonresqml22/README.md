@@ -44,13 +44,13 @@ significantly better 1:1 mapping between Energistics types and OSDU schema kinds
 
 In 2.0.1, two separate types (`GeneticBoundaryFeature` + `TectonicBoundaryFeature`) collapsed
 into one OSDU kind with the type distinction stored only as a `BoundaryType` attribute.
-In 2.2, `BoundaryFeature` is already unified with `GeologicBoundaryKind` as an attribute —
+In 2.2, `BoundaryFeature` is already unified with `GeologicBoundaryKind` as an attribute -
 this maps **directly** to `master-data--LocalBoundaryFeature` with no information loss.
 
 **2. RockVolumeFeature (1:1, was renamed)**
 
 In 2.0.1, `StratigraphicUnitFeature` had a misleading name that didn't match the OSDU kind
-`LocalRockVolumeFeature`. In 2.2, the type is renamed to `RockVolumeFeature` — a **direct**
+`LocalRockVolumeFeature`. In 2.2, the type is renamed to `RockVolumeFeature` - a **direct**
 semantic match to the OSDU kind.
 
 **3. Model (1:1, cleaner)**
@@ -62,7 +62,7 @@ semantic match to the OSDU kind.
 
 In 2.0.1, property kinds used local XML `PropertyKind` objects that required custom
 mapping to OSDU `reference-data--PropertyKind`. In 2.2, `PropertyKindIndex` references
-the standard Energistics property kind dictionary — same dictionary OSDU uses.
+the standard Energistics property kind dictionary - same dictionary OSDU uses.
 
 **5. LocalEngineeringCompoundCrs (unified CRS)**
 

@@ -46,7 +46,7 @@ All config is split across two files under `k8s/`:
 |------|---------|---------|
 | `configmap.yaml` | Yes | Hostnames, partitions, legal tags, app settings |
 | `secret.yaml` | **No** (gitignored) | Client IDs, tokens, client secrets, API keys |
-| `secret.yaml.template` | Yes | Empty template — copy to `secret.yaml` and fill in |
+| `secret.yaml.template` | Yes | Empty template - copy to `secret.yaml` and fill in |
 
 Each OSDU instance is defined by `INSTANCE_<NAME>_*` env vars split across both files.
 Non-secret identifiers (tenant IDs, hostnames) go in `configmap.yaml`;
@@ -117,9 +117,9 @@ k8s/                   # Kubernetes / Radix manifests
 
 Requests pass through middleware in this order:
 
-1. **SessionMiddleware** (outermost) — makes `request.session` available
-2. **Security headers** — `no-store`, `no-transform`, `nosniff`
-3. **Auth middleware** (`inject_access_token`) — resolves an access token and attaches it to `request.state.access_token`
+1. **SessionMiddleware** (outermost) - makes `request.session` available
+2. **Security headers** - `no-store`, `no-transform`, `nosniff`
+3. **Auth middleware** (`inject_access_token`) - resolves an access token and attaches it to `request.state.access_token`
 
 The auth middleware priority chain:
 
@@ -192,7 +192,7 @@ The Drogon pipeline (`demo/drogon/`) generates ~19 OSDU records from a single FM
 
 | Step | Script | Output |
 |------|--------|--------|
-| 0 | `split_valysar.py` | Split CSV — volumes + parameters |
+| 0 | `split_valysar.py` | Split CSV - volumes + parameters |
 | 0b | `genrefpropertytypes_drogon.py` | Reference data (PropertyTypes, FacetRoles) |
 | 1 | `genmaster_drogon.py` | Reservoir + Segments + WorkProduct |
 | 2-3 | `genrawmanifest` / `genstatmanifest` | Raw & Stat REV |
@@ -212,7 +212,7 @@ The Drogon pipeline (`demo/drogon/`) generates ~19 OSDU records from a single FM
 
 ### Token tools
 
-Token minting is centralised in `demo/_auth.py` — single source of truth for
+Token minting is centralised in `demo/_auth.py` - single source of truth for
 k8s YAML loading, instance resolution, and OAuth2 token exchange.
 
 | File | Purpose |
@@ -241,7 +241,7 @@ The app is deployed to Omnia Radix via `radixconfig.yaml`:
 
 **Non-secret config** (hostnames, partitions, legal tags) is inline in `radixconfig.yaml`.
 **Secrets** (CLIENT_ID, CLIENT_SECRET, SCOPE, TENANT_ID, SECRET_KEY) are set in
-**Radix Console → ores → \<env\> → Secrets** — never committed to git.
+**Radix Console → ores → \<env\> → Secrets** - never committed to git.
 
 Health probes: readiness + liveness on `/login-page`.
 
@@ -255,10 +255,10 @@ Required secrets:
 
 | Key | Purpose |
 |-----|---------|
-| `SECRET_KEY` | Signs session cookies and encrypts refresh tokens — must be identical across replicas |
+| `SECRET_KEY` | Signs session cookies and encrypts refresh tokens - must be identical across replicas |
 | `INSTANCE_<NAME>_TENANT_ID` | AD tenant for the OSDU instance |
 | `INSTANCE_<NAME>_CLIENT_ID` | App registration client ID |
-| `INSTANCE_<NAME>_REFRESH_TOKEN` | Shared refresh token (optional — enables zero-click mode) |
+| `INSTANCE_<NAME>_REFRESH_TOKEN` | Shared refresh token (optional - enables zero-click mode) |
 | `INSTANCE_<NAME>_CLIENT_SECRET` | Client secret (required for confidential-client PKCE and/or client_credentials) |
 
 ### Persisting the token database
@@ -323,7 +323,7 @@ OSDU's `BusinessDecision` schema drops custom `ext.equinor` keys during workflow
 
 ## GraphQL deep search
 
-The `/keys` page includes a GraphQL panel for deep RESQML queries — object browsing,
+The `/keys` page includes a GraphQL panel for deep RESQML queries - object browsing,
 relationship graph traversal, and array-level numerical filtering.
 
 To enable direct PostgreSQL access (fastest, bypasses REST):
@@ -358,7 +358,7 @@ Test coverage includes: auth modes, PKCE flow, token refresh, all page routes,
 k8s loading, instance discovery, token minting, caching, tokenstore, multiuser sessions,
 error handling, addgate, ingest, keys, search, strat, bd_enrichment, resqml_viz.
 
-All tests use `unittest.mock` to patch OSDU API calls — no live credentials or network needed.
+All tests use `unittest.mock` to patch OSDU API calls - no live credentials or network needed.
 
 ---
 

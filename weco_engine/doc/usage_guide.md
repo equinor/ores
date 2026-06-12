@@ -1,4 +1,4 @@
-# WeCo Usage Guide — From Data to Interpretation
+# WeCo Usage Guide - From Data to Interpretation
 
 > Practical workflow guide for setting up well correlation projects.
 > Covers data preparation, parameter selection by depositional environment,
@@ -26,7 +26,7 @@ The key principle: **more data ≠ better correlation**.
 
 Over-detailed or over-interpreted input data adds noise that degrades
 correlation quality. Every input channel should carry **independent
-stratigraphic signal** — if it doesn't, it's noise.
+stratigraphic signal** - if it doesn't, it's noise.
 
 ### Rules of thumb
 
@@ -80,9 +80,9 @@ For each well, catalogue:
 
 | Combination | Why it works |
 |-------------|-------------|
-| GR + RHOB | Clay vs density — different physics |
-| GR + NPHI | Clay vs hydrogen index — orthogonal in crossplot |
-| GR + DT | Clay vs compaction/fluid — different scales |
+| GR + RHOB | Clay vs density - different physics |
+| GR + NPHI | Clay vs hydrogen index - orthogonal in crossplot |
+| GR + DT | Clay vs compaction/fluid - different scales |
 | GR + RT | Clay vs fluid saturation |
 
 ### Step 3: Consolidate categorical data
@@ -176,7 +176,7 @@ Reduce samples or `max_cor` to stay responsive.
 |-------------|---------------|-----------|------------|-------|
 | **Shallow marine (clastic)** | GR | RHOB or NPHI | Biozones, flooding surfaces | Facies-distality adds value if well-calibrated |
 | **Deep marine (turbidites)** | GR | DT or AI | Biostratigraphy | High condensation in basin → allow gaps |
-| **Fluvial / alluvial** | GR | — | None (channels are discontinuous) | Wide band-width; accept high uncertainty |
+| **Fluvial / alluvial** | GR | - | None (channels are discontinuous) | Wide band-width; accept high uncertainty |
 | **Deltaic** | GR | DEN | Flooding surfaces | Position-ordered along dip direction |
 | **Carbonate platform** | GR + DEN | SON or PEF | Sequence boundaries | DEN is more diagnostic than GR in carbonates |
 | **Coal measures** | DEN | GR | Marine bands | DEN separates coal (1.3) from rock (2.5) |
@@ -193,7 +193,7 @@ proximal-to-distal transect.
 **Carbonates**: GR alone is insufficient (low-GR carbonates look alike).
 DEN or SON differentiates facies (grain-supported vs mud-supported).
 PEF distinguishes limestone from dolomite from anhydrite. Cycle stacking
-patterns are the real signal — resample to capture cycle scale.
+patterns are the real signal - resample to capture cycle scale.
 
 **Fluvial**: The hardest setting. Channel sandbodies are laterally
 discontinuous by nature. Expect multiple valid solutions. Use:
@@ -398,11 +398,11 @@ Based on comprehensive testing across 10 demo datasets:
 
 | Parameter | Effect on Architecture | Impact Level |
 |-----------|----------------------|--------------|
-| `const_gap_cost` | Controls horizon count and lateral continuity | **HIGH** — most impactful single dial |
-| Log choice (`var_data`) | Fundamentally different correlations with different logs | **HIGH** — but only if logs carry independent signal |
+| `const_gap_cost` | Controls horizon count and lateral continuity | **HIGH** - most impactful single dial |
+| Log choice (`var_data`) | Fundamentally different correlations with different logs | **HIGH** - but only if logs carry independent signal |
 | `order` (distality) | Enforces depositional model, constrains solution space | **MEDIUM** |
 | `no_crossing` constraints | Removes geologically impossible solutions | **MEDIUM** |
-| `min_dist` / `out_min_dist` | Path-space diversity (local variations only) | **LOW** — does not guarantee architectural change |
+| `min_dist` / `out_min_dist` | Path-space diversity (local variations only) | **LOW** - does not guarantee architectural change |
 | `classification` (FACIES) | Often zero impact (already implicit in log response) | **LOW** |
 | `multiscale` | Convergence to same solution at both scales | **LOW** |
 
@@ -605,9 +605,9 @@ wl = rddms.load_wells(dataspace="maap/weco", dataset="shallow_marine")
 
 ## See Also
 
-- [Parameter Reference](parameters.md) — exhaustive parameter documentation
-- [Domain Strategies](domain_strategies.md) — per-environment recipes
-- [Geology Primer](geology_primer.md) — introduction to DTW correlation
-- [Formats](formats.md) — file format specifications
-- [Sigrun Demo](../demo/data/data_set_sigrun/) — real-world example with 6 scenarios
-- [Demo Results Analysis](demo_results_analysis.md) — quantitative analysis of all demo runs
+- [Parameter Reference](parameters.md) - exhaustive parameter documentation
+- [Domain Strategies](domain_strategies.md) - per-environment recipes
+- [Geology Primer](geology_primer.md) - introduction to DTW correlation
+- [Formats](formats.md) - file format specifications
+- [Sigrun Demo](../demo/data/data_set_sigrun/) - real-world example with 6 scenarios
+- [Demo Results Analysis](demo_results_analysis.md) - quantitative analysis of all demo runs

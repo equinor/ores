@@ -10,7 +10,7 @@
 
 ## 1. What Is a CollaborationProject?
 
-A `CollaborationProject` is **master-data** — a persistent namespace that bridges the System of Engagement (SoE: WIP collaboration) and System of Record (SoR: curated artefacts). It persists across decision gates (DG1 → DG2 → DG3 → FID), accumulating trusted data at each gate.
+A `CollaborationProject` is **master-data** - a persistent namespace that bridges the System of Engagement (SoE: WIP collaboration) and System of Record (SoR: curated artefacts). It persists across decision gates (DG1 → DG2 → DG3 → FID), accumulating trusted data at each gate.
 
 ```mermaid
 graph LR
@@ -104,7 +104,7 @@ Auto-logged events: `Created`, `Open`, `SOR Resources added`, `WIP Resources pub
 ## 6. Use Cases
 
 ### Reservoir Study (DG2/DG3)
-Create CP scoped to target reservoir. Assemble trusted baseline (wells, trajectories, seismic horizons). Each discipline works in WIP. Publish after QC. Project persists across gates — `BusinessDecision` references it via `ParentProjectID`.
+Create CP scoped to target reservoir. Assemble trusted baseline (wells, trajectories, seismic horizons). Each discipline works in WIP. Publish after QC. Project persists across gates - `BusinessDecision` references it via `ParentProjectID`.
 
 ### FMU Ensemble
 Link CP to FMU case and design matrix. Ingest volumes/surfaces as WIP. Review in ORES/Webviz. Publish P10/P50/P90 to SOR. Activity records capture provenance.

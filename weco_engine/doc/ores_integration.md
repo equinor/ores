@@ -4,7 +4,7 @@
 
 WeCo is integrated into ORES (the Equinor OSDU web frontend) as an **in-process
 Python package**. The WeCo C++ correlation engine runs inside the ORES container
-— no separate microservice or Radix app is needed.
+- no separate microservice or Radix app is needed.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -35,27 +35,27 @@ WeCo repo. This is only used at Docker build time.
 
 | File | Role |
 |------|------|
-| `app/weco_router.py` | FastAPI router — serves `/weco/` page + all API endpoints |
-| `app/templates/weco.html` | Jinja2 template — 3-tab UI (Wells → Parameters → Results) |
-| `app/static/weco.js` | Frontend JS — calls `/weco/*` endpoints |
-| `app/templates/base.html` | Nav bar — includes "Correlation" link |
-| `Dockerfile` | Multi-stage build — compiles WeCo C++ in builder stage |
+| `app/weco_router.py` | FastAPI router - serves `/weco/` page + all API endpoints |
+| `app/templates/weco.html` | Jinja2 template - 3-tab UI (Wells → Parameters → Results) |
+| `app/static/weco.js` | Frontend JS - calls `/weco/*` endpoints |
+| `app/templates/base.html` | Nav bar - includes "Correlation" link |
+| `Dockerfile` | Multi-stage build - compiles WeCo C++ in builder stage |
 | `weco_engine/` | Git submodule → WeCo source (for Docker build) |
 
 ## How It Works
 
-1. **No HTTP between ORES and WeCo** — the router imports `weco.rddms`,
+1. **No HTTP between ORES and WeCo** - the router imports `weco.rddms`,
    `weco.api`, `weco.ext` directly. The C++ engine (`.so`) is loaded in-process.
 
-2. **Lazy imports** — WeCo modules are imported inside endpoint functions, not
+2. **Lazy imports** - WeCo modules are imported inside endpoint functions, not
    at module level. If WeCo is missing, only WeCo endpoints fail (rest of ORES
    is unaffected).
 
-3. **Single-worker process** — ORES runs with `--workers 1` (SQLite token store
+3. **Single-worker process** - ORES runs with `--workers 1` (SQLite token store
    constraint). WeCo's global C++ state is safe within one process, with
    `reset_options()` called before every run.
 
-4. **Session state** — imported wells are cached in `_cached_well_list` (module
+4. **Session state** - imported wells are cached in `_cached_well_list` (module
    global). This works for single-user/single-worker. Multi-user would need
    session-keyed storage.
 
@@ -136,14 +136,14 @@ The WeCo submodule is cloned automatically (`--recurse-submodules`).
 ### Build Process (Dockerfile)
 
 ```dockerfile
-# Stage 1: Builder — compiles WeCo C++ engine
+# Stage 1: Builder - compiles WeCo C++ engine
 FROM python:3.12-slim AS builder
 RUN apt-get install -y build-essential g++ cmake ninja-build
 COPY weco_engine/ /build/weco_engine/
 RUN pip install scikit-build-core pybind11
 RUN pip install /build/weco_engine/
 
-# Stage 2: Runtime — slim image
+# Stage 2: Runtime - slim image
 FROM python:3.12-slim
 RUN apt-get install -y libgomp1  # OpenMP runtime for C++ engine
 COPY --from=builder /opt/venv /opt/venv
@@ -185,7 +185,7 @@ git push origin release   # → triggers Radix prod build
 
 ## Radix Configuration
 
-In `radixconfig.yaml`, no extra config needed for WeCo — it's compiled into the
+In `radixconfig.yaml`, no extra config needed for WeCo - it's compiled into the
 same container. Relevant env vars:
 
 | Variable | Purpose | Default |
@@ -196,10 +196,10 @@ same container. Relevant env vars:
 
 ### Required in Docker
 
-- `libgomp1` — OpenMP runtime (C++ engine parallelism)
-- `scikit-build-core`, `pybind11` — build-time only (builder stage)
-- `numpy`, `scipy`, `matplotlib` — WeCo Python deps
-- `resqml` package — for RDDMS import/export (see below)
+- `libgomp1` - OpenMP runtime (C++ engine parallelism)
+- `scikit-build-core`, `pybind11` - build-time only (builder stage)
+- `numpy`, `scipy`, `matplotlib` - WeCo Python deps
+- `resqml` package - for RDDMS import/export (see below)
 
 ### The resqml Dependency
 
@@ -260,17 +260,17 @@ curl http://localhost:9000/weco/health
 
 ## Known Limitations
 
-1. **Single-user session** — `_cached_well_list` is a process global. If two
+1. **Single-user session** - `_cached_well_list` is a process global. If two
    users import different well sets simultaneously, they overwrite each other.
    Fix: key by session ID.
 
-2. **Blocking correlation** — the C++ engine blocks the event loop. Other
+2. **Blocking correlation** - the C++ engine blocks the event loop. Other
    requests wait. Fix: run in `asyncio.to_thread()` or a process pool.
 
-3. **No file-based routes** — the web UI only supports RDDMS data. Local file
+3. **No file-based routes** - the web UI only supports RDDMS data. Local file
    correlation requires the desktop GUI or CLI.
 
-4. **resqml not in Docker yet** — RDDMS endpoints return 501 until resolved.
+4. **resqml not in Docker yet** - RDDMS endpoints return 501 until resolved.
 
 ## Future Improvements
 

@@ -1,6 +1,6 @@
 # WeCo Examples & Use-Case Guide
 
-> **WeCo v0.9.31** — How to run examples, use the datasets, and set up
+> **WeCo v0.9.31** - How to run examples, use the datasets, and set up
 > your own correlation project.
 
 ---
@@ -39,12 +39,12 @@ WeCoStudio --well-list data/data_set_coal/wells.txt  # load custom data
 
 | Page | What it does |
 |------|-------------|
-| **0 — Welcome** | Pick a demo dataset from the tree (toy, Quaternary, Coal). Click → loads data + recommended parameters. |
-| **1 — Data** | Inspect wells: well table, data/region lists, log preview plots, data conditioning (Vshale, biozones, electrofacies). |
-| **2 — Parameters** | Edit all engine parameters in 7 categories. Contextual help panel explains each parameter. Presets and undo/redo. |
-| **3 — Run** | Execute the engine. Live log, progress bar. Threaded — GUI stays responsive. |
-| **4 — Results** | Professional correlation plot (multi-log tracks, region strips, correlation lines). Navigate n-best results. Export PNG/SVG/PDF. |
-| **5 — Help** | Built-in reference: workflow guide, parameter docs, format support, interpretation tips. |
+| **0 - Welcome** | Pick a demo dataset from the tree (toy, Quaternary, Coal). Click → loads data + recommended parameters. |
+| **1 - Data** | Inspect wells: well table, data/region lists, log preview plots, data conditioning (Vshale, biozones, electrofacies). |
+| **2 - Parameters** | Edit all engine parameters in 7 categories. Contextual help panel explains each parameter. Presets and undo/redo. |
+| **3 - Run** | Execute the engine. Live log, progress bar. Threaded - GUI stays responsive. |
+| **4 - Results** | Professional correlation plot (multi-log tracks, region strips, correlation lines). Navigate n-best results. Export PNG/SVG/PDF. |
+| **5 - Help** | Built-in reference: workflow guide, parameter docs, format support, interpretation tips. |
 
 ### Built-in Demos
 
@@ -60,7 +60,7 @@ Studio ships with demos covering the main WeCo constraint types:
 | 6 | `fluvial` | data_set_fluvial | 20 | **Gap cost** (channel pinch-out) + wide band-width |
 | 7 | `delta` | data_set_delta | 8 | **Multi-log** (GR+DEN) + high diversity forcing |
 | 8 | `bryson` | data_set_bryson | 7 | **No-crossing** (ZONE) + categorical FACIES cost |
-| 9 | `sigrun` | data_set_sigrun | 2 | **Multi-log** (GR+NPHI) — North Sea well-tie |
+| 9 | `sigrun` | data_set_sigrun | 2 | **Multi-log** (GR+NPHI) - North Sea well-tie |
 | 10 | `troll` | data_set_troll | 5 | **Categorical** + distality ordering (Walther's Law) |
 
 Each demo uses **geology-aware diversity parameters** scaled to dataset
@@ -92,7 +92,7 @@ Or run the batch demo runner:
 python bin/auto_run_examples.py
 ```
 
-### ex1 — Basic Correlation from Python
+### ex1 - Basic Correlation from Python
 
 The simplest possible WeCo run: set options, run on a well file.
 
@@ -111,7 +111,7 @@ project.run("test_wells.txt")
 **What it shows:** `ProjectExt` API, setting options via keyword arguments,
 running the engine on a WeCo well file.
 
-### ex2 — Custom Python Cost Function
+### ex2 - Custom Python Cost Function
 
 Define your own cost function in Python and plug it into the engine.
 
@@ -136,7 +136,7 @@ project.run("test_wells.txt")
 **What it shows:** `CCFPartExt` subclassing, `data_helper` / `region_helper`
 accessors, `full_cost()` vs `dest_cost()` methods, registering custom costs.
 
-### ex4 — Test Data Generation & Multiscale
+### ex4 - Test Data Generation & Multiscale
 
 Generate synthetic well data programmatically and run a multiscale
 (hierarchical) correlation.
@@ -167,7 +167,7 @@ msp.run()
 **What it shows:** `TestBuilder` for synthetic data, `MultiScaleProject` for
 two-pass coarse-to-fine correlation, erosion simulation.
 
-### ex6 — Custom Well Merge Order (DAG)
+### ex6 - Custom Well Merge Order (DAG)
 
 Control the order in which wells are merged using a Python callback.
 
@@ -187,7 +187,7 @@ project.run("test_wells.txt")
 **What it shows:** `set_order_func()`, DAG task graph construction,
 DOT export for visualisation.
 
-### ex8 — Multiscale Correlation
+### ex8 - Multiscale Correlation
 
 Simplified multiscale example with 3 wells, demonstrating the
 `MultiScaleProject` and `MultiScaleChecker` APIs.
@@ -195,7 +195,7 @@ Simplified multiscale example with 3 wells, demonstrating the
 **What it shows:** Region-based level definition, per-level options,
 multiscale validation.
 
-### show_cost_matrix — Cost Matrix Visualisation
+### show_cost_matrix - Cost Matrix Visualisation
 
 ```python
 from weco.data import CostMatrix
@@ -209,7 +209,7 @@ plt.colorbar()
 plt.show()
 ```
 
-### EAGE2024.ipynb — Jupyter Notebook
+### EAGE2024.ipynb - Jupyter Notebook
 
 Interactive notebook from the EAGE 2024 conference demo, using real LAS
 well data from `data/data_set_hugin_tidal/`.
@@ -234,9 +234,9 @@ wf.export_rms("output/rms_package/")
 ## Datasets
 
 All datasets live in `demo/data/`. Each folder contains:
-- `wells.txt` — WeCo WellList v2 file
-- `options.txt` — default engine parameters
-- `generate_*.py` — regeneration script (synthetic datasets)
+- `wells.txt` - WeCo WellList v2 file
+- `options.txt` - default engine parameters
+- `generate_*.py` - regeneration script (synthetic datasets)
 
 ### Concept Datasets (data_set_distality, data_set_biozone_distality)
 
@@ -256,7 +256,7 @@ All datasets live in `demo/data/`. Each folder contains:
 | **data_set_shallow_marine** | 10 | Shoreface parasequences, erosion surfaces | GR, RHOB, DT | Gap cost (2.0) + band-width (20) + **3-log** | `generate_shallow_marine.py` |
 | **data_set_fluvial** | 20 | Channel belt, pinch-out uncertainty | GR | Gap cost (0.5) + band-width (20) + high diversity (min-dist=0.15) | `generate_fluvial.py` |
 | **data_set_delta** | 8 | Prograding delta, clinoform ambiguity | GR, DEN, NPHI | Band-width (20) + 2-log | `generate_delta.py` |
-| **data_set_bryson** | 7 | Appalachian Basin (categorical only) | FACIES | **No-crossing** (ZONE) — categorical correlation | Real data |
+| **data_set_bryson** | 7 | Appalachian Basin (categorical only) | FACIES | **No-crossing** (ZONE) - categorical correlation | Real data |
 | **data_set_sigrun** | 2 | North Sea marine shale/sand | GR, NPHI | 2-log well-tie | Real data |
 | **data_set_troll** | 5 | Troll field (categorical) | FACIES, DISTALITY | Categorical + distality (Walther's Law) | Real data |
 
@@ -264,8 +264,8 @@ All datasets live in `demo/data/`. Each folder contains:
 
 | Folder | Purpose | Used by |
 |--------|---------|--------|
-| `demo/data/` | **Datasets** — geological input files (wells, options, results) | Studio demos, `bin/auto_run_examples.py`, your own scripts |
-| `demo/` | **Code examples** — Python scripts showing API usage | Learning the API, extending WeCo |
+| `demo/data/` | **Datasets** - geological input files (wells, options, results) | Studio demos, `bin/auto_run_examples.py`, your own scripts |
+| `demo/` | **Code examples** - Python scripts showing API usage | Learning the API, extending WeCo |
 
 They serve complementary purposes. `demo/data/` is the input; `demo/ex*.py` shows
 how to *process* that input. Studio can load any dataset from `demo/data/`
@@ -275,7 +275,7 @@ directly via its demo picker.
 
 ## Use Cases
 
-### Quaternary Hydrogeology — Aquifer Mapping
+### Quaternary Hydrogeology - Aquifer Mapping
 
 **Goal:** Correlate 3 aquifer units (sand/gravel) separated by 2 aquitards
 (till/clay) across a borehole survey for groundwater flow modelling.
@@ -294,14 +294,14 @@ wf = (CorrelationWorkflow()
 ```
 
 **Key parameters:**
-- `var_data=GR`, `var_data2=RT` — primary correlation logs
-- `same_region=Lithofacies` — prefer sand-to-sand, till-to-till
-- `no_crossing=AquiferZone` — don't cross aquifer/aquitard boundaries
-- `max_cor=50` — keep many alternatives for uncertainty
+- `var_data=GR`, `var_data2=RT` - primary correlation logs
+- `same_region=Lithofacies` - prefer sand-to-sand, till-to-till
+- `no_crossing=AquiferZone` - don't cross aquifer/aquitard boundaries
+- `max_cor=50` - keep many alternatives for uncertainty
 
 **Output:** Per-well zonation (A1/T1/A2/T2/A3) for MODFLOW input.
 
-### Coal Seam Correlation — Mine Planning
+### Coal Seam Correlation - Mine Planning
 
 **Goal:** Correlate named coal seams across a borehole grid for resource
 estimation and mine planning.
@@ -311,13 +311,13 @@ WeCoStudio --demo coal_seam_constrained
 ```
 
 **Key parameters:**
-- `var_data=GR`, `var_data2=DEN` — coal has extreme GR lows + DEN lows
-- `same_region=Lithofacies` — correlate coal-to-coal
-- `no_crossing=MarineBand` — isochronous markers as hard constraints
+- `var_data=GR`, `var_data2=DEN` - coal has extreme GR lows + DEN lows
+- `same_region=Lithofacies` - correlate coal-to-coal
+- `no_crossing=MarineBand` - isochronous markers as hard constraints
 
 **Output:** Seam correlation table → seam thickness maps.
 
-### Oil Reservoir — Shallow Marine / Delta
+### Oil Reservoir - Shallow Marine / Delta
 
 **Goal:** Correlate reservoir zones in a prograding shoreface/delta
 environment for 3D geomodel construction.
@@ -334,14 +334,14 @@ wf.export_rms("output/")
 ```
 
 **Key parameters:**
-- `var_data=GR`, `var_data2=DEN`, `var_data3=NPHI` — full log suite
-- `dist_facies=electrofacies`, `dist_distal=Distality` — lateral facies control
-- `transport_direction=135` — NW→SE progradation
-- `no_crossing=Biozone` — age constraints
+- `var_data=GR`, `var_data2=DEN`, `var_data3=NPHI` - full log suite
+- `dist_facies=electrofacies`, `dist_distal=Distality` - lateral facies control
+- `transport_direction=135` - NW→SE progradation
+- `no_crossing=Biozone` - age constraints
 
 **Output:** Reservoir zonation + horizon picks for Petrel/RMS import.
 
-### Intelligent Workflow — Zero-Config Correlation
+### Intelligent Workflow - Zero-Config Correlation
 
 **Goal:** Run a complete correlation from raw data with zero manual
 parameter selection using the intelligent pipeline:
@@ -377,7 +377,7 @@ wf.export_rms("output/")
 **In the GUI:** Click ⚡ **Quick Run** (does steps 1–4 automatically),
 then 🔧 **Fine-Tune** to optimise, then **Export**.
 
-### RDDMS Round-Trip — Cloud Workflow
+### RDDMS Round-Trip - Cloud Workflow
 
 **Goal:** Load demo data from RDDMS, correlate, push results back:
 

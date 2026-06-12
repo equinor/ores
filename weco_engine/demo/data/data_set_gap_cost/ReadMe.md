@@ -1,10 +1,10 @@
-# Data Set 2 — Dionisos Process-Based Geomodel (Coastal Deltaic)
+# Data Set 2 - Dionisos Process-Based Geomodel (Coastal Deltaic)
 
 ## Purpose
 
 Synthetic dataset generated from the **Dionisos** forward stratigraphic
 modelling software. Represents a coastal deltaic system where the
-stratigraphy is *known* because it was forward-modelled — providing
+stratigraphy is *known* because it was forward-modelled - providing
 ground truth for validation.
 
 ## Wells: 9
@@ -28,7 +28,7 @@ a prograding coastal deltaic system.
 
 Dionisos (developed at IFP Energies nouvelles) simulates sediment
 transport, deposition, and compaction over geological time scales.
-The resulting 3D model is *physically consistent* — mass is conserved,
+The resulting 3D model is *physically consistent* - mass is conserved,
 Walther's Law is satisfied by construction, and the geometry
 reflects the modelled basin accommodation and sediment supply.
 
@@ -60,4 +60,4 @@ reference correlation itself.
 
 ## Authors
 
-Christophe Antoine, Guillaume Caumon, Paul Baville — ASGA/RING, Université de Lorraine.
+Christophe Antoine, Guillaume Caumon, Paul Baville - ASGA/RING, Université de Lorraine.

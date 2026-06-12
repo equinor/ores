@@ -31,26 +31,26 @@ with thin turbidite-like lobes.
 
 ## Data Channels
 
-- **GR**: Gamma ray (API) — primary correlation log
-- **DEN**: Bulk density (g/cc) — secondary discriminator
-- **NPHI**: Neutron porosity (v/v) — porosity indicator
+- **GR**: Gamma ray (API) - primary correlation log
+- **DEN**: Bulk density (g/cc) - secondary discriminator
+- **NPHI**: Neutron porosity (v/v) - porosity indicator
 - **FACIES**: Depositional facies (region, codes 1–7)
 - **SEQSTRAT**: Sequence stratigraphic boundaries (region, no-crossing)
 - **DISTAL**: Well distality position (region, 1=distal → N=proximal)
 
 ## Correlation Strategy
 
-### `options.txt` — GR + DEN variance with sequence constraints
+### `options.txt` - GR + DEN variance with sequence constraints
 Primary correlation using log waveform matching. SEQSTRAT `no-crossing`
 locks parasequence boundaries as hard constraints.
 
-### `options_distality.txt` — with Walther's Law cost
+### `options_distality.txt` - with Walther's Law cost
 Adds the **distality** cost function which penalises correlations that
 violate the expected lateral facies ordering (Walther's Law of Facies).
 
 ## Key Correlation Challenges
 
-1. **Clinoform progradation**: Time-surfaces dip basin-ward — not horizontal
+1. **Clinoform progradation**: Time-surfaces dip basin-ward - not horizontal
 2. **Mouth-bar amalgamation**: Stacked channels appear as single thick sand
 3. **Flooding surface diachroneity**: Transgressive lags are slightly time-
    transgressive

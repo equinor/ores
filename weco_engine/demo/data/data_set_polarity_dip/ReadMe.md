@@ -1,4 +1,4 @@
-# Data Set 1.5 — B3D (3D Bézier) Cost Function Test
+# Data Set 1.5 - B3D (3D Bézier) Cost Function Test
 
 ## Purpose
 
@@ -21,11 +21,11 @@ and **structural azimuth** as functions of depth.
 
 ## External Files
 
-- **dep_profile.txt**: Conceptual depositional profile parameters —
+- **dep_profile.txt**: Conceptual depositional profile parameters -
   spatial extension of the depositional system and sediment transport
   direction (dx, dy, dz, sed_dir).
 - **dep_facies.txt**: Theoretical facies distribution as a function of
-  depositional depth within the profile — defines where each facies
+  depositional depth within the profile - defines where each facies
   *should* occur in 3D space (id, dx, dy, dz, z↑, z↓).
 
 ## Correlation Cost Function
@@ -62,4 +62,4 @@ The B3D cost function encodes the expectation that:
 
 ## Authors
 
-Christophe Antoine, Guillaume Caumon, Paul Baville — ASGA/RING, Université de Lorraine.
+Christophe Antoine, Guillaume Caumon, Paul Baville - ASGA/RING, Université de Lorraine.

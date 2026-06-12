@@ -1,4 +1,4 @@
-# Data Set 3 — Hugin Formation, Gudrun–Sigrun Field Area (7 wells)
+# Data Set 3 - Hugin Formation, Gudrun–Sigrun Field Area (7 wells)
 
 ## Source
 
@@ -60,7 +60,7 @@ to determine best-fit palaeogeography.
 Correlation results are validated against **biostratigraphic interpretations**:
 > "Multiple geological scenarios validation by confronting stratigraphic
 > well correlation simulations to biostratigraphic interpretations."
-> — Baville et al., Annual RING Meeting, 2022.
+> - Baville et al., Annual RING Meeting, 2022.
 
 ## References
 
@@ -80,5 +80,5 @@ Correlation results are validated against **biostratigraphic interpretations**:
 
 ## Authors
 
-Christophe Antoine, Guillaume Caumon, Paul Baville — ASGA/RING, Université de Lorraine.
+Christophe Antoine, Guillaume Caumon, Paul Baville - ASGA/RING, Université de Lorraine.
 Well data courtesy of Equinor ASA.

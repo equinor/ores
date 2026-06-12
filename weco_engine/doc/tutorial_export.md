@@ -61,7 +61,7 @@ from weco.rddms import epc_export_wells, epc_export_results
 epc_export_wells("wells.epc", well_list)
 epc_export_results("results.epc", res_file, well_list)
 
-# Pure Python fallback (§4.6 — no external dependencies)
+# Pure Python fallback (§4.6 - no external dependencies)
 from weco.formats.epc_writer import write_epc_wells, write_epc_results
 write_epc_wells("wells.epc", well_list)
 write_epc_results("results.epc", res_file, wells_file)

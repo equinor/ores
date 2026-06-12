@@ -448,7 +448,7 @@ Quality check workflows verify data integrity before it enters a decision gate.
 The key FMU Activity pattern:
 - **Inputs**: Design matrix (`ColumnBasedTable`), forward model chain (string), ensemble name, number of realisations, case collection
 - **Outputs**: Raw `ReservoirEstimatedVolumes` (per-realisation), statistical REV (P10/P50/P90), output surfaces
-- **Provenance**: The Activity makes the implicit `fmu.realization.id` chain **explicit** — linking design matrix rows to specific output volumes via `Keys[realisation-index]`
+- **Provenance**: The Activity makes the implicit `fmu.realization.id` chain **explicit** - linking design matrix rows to specific output volumes via `Keys[realisation-index]`
 
 ---
 

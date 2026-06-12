@@ -1,6 +1,6 @@
-# WeCo File Format Support — Status & Roadmap
+# WeCo File Format Support - Status & Roadmap
 
-> **WeCo v0.9.31** — Current support, detailed capabilities, and planned extensions.
+> **WeCo v0.9.31** - Current support, detailed capabilities, and planned extensions.
 
 ---
 
@@ -10,7 +10,7 @@
 
 | Format | Module | Logs | Regions | Markers | XY coords | Dip/Azi | Trajectory |
 |--------|--------|:----:|:-------:|:-------:|:---------:|:-------:|:----------:|
-| **WeCo native** `.txt` | `data.py` | ✅ | ✅ | — | ✅ | as data | ❌ |
+| **WeCo native** `.txt` | `data.py` | ✅ | ✅ | - | ✅ | as data | ❌ |
 | **LAS 2.0** `.las` | `lasfile.py` → `las2welllist.py` | ✅ | ✅ (auto-detect) | ✅ (~Tops) | ✅ (XCOORD/YCOORD) | ✅ (DIP/AZIM) | ❌ |
 | **LAS 3.0** `.las` | `lasfile.py` | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | **RESQML v2** `.epc+.h5` | `resqml.py` | ✅ Continuous | ✅ Discrete | ✅ WellboreMarkerFrame | via MdDatum | ❌ | ✅ |
@@ -57,7 +57,7 @@ Regions segment the well into named intervals.
 
 ## Roadmap
 
-### Phase 1 — GOCAD Well Import (`.wl`)
+### Phase 1 - GOCAD Well Import (`.wl`)
 
 **Priority: HIGH** (enables the GOCAD plugin workflow)
 
@@ -70,10 +70,10 @@ Regions segment the well into named intervals.
 | Multi-well `.wl` files | Low | Multiple `GOCAD Well...END` blocks |
 | Create `gocad2welllist.py` module | Medium | GOCAD `.wl` → WeCo `WellList` converter |
 
-**Challenge:** Resampling — GOCAD logs at arbitrary MD vs WeCo marker-indexed arrays.
+**Challenge:** Resampling - GOCAD logs at arbitrary MD vs WeCo marker-indexed arrays.
 Strategy: Interpolate log values onto the marker/sample grid (linear or nearest).
 
-### Phase 2 — Enhanced LAS Support
+### Phase 2 - Enhanced LAS Support
 
 **Priority: MEDIUM**
 
@@ -85,7 +85,7 @@ Strategy: Interpolate log values onto the marker/sample grid (linear or nearest)
 | LAS dip/azimuth | Low | Detect DIP/DAZI/AZIM curves → map to WeCo data |
 | Multi-file batch import | Low | Glob pattern → WellList |
 
-### Phase 3 — Enhanced CSV Support
+### Phase 3 - Enhanced CSV Support
 
 **Priority: MEDIUM**
 
@@ -97,7 +97,7 @@ Strategy: Interpolate log values onto the marker/sample grid (linear or nearest)
 | CSV pointset import | Low | `x, y, z, property1, property2, ...` |
 | CSV region export | Low | Export regions alongside results |
 
-### Phase 4 — GOCAD Export
+### Phase 4 - GOCAD Export
 
 **Priority: LOW** (for feeding results back to GOCAD)
 
@@ -108,7 +108,7 @@ Strategy: Interpolate log values onto the marker/sample grid (linear or nearest)
 | Write correlation as GOCAD surfaces | High | Interpolated horizons → `.ts` (TSurf) |
 | Export Bézier curves as GOCAD VSet | Low | B3D output → `.vs` point sets |
 
-### Phase 5 — GOCAD Plugin Integration
+### Phase 5 - GOCAD Plugin Integration
 
 **Priority: FUTURE** (depends on Phase 1 + GOCAD build setup)
 
@@ -193,12 +193,12 @@ Prefer Option A for dense logs, Option B for sparse/categorical data.
 
 ### WeCo Native (`.wells.txt`)
 
-**Read:** `WellList(path)` — header `WeCo WellList 2`  
+**Read:** `WellList(path)` - header `WeCo WellList 2`  
 **Write:** `WellList.write(path)`
 
 Handles:
 - ✅ Well metadata (name, size, x, y, z, h)
-- ✅ Data arrays (logs — arbitrary named float arrays)
+- ✅ Data arrays (logs - arbitrary named float arrays)
 - ✅ Regions (named region lists with id + start + length)
 - ✅ Derivatives (`Well.add_derivative()`)
 - ✅ Region↔Data conversion (`add_data_from_region`, `add_region_from_data`)
@@ -209,9 +209,9 @@ Handles:
 ### LAS 2.0
 
 **Read:** `LASFile.read()` → sections (version, well, curve, param, data)  
-**Write:** `las_write()` — standard LAS 2.0  
-**Convert:** `las2well()` — LAS → WeCo `Well`; `LAS2WellList` — batch  
-**Export:** `Res2LAS` — correlation results → per-well LAS (DEPTH, RGTMI, RGTMA)
+**Write:** `las_write()` - standard LAS 2.0  
+**Convert:** `las2well()` - LAS → WeCo `Well`; `LAS2WellList` - batch  
+**Export:** `Res2LAS` - correlation results → per-well LAS (DEPTH, RGTMI, RGTMA)
 
 Handles:
 - ✅ All curve/log data
@@ -219,7 +219,7 @@ Handles:
 - ✅ Depth (STRT, STOP, STEP)
 - ✅ NULL value handling
 - ✅ Row filtering via Python expressions
-- ❌ Markers/regions (not a LAS concept — convert via `data_import.py`)
+- ❌ Markers/regions (not a LAS concept - convert via `data_import.py`)
 - ❌ LAS 3.0
 
 ### RESQML v2
@@ -251,12 +251,12 @@ Handles:
 
 ### CSV Export
 
-**Write:** `Res2CSV.run()` — correlation → (Well, Marker, Depth) CSV  
-**Write:** `CostMatrix.csv_dest()`, `csv_full()` — cost matrix CSV
+**Write:** `Res2CSV.run()` - correlation → (Well, Marker, Depth) CSV  
+**Write:** `CostMatrix.csv_dest()`, `csv_full()` - cost matrix CSV
 
 ---
 
-## Gap Analysis — What's Missing?
+## Gap Analysis - What's Missing?
 
 ### Data Types Not Supported
 
@@ -314,13 +314,13 @@ END
 ```
 
 Key sections:
-- **VRTX / PVRTX** — vertex coordinates (3D/property-carrying)
-- **TRGL** — triangles (for TSurf)
-- **SEG** — segments (for PLine)
-- **ATOM** — reference to another vertex (for VSet)
-- **WREF** — well reference data
-- **MRKR** — marker data
-- **ZONE** — zone/log data
+- **VRTX / PVRTX** - vertex coordinates (3D/property-carrying)
+- **TRGL** - triangles (for TSurf)
+- **SEG** - segments (for PLine)
+- **ATOM** - reference to another vertex (for VSet)
+- **WREF** - well reference data
+- **MRKR** - marker data
+- **ZONE** - zone/log data
 
 ---
 
@@ -384,18 +384,18 @@ wl = read_wells("data.csv", columns=["WELL", "DEPTH", "GR"])  # CSV
 
 The user has a GOCAD installation at `~/gocad`. Integration strategy:
 
-1. **Phase 1 — Standalone format support** (no GOCAD dependency)
+1. **Phase 1 - Standalone format support** (no GOCAD dependency)
    - Read/write GOCAD ASCII files directly
    - Pure Python, no external libraries needed
    - Works everywhere, not just on machines with GOCAD installed
 
-2. **Phase 2 — GOCAD plugin** (optional, for live GOCAD workflow)
+2. **Phase 2 - GOCAD plugin** (optional, for live GOCAD workflow)
    - Use WeCo's C ABI plugin system (`weco_plugin.h`)
    - Plugin loads inside GOCAD's Python environment (gopy)
    - Update legacy `gopy_extract.py` to modern Python 3
    - Enables run-from-GOCAD workflow
 
-3. **Phase 3 — GOCAD API bridge** (bidirectional)
+3. **Phase 3 - GOCAD API bridge** (bidirectional)
    - Export correlation results as GOCAD objects (surfaces, markers, polylines)
    - Import GOCAD project wells directly (via gopy API if available)
 

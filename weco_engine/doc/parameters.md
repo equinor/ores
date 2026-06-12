@@ -1,6 +1,6 @@
 # WeCo Parameter Reference
 
-> **WeCo v0.9.31** — Multi-well correlation engine  
+> **WeCo v0.9.31** - Multi-well correlation engine  
 > Comprehensive guide to all parameters, their geological meaning, and recommended settings.
 
 ---
@@ -29,7 +29,7 @@
 
 ## Quick-Start Recipes
 
-### Recipe A — Simple log correlation (2–6 wells, one log curve)
+### Recipe A - Simple log correlation (2–6 wells, one log curve)
 
 ```
 cost_function = composite
@@ -41,7 +41,7 @@ nbr_cor       = 50
 out_nbr_cor   = 5
 ```
 
-### Recipe B — Two-log correlation with no-crossing constraint
+### Recipe B - Two-log correlation with no-crossing constraint
 
 ```
 cost_function  = composite
@@ -56,7 +56,7 @@ nbr_cor        = 50
 out_nbr_cor    = 10
 ```
 
-### Recipe C — Facies-distality (Walther's Law) correlation
+### Recipe C - Facies-distality (Walther's Law) correlation
 
 ```
 cost_function = composite
@@ -69,7 +69,7 @@ nbr_cor       = 100
 out_nbr_cor   = 10
 ```
 
-### Recipe D — Full kitchen sink (variance + constraints + gap + distality)
+### Recipe D - Full kitchen sink (variance + constraints + gap + distality)
 
 ```
 cost_function    = composite
@@ -98,8 +98,8 @@ Parameters ranked by how much they affect correlation quality:
 
 | Rank | Parameter | Impact | When to Tune |
 |------|-----------|--------|--------------|
-| ★★★★★ | `var_data` | **Critical** | Always — this is what drives the correlation |
-| ★★★★★ | `order` | **Critical** | Always — wrong order = bad merge tree |
+| ★★★★★ | `var_data` | **Critical** | Always - this is what drives the correlation |
+| ★★★★★ | `order` | **Critical** | Always - wrong order = bad merge tree |
 | ★★★★☆ | `max_cor` | **High** | If best cost is suspiciously high |
 | ★★★★☆ | `no_crossing` | **High** | When you have known stratigraphic markers |
 | ★★★★☆ | `dist_distal` + `dist_facies` | **High** | For basin transects with palaeo-geography |
@@ -110,7 +110,7 @@ Parameters ranked by how much they affect correlation quality:
 | ★★☆☆☆ | `same_region` | **Low-Med** | When lithostratigraphic units are well-known |
 | ★★☆☆☆ | `out_nbr_cor` | **Low** | Only affects output count, not quality |
 | ★☆☆☆☆ | `thread` | **Negligible** | Performance only; 0 = auto |
-| ★★★☆☆ | `min_dist` | **Medium** | Controls scenario diversity — higher = more structurally different solutions |
+| ★★★☆☆ | `min_dist` | **Medium** | Controls scenario diversity - higher = more structurally different solutions |
 
 ---
 
@@ -162,14 +162,14 @@ Post:      if diversity_mode → filter by topology or enumerate architectures
 ### §2b. Diversity Mode (NEW)
 
 The default k-best algorithm returns cost-ranked paths that typically differ by
-<0.01% in cost — they represent local path variations, not architecturally
+<0.01% in cost - they represent local path variations, not architecturally
 distinct geological models. The `diversity_mode` option adds post-processing:
 
 | Mode | Behaviour | When to use |
 |------|-----------|-------------|
 | `""` | Default: return cost-ranked k-best | Simple problems, data-conclusive cases |
-| `topology` | Filter by topology distance (horizon count, gap fraction, connectivity) | General use — fast, retains only distinct architectures |
-| `architecture` | Re-run with varying `const_gap_cost` (0→5, step=1) to force different horizon counts | Maximum diversity — slower but guarantees different models |
+| `topology` | Filter by topology distance (horizon count, gap fraction, connectivity) | General use - fast, retains only distinct architectures |
+| `architecture` | Re-run with varying `const_gap_cost` (0→5, step=1) to force different horizon counts | Maximum diversity - slower but guarantees different models |
 
 **Topology metrics used:**
 - Horizon count (number of correlation lines)
@@ -185,7 +185,7 @@ incompatible scales.
 
 | Mode | Behaviour |
 |------|-----------|
-| `""` | No screening — use all specified logs |
+| `""` | No screening - use all specified logs |
 | `report` | Score all logs, report results, but don't modify options |
 | `auto` | Score logs, **remove irrelevant ones** from the cost function |
 
@@ -252,7 +252,7 @@ this is typically 5–15 seconds total.
 
 **Rules of thumb:**
 - The auto-parametrizer scales `nbr_cor` and `min_dist` with well count
-  and average well length — manual override is rarely needed.
+  and average well length - manual override is rarely needed.
 - **Categorical data** (FACIES, LITHOLOGY) has a flat cost landscape:
   use `min_dist ≥ 0.5` to force genuinely different solutions.
 - **Many wells** (15+): pair diversity already provides scenario variation;
@@ -337,7 +337,7 @@ must correspond to the same geological unit as Region 3 in Well B.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| `same_region` | region | `""` | Region 1 — correlated positions must share the same label. |
+| `same_region` | region | `""` | Region 1 - correlated positions must share the same label. |
 | `same_region2` | region | `""` | Region 2. |
 | `same_region3` | region | `""` | Region 3. |
 
@@ -400,8 +400,8 @@ position. This is the key cost function for **sequence-stratigraphic correlation
 
 | Parameter | Type | Default | Range | Description |
 |-----------|------|---------|-------|-------------|
-| `dist_distal` | region | `""` | — | Palaeo-distality of well position. Values: distal(1) → proximal(n). **Both `dist_distal` and `dist_facies` required.** |
-| `dist_facies` | region | `""` | — | Palaeo-bathymetric facies. Values: deepest(1) → shallowest(n). |
+| `dist_distal` | region | `""` | - | Palaeo-distality of well position. Values: distal(1) → proximal(n). **Both `dist_distal` and `dist_facies` required.** |
+| `dist_facies` | region | `""` | - | Palaeo-bathymetric facies. Values: deepest(1) → shallowest(n). |
 | `dist_scaling` | float | `1.0` | -1.0 to 1.0 | Scaling coefficient for the wedge model. |
 
 ### Algorithm
@@ -490,7 +490,7 @@ Penalises gaps based on magnetic/stratigraphic polarity matching.
 
 | Parameter | Type | Default | Range | Description |
 |-----------|------|---------|-------|-------------|
-| `polarity_region` | region | `""` | — | Region encoding polarity. **Required** to activate. |
+| `polarity_region` | region | `""` | - | Region encoding polarity. **Required** to activate. |
 | `polarity_cost_diff` | float | `0.5` | 0–100 | Gap cost when polarity **differs** between sides. |
 | `polarity_cost_same` | float | `0.5` | 0–100 | Gap cost when polarity is the **same**. |
 | `polarity_cost_start` | float | `0.5` | 0–100 | Gap cost at well top. |
@@ -776,7 +776,7 @@ wl.write("test_wells.txt")
 
 ---
 
-## 16. AI Features (optional — requires `pip install weco[ai]`)
+## 16. AI Features (optional - requires `pip install weco[ai]`)
 
 WeCo includes optional AI-powered preprocessing and postprocessing modules
 that enhance correlation quality and provide quantitative assessment.
@@ -786,7 +786,7 @@ that enhance correlation quality and provide quantitative assessment.
 | Feature | Module | Purpose |
 |---------|--------|---------|
 | **Log QC** | `weco.ai.log_qc.LogQC` | Detect washout zones, impute missing values, cross-well normalisation |
-| **Facies Prediction** | `weco.ai.facies_predict.FaciesPredictor` | GBM-based facies from logs — enables distality cost without manual picks |
+| **Facies Prediction** | `weco.ai.facies_predict.FaciesPredictor` | GBM-based facies from logs - enables distality cost without manual picks |
 | **Auto-Tune** | `weco.ai.auto_tune.AutoTuner` | Differential-evolution optimisation of engine parameters against a reference |
 
 ### Postprocessing
@@ -806,13 +806,13 @@ Each demo dataset ships with recommended AI settings:
 |------|:-------:|:-------:|:-----------:|:------:|
 | Coal Basin (10 wells) | ✓ | ✓ | ✓ | ✓ |
 | Quaternary (20 wells) | ✓ | ✓ | ✓ | ✓ |
-| Shallow Marine (10 wells) | ✓ | ✓ | ✓ | — |
-| Fluvial (12 wells) | ✓ | ✓ | ✓ | — |
-| Delta (8 wells) | ✓ | — | ✓ | — |
-| Bryson (7 wells) | ✓ | ✓ | — | — |
-| Distality (2 wells) | ✓ | — | — | — |
-| Sigrun (2 wells) | ✓ | — | — | — |
-| Troll (5 wells) | ✓ | — | — | — |
+| Shallow Marine (10 wells) | ✓ | ✓ | ✓ | - |
+| Fluvial (12 wells) | ✓ | ✓ | ✓ | - |
+| Delta (8 wells) | ✓ | - | ✓ | - |
+| Bryson (7 wells) | ✓ | ✓ | - | - |
+| Distality (2 wells) | ✓ | - | - | - |
+| Sigrun (2 wells) | ✓ | - | - | - |
+| Troll (5 wells) | ✓ | - | - | - |
 
 ### API Usage
 

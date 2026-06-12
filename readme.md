@@ -45,13 +45,13 @@ Each instance can use a different token strategy. The middleware tries them in o
 
 | Priority | Strategy | Config needed | Typical use |
 |----------|----------|---------------|-------------|
-| 0 | **Per-user session** | Nothing — always available | User signed in via Azure AD (session cookie → server-side tokens) |
-| 1 | **Instance token** | `_REFRESH_TOKEN` and/or `_CLIENT_SECRET` | Zero-click — shared across all users |
+| 0 | **Per-user session** | Nothing - always available | User signed in via Azure AD (session cookie → server-side tokens) |
+| 1 | **Instance token** | `_REFRESH_TOKEN` and/or `_CLIENT_SECRET` | Zero-click - shared across all users |
 | 2 | **Env token** | Top-level `REFRESH_TOKEN` (legacy) | Single-instance setups |
 
 PKCE login is **always available as a fallback**, even when the instance is configured with `client_credentials`. If the service principal secret expires, users can still sign in with their own Microsoft account.
 
-**Example — two instances with different strategies:**
+**Example - two instances with different strategies:**
 
 | Instance | Secret vars | `auth_mode` | Behaviour |
 |----------|-------------|-------------|----------|
@@ -59,10 +59,10 @@ PKCE login is **always available as a fallback**, even when the instance is conf
 | `preship` | `_CLIENT_SECRET` | `client_credentials` | Auto-authenticated via service principal; PKCE fallback if secret expires |
 
 > **Confidential client:** When `CLIENT_SECRET` is set, it must be included in every OAuth2 request.
-> The code handles this automatically — just make sure the secret is configured.
+> The code handles this automatically - just make sure the secret is configured.
 
 > **ADME scope:** Per-user PKCE requires `bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc/.default openid offline_access`.
-> Do **not** use `https://energy.azure.com/.default` — that old scope only works for app-level grants.
+> Do **not** use `https://energy.azure.com/.default` - that old scope only works for app-level grants.
 
 ### Minting a shared refresh token (admin)
 

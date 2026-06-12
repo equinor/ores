@@ -1,6 +1,6 @@
 # WeCo GUI Documentation
 
-> Two front-ends — **PyQt desktop** and **Web client** — sharing the same
+> Two front-ends - **PyQt desktop** and **Web client** - sharing the same
 > correlation engine, API layer, demo datasets, and result semantics.
 
 ---
@@ -59,17 +59,17 @@ Both GUIs load the same demo datasets from `demo/data/`:
 
 ```
 demo/data/
-├── data_set_variance_weights/    (3 wells — simple distality)
-├── data_set_polarity_dip/    (4 wells — marker-only)
-├── data_set_gap_cost/      (5 wells — gap cost exploration)
-├── data_set_distality/      (6 wells — coal basin cyclothems)
-├── data_set_biozone_distality/      (2 wells — constrained crossing)
-├── data_set_bryson/ (7 wells — Appalachian biostratigraphy)
-├── data_set_coal/   (30 wells — large coal deposit)
-├── data_set_delta/  (8 wells — deltaic sequences)
-├── data_set_shallow_marine/ (10 wells — parasequences)
-├── data_set_sigrun/ (2 wells — Hugin Fm shallow marine)
-└── data_set_troll/  (5 wells — Troll field)
+├── data_set_variance_weights/    (3 wells - simple distality)
+├── data_set_polarity_dip/    (4 wells - marker-only)
+├── data_set_gap_cost/      (5 wells - gap cost exploration)
+├── data_set_distality/      (6 wells - coal basin cyclothems)
+├── data_set_biozone_distality/      (2 wells - constrained crossing)
+├── data_set_bryson/ (7 wells - Appalachian biostratigraphy)
+├── data_set_coal/   (30 wells - large coal deposit)
+├── data_set_delta/  (8 wells - deltaic sequences)
+├── data_set_shallow_marine/ (10 wells - parasequences)
+├── data_set_sigrun/ (2 wells - Hugin Fm shallow marine)
+└── data_set_troll/  (5 wells - Troll field)
 ```
 
 ### PyQt: Embedded Dataset Dictionary
@@ -127,8 +127,8 @@ POST /demos/{id}/wells   → load wells + return recommended_options
 | `const-gap-cost` | QDoubleSpinBox | `<input>` | Constant gap penalty |
 | `band-width` | QSpinBox | `<input #p-band-width>` | DTW band constraint |
 | `max-cor` | QSpinBox | `<input #p-max-cor>` | Max results to keep |
-| `nbr-cor` | QSpinBox | — | Number of results |
-| `min-dist` | QDoubleSpinBox | — | Diversity filter |
+| `nbr-cor` | QSpinBox | - | Number of results |
+| `min-dist` | QDoubleSpinBox | - | Diversity filter |
 | `n-best` | QSpinBox | `<input #p-n-best>` | Output count |
 
 ### Auto-Suggest
@@ -232,7 +232,7 @@ Gap corridors between wells contain correlation lines:
 | Depth axis | MD on left per well | MD and/or TVDSS (toggle) |
 | Alignment | Fixed (absolute) | Marker-aligned or absolute (toggle) |
 | Uncertainty | Alpha-blended top-N overlay | Ranking panel (no overlay) |
-| Stratcolumn | — | Left-side global reference band |
+| Stratcolumn | - | Left-side global reference band |
 | Output format | PNG to `tmp/img/` | Canvas → PNG download button |
 | Plot size | Figure(20, 12) fixed | Responsive (fills container) |
 
@@ -287,9 +287,9 @@ Both GUIs invoke `CorrelationQuality(rf, wl)`:
 | RDDMS markers | ✓ (Export tab) | ✓ (`POST /rddms/export-results`) |
 | RDDMS zone log | ✓ (Export tab) | ✓ (`POST /rddms/export-results`) |
 | RDDMS strat column | ✓ (Export tab) | ✓ (`POST /rddms/export-results`) |
-| JSON result | — | ✓ (download) |
-| CSV marker table | — | ✓ (download) |
-| Workflow save/load | — | ✓ (tokenstore SQLite) |
+| JSON result | - | ✓ (download) |
+| CSV marker table | - | ✓ (download) |
+| Workflow save/load | - | ✓ (tokenstore SQLite) |
 
 ### RDDMS Export (Both GUIs)
 
@@ -347,7 +347,7 @@ Automated timing via `pytest/test_benchmark.py`:
 
 ### Integration Testing (Q1)
 
-`pytest/test_auto_pipeline.py` — parametrized over all demos ≤10 wells:
+`pytest/test_auto_pipeline.py` - parametrized over all demos ≤10 wells:
 - `test_suggest_defaults`: options dict non-empty
 - `test_full_pipeline`: suggest → run → extract → diversify → label
 - `test_pipeline_result_structure`: verify result fields (cost, wells, boundaries)
@@ -357,7 +357,7 @@ Automated timing via `pytest/test_benchmark.py`:
 ## GUI Consistency Principles
 
 1. **Same engine, same results**: Both GUIs produce identical correlation outputs for the same input wells and parameters
-2. **Same demo data**: Both load from `demo/data/` — results are reproducible across front-ends
+2. **Same demo data**: Both load from `demo/data/` - results are reproducible across front-ends
 3. **Same API functions**: Both ultimately call `_suggest_defaults_for_wells`, `_run_engine`, `_extract_results`, `_diverse_results`
 4. **Same AI scoring**: Quality/anomaly/uncertainty implementations shared in `weco/ai/`
 5. **Consistent line classification**: Boundary (red) / gap (blue dotted) / framework (gray) in both renderers

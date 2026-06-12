@@ -1,11 +1,11 @@
-# WeCo Demo Results — Deep Analysis
+# WeCo Demo Results - Deep Analysis
 
 ## Executive Summary
 
 All 10 demo datasets were run with their base configurations and 5–10 meaningful variants each (log combinations, gap costs, min-dist thresholds, search depth, classification constraints, order functions, multiscale). The analysis below addresses:
 
 1. **Consistency** between data, geological concepts, and modelling strategy
-2. **Why scenarios do not differ substantially** — data conclusiveness vs algorithm limitations
+2. **Why scenarios do not differ substantially** - data conclusiveness vs algorithm limitations
 3. **Configurations that produce significantly different scenarios** (connectivity, architecture)
 4. **Improvement recommendations** for data sampling, parameters, and strategy
 
@@ -17,14 +17,14 @@ All 10 demo datasets were run with their base configurations and 5–10 meaningf
 |---------|-------|-----------------|------------------------|---------|
 | shallow_marine | 10 | GR, RT, RHOB, NPHI, DT | FACIES | Shelf sands/shales |
 | coal | 10 | DEN, GR, SON, RT, NEU, CAL | LITH, SEAM | Coal measures |
-| quaternary | 20 | GR, RT | — | Glacial sediments |
+| quaternary | 20 | GR, RT | - | Glacial sediments |
 | fluvial | 20 | GR | FACIES | Channel/floodplain |
 | delta | 6 | GR, DEN, NPHI | FACIES, SEQSTRAT | Deltaic |
 | sigrun | 6 | GR, NPHI | FACIES, FACIES3, BIOZONE, SEQUENCE, DISTALITY, ZONELOG_REF | North Sea Jurassic |
-| troll | 5–23 | — | FACIES, DISTALITY, BIOZONE, SEQUENCE | Sognefjord Fm |
-| distality | synthetic | — | DISTAL, FACIES_1 | Synthetic gradient |
-| bryson | 5 | synthetic | — | Textbook section |
-| hugin_tidal | 2 | — | DISTALITY, FACIES_1 | Tidal |
+| troll | 5–23 | - | FACIES, DISTALITY, BIOZONE, SEQUENCE | Sognefjord Fm |
+| distality | synthetic | - | DISTAL, FACIES_1 | Synthetic gradient |
+| bryson | 5 | synthetic | - | Textbook section |
+| hugin_tidal | 2 | - | DISTALITY, FACIES_1 | Tidal |
 
 ---
 
@@ -43,7 +43,7 @@ All 10 demo datasets were run with their base configurations and 5–10 meaningf
 | troll | 8 | 228.72 – 228.72 | <0.001% | 0.4s |
 | hugin_tidal | 45 | 74.59 – 74.59 | <0.001% | 0.1s |
 
-**Key observation**: Across all datasets, the **relative cost spread between the top-N scenarios is systematically below 0.01%** (except distality at 3.5% and bryson at 0.1%). The returned scenarios are essentially cost-equivalent — they differ only in micro-local path choices, not in geological architecture.
+**Key observation**: Across all datasets, the **relative cost spread between the top-N scenarios is systematically below 0.01%** (except distality at 3.5% and bryson at 0.1%). The returned scenarios are essentially cost-equivalent - they differ only in micro-local path choices, not in geological architecture.
 
 ---
 
@@ -59,13 +59,13 @@ All 10 demo datasets were run with their base configurations and 5–10 meaningf
 | **high gap cost** | **8** | **20,812** | **0.127** | **286** | **276** |
 | high search (50/30/15) | 96 | 17,845 | 0.017 | 324 | 314 |
 | low min-dist | 16 | 17,877 | 0.010 | 325 | 318 |
-| multiscale=2 | 4 | 17,846 | — | — | — |
-| with classification | 4 | 17,846 | — | — | — |
+| multiscale=2 | 4 | 17,846 | - | - | - |
+| with classification | 4 | 17,846 | - | - | - |
 
 **Observations**:
 - **Gap cost is the dominant control on architectural diversity**. High gap cost (penalty for gaps) forces fewer but more reliable horizons and substantially increases Jaccard diversity (0.127 vs 0.044).
-- Removing gap cost proliferates horizons but they are less distinct — all scenarios converge.
-- Classification (FACIES) and multiscale produce **identical results** to base — data already constrains the solution.
+- Removing gap cost proliferates horizons but they are less distinct - all scenarios converge.
+- Classification (FACIES) and multiscale produce **identical results** to base - data already constrains the solution.
 - Log choice matters for absolute cost but not for relative scenario diversity.
 
 ### 3.2 Coal (10 wells, 6 continuous logs + LITH)
@@ -75,16 +75,16 @@ All 10 demo datasets were run with their base configurations and 5–10 meaningf
 | base (DEN+GR+SON) | 4 | 94,628 | <0.001% | 8s |
 | **DEN only** | **8** | **8.51** | **<0.001%** | **6s** |
 | GR only | 2 | 124,437 | <0.001% | 4s |
-| SON only | 1 | 51,371 | — | 4s |
-| RT only | 1 | 2,243,790 | — | 5s |
+| SON only | 1 | 51,371 | - | 4s |
+| RT only | 1 | 2,243,790 | - | 5s |
 | all logs (DEN+GR+SON) | 4 | 74,634 | <0.001% | 6s |
 | DEN + gap=5 | 5 | 41.71 | 0.1% | 289s |
 | DEN + LITH classification | 8 | 8.51 | <0.001% | 36s |
 
 **Observations**:
-- **Extreme sensitivity to log choice**: DEN alone gives cost=8.5 (excellent coal-seam correlation via density contrast). GR gives 124k, RT gives 2.2M — these logs are **geologically irrelevant** for coal correlation.
-- When using the right log (DEN), the algorithm finds a near-perfect optimum immediately — adding other logs introduces noise and increases cost 10,000×.
-- DEN+gap=5 costs 41 vs 8.5 — gap penalty successfully enforces laterally discontinuous seams (geologically correct for coal).
+- **Extreme sensitivity to log choice**: DEN alone gives cost=8.5 (excellent coal-seam correlation via density contrast). GR gives 124k, RT gives 2.2M - these logs are **geologically irrelevant** for coal correlation.
+- When using the right log (DEN), the algorithm finds a near-perfect optimum immediately - adding other logs introduces noise and increases cost 10,000×.
+- DEN+gap=5 costs 41 vs 8.5 - gap penalty successfully enforces laterally discontinuous seams (geologically correct for coal).
 - **Coal is the dataset where log choice produces fundamentally different connectivity patterns.**
 
 ### 3.3 Sigrun (6 North Sea wells, complex stratigraphy)
@@ -103,10 +103,10 @@ All 10 demo datasets were run with their base configurations and 5–10 meaningf
 | GR low min-dist | 24 | 21,133 | 0.004% |
 
 **Observations**:
-- Adding NPHI multiplies cost by **884×** — likely a normalization artefact or scale mismatch between GR (API units ~0–150) and NPHI (fractional 0–0.5).
-- **Classification constraints (FACIES, SEQUENCE) have zero effect** — the DTW-based correlation finds the same minimum regardless.
-- **Distality ordering changes cost by 4×** (21k → 82k) — imposing a depositional order significantly constrains the solution space.
-- Increasing search depth from 15/8/5 to 40/20/10 yields 200 results vs 24, but cost only changes by 0.9% — all 200 scenarios are essentially equivalent.
+- Adding NPHI multiplies cost by **884×** - likely a normalization artefact or scale mismatch between GR (API units ~0–150) and NPHI (fractional 0–0.5).
+- **Classification constraints (FACIES, SEQUENCE) have zero effect** - the DTW-based correlation finds the same minimum regardless.
+- **Distality ordering changes cost by 4×** (21k → 82k) - imposing a depositional order significantly constrains the solution space.
+- Increasing search depth from 15/8/5 to 40/20/10 yields 200 results vs 24, but cost only changes by 0.9% - all 200 scenarios are essentially equivalent.
 - **Gap cost provides systematic cost-controlled diversification**: gap=0 → 21k, gap=2 → 22.5k, gap=5 → 24.5k, gap=10 → 27.6k (linear relationship).
 
 ### 3.4 Delta (6 wells, GR + DEN + NPHI)
@@ -124,8 +124,8 @@ All 10 demo datasets were run with their base configurations and 5–10 meaningf
 | GR big search | 40 | 30,182 – 30,184 | 0.006% |
 
 **Observations**:
-- DEN and NPHI alone produce costs of 0.15–0.27 — these logs show **almost zero variance** in this delta dataset (constant-value logs), making correlation trivial but meaningless.
-- Multi-log combinations (GR+DEN+NPHI) lower cost progressively but maintain 0.016% spread — **adding logs doesn't increase diversity, only improves fit**.
+- DEN and NPHI alone produce costs of 0.15–0.27 - these logs show **almost zero variance** in this delta dataset (constant-value logs), making correlation trivial but meaningless.
+- Multi-log combinations (GR+DEN+NPHI) lower cost progressively but maintain 0.016% spread - **adding logs doesn't increase diversity, only improves fit**.
 - **FACIES classification has zero effect** on GR-only correlation (same cost/results).
 - Gap cost is again the **only mechanism that significantly alters the number of output scenarios** (48→8 with gap=5).
 
@@ -141,7 +141,7 @@ All 10 demo datasets were run with their base configurations and 5–10 meaningf
 
 **Observations**:
 - Extremely stable: Jaccard diversity is always ~0.03 regardless of configuration.
-- This dataset is **data-conclusive** — with 20 wells on a single log (GR), the channel architecture is so well constrained that no parameter changes produce structurally different scenarios.
+- This dataset is **data-conclusive** - with 20 wells on a single log (GR), the channel architecture is so well constrained that no parameter changes produce structurally different scenarios.
 - The algorithm correctly identifies a strong global minimum.
 
 ### 3.6 Bryson (5 wells, synthetic)
@@ -154,7 +154,7 @@ All 10 demo datasets were run with their base configurations and 5–10 meaningf
 | low min-dist | 24 | 53.39 | 0.076 |
 
 **Observations**:
-- **Removing constraints produces 3.3× higher Jaccard diversity** and 3.5× lower cost — the imposed constraints are fighting the data.
+- **Removing constraints produces 3.3× higher Jaccard diversity** and 3.5× lower cost - the imposed constraints are fighting the data.
 - This reveals a **model-data conflict**: either the constraints are wrong for this dataset, or they encode prior geological knowledge that should override the data.
 
 ### 3.7 Troll (5 wells, categorical only)
@@ -168,7 +168,7 @@ All 10 demo datasets were run with their base configurations and 5–10 meaningf
 
 **Observations**:
 - Categorical data (FACIES only) produces a well-defined minimum.
-- Adding gap cost collapses the solution to a **single result** — gap cost is incompatible with the categorical matching approach for this dataset.
+- Adding gap cost collapses the solution to a **single result** - gap cost is incompatible with the categorical matching approach for this dataset.
 
 ---
 
@@ -190,10 +190,10 @@ All 10 demo datasets were run with their base configurations and 5–10 meaningf
 **The fundamental issue is that the DTW-based k-best algorithm explores near-optimal paths that differ by local edge swaps, not by global architectural changes.** The `min-dist` parameter enforces path distance, but path-distance does not guarantee different geological interpretations (different connectivity, zone volumes, or flow patterns).
 
 Specifically:
-1. **Cost landscape is extremely flat near the optimum** — the top 200 solutions for Sigrun differ by only 0.007%.
+1. **Cost landscape is extremely flat near the optimum** - the top 200 solutions for Sigrun differ by only 0.007%.
 2. **The k-best algorithm enumerates paths by Hamming-like distance**, not by geological impact (connectivity, thickness, facies volume).
-3. **Classification constraints (FACIES, SEQUENCE) have zero impact** in most cases — the DTW already implicitly captures facies boundaries via log response.
-4. **Multiscale does not add diversity** — it converges to the same solution at both scales.
+3. **Classification constraints (FACIES, SEQUENCE) have zero impact** in most cases - the DTW already implicitly captures facies boundaries via log response.
+4. **Multiscale does not add diversity** - it converges to the same solution at both scales.
 
 ### 4.3 When Data Is Conclusive vs. Parameters Inadequate
 
@@ -230,11 +230,11 @@ const-gap-cost: 0 → 2 → 5 → 10
 
 | Dataset | GR | DEN | NPHI | Impact |
 |---------|----|----|------|--------|
-| Coal | cost=124,437 | cost=8.5 | — | Completely different correlation |
+| Coal | cost=124,437 | cost=8.5 | - | Completely different correlation |
 | Delta | cost=30,182 | cost=0.27 | cost=0.15 | DEN/NPHI are constant → meaningless |
-| Sigrun | cost=21,133 | — | cost=18.7M | Scale mismatch |
+| Sigrun | cost=21,133 | - | cost=18.7M | Scale mismatch |
 
-**Choosing different logs as primary produces fundamentally different correlations — but only if the logs carry independent geological information.**
+**Choosing different logs as primary produces fundamentally different correlations - but only if the logs carry independent geological information.**
 
 ### 5.3 Order Function (Distality)
 
@@ -242,7 +242,7 @@ When applicable (Sigrun, Troll, Hugin):
 - Without distality: cost = 21k
 - With distality: cost = 82k
 
-**Distality ordering enforces a depositional model that significantly constrains the solution space.** The 4× cost increase indicates the data doesn't naturally follow the imposed order — this tension between data and geological model is exactly where scenario uncertainty lives.
+**Distality ordering enforces a depositional model that significantly constrains the solution space.** The 4× cost increase indicates the data doesn't naturally follow the imposed order - this tension between data and geological model is exactly where scenario uncertainty lives.
 
 ### 5.4 Constraint Removal (No-Crossing, Biozone)
 
@@ -250,7 +250,7 @@ Removing `no-crossing` constraints (Bryson):
 - Cost drops from 53 to 15 (data fit improves 3.5×)
 - Diversity increases from 0.08 to 0.25 (3× more distinct scenarios)
 
-**Constraints are where geological knowledge meets data — relaxing them reveals the space of data-consistent-but-geologically-questionable scenarios.**
+**Constraints are where geological knowledge meets data - relaxing them reveals the space of data-consistent-but-geologically-questionable scenarios.**
 
 ---
 
@@ -290,7 +290,7 @@ Removing `no-crossing` constraints (Bryson):
 
 1. **Replace k-best-paths with diverse-k-best**: Instead of enumerating by cost, enumerate by maximum topological distance from the optimal path.
 2. **Multi-objective optimization**: Minimize cost + maximize diversity simultaneously (Pareto front).
-3. **Stochastic perturbation**: Add noise to the cost matrix and re-solve multiple times — solutions that persist across noise realizations are robust.
+3. **Stochastic perturbation**: Add noise to the cost matrix and re-solve multiple times - solutions that persist across noise realizations are robust.
 4. **Hierarchical scenarios**: First decide horizon count (N), then optimize within each N. Different N values produce genuinely different architectures.
 5. **Log-normalization before combination**: Use `(x - median) / IQR` per well per log to equalize scales before multi-log DTW.
 
@@ -300,7 +300,7 @@ Removing `no-crossing` constraints (Bryson):
 
 | Dataset | Config | # Results | Best Cost | Key Difference |
 |---------|--------|-----------|-----------|----------------|
-| shallow_marine | base | 4 | 17,875 | — |
+| shallow_marine | base | 4 | 17,875 | - |
 | shallow_marine | high_gap | 8 | 20,812 | **+16% cost, 3× diversity** |
 | shallow_marine | no_gap | 16 | 14,724 | More horizons, less distinct |
 | coal | DEN_only | 8 | 8.51 | Perfect coal-seam match |
@@ -322,17 +322,17 @@ Removing `no-crossing` constraints (Bryson):
 
 ## 8. Conclusions
 
-1. **The current algorithm systematically produces near-identical scenarios** (cost spread <0.01%). This is not a bug — it reflects a flat cost landscape near the optimum — but it means the output does not capture real geological uncertainty.
+1. **The current algorithm systematically produces near-identical scenarios** (cost spread <0.01%). This is not a bug - it reflects a flat cost landscape near the optimum - but it means the output does not capture real geological uncertainty.
 
 2. **Data is conclusive** for well-sampled datasets (fluvial with 20 wells, coal with DEN). For sparse or complex datasets (Sigrun with 6 wells, Bryson with constraints), uncertainty exists but the algorithm cannot express it.
 
-3. **Gap cost is the only parameter that reliably produces architecturally distinct scenarios** — it controls horizon count and lateral continuity, which directly maps to flow connectivity.
+3. **Gap cost is the only parameter that reliably produces architecturally distinct scenarios** - it controls horizon count and lateral continuity, which directly maps to flow connectivity.
 
 4. **Log choice is critical** and can produce fundamentally wrong models (coal with GR instead of DEN). An automated log-relevance pre-screening step would prevent costly errors.
 
 5. **The diversity metric (min-dist) operates in cost-path space, not geological-model space**. A topology-aware diversity criterion (different horizon counts, different connectivity graphs) would be transformative.
 
-6. **Classification and multiscale constraints have negligible impact** in all tested cases — either they are already implicit in the log response, or their implementation doesn't sufficiently penalize violations.
+6. **Classification and multiscale constraints have negligible impact** in all tested cases - either they are already implicit in the log response, or their implementation doesn't sufficiently penalize violations.
 
 ---
 
@@ -364,7 +364,7 @@ horizons. Results with different gap costs now produce **unique topology hashes*
 | 4 | 341 | 199 | 0.585 | 185877965... |
 | 6 | 328 | 182 | 0.557 | -39685292... |
 
-**4/4 unique topologies** — each gap cost produces a genuinely different
+**4/4 unique topologies** - each gap cost produces a genuinely different
 architectural model. This directly addresses finding §4.2 ("min-dist doesn't
 capture topological differences").
 
@@ -374,7 +374,7 @@ Systematically varies `const-gap-cost` and returns one representative scenario
 per unique topology. For shallow_marine with gap_cost_range=(0, 6, 1):
 
 - **7 distinct architectures** found (328–440 horizons)
-- 34% range in horizon count — genuine structural diversity
+- 34% range in horizon count - genuine structural diversity
 - Runtime: 2.3s for 7 engine runs
 
 ### 9.4 Auto-Tune (`weco.ai.auto_tune.AutoTuner`)

@@ -2,11 +2,11 @@
 
 Practical guide for mapping coordinate reference systems from **RESQML 2.0.1** (as stored in **RDDMS**) into **OSDU**, as the ETP client does when building an M27 manifest. Focused on the NCS / Equinor case.
 
-**The one rule:** OSDU keeps the CRS *record* pure (just the geodetic system); every local-frame parameter — offsets, rotation, axis order, units, Z direction — goes on the **dataset metadata**. RESQML keeps both on the `LocalDepth3dCrs`. Mapping = split them apart.
+**The one rule:** OSDU keeps the CRS *record* pure (just the geodetic system); every local-frame parameter - offsets, rotation, axis order, units, Z direction - goes on the **dataset metadata**. RESQML keeps both on the `LocalDepth3dCrs`. Mapping = split them apart.
 
 ---
 
-## Part 1 — Guide
+## Part 1 - Guide
 
 ### Do I need a Bound CRS?
 
@@ -14,8 +14,8 @@ OSDU prefers a **Bound CRS** (projected CRS pinned to an explicit datum transfor
 
 | Your projected CRS | Action |
 |--------------------|--------|
-| ETRS89-based (EPSG 25831–25836) | Plain `Projected` — already WGS84-aligned, no shift |
-| ED50 / WGS72 / WKT+`TOWGS84` | **`BoundProjected`** — add the CT (e.g. ED50→WGS84 EPSG:1612) |
+| ETRS89-based (EPSG 25831–25836) | Plain `Projected` - already WGS84-aligned, no shift |
+| ED50 / WGS72 / WKT+`TOWGS84` | **`BoundProjected`** - add the CT (e.g. ED50→WGS84 EPSG:1612) |
 | Operator code, no EPSG | Register in OSDU CRS Catalog as `Projected:LocalAuthority::<code>` |
 
 > NCS rule of thumb: anything **ED50** needs a Bound CRS; modern **ETRS89** does not.
@@ -33,11 +33,11 @@ OSDU prefers a **Bound CRS** (projected CRS pinned to an explicit datum transfor
 | EPSG:25831 / 25832 | ETRS89 UTM 31N/32N | `Projected:EPSG::25832` | no |
 | EPSG:23031 / 23032 | ED50 UTM 31N/32N | `BoundProjected:EPSG::23031_EPSG::1612` | **yes** |
 | EPSG:23037 | ED50 UTM 37S (Drogon) | `BoundProjected:EPSG::23037_EPSG::1612` | **yes** |
-| EPSG:5714 | MSL height | `Vertical:EPSG::5714` | — |
+| EPSG:5714 | MSL height | `Vertical:EPSG::5714` | - |
 | WKT + `TOWGS84[...]` | legacy ED50 | extract shift → match EPSG CT → BoundProjected | **yes** |
-| `VerticalUnknownCrs` | old models | `verticalCRSID: null` (keep uom/direction in localFrame) | — |
+| `VerticalUnknownCrs` | old models | `verticalCRSID: null` (keep uom/direction in localFrame) | - |
 
-### Worked example — Drogon (`maap/drogon2`)
+### Worked example - Drogon (`maap/drogon2`)
 
 The curated Drogon EPC uses **ED50 / UTM zone 37S (EPSG:23037)**, vertical **MSL**. M27 emits two CRS work-product-components:
 
@@ -62,7 +62,7 @@ Because EPSG:23037 is ED50, geometry points get a **BoundProjected** frame-of-re
 
 ---
 
-## Part 2 — Technical
+## Part 2 - Technical
 
 ### RESQML 2.0.1 CRS model
 
@@ -79,12 +79,12 @@ Projected/vertical identification forms (EnergyML Common): `ProjectedEpsgCrs` (p
 
 ### RESQML peculiarities (watch these)
 
-- **`ArealRotation` is a measure, not a number** — `{ "_": 15, "Uom": "dega" }` or `Uom: "rad"`. Always read the `Uom`.
+- **`ArealRotation` is a measure, not a number** - `{ "_": 15, "Uom": "dega" }` or `Uom: "rad"`. Always read the `Uom`.
 - **Z is positive-down when `ZIncreasingDownward: true`** (the usual depth case). Do not assume math convention.
-- **Vertical CRS is often `VerticalUnknownCrs`** — there is no EPSG code; only the uom/direction is meaningful → `verticalCRSID: null`.
-- **WKT can hide in `ProjectedUnknownCrs.Unknown`** — detected only if it matches `/^PROJC(RS|S)\[/`; other strings are ignored.
-- **`TOWGS84[...]` inside WKT is the datum shift** — it is what justifies a BoundProjected ID.
-- **Offsets keep coordinates small** — global = offset + rotated local; never store the offset in the OSDU CRS record.
+- **Vertical CRS is often `VerticalUnknownCrs`** - there is no EPSG code; only the uom/direction is meaningful → `verticalCRSID: null`.
+- **WKT can hide in `ProjectedUnknownCrs.Unknown`** - detected only if it matches `/^PROJC(RS|S)\[/`; other strings are ignored.
+- **`TOWGS84[...]` inside WKT is the datum shift** - it is what justifies a BoundProjected ID.
+- **Offsets keep coordinates small** - global = offset + rotated local; never store the offset in the OSDU CRS record.
 
 ### What M27 manifest generation emits
 
@@ -121,9 +121,9 @@ x_global = XOffset + x_local·cos(θ) + y_local·sin(θ)
 y_global = YOffset − x_local·sin(θ) + y_local·cos(θ)
 ```
 
-### Examples — RESQML JSON → OSDU
+### Examples - RESQML JSON → OSDU
 
-**Typical NCS — ETRS89, no shift (plain Projected):**
+**Typical NCS - ETRS89, no shift (plain Projected):**
 ```json
 // RESQML
 { "$type": "resqml20.obj_LocalDepth3dCrs",
@@ -139,7 +139,7 @@ y_global = YOffset − x_local·sin(θ) + y_local·cos(θ)
   "rddms/localFrame/zIncreasingDownward": true, "rddms/localFrame/crsVersion": "eml20" }
 ```
 
-**Legacy ED50 — Bound CRS (projected + vertical both EPSG):**
+**Legacy ED50 - Bound CRS (projected + vertical both EPSG):**
 ```json
 // RESQML
 { "$type": "resqml20.obj_LocalDepth3dCrs",
@@ -185,9 +185,9 @@ v2.2 is released but not yet in production. The ETP client normalizes it to the 
 
 ### References
 
-- [RESQML CRS overview][r-crs] — one-projected-CRS-per-dataspace rule
-- [AbstractLocal3dCrs attributes][r-abs] — offsets, rotation, axis order, Z
-- [EnergyML Common CRS classes][c-crs] — EPSG/GML/WKT/LocalAuthority/Unknown
+- [RESQML CRS overview][r-crs] - one-projected-CRS-per-dataspace rule
+- [AbstractLocal3dCrs attributes][r-abs] - offsets, rotation, axis order, Z
+- [EnergyML Common CRS classes][c-crs] - EPSG/GML/WKT/LocalAuthority/Unknown
 - [OSDU CRS Catalog][os-cat] · [CRS Convert v3][os-conv] · [ADR: dynamic CRS/CT][os-adr]
 
 [r-crs]: https://docs.energistics.org/RESQML/RESQML_TOPICS/RESQML-000-066-0-C-sv2010.html

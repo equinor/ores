@@ -23,7 +23,7 @@ A complete manifest should produce **~144 records** (1 dataset + 24 master-data 
 ### 1. Well objects produce zero records – by design (DDMS ownership)
 
 **Severity:** **By design** 
-**Impact:** Well data is absent from the RDDMS-built manifest — acceptable if Well DDMS owns it  
+**Impact:** Well data is absent from the RDDMS-built manifest - acceptable if Well DDMS owns it  
 
 The builder produces no records for any well-related RESQML type:
 
@@ -230,7 +230,7 @@ But the schema version is missing (`ETPDataspace:1.0.1`) and the dataspace path 
 
 ### The Problem
 
-An EPC file bundles *everything* — wells, structural surfaces, grids, properties —
+An EPC file bundles *everything* - wells, structural surfaces, grids, properties -
 into a single archive. But in OSDU, different Domain Data Management Services (DDMSes)
 own different data types:
 
@@ -298,7 +298,7 @@ well data from Well DDMS, the pipeline should:
 2. If found: use their IDs in `WellboreID` cross-references, skip master-data creation
 3. If not found: create them (demo mode)
 
-This is handled by the `--skip-wells` flag (not yet implemented — see TODO).
+This is handled by the `--skip-wells` flag (not yet implemented - see TODO).
 
 ### Implications for RDDMS Manifest Builder (open-etp-client)
 
@@ -317,12 +317,12 @@ DDMS ownership boundaries. However, it should:
 | Metric | Builder | `build_full_manifest.py` | Gap (builder vs full) |
 |---|---|---|---|
 | Total records | 102 | 145 | -43 |
-| Datasets | 1 | 1 | — |
+| Datasets | 1 | 1 | - |
 | MasterData | 0 | 24 | -24 |
 | WPCs | 101 | 120 | -19 |
 | RESQML types covered | 18/28 | 26/28 | -8 types |
-| DomainTypeID on interp | ✓ (Depth only) | ✓ (Mixed — correct) | wrong value |
-| StratigraphicRoleTypeID | ✓ | ✓ | — |
+| DomainTypeID on interp | ✓ (Depth only) | ✓ (Mixed - correct) | wrong value |
+| StratigraphicRoleTypeID | ✓ | ✓ | - |
 | Shared BinGrid | ✗ | ✓ (1 GenericBinGrid, 9 refs) | -1 record |
 | Grid geometry inline | ✗ | ✓ (NodeCount, spacing, origin) | missing fields |
 | Horizon-specific names | ✗ | ✓ ("Surface (TopVolantis)") | generic names |
@@ -330,7 +330,7 @@ DDMS ownership boundaries. However, it should:
 | BinGridID on surfaces | ✗ | ✓ | missing cross-ref |
 | Objects with catalog presence | 101/404 | 402/404 | -301 objects |
 | Cross-ref fields populated | 4 types | 8 types | -4 |
-| Spatial extent | 0% | 0% (open) | — |
+| Spatial extent | 0% | 0% (open) | - |
 
 *Note: 222 well-log ContinuousProperty objects are expected to be grouped into 9 WellLog WPCs (not 222 separate records), which is why "objects with catalog presence" differs from "total records".*
 

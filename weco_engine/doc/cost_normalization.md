@@ -1,6 +1,6 @@
 # Cost Function Normalization Guide
 
-> Reference: Baville (2022) §6.3.5 — *"The proposed correlation cost normalization, 0 ≤ c ≤ 1,
+> Reference: Baville (2022) §6.3.5 - *"The proposed correlation cost normalization, 0 ≤ c ≤ 1,
 > makes it possible to define multi-criteria correlation costs."*
 
 ## Principle
@@ -35,14 +35,14 @@ others.
 
 ## Known Issues
 
-### B3D Cost Normalization (§13.4) — RESOLVED
+### B3D Cost Normalization (§13.4) - RESOLVED
 
 The B3D (Bézier-3D) curve and patch cost functions compute a geometric
-integral — the area (2D) or volume (3D) between the actual and ideal B3D profile.
+integral - the area (2D) or volume (3D) between the actual and ideal B3D profile.
 
 Normalization is now implemented via engine options:
-- `b3d-curve-normalize` (default: `true`) — divides by $A_0 = (h_1 + h_2) \cdot d / 2$
-- `b3d-patch-normalize` (default: `true`) — divides by $V_0 = (h_1 + h_2 + h_3) \cdot S / 3$
+- `b3d-curve-normalize` (default: `true`) - divides by $A_0 = (h_1 + h_2) \cdot d / 2$
+- `b3d-patch-normalize` (default: `true`) - divides by $V_0 = (h_1 + h_2 + h_3) \cdot S / 3$
 
 This brings B3D costs into a comparable range with other normalized cost functions.
 
@@ -80,7 +80,7 @@ For weighted average, it would also ensure that the total cost stays in [0, 1].
 
 ---
 
-## Extended Theory — Thesis Reference
+## Extended Theory - Thesis Reference
 
 ### Distality Parameter Audit
 
@@ -106,7 +106,7 @@ region → use as `dist-facies` in correlation.
 
 ### Thickness Constraint Equation
 
-From Baville (2022) §6.3.2 — proposed but not yet in C++ engine:
+From Baville (2022) §6.3.2 - proposed but not yet in C++ engine:
 
 $$c_{\text{thick}} = w_t \cdot \left(\frac{|\Delta h_{ij} - \Delta h_{\text{exp}}|}{\Delta h_{\text{exp}}}\right)^2$$
 

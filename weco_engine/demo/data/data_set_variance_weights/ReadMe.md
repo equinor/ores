@@ -1,4 +1,4 @@
-# Data Set 1.1 — Variance Cost Function Test
+# Data Set 1.1 - Variance Cost Function Test
 
 ## Purpose
 
@@ -51,4 +51,4 @@ where $d_{h,w}$ is the data value at horizon $h$ in well $w$.
 
 ## Authors
 
-Christophe Antoine, Guillaume Caumon, Paul Baville — ASGA/RING, Université de Lorraine.
+Christophe Antoine, Guillaume Caumon, Paul Baville - ASGA/RING, Université de Lorraine.

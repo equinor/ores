@@ -1,4 +1,4 @@
-# Data Set 1.2 — No-Crossing Cost Function Test
+# Data Set 1.2 - No-Crossing Cost Function Test
 
 ## Purpose
 
@@ -24,7 +24,7 @@ side of a boundary is assigned cost = ∞ and excluded from the
 dynamic programming search.
 
 This implements the biostratigraphic principle that:
-> Biozones define time intervals — correlation lines connecting
+> Biozones define time intervals - correlation lines connecting
 > coeval strata cannot cross biozone boundaries.
 
 In the DTW graph, no-crossing modifies the adjacency structure by
@@ -48,4 +48,4 @@ removing edges that would violate boundary ordering.
 
 ## Authors
 
-Christophe Antoine, Guillaume Caumon, Paul Baville — ASGA/RING, Université de Lorraine.
+Christophe Antoine, Guillaume Caumon, Paul Baville - ASGA/RING, Université de Lorraine.

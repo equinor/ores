@@ -11,7 +11,7 @@ biozone picks into a WeCo correlation workflow.
 Biozones are depth intervals in wells defined by the presence of specific
 fossils (foraminifera, nannoplankton, palynomorphs).  Each biozone has a
 known age range.  Correlating markers *across* a biozone boundary implies
-a time gap — which WeCo can penalise via the `BiozonAgeCost`.
+a time gap - which WeCo can penalise via the `BiozonAgeCost`.
 
 ## Step 1: Prepare Biozone Data
 
@@ -93,7 +93,7 @@ the age constraints while still finding optimal log-shape matches.
   are still being crossed.
 - **Combine with distality**: The biozone constraint works well alongside
   distality cost for shallow marine settings.
-- **Missing data**: Wells without biozone picks are unpenalised — the cost
+- **Missing data**: Wells without biozone picks are unpenalised - the cost
   gracefully degrades.
 
 ## Workflow Integration

@@ -253,20 +253,20 @@ WeCo outcome files:
 
 ## Geological Demo Datasets
 
-**data_set_quaternary — Quaternary hydrogeology**
+**data_set_quaternary - Quaternary hydrogeology**
 
 100 synthetic wells representing periglacial/glacial Quaternary stratigraphy with
 9 facies codes, 6 log curves, and periglacial features (Eiskeil, cryoturbation,
 dropstones). See [data_set_quaternary/ReadMe.md](data_set_quaternary/ReadMe.md)
 for full description.
 
-**data_set_coal — Coal basin cyclothems**
+**data_set_coal - Coal basin cyclothems**
 
 30 synthetic wells modelling coal-bearing cyclothem sequences with 10 lithologies,
 6 log curves, and coal seam correlation. See
 [data_set_coal/ReadMe.md](data_set_coal/ReadMe.md) for full description.
 
-**data_set_hugin_tidal — EAGE 2024 workshop**
+**data_set_hugin_tidal - EAGE 2024 workshop**
 
 Facies-based dataset used for the EAGE 2024 workshop demonstration.
 

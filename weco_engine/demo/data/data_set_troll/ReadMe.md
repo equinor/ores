@@ -29,7 +29,7 @@ Extracted from core-based sedimentological interpretation spreadsheet.
 | 10 | Shelf / Offshore | 1 (distal) |
 
 ## Correlation Strategy
-1. **options_distal.txt**: Distal CCF — uses facies + distality (Walther's Law)
+1. **options_distal.txt**: Distal CCF - uses facies + distality (Walther's Law)
 2. **options_sequence.txt**: Variance + same-region (SEQUENCE boundaries)
 3. **options_basic.txt**: Unconstrained variance (baseline comparison)
 

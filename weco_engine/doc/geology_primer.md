@@ -19,7 +19,7 @@
 
 **Well correlation** is the process of connecting equivalent
 stratigraphic horizons between wells.  When you drill multiple wells
-through sedimentary rock, you see similar layers — but they don't
+through sedimentary rock, you see similar layers - but they don't
 line up perfectly because:
 
 - Layers **thicken and thin** laterally
@@ -45,7 +45,7 @@ Well A        Well B        Well C
 
 **Dynamic Time Warping** is an algorithm that finds the optimal
 alignment between two sequences.  Originally from speech recognition,
-it naturally handles stretching and compression — exactly what
+it naturally handles stretching and compression - exactly what
 happens to geological layers.
 
 In WeCo's context:
@@ -72,13 +72,13 @@ cost function** that combines multiple geological criteria:
 ### Variance Cost (`var-data`, `var-weight`)
 Penalises correlating markers with **different log values**.
 If marker A has GR=30 (sand) and marker B has GR=120 (shale),
-the cost is high — they probably aren't the same layer.
+the cost is high - they probably aren't the same layer.
 
 $$c_{\text{var}} = \text{Var}(v_1, v_2, \ldots, v_n)$$
 
 ### Gap Cost (`gap-const-cost`, `gap-func-cost`)
 Penalises **skipping** markers (gaps).  A gap means "this marker
-in well A has no equivalent in well B" — it represents a missing
+in well A has no equivalent in well B" - it represents a missing
 or eroded layer.  Some gaps are geologically expected; too many
 suggest a bad correlation.
 
@@ -96,7 +96,7 @@ surfaces that are known to be time-equivalent.
 For lateral facies changes: penalises correlations that are
 inconsistent with the **depositional environment**.  If well A
 is proximal (near shore) and well B is distal (basin), their
-facies should change systematically — not randomly.
+facies should change systematically - not randomly.
 
 ### B3D Cost (Bézier 3D)
 Penalises correlations that create **geologically implausible
@@ -104,7 +104,7 @@ geometries** (e.g., very steep dips, reversals).
 
 ## What is k-Best?
 
-WeCo doesn't just find the **single best** correlation — it finds
+WeCo doesn't just find the **single best** correlation - it finds
 the **k best** correlations (controlled by `nbr-cor` and
 `out-nbr-cor`).  This is crucial because:
 
@@ -139,8 +139,8 @@ should ideally appear as one of the top-ranked results.
 ## Further Reading
 
 - Baville (2022) *"Stochastic stratigraphic correlation using
-  graph-DTW"* — PhD thesis, the theoretical foundation of WeCo
+  graph-DTW"* - PhD thesis, the theoretical foundation of WeCo
 - Lallier et al. (2013) *"Uncertainty of well correlation"*
-  — DTW applied to well correlation
+  - DTW applied to well correlation
 - Catuneanu (2006) *"Principles of Sequence Stratigraphy"*
-  — geological background for hierarchical correlation
+  - geological background for hierarchical correlation
