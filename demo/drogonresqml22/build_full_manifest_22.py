@@ -660,6 +660,8 @@ def main():
     ap = argparse.ArgumentParser(description="Build OSDU manifest from Drogon RESQML 2.2 EPC")
     ap.add_argument("--from-201", action="store_true",
                     help="Convert from RESQML 2.0.1 EPC (demo/drogonresqml/drogon_demo.epc)")
+    ap.add_argument("--epc", type=Path, default=None,
+                    help="Explicit source EPC path (overrides default 2.2 EPC)")
     ap.add_argument("--save-only", action="store_true",
                     help="Save manifest JSON only (don't push)")
     ap.add_argument("-o", "--output", type=Path, default=OUT_FILE,
@@ -671,6 +673,10 @@ def main():
         epc = EPC_FILE_201
         convert = True
         print(f"  Source: {epc.name} (RESQML 2.0.1 → converting to 2.2 types)")
+    elif args.epc:
+        epc = args.epc
+        convert = False
+        print(f"  Source: {epc.name} (RESQML 2.2 native, explicit)")
     else:
         epc = EPC_FILE_22
         convert = False

@@ -805,6 +805,78 @@ async def _pg_grid2d_surface(pool, ds: str, uuid: str) -> dict[str, Any] | None:
 # Unified geometry builder (shared by PG and REST paths)
 # ═══════════════════════════════════════════════════════════════════════════════
 
+def _interp_along_traj(
+    traj_md: list[float],
+    traj_xyz: list[float],
+    marker_md: list[float],
+) -> list[float]:
+    """Interpolate XYZ for each marker MD along a trajectory polyline.
+
+    ``traj_md`` are the measured depths of the trajectory control points and
+    ``traj_xyz`` the interleaved ``[x,y,z,...]`` of those points.  Returns
+    interleaved ``[x,y,z,...]`` for each value in *marker_md*.  Markers outside
+    the trajectory MD range are clamped to the nearest end.
+    """
+    n = len(traj_md)
+    if n == 0 or len(traj_xyz) < n * 3:
+        return []
+    # Ensure ascending MD (control points are normally already ordered).
+    order = sorted(range(n), key=lambda i: traj_md[i])
+    md_sorted = [traj_md[i] for i in order]
+    xyz_sorted = [traj_xyz[i * 3 + k] for i in order for k in range(3)]
+
+    def _pt(i: int) -> tuple[float, float, float]:
+        return (xyz_sorted[i * 3], xyz_sorted[i * 3 + 1], xyz_sorted[i * 3 + 2])
+
+    out: list[float] = []
+    for m in marker_md:
+        if m <= md_sorted[0]:
+            x, y, z = _pt(0)
+        elif m >= md_sorted[-1]:
+            x, y, z = _pt(n - 1)
+        else:
+            x, y, z = _pt(n - 1)
+            for i in range(n - 1):
+                lo, hi = md_sorted[i], md_sorted[i + 1]
+                if lo <= m <= hi:
+                    t = (m - lo) / (hi - lo) if hi != lo else 0.0
+                    x0, y0, z0 = _pt(i)
+                    x1, y1, z1 = _pt(i + 1)
+                    x = x0 + t * (x1 - x0)
+                    y = y0 + t * (y1 - y0)
+                    z = z0 + t * (z1 - z0)
+                    break
+        out.extend((x, y, z))
+    return out
+
+
+async def _read_trajectory_md_xyz(
+    arr_paths: dict[str, str],
+    read_fn,
+    fallback_paths: list[str],
+) -> tuple[list[float], list[float]]:
+    """Read ``(md, xyz)`` control-point arrays from a trajectory's array set."""
+    xyz: list[float] = []
+    for kw in ("controlpoints", "points", "xyz", "coordinates"):
+        for lk, rp in arr_paths.items():
+            if kw in lk and "count" not in lk and "parameter" not in lk:
+                xyz = [float(v) for v in await read_fn(rp)]
+                break
+        if xyz:
+            break
+    md: list[float] = []
+    for kw in ("controlpointparameters", "nodemd", "measureddepth", "md"):
+        for lk, rp in arr_paths.items():
+            if kw in lk:
+                md = [float(v) for v in await read_fn(rp)]
+                break
+        if md:
+            break
+    if not xyz and fallback_paths:
+        xyz = [float(v) for v in await read_fn(fallback_paths[0])]
+    return md, xyz
+
+
 async def _build_geometry_result(
     typ: str,
     title: str,
@@ -812,6 +884,7 @@ async def _build_geometry_result(
     read_fn,
     fallback_paths: list[str],
     marker_labels: list[str] | None = None,
+    marker_traj: tuple[list[float], list[float]] | None = None,
 ) -> dict[str, Any] | None:
     """Build a geometry result dict from arrays for the Three.js viewer.
 
@@ -825,6 +898,8 @@ async def _build_geometry_result(
         read_fn: ``async (path) -> list[float]`` - reads an array by path.
         fallback_paths: Ordered original paths for positional fallback reads.
         marker_labels: Pre-extracted labels for WellboreMarkerFrame objects.
+        marker_traj: ``(traj_md, traj_xyz)`` of the referenced trajectory's
+            control points, used to interpolate marker XYZ positions.
 
     Returns a dict with ``kind`` + geometry arrays, or ``None`` if *typ* is
     not recognised.
@@ -887,10 +962,19 @@ async def _build_geometry_result(
 
     # ── WellboreMarkerFrameRepresentation ─────────────────────────────
     if "marker" in tl:
+        # Marker frames store only MD values (NodeMd) plus a reference to a
+        # WellboreTrajectory.  XYZ positions are obtained by interpolating
+        # each marker MD along the referenced trajectory's control points.
         md_values = await _find_read("md", "nodemd", "measureddepth")
         positions = await _find_read("points", "xyz", "coordinates")
-        zmin = min(md_values) if md_values else 0
-        zmax = max(md_values) if md_values else 1
+        if not positions and md_values and marker_traj:
+            traj_md, traj_xyz = marker_traj
+            positions = _interp_along_traj(traj_md, traj_xyz, md_values)
+        if positions:
+            zmin, zmax = _z_stats(positions)
+        else:
+            zmin = min(md_values) if md_values else 0
+            zmax = max(md_values) if md_values else 1
         return {"kind": "markers", "title": title, "positions": positions,
                 "md": md_values, "labels": marker_labels or [],
                 "zmin": zmin, "zmax": zmax}
@@ -978,10 +1062,12 @@ async def _pg_geometry3d(pool, ds: str, typ: str, uuid: str) -> dict[str, Any] |
     async def _read(path: str) -> list[float]:
         return await pg_read_array(pool, ds, uuid, path)
 
-    # Marker labels from XML
+    # Marker labels + referenced trajectory geometry from XML
     marker_labels: list[str] | None = None
+    marker_traj: tuple[list[float], list[float]] | None = None
     if "marker" in tl:
         marker_labels = []
+        traj_uuid: str | None = None
         _, xml_str = await _pg_get_obj_id_and_xml(pool, ds, uuid)
         if xml_str:
             try:
@@ -993,11 +1079,26 @@ async def _pg_geometry3d(pool, ds: str, typ: str, uuid: str) -> dict[str, Any] |
                         or _xtext(wm, "Citation", "Title")
                     )
                     marker_labels.append(label)
+                traj_ref = _xfind(root, "Trajectory")
+                if traj_ref is not None:
+                    traj_uuid = _xtext(traj_ref, "UUID") or None
             except ET.ParseError:
                 pass
+        if traj_uuid:
+            traj_arrays = await pg_list_arrays(pool, ds, traj_uuid)
+            if traj_arrays:
+                t_paths = {a["path"].lower(): a["path"] for a in traj_arrays}
+                t_fallback = [a["path"] for a in traj_arrays]
+
+                async def _tread(path: str) -> list[float]:
+                    return await pg_read_array(pool, ds, traj_uuid, path)
+
+                marker_traj = await _read_trajectory_md_xyz(
+                    t_paths, _tread, t_fallback,
+                )
 
     return await _build_geometry_result(
-        typ, title, arr_paths, _read, fallback_paths, marker_labels,
+        typ, title, arr_paths, _read, fallback_paths, marker_labels, marker_traj,
     )
 
 
@@ -1176,6 +1277,7 @@ async def _rest_geometry3d(
 
         # Marker labels from REST JSON object
         marker_labels: list[str] | None = None
+        marker_traj: tuple[list[float], list[float]] | None = None
         if "marker" in tl:
             marker_labels = []
             for m in obj.get("WellboreMarker") or []:
@@ -1187,8 +1289,50 @@ async def _rest_geometry3d(
                 )
                 marker_labels.append(label)
 
+            # Resolve referenced trajectory and read its control points so
+            # marker MDs can be interpolated into XYZ positions.
+            traj_ref = obj.get("Trajectory") or {}
+            traj_uuid = (
+                traj_ref.get("Uuid") or traj_ref.get("UUID")
+                or traj_ref.get("uuid")
+            )
+            if traj_uuid:
+                traj_typ = (
+                    traj_ref.get("QualifiedType")
+                    or typ.replace(
+                        "MarkerFrameRepresentation", "TrajectoryRepresentation")
+                )
+                t_url = osdu._rddms_url(
+                    f"/dataspaces/{enc}/resources/{traj_typ}/{traj_uuid}")
+                try:
+                    rt = await client.get(f"{t_url}/arrays", headers=hdr)
+                    if rt.status_code not in (404, 405, 412):
+                        rt.raise_for_status()
+                        t_list = rt.json() or []
+                        t_paths: dict[str, str] = {}
+                        t_fallback: list[str] = []
+                        for a in t_list:
+                            uid = a.get("uid") or {}
+                            p = uid.get("pathInResource", "")
+                            t_paths[p.lower()] = p
+                            t_fallback.append(p)
+
+                        async def _tread(path: str) -> list:
+                            ae = urllib.parse.quote(path, safe="")
+                            r = await client.get(
+                                f"{t_url}/arrays/{ae}", headers=hdr)
+                            r.raise_for_status()
+                            return _extract_flat_array(r.json() or {})
+
+                        if t_paths:
+                            marker_traj = await _read_trajectory_md_xyz(
+                                t_paths, _tread, t_fallback)
+                except Exception as e:  # noqa: BLE001 - viz is best-effort
+                    log.warning("marker trajectory fetch failed: %s", e)
+
         result = await _build_geometry_result(
-            typ, title, arr_paths, _read_arr, fallback_paths, marker_labels,
+            typ, title, arr_paths, _read_arr, fallback_paths,
+            marker_labels, marker_traj,
         )
         if result is None:
             raise ValueError(f"Unsupported type for 3D: {typ}")

@@ -55,8 +55,8 @@ from _auth import get_token, load_instance  # noqa: E402
 # ── Constants ─────────────────────────────────────────────────────────────
 DATASPACE_DEFAULT = "maap/drogon22"
 DATASPACE_OVERRIDE = {}
-EPC_FILE = SCRIPT_DIR / "drogon_demo_22.epc"
-MANIFEST_FILE = SCRIPT_DIR / "manifest_drogon22_interop.json"
+EPC_FILE = SCRIPT_DIR / "drogon22_subset.epc"
+MANIFEST_FILE = SCRIPT_DIR / "manifest_drogon22_subset.json"
 IMAGE_SSL = "osdu-etp-sslclient"
 
 # RESQML 2.2 type prefix (no obj_ prefix, different class names)
@@ -115,6 +115,38 @@ def authenticate(cfg: InstanceConfig) -> str:
 # ═══════════════════════════════════════════════════════════════════════════
 # 2. Create dataspace
 # ═══════════════════════════════════════════════════════════════════════════
+
+def purge_dataspace(token: str, cfg: InstanceConfig) -> bool:
+    """Delete the whole dataspace via ETP (requires ETP delete rights, e.g.
+    interop). On instances without delete rights (eqndev) this is a no-op."""
+    print(f"\n=== 2a. Purge dataspace ({cfg.dataspace}) via ETP ===")
+    tok_file = SCRIPT_DIR / ".etp_token"
+    tok_file.write_text(token)
+    inner = (
+        f"export JWT=$(cat /data/.etp_token) && "
+        f"/bin/openETPServer space "
+        f"--server-url {cfg.etp_url} "
+        f"--data-partition-id {cfg.partition} "
+        f"--auth bearer --jwt-token $JWT "
+        f"-s {cfg.dataspace} --delete"
+    )
+    cmd = ["docker", "run", "--rm", "-v", f"{SCRIPT_DIR}:/data",
+           "--entrypoint=sh", IMAGE_SSL, "-c", inner]
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+    tok_file.unlink(missing_ok=True)
+    combined = result.stdout + result.stderr
+    if result.returncode == 0:
+        print(f"  ✓ Purged dataspace {cfg.dataspace}")
+        time.sleep(3)
+        return True
+    if "not found" in combined.lower():
+        print(f"  ✓ Dataspace {cfg.dataspace} did not exist (nothing to purge)")
+        return True
+    print(f"  ⚠ Purge failed (rc={result.returncode}) — likely no ETP delete "
+          f"rights on this instance; continuing additive")
+    print(f"    {combined[-200:]}")
+    return False
+
 
 def create_dataspace(token: str, cfg: InstanceConfig) -> bool:
     """Create maap/drogon22 dataspace on remote RDDMS via REST."""
@@ -208,7 +240,8 @@ def import_epc(token: str, cfg: InstanceConfig) -> bool:
         f"--data-partition-id {cfg.partition} "
         f"--auth bearer --jwt-token $JWT "
         f"-s {cfg.dataspace} "
-        f"--import-epc /data/{EPC_FILE.name} -j -M 50MB"
+        f"--import-epc /data/{EPC_FILE.name} -j -M 50MB "
+        f"--timeout 60s,120s --transaction-retries 5 --reconnect-retries 5"
     )
     cmd = [
         "docker", "run", "--rm",
@@ -453,6 +486,9 @@ def main():
                     help="Target OSDU instance name")
     ap.add_argument("--skip-etp", action="store_true",
                     help="Skip ETP import (manifest only)")
+    ap.add_argument("--purge", action="store_true",
+                    help="Purge the dataspace via ETP before import (interop only; "
+                         "no-op where ETP delete rights are absent, e.g. eqndev)")
     ap.add_argument("--remote-manifest", action="store_true",
                     help="Use remote RDDMS manifest builder instead of local manifest")
     ap.add_argument("--save-only", action="store_true",
@@ -486,6 +522,8 @@ def main():
     if not args.dry_run and not args.skip_etp:
         if not token:
             token = authenticate(cfg)
+        if args.purge:
+            purge_dataspace(token, cfg)
         create_dataspace(token, cfg)
         ok = import_epc(token, cfg)
         if not ok:

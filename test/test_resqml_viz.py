@@ -409,3 +409,50 @@ class TestRenderTrisetPng:
         indices = [0, 1, 3]  # triangle uses only valid verts
         result = render_triset_png(positions, indices)
         assert result[:4] == b"\x89PNG"
+
+
+# ─── _interp_along_traj (marker MD → XYZ) ────────────────────────────────────
+
+class TestInterpAlongTraj:
+    """Marker MD values are interpolated into XYZ along a trajectory."""
+
+    def test_midpoint_interpolation(self):
+        from app.resqml_viz import _interp_along_traj
+        traj_md = [0.0, 100.0, 200.0]
+        traj_xyz = [0.0, 0.0, 0.0,  10.0, 0.0, -100.0,  20.0, 0.0, -200.0]
+        out = _interp_along_traj(traj_md, traj_xyz, [50.0])
+        assert out == pytest.approx([5.0, 0.0, -50.0])
+
+    def test_exact_node(self):
+        from app.resqml_viz import _interp_along_traj
+        traj_md = [0.0, 100.0]
+        traj_xyz = [0.0, 0.0, 0.0,  10.0, 5.0, -100.0]
+        out = _interp_along_traj(traj_md, traj_xyz, [100.0])
+        assert out == pytest.approx([10.0, 5.0, -100.0])
+
+    def test_clamp_below_and_above(self):
+        from app.resqml_viz import _interp_along_traj
+        traj_md = [10.0, 20.0]
+        traj_xyz = [1.0, 1.0, -10.0,  2.0, 2.0, -20.0]
+        out = _interp_along_traj(traj_md, traj_xyz, [0.0, 99.0])
+        assert out[:3] == pytest.approx([1.0, 1.0, -10.0])
+        assert out[3:] == pytest.approx([2.0, 2.0, -20.0])
+
+    def test_multiple_markers(self):
+        from app.resqml_viz import _interp_along_traj
+        traj_md = [0.0, 100.0]
+        traj_xyz = [0.0, 0.0, 0.0,  0.0, 0.0, -100.0]
+        out = _interp_along_traj(traj_md, traj_xyz, [25.0, 75.0])
+        assert out == pytest.approx([0.0, 0.0, -25.0, 0.0, 0.0, -75.0])
+
+    def test_unsorted_md_handled(self):
+        from app.resqml_viz import _interp_along_traj
+        traj_md = [100.0, 0.0]
+        traj_xyz = [0.0, 0.0, -100.0,  0.0, 0.0, 0.0]
+        out = _interp_along_traj(traj_md, traj_xyz, [50.0])
+        assert out == pytest.approx([0.0, 0.0, -50.0])
+
+    def test_empty_inputs(self):
+        from app.resqml_viz import _interp_along_traj
+        assert _interp_along_traj([], [], [10.0]) == []
+        assert _interp_along_traj([0.0], [0.0], [10.0]) == []  # xyz too short
