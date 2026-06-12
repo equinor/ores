@@ -456,3 +456,61 @@ class TestInterpAlongTraj:
         from app.resqml_viz import _interp_along_traj
         assert _interp_along_traj([], [], [10.0]) == []
         assert _interp_along_traj([0.0], [0.0], [10.0]) == []  # xyz too short
+
+
+# ─── _parse_angle_deg / _dip_to_normal (marker layer orientation) ────────────
+
+class TestParseAngleDeg:
+    """Dip / dip-azimuth measures are parsed into degrees."""
+
+    def test_plain_number(self):
+        from app.resqml_viz import _parse_angle_deg
+        assert _parse_angle_deg(30.0) == pytest.approx(30.0)
+        assert _parse_angle_deg("45") == pytest.approx(45.0)
+
+    def test_dict_value_uom(self):
+        from app.resqml_viz import _parse_angle_deg
+        assert _parse_angle_deg({"Value": 12.5, "Uom": "dega"}) == pytest.approx(12.5)
+
+    def test_radian_conversion(self):
+        from app.resqml_viz import _parse_angle_deg
+        assert _parse_angle_deg(math.pi / 2, "rad") == pytest.approx(90.0)
+        assert _parse_angle_deg({"Value": math.pi, "Uom": "rad"}) == pytest.approx(180.0)
+
+    def test_none_and_invalid(self):
+        from app.resqml_viz import _parse_angle_deg
+        assert _parse_angle_deg(None) is None
+        assert _parse_angle_deg("") is None
+        assert _parse_angle_deg("not-a-number") is None
+
+
+class TestDipToNormal:
+    """Geological dip/azimuth converts to a bedding-plane normal."""
+
+    def test_flat_lying_defaults_vertical(self):
+        from app.resqml_viz import _dip_to_normal
+        assert _dip_to_normal(None, None) == pytest.approx((0.0, 0.0, 1.0))
+        assert _dip_to_normal(0.0, 123.0) == pytest.approx((0.0, 0.0, 1.0))
+
+    def test_vertical_bed_horizontal_normal(self):
+        from app.resqml_viz import _dip_to_normal
+        # 90° dip toward North → normal points North, zero vertical component.
+        nx, ny, nz = _dip_to_normal(90.0, 0.0)
+        assert nx == pytest.approx(0.0, abs=1e-9)
+        assert ny == pytest.approx(1.0)
+        assert nz == pytest.approx(0.0, abs=1e-9)
+
+    def test_dip_azimuth_east(self):
+        from app.resqml_viz import _dip_to_normal
+        # 90° dip toward East (azimuth 90) → normal points East.
+        nx, ny, nz = _dip_to_normal(90.0, 90.0)
+        assert nx == pytest.approx(1.0)
+        assert ny == pytest.approx(0.0, abs=1e-9)
+        assert nz == pytest.approx(0.0, abs=1e-9)
+
+    def test_unit_length(self):
+        from app.resqml_viz import _dip_to_normal
+        for dip, az in [(30.0, 45.0), (60.0, 200.0), (15.0, 310.0)]:
+            nx, ny, nz = _dip_to_normal(dip, az)
+            assert (nx*nx + ny*ny + nz*nz) == pytest.approx(1.0)
+

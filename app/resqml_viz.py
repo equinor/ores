@@ -850,6 +850,47 @@ def _interp_along_traj(
     return out
 
 
+def _parse_angle_deg(raw: Any, uom: str | None = None) -> float | None:
+    """Parse a RESQML PlaneAngleMeasure into degrees.
+
+    Accepts a plain number, a numeric string, or a ``{"Value", "Uom"}`` dict
+    (REST JSON).  Radian units are converted to degrees; anything else is
+    assumed to already be in degrees.  Returns ``None`` if not parseable.
+    """
+    if isinstance(raw, dict):
+        uom = raw.get("Uom") or raw.get("uom") or uom
+        raw = raw.get("Value", raw.get("value"))
+    if raw is None or raw == "":
+        return None
+    try:
+        val = float(raw)
+    except (TypeError, ValueError):
+        return None
+    if uom and str(uom).lower().startswith("rad"):
+        return math.degrees(val)
+    return val
+
+
+def _dip_to_normal(
+    dip_deg: float | None, az_deg: float | None
+) -> tuple[float, float, float]:
+    """Unit normal of a geological layer from its dip / dip-azimuth.
+
+    ``dip_deg`` is the dip angle measured from horizontal (0 = flat-lying bed)
+    and ``az_deg`` the dip-direction azimuth measured clockwise from North.
+    Returns the bedding-plane normal in the RESQML ``(X=East, Y=North, Z)``
+    frame.  A flat-lying bed (dip 0 or missing values) yields ``(0, 0, 1)`` —
+    a horizontal disk perpendicular to the depth axis.  The sign of the normal
+    is irrelevant for an (orientation-only) disk.
+    """
+    if dip_deg is None:
+        return (0.0, 0.0, 1.0)
+    d = math.radians(dip_deg)
+    a = math.radians(az_deg or 0.0)
+    sd = math.sin(d)
+    return (sd * math.sin(a), sd * math.cos(a), math.cos(d))
+
+
 async def _read_trajectory_md_xyz(
     arr_paths: dict[str, str],
     read_fn,
@@ -885,6 +926,7 @@ async def _build_geometry_result(
     fallback_paths: list[str],
     marker_labels: list[str] | None = None,
     marker_traj: tuple[list[float], list[float]] | None = None,
+    marker_dips: list[tuple[float | None, float | None] | None] | None = None,
 ) -> dict[str, Any] | None:
     """Build a geometry result dict from arrays for the Three.js viewer.
 
@@ -900,6 +942,9 @@ async def _build_geometry_result(
         marker_labels: Pre-extracted labels for WellboreMarkerFrame objects.
         marker_traj: ``(traj_md, traj_xyz)`` of the referenced trajectory's
             control points, used to interpolate marker XYZ positions.
+        marker_dips: Per-marker ``(dip_deg, dip_azimuth_deg)`` of the geological
+            layer at each marker (``None`` for flat-lying), aligned with the
+            marker order.  Used to orient the marker disks in the viewer.
 
     Returns a dict with ``kind`` + geometry arrays, or ``None`` if *typ* is
     not recognised.
@@ -975,9 +1020,17 @@ async def _build_geometry_result(
         else:
             zmin = min(md_values) if md_values else 0
             zmax = max(md_values) if md_values else 1
+        # Per-marker bedding-plane normals (geological dip/azimuth, flat-lying
+        # by default) so the viewer can draw oriented layer disks.
+        n_mark = len(positions) // 3
+        normals: list[float] = []
+        for i in range(n_mark):
+            dip = marker_dips[i] if marker_dips and i < len(marker_dips) else None
+            nx, ny, nz = _dip_to_normal(*(dip or (None, None)))
+            normals.extend((nx, ny, nz))
         return {"kind": "markers", "title": title, "positions": positions,
                 "md": md_values, "labels": marker_labels or [],
-                "zmin": zmin, "zmax": zmax}
+                "normals": normals, "zmin": zmin, "zmax": zmax}
 
     # ── PolylineSetRepresentation ─────────────────────────────────────
     if "polylineset" in tl:
@@ -1065,8 +1118,10 @@ async def _pg_geometry3d(pool, ds: str, typ: str, uuid: str) -> dict[str, Any] |
     # Marker labels + referenced trajectory geometry from XML
     marker_labels: list[str] | None = None
     marker_traj: tuple[list[float], list[float]] | None = None
+    marker_dips: list[tuple[float | None, float | None] | None] | None = None
     if "marker" in tl:
         marker_labels = []
+        marker_dips = []
         traj_uuid: str | None = None
         _, xml_str = await _pg_get_obj_id_and_xml(pool, ds, uuid)
         if xml_str:
@@ -1079,6 +1134,18 @@ async def _pg_geometry3d(pool, ds: str, typ: str, uuid: str) -> dict[str, Any] |
                         or _xtext(wm, "Citation", "Title")
                     )
                     marker_labels.append(label)
+                    dip_el = _xfind(wm, "DipAngle")
+                    azi_el = _xfind(wm, "DipDirection")
+                    dip = _parse_angle_deg(
+                        dip_el.text if dip_el is not None else None,
+                        dip_el.get("uom") if dip_el is not None else None,
+                    )
+                    azi = _parse_angle_deg(
+                        azi_el.text if azi_el is not None else None,
+                        azi_el.get("uom") if azi_el is not None else None,
+                    )
+                    marker_dips.append(
+                        (dip, azi) if dip is not None else None)
                 traj_ref = _xfind(root, "Trajectory")
                 if traj_ref is not None:
                     traj_uuid = _xtext(traj_ref, "UUID") or None
@@ -1099,6 +1166,7 @@ async def _pg_geometry3d(pool, ds: str, typ: str, uuid: str) -> dict[str, Any] |
 
     return await _build_geometry_result(
         typ, title, arr_paths, _read, fallback_paths, marker_labels, marker_traj,
+        marker_dips,
     )
 
 
@@ -1278,8 +1346,10 @@ async def _rest_geometry3d(
         # Marker labels from REST JSON object
         marker_labels: list[str] | None = None
         marker_traj: tuple[list[float], list[float]] | None = None
+        marker_dips: list[tuple[float | None, float | None] | None] | None = None
         if "marker" in tl:
             marker_labels = []
+            marker_dips = []
             for m in obj.get("WellboreMarker") or []:
                 label = (
                     m.get("MarkerName")
@@ -1288,6 +1358,9 @@ async def _rest_geometry3d(
                     or ""
                 )
                 marker_labels.append(label)
+                dip = _parse_angle_deg(m.get("DipAngle"))
+                azi = _parse_angle_deg(m.get("DipDirection"))
+                marker_dips.append((dip, azi) if dip is not None else None)
 
             # Resolve referenced trajectory and read its control points so
             # marker MDs can be interpolated into XYZ positions.
@@ -1332,7 +1405,7 @@ async def _rest_geometry3d(
 
         result = await _build_geometry_result(
             typ, title, arr_paths, _read_arr, fallback_paths,
-            marker_labels, marker_traj,
+            marker_labels, marker_traj, marker_dips,
         )
         if result is None:
             raise ValueError(f"Unsupported type for 3D: {typ}")

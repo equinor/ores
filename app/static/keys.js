@@ -880,10 +880,36 @@
         mesh = new THREE.Mesh(geom3, new THREE.MeshPhongMaterial({
           vertexColors: true, side: THREE.DoubleSide, shininess: 30, flatShading: false,
         }));
-      } else if (kind === 'points' || kind === 'markers') {
+      } else if (kind === 'points') {
         mesh = new THREE.Points(geom3, new THREE.PointsMaterial({
-          vertexColors: true, size: kind === 'markers' ? 0.04 : 0.015, sizeAttenuation: true,
+          vertexColors: true, size: 0.015, sizeAttenuation: true,
         }));
+      } else if (kind === 'markers') {
+        // Oriented geological-layer disks (bedding planes), tilted by dip.
+        const normals = geo.normals || [];
+        const diskR = 0.06;
+        const baseN = new THREE.Vector3(0, 0, 1);
+        mesh = new THREE.Group();
+        for (let i = 0; i < nVerts; i++) {
+          let nv;
+          if (normals.length >= (i + 1) * 3) {
+            nv = new THREE.Vector3(
+              normals[i*3], normals[i*3 + 2] * zExag, normals[i*3 + 1]);
+          } else {
+            nv = new THREE.Vector3(0, 1, 0);
+          }
+          if (nv.lengthSq() < 1e-9) nv.set(0, 1, 0);
+          nv.normalize();
+          const disk = new THREE.Mesh(
+            new THREE.CircleGeometry(diskR, 40),
+            new THREE.MeshPhongMaterial({
+              color: baseColor, side: THREE.DoubleSide,
+              shininess: 18, transparent: true, opacity: 0.82,
+            }));
+          disk.quaternion.setFromUnitVectors(baseN, nv);
+          disk.position.set(normPos[i*3], normPos[i*3+1], normPos[i*3+2]);
+          mesh.add(disk);
+        }
       } else if (kind === 'trajectory') {
         mesh = new THREE.Line(geom3, new THREE.LineBasicMaterial({ vertexColors: true, linewidth: 2 }));
         const sg = new THREE.SphereGeometry(0.012, 6, 6);
@@ -931,7 +957,11 @@
       _gql3dViewer.scene.traverse(obj => {
         if (obj.isMesh || obj.isLine || obj.isPoints) {
           const b = new THREE.Box3().setFromBufferAttribute(obj.geometry?.attributes?.position);
-          if (!b.isEmpty()) box.union(b);
+          if (!b.isEmpty()) {
+            obj.updateWorldMatrix(true, false);
+            b.applyMatrix4(obj.matrixWorld);  // account for per-marker offsets
+            box.union(b);
+          }
         }
       });
       if (box.isEmpty()) return;
@@ -1849,6 +1879,11 @@
         const extX = maxX - minX, extY = maxY - minY, extZ = maxZ - minZ;
         const extLateral = Math.max(extX, extY) || 1;
         const extent = Math.max(extX, extY, extZ) || 1;
+        // Normalization scale. For near-vertical features (wells, marker frames)
+        // the lateral extent collapses to ~0, which would blow up the depth-axis
+        // mapping and push the object off-screen. Fall back to the full 3D
+        // extent in that case so the geometry stays framed by the camera.
+        const normScale = (extLateral < extent * 0.2) ? extent : extLateral;
         // Z exaggeration: amplify depth relief so it's clearly visible in 3D
         // For subsurface surfaces the Z range is often <5% of lateral → exaggerate
         let zExag = 1;
@@ -1872,9 +1907,9 @@
         const normPos = new Float32Array(positions.length);
         const colors = new Float32Array(positions.length);
         for (let i = 0; i < nVerts; i++) {
-          normPos[i*3]     = (positions[i*3]     - cx) / extLateral * 2;
-          normPos[i*3 + 1] = (positions[i*3 + 2] - cz) / extLateral * 2 * zExag;  // Z → Y (up)
-          normPos[i*3 + 2] = (positions[i*3 + 1] - cy) / extLateral * 2;          // Y → Z (depth)
+          normPos[i*3]     = (positions[i*3]     - cx) / normScale * 2;
+          normPos[i*3 + 1] = (positions[i*3 + 2] - cz) / normScale * 2 * zExag;  // Z → Y (up)
+          normPos[i*3 + 2] = (positions[i*3 + 1] - cy) / normScale * 2;          // Y → Z (depth)
           if (propVals && propVals.length > i) {
             // Color by property value
             const v = propVals[i];
@@ -1904,15 +1939,56 @@
             shininess: 30, flatShading: false,
           });
           mesh = new THREE.Mesh(geom3, mat);
-        } else if (kind === 'points' || kind === 'markers') {
+        } else if (kind === 'points') {
           const mat = new THREE.PointsMaterial({
-            vertexColors: true, size: kind === 'markers' ? 0.04 : 0.015,
+            vertexColors: true, size: 0.015,
             sizeAttenuation: true,
           });
           mesh = new THREE.Points(geom3, mat);
+        } else if (kind === 'markers') {
+          // Geological layer markers: draw an oriented disk (bedding plane) at
+          // each marker position, tilted by the layer's dip / dip-azimuth.
+          const normals = geo.normals || [];
+          const diskR = 0.09;
+          const baseN = new THREE.Vector3(0, 0, 1);  // CircleGeometry faces +Z
+          mesh = new THREE.Group();
+          for (let i = 0; i < nVerts; i++) {
+            // Normal in viewer frame (RESQML X→X, Z→Y, Y→Z). zExag stretches
+            // the depth axis, so divide the up-component to keep the disk
+            // perpendicular to the (exaggerated) bedding.
+            let nv;
+            if (normals.length >= (i + 1) * 3) {
+              nv = new THREE.Vector3(
+                normals[i*3], normals[i*3 + 2] * zExag, normals[i*3 + 1]);
+            } else {
+              nv = new THREE.Vector3(0, 1, 0);
+            }
+            if (nv.lengthSq() < 1e-9) nv.set(0, 1, 0);
+            nv.normalize();
+            const col = new THREE.Color(colors[i*3], colors[i*3+1], colors[i*3+2]);
+            const diskGeo = new THREE.CircleGeometry(diskR, 48);
+            const diskMat = new THREE.MeshPhongMaterial({
+              color: col, side: THREE.DoubleSide,
+              shininess: 18, transparent: true, opacity: 0.82,
+            });
+            const disk = new THREE.Mesh(diskGeo, diskMat);
+            disk.quaternion.setFromUnitVectors(baseN, nv);
+            disk.position.set(normPos[i*3], normPos[i*3+1], normPos[i*3+2]);
+            mesh.add(disk);
+            // Bright rim so thin/edge-on disks stay visible.
+            const ringGeo = new THREE.RingGeometry(diskR * 0.92, diskR, 48);
+            const ringMat = new THREE.MeshBasicMaterial({
+              color: 0xffffff, side: THREE.DoubleSide,
+              transparent: true, opacity: 0.55,
+            });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.quaternion.copy(disk.quaternion);
+            ring.position.copy(disk.position);
+            mesh.add(ring);
+          }
 
-          // For markers, add label sprites
-          if (kind === 'markers' && geo.labels && geo.labels.length) {
+          // Label sprites
+          if (geo.labels && geo.labels.length) {
             for (let i = 0; i < Math.min(geo.labels.length, nVerts); i++) {
               if (!geo.labels[i]) continue;
               const canvas = document.createElement('canvas');
@@ -1924,7 +2000,7 @@
               const tex = new THREE.CanvasTexture(canvas);
               const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0.9 });
               const sprite = new THREE.Sprite(spriteMat);
-              sprite.position.set(normPos[i*3] + 0.03, normPos[i*3+1] + 0.03, normPos[i*3+2]);
+              sprite.position.set(normPos[i*3] + diskR + 0.02, normPos[i*3+1] + 0.02, normPos[i*3+2]);
               sprite.scale.set(0.15, 0.04, 1);
               scene.add(sprite);
             }
@@ -2003,10 +2079,10 @@
         scene.add(dir2);
 
         // ── Compute normalized scene bounds ──
-        const yMin = (minZ - cz) / extLateral * 2 * zExag;
-        const yMax = (maxZ - cz) / extLateral * 2 * zExag;
-        const halfW = extX / extLateral;
-        const halfD = extY / extLateral;
+        const yMin = (minZ - cz) / normScale * 2 * zExag;
+        const yMax = (maxZ - cz) / normScale * 2 * zExag;
+        const halfW = extX / normScale;
+        const halfD = extY / normScale;
 
         // ── Ground grid ──
         const gridSize = Math.max(halfW, halfD) * 2.2;
@@ -2015,9 +2091,9 @@
         scene.add(gridHelper);
 
         // ── Bounding box wireframe ──
-        const bbW = extX / extLateral * 2;
+        const bbW = extX / normScale * 2;
         const bbH = (yMax - yMin) || 0.1;
-        const bbD = extY / extLateral * 2;
+        const bbD = extY / normScale * 2;
         const bbGeo = new THREE.BoxGeometry(bbW, bbH, bbD);
         const bbEdges = new THREE.EdgesGeometry(bbGeo);
         const bbLine = new THREE.LineSegments(bbEdges,
