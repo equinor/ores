@@ -602,7 +602,6 @@
 })();
 
 /* ── Results table sorting ── */
-<script>
 /* ── Sortable table headers (all .results-table) ── */
 (function() {
   function sortTable(th) {
@@ -637,6 +636,9 @@
       return 0;
     });
     rows.forEach(function(row) { tbody.appendChild(row); });
+    if (table.id === 'main-results-table' && window.__resultsPaginateRefresh) {
+      window.__resultsPaginateRefresh();
+    }
   }
 
   document.querySelectorAll('.results-table').forEach(function(table) {
@@ -648,4 +650,58 @@
       });
     });
   });
+})();
+
+/* ── Results table pagination (large result sets) ──
+   The main results table can hold hundreds of rows.  Rather than re-fetching
+   or rendering everything at once, we page the already-loaded rows entirely
+   client-side.  It cooperates with column sorting (re-paginates after a sort)
+   and leaves data-rec-idx untouched so the row-click → detail-panel mapping
+   keeps working. */
+(function() {
+  var PAGE_SIZE = 100;
+  var table = document.getElementById('main-results-table');
+  if (!table) return;
+  var tbody = table.querySelector('tbody');
+  if (!tbody) return;
+
+  function rows() { return Array.prototype.slice.call(tbody.querySelectorAll('tr')); }
+  if (rows().length <= PAGE_SIZE) return;  // small result set – no paging needed
+
+  var page = 0;
+  var nav = document.createElement('div');
+  nav.className = 'results-pager';
+  nav.style.cssText = 'display:flex;gap:.6rem;align-items:center;margin:.5rem 0;font-size:.85rem;';
+  var prev = document.createElement('button');
+  var next = document.createElement('button');
+  var label = document.createElement('span');
+  prev.type = next.type = 'button';
+  prev.textContent = '\u2039 Prev';
+  next.textContent = 'Next \u203a';
+  [prev, next].forEach(function(b) {
+    b.style.cssText = 'padding:.2rem .7rem;border:1px solid #cbd5e0;border-radius:4px;background:#fff;cursor:pointer;';
+  });
+  nav.appendChild(prev);
+  nav.appendChild(label);
+  nav.appendChild(next);
+  var scroll = table.closest('.results-scroll') || table;
+  scroll.parentNode.insertBefore(nav, scroll.nextSibling);
+
+  function render() {
+    var rws = rows();  // re-read every time (a sort may have reordered the DOM)
+    var pages = Math.max(1, Math.ceil(rws.length / PAGE_SIZE));
+    if (page >= pages) page = pages - 1;
+    if (page < 0) page = 0;
+    var start = page * PAGE_SIZE;
+    var end = Math.min(start + PAGE_SIZE, rws.length);
+    rws.forEach(function(r, i) { r.style.display = (i >= start && i < end) ? '' : 'none'; });
+    label.textContent = 'Showing ' + (rws.length ? start + 1 : 0) + '\u2013' + end + ' of ' + rws.length;
+    prev.disabled = page <= 0;
+    next.disabled = page >= pages - 1;
+  }
+  prev.addEventListener('click', function() { if (page > 0) { page--; render(); } });
+  next.addEventListener('click', function() { page++; render(); });
+  // Re-invoked by sortTable() after a re-sort so the current page stays valid.
+  window.__resultsPaginateRefresh = function() { page = 0; render(); };
+  render();
 })();

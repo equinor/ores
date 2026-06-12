@@ -1,0 +1,349 @@
+[
+  {
+    "id": "dev:master-data--Well:Drogon-55-33-1",
+    "kind": "osdu:wks:master-data--Well:1.1.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-1",
+      "FacilityID": "55/33-1",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  },
+  {
+    "id": "dev:master-data--Well:Drogon-55-33-2",
+    "kind": "osdu:wks:master-data--Well:1.1.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-2",
+      "FacilityID": "55/33-2",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  },
+  {
+    "id": "dev:master-data--Well:Drogon-55-33-3",
+    "kind": "osdu:wks:master-data--Well:1.1.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-3",
+      "FacilityID": "55/33-3",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  },
+  {
+    "id": "dev:master-data--Well:Drogon-55-33-A",
+    "kind": "osdu:wks:master-data--Well:1.1.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-A",
+      "FacilityID": "55/33-A",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  },
+  {
+    "id": "dev:master-data--Wellbore:Drogon-55-33-1",
+    "kind": "osdu:wks:master-data--Wellbore:1.2.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-1",
+      "FacilityID": "55/33-1",
+      "WellID": "dev:master-data--Well:Drogon-55-33-1:",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  },
+  {
+    "id": "dev:master-data--Wellbore:Drogon-55-33-2",
+    "kind": "osdu:wks:master-data--Wellbore:1.2.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-2",
+      "FacilityID": "55/33-2",
+      "WellID": "dev:master-data--Well:Drogon-55-33-2:",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  },
+  {
+    "id": "dev:master-data--Wellbore:Drogon-55-33-3",
+    "kind": "osdu:wks:master-data--Wellbore:1.2.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-3",
+      "FacilityID": "55/33-3",
+      "WellID": "dev:master-data--Well:Drogon-55-33-3:",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  },
+  {
+    "id": "dev:master-data--Wellbore:Drogon-55-33-A-1",
+    "kind": "osdu:wks:master-data--Wellbore:1.2.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-A-1",
+      "FacilityID": "55/33-A-1",
+      "WellID": "dev:master-data--Well:Drogon-55-33-A:",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  },
+  {
+    "id": "dev:master-data--Wellbore:Drogon-55-33-A-2",
+    "kind": "osdu:wks:master-data--Wellbore:1.2.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-A-2",
+      "FacilityID": "55/33-A-2",
+      "WellID": "dev:master-data--Well:Drogon-55-33-A:",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  },
+  {
+    "id": "dev:master-data--Wellbore:Drogon-55-33-A-3",
+    "kind": "osdu:wks:master-data--Wellbore:1.2.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-A-3",
+      "FacilityID": "55/33-A-3",
+      "WellID": "dev:master-data--Well:Drogon-55-33-A:",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  },
+  {
+    "id": "dev:master-data--Wellbore:Drogon-55-33-A-4",
+    "kind": "osdu:wks:master-data--Wellbore:1.2.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-A-4",
+      "FacilityID": "55/33-A-4",
+      "WellID": "dev:master-data--Well:Drogon-55-33-A:",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  },
+  {
+    "id": "dev:master-data--Wellbore:Drogon-55-33-A-5",
+    "kind": "osdu:wks:master-data--Wellbore:1.2.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-A-5",
+      "FacilityID": "55/33-A-5",
+      "WellID": "dev:master-data--Well:Drogon-55-33-A:",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  },
+  {
+    "id": "dev:master-data--Wellbore:Drogon-55-33-A-6",
+    "kind": "osdu:wks:master-data--Wellbore:1.2.0",
+    "acl": {
+      "owners": [
+        "data.default.owners@dev.dataservices.energy"
+      ],
+      "viewers": [
+        "data.default.viewers@dev.dataservices.energy"
+      ]
+    },
+    "legal": {
+      "legaltags": [
+        "dev-equinor-private-default"
+      ],
+      "otherRelevantDataCountries": [
+        "NO"
+      ],
+      "status": "compliant"
+    },
+    "data": {
+      "FacilityName": "55/33-A-6",
+      "FacilityID": "55/33-A-6",
+      "WellID": "dev:master-data--Well:Drogon-55-33-A:",
+      "Source": "ORES Drogon demo (curated)"
+    }
+  }
+]

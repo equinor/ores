@@ -809,7 +809,7 @@
     <p>No records matched your query.</p>
   {% else %}
     <div class="results-scroll">
-    <table class="results-table">
+    <table class="results-table" id="main-results-table">
       <thead>
       <tr>
         <th>Name</th>
@@ -824,9 +824,10 @@
       {% for rec in results.results or [] %}
         {% set d = rec.data or {} %}
         {% set raw_name = d.get('Name') or '' %}
-        {# Fall back to FeatureName when Name is missing or |UNNAMED| #}
+        {# Prefer the server-computed kind-aware display name; keep the
+           Name / FeatureName fallback for safety if it is ever missing. #}
         {% set feature_name = d.get('FeatureName') or '' %}
-        {% set display_name = raw_name if (raw_name and raw_name != '|UNNAMED|') else (feature_name or raw_name or '-') %}
+        {% set display_name = rec.display_name or (raw_name if (raw_name and raw_name != '|UNNAMED|') else (feature_name or raw_name or '-')) %}
         {% set desc = d.get('Description') %}
         {# Extract short dataspace name from DDMSDatasets URI #}
         {% set ddms_ds = d.get('DDMSDatasets', []) %}
@@ -878,7 +879,7 @@
           {% set name = (rec.id or '').split('ETPDataspace:')[1].split(':')[0].replace('-', '/', 1) %}
         {% endif %}
       {% endif %}
-      {% set label = name or rec.id %}
+      {% set label = rec.display_name or name or rec.id %}
 
       {# Volumes helpers #}
       {% set vol = rec.volumes or {} %}

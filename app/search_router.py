@@ -54,6 +54,50 @@ templates.env.filters["pretty_val"] = _jinja_pretty_val
 # ──────────────────────────────────────────────────────────────────────────────
 
 
+def _best_name(data: Dict[str, Any], kind: str = "") -> str | None:
+    """Best human-readable name for an OSDU record, across record kinds.
+
+    Many kinds carry their title in a field other than ``Name`` – e.g.
+    ``FeatureName`` for *Feature master-data, ``FacilityName`` for wells,
+    or ``Citation.Title`` for RESQML-derived work-product-components.
+    Returns ``None`` when nothing usable is found so the caller can fall
+    back to the record id.
+    """
+    if not isinstance(data, dict):
+        return None
+    name = data.get("Name")
+    if isinstance(name, str):
+        name = name.strip()
+        if name and name != "|UNNAMED|":
+            return name
+    for key in ("FacilityName", "FeatureName"):
+        v = data.get(key)
+        if isinstance(v, str) and v.strip():
+            return v.strip()
+    cit = data.get("Citation")
+    if isinstance(cit, dict):
+        t = cit.get("Title")
+        if isinstance(t, str) and t.strip():
+            return t.strip()
+    t = data.get("Title")
+    if isinstance(t, str) and t.strip():
+        return t.strip()
+    # ETPDataspace dataset records: derive a label from the dataspace URI
+    dp = data.get("DatasetProperties")
+    if isinstance(dp, dict):
+        uri = dp.get("URI")
+        if isinstance(uri, str):
+            m = re.search(r"dataspace\(['\"]?([^'\"\)\s]+)['\"]?\)", uri)
+            if m:
+                return m.group(1)
+    return None
+
+
+def _display_name(data: Dict[str, Any], kind: str = "", rid: str = "") -> str:
+    """Human-readable display name with id fallback (never empty)."""
+    return _best_name(data, kind) or rid or "-"
+
+
 async def _resolve_wildcard_kind(
     client: httpx.AsyncClient, search_url: str, hdr: dict, wildcard_kind: str,
 ) -> List[str]:
@@ -348,6 +392,7 @@ async def _enrich_record_light(
         log.warning("[ENRICH-LIGHT] metadata_pairs extraction failed for %s: %s", rid, e)
 
     result = dict(full)
+    result["display_name"] = _display_name(data_block, full.get("kind") or "", rid)
     result["volumes"] = volumes
     result["links"] = links
     result["linked_labels"] = {}
@@ -479,7 +524,7 @@ async def _enrich_record(
                 r_link = await client.get(f"{storage_url}/{lid}", headers=hdr)
                 if r_link.status_code == 200:
                     rr = r_link.json()
-                    nm = (rr.get("data") or {}).get("Name")
+                    nm = _best_name(rr.get("data") or {}, rr.get("kind") or "")
                     entry: Dict[str, Any] = {
                         "name": nm or None,
                         "kind": rr.get("kind"),
@@ -538,6 +583,7 @@ async def _enrich_record(
         "id": full.get("id"),
         "kind": full.get("kind"),
         "version": full.get("version"),
+        "display_name": _display_name(data_block, full.get("kind") or "", full.get("id") or ""),
         "data": data_block,
         "ancestry_parents": ancestry.get("parents", []) or [],
         "ancestry_children": ancestry.get("children", []) or [],
@@ -714,7 +760,7 @@ async def search_run(
                 enriched_results.append(await _enrich_record_light(full, client, storage_url, search_url, hdr))
 
             enriched_results.sort(
-                key=lambda r: ((r.get("data") or {}).get("Name") or r.get("id") or "").lower()
+                key=lambda r: (r.get("display_name") or r.get("id") or "").lower()
             )
 
         return templates.TemplateResponse(
