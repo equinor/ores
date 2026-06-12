@@ -60,8 +60,8 @@ classDiagram
     }
     class AbstractRepresentation {
         InterpretationID
-        RepresentationRole
-        RepresentationType
+        InterpretationName
+        LocalModelCompoundCrsID
     }
     class AbstractGenericBinGrid {
         Origin, Bearing
@@ -146,11 +146,14 @@ LocalBoundaryFeature → HorizonInterpretation → HorizonControlPoints (picks)
 | Field | Value |
 |---|---|
 | `InterpretationID` | → HorizonInterpretation |
-| `BinGridID` | → GenericBinGrid (shared lattice) |
+| `BinGridID` | → GenericBinGrid (shared lattice) — *mutually exclusive with inline grid props* |
 | `SeismicHorizonID` | → SeismicHorizon (TWT source) |
 | `DomainTypeID` | `Depth` |
-| Inline grid props | Origin, Bearing, BinWidth, NodeCount |
+| Inline grid props | `OriginEasting`/`OriginNorthing`, `MapGridBearingOfBinGridJaxis`, `BinWidthOnIaxis`/`BinWidthOnJaxis`, `NodeCountOnIAxis`/`NodeCountOnJAxis` |
 | `DDMSDatasets[]` | EML URI to Z-values |
+
+> Per the schema (`AbstractGenericBinGrid`): “Only one approach should be populated.” `BinGridID`
+> and the inline grid props are **mutually exclusive** — see §7.
 
 ---
 
