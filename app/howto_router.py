@@ -77,12 +77,6 @@ _HOWTO_SECTIONS: list[dict] = [
                 "desc": "Data model, tooling & workflow",
             },
             {
-                "slug": "markers",
-                "file": "Markers.md",
-                "title": "Markers",
-                "desc": "WellboreMarkerFrame data model & OSDU mapping",
-            },
-            {
                 "slug": "activity",
                 "file": "Activity.md",
                 "title": "Activity & Provenance",
@@ -94,6 +88,12 @@ _HOWTO_SECTIONS: list[dict] = [
     {
         "title": "Infrastructure",
         "items": [
+            {
+                "slug": "markers",
+                "file": "Markers.md",
+                "title": "Markers",
+                "desc": "WellboreMarkerFrame data model & OSDU mapping",
+            },
             {
                 "slug": "pws",
                 "file": "PWS.md",

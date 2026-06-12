@@ -561,6 +561,21 @@
       $('ez-filter-row').style.display = (action === 'deep_search') ? '' : 'none';
     });
 
+    // Easy-mode quick example: wellbore markers grouped by horizon/feature,
+    // renderable in 3D via the "Show 3D Results" button.
+    const ezExMarkers = $('ez-ex-markers');
+    if (ezExMarkers) {
+      ezExMarkers.addEventListener('click', () => {
+        $('ez-action').value = 'deep_search';
+        $('ez-action').dispatchEvent(new Event('change'));
+        $('ez-type').value = 'resqml20.obj_WellboreMarkerFrameRepresentation';
+        $('ez-type').dispatchEvent(new Event('change'));
+        $('ez-prop').value = '';
+        if ($('ez-relations')) $('ez-relations').checked = true;
+        $('ez-run').click();
+      });
+    }
+
     // Load reference data on init
     loadReferenceData();
 
@@ -855,7 +870,7 @@
       const colors = new Float32Array(positions.length);
       for (let i = 0; i < nVerts; i++) {
         normPos[i*3]     = (positions[i*3]     - cx) / extLateral * 2;
-        normPos[i*3 + 1] = (positions[i*3 + 2] - cz) / extLateral * 2 * zExag;
+        normPos[i*3 + 1] = (cz - positions[i*3 + 2]) / extLateral * 2 * zExag;  // depth increases downward
         normPos[i*3 + 2] = (positions[i*3 + 1] - cy) / extLateral * 2;
         if (propVals && propVals.length > i) {
           const [cr, cg, cb] = _colorFromProperty(propVals[i], propMin, propMax, pLog, pRev, pCmap);
@@ -1839,6 +1854,7 @@
         // Build container
         grid2dView.innerHTML = `<div id="viewer3d-container">
           <div class="viewer3d-hud" id="viewer3d-hud"></div>
+          <div id="viewer3d-controls" style="position:absolute;bottom:10px;left:10px;z-index:5;display:none;font-size:12px;color:#cfe3ff;background:rgba(20,20,46,0.72);padding:5px 9px;border-radius:4px;"></div>
           <canvas id="viewer3d-legend" class="viewer3d-legend" width="24" height="200"></canvas>
           <div class="viewer3d-legend-labels" id="viewer3d-legend-labels"></div>
         </div>`;
@@ -1908,7 +1924,7 @@
         const colors = new Float32Array(positions.length);
         for (let i = 0; i < nVerts; i++) {
           normPos[i*3]     = (positions[i*3]     - cx) / normScale * 2;
-          normPos[i*3 + 1] = (positions[i*3 + 2] - cz) / normScale * 2 * zExag;  // Z → Y (up)
+          normPos[i*3 + 1] = (cz - positions[i*3 + 2]) / normScale * 2 * zExag;  // Z → Y (up); depth increases downward
           normPos[i*3 + 2] = (positions[i*3 + 1] - cy) / normScale * 2;          // Y → Z (depth)
           if (propVals && propVals.length > i) {
             // Color by property value
@@ -1948,11 +1964,14 @@
         } else if (kind === 'markers') {
           // Geological layer markers: draw an oriented disk (bedding plane) at
           // each marker position, tilted by the layer's dip / dip-azimuth.
+          const md = geo.md || [];
           const normals = geo.normals || [];
           const diskR = 0.09;
           const baseN = new THREE.Vector3(0, 0, 1);  // CircleGeometry faces +Z
+          const datumObjs = [];  // KB / MSL / above-datum markers (MD ≤ 0)
           mesh = new THREE.Group();
           for (let i = 0; i < nVerts; i++) {
+            const isDatum = md.length > i && md[i] <= 0;
             // Normal in viewer frame (RESQML X→X, Z→Y, Y→Z). zExag stretches
             // the depth axis, so divide the up-component to keep the disk
             // perpendicular to the (exaggerated) bedding.
@@ -1985,6 +2004,7 @@
             ring.quaternion.copy(disk.quaternion);
             ring.position.copy(disk.position);
             mesh.add(ring);
+            if (isDatum) { datumObjs.push(disk, ring); }
           }
 
           // Label sprites
@@ -2003,6 +2023,22 @@
               sprite.position.set(normPos[i*3] + diskR + 0.02, normPos[i*3+1] + 0.02, normPos[i*3+2]);
               sprite.scale.set(0.15, 0.04, 1);
               scene.add(sprite);
+              if (md.length > i && md[i] <= 0) datumObjs.push(sprite);
+            }
+          }
+
+          // KB / datum-marker visibility toggle. Markers at or above the
+          // wellhead datum (MD ≤ 0, e.g. KB / MSL) are hidden by default so the
+          // geological markers are the focus.
+          if (datumObjs.length) {
+            const setDatumHidden = (hide) => datumObjs.forEach(o => { o.visible = !hide; });
+            setDatumHidden(true);
+            const ctrls = $('viewer3d-controls');
+            if (ctrls) {
+              ctrls.style.display = '';
+              ctrls.innerHTML = `<label style="cursor:pointer;"><input type="checkbox" id="vz-hide-kb" checked> Hide KB / datum markers (MD &le; 0)</label>`;
+              const cb = $('vz-hide-kb');
+              if (cb) cb.addEventListener('change', () => setDatumHidden(cb.checked));
             }
           }
         } else if (kind === 'trajectory') {
@@ -2079,8 +2115,8 @@
         scene.add(dir2);
 
         // ── Compute normalized scene bounds ──
-        const yMin = (minZ - cz) / normScale * 2 * zExag;
-        const yMax = (maxZ - cz) / normScale * 2 * zExag;
+        const yMin = (cz - maxZ) / normScale * 2 * zExag;  // deepest → bottom
+        const yMax = (cz - minZ) / normScale * 2 * zExag;  // shallowest → top
         const halfW = extX / normScale;
         const halfD = extY / normScale;
 
@@ -3330,6 +3366,35 @@
       uuid title typeName
       relations {
         uuid name typeName direction
+      }
+    }
+  }
+}`,
+      markers_by_horizon: `# MARKERS: wellbore markers grouped by the horizon / feature they pick
+#
+# Returns WellboreMarkerFrameRepresentation objects (one per wellbore) with
+# their relations, so you can see — per well — which HorizonInterpretation /
+# GeneticBoundaryFeature each marker references. Click "Show 3D Results" to
+# render the bedding-disk markers across all wells (depth increases downward).
+#
+# To focus on ONE horizon or feature:
+#   • read each frame's relations and keep the frames whose relations include
+#     your horizon/feature uuid, OR
+#   • use the reverse view (preset "HorizonInterp → surfaces"): start from a
+#     single HorizonInterpretation and its "sources" relations list every
+#     marker frame that points to it.
+{
+  deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_WellboreMarkerFrameRepresentation"
+    includeRelations: true
+    limit: 25
+  ) {
+    backend totalScanned totalMatched queryDescription
+    objects {
+      uuid title typeName
+      relations {
+        uuid name typeName direction contentType
       }
     }
   }
