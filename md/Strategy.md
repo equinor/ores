@@ -395,7 +395,7 @@ Locked `/v<n>` snapshots accumulate indefinitely. Define a retention policy so s
 ```mermaid
 flowchart TD
   START[Project Kickoff] --> CREATE_CP[Create CollaborationProject<br/>+ SoR/WIP dataspaces]
-  CREATE_CP --> BASELINE[Assemble trusted baseline<br/>Wells, Strat, Seismic from SDMA]
+  CREATE_CP --> BASELINE[Assemble trusted baseline<br/>Wells, Strat, Seismic from OSDU]
   BASELINE --> WORK[Discipline work in WIP dataspaces]
   WORK --> QC{QC Review}
   QC -->|Pass| SNAPSHOT[Clone WIP → v_n, Lock]
@@ -450,7 +450,7 @@ flowchart TD
 | RDDMS dataspace drift (objects modified without Activity record) | Enforce manifest builds at regular intervals; audit via `storeLastWrite` timestamp |
 | No atomic multi-dataspace transaction | Accept eventual consistency; use lifecycle events as sync checkpoints |
 | P&WS not yet on Azure ADME | Use Storage API patterns (§8 of PWS.md) - forward-compatible |
-| Large ensembles (1000+ realizations) overwhelm RDDMS | Store raw realizations in Sumo; promote only P10/P50/P90 statistics to RDDMS/OSDU |
+| Large ensemble outputs overwhelm RDDMS, OSDU catalog | Store raw realizations in Sumo; promote only P10/P50/P90 statistics to RDDMS/OSDU |
 | ACL sprawl across many projects | Standardize group naming; automate creation/cleanup via project lifecycle |
 | Cross-platform interpretation tools (OW vs Petrel) create duplicate objects | Use `osduAlias` and `InterpretationID` to de-duplicate at catalog level |
 | Locked `/v<n>` snapshots accumulate without bound | Apply retention policy (§8.4); archive gate snapshots, purge orphaned/interim dataspaces |
@@ -463,7 +463,7 @@ flowchart TD
 | Role | Reads from | Writes to | Governed by |
 |---|---|---|---|
 | **Geophysicist** | Enterprise seismic, WIP velocity | `<project>/gph-wip` | CollaborationProject ACL |
-| **Geologist** | SDMA wells, WIP picks | `<project>/geo-wip` | CollaborationProject ACL |
+| **Geologist** | ODSU wells, WIP picks | `<project>/geo-wip` | CollaborationProject ACL |
 | **Reservoir Engineer** | SoR grid/surfaces, FMU outputs | `<project>/res-wip` | CollaborationProject ACL |
 | **FMU Pipeline (ERT)** | SoR static model, design matrix | `<project>/fmu-wip` → Sumo → OSDU | Activity provenance |
 | **Data Steward** | All of the above | Enterprise SoR (publish) | BusinessDecision approval |
