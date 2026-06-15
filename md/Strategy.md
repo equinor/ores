@@ -34,7 +34,7 @@ flowchart TD
   SOR["RDDMS SoR Dataspaces<br/>(locked · curated)"]
 
   %% ── OSDU Layer ──
-  SDMA["SDMA<br/>Wells · Wellbores · Stratigraphy"]
+  SDMA/OSDU["SDMA<br/>Wells · Wellbores · Stratigraphy"]
   OSDU["OSDU Catalog<br/>Governed WPCs · Collections"]
   SUMO["Sumo<br/>FMU raw results"]
 
