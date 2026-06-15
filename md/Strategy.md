@@ -1,6 +1,6 @@
-# OSDU Project Data Governance Strategy
+# Reservoir DDMS Project Collaboration and Governance
 
-> **Scope**: End-to-end governance for subsurface projects spanning wellbore master data, OpenWorks/DecisionSpace interpretation sets, OSDU/SDMA reference data, FMU ensembles, and RDDMS content storage - with versioning, SoR/SoE separation, and cross-discipline collaboration.
+> **Scope**: End-to-end governance for subsurface projects spanning wellbore master data, OpenWorks/DecisionSpace interpretation sets, SDMA reference data, FMU ensembles, and RDDMS content storage - with versioning, SoR/SoE separation, and cross-discipline collaboration.
 >
 > **Related**: [PWS](PWS.md) · [Activity](Activity.md) · [FmuOsdu](FmuOsdu.md) · [Uncertainty](Uncertainty.md) · [SeisInt](SeisInt.md)
 
