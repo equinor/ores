@@ -51,7 +51,6 @@ demo/drogonresqml22/manifest_*.json
 demo/drogonresqml22/schema_examples/
 demo/drogonresqml/drogon.epc.orig*
 demo/drogonresqml/drogon.h5.orig*
-demo/drogonresqml/vds/*
 
 # ── Local runtime artifacts ──
 ores_tokens.db
