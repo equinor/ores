@@ -18,8 +18,8 @@ Pre-requisites
        SEGYImport src/seismic--amplitude_near_time--20180101.sgy \\
                   --url vds/amplitude_near_time_20180101 --sample-unit ms
 
-  2. Both .sgy files in demo/drogonresqml/src/
-  3. Matching .vds files in demo/drogonresqml/vds/
+    2. Both .sgy files in demo/drogonresqml/src/
+    3. Matching VDS files in demo/drogonresqml/src/vds/
 
 Usage
 -----
@@ -46,25 +46,29 @@ except ImportError:
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEMO_DIR = SCRIPT_DIR.parent
 SRC_DIR = SCRIPT_DIR / "src"
-VDS_DIR = SCRIPT_DIR / "vds"
+VDS_DIR = SRC_DIR / "vds"
 sys.path.insert(0, str(DEMO_DIR))
 
 from _auth import get_token, load_instance  # noqa: E402
 
 # ── Seismic volumes ───────────────────────────────────────────────────────
-# (sgy filename, vds dirname, dataset_id base, display name, offset class)
+# (sgy filename, vds filename, wpc id base, segy id base, vds id base, display name, offset class)
 SEISMIC_FILES = [
     (
         "seismic--amplitude_far_time--20180101.sgy",
         "amplitude_far_time_20180101",
-        "amplitude_far_time_20180101",
+        "drogon-amp-far-time-20180101",
+        "drogon-amplitude-far-time-20180101",
+        "drogon-amplitude-far-time-20180101",
         "Drogon Amplitude Far Offset (Time) 2018-01-01",
         "FAR",
     ),
     (
         "seismic--amplitude_near_time--20180101.sgy",
         "amplitude_near_time_20180101",
-        "amplitude_near_time_20180101",
+        "drogon-amp-near-time-20180101",
+        "drogon-amplitude-near-time-20180101",
+        "drogon-amplitude-near-time-20180101",
         "Drogon Amplitude Near Offset (Time) 2018-01-01",
         "NEAR",
     ),
@@ -164,6 +168,19 @@ def _deterministic_uuid(partition: str, dataset_id: str, suffix: str) -> str:
     ))
 
 
+def _record_id(partition: str, entity: str, name: str) -> str:
+    """Build a stable OSDU record id without creating duplicate records."""
+    return f"{partition}:{entity}:{name}"
+
+
+def _dataset_record_id(partition: str, kind: str, name: str) -> str:
+    return _record_id(partition, f"dataset--{kind}", name)
+
+
+def _wpc_record_id(partition: str, name: str) -> str:
+    return _record_id(partition, "work-product-component--SeismicTraceData", name)
+
+
 def _get_upload_url(token: str, cfg: Config) -> tuple[str, str] | None:
     """
     Get a signed upload URL from the OSDU File service.
@@ -214,11 +231,13 @@ def _register_file_metadata(
     file_source: str,
     record_id: str,
     kind: str,
-    filename: str,
+    file_path: Path,
     description: str,
 ) -> str | None:
     """Register file metadata with the File service, returning the record ID."""
     url = f"{cfg.base_url}/api/file/v2/files/metadata"
+    filename = file_path.name
+    file_size = file_path.stat().st_size
     body = {
         "kind": kind,
         "id": record_id,
@@ -227,11 +246,21 @@ def _register_file_metadata(
         "data": {
             "Name": filename,
             "Description": description,
+            "TotalSize": str(file_size),
+            "ResourceSecurityClassification": f"{cfg.partition}:reference-data--ResourceSecurityClassification:RESTRICTED:",
             "DatasetProperties": {
                 "FileSourceInfo": {
                     "FileSource": file_source,
                     "Name": filename,
-                }
+                    "FileSize": str(file_size),
+                },
+                "FileSourceInfos": [
+                    {
+                        "FileSource": file_source,
+                        "Name": filename,
+                        "FileSize": str(file_size),
+                    }
+                ]
             },
             "SchemaFormatTypeID": (
                 f"{cfg.partition}:reference-data--SchemaFormatType:SEG-Y:"
@@ -246,7 +275,14 @@ def _register_file_metadata(
         rid = resp.get("id", record_id)
         print(f"  ✓ File metadata registered: {rid}")
         return rid
-    print(f"  ✗ File metadata failed {r.status_code}: {r.text[:300]}")
+    print(f"  ! File metadata failed {r.status_code}: {r.text[:300]}")
+    print("  Falling back to Storage record upsert for FileCollection metadata")
+    storage_url = f"{cfg.base_url}/api/storage/v2/records"
+    storage_resp = httpx.put(storage_url, headers=cfg.headers(token), json=[body], timeout=60)
+    if storage_resp.status_code in (200, 201):
+        print(f"  ✓ FileCollection stored: {record_id}")
+        return record_id
+    print(f"  ✗ Storage fallback failed {storage_resp.status_code}: {storage_resp.text[:300]}")
     return None
 
 
@@ -254,7 +290,7 @@ def upload_file_collection(
     token: str,
     cfg: Config,
     file_path: Path,
-    record_uuid: str,
+    record_id: str,
     kind: str,
     description: str,
 ) -> str | None:
@@ -274,10 +310,8 @@ def upload_file_collection(
         return None
 
     # 3. Register file metadata
-    kind_prefix = kind.split("--")[1].split(":")[0] if "--" in kind else "FileCollection"
-    record_id = f"{cfg.partition}:dataset--{kind_prefix}:{record_uuid}:"
     return _register_file_metadata(
-        token, cfg, file_source, record_id, kind, file_path.name, description
+        token, cfg, file_source, record_id, kind, file_path, description
     )
 
 
@@ -289,7 +323,8 @@ def build_seismic_trace_data_record(
     cfg: Config,
     display_name: str,
     offset_class: str,
-    dataset_id: str,
+    wpc_id_base: str,
+    original_filename: str,
     segy_record_id: str,
     vds_record_id: str,
 ) -> dict:
@@ -297,10 +332,9 @@ def build_seismic_trace_data_record(
     Build a SeismicTraceData WPC record using the proper schema-conformant
     Datasets + Artefacts pattern instead of DDMSDatasets.
     """
-    record_uuid = _deterministic_uuid(cfg.partition, dataset_id, "wpc")
     return {
         "kind": KIND_SEISMIC_TRACE_DATA,
-        "id": f"{cfg.partition}:work-product-component--SeismicTraceData:{record_uuid}:",
+        "id": _wpc_record_id(cfg.partition, wpc_id_base),
         "acl": cfg.acl(),
         "legal": cfg.legal(),
         "data": {
@@ -343,7 +377,7 @@ def build_seismic_trace_data_record(
             "CrosslineIncrement": 1,
             "TraceCount": 120336,
             "ExtensionProperties": {
-                "OriginalFilename": f"{dataset_id}.sgy",
+                "OriginalFilename": original_filename,
                 "DrogonProject": "maap/drogon",
                 "OffsetClass": offset_class,
             },
@@ -393,7 +427,11 @@ def main():
     ap.add_argument("--convert", action="store_true",
                     help="Run SEGYImport to convert .sgy → .vds before upload")
     ap.add_argument("--skip-upload", action="store_true",
-                    help="Skip file upload, only push manifest (assumes files already uploaded)")
+                    help="Skip file upload, only update WPC records (assumes dataset records already exist)")
+    ap.add_argument("--upload-vds-only", action="store_true", default=True,
+                    help="Reuse existing SEG-Y dataset records and upload/update only VDS dataset records (default)")
+    ap.add_argument("--upload-segy", action="store_true",
+                    help="Also upload/update SEG-Y dataset records")
     ap.add_argument("--dry-run", action="store_true",
                     help="Print config + manifest — no remote calls")
     args = ap.parse_args()
@@ -425,7 +463,7 @@ def main():
         if not args.skip_upload:
             sgy_path = SRC_DIR / sgy_name
             vds_path = VDS_DIR / vds_name
-            if not sgy_path.exists():
+            if args.upload_segy and not sgy_path.exists():
                 sys.exit(f"  ✗ SEG-Y not found: {sgy_path}")
             if not vds_path.exists():
                 sys.exit(f"  ✗ VDS not found: {vds_path} (run with --convert)")
@@ -433,11 +471,11 @@ def main():
     if args.dry_run:
         # Build and print manifest without uploading
         wpc_records = []
-        for sgy_name, vds_name, dataset_id, display_name, offset_class in SEISMIC_FILES:
-            segy_id = f"{cfg.partition}:dataset--FileCollection.SEGY:{_deterministic_uuid(cfg.partition, dataset_id, 'segy')}:"
-            vds_id = f"{cfg.partition}:dataset--FileCollection.Bluware.OpenVDS:{_deterministic_uuid(cfg.partition, dataset_id, 'vds')}:"
+        for sgy_name, vds_name, wpc_id_base, segy_id_base, vds_id_base, display_name, offset_class in SEISMIC_FILES:
+            segy_id = _dataset_record_id(cfg.partition, "FileCollection.SEGY", segy_id_base)
+            vds_id = _dataset_record_id(cfg.partition, "FileCollection.Bluware.OpenVDS", vds_id_base)
             wpc_records.append(build_seismic_trace_data_record(
-                cfg, display_name, offset_class, dataset_id, segy_id, vds_id
+                cfg, display_name, offset_class, wpc_id_base, sgy_name, segy_id, vds_id
             ))
         manifest = build_manifest(cfg, wpc_records)
         print("\n" + json.dumps(manifest, indent=2))
@@ -452,36 +490,37 @@ def main():
 
     # ── Upload files + build WPC records ──────────────────────────────────
     wpc_records = []
-    for sgy_name, vds_name, dataset_id, display_name, offset_class in SEISMIC_FILES:
+    for sgy_name, vds_name, wpc_id_base, segy_id_base, vds_id_base, display_name, offset_class in SEISMIC_FILES:
         print(f"\n--- {display_name} ---")
 
-        segy_uuid = _deterministic_uuid(cfg.partition, dataset_id, "segy")
-        vds_uuid = _deterministic_uuid(cfg.partition, dataset_id, "vds")
+        segy_record_id = _dataset_record_id(cfg.partition, "FileCollection.SEGY", segy_id_base)
+        vds_record_id = _dataset_record_id(cfg.partition, "FileCollection.Bluware.OpenVDS", vds_id_base)
 
         if args.skip_upload:
-            # Assume records already exist with deterministic IDs
-            segy_record_id = f"{cfg.partition}:dataset--FileCollection.SEGY:{segy_uuid}:"
-            vds_record_id = f"{cfg.partition}:dataset--FileCollection.Bluware.OpenVDS:{vds_uuid}:"
+            print("  Reusing existing dataset record IDs (no file upload)")
         else:
-            # Upload SEG-Y
-            print("  [SEG-Y upload]")
-            segy_record_id = upload_file_collection(
-                token, cfg,
-                SRC_DIR / sgy_name,
-                segy_uuid,
-                KIND_FILE_COLLECTION_SEGY,
-                f"Original SEG-Y: {display_name}",
-            )
-            if not segy_record_id:
-                print(f"  ✗ SEG-Y upload failed for {sgy_name}")
-                continue
+            if args.upload_segy:
+                print("  [SEG-Y upload]")
+                uploaded_segy_id = upload_file_collection(
+                    token, cfg,
+                    SRC_DIR / sgy_name,
+                    segy_record_id,
+                    KIND_FILE_COLLECTION_SEGY,
+                    f"Original SEG-Y: {display_name}",
+                )
+                if not uploaded_segy_id:
+                    print(f"  ✗ SEG-Y upload failed for {sgy_name}")
+                    continue
+                segy_record_id = uploaded_segy_id
+            else:
+                print(f"  Reusing SEG-Y dataset: {segy_record_id}")
 
             # Upload VDS
             print("  [OpenVDS upload]")
             vds_record_id = upload_file_collection(
                 token, cfg,
                 VDS_DIR / vds_name,
-                vds_uuid,
+                vds_record_id,
                 KIND_FILE_COLLECTION_VDS,
                 f"OpenVDS converted: {display_name}",
             )
@@ -491,7 +530,7 @@ def main():
 
         # Build WPC record
         wpc_records.append(build_seismic_trace_data_record(
-            cfg, display_name, offset_class, dataset_id, segy_record_id, vds_record_id
+            cfg, display_name, offset_class, wpc_id_base, sgy_name, segy_record_id, vds_record_id
         ))
 
     if not wpc_records:
