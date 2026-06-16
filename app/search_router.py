@@ -54,6 +54,26 @@ templates.env.filters["pretty_val"] = _jinja_pretty_val
 # ──────────────────────────────────────────────────────────────────────────────
 
 
+def _dataspace_label(data: Dict[str, Any]) -> str | None:
+    """Extract a human-friendly source label from DDMSDatasets URI dataspace.
+
+    E.g. 'eml:///dataspace(\"drogon/sor\")/...' → 'drogon'
+    Returns the first path segment of the dataspace (the project name).
+    """
+    for duri in (data.get("DDMSDatasets") or []):
+        if not isinstance(duri, str):
+            continue
+        m = re.search(r"dataspace\(['\"]?([^'\"\)\s]+)['\"]?\)", duri)
+        if m:
+            ds = m.group(1)
+            # Take the first path component as the project name
+            # e.g. "drogon/sor" → "drogon", "norway" → "norway"
+            label = ds.split("/")[0].strip()
+            if label:
+                return label
+    return None
+
+
 def _best_name(data: Dict[str, Any], kind: str = "") -> str | None:
     """Best human-readable name for an OSDU record, across record kinds.
 
@@ -95,6 +115,10 @@ def _best_name(data: Dict[str, Any], kind: str = "") -> str | None:
             m = re.search(r"dataspace\(['\"]?([^'\"\)\s]+)['\"]?\)", uri)
             if m:
                 return m.group(1)
+    # Last resort: derive project name from DDMSDatasets dataspace
+    ds_label = _dataspace_label(data)
+    if ds_label:
+        return ds_label
     return None
 
 
@@ -165,6 +189,15 @@ def _firp_summary(data: Dict[str, Any]) -> str | None:
     survey = data.get("SeismicAcquisitionSurveyName") or data.get("SurveyName")
     if isinstance(survey, str) and survey.strip():
         parts.append(f"Survey: {survey.strip()}")
+    # Source / project name from DDMSDatasets URI dataspace or Source field
+    source = data.get("Source")
+    if isinstance(source, str) and source.strip():
+        parts.append(f"Source: {source.strip()}")
+    else:
+        # Derive project/source from DDMSDatasets dataspace name (e.g. "drogon/sor" → "drogon")
+        ds_name = _dataspace_label(data)
+        if ds_name:
+            parts.append(f"Source: {ds_name}")
     # ExistenceKind
     ek = data.get("ExistenceKind")
     if isinstance(ek, str) and ek.strip() and ek.strip().lower() not in ("actual",):
@@ -661,6 +694,7 @@ async def _enrich_record(
         "kind": full.get("kind"),
         "version": full.get("version"),
         "display_name": _display_name(data_block, full.get("kind") or "", full.get("id") or ""),
+        "display_description": _best_description(data_block) or "",
         "data": data_block,
         "ancestry_parents": ancestry.get("parents", []) or [],
         "ancestry_children": ancestry.get("children", []) or [],
