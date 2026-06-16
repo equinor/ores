@@ -247,8 +247,7 @@ Each RDDMS object should have **both** a universal and a specialised catalog ent
 | Direction | I & J via P6 vectors | J bearing only |
 | Counts | Inline/Crossline | NodeCountOnI/JAxis |
 | Use case | Seismic survey geometry | Non-seismic grids |
-| Referenced by | `SeismicTraceData.BinGridID` (required) | `StructureMap.BinGridID` |
-
+| Referenced by | `SeismicTraceData.BinGridID` (required) | `StructureMap.BinGridID
 **Rule**: `SeismicTraceData` schema validates `BinGridID` against the regex `SeismicBinGrid` — using `GenericBinGrid` will fail schema validation. Non-seismic WPCs (StructureMap, etc.) use `GenericBinGrid`.
 
 Conversion: `BinWidth = √(X²+Y²)`, `Bearing = atan2(X,Y)`.
