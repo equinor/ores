@@ -42,6 +42,21 @@ COUNTRIES = ["US"]
 # DDMS base URI – uses resqml22 prefix (no obj_)
 DDMS_URI = f"eml://reservoir-ddms1/dataspace('{DATASPACE}')"
 
+
+def _configure(partition: str, legal_tag: str, owners: list[str],
+               viewers: list[str], countries: list[str],
+               dataspace: str | None = None):
+    """Override module-level config (called from argparse)."""
+    global PARTITION, LEGAL_TAG, OWNERS, VIEWERS, COUNTRIES, DATASPACE, DDMS_URI
+    PARTITION = partition
+    LEGAL_TAG = legal_tag
+    OWNERS = owners
+    VIEWERS = viewers
+    COUNTRIES = countries
+    if dataspace:
+        DATASPACE = dataspace
+        DDMS_URI = f"eml://reservoir-ddms1/dataspace('{DATASPACE}')"
+
 # ═══════════════════════════════════════════════════════════════════════════
 # RESQML 2.2 → OSDU type mapping
 #
