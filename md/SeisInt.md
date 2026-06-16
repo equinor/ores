@@ -253,7 +253,7 @@ Each RDDMS object should have **both** a universal and a specialised catalog ent
 
 Conversion: `BinWidth = √(X²+Y²)`, `Bearing = atan2(X,Y)`.
 
----
+--- 
 
 ## 10. End-to-End Retrieval
 
