@@ -232,6 +232,7 @@ def _register_file_metadata(
     record_id: str,
     kind: str,
     file_path: Path,
+    name: str,
     description: str,
 ) -> str | None:
     """Register file metadata with the File service, returning the record ID."""
@@ -244,7 +245,7 @@ def _register_file_metadata(
         "acl": cfg.acl(),
         "legal": cfg.legal(),
         "data": {
-            "Name": filename,
+            "Name": name,
             "Description": description,
             "TotalSize": str(file_size),
             "ResourceSecurityClassification": f"{cfg.partition}:reference-data--ResourceSecurityClassification:RESTRICTED:",
@@ -292,6 +293,7 @@ def upload_file_collection(
     file_path: Path,
     record_id: str,
     kind: str,
+    name: str,
     description: str,
 ) -> str | None:
     """
@@ -311,7 +313,7 @@ def upload_file_collection(
 
     # 3. Register file metadata
     return _register_file_metadata(
-        token, cfg, file_source, record_id, kind, file_path, description
+        token, cfg, file_source, record_id, kind, file_path, name, description
     )
 
 
@@ -506,6 +508,7 @@ def main():
                     SRC_DIR / sgy_name,
                     segy_record_id,
                     KIND_FILE_COLLECTION_SEGY,
+                    f"SEG-Y {display_name}",
                     f"Original SEG-Y: {display_name}",
                 )
                 if not uploaded_segy_id:
@@ -522,6 +525,7 @@ def main():
                 VDS_DIR / vds_name,
                 vds_record_id,
                 KIND_FILE_COLLECTION_VDS,
+                f"OpenVDS {display_name}",
                 f"OpenVDS converted: {display_name}",
             )
             if not vds_record_id:

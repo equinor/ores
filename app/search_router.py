@@ -174,6 +174,8 @@ def _collect_manifest_kinds() -> List[Dict[str, Any]]:
     """
     _KINDS: list[str] = [
         "osdu:wks:dataset--ETPDataspace:*",
+        "osdu:wks:dataset--FileCollection.Bluware.OpenVDS:*",
+        "osdu:wks:dataset--FileCollection.SEGY:*",
         "osdu:wks:master-data--BusinessDecision:*",
         "osdu:wks:master-data--CollaborationProject:*",
         "osdu:wks:master-data--Field:*",
