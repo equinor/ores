@@ -399,14 +399,10 @@ async def build_manifest_for_uris(
     manifest, or multiple object URIs for a targeted build.
     """
     hdr = headers(access_token)
-    legal_tag = legal_tag or DEFAULT_LEGAL_TAG
-    owners = owners or DEFAULT_OWNERS
-    viewers = viewers or DEFAULT_VIEWERS
-    countries = countries or DEFAULT_COUNTRIES
+    # NOTE: RDDMS v2 /manifests/build no longer accepts acl/legal in the
+    # request body — those are configured on the RDDMS side (k8s configmap).
     body = {
         "uris": list(uris),
-        "acl": {"owners": owners, "viewers": viewers},
-        "legal": {"legaltags": [legal_tag], "otherRelevantDataCountries": countries},
         "createMissingReferences": bool(create_missing_refs),
     }
     async with _http(timeout=120) as client:

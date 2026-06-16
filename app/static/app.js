@@ -114,7 +114,7 @@
 
   async function loadTypes() {
     if (!dsSel || !typeSel) return;
-    typeSel.innerHTML = '<option value="">(All types)</option>';
+    typeSel.innerHTML = '<option value="" selected>(All types)</option>';
     try {
       const ds = dsSel.value;
       if (!ds) return;
@@ -127,18 +127,29 @@
         opt.textContent = lbl;
         typeSel.appendChild(opt);
       }
-      typeSel.selectedIndex = 0;
+      // Pre-select "(All types)"
+      typeSel.options[0].selected = true;
     } catch (e) {
       console.warn('Failed to load types:', e);
       // leave "(All types)"
     }
   }
 
+  function _getSelectedTypes() {
+    // Collect all selected type values from the multi-select; empty string = all types
+    if (!typeSel) return [];
+    const vals = [];
+    for (const opt of typeSel.selectedOptions) {
+      if (opt.value) vals.push(opt.value);
+    }
+    return vals; // empty array means "all types"
+  }
+
   async function loadObjects() {
     if (!dsSel || !objSel) return;
     setText(objErr, '');
     const ds = dsSel.value;
-    const typ = (typeSel && typeSel.value) ? typeSel.value : null;
+    const selectedTypes = _getSelectedTypes();
     if (!ds) {
       objSel.innerHTML = '<option value="">- select dataspace/type -</option>';
       return;
@@ -149,11 +160,27 @@
     objSel.disabled = true;
     objSel.innerHTML = '<option value="">Loading…</option>';
     try {
-      const url = typ
-        ? `/keys/objects.json?ds=${encodeURIComponent(ds)}&typ=${encodeURIComponent(typ)}&q=${encodeURIComponent(q)}`
-        : `/keys/objects.json?ds=${encodeURIComponent(ds)}&q=${encodeURIComponent(q)}`;
-      const res = await fetchJSON(url);
-      const items = (res.items || []).map(x => ({ ...x, typePath: x.typePath || x.type || '' }));
+      // Fetch objects: if specific types selected, request each and merge; otherwise fetch all
+      let allItems = [];
+      if (selectedTypes.length === 0) {
+        const url = `/keys/objects.json?ds=${encodeURIComponent(ds)}&q=${encodeURIComponent(q)}`;
+        const res = await fetchJSON(url);
+        allItems = res.items || [];
+      } else if (selectedTypes.length === 1) {
+        const url = `/keys/objects.json?ds=${encodeURIComponent(ds)}&typ=${encodeURIComponent(selectedTypes[0])}&q=${encodeURIComponent(q)}`;
+        const res = await fetchJSON(url);
+        allItems = res.items || [];
+      } else {
+        // Multiple types selected: fetch in parallel and merge
+        const fetches = selectedTypes.map(t =>
+          fetchJSON(`/keys/objects.json?ds=${encodeURIComponent(ds)}&typ=${encodeURIComponent(t)}&q=${encodeURIComponent(q)}`)
+            .then(r => r.items || [])
+            .catch(() => [])
+        );
+        const results = await Promise.all(fetches);
+        for (const items of results) allItems.push(...items);
+      }
+      const items = allItems.map(x => ({ ...x, typePath: x.typePath || x.type || '' }));
       objSel.innerHTML = '';
       if (!items.length) {
         objSel.innerHTML = '<option value="">No objects match</option>';
@@ -163,8 +190,8 @@
       }
       for (const x of items) {
         const opt = document.createElement('option');
-        // Use item's own typePath, fall back to the type filter from the dropdown
-        const typ2 = x.typePath || x.type || typ || '';
+        // Use item's own typePath, fall back to the first selected type
+        const typ2 = x.typePath || x.type || (selectedTypes[0] || '');
         const uuid = x.uuid || '';
         opt.value = JSON.stringify({ ds, typ: typ2, uuid });
         // Short type label: strip resqml20.obj_ prefix and any (uuid) suffix
