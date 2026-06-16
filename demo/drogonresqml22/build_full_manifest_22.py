@@ -172,20 +172,22 @@ def parse_epc(epc_path: Path, convert_from_201: bool = False) -> dict:
                     boundary_kind = "fault"
 
             # Relationships
+            # RESQML 2.0.1: InterpretedFeature / RepresentedInterpretation
+            # RESQML 2.2:   RepresentedObject (unified)
             interp_uuid = _extract(
-                r"(?:InterpretedFeature|RepresentedInterpretation).*?<eml\d*:UUID[^>]*>([^<]+)</eml\d*:UUID>",
+                r"(?:InterpretedFeature|RepresentedInterpretation|RepresentedObject).*?<eml\d*:(?:UUID|Uuid)[^>]*>([^<]+)</eml\d*:(?:UUID|Uuid)>",
                 content, None, re.S)
             if not interp_uuid:
                 interp_uuid = _extract(
-                    r"(?:InterpretedFeature|RepresentedInterpretation).*?uuid=\"([^\"]+)\"",
+                    r"(?:InterpretedFeature|RepresentedInterpretation|RepresentedObject).*?uuid=\"([^\"]+)\"",
                     content, None, re.S)
             interp_title = _extract(
-                r"RepresentedInterpretation.*?<eml\d*:Title[^>]*>([^<]+)</eml\d*:Title>",
+                r"(?:RepresentedInterpretation|RepresentedObject).*?<eml\d*:Title[^>]*>([^<]+)</eml\d*:Title>",
                 content, None, re.S)
             crs_uuid = _extract(
-                r"(?:LocalCrs|Crs).*?<eml\d*:UUID[^>]*>([^<]+)</eml\d*:UUID>", content, None, re.S)
+                r"(?:LocalCrs|Crs).*?<eml\d*:(?:UUID|Uuid)[^>]*>([^<]+)</eml\d*:(?:UUID|Uuid)>", content, None, re.S)
             support_uuid = _extract(
-                r"SupportingRepresentation.*?<eml\d*:UUID[^>]*>([^<]+)</eml\d*:UUID>", content, None, re.S)
+                r"SupportingRepresentation.*?<eml\d*:(?:UUID|Uuid)[^>]*>([^<]+)</eml\d*:(?:UUID|Uuid)>", content, None, re.S)
 
             # Grid2d geometry
             fast_axis = _extract(r"<resqml\d*:FastestAxisCount[^>]*>(\d+)<", content, None)
@@ -439,6 +441,18 @@ def build_manifest(objects: dict) -> dict:
         wpcs.append(rec)
 
     # ── Grid2d → StructureMap (depth) or SeismicHorizon (time) ──
+    # First pass: build lookup of interp_uuid → SeismicHorizon record ID
+    # so StructureMaps can reference their TWT counterpart via SeismicHorizonID.
+    interp_to_seishorizon: dict[str, str] = {}  # interp_uuid → SeismicHorizon WPC id
+    for obj in grid2d_objs:
+        crs_id = depth_crs_id
+        if obj.get("crs_uuid"):
+            crs_obj = objects.get(obj["crs_uuid"])
+            if crs_obj and "Time" in crs_obj.get("type", ""):
+                crs_id = time_crs_id
+        if crs_id == time_crs_id and obj["interp_uuid"]:
+            interp_to_seishorizon[obj["interp_uuid"]] = _wpc_id("SeismicHorizon:2.1.0", obj["uuid"])
+
     for obj in grid2d_objs:
         crs_id = depth_crs_id
         if obj.get("crs_uuid"):
@@ -462,6 +476,9 @@ def build_manifest(objects: dict) -> dict:
         rec["data"]["VerticalDomain"] = "time" if is_time else "depth"
         if obj["interp_uuid"]:
             rec["data"]["InterpretedHorizonID"] = _wpc_id("HorizonInterpretation:1.2.0", obj["interp_uuid"])
+        # StructureMap → SeismicHorizon cross-reference (depth surface links to its TWT counterpart)
+        if not is_time and obj["interp_uuid"] and obj["interp_uuid"] in interp_to_seishorizon:
+            rec["data"]["SeismicHorizonID"] = interp_to_seishorizon[obj["interp_uuid"]]
         if bingrid_id:
             rec["data"]["BinGridID"] = bingrid_id
         if obj.get("fast_axis") and obj.get("slow_axis"):

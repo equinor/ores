@@ -349,6 +349,15 @@ def build_manifest(objects: dict) -> dict:
         wpcs.append(rec)
 
     # ── Grid2d → StructureMap (depth) or SeismicHorizon (time) ──
+    # First pass: build lookup of interp_uuid → SeismicHorizon record ID
+    # so StructureMaps can reference their TWT counterpart via SeismicHorizonID.
+    interp_to_seishorizon: dict[str, str] = {}  # interp_uuid → SeismicHorizon WPC id
+    for obj in by_type.get("Grid2dRepresentation", []):
+        crs_id = time_crs_id if obj.get("crs_uuid") and objects.get(obj["crs_uuid"], {}).get("type") == "LocalTime3dCrs" else depth_crs_id
+        is_time = crs_id == time_crs_id
+        if is_time and obj["interp_uuid"]:
+            interp_to_seishorizon[obj["interp_uuid"]] = _wpc_id("SeismicHorizon:2.1.0", obj["uuid"])
+
     for obj in by_type.get("Grid2dRepresentation", []):
         crs_id = time_crs_id if obj.get("crs_uuid") and objects.get(obj["crs_uuid"], {}).get("type") == "LocalTime3dCrs" else depth_crs_id
         is_time = crs_id == time_crs_id
@@ -371,6 +380,9 @@ def build_manifest(objects: dict) -> dict:
         rec["data"]["VerticalDomain"] = "time" if is_time else "depth"
         if obj["interp_uuid"]:
             rec["data"]["InterpretedHorizonID"] = _wpc_id("HorizonInterpretation:1.2.0", obj["interp_uuid"])
+        # StructureMap → SeismicHorizon cross-reference (depth surface links to its TWT counterpart)
+        if not is_time and obj["interp_uuid"] and obj["interp_uuid"] in interp_to_seishorizon:
+            rec["data"]["SeismicHorizonID"] = interp_to_seishorizon[obj["interp_uuid"]]
         # Shared BinGrid reference (all surfaces use the same XY lattice)
         if bingrid_id:
             rec["data"]["BinGridID"] = bingrid_id
