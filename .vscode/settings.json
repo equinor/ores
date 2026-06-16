@@ -44,6 +44,7 @@
     "awk *",
     "jq *",
     "uvicorn app.main:app *"
-  ]
+  ],
+  "cmake.sourceDirectory": "/home/maap/ores/weco_engine"
 }
 

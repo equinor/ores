@@ -174,11 +174,11 @@ def _ddms_uri(rtype: str, obj_uuid: str) -> str:
 
 
 def _wpc_id(kind_short: str, obj_uuid: str) -> str:
-    return f"{PARTITION}:work-product-component--{kind_short}:{obj_uuid}"
+    return f"{PARTITION}:work-product-component--{kind_short}:{obj_uuid}:"
 
 
 def _md_id(kind_short: str, obj_uuid: str) -> str:
-    return f"{PARTITION}:master-data--{kind_short}:{obj_uuid}"
+    return f"{PARTITION}:master-data--{kind_short}:{obj_uuid}:"
 
 
 def build_manifest(objects: dict) -> dict:

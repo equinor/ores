@@ -169,8 +169,8 @@ def _deterministic_uuid(partition: str, dataset_id: str, suffix: str) -> str:
 
 
 def _record_id(partition: str, entity: str, name: str) -> str:
-    """Build a stable OSDU record id without creating duplicate records."""
-    return f"{partition}:{entity}:{name}"
+    """Build a stable OSDU record id with trailing colon (latest-version convention)."""
+    return f"{partition}:{entity}:{name}:"
 
 
 def _dataset_record_id(partition: str, kind: str, name: str) -> str:
@@ -179,6 +179,10 @@ def _dataset_record_id(partition: str, kind: str, name: str) -> str:
 
 def _wpc_record_id(partition: str, name: str) -> str:
     return _record_id(partition, "work-product-component--SeismicTraceData", name)
+
+
+def _seismic_bingrid_record_id(partition: str, name: str) -> str:
+    return _record_id(partition, "work-product-component--SeismicBinGrid", name)
 
 
 def _get_upload_url(token: str, cfg: Config) -> tuple[str, str] | None:
@@ -329,6 +333,7 @@ def build_seismic_trace_data_record(
     original_filename: str,
     segy_record_id: str,
     vds_record_id: str,
+    bingrid_record_id: str,
 ) -> dict:
     """
     Build a SeismicTraceData WPC record using the proper schema-conformant
@@ -358,6 +363,8 @@ def build_seismic_trace_data_record(
                     "RoleID": f"{cfg.partition}:reference-data--ArtefactRole:ConvertedContent:",
                 }
             ],
+            # BinGrid: references SeismicBinGrid (required by SeismicTraceData schema)
+            "BinGridID": bingrid_record_id,
             # Seismic metadata
             "SeismicDomainTypeID": f"{cfg.partition}:reference-data--SeismicDomainType:Time:",
             "SeismicTraceDataDimensionalityTypeID": (
@@ -383,6 +390,47 @@ def build_seismic_trace_data_record(
                 "DrogonProject": "maap/drogon",
                 "OffsetClass": offset_class,
             },
+        },
+    }
+
+
+# Deterministic UUID for the shared Drogon seismic bin grid
+SEISMIC_BINGRID_UUID = str(uuid_mod.uuid5(uuid_mod.NAMESPACE_DNS, "maap/drogon/seismic-bingrid"))
+SEISMIC_BINGRID_ID_BASE = "drogon-seismic-bingrid"
+KIND_SEISMIC_BINGRID = "osdu:wks:work-product-component--SeismicBinGrid:1.0.0"
+
+
+def build_seismic_bingrid_record(cfg: Config) -> dict:
+    """
+    Build a SeismicBinGrid WPC record for the Drogon seismic survey geometry.
+    SeismicTraceData.BinGridID must reference this (not GenericBinGrid).
+    """
+    return {
+        "kind": KIND_SEISMIC_BINGRID,
+        "id": _seismic_bingrid_record_id(cfg.partition, SEISMIC_BINGRID_ID_BASE),
+        "acl": cfg.acl(),
+        "legal": cfg.legal(),
+        "data": {
+            "Name": "Drogon Seismic Bin Grid",
+            "Description": "Shared seismic bin grid geometry for Drogon 3D survey (436×276 bins).",
+            "ExistenceKind": f"{cfg.partition}:reference-data--ExistenceKind:Prototype:",
+            "InlineMin": 0,
+            "InlineMax": 435,
+            "CrosslineMin": 0,
+            "CrosslineMax": 275,
+            "InlineBinCount": 436,
+            "CrosslineBinCount": 276,
+            "InlineBinIncrement": 1,
+            "CrosslineBinIncrement": 1,
+            "InlineBinWidth": 25.0,
+            "CrosslineBinWidth": 25.0,
+            "P6BinGridOriginEasting": 455700.0,
+            "P6BinGridOriginNorthing": 6780000.0,
+            "P6BinGridOriginI": 0,
+            "P6BinGridOriginJ": 0,
+            "P6BinNodeIncrementOnIaxis": {"X": 25.0, "Y": 0.0},
+            "P6BinNodeIncrementOnJaxis": {"X": 0.0, "Y": 25.0},
+            "P6TransformationMethod": "9666",
         },
     }
 
@@ -472,12 +520,13 @@ def main():
 
     if args.dry_run:
         # Build and print manifest without uploading
-        wpc_records = []
+        bingrid_id = _seismic_bingrid_record_id(cfg.partition, SEISMIC_BINGRID_ID_BASE)
+        wpc_records = [build_seismic_bingrid_record(cfg)]
         for sgy_name, vds_name, wpc_id_base, segy_id_base, vds_id_base, display_name, offset_class in SEISMIC_FILES:
             segy_id = _dataset_record_id(cfg.partition, "FileCollection.SEGY", segy_id_base)
             vds_id = _dataset_record_id(cfg.partition, "FileCollection.Bluware.OpenVDS", vds_id_base)
             wpc_records.append(build_seismic_trace_data_record(
-                cfg, display_name, offset_class, wpc_id_base, sgy_name, segy_id, vds_id
+                cfg, display_name, offset_class, wpc_id_base, sgy_name, segy_id, vds_id, bingrid_id
             ))
         manifest = build_manifest(cfg, wpc_records)
         print("\n" + json.dumps(manifest, indent=2))
@@ -533,12 +582,16 @@ def main():
                 continue
 
         # Build WPC record
+        bingrid_id = _seismic_bingrid_record_id(cfg.partition, SEISMIC_BINGRID_ID_BASE)
         wpc_records.append(build_seismic_trace_data_record(
-            cfg, display_name, offset_class, wpc_id_base, sgy_name, segy_record_id, vds_record_id
+            cfg, display_name, offset_class, wpc_id_base, sgy_name, segy_record_id, vds_record_id, bingrid_id
         ))
 
     if not wpc_records:
         sys.exit("No records built – aborting")
+
+    # Include the SeismicBinGrid record itself
+    wpc_records.insert(0, build_seismic_bingrid_record(cfg))
 
     # ── Push manifest ─────────────────────────────────────────────────────
     manifest = build_manifest(cfg, wpc_records)

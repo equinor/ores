@@ -26,7 +26,7 @@ weco_deploy_key.pub
 *.xml
 *.bak
 *.log
-
+out.txt
 
 # ── Project-specific ignores ──
 tmp/
@@ -37,6 +37,4 @@ demo/
 ores_tokens.db
 ores_tokens.db-shm
 ores_tokens.db-wal
-log.txt
-out.txt
-Readme.comm.md
+
