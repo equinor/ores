@@ -696,9 +696,28 @@ def main():
                     help="Explicit source EPC path (overrides default 2.2 EPC)")
     ap.add_argument("--save-only", action="store_true",
                     help="Save manifest JSON only (don't push)")
-    ap.add_argument("-o", "--output", type=Path, default=OUT_FILE,
-                    help=f"Output path (default: {OUT_FILE.name})")
+    ap.add_argument("--partition", default="opendes",
+                    help="OSDU partition for record IDs (default: opendes)")
+    ap.add_argument("--dataspace", default=None,
+                    help="RDDMS dataspace name (default: maap/drogon22)")
+    ap.add_argument("--legal-tag", default=None,
+                    help="Legal tag (default: <partition>-default-legal-tag)")
+    ap.add_argument("--owners", default=None, help="Owners ACL group")
+    ap.add_argument("--viewers", default=None, help="Viewers ACL group")
+    ap.add_argument("--countries", default="US", help="Legal countries (comma-separated)")
+    ap.add_argument("-o", "--output", type=Path, default=None,
+                    help=f"Output path (default: auto)")
     args = ap.parse_args()
+
+    # Apply config
+    partition = args.partition
+    legal_tag = args.legal_tag or f"{partition}-ReservoirDDMS-Legal-Tag"
+    owners = [args.owners] if args.owners else [f"data.default.owners@{partition}.dataservices.energy"]
+    viewers = [args.viewers] if args.viewers else [f"data.default.viewers@{partition}.dataservices.energy"]
+    countries = [c.strip() for c in args.countries.split(",")]
+    _configure(partition, legal_tag, owners, viewers, countries,
+               dataspace=args.dataspace)
+    output = args.output or SCRIPT_DIR / f"manifest_drogon22_{partition}.json"
 
     # Select source EPC
     if args.from_201:
@@ -718,7 +737,7 @@ def main():
         sys.exit(f"  ✗ EPC not found: {epc}")
 
     print(f"  Target dataspace: {DATASPACE}")
-    print(f"  Output: {args.output.name}")
+    print(f"  Output: {output.name}")
     print()
 
     # Parse
@@ -744,9 +763,9 @@ def main():
             print(f"    {section}: {len(records)}")
 
     # Save
-    args.output.write_text(json.dumps(manifest, indent=2))
-    size_kb = args.output.stat().st_size / 1024
-    print(f"\n  ✓ Saved: {args.output.name} ({size_kb:.0f} KB)")
+    output.write_text(json.dumps(manifest, indent=2))
+    size_kb = output.stat().st_size / 1024
+    print(f"\n  \u2713 Saved: {output.name} ({size_kb:.0f} KB)")
 
 
 if __name__ == "__main__":

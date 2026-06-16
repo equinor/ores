@@ -828,7 +828,7 @@
            Name / FeatureName fallback for safety if it is ever missing. #}
         {% set feature_name = d.get('FeatureName') or '' %}
         {% set display_name = rec.display_name or (raw_name if (raw_name and raw_name != '|UNNAMED|') else (feature_name or raw_name or '-')) %}
-        {% set desc = d.get('Description') %}
+        {% set desc = rec.display_description or d.get('Description') %}
         {# Extract short dataspace name from DDMSDatasets URI #}
         {% set ddms_ds = d.get('DDMSDatasets', []) %}
         {% set ds_raw = ddms_ds[0] if ddms_ds else '' %}

@@ -70,7 +70,7 @@ def _best_name(data: Dict[str, Any], kind: str = "") -> str | None:
         name = name.strip()
         if name and name != "|UNNAMED|":
             return name
-    for key in ("FacilityName", "FeatureName"):
+    for key in ("FacilityName", "FeatureName", "InterpretationName"):
         v = data.get(key)
         if isinstance(v, str) and v.strip():
             return v.strip()
@@ -82,6 +82,11 @@ def _best_name(data: Dict[str, Any], kind: str = "") -> str | None:
     t = data.get("Title")
     if isinstance(t, str) and t.strip():
         return t.strip()
+    # SeismicBinGrid / SeismicTraceData: try survey-related fields
+    for key in ("SeismicAcquisitionSurveyName", "SurveyName"):
+        v = data.get(key)
+        if isinstance(v, str) and v.strip():
+            return v.strip()
     # ETPDataspace dataset records: derive a label from the dataspace URI
     dp = data.get("DatasetProperties")
     if isinstance(dp, dict):
@@ -96,6 +101,75 @@ def _best_name(data: Dict[str, Any], kind: str = "") -> str | None:
 def _display_name(data: Dict[str, Any], kind: str = "", rid: str = "") -> str:
     """Human-readable display name with id fallback (never empty)."""
     return _best_name(data, kind) or rid or "-"
+
+
+def _best_description(data: Dict[str, Any]) -> str | None:
+    """Best human-readable description for an OSDU record.
+
+    Checks top-level Description, then Citation.Description, then
+    synthesises a FIRP-based semantic summary from relationships.
+    """
+    if not isinstance(data, dict):
+        return None
+    desc = data.get("Description")
+    if isinstance(desc, str) and desc.strip():
+        return desc.strip()
+    cit = data.get("Citation")
+    if isinstance(cit, dict):
+        d = cit.get("Description")
+        if isinstance(d, str) and d.strip():
+            return d.strip()
+    # Synthesise from FIRP hierarchy relationships
+    return _firp_summary(data)
+
+
+def _firp_summary(data: Dict[str, Any]) -> str | None:
+    """Synthesise a description from RESQML FIRP hierarchy fields.
+
+    FIRP = Feature → Interpretation → Representation → Property.
+    Extracts semantic meaning from relationship fields present in the record.
+    """
+    parts: list[str] = []
+    # Representation-level: linked interpretation
+    interp_name = data.get("InterpretationName")
+    if isinstance(interp_name, str) and interp_name.strip():
+        parts.append(f"Interpretation: {interp_name.strip()}")
+    # Role / Type (GenericRepresentation, HorizonControlPoints)
+    role = data.get("Role") or data.get("RepresentationRole")
+    rtype = data.get("Type") or data.get("RepresentationType")
+    if isinstance(role, str) and role.strip():
+        parts.append(f"Role: {role.strip()}")
+    if isinstance(rtype, str) and rtype.strip():
+        parts.append(f"Type: {rtype.strip()}")
+    # Domain
+    domain = data.get("DomainTypeID")
+    if isinstance(domain, str) and domain.strip():
+        parts.append(f"Domain: {domain.strip()}")
+    # Grid geometry summary (SeismicBinGrid / StructureMap)
+    for axis_label, i_key, j_key in [
+        ("Nodes", "NodeCountOnIAxis", "NodeCountOnJAxis"),
+        ("Inline/Xline", "InlineMin", "CrosslineMin"),
+    ]:
+        iv = data.get(i_key)
+        jv = data.get(j_key)
+        if iv is not None and jv is not None:
+            if axis_label == "Nodes":
+                parts.append(f"{iv}×{jv} nodes")
+            else:
+                i_max = data.get("InlineMax")
+                x_max = data.get("CrosslineMax")
+                if i_max is not None and x_max is not None:
+                    parts.append(f"IL {iv}–{i_max}, XL {jv}–{x_max}")
+            break
+    # Seismic acquisition survey reference
+    survey = data.get("SeismicAcquisitionSurveyName") or data.get("SurveyName")
+    if isinstance(survey, str) and survey.strip():
+        parts.append(f"Survey: {survey.strip()}")
+    # ExistenceKind
+    ek = data.get("ExistenceKind")
+    if isinstance(ek, str) and ek.strip() and ek.strip().lower() not in ("actual",):
+        parts.append(ek.strip())
+    return " · ".join(parts) if parts else None
 
 
 async def _resolve_wildcard_kind(
@@ -395,6 +469,7 @@ async def _enrich_record_light(
 
     result = dict(full)
     result["display_name"] = _display_name(data_block, full.get("kind") or "", rid)
+    result["display_description"] = _best_description(data_block) or ""
     result["volumes"] = volumes
     result["links"] = links
     result["linked_labels"] = {}
