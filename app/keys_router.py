@@ -380,6 +380,25 @@ def _enrich_label(title: str, domain: Optional[str], role: Optional[str]) -> str
     return f"{title}.{'.'.join(bits)}" if bits else title
 
 
+def _strip_type_prefixes(name: str) -> str:
+    """Strip RESQML/EML type prefixes for cleaner display.
+    
+    Examples:
+      resqml20.obj_IjkGridRepresentation → IjkGridRepresentation
+      eml23.obj_ContinuousProperty → ContinuousProperty
+    """
+    if not name:
+        return name
+    prefixes = [
+        "resqml20.obj_", "resqml22.obj_", "resqml23.obj_",
+        "eml20.obj_", "eml21.obj_", "eml22.obj_", "eml23.obj_",
+    ]
+    for prefix in prefixes:
+        if name.startswith(prefix):
+            return name[len(prefix):]
+    return name
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Object detail
 # ──────────────────────────────────────────────────────────────────────────────
@@ -704,6 +723,16 @@ async def keys_objects(
                     it["label"] = _enrich_label(it.get("title") or it.get("uuid") or "", domain, role)
         except Exception as e:
             log.debug("keys_objects label enrichment failed for %s/%s: %s", ds, typ, e)
+
+    # Strip RESQML/EML type prefixes from labels and titles for cleaner display
+    for item in out:
+        if "label" in item:
+            item["label"] = _strip_type_prefixes(item["label"])
+        if "title" in item:
+            item["title"] = _strip_type_prefixes(item["title"])
+    
+    # Sort alphabetically by label, title, or uuid
+    out.sort(key=lambda x: (x.get("label") or x.get("title") or x.get("uuid") or "").lower())
 
     return JSONResponse({"items": out})
 
