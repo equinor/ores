@@ -158,7 +158,11 @@ async def ingest_manifest(
       "method": "storage",            # "storage" (default) or "workflow"
       "runId": "optional-guid",      # optional (workflow only)
       "partition": "data",           # optional override of DATA_PARTITION_ID
-      "appKey": "my-app"             # optional override of APP_KEY
+      "appKey": "my-app",            # optional override of APP_KEY
+      "legalTag": "...",             # optional legal tag for records
+      "owners": [...],               # optional owner list for ACL
+      "viewers": [...],              # optional viewer list for ACL
+      "countries": [...]             # optional countries list
     }
     """
     try:
@@ -188,6 +192,12 @@ async def ingest_manifest(
     partition = body.get("partition") or _get_env("DATA_PARTITION_ID", "data")
     app_key = body.get("appKey") or _get_env("APP_KEY")
     run_id = body.get("runId") or str(uuid.uuid4())
+
+    # Extract enrichment parameters for record ingest (optional, use module defaults)
+    legal_tag = body.get("legalTag") or _osdu_mod.DEFAULT_LEGAL_TAG
+    owners = body.get("owners") or _osdu_mod.DEFAULT_OWNERS
+    viewers = body.get("viewers") or _osdu_mod.DEFAULT_VIEWERS
+    countries = body.get("countries") or _osdu_mod.DEFAULT_COUNTRIES
 
     # Fetch access_token from existing session/auth flow
     access_token = _find_access_token(request)
@@ -224,6 +234,10 @@ async def ingest_manifest(
                 partition=partition,
                 access_token=access_token,
                 manifest=manifest,
+                legal_tag=legal_tag,
+                owners=owners,
+                viewers=viewers,
+                countries=countries,
             )
         except HTTPException:
             raise
@@ -325,10 +339,15 @@ async def _ingest_via_storage(
     partition: str,
     access_token: str,
     manifest: Dict[str, Any],
+    legal_tag: str = "",
+    owners: list | None = None,
+    viewers: list | None = None,
+    countries: list | None = None,
 ) -> Dict[str, Any]:
     """PUT records to /api/storage/v2/records (direct Storage API).
 
     Extracts all WPC records from the manifest and sends them in one batch.
+    Enriches records with legal tags and ACL before ingest.
     Returns the Storage API response.
     """
     url = base_url.rstrip("/") + "/api/storage/v2/records"
@@ -352,6 +371,38 @@ async def _ingest_via_storage(
             status_code=400,
             detail="Manifest contains no records to ingest",
         )
+
+    # Enrich records with legal tags and ACL
+    owners = owners or []
+    viewers = viewers or []
+    countries = countries or []
+    for record in records:
+        # Set legal tags at top level (alongside "data", "kind", "acl")
+        if legal_tag:
+            if "legal" not in record:
+                record["legal"] = {}
+            record["legal"]["legaltags"] = [legal_tag]
+        
+        # Set countries at top level
+        if countries:
+            if "legal" not in record:
+                record["legal"] = {}
+            record["legal"]["otherRelevantDataCountries"] = countries
+        else:
+            # Ensure otherRelevantDataCountries is not empty (Storage API requirement)
+            if "legal" not in record:
+                record["legal"] = {}
+            if not record["legal"].get("otherRelevantDataCountries"):
+                record["legal"]["otherRelevantDataCountries"] = ["US"]
+        
+        # Set ACL at top level
+        if owners or viewers:
+            if "acl" not in record:
+                record["acl"] = {}
+            if owners:
+                record["acl"]["owners"] = owners
+            if viewers:
+                record["acl"]["viewers"] = viewers
 
     async with _osdu_mod.http_client(timeout=httpx.Timeout(120.0, read=120.0)) as client:
         r = await client.put(url, headers=headers, json=records)
@@ -536,6 +587,10 @@ async def rddms_index(request: Request) -> JSONResponse:
             partition=partition,
             access_token=access_token,
             manifest=manifest,
+            legal_tag=body.get("legalTag") or _osdu_mod.DEFAULT_LEGAL_TAG,
+            owners=body.get("owners") or _osdu_mod.DEFAULT_OWNERS,
+            viewers=body.get("viewers") or _osdu_mod.DEFAULT_VIEWERS,
+            countries=body.get("countries") or _osdu_mod.DEFAULT_COUNTRIES,
         )
         return JSONResponse({
             "status": "submitted",

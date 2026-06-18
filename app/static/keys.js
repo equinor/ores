@@ -1307,13 +1307,30 @@
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const js = await r.json();
         typSel.innerHTML = '';
+        
+        // Group types by category
+        const byCategory = {};
         (js.items || []).forEach(x => {
           if (!x || !x.name) return;
-          const o = document.createElement('option');
-          o.value = x.name;
-          o.textContent = x.count ? `${x.name} (${x.count})` : x.name;
-          typSel.appendChild(o);
+          const cat = x.category || 'Other';
+          if (!byCategory[cat]) byCategory[cat] = [];
+          byCategory[cat].push(x);
         });
+        
+        // Add types grouped by category using optgroups
+        const sortedCategories = Object.keys(byCategory).sort();
+        sortedCategories.forEach(cat => {
+          const og = document.createElement('optgroup');
+          og.label = cat;
+          byCategory[cat].forEach(x => {
+            const o = document.createElement('option');
+            o.value = x.name;
+            o.textContent = x.count ? `${x.name} (${x.count})` : x.name;
+            og.appendChild(o);
+          });
+          typSel.appendChild(og);
+        });
+        
         objSel.innerHTML = '';
         clearDetails();
         setMsg(js.items && js.items.length ? '' : 'No types found in this dataspace.');
@@ -1326,11 +1343,16 @@
     }
 
     async function loadObjects() {
-      if (!dsSel.value || !typSel.value) return;
+      if (!dsSel.value) return;
+      // Get all selected types (multi-select support)
+      const selectedTypes = Array.from(typSel.selectedOptions).map(o => o.value);
+      if (selectedTypes.length === 0) return;
       setMsg('Loading objects…');
       showLoading('Loading objects…');
       try {
-        const url = `/keys/objects.json?ds=${encodeURIComponent(dsSel.value)}&typ=${encodeURIComponent(typSel.value)}`;
+        // Join multiple types with comma for backend
+        const typParam = selectedTypes.join(',');
+        const url = `/keys/objects.json?ds=${encodeURIComponent(dsSel.value)}&typ=${encodeURIComponent(typParam)}`;
         const r = await fetch(url, { credentials: 'same-origin' });
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const js = await r.json();
@@ -1343,7 +1365,8 @@
           objSel.appendChild(o);
         });
         clearDetails();
-        setMsg(js.items && js.items.length ? '' : 'No objects in this type.');
+        const typeCount = selectedTypes.length > 1 ? ` (${selectedTypes.length} types)` : '';
+        setMsg(js.items && js.items.length ? '' : `No objects found${typeCount}.`);
       } catch (e) {
         setMsg('Failed to load objects.');
         console.error(e);

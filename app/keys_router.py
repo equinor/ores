@@ -183,6 +183,30 @@ async def keys_types(
             "resqml20.obj_ActivityTemplate",
             "eml20.obj_EpcExternalPartReference",
         ]]
+    
+    # ─── Enhance items with category information ───
+    # Map type names to categories for grouping in UI
+    _CATEGORY_MAP = {
+        "Grid": ["IjkGrid", "TriangulatedSet", "PointSet"],
+        "Surface": ["Grid2d", "PolylineSet"],
+        "Well": ["Wellbore", "Trajectory", "MdDatum", "WellboreMarker", "DeviationSurvey"],
+        "Property": ["ContinuousProperty", "DiscreteProperty", "CategoricalProperty"],
+        "Stratigraphy": ["Horizon", "Fault", "Genetic", "Tectonic", "StratColumn"],
+        "Organization": ["Organization"],
+        "CRS": ["Crs"],
+        "Provenance": ["Activity"],
+        "Reference": ["PropertyKind", "StringTable", "EpcExternal"],
+    }
+    
+    for item in items:
+        name = item.get("name", "")
+        category = None
+        for cat, keywords in _CATEGORY_MAP.items():
+            if any(kw in name for kw in keywords):
+                category = cat
+                break
+        item["category"] = category or "Other"
+    
     return JSONResponse({"items": items})
 
 
@@ -554,20 +578,26 @@ async def keys_object_array_json(
 async def keys_objects(
     request: Request,
     ds: str = Query(..., description="Dataspace path"),
-    typ: Optional[str] = Query(None, description="resqml20.obj_* type (optional)"),
+    typ: Optional[str] = Query(None, description="resqml20.obj_* type(s) - comma-separated for multi-select (optional)"),
     q: Optional[str] = Query(None, description="Name/UUID contains (optional)"),
 ):
     """
     Aggregated list endpoint used by app.js:
     - Try local PG first (fast), fall back to RDDMS REST.
-    - If 'typ' provided -> list via RDDMS /resources/{type}
+    - If 'typ' provided (single or comma-separated) -> list via RDDMS /resources/{type}
     - If 'typ' omitted  -> try RDDMS /resources/all; on failure/empty, fall back to
       enumerating types via /resources and aggregating /resources/{type}.
     Supports 'q' as contains filter on title/uuid ('*' means no filter).
+    Supports multi-select: typ="type1,type2,type3" for multiple types.
     """
     at = _access_token(request)
     enc = urllib.parse.quote(ds, safe="")
     rows: List[Dict[str, Any]] = []
+
+    # Parse comma-separated types for multi-select support
+    types_to_query = []
+    if typ:
+        types_to_query = [t.strip() for t in typ.split(',') if t.strip()]
 
     # --- Try local PG first (instant, no network) ---
     pg_done = False
@@ -575,8 +605,14 @@ async def keys_objects(
         from .pg_backend import get_pool, pg_list_resources, pg_list_types
         pool = await get_pool()
         if pool:
-            if typ:
-                pg_rows = await pg_list_resources(pool, ds, typ, limit=500)
+            if types_to_query:
+                # Handle multi-select: query each type and aggregate
+                parts = await asyncio.gather(
+                    *[pg_list_resources(pool, ds, t, limit=500) for t in types_to_query]
+                )
+                pg_rows = []
+                for part in parts:
+                    pg_rows.extend(part)
             else:
                 # Get all types then aggregate
                 pg_types = await pg_list_types(pool, ds)
@@ -598,8 +634,14 @@ async def keys_objects(
     # --- Fall back to RDDMS REST ---
     if not pg_done:
         try:
-            if typ:
-                rows = await osdu.list_resources(at, enc, typ)
+            if types_to_query:
+                # Handle multi-select: aggregate results from multiple types
+                parts = await asyncio.gather(
+                    *[osdu.list_resources(at, enc, t) for t in types_to_query]
+                )
+                rows = []
+                for part in parts:
+                    rows.extend(part or [])
             else:
                 # Try /resources/all first
                 try:
@@ -649,9 +691,9 @@ async def keys_objects(
         title = (r.get("Citation") or {}).get("Title") or r.get("name") or r.get("title") or uid or uri
         ct = r.get("$type") or r.get("contentType") or ""
         type_path = _infer_type_path(r)
-        # When listing by specific type and inference fails, use the requested type
-        if not type_path and typ:
-            type_path = _sanitize_type(typ)
+        # When listing by specific types and inference fails, use the first requested type
+        if not type_path and types_to_query:
+            type_path = _sanitize_type(types_to_query[0])
 
         # contains filter on title/uuid
         if qq_norm:
@@ -672,7 +714,9 @@ async def keys_objects(
     #   "TopVolantis . Depth . horizon"  and  "TopVolantis . Time . horizon"
     # by resolving one relationship hop (CRS + Interpretation). Only applied when a
     # specific representation type is selected (the ambiguous case).
-    if typ and _is_representation_type(typ) and out:
+    # For multi-select, check if any selected type is a representation type.
+    is_repr_type = any(_is_representation_type(t) for t in types_to_query) if types_to_query else False
+    if is_repr_type and out:
         try:
             rel_types_by_uuid: Dict[str, List[str]] = {}
             if pg_done:
@@ -692,7 +736,7 @@ async def keys_objects(
                             rel_types_by_uuid[u] = [rel.get("type_name", "") for rel in rels]
             else:
                 # REST: bounded-concurrency /targets lookups (remote dataspaces).
-                typ_clean = _sanitize_type(typ)
+                typ_clean = _sanitize_type(types_to_query[0]) if types_to_query else ""
                 sem = asyncio.Semaphore(8)
 
                 async def _targets_for(u: str) -> Tuple[str, List[str]]:

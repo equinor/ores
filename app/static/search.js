@@ -659,7 +659,7 @@
    and leaves data-rec-idx untouched so the row-click → detail-panel mapping
    keeps working. */
 (function() {
-  var PAGE_SIZE = 100;
+  var PAGE_SIZE = 50;
   var table = document.getElementById('main-results-table');
   if (!table) return;
   var tbody = table.querySelector('tbody');

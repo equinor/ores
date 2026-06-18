@@ -397,18 +397,16 @@ async def build_manifest_for_uris(
 
     Pass a single ``eml:///dataspace('...')`` URI to build a whole-dataspace
     manifest, or multiple object URIs for a targeted build.
+    
+    Note: ACL and legal tags are NOT sent to the manifest build endpoint.
+    They should be applied to records after manifest build, during ingest.
     """
     hdr = headers(access_token)
-    # Use provided values or sensible defaults
-    legal_tag = legal_tag or DEFAULT_LEGAL_TAG
-    owners = owners or DEFAULT_OWNERS
-    viewers = viewers or DEFAULT_VIEWERS
-    countries = countries or DEFAULT_COUNTRIES
     
+    # Build request body - RDDMS manifests/build only accepts URIs and createMissingReferences
+    # ACL and legal tags will be applied to records during ingest, not here
     body = {
         "uris": list(uris),
-        "acl": {"owners": owners, "viewers": viewers},
-        "legal": {"legaltags": [legal_tag], "otherRelevantDataCountries": countries},
         "createMissingReferences": bool(create_missing_refs),
     }
     async with _http(timeout=120) as client:
