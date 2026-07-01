@@ -50,6 +50,10 @@ def _role_from_path(path: str) -> str:
         return "parent-work-product"
     if "parentobjectid" in p:
         return "parent-object"
+    if "evidencecollectionid" in p or "trustedcollectionid" in p:
+        return "evidence"
+    if "collaborationprojectid" in p:
+        return "project"
     if "parameters" in p and "objectparameterkey" in p:
         return "parameter-object"
     if "ancestry.parents" in p:

@@ -238,11 +238,29 @@ def _register_file_metadata(
     file_path: Path,
     name: str,
     description: str,
+    collection_path: str | None = None,
 ) -> str | None:
     """Register file metadata with the File service, returning the record ID."""
     url = f"{cfg.base_url}/api/file/v2/files/metadata"
     filename = file_path.name
     file_size = file_path.stat().st_size
+    dataset_props: dict = {
+        "FileSourceInfo": {
+            "FileSource": file_source,
+            "Name": filename,
+            "FileSize": str(file_size),
+        },
+        "FileSourceInfos": [
+            {
+                "FileSource": file_source,
+                "Name": filename,
+                "FileSize": str(file_size),
+            }
+        ],
+    }
+    # FileCollectionPath is required by the OpenVDS schema
+    if collection_path:
+        dataset_props["FileCollectionPath"] = collection_path
     body = {
         "kind": kind,
         "id": record_id,
@@ -253,20 +271,7 @@ def _register_file_metadata(
             "Description": description,
             "TotalSize": str(file_size),
             "ResourceSecurityClassification": f"{cfg.partition}:reference-data--ResourceSecurityClassification:RESTRICTED:",
-            "DatasetProperties": {
-                "FileSourceInfo": {
-                    "FileSource": file_source,
-                    "Name": filename,
-                    "FileSize": str(file_size),
-                },
-                "FileSourceInfos": [
-                    {
-                        "FileSource": file_source,
-                        "Name": filename,
-                        "FileSize": str(file_size),
-                    }
-                ]
-            },
+            "DatasetProperties": dataset_props,
             "SchemaFormatTypeID": (
                 f"{cfg.partition}:reference-data--SchemaFormatType:SEG-Y:"
                 if "SEGY" in kind else
@@ -299,6 +304,7 @@ def upload_file_collection(
     kind: str,
     name: str,
     description: str,
+    collection_path: str | None = None,
 ) -> str | None:
     """
     Upload a file to OSDU and register it as a FileCollection dataset.
@@ -317,7 +323,8 @@ def upload_file_collection(
 
     # 3. Register file metadata
     return _register_file_metadata(
-        token, cfg, file_source, record_id, kind, file_path, name, description
+        token, cfg, file_source, record_id, kind, file_path, name, description,
+        collection_path=collection_path,
     )
 
 
@@ -569,6 +576,8 @@ def main():
 
             # Upload VDS
             print("  [OpenVDS upload]")
+            # FileCollectionPath is the sd:// URI prefix for the VDS dataset (required by schema)
+            vds_collection_path = f"sd://{cfg.partition}/{vds_id_base}"
             vds_record_id = upload_file_collection(
                 token, cfg,
                 VDS_DIR / vds_name,
@@ -576,6 +585,7 @@ def main():
                 KIND_FILE_COLLECTION_VDS,
                 f"OpenVDS {display_name}",
                 f"OpenVDS converted: {display_name}",
+                collection_path=vds_collection_path,
             )
             if not vds_record_id:
                 print(f"  ✗ VDS upload failed for {vds_name}")

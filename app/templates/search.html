@@ -235,9 +235,16 @@
   <div class="kind-row" style="grid-template-columns: 220px 1fr;">
     <select id="kindPreset" style="min-width: 0;">
       <option value="">Select kind…</option>
+      {% set current_group = namespace(value='') %}
       {% for opt in kind_options or [] %}
+        {% if opt.group is defined and opt.group != current_group.value %}
+          {% if current_group.value %}</optgroup>{% endif %}
+          {% set current_group.value = opt.group %}
+          <optgroup label="{{ opt.group }}">
+        {% endif %}
         <option value="{{ opt.kind }}" {% if opt.kind == kind %}selected{% endif %}>{{ opt.label or opt.kind }}</option>
       {% endfor %}
+      {% if current_group.value %}</optgroup>{% endif %}
     </select>
     <input type="text" id="kindInput" name="kind" value="{{ kind or '' }}" list="kindCatalog" placeholder="osdu:wks:... (edit version or leave :* for all)">
   </div>

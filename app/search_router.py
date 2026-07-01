@@ -269,58 +269,61 @@ def _parse_kind_inputs(kind: str, kinds_extra: str) -> List[str]:
 
 
 def _collect_manifest_kinds() -> List[Dict[str, Any]]:
-    """Return an alphabetically sorted list of OSDU kinds for the search dropdown.
+    """Return a grouped list of OSDU kinds for the search dropdown.
 
     Uses wildcard versions (``*``) so the dropdown matches all indexed
     versions of each entity type.  The user can manually edit the
     version in the text input if a specific one is needed.
 
-    The search route automatically resolves wildcard kinds to concrete
-    versions when the query contains leading wildcards (an ADME
-    limitation that rejects ``kind:*`` + ``data.X:*foo*``).
+    Kinds are grouped by category (Dataset, Master Data, WPC) for better UX
+    in the dropdown. Each entry has 'kind', 'label', and 'group'.
     """
-    _KINDS: list[str] = [
-        "osdu:wks:dataset--ETPDataspace:*",
-        "osdu:wks:dataset--FileCollection.Bluware.OpenVDS:*",
-        "osdu:wks:dataset--FileCollection.SEGY:*",
-        "osdu:wks:master-data--BusinessDecision:*",
-        "osdu:wks:master-data--CollaborationProject:*",
-        "osdu:wks:master-data--Field:*",
-        "osdu:wks:master-data--LocalBoundaryFeature:*",
-        "osdu:wks:master-data--Organisation:*",
-        "osdu:wks:master-data--Reservoir:*",
-        "osdu:wks:master-data--ReservoirSegment:*",
-        "osdu:wks:master-data--Risk:*",
-        "osdu:wks:master-data--Well:*",
-        "osdu:wks:master-data--Wellbore:*",
-        "osdu:wks:work-product-component--Activity:*",
-        "osdu:wks:work-product-component--ActivityTemplate:*",
-        "osdu:wks:work-product-component--CollaborationProjectCollection:*",
-        "osdu:wks:work-product-component--ColumnBasedTable:*",
-        "osdu:wks:work-product-component--DevelopmentConcept:*",
-        "osdu:wks:work-product-component--Document:*",
-        "osdu:wks:work-product-component--GenericBinGrid:*",
-        "osdu:wks:work-product-component--GenericRepresentation:*",
-        "osdu:wks:work-product-component--GeoLabelSet:*",
-        "osdu:wks:work-product-component--HorizonControlPoints:*",
-        "osdu:wks:work-product-component--HorizonInterpretation:*",
-        "osdu:wks:work-product-component--IjkGridRepresentation:*",
-        "osdu:wks:work-product-component--LocalBoundaryFeature:*",
-        "osdu:wks:work-product-component--LocalModelCompoundCrs:*",
-        "osdu:wks:work-product-component--PersistedCollection:*",
-        "osdu:wks:work-product-component--ReservoirEstimatedVolumes:*",
-        "osdu:wks:work-product-component--SeismicBinGrid:*",
-        "osdu:wks:work-product-component--SeismicHorizon:*",
-        "osdu:wks:work-product-component--SeismicTraceData:*",
-        "osdu:wks:work-product-component--StratigraphicColumn:*",
-        "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:*",
-        "osdu:wks:work-product-component--StratigraphicUnitInterpretation:*",
-        "osdu:wks:work-product-component--StructureMap:*",
-        "osdu:wks:work-product-component--WellLog:*",
-        "osdu:wks:work-product-component--WellboreMarkerSet:*",
-        "osdu:wks:work-product-component--WellboreTrajectory:*",
+    _KINDS_GROUPED: list[tuple[str, str]] = [
+        # (group_label, kind)
+        ("Dataset", "osdu:wks:dataset--ETPDataspace:*"),
+        ("Dataset", "osdu:wks:dataset--FileCollection.Bluware.OpenVDS:*"),
+        ("Dataset", "osdu:wks:dataset--FileCollection.SEGY:*"),
+        ("Master Data", "osdu:wks:master-data--BusinessDecision:*"),
+        ("Master Data", "osdu:wks:master-data--CollaborationProject:*"),
+        ("Master Data", "osdu:wks:master-data--Field:*"),
+        ("Master Data", "osdu:wks:master-data--LocalBoundaryFeature:*"),
+        ("Master Data", "osdu:wks:master-data--Organisation:*"),
+        ("Master Data", "osdu:wks:master-data--Reservoir:*"),
+        ("Master Data", "osdu:wks:master-data--ReservoirSegment:*"),
+        ("Master Data", "osdu:wks:master-data--Risk:*"),
+        ("Master Data", "osdu:wks:master-data--Well:*"),
+        ("Master Data", "osdu:wks:master-data--Wellbore:*"),
+        ("WPC – Subsurface", "osdu:wks:work-product-component--Activity:*"),
+        ("WPC – Subsurface", "osdu:wks:work-product-component--ActivityTemplate:*"),
+        ("WPC – Subsurface", "osdu:wks:work-product-component--ColumnBasedTable:*"),
+        ("WPC – Subsurface", "osdu:wks:work-product-component--DevelopmentConcept:*"),
+        ("WPC – Subsurface", "osdu:wks:work-product-component--GeoLabelSet:*"),
+        ("WPC – Subsurface", "osdu:wks:work-product-component--GenericRepresentation:*"),
+        ("WPC – Subsurface", "osdu:wks:work-product-component--ReservoirEstimatedVolumes:*"),
+        ("WPC – Subsurface", "osdu:wks:work-product-component--StructureMap:*"),
+        ("WPC – Geo Model", "osdu:wks:work-product-component--GenericBinGrid:*"),
+        ("WPC – Geo Model", "osdu:wks:work-product-component--HorizonControlPoints:*"),
+        ("WPC – Geo Model", "osdu:wks:work-product-component--HorizonInterpretation:*"),
+        ("WPC – Geo Model", "osdu:wks:work-product-component--IjkGridRepresentation:*"),
+        ("WPC – Geo Model", "osdu:wks:work-product-component--LocalBoundaryFeature:*"),
+        ("WPC – Geo Model", "osdu:wks:work-product-component--LocalModelCompoundCrs:*"),
+        ("WPC – Geo Model", "osdu:wks:work-product-component--StratigraphicColumn:*"),
+        ("WPC – Geo Model", "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:*"),
+        ("WPC – Geo Model", "osdu:wks:work-product-component--StratigraphicUnitInterpretation:*"),
+        ("WPC – Wells", "osdu:wks:work-product-component--WellLog:*"),
+        ("WPC – Wells", "osdu:wks:work-product-component--WellboreMarkerSet:*"),
+        ("WPC – Wells", "osdu:wks:work-product-component--WellboreTrajectory:*"),
+        ("WPC – Seismic", "osdu:wks:work-product-component--SeismicBinGrid:*"),
+        ("WPC – Seismic", "osdu:wks:work-product-component--SeismicHorizon:*"),
+        ("WPC – Seismic", "osdu:wks:work-product-component--SeismicTraceData:*"),
+        ("WPC – Collections", "osdu:wks:work-product-component--CollaborationProjectCollection:*"),
+        ("WPC – Collections", "osdu:wks:work-product-component--Document:*"),
+        ("WPC – Collections", "osdu:wks:work-product-component--PersistedCollection:*"),
     ]
-    return [{"kind": k, "label": re.sub(r"^.*--", "", k).replace(":*", "")} for k in _KINDS]
+    return [
+        {"kind": k, "label": re.sub(r"^.*--", "", k).replace(":*", ""), "group": g}
+        for g, k in _KINDS_GROUPED
+    ]
 
 
 def _collect_refdata_kinds() -> List[Dict[str, Any]]:

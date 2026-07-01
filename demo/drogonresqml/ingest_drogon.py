@@ -48,6 +48,40 @@ DATASPACE_OVERRIDE = {}
 EPC_FILE = SCRIPT_DIR / "drogon.epc"
 IMAGE_SSL = "osdu-etp-sslclient"
 
+# Drogon project CRS: WGS84 / UTM zone 37N (EPSG:32637) – synthetic model
+# Grid: origin (456064, 5926551), 572×645 nodes at 20m
+# WGS84 bounding box (computed via pyproj from UTM extent)
+DROGON_CRS_ID = "reference-data--CoordinateReferenceSystem:BoundCRS.SLB.32637.15851:"
+DROGON_SPATIAL_AREA_WGS84 = {
+    "Wgs84Coordinates": {
+        "type": "Polygon",
+        "coordinates": [[[38.3360, 53.4861], [38.5102, 53.4869],
+                         [38.5089, 53.6029], [38.3360, 53.6020],
+                         [38.3360, 53.4861]]]
+    }
+}
+DROGON_CRS_META = {
+    "kind": "CRS",
+    "name": "WGS 84 / UTM zone 37N",
+    "persistableReference": (
+        '{"authCode":{"auth":"EPSG","code":"32637"},'
+        '"type":"LBC","ver":"PE_10_9_1",'
+        '"name":"WGS_1984_UTM_Zone_37N",'
+        '"wkt":"PROJCS[\\"WGS_1984_UTM_Zone_37N\\",'
+        'GEOGCS[\\"GCS_WGS_1984\\",DATUM[\\"D_WGS_1984\\",'
+        'SPHEROID[\\"WGS_1984\\",6378137.0,298.257223563]],'
+        'PRIMEM[\\"Greenwich\\",0.0],'
+        'UNIT[\\"Degree\\",0.0174532925199433]],'
+        'PROJECTION[\\"Transverse_Mercator\\"],'
+        'PARAMETER[\\"False_Easting\\",500000.0],'
+        'PARAMETER[\\"False_Northing\\",0.0],'
+        'PARAMETER[\\"Central_Meridian\\",39.0],'
+        'PARAMETER[\\"Scale_Factor\\",0.9996],'
+        'PARAMETER[\\"Latitude_Of_Origin\\",0.0],'
+        'UNIT[\\"Meter\\",1.0]]"}'
+    ),
+}
+
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Instance config loader
@@ -239,11 +273,22 @@ def verify_import(token: str, cfg: InstanceConfig) -> bool:
 def load_manifest(cfg: InstanceConfig) -> dict:
     """Load the pre-built comprehensive manifest and re-partition it."""
     print(f"\n=== 5. Load manifest ===")
-    src = SCRIPT_DIR / "manifest_full_opendes.json"
-    if not src.exists():
-        print(f"  ⚠ {src.name} not found, running build_full_manifest.py...")
+    # Try instance-specific first, then generic opendes base
+    candidates = [
+        SCRIPT_DIR / f"manifest_full_{cfg.partition}.json",
+        SCRIPT_DIR / f"manifest_full_{cfg.name}.json",
+        SCRIPT_DIR / "manifest_full_opendes.json",
+    ]
+    src = None
+    for c in candidates:
+        if c.exists():
+            src = c
+            break
+    if not src:
+        print(f"  ⚠ No pre-built manifest found, running build_full_manifest.py...")
         subprocess.run([sys.executable, str(SCRIPT_DIR / "build_full_manifest.py")],
                        check=True)
+        src = candidates[0] if candidates[0].exists() else candidates[-1]
     manifest = json.loads(src.read_text())
     data = manifest.get("Data", {})
     total = sum(len(v) for v in data.values() if isinstance(v, list))
@@ -328,6 +373,73 @@ def patch_manifest(manifest: dict, cfg: InstanceConfig) -> dict:
             patched += 1
 
     print(f"  Patched {patched} records → partition={cfg.partition}, legal={cfg.legal_tag}")
+    return manifest
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 6b. Enrich manifest with CRS + spatial (for bounding-box search)
+# ═══════════════════════════════════════════════════════════════════════════
+
+# WPC kinds that represent spatial objects (grids, surfaces, trajectories)
+_SPATIAL_KINDS = frozenset([
+    "StructureMap", "GenericRepresentation", "GenericBinGrid",
+    "IjkGridRepresentation", "HorizonControlPoints", "HorizonInterpretation",
+    "SeismicBinGrid", "SeismicHorizon", "SeismicTraceData",
+    "WellboreTrajectory", "WellboreMarkerSet", "WellLog",
+    "PointSetRepresentation", "PolylineSetRepresentation",
+    "GridConnectionSetRepresentation", "Grid2dRepresentation",
+    "LocalBoundaryFeature",
+])
+
+
+def enrich_spatial(manifest: dict, cfg: InstanceConfig) -> dict:
+    """Add SpatialArea + CRS metadata to WPC records for bounding-box search.
+
+    The RDDMS manifest builder generates records without spatial metadata.
+    This post-processing step adds the Drogon project WGS84 bounding box
+    and fills the empty CRS persistableReference so that OSDU ingestion
+    can index the records for spatial queries.
+    """
+    print(f"\n=== 6b. Enrich spatial metadata ===")
+    data = manifest.get("Data", {})
+    patched = 0
+
+    crs_ref_id = f"{cfg.partition}:{DROGON_CRS_ID}"
+
+    for section in data.values():
+        if not isinstance(section, list):
+            continue
+        for rec in section:
+            kind = rec.get("kind", "")
+            rec_data = rec.get("data")
+            if not rec_data:
+                continue
+
+            # Determine if this is a spatial WPC
+            is_spatial = any(sk in kind for sk in _SPATIAL_KINDS)
+            if not is_spatial:
+                continue
+
+            # Add SpatialArea if missing
+            if "SpatialArea" not in rec_data:
+                rec_data["SpatialArea"] = DROGON_SPATIAL_AREA_WGS84
+                patched += 1
+
+            # Add/fix CRS reference if missing or only internal
+            if "CoordinateReferenceSystemID" not in rec_data:
+                rec_data["CoordinateReferenceSystemID"] = crs_ref_id
+
+            # Fix empty meta CRS persistableReference
+            meta = rec.get("meta")
+            if isinstance(meta, list):
+                for m in meta:
+                    if m.get("kind") == "CRS" and not m.get("persistableReference"):
+                        m["persistableReference"] = DROGON_CRS_META["persistableReference"]
+            elif meta is None:
+                rec["meta"] = [DROGON_CRS_META]
+
+    print(f"  ✓ {patched} records enriched with SpatialArea (WGS84 bbox)")
+    print(f"    CRS: {DROGON_CRS_ID}")
     return manifest
 
 
@@ -481,6 +593,9 @@ def main():
 
     # ── Patch for target ──
     manifest = patch_manifest(manifest, cfg)
+
+    # ── Enrich spatial metadata (CRS + WGS84 bbox) ──
+    manifest = enrich_spatial(manifest, cfg)
 
     # ── Summary ──
     data = manifest.get("Data", {})

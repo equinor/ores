@@ -311,10 +311,11 @@ async def _build_rddms_manifest(
     else:
         body_uris = [f"eml:///dataspace('{dataspace}')"]
 
+    # RDDMS manifests/build only accepts 'uris' and 'createMissingReferences'.
+    # ACL and legal tags are NOT accepted by this endpoint (400 error if included).
+    # They must be applied to records AFTER manifest build, during ingest.
     body = {
         "uris": body_uris,
-        "acl": {"owners": owners, "viewers": viewers},
-        "legal": {"legaltags": [legal_tag], "otherRelevantDataCountries": countries},
         "createMissingReferences": create_missing_refs,
     }
 
