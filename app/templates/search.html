@@ -2058,7 +2058,8 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
               <b>Linked objects</b>
               {# ── Group links by role category ── #}
               {% set ns_links = namespace(
-                  activities=[], risks=[], params=[], parents=[], refs=[], rev=[]
+                  activities=[], risks=[], params=[], parents=[], refs=[], rev=[],
+                  evidence=[], projects=[]
               ) %}
               {% for l in rec.links or [] %}
                 {% if l.id not in (rec.ancestry_parents or []) and l.id not in (rec.ancestry_children or []) %}
@@ -2066,6 +2067,10 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
                     {% set ns_links.activities = ns_links.activities + [l] %}
                   {% elif l.role == 'risk' %}
                     {% set ns_links.risks = ns_links.risks + [l] %}
+                  {% elif l.role == 'evidence' %}
+                    {% set ns_links.evidence = ns_links.evidence + [l] %}
+                  {% elif l.role == 'project' %}
+                    {% set ns_links.projects = ns_links.projects + [l] %}
                   {% elif l.role == 'parameter-object' %}
                     {% set ns_links.params = ns_links.params + [l] %}
                   {% elif l.role in ('parent-work-product', 'parent-object') %}
@@ -2099,6 +2104,8 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
               {% endmacro %}
 
               {{ link_group('Activities', ns_links.activities, '⚙') }}
+              {{ link_group('Evidence & Collections', ns_links.evidence, '📎') }}
+              {{ link_group('Collaboration Projects', ns_links.projects, '🏗') }}
               {{ link_group('Parameters & Inputs', ns_links.params, '📋') }}
               {{ link_group('Risks', ns_links.risks, '⚠') }}
               {{ link_group('Parent Objects', ns_links.parents, '📦') }}
