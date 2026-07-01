@@ -336,21 +336,15 @@
         });
       }
 
-      // Browse results
+      // Browse results (paginated)
       if (d.resqmlObjects) {
         html += `<div style="margin-bottom:8px;padding:8px 12px;background:#f3e5f5;border-radius:4px;border-left:4px solid #9c27b0;font-size:13px;">
           <strong>${d.resqmlObjects.length}</strong> objects found
         </div>`;
-        d.resqmlObjects.forEach(obj => {
-          const tShort = (obj.typeName || '').replace(/^resqml\d+\.obj_/, '');
-          const cat = (_refData.resqmlTypes.find(t => t.name === obj.typeName) || {}).category || '';
-          const colors = TYPE_COLORS[cat] || DEFAULT_COLOR;
-          html += `<div style="margin-bottom:6px;padding:8px 12px;background:${colors.bg};border:1px solid ${colors.border};border-radius:4px;display:flex;align-items:center;gap:10px;">
-            <span style="font-size:11px;font-family:monospace;color:#605e5c;user-select:all;flex-shrink:0;">${esc(obj.uuid)}</span>
-            <strong style="color:${colors.fg};">${esc(obj.title)}</strong>
-            <span class="tag" style="background:${colors.bg};color:${colors.fg};border:1px solid ${colors.border};">${tShort}</span>
-          </div>`;
-        });
+        html += '<div id="ez-browse-cards"></div>';
+        if (d.resqmlObjects.length > 50) {
+          html += '<div id="ez-browse-pager" style="display:flex;align-items:center;gap:12px;margin:8px 0;font-size:13px;"></div>';
+        }
       }
 
       // Relation results
@@ -376,6 +370,41 @@
       }
 
       container.innerHTML = html || '<p class="muted">Query returned no renderable results. Check JSON tab for raw output.</p>';
+
+      // Paginate browse cards
+      if (d.resqmlObjects && d.resqmlObjects.length > 0) {
+        var BROWSE_PAGE = 50;
+        var browseContainer = document.getElementById('ez-browse-cards');
+        var browsePager = document.getElementById('ez-browse-pager');
+        var browsePage = 0;
+        var objs = d.resqmlObjects;
+        function renderBrowsePage() {
+          var start = browsePage * BROWSE_PAGE;
+          var end = Math.min(start + BROWSE_PAGE, objs.length);
+          var h = '';
+          for (var i = start; i < end; i++) {
+            var obj = objs[i];
+            var tShort = (obj.typeName || '').replace(/^(resqml|eml)\d+\.obj_/, '');
+            var cat = (_refData.resqmlTypes.find(function(t){ return t.name === obj.typeName; }) || {}).category || '';
+            var colors = TYPE_COLORS[cat] || DEFAULT_COLOR;
+            h += '<div style="margin-bottom:6px;padding:8px 12px;background:' + colors.bg + ';border:1px solid ' + colors.border + ';border-radius:4px;display:flex;align-items:center;gap:10px;">' +
+              '<span style="font-size:11px;font-family:monospace;color:#605e5c;user-select:all;flex-shrink:0;">' + esc(obj.uuid) + '</span>' +
+              '<strong style="color:' + colors.fg + ';">' + esc(obj.title) + '</strong>' +
+              '<span class="tag" style="background:' + colors.bg + ';color:' + colors.fg + ';border:1px solid ' + colors.border + ';">' + tShort + '</span>' +
+              '</div>';
+          }
+          if (browseContainer) browseContainer.innerHTML = h;
+          if (browsePager) {
+            var pages = Math.ceil(objs.length / BROWSE_PAGE);
+            browsePager.innerHTML = '<button onclick="window.__ezBrowsePrev()"' + (browsePage <= 0 ? ' disabled' : '') + ' style="padding:2px 10px;cursor:pointer;">&#8249; Prev</button>' +
+              '<span>Showing ' + (start + 1) + '–' + end + ' of ' + objs.length + '</span>' +
+              '<button onclick="window.__ezBrowseNext()"' + (browsePage >= pages - 1 ? ' disabled' : '') + ' style="padding:2px 10px;cursor:pointer;">Next &#8250;</button>';
+          }
+        }
+        window.__ezBrowsePrev = function() { if (browsePage > 0) { browsePage--; renderBrowsePage(); } };
+        window.__ezBrowseNext = function() { var pages = Math.ceil(objs.length / BROWSE_PAGE); if (browsePage < pages - 1) { browsePage++; renderBrowsePage(); } };
+        renderBrowsePage();
+      }
 
       // Check for 3D-renderable objects and show "Show 3D Results" button
       const renderableObjs = extractRenderableObjects(data);

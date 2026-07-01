@@ -788,6 +788,8 @@ def auto_preprocess(
     well_list,
     environment: "str | None" = None,
     gr_name: str = "GR",
+    steps: "list | None" = None,
+    resample_interval: float = 1.0,
 ) -> dict:
     """AI-driven preprocessing: auto-detect geological setting and apply
     the optimal conditioning steps.
@@ -803,6 +805,14 @@ def auto_preprocess(
         Override auto-detection (e.g. "shallow_marine", "fluvial_deltaic").
     gr_name : str
         Name of the GR log for GR-based transforms.
+    steps : list, optional
+        Explicit list of step names to apply (e.g. ["resample", "normalise",
+        "vshale", "smooth", "stacking", "log_qc", "electrofacies",
+        "ai_facies"]).  When provided, only these steps run regardless of
+        the auto-detected recommendation.
+    resample_interval : float
+        Downsample interval (every N-th sample) when "resample" is in
+        *steps*.  Ignored when steps is None.
 
     Returns
     -------
@@ -822,6 +832,26 @@ def auto_preprocess(
         "errors": [],
         "recommendation": rec,
     }
+
+    # When explicit steps are given, override the recommendation flags
+    if steps is not None:
+        step_set = {s.lower().replace("-", "_") for s in steps}
+        rec.normalise = "normalise" in step_set or "normalize" in step_set
+        rec.vshale = "vshale" in step_set
+        rec.stacking_pattern = "stacking" in step_set or "stacking_pattern" in step_set
+        rec.smooth = "smooth" in step_set
+        rec.log_qc = "log_qc" in step_set or "logqc" in step_set
+        rec.electrofacies = "electrofacies" in step_set
+        rec.ai_facies = "ai_facies" in step_set or "aifacies" in step_set
+
+        # Resample (not part of the recommendation tree)
+        if "resample" in step_set:
+            interval = max(1, int(resample_interval))
+            for w in well_list.wells:
+                if hasattr(w, "resample"):
+                    w.resample(interval)
+            result["steps_applied"].append(
+                f"resample(interval={interval})")
 
     # Resolve GR name from data
     data_names = well_list.get_data_names()
