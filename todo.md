@@ -1,8 +1,14 @@
+
+
+
+
 - admin.html Ingest failed: Manifest from selected objects incl. references
     URI=eml:///dataspace('maap/drogon')/resqml20.obj_Grid2dRepresentation('de0d1e85-344a-44f4-9c3f-ea4e2f75dfb7') · refs=3 (sources 1, targets 2, CRS 0)
     Build manifest
     Ingest
     Build failed after 1.4s: 400 : ['property acl should not exist', 'property legal should not exist']
+
+- the ingested structuremaps and genericprepresentation maps have now crs and std osdu location metadata? (i think they need this in osdu to be in the catalog for bounding box search?) 
 
 
 - when listing objects in keys.html and admin.html pages
@@ -16,9 +22,24 @@ it's long, can we make sections of grouped types like wpc masterdata dataset for
 - loading many objects like 200+ in global search freezes the browser we may load and cache just the content of the first 50, or create a list of 50 and next arrow for next previous 50- find useful way cache memory. so we need pagination with arrows on all object lists: in keys.html and global search.html
 - pagination could also be useful for all searches for objects in rddms, in keys html and admin html, in various sections 
 
+- drogon vds ingestion to osdu interop fails still. /home/maap/ores/demo/drogonresqml/src/vds
+   /home/maap/ores/demo/drogonresqml/ingest_seismic_vds.py
+   the schema is not correct, and the vds file not uploaded. cannot find the VDS dataset that is linked from the above WPC-SeismicTraceData,
+    The problem is that opendes:work-product-component--SeismicTraceData:drogon-amp-far-time-20180101 points to the Artefact opendes:dataset--FileCollection.Bluware.OpenVDS:drogon-amplitude-far-time-20180101 (still missing the trailing colon). I don't see data.FileCollectionPath though which is how we normally find the sd:// URI that we use to read VDS dataset.  Here's an example from another :{
+      "data": {
+        "CreatorApplication": "SEGYImport",
+        "CreatorApplicationVersion": "3.4.9",
+        "DatasetProperties": {
+          "FileCollectionPath": "sd://opendes/sleipner",    /// <= MISSING THIS 
+          "FileSourceInfos": [
+            {
+              "FileSize": "561666660",
+              "FileSource": "sd://opendes/sleipner/01p07ful.vds"
+I used an online schema validator and it appears that data.FileCollectionPath is required.  See https://www.jsonschemavalidator.net/s/J7GlbIJL
 
-- test the changes add to appropriate /test 
+- ingest data and manifest,  test the changes (all code, manifest gen and ingest) and add to test folder
 
+- weco Data Conditioning Failed: {"detail":"Preprocessing failed: auto_preprocess() got an unexpected keyword argument 'steps'"}
 
 # Changes Summary - ORES Object Listing & Pagination Updates
 
