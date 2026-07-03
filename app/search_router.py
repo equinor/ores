@@ -626,7 +626,7 @@ async def _enrich_record(
     linked_labels: Dict[str, Dict[str, Any]] = {}
     try:
         unique_lids = []
-        for l in links[:25]:
+        for l in links[:200]:
             lid = l.get("id")
             if lid and lid not in linked_labels:
                 unique_lids.append(lid)

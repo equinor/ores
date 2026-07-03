@@ -2110,7 +2110,56 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
               {{ link_group('Risks', ns_links.risks, '⚠') }}
               {{ link_group('Parent Objects', ns_links.parents, '📦') }}
               {{ link_group('Referenced By', ns_links.rev, '↩') }}
-              {{ link_group('Other References', ns_links.refs, '🔗') }}
+
+              {# Group "Other References" by entity type, sorted alphabetically #}
+              {% if ns_links.refs %}
+              {% set ns_typed = namespace(groups={}) %}
+              {% for l in ns_links.refs %}
+                {% set etype = l.id.split('--')[1].split(':')[0] if '--' in l.id else 'Other' %}
+                {% if etype not in ns_typed.groups %}
+                  {% set _ = ns_typed.groups.update({etype: []}) %}
+                {% endif %}
+                {% set _ = ns_typed.groups[etype].append(l) %}
+              {% endfor %}
+              {% for etype in ns_typed.groups.keys()|sort %}
+                {% set items = ns_typed.groups[etype] %}
+                <div style="margin-top:.5rem;">
+                  <div style="font-size:.78rem;font-weight:600;color:#4a5568;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.2rem;">🔗 {{ etype }} <span class="muted" style="font-weight:400;">({{ items|length }})</span></div>
+                  <ul style="margin:0;padding-left:1.2rem;">
+                    {% set ns_sorted = namespace(decorated=[]) %}
+                    {% for l in items %}
+                      {% set info = (rec.linked_labels or {}).get(l.id, {}) %}
+                      {% set short_id = l.id.split(':')[-2] if l.id.count(':') >= 3 else (l.id.split(':')[-1] if ':' in l.id else l.id) %}
+                      {% set link_label = info.name if info.name else (etype ~ ': ' ~ short_id) %}
+                      {% set _ = ns_sorted.decorated.append({'label': link_label, 'id': l.id, 'role': l.role|default('ref'), 'info': info}) %}
+                    {% endfor %}
+                    {% set sorted_items = ns_sorted.decorated|sort(attribute='label') %}
+                    {% set collapse_threshold = 6 %}
+                    {% for item in sorted_items[:collapse_threshold] %}
+                      <li>
+                        <a href="/search/view/{{ item.id }}" title="{{ item.role }}{% if item.info.kind %} · {{ item.info.kind }}{% endif %}">{{ item.label }}</a>
+                        {% if item.info.kind and item.info.name %}<span class="muted" style="font-size:.75rem;">{{ item.info.kind.split('--')[-1].split(':')[0] }}</span>{% endif %}
+                      </li>
+                    {% endfor %}
+                    {% if sorted_items|length > collapse_threshold %}
+                    <li style="list-style:none;margin-left:-1.2rem;">
+                      <details style="margin-top:.2rem;">
+                        <summary style="cursor:pointer;font-size:.78rem;color:#3182ce;">Show {{ sorted_items|length - collapse_threshold }} more…</summary>
+                        <ul style="margin:.2rem 0 0 1.2rem;padding:0;">
+                          {% for item in sorted_items[collapse_threshold:] %}
+                            <li>
+                              <a href="/search/view/{{ item.id }}" title="{{ item.role }}{% if item.info.kind %} · {{ item.info.kind }}{% endif %}">{{ item.label }}</a>
+                              {% if item.info.kind and item.info.name %}<span class="muted" style="font-size:.75rem;">{{ item.info.kind.split('--')[-1].split(':')[0] }}</span>{% endif %}
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </details>
+                    </li>
+                    {% endif %}
+                  </ul>
+                </div>
+              {% endfor %}
+              {% endif %}
 
               {% if not (rec.links or []) %}<div class="muted" style="margin-top:.3rem;">No linked objects.</div>{% endif %}
             </div>
