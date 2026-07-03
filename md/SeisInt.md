@@ -185,9 +185,11 @@ Workflow suffixes: `_interp` (initial), `_filter` (QC'd), `_filter_from_time` (d
 | RESQML | OSDU field | Mapped? |
 |---|---|---|
 | `Title` | `data.Name` | ✓ |
-| `Originator` | `data.Source` | Partial |
+| `Originator` | `data.Source` | ✓ |
+| `Originator` | `data.Interpreter` | ✓ (SeismicHorizon, SeismicFault — native schema field) |
+| `Originator` | `data.ExtensionProperties.Interpreter` | ✓ (StructureMap — no native field) |
 | `Creation` | `ResourceCreationDateTime` | Available |
-| `Format` | (authoring software) | Not mapped |
+| `Format` | `data.ExtensionProperties.AuthoringSoftware` | ✓ |
 
 ### Interpretation link
 

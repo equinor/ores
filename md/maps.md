@@ -764,7 +764,25 @@ Ask the vendor to define and document the mapping precedence:
 
 ---
 
-## 17. Final Recommendation
+## 17. RDDMS Extension Properties for Round-Trip Fidelity
+
+RDDMS now preserves additional RESQML Citation metadata in OSDU `ExtensionProperties`, enabling faithful round-trip re-ingest:
+
+| RESQML field | OSDU ExtensionProperties key | Scope |
+|---|---|---|
+| `Citation.Format` | `AuthoringSoftware` | All WPCs (base class) |
+| `Citation.Originator` | `Interpreter` | StructureMap, SeismicHorizon |
+
+Additionally, RDDMS manifest export now includes `*Property` objects by default (via `DEFAULT_DATASPACE_TYPE_PATTERNS`), ensuring that `GenericProperty` / `ContinuousProperty` records on grids are captured in manifests alongside their parent representations.
+
+These changes mean that:
+- attribute maps stored as properties on grids will appear in manifests automatically;
+- re-ingested manifests can restore the original authoring tool and interpreter identity;
+- round-trip workflows (export → QC → re-ingest) preserve provenance metadata.
+
+---
+
+## 18. Final Recommendation
 
 For grid-linked properties from OpenWorks / DSIS:
 
