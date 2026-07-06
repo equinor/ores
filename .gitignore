@@ -28,7 +28,7 @@ weco_deploy_key.pub
 *.log
 out.txt
 
-# ── Project-specific ignores ──
+# Project-specific ignores 
 tmp/
 test/_pg_vs_rest_output
 demo/eqn/
