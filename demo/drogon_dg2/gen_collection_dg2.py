@@ -166,6 +166,14 @@ def main():
     # WellboreMarkerSets (formation tops per wellbore)
     _add_all(args.markers)
 
+    # Seismic (SeismicBinGrid + SeismicTraceData WPCs) – IDs use target prefix
+    seismic_ids = [
+        f"{pfx}:work-product-component--SeismicBinGrid:drogon-seismic-bingrid",
+        f"{pfx}:work-product-component--SeismicTraceData:drogon-amp-far-time-20180101",
+        f"{pfx}:work-product-component--SeismicTraceData:drogon-amp-near-time-20180101",
+    ]
+    components.extend(seismic_ids)
+
     # GeoLabelSet (generated separately, added by ID)
     if args.geolabelset_id:
         components.append(args.geolabelset_id)
@@ -203,6 +211,7 @@ def main():
                 "production forecast, development concept, grid model (IjkGrid + 10 properties), "
                 "structure maps (49 surfaces), simulator tables (relperm, PVT, summary, "
                 "well completions, group tree), polygons (fault lines, outlines), "
+                "seismic (SeismicBinGrid + SeismicTraceData far/near with OpenVDS), "
                 "activity chain, risks, documents, wells + wellbores, "
                 "lithostratigraphic column, wellbore marker sets, "
                 "GeoLabelSet, and RDDMS dataspace reference. "
@@ -213,6 +222,7 @@ def main():
                 "DG2",
                 "Drogon",
                 "EvidencePackage",
+                "Seismic",
                 "Stratigraphy",
                 "WellboreMarkerSet",
                 "Wells",
