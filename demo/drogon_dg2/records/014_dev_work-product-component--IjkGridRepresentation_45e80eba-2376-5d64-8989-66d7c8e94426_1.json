@@ -1,0 +1,61 @@
+{
+  "id": "dev:work-product-component--IjkGridRepresentation:45e80eba-2376-5d64-8989-66d7c8e94426:1",
+  "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 - Geogrid (static geomodel)",
+    "Description": "Corner-point grid exported from RMS (fmu-drogon tutorial 26.0.0). 92×146×69 cells, 3 zones (Valysar k0-19, Therys k20-53, Volon k54-68), 7 reservoir segments. Grid geometry stored in RDDMS dataspace (maap/drogon_dg). Standard result: grid_model_static.",
+    "Ni": 92,
+    "Nj": 146,
+    "Nk": 69,
+    "KDirection": "down",
+    "Handedness": "right",
+    "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
+    "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "DDMSDatasets": [
+      "eml:///dataspace('maap/drogon_dg')/resqml22.IjkGridRepresentation('45e80eba-2376-5d64-8989-66d7c8e94426')"
+    ],
+    "Zones": [
+      {
+        "Name": "Valysar",
+        "KStart": 0,
+        "KEnd": 19
+      },
+      {
+        "Name": "Therys",
+        "KStart": 20,
+        "KEnd": 53
+      },
+      {
+        "Name": "Volon",
+        "KStart": 54,
+        "KEnd": 68
+      }
+    ],
+    "StandardResult": "grid_model_static",
+    "FMU": {
+      "CaseName": "drogon_design",
+      "DataioVersion": "2.23",
+      "SchemaVersion": "0.19.0",
+      "Content": "grid"
+    },
+    "data.ancestry.inputs": [
+      "dev:dataset--ETPDataspace:maap-drogon_dg:1"
+    ]
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "id": "dev:work-product-component--StructureMap:84101b9a-c354-5911-a219-149a357c75fb:1",
+  "kind": "osdu:wks:work-product-component--StructureMap:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 - msl--ds_extract_geogrid",
+    "Description": "Grid-extracted depth surface for MSL (ds_extract_geogrid)",
+    "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
+    "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "NodeCountOnIAxis": 280,
+    "NodeCountOnJAxis": 440,
+    "BinWidthOnIaxis": 25.0,
+    "BinWidthOnJaxis": 25.0,
+    "DDMSDatasets": [
+      "eml:///dataspace('maap/drogon_dg')/resqml22.Grid2dRepresentation('84101b9a-c354-5911-a219-149a357c75fb')"
+    ],
+    "FMU": {
+      "Content": "depth",
+      "PropertyAttribute": "depth",
+      "StratigraphicReference": "MSL",
+      "StandardResult": "grid_extracted_depth_surface"
+    },
+    "DomainTypeID": "dev:reference-data--DomainType:Depth:",
+    "HorizonName": "MSL",
+    "FacetIDs": [
+      "dev:reference-data--FacetType:statistics:",
+      "dev:reference-data--FacetRole:P50:"
+    ],
+    "data.ancestry.inputs": [
+      "dev:work-product-component--IjkGridRepresentation:45e80eba-2376-5d64-8989-66d7c8e94426:1",
+      "dev:dataset--ETPDataspace:maap-drogon_dg:1"
+    ]
+  }
+}

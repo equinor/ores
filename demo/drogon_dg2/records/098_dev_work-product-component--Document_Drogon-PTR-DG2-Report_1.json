@@ -1,0 +1,26 @@
+{
+  "id": "dev:work-product-component--Document:Drogon-PTR-DG2-Report:1",
+  "kind": "osdu:wks:work-product-component--Document:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon - Petroleum Technology Report (PTR) DG2",
+    "Description": "Petroleum Technology Report for DG2 Concept Select. Covers geomodelling (250 FMU realisations, one-by-one sensitivity design), APS facies model with seismic conditioning, 92×146×69 simulation grid (10 properties: PHIT, KLOGH, KV, SW, SWL, SG, VSH, FACIES, REGION, ZONE), OPM Flow dynamic simulation with history matching. Observation data used for calibration: BHP (6 wells × 3 dates), WWCT and WGOR time-series (4 producers, 10 points each), PLT zone-level rates (A3–A6 at Aug 2019), RFT pressure profiles (R_A2–R_A6), 4D seismic amplitude maps (2018→2020), and 2 water tracers (WT1, WT2). Volumetric uncertainty (P10/P50/P90 STOIIP and recoverable) across 7 regions.",
+    "DocumentType": "PTR",
+    "DocumentDate": "2026-02-20"
+  }
+}

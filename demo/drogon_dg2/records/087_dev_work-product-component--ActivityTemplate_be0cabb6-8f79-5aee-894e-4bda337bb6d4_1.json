@@ -1,0 +1,325 @@
+{
+  "id": "dev:work-product-component--ActivityTemplate:be0cabb6-8f79-5aee-894e-4bda337bb6d4:1",
+  "kind": "osdu:wks:work-product-component--ActivityTemplate:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon - Full FMU Workflow Template (ERT → RMS → OPM Flow)",
+    "Description": "Comprehensive ActivityTemplate for the Drogon FMU reservoir model. Captures the complete input-to-output pipeline for one decision gate: seismic + horizons + wells + stratigraphy + uncertainty distributions → ERT orchestration (DESIGN2PARAMS → RMS MAIN → OPM Flow) → volumes, production profiles, maps, grid properties. Based on the official equinor/fmu-drogon tutorial model (24.3.1). 250 realisations, one-by-one sensitivity design.",
+    "Originator": "markuslund.vevle@emerson.com",
+    "ParameterTemplates": [
+      {
+        "Title": "SeismicData",
+        "Description": "3D/4D seismic interpretation data used for facies conditioning (near/far offset, amplitude/RelAI). Static 3D vintage and 3 monitor 4D surveys.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "Horizons",
+        "Description": "Structural horizon surfaces: TopVolantis, TopTherys, TopVolon, BaseVolantis. Input to RMS structural model and Eclipse grid.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "StratigraphicColumn",
+        "Description": "Stratigraphic column defining the Volantis Group: Valysar Fm, Therys Fm, Volon Fm. Used for zone definitions and facies grouping.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "Wells",
+        "Description": "Well data: appraisal (55_33-1), producers (A1-A4), injectors (A5-A6), RFT reference (R_A2..R_A6). Includes trajectories, logs, completions.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "ReservoirProperties",
+        "Description": "Reference petrophysical properties per formation and facies: porosity, permeability, Kv/Kh, J-functions, PVT, fluid contacts per region.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "FaultModel",
+        "Description": "Fault framework with 7 regions and fault seal scaling (LOGUNIF 0.1–10). Includes multregt template.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "Observations",
+        "Description": "History matching observations: WBHP, RFT, WCT, GOR, tracers, 4D seismic, PLT data.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "ErtConfig",
+        "Description": "ERT configuration: drogon_design.ert defining the full forward model chain, LSF queue settings, random seed, and run parameters.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string",
+        "DefaultParameterRole": "Workflow"
+      },
+      {
+        "Title": "DesignMatrix",
+        "Description": "Design matrix Excel file (design_matrix_one_by_one.xlsx): DesignSheet01 with one-by-one sensitivity layout, DefaultValues sheet.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string",
+        "DefaultParameterRole": "Workflow"
+      },
+      {
+        "Title": "UncertaintyParameters",
+        "Description": "Uncertainty parameter distributions from global_variables.dist: Kv/Kh, FWL, GOC, fault seal, relperm interpolation, APS facies probabilities.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string",
+        "DefaultParameterRole": "Workflow"
+      },
+      {
+        "Title": "ModelSwitches",
+        "Description": "Model alternative switches: DCONV, HUM, PETROMODEL, FACIESMODEL, seismic conditioning, facies belts.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string",
+        "DefaultParameterRole": "Workflow"
+      },
+      {
+        "Title": "FmuConfig",
+        "Description": "fmuconfig global_variables.yml: complete model parameterisation including dates, seismic paths, grids, regions, facies, petro constants, J-functions, relperm.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string",
+        "DefaultParameterRole": "Workflow"
+      },
+      {
+        "Title": "ForwardModelChain",
+        "Description": "Ordered list of ERT forward models: DESIGN2PARAMS → DESIGN_KW → RMS → ECLCOMPRESS → OPM_FLOW → export_tables → export_maps → export_ecl_roff → sim2seis.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string",
+        "DefaultParameterRole": "Workflow"
+      },
+      {
+        "Title": "NumberOfRealizations",
+        "Description": "Number of realisations (250 for one-by-one design).",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "integer",
+        "DefaultParameterRole": "Workflow"
+      },
+      {
+        "Title": "RmsProject",
+        "Description": "RMS project and workflow definition: project name, version, workflow (MAIN).",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string",
+        "DefaultParameterRole": "Workflow"
+      },
+      {
+        "Title": "EclipseDataTemplate",
+        "Description": "Eclipse/OPM DATA file template (DROGON_HIST.DATA) with INCLUDEs for grid, props, schedule.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string",
+        "DefaultParameterRole": "Workflow"
+      },
+      {
+        "Title": "HookWorkflows",
+        "Description": "ERT hook workflows: fmuconfig update, fmuobs YAML creation, case metadata via dataio.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string",
+        "DefaultParameterRole": "Workflow"
+      },
+      {
+        "Title": "InputParameterTable",
+        "Description": "OSDU ColumnBasedTable WPC with per-realisation input parameters (OWC depths + porosity).",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "GeoModelDataspace",
+        "Description": "RDDMS ETP dataspace holding the Drogon geomodel EPC files (structural model, shared DG1/DG2).",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "OutputParameterTable",
+        "Description": "Generated per-realisation input parameter table (ColumnBasedTable WPC).",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "OutputVolumesRaw",
+        "Description": "Per-realisation reservoir estimated volumes (RAW REV WPC) - by region, zone, and facies.",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "OutputVolumesStats",
+        "Description": "Statistical aggregation P10/P50/P90 of volumes across realisations (STAT REV WPC).",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "OutputProductionForecast",
+        "Description": "Field and well production profiles (rates, cumulatives, pressures) as ColumnBasedTable WPC.",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 1,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "OutputMaps",
+        "Description": "HC thickness maps and average parameter maps (regular surface grids).",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "OutputGridProperties",
+        "Description": "Eclipse grid properties exported to ROFF: restart parameters, init properties.",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "OutputSim2Seis",
+        "Description": "Synthetic seismic computed from simulation results for 4D comparison.",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "OutputWellData",
+        "Description": "RFT pressure data, tracer breakthrough, well completion data.",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "OutputEclipseTables",
+        "Description": "Eclipse-derived tables: saturation functions, PVT, VFP, group tree, summary vectors.",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "string"
+      },
+      {
+        "Title": "VolumeEstimates",
+        "Description": "P50 volume estimates link to statistical REV WPC record.",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "ProductionProfileP50",
+        "Description": "P50 production profile link to ColumnBasedTable WPC with real OPM Flow output.",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "ReservoirRecord",
+        "Description": "OSDU Reservoir master-data record for the Drogon field.",
+        "IsInput": true,
+        "IsOutput": false,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      },
+      {
+        "Title": "DevelopmentConcept",
+        "Description": "DG2 Development Concept WPC record.",
+        "IsInput": false,
+        "IsOutput": true,
+        "MinOccurs": 0,
+        "MaxOccurs": 1,
+        "DefaultParameterKind": "DataObject"
+      }
+    ]
+  }
+}

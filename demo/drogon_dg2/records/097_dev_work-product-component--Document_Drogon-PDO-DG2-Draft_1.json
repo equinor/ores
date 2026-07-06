@@ -1,0 +1,26 @@
+{
+  "id": "dev:work-product-component--Document:Drogon-PDO-DG2-Draft:1",
+  "kind": "osdu:wks:work-product-component--Document:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon - Plan for Development and Operation (PDO) DG2 Draft",
+    "Description": "Draft PDO for the Drogon DG2 Concept Select gate. Covers field description (Volantis Group, 3 zones, 7 fault-bounded regions), selected development concept (FPSO, 4 producers + 2 WI wells), STOIIP ≈ 34.5 MSm³, GIIP ≈ 1.0 GSm³ (NorthHorst gas cap, GOC 1640 m). Black-oil model (DISGAS+VAPOIL), ref. pressure 310 bar. Production forecast: peak 14,259 Sm³/d oil (Oct 2018), declining to ~2,900 Sm³/d at RF ~40%. LRAT-controlled prediction with WI at 6,500 Sm³/d per well to Jan 2025. Basis for DG3 FEED scope.",
+    "DocumentType": "PDO",
+    "DocumentDate": "2026-03-01"
+  }
+}

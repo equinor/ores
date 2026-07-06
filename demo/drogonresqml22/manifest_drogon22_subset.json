@@ -1,0 +1,3868 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "Data": {
+    "Datasets": [
+      {
+        "id": "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22",
+        "kind": "osdu:wks:dataset--ETPDataspace:1.0.1",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "maap/drogon22",
+          "Description": "RDDMS dataspace for Drogon RESQML 2.2 demo",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DatasetProperties": {
+            "URI": "eml:///dataspace('maap/drogon22')"
+          },
+          "ResqmlVersion": "2.2"
+        }
+      }
+    ],
+    "MasterData": [
+      {
+        "id": "opendes:master-data--LocalBoundaryFeature:1.1.0:0c402b9f-fa0e-4c36-a08f-37f292115e01",
+        "kind": "osdu:wks:master-data--LocalBoundaryFeature:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "MSL",
+          "Description": "Horizon feature: MSL. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "BoundaryType": "horizon",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(0c402b9f-fa0e-4c36-a08f-37f292115e01)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ]
+        }
+      },
+      {
+        "id": "opendes:master-data--LocalBoundaryFeature:1.1.0:2d66e9f5-f120-43c4-93ca-1c8220846fbb",
+        "kind": "osdu:wks:master-data--LocalBoundaryFeature:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "TopVolantis",
+          "Description": "Horizon feature: TopVolantis. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "BoundaryType": "horizon",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(2d66e9f5-f120-43c4-93ca-1c8220846fbb)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ]
+        }
+      },
+      {
+        "id": "opendes:master-data--LocalBoundaryFeature:1.1.0:49cd1075-1eef-4950-8e50-2bec81ca4275",
+        "kind": "osdu:wks:master-data--LocalBoundaryFeature:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "TopTherys",
+          "Description": "Horizon feature: TopTherys. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "BoundaryType": "horizon",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(49cd1075-1eef-4950-8e50-2bec81ca4275)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ]
+        }
+      },
+      {
+        "id": "opendes:master-data--LocalBoundaryFeature:1.1.0:67349b6a-2004-43ed-94bc-43e90b584aad",
+        "kind": "osdu:wks:master-data--LocalBoundaryFeature:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "BaseVolantis",
+          "Description": "Horizon feature: BaseVolantis. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "BoundaryType": "horizon",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(67349b6a-2004-43ed-94bc-43e90b584aad)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ]
+        }
+      },
+      {
+        "id": "opendes:master-data--LocalBoundaryFeature:1.1.0:6e9dd9ee-bcde-4e49-9fbf-4b7271c055e9",
+        "kind": "osdu:wks:master-data--LocalBoundaryFeature:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "F2",
+          "Description": "Fault feature: F2. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "BoundaryType": "horizon",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(6e9dd9ee-bcde-4e49-9fbf-4b7271c055e9)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ]
+        }
+      },
+      {
+        "id": "opendes:master-data--LocalBoundaryFeature:1.1.0:8ee397de-c017-4d5a-bed3-102475128c0d",
+        "kind": "osdu:wks:master-data--LocalBoundaryFeature:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "F3",
+          "Description": "Fault feature: F3. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "BoundaryType": "horizon",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(8ee397de-c017-4d5a-bed3-102475128c0d)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ]
+        }
+      },
+      {
+        "id": "opendes:master-data--LocalBoundaryFeature:1.1.0:a579fa9b-6e89-411c-aa90-88b1fa58e022",
+        "kind": "osdu:wks:master-data--LocalBoundaryFeature:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "F5",
+          "Description": "Fault feature: F5. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "BoundaryType": "horizon",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(a579fa9b-6e89-411c-aa90-88b1fa58e022)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ]
+        }
+      },
+      {
+        "id": "opendes:master-data--LocalBoundaryFeature:1.1.0:b84423b7-412b-4ad5-a1bb-2e66bbb975fb",
+        "kind": "osdu:wks:master-data--LocalBoundaryFeature:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "F4",
+          "Description": "Fault feature: F4. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "BoundaryType": "horizon",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(b84423b7-412b-4ad5-a1bb-2e66bbb975fb)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ]
+        }
+      },
+      {
+        "id": "opendes:master-data--LocalBoundaryFeature:1.1.0:c2d89ecc-f0a2-4e17-982b-acecf8b0506f",
+        "kind": "osdu:wks:master-data--LocalBoundaryFeature:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "F6",
+          "Description": "Fault feature: F6. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "BoundaryType": "horizon",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(c2d89ecc-f0a2-4e17-982b-acecf8b0506f)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ]
+        }
+      },
+      {
+        "id": "opendes:master-data--LocalBoundaryFeature:1.1.0:d9593949-6e2a-4514-802f-001d0a6c3708",
+        "kind": "osdu:wks:master-data--LocalBoundaryFeature:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "BaseVelmodel",
+          "Description": "Horizon feature: BaseVelmodel. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "BoundaryType": "horizon",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(d9593949-6e2a-4514-802f-001d0a6c3708)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ]
+        }
+      },
+      {
+        "id": "opendes:master-data--LocalBoundaryFeature:1.1.0:e185b471-9f88-446d-b36e-00c77a7cf0b8",
+        "kind": "osdu:wks:master-data--LocalBoundaryFeature:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "TopVolon",
+          "Description": "Horizon feature: TopVolon. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "BoundaryType": "horizon",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(e185b471-9f88-446d-b36e-00c77a7cf0b8)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ]
+        }
+      },
+      {
+        "id": "opendes:master-data--LocalBoundaryFeature:1.1.0:f9578d62-0123-4c9a-bb25-d87ea7c2726d",
+        "kind": "osdu:wks:master-data--LocalBoundaryFeature:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "F1",
+          "Description": "Fault feature: F1. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "BoundaryType": "horizon",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(f9578d62-0123-4c9a-bb25-d87ea7c2726d)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ]
+        }
+      },
+      {
+        "id": "opendes:master-data--Wellbore:1.3.0:50495987-88f4-4e39-95c8-0b2624298c47",
+        "kind": "osdu:wks:master-data--Wellbore:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "55/33-A-1",
+          "Description": "Wellbore 55/33-A-1 - Drogon field",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(50495987-88f4-4e39-95c8-0b2624298c47)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ],
+          "Basin": "Norwegian Continental Shelf"
+        }
+      },
+      {
+        "id": "opendes:master-data--Wellbore:1.3.0:53e2c61e-9ef6-40fc-9d35-7c740287c0ca",
+        "kind": "osdu:wks:master-data--Wellbore:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "55/33-A-2",
+          "Description": "Wellbore 55/33-A-2 - Drogon field",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(53e2c61e-9ef6-40fc-9d35-7c740287c0ca)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ],
+          "Basin": "Norwegian Continental Shelf"
+        }
+      },
+      {
+        "id": "opendes:master-data--Wellbore:1.3.0:5977521b-9f69-4572-906f-4f5e4f8004bc",
+        "kind": "osdu:wks:master-data--Wellbore:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "OP5_Y1",
+          "Description": "Wellbore OP5_Y1 - Drogon field",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(5977521b-9f69-4572-906f-4f5e4f8004bc)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ],
+          "Basin": "Norwegian Continental Shelf"
+        }
+      },
+      {
+        "id": "opendes:master-data--Wellbore:1.3.0:6400c518-246f-41c3-9e0e-ba336ee5b5f1",
+        "kind": "osdu:wks:master-data--Wellbore:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "55/33-1",
+          "Description": "Wellbore 55/33-1 - Drogon field",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(6400c518-246f-41c3-9e0e-ba336ee5b5f1)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ],
+          "Basin": "Norwegian Continental Shelf"
+        }
+      },
+      {
+        "id": "opendes:master-data--Wellbore:1.3.0:66ba7e66-4f87-46ea-9e55-e4b8f1b2c7bc",
+        "kind": "osdu:wks:master-data--Wellbore:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "55/33-A-4",
+          "Description": "Wellbore 55/33-A-4 - Drogon field",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(66ba7e66-4f87-46ea-9e55-e4b8f1b2c7bc)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ],
+          "Basin": "Norwegian Continental Shelf"
+        }
+      },
+      {
+        "id": "opendes:master-data--Wellbore:1.3.0:7e602daa-95cd-4bc6-9950-f389e252d35a",
+        "kind": "osdu:wks:master-data--Wellbore:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "55/33-A-3",
+          "Description": "Wellbore 55/33-A-3 - Drogon field",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(7e602daa-95cd-4bc6-9950-f389e252d35a)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ],
+          "Basin": "Norwegian Continental Shelf"
+        }
+      },
+      {
+        "id": "opendes:master-data--Wellbore:1.3.0:830ae7e3-5f03-43b6-b066-a1977194ff2a",
+        "kind": "osdu:wks:master-data--Wellbore:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "55/33-2",
+          "Description": "Wellbore 55/33-2 - Drogon field",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(830ae7e3-5f03-43b6-b066-a1977194ff2a)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ],
+          "Basin": "Norwegian Continental Shelf"
+        }
+      },
+      {
+        "id": "opendes:master-data--Wellbore:1.3.0:a1f4af0a-934a-483b-b0d7-8dcdbd4ea51a",
+        "kind": "osdu:wks:master-data--Wellbore:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "OP6",
+          "Description": "Wellbore OP6 - Drogon field",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(a1f4af0a-934a-483b-b0d7-8dcdbd4ea51a)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ],
+          "Basin": "Norwegian Continental Shelf"
+        }
+      },
+      {
+        "id": "opendes:master-data--Wellbore:1.3.0:cf76d1a8-fc2b-4f83-afe4-b96cc2bb41b7",
+        "kind": "osdu:wks:master-data--Wellbore:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "OP5_Y2",
+          "Description": "Wellbore OP5_Y2 - Drogon field",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(cf76d1a8-fc2b-4f83-afe4-b96cc2bb41b7)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ],
+          "Basin": "Norwegian Continental Shelf"
+        }
+      },
+      {
+        "id": "opendes:master-data--Wellbore:1.3.0:d3727dbc-0025-407b-89a1-c93337f1fe25",
+        "kind": "osdu:wks:master-data--Wellbore:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "55/33-A-5",
+          "Description": "Wellbore 55/33-A-5 - Drogon field",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(d3727dbc-0025-407b-89a1-c93337f1fe25)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ],
+          "Basin": "Norwegian Continental Shelf"
+        }
+      },
+      {
+        "id": "opendes:master-data--Wellbore:1.3.0:df2828a0-ebb9-4edd-84fb-51c946d57f1d",
+        "kind": "osdu:wks:master-data--Wellbore:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "55/33-3",
+          "Description": "Wellbore 55/33-3 - Drogon field",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(df2828a0-ebb9-4edd-84fb-51c946d57f1d)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ],
+          "Basin": "Norwegian Continental Shelf"
+        }
+      },
+      {
+        "id": "opendes:master-data--Wellbore:1.3.0:e1c757ee-9ad7-4575-9f9c-d15a60e3ef1a",
+        "kind": "osdu:wks:master-data--Wellbore:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "55/33-A-6",
+          "Description": "Wellbore 55/33-A-6 - Drogon field",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(e1c757ee-9ad7-4575-9f9c-d15a60e3ef1a)"
+          ],
+          "FieldNames": [
+            "Drogon"
+          ],
+          "Basin": "Norwegian Continental Shelf"
+        }
+      }
+    ],
+    "WorkProductComponents": [
+      {
+        "id": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+        "kind": "osdu:wks:work-product-component--LocalModelCompoundCrs:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Local Depth CRS",
+          "Description": "Local depth coordinate reference system. Projected CRS: ED50 / UTM zone 37S (EPSG:23037). Vertical: MSL.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.LocalDepth3dCrs(0a0ae03b-aee1-4651-8f11-5433eeda0ec2)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "VerticalDomain": "depth",
+          "ProjectedCrsName": "ED50 / UTM zone 31N",
+          "VerticalCrsName": "MSL (m)"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:96fb7643-0012-4033-8e55-7b1b4652ed33",
+        "kind": "osdu:wks:work-product-component--LocalModelCompoundCrs:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Local Time CRS",
+          "Description": "Local time coordinate reference system. Projected CRS: ED50 / UTM zone 37S (EPSG:23037). Vertical: Two-way time.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.LocalTime3dCrs(96fb7643-0012-4033-8e55-7b1b4652ed33)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "VerticalDomain": "time",
+          "ProjectedCrsName": "ED50 / UTM zone 31N",
+          "VerticalCrsName": "TWT (ms)"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericBinGrid:1.0.0:89cca2ec-262e-5a87-8a7c-b50baae90399",
+        "kind": "osdu:wks:work-product-component--GenericBinGrid:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Drogon Surface Grid (shared lattice)",
+          "Description": "Shared regular grid for all depth and time surfaces",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "NodeCountOnIAxis": 280,
+          "NodeCountOnJAxis": 440,
+          "IncrementOnIAxis": 25.0,
+          "IncrementOnJAxis": 25.0,
+          "OriginX": 461500.0,
+          "OriginY": 5926500.0
+        }
+      },
+      {
+        "id": "opendes:work-product-component--HorizonInterpretation:1.2.0:011ae8ee-bfa5-4804-a675-1f4704b1730c",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "BaseVelmodel",
+          "Description": "Horizon interpretation: BaseVelmodel. Drogon field.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(011ae8ee-bfa5-4804-a675-1f4704b1730c)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "DomainTypeID": "osdu:reference-data--DomainType:Mixed:",
+          "StratigraphicRoleTypeID": "osdu:reference-data--StratigraphicRoleType:Chronostratigraphic:"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--HorizonInterpretation:1.2.0:02e954a9-d7db-4b57-aef7-12b8ebf47a65",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "TopVolantis",
+          "Description": "Horizon interpretation: TopVolantis. Drogon field.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(02e954a9-d7db-4b57-aef7-12b8ebf47a65)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "DomainTypeID": "osdu:reference-data--DomainType:Mixed:",
+          "StratigraphicRoleTypeID": "osdu:reference-data--StratigraphicRoleType:Chronostratigraphic:"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--HorizonInterpretation:1.2.0:3657ca0b-d21f-41ca-801b-4a6a7eb1f426",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "BaseVolantis",
+          "Description": "Horizon interpretation: BaseVolantis. Drogon field.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(3657ca0b-d21f-41ca-801b-4a6a7eb1f426)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "DomainTypeID": "osdu:reference-data--DomainType:Mixed:",
+          "StratigraphicRoleTypeID": "osdu:reference-data--StratigraphicRoleType:Chronostratigraphic:"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--HorizonInterpretation:1.2.0:6c6eeb68-bb4d-4fa4-9eb4-b880b5bd7086",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "TopTherys",
+          "Description": "Horizon interpretation: TopTherys. Drogon field.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(6c6eeb68-bb4d-4fa4-9eb4-b880b5bd7086)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "DomainTypeID": "osdu:reference-data--DomainType:Mixed:",
+          "StratigraphicRoleTypeID": "osdu:reference-data--StratigraphicRoleType:Chronostratigraphic:"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--HorizonInterpretation:1.2.0:7da0e4d7-1955-4031-8eaf-68a93515414d",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "MSL",
+          "Description": "Horizon interpretation: MSL. Drogon field.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(7da0e4d7-1955-4031-8eaf-68a93515414d)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "DomainTypeID": "osdu:reference-data--DomainType:Mixed:",
+          "StratigraphicRoleTypeID": "osdu:reference-data--StratigraphicRoleType:Chronostratigraphic:"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--HorizonInterpretation:1.2.0:db54a781-84ad-41e5-8bdd-c510246375cd",
+        "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "TopVolon",
+          "Description": "Horizon interpretation: TopVolon. Drogon field.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(db54a781-84ad-41e5-8bdd-c510246375cd)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "DomainTypeID": "osdu:reference-data--DomainType:Mixed:",
+          "StratigraphicRoleTypeID": "osdu:reference-data--StratigraphicRoleType:Chronostratigraphic:"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--FaultInterpretation:1.3.0:67eb8600-bc7b-4f34-87ce-ed4c2cb287e8",
+        "kind": "osdu:wks:work-product-component--FaultInterpretation:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "F1",
+          "Description": "Fault interpretation: F1. Drogon field.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.FaultInterpretation(67eb8600-bc7b-4f34-87ce-ed4c2cb287e8)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--FaultInterpretation:1.3.0:79dfdaf9-1781-4908-861a-0773c12b50cb",
+        "kind": "osdu:wks:work-product-component--FaultInterpretation:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "F4",
+          "Description": "Fault interpretation: F4. Drogon field.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.FaultInterpretation(79dfdaf9-1781-4908-861a-0773c12b50cb)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--FaultInterpretation:1.3.0:80f6a885-7eab-4d49-9dce-eac3093ce284",
+        "kind": "osdu:wks:work-product-component--FaultInterpretation:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "F5",
+          "Description": "Fault interpretation: F5. Drogon field.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.FaultInterpretation(80f6a885-7eab-4d49-9dce-eac3093ce284)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--FaultInterpretation:1.3.0:893841bd-2fec-4716-ab0f-032693a152e3",
+        "kind": "osdu:wks:work-product-component--FaultInterpretation:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "F2",
+          "Description": "Fault interpretation: F2. Drogon field.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.FaultInterpretation(893841bd-2fec-4716-ab0f-032693a152e3)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--FaultInterpretation:1.3.0:9396f818-78bf-44af-879d-c82f74816510",
+        "kind": "osdu:wks:work-product-component--FaultInterpretation:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "F6",
+          "Description": "Fault interpretation: F6. Drogon field.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.FaultInterpretation(9396f818-78bf-44af-879d-c82f74816510)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--FaultInterpretation:1.3.0:db9f8a3e-4cca-46bc-8c1e-09fb88c1a3a5",
+        "kind": "osdu:wks:work-product-component--FaultInterpretation:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "F3",
+          "Description": "Fault interpretation: F3. Drogon field.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.FaultInterpretation(db9f8a3e-4cca-46bc-8c1e-09fb88c1a3a5)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--StructuralModel:1.0.0:33978839-0c63-40d2-a2be-346fc3b37eaf",
+        "kind": "osdu:wks:work-product-component--StructuralModel:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Drogon Structural Framework",
+          "Description": "Structural organization combining 6 horizons and 6 faults for the Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StructuralOrganizationInterpretation(33978839-0c63-40d2-a2be-346fc3b37eaf)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "FaultInterpretationIDs": [
+            "opendes:work-product-component--FaultInterpretation:1.3.0:67eb8600-bc7b-4f34-87ce-ed4c2cb287e8",
+            "opendes:work-product-component--FaultInterpretation:1.3.0:79dfdaf9-1781-4908-861a-0773c12b50cb",
+            "opendes:work-product-component--FaultInterpretation:1.3.0:80f6a885-7eab-4d49-9dce-eac3093ce284",
+            "opendes:work-product-component--FaultInterpretation:1.3.0:893841bd-2fec-4716-ab0f-032693a152e3",
+            "opendes:work-product-component--FaultInterpretation:1.3.0:9396f818-78bf-44af-879d-c82f74816510",
+            "opendes:work-product-component--FaultInterpretation:1.3.0:db9f8a3e-4cca-46bc-8c1e-09fb88c1a3a5"
+          ],
+          "HorizonInterpretationIDs": [
+            "opendes:work-product-component--HorizonInterpretation:1.2.0:011ae8ee-bfa5-4804-a675-1f4704b1730c",
+            "opendes:work-product-component--HorizonInterpretation:1.2.0:02e954a9-d7db-4b57-aef7-12b8ebf47a65",
+            "opendes:work-product-component--HorizonInterpretation:1.2.0:3657ca0b-d21f-41ca-801b-4a6a7eb1f426",
+            "opendes:work-product-component--HorizonInterpretation:1.2.0:6c6eeb68-bb4d-4fa4-9eb4-b880b5bd7086",
+            "opendes:work-product-component--HorizonInterpretation:1.2.0:7da0e4d7-1955-4031-8eaf-68a93515414d",
+            "opendes:work-product-component--HorizonInterpretation:1.2.0:db54a781-84ad-41e5-8bdd-c510246375cd"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--LocalModelFeature:1.2.0:79115ac7-01c0-4046-ad69-b3f87fd06c55",
+        "kind": "osdu:wks:work-product-component--LocalModelFeature:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Earth model for Geogrid",
+          "Description": "Structural organisation feature for the Drogon reservoir model.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.Model(79115ac7-01c0-4046-ad69-b3f87fd06c55)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--StructureMap:1.0.0:b1920f99-6252-43b1-a2d7-0d316b8f8107",
+        "kind": "osdu:wks:work-product-component--StructureMap:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Time Surface - Interpreted",
+          "Description": "2D regular grid (surface map) representation: Time Surface - Interpreted. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.Grid2dRepresentation(b1920f99-6252-43b1-a2d7-0d316b8f8107)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "VerticalDomain": "depth",
+          "BinGridID": "opendes:work-product-component--GenericBinGrid:1.0.0:89cca2ec-262e-5a87-8a7c-b50baae90399",
+          "NodeCountOnIAxis": 280,
+          "NodeCountOnJAxis": 440,
+          "IncrementOnIAxis": 25.0,
+          "IncrementOnJAxis": 25.0,
+          "OriginX": 461500.0,
+          "OriginY": 5926500.0
+        }
+      },
+      {
+        "id": "opendes:work-product-component--StructureMap:1.0.0:dbae5c23-e9b0-46bb-b4bc-c243271ae4eb",
+        "kind": "osdu:wks:work-product-component--StructureMap:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Depth Surface - Interpreted",
+          "Description": "2D regular grid (surface map) representation: Depth Surface - Interpreted. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.Grid2dRepresentation(dbae5c23-e9b0-46bb-b4bc-c243271ae4eb)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "VerticalDomain": "depth",
+          "BinGridID": "opendes:work-product-component--GenericBinGrid:1.0.0:89cca2ec-262e-5a87-8a7c-b50baae90399",
+          "NodeCountOnIAxis": 280,
+          "NodeCountOnJAxis": 440,
+          "IncrementOnIAxis": 25.0,
+          "IncrementOnJAxis": 25.0,
+          "OriginX": 461500.0,
+          "OriginY": 5926500.0
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:0fef5933-342a-4a95-9abc-e963b7adeafd",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Fault Sticks (Time)",
+          "Description": "Polyline set: Fault Sticks (Time). Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PolylineSetRepresentation(0fef5933-342a-4a95-9abc-e963b7adeafd)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PolylineSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:3eba1cea-4a3d-4a93-acc0-7f5e765ba8c5",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Fault Sticks (Time)",
+          "Description": "Polyline set: Fault Sticks (Time). Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PolylineSetRepresentation(3eba1cea-4a3d-4a93-acc0-7f5e765ba8c5)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PolylineSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:6cef9e9d-1a5c-492c-bd50-818f872207ca",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Fault Sticks (Time)",
+          "Description": "Polyline set: Fault Sticks (Time). Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PolylineSetRepresentation(6cef9e9d-1a5c-492c-bd50-818f872207ca)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PolylineSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:6f834832-d5fe-4961-bc62-d90b7552bc0a",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Fault Sticks (Time)",
+          "Description": "Polyline set: Fault Sticks (Time). Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PolylineSetRepresentation(6f834832-d5fe-4961-bc62-d90b7552bc0a)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PolylineSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:7beb6e90-8f63-4c28-a93f-71ca27785c90",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Fault Sticks (Time)",
+          "Description": "Polyline set: Fault Sticks (Time). Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PolylineSetRepresentation(7beb6e90-8f63-4c28-a93f-71ca27785c90)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PolylineSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:d93d8f14-049e-44b8-ae60-09f12a9c6710",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Fault Sticks (Time)",
+          "Description": "Polyline set: Fault Sticks (Time). Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PolylineSetRepresentation(d93d8f14-049e-44b8-ae60-09f12a9c6710)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PolylineSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:17831789-e8cc-4830-a8bb-6c6662739a6d",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Extracted Fault Points",
+          "Description": "Point set representation: Extracted Fault Points. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(17831789-e8cc-4830-a8bb-6c6662739a6d)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PointSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:32cc597e-6c56-4a56-af78-953d05453336",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Extracted Fault Points",
+          "Description": "Point set representation: Extracted Fault Points. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(32cc597e-6c56-4a56-af78-953d05453336)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PointSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:38664cf8-7150-426f-82a0-f1386a11bbc8",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Fault Points (Truth Model)",
+          "Description": "Point set representation: Fault Points (Truth Model). Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(38664cf8-7150-426f-82a0-f1386a11bbc8)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PointSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:843c1d3a-c859-43b6-b23b-88e82aa07e23",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Extracted Fault Points",
+          "Description": "Point set representation: Extracted Fault Points. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(843c1d3a-c859-43b6-b23b-88e82aa07e23)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PointSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:a1b80900-06a2-4bb0-82f3-ad9b4ebe96c1",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Extracted Fault Points",
+          "Description": "Point set representation: Extracted Fault Points. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(a1b80900-06a2-4bb0-82f3-ad9b4ebe96c1)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PointSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:e82d77f4-5cbb-4fa5-882b-dda38ef148f6",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Extracted Fault Points",
+          "Description": "Point set representation: Extracted Fault Points. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(e82d77f4-5cbb-4fa5-882b-dda38ef148f6)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PointSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--GenericRepresentation:1.2.0:f3e33c91-2cc7-483a-9b9e-bfa7bbf0e589",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Extracted Fault Points",
+          "Description": "Point set representation: Extracted Fault Points. Drogon field, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(f3e33c91-2cc7-483a-9b9e-bfa7bbf0e589)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "RepresentationType": "PointSet"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--IjkGridRepresentation:1.1.0:2c6de928-7e08-4601-b979-34048bd68c02",
+        "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.1.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Geogrid",
+          "Description": "3D corner-point grid representation of the Drogon reservoir model (Geogrid). Covers the Therys, Valysar and Volon formations, Norwegian Continental Shelf.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.IjkGridRepresentation(2c6de928-7e08-4601-b979-34048bd68c02)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+          "Ni": 92,
+          "Nj": 146,
+          "Nk": 69,
+          "CellCount": 925668
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellboreTrajectory:1.3.0:2656fc33-2e42-479c-8826-a7bbf0239d1b",
+        "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Planned",
+          "Description": "Trajectory for Planned",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(2656fc33-2e42-479c-8826-a7bbf0239d1b)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellboreTrajectory:1.3.0:403b1cd4-056c-43df-ae69-cb6ab1c6c445",
+        "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Drilled trajectory",
+          "Description": "Trajectory for Drilled trajectory",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(403b1cd4-056c-43df-ae69-cb6ab1c6c445)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellboreTrajectory:1.3.0:4800aa84-6290-42b9-82fb-6f2b6f021dea",
+        "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Drilled trajectory",
+          "Description": "Trajectory for Drilled trajectory",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(4800aa84-6290-42b9-82fb-6f2b6f021dea)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellboreTrajectory:1.3.0:50ea6f8c-24b4-4e0f-8633-919b4e279f42",
+        "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Drilled trajectory",
+          "Description": "Trajectory for Drilled trajectory",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(50ea6f8c-24b4-4e0f-8633-919b4e279f42)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellboreTrajectory:1.3.0:652e5d95-034a-4c6b-905e-915887bcb953",
+        "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Planned",
+          "Description": "Trajectory for Planned",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(652e5d95-034a-4c6b-905e-915887bcb953)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellboreTrajectory:1.3.0:8ba77da6-6c54-4fe4-969a-f8366555b3df",
+        "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Drilled trajectory",
+          "Description": "Trajectory for Drilled trajectory",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(8ba77da6-6c54-4fe4-969a-f8366555b3df)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellboreTrajectory:1.3.0:92c9d6a8-9d43-4780-8bfc-532afb066fb6",
+        "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Planned",
+          "Description": "Trajectory for Planned",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(92c9d6a8-9d43-4780-8bfc-532afb066fb6)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellboreTrajectory:1.3.0:9b20558b-06fc-418a-b13a-bfa5bd46b0d2",
+        "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Drilled trajectory",
+          "Description": "Trajectory for Drilled trajectory",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(9b20558b-06fc-418a-b13a-bfa5bd46b0d2)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellboreTrajectory:1.3.0:a6edb5b1-ba51-46c8-9494-ad0b47aa00d0",
+        "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Drilled trajectory",
+          "Description": "Trajectory for Drilled trajectory",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(a6edb5b1-ba51-46c8-9494-ad0b47aa00d0)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellboreTrajectory:1.3.0:b21869ff-bc7c-459d-aefb-1383a80342f3",
+        "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Drilled trajectory",
+          "Description": "Trajectory for Drilled trajectory",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(b21869ff-bc7c-459d-aefb-1383a80342f3)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellboreTrajectory:1.3.0:e7ee1dc9-ca95-4c6a-a752-926bba5ba379",
+        "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Drilled trajectory",
+          "Description": "Trajectory for Drilled trajectory",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(e7ee1dc9-ca95-4c6a-a752-926bba5ba379)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellboreTrajectory:1.3.0:f74cec60-70f0-4da7-a4bc-101e9b9e5efc",
+        "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Drilled trajectory",
+          "Description": "Trajectory for Drilled trajectory",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(f74cec60-70f0-4da7-a4bc-101e9b9e5efc)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2"
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:0086eb99-eca4-485b-882a-af15bc9add89",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Well Log Frame",
+          "Description": "Log curves on Well Log Frame",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(0086eb99-eca4-485b-882a-af15bc9add89)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:25e1b59c-8a37-446c-ae28-878f760bb6d6",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Stratigraphic Marker Set",
+          "Description": "Log curves on Stratigraphic Marker Set",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(25e1b59c-8a37-446c-ae28-878f760bb6d6)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:2ceca2ec-0066-4090-b14c-9850f70f1339",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Stratigraphic Marker Set",
+          "Description": "Log curves on Stratigraphic Marker Set",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(2ceca2ec-0066-4090-b14c-9850f70f1339)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:3df9933e-4833-48e2-b611-97d18f0c5e42",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Well Log Frame",
+          "Description": "Log curves on Well Log Frame",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(3df9933e-4833-48e2-b611-97d18f0c5e42)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:4695cc9b-601e-48c8-8c64-6c209f5ab7bd",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Well Log Frame",
+          "Description": "Log curves on Well Log Frame",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(4695cc9b-601e-48c8-8c64-6c209f5ab7bd)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:4b34a6d6-e838-4578-b193-e0d898db0e04",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Well Log Frame",
+          "Description": "Log curves on Well Log Frame",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(4b34a6d6-e838-4578-b193-e0d898db0e04)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:6b7237b4-9b6b-4ac9-ac9f-352b5a16db63",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Stratigraphic Marker Set",
+          "Description": "Log curves on Stratigraphic Marker Set",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(6b7237b4-9b6b-4ac9-ac9f-352b5a16db63)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:7a5b4432-bf84-4828-9e7d-363cc229cb33",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Stratigraphic Marker Set",
+          "Description": "Log curves on Stratigraphic Marker Set",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(7a5b4432-bf84-4828-9e7d-363cc229cb33)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:8e7ad4d4-95f8-491c-8750-0d6eb0b4eadd",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Stratigraphic Marker Set",
+          "Description": "Log curves on Stratigraphic Marker Set",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(8e7ad4d4-95f8-491c-8750-0d6eb0b4eadd)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:95878ba3-6888-415a-8c3f-d349630a6ef9",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Stratigraphic Marker Set",
+          "Description": "Log curves on Stratigraphic Marker Set",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(95878ba3-6888-415a-8c3f-d349630a6ef9)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:a8215264-4971-4700-acf8-b6855a8fac36",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Well Log Frame",
+          "Description": "Log curves on Well Log Frame",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(a8215264-4971-4700-acf8-b6855a8fac36)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:a8f0ff64-b396-4cec-a3a3-ce2bb6b3f29e",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Well Log Frame",
+          "Description": "Log curves on Well Log Frame",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(a8f0ff64-b396-4cec-a3a3-ce2bb6b3f29e)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:aa325d5d-3709-4dd2-97e4-fd15b2ccb1a3",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Well Log Frame",
+          "Description": "Log curves on Well Log Frame",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(aa325d5d-3709-4dd2-97e4-fd15b2ccb1a3)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:b19c312f-110b-4fea-b36c-fce25bcc2344",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Stratigraphic Marker Set",
+          "Description": "Log curves on Stratigraphic Marker Set",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(b19c312f-110b-4fea-b36c-fce25bcc2344)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:b3c89e44-09a1-46c2-8f53-d0958b0dcfcd",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Well Log Frame",
+          "Description": "Log curves on Well Log Frame",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(b3c89e44-09a1-46c2-8f53-d0958b0dcfcd)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:bae84971-88a5-41e0-8050-bb4e7538b1ce",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Stratigraphic Marker Set",
+          "Description": "Log curves on Stratigraphic Marker Set",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(bae84971-88a5-41e0-8050-bb4e7538b1ce)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:f1790979-894e-44fe-8ea7-ef10589556e0",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Well Log Frame",
+          "Description": "Log curves on Well Log Frame",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(f1790979-894e-44fe-8ea7-ef10589556e0)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--WellLog:1.2.0:f2d8a5f5-2dd1-4823-9e98-2494963925ce",
+        "kind": "osdu:wks:work-product-component--WellLog:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Well Log - Stratigraphic Marker Set",
+          "Description": "Log curves on Stratigraphic Marker Set",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(f2d8a5f5-2dd1-4823-9e98-2494963925ce)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ],
+          "CurveCount": 0,
+          "Curves": []
+        }
+      },
+      {
+        "id": "opendes:work-product-component--StratigraphicColumn:1.2.0:6b079bdd-93ef-48ea-a7f3-abe0bc229deb",
+        "kind": "osdu:wks:work-product-component--StratigraphicColumn:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Stratigraphic Column (Geogrid)",
+          "Description": "Stratigraphic column for the Drogon reservoir model. Defines the vertical succession of formations.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicColumn(6b079bdd-93ef-48ea-a7f3-abe0bc229deb)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--StratigraphicColumnRankInterpretation:1.3.0:1a90dd88-4d6f-4d2c-9945-9696c28b1dae",
+        "kind": "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Stratigraphic Column Rank (Geogrid)",
+          "Description": "Stratigraphic column rank interpretation for the Drogon reservoir model.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicColumnRankInterpretation(1a90dd88-4d6f-4d2c-9945-9696c28b1dae)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--LocalRockVolumeFeature:1.2.0:1227da48-72a0-4375-a01a-ef67b544ee1a",
+        "kind": "osdu:wks:work-product-component--LocalRockVolumeFeature:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Above Top Volantis",
+          "Description": "Stratigraphic unit: Above Top Volantis. Drogon reservoir model.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.RockVolumeFeature(1227da48-72a0-4375-a01a-ef67b544ee1a)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--LocalRockVolumeFeature:1.2.0:76a2a884-4cdc-43e8-8b8d-0341dd571c35",
+        "kind": "osdu:wks:work-product-component--LocalRockVolumeFeature:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Valysar",
+          "Description": "Stratigraphic unit: Valysar. Drogon reservoir model.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.RockVolumeFeature(76a2a884-4cdc-43e8-8b8d-0341dd571c35)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--LocalRockVolumeFeature:1.2.0:95fb8abd-6164-4961-8712-497e32bb5842",
+        "kind": "osdu:wks:work-product-component--LocalRockVolumeFeature:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Volon",
+          "Description": "Stratigraphic unit: Volon. Drogon reservoir model.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.RockVolumeFeature(95fb8abd-6164-4961-8712-497e32bb5842)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--LocalRockVolumeFeature:1.2.0:ab851c51-0100-41bb-bf10-7e8311f5b437",
+        "kind": "osdu:wks:work-product-component--LocalRockVolumeFeature:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Therys",
+          "Description": "Stratigraphic unit: Therys. Drogon reservoir model.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.RockVolumeFeature(ab851c51-0100-41bb-bf10-7e8311f5b437)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--LocalRockVolumeFeature:1.2.0:e3e87371-e005-4a29-be22-84489d6f5abf",
+        "kind": "osdu:wks:work-product-component--LocalRockVolumeFeature:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Below Base Volantis",
+          "Description": "Stratigraphic unit: Below Base Volantis. Drogon reservoir model.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.RockVolumeFeature(e3e87371-e005-4a29-be22-84489d6f5abf)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--StratigraphicUnitInterpretation:1.3.0:0b257a04-c38c-4c56-9e18-987b03583830",
+        "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Valysar",
+          "Description": "Stratigraphic unit interpretation: Valysar. Drogon reservoir model.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicUnitInterpretation(0b257a04-c38c-4c56-9e18-987b03583830)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--StratigraphicUnitInterpretation:1.3.0:2d0b751e-0f4f-45d3-aa1d-7ee0aa763228",
+        "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Below Base Volantis",
+          "Description": "Stratigraphic unit interpretation: Below Base Volantis. Drogon reservoir model.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicUnitInterpretation(2d0b751e-0f4f-45d3-aa1d-7ee0aa763228)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--StratigraphicUnitInterpretation:1.3.0:7c70894a-2442-4735-a219-c954f87ba07d",
+        "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Therys",
+          "Description": "Stratigraphic unit interpretation: Therys. Drogon reservoir model.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicUnitInterpretation(7c70894a-2442-4735-a219-c954f87ba07d)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--StratigraphicUnitInterpretation:1.3.0:935cdfef-94fc-4df5-8362-4abadfb0b8ca",
+        "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Above Top Volantis",
+          "Description": "Stratigraphic unit interpretation: Above Top Volantis. Drogon reservoir model.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicUnitInterpretation(935cdfef-94fc-4df5-8362-4abadfb0b8ca)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      },
+      {
+        "id": "opendes:work-product-component--StratigraphicUnitInterpretation:1.3.0:e3be3316-0ea0-4c20-9722-14a2174ce7ab",
+        "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "createTime": "2026-05-20T10:00:00.000Z",
+        "modifyTime": "2026-05-20T10:00:00.000Z",
+        "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+        "version": 1,
+        "data": {
+          "Name": "Volon",
+          "Description": "Stratigraphic unit interpretation: Volon. Drogon reservoir model.",
+          "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicUnitInterpretation(e3be3316-0ea0-4c20-9722-14a2174ce7ab)"
+          ],
+          "DatasetIDs": [
+            "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+          ]
+        }
+      }
+    ]
+  }
+}

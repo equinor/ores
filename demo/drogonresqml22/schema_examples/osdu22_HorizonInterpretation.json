@@ -1,0 +1,39 @@
+{
+  "id": "opendes:work-product-component--HorizonInterpretation:1.2.0:011ae8ee-bfa5-4804-a675-1f4704b1730c",
+  "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@opendes.dataservices.energy"
+    ],
+    "viewers": [
+      "data.default.viewers@opendes.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "opendes-ReservoirDDMS-Legal-Tag"
+    ],
+    "otherRelevantDataCountries": [
+      "US"
+    ],
+    "status": "compliant"
+  },
+  "createTime": "2026-05-20T10:00:00.000Z",
+  "modifyTime": "2026-05-20T10:00:00.000Z",
+  "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+  "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+  "version": 1,
+  "data": {
+    "Name": "BaseVelmodel",
+    "Description": "Horizon interpretation: BaseVelmodel. Drogon field.",
+    "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+    "DDMSDatasets": [
+      "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(011ae8ee-bfa5-4804-a675-1f4704b1730c)"
+    ],
+    "DatasetIDs": [
+      "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+    ],
+    "DomainTypeID": "osdu:reference-data--DomainType:Mixed:",
+    "StratigraphicRoleTypeID": "osdu:reference-data--StratigraphicRoleType:Chronostratigraphic:"
+  }
+}

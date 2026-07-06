@@ -31,7 +31,7 @@ out.txt
 # ── Project-specific ignores ──
 tmp/
 test/_pg_vs_rest_output
-demo/
+demo/eqn/
 
 # ── Local runtime artifacts ──
 ores_tokens.db

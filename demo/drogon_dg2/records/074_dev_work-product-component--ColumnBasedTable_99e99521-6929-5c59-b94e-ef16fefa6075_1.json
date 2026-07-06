@@ -1,0 +1,96 @@
+{
+  "id": "dev:work-product-component--ColumnBasedTable:99e99521-6929-5c59-b94e-ef16fefa6075:1",
+  "kind": "osdu:wks:work-product-component--ColumnBasedTable:1.4.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 - Relative Permeability (saturation functions)",
+    "Description": "Relative permeability and capillary pressure curves per SATNUM region. Exported by RES2CSV:satfunc from Eclipse restart data. Covers water-oil (SWOF) and gas-oil (SGOF) tables for all 7 FIP regions.",
+    "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "ColumnBasedTableTypeID": "dev:reference-data--ColumnBasedTableType:AdHoc:",
+    "Columns": [
+      {
+        "ColumnName": "SATNUM",
+        "ColumnRole": "Key",
+        "ValueType": "integer"
+      },
+      {
+        "ColumnName": "KEYWORD",
+        "ColumnRole": "Key",
+        "ValueType": "string"
+      },
+      {
+        "ColumnName": "SW",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:"
+      },
+      {
+        "ColumnName": "SG",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:"
+      },
+      {
+        "ColumnName": "KRW",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:"
+      },
+      {
+        "ColumnName": "KROW",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:"
+      },
+      {
+        "ColumnName": "KRG",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:"
+      },
+      {
+        "ColumnName": "KROG",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:"
+      },
+      {
+        "ColumnName": "PCOW",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:bar:"
+      },
+      {
+        "ColumnName": "PCOG",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:bar:"
+      }
+    ],
+    "DDMSDatasets": [
+      "eml:///dataspace('maap/drogon_dg')/share/results/tables/relperm.csv"
+    ],
+    "FMU": {
+      "Content": "relperm",
+      "FileReference": "share/results/tables/relperm.csv"
+    },
+    "data.ancestry.inputs": [
+      "dev:dataset--ETPDataspace:maap-drogon_dg:1"
+    ]
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "Data": {
+    "WorkProductComponents": [
+      {
+        "kind": "osdu:wks:work-product-component--SeismicTraceData:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "id": "opendes:work-product-component--SeismicTraceData:22df3d32-92d8-511e-8f52-34757c6c539f",
+        "data": {
+          "Name": "Drogon Amplitude Far Offset (Time) 2018-01-01",
+          "Description": "Drogon synthetic seismic \u2013 far offset amplitude in time domain. Vintage 2018-01-01.",
+          "ExistenceKind": "opendes:reference-data--ExistenceKind:Prototype:",
+          "IsDiscoverable": true,
+          "IsExtendedLoad": false,
+          "DDMSDatasets": [
+            "sd://opendes/drogon/amplitude_far_time_20180101"
+          ],
+          "SeismicDomainTypeID": "opendes:reference-data--SeismicDomainType:Time:",
+          "BinGridID": "",
+          "OffsetClass": "FAR",
+          "ExtensionProperties": {
+            "OriginalFilename": "amplitude_far_time_20180101.sgy",
+            "DrogonProject": "maap/drogon"
+          }
+        }
+      },
+      {
+        "kind": "osdu:wks:work-product-component--SeismicTraceData:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@opendes.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@opendes.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "opendes-ReservoirDDMS-Legal-Tag"
+          ],
+          "otherRelevantDataCountries": [
+            "US"
+          ],
+          "status": "compliant"
+        },
+        "id": "opendes:work-product-component--SeismicTraceData:0009f495-f69b-5c26-8807-3efb5667d00f",
+        "data": {
+          "Name": "Drogon Amplitude Near Offset (Time) 2018-01-01",
+          "Description": "Drogon synthetic seismic \u2013 near offset amplitude in time domain. Vintage 2018-01-01.",
+          "ExistenceKind": "opendes:reference-data--ExistenceKind:Prototype:",
+          "IsDiscoverable": true,
+          "IsExtendedLoad": false,
+          "DDMSDatasets": [
+            "sd://opendes/drogon/amplitude_near_time_20180101"
+          ],
+          "SeismicDomainTypeID": "opendes:reference-data--SeismicDomainType:Time:",
+          "BinGridID": "",
+          "OffsetClass": "NEAR",
+          "ExtensionProperties": {
+            "OriginalFilename": "amplitude_near_time_20180101.sgy",
+            "DrogonProject": "maap/drogon"
+          }
+        }
+      }
+    ]
+  }
+}

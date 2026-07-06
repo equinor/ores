@@ -1,0 +1,125 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [],
+  "Data": {
+    "WorkProductComponents": [
+      {
+        "kind": "osdu:wks:work-product-component--SeismicTraceData:1.2.0",
+        "id": "dev:work-product-component--SeismicTraceData:drogon-amp-far-time-20180101",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ],
+          "status": "compliant"
+        },
+        "data": {
+          "Name": "Drogon Amplitude Far Offset (Time) 2018-01-01",
+          "Description": "Drogon synthetic seismic \u2013 far offset amplitude in time domain. Vintage 2018-01-01.",
+          "ExistenceKind": "dev:reference-data--ExistenceKind:Prototype:",
+          "IsDiscoverable": true,
+          "IsExtendedLoad": false,
+          "Datasets": [
+            "dev:dataset--FileCollection.SEGY:drogon-amplitude-far-time-20180101"
+          ],
+          "Artefacts": [
+            {
+              "ResourceID": "dev:dataset--FileCollection.Bluware.OpenVDS:drogon-amplitude-far-time-20180101",
+              "ResourceKind": "osdu:wks:dataset--FileCollection.Bluware.OpenVDS:1.2.0",
+              "RoleID": "dev:reference-data--ArtefactRole:ConvertedContent:"
+            }
+          ],
+          "SeismicDomainTypeID": "dev:reference-data--SeismicDomainType:Time:",
+          "SeismicTraceDataDimensionalityTypeID": "dev:reference-data--SeismicTraceDataDimensionalityType:3D:",
+          "SeismicAttributeTypeID": "dev:reference-data--SeismicAttributeType:Amplitude:",
+          "SampleInterval": 1.0,
+          "SampleCount": 2000,
+          "StartTime": 0.0,
+          "EndTime": 1999.0,
+          "TraceDomainUOM": "dev:reference-data--UnitOfMeasure:ms:",
+          "InlineMin": 0,
+          "InlineMax": 435,
+          "CrosslineMin": 0,
+          "CrosslineMax": 275,
+          "InlineIncrement": 1,
+          "CrosslineIncrement": 1,
+          "TraceCount": 120336,
+          "ExtensionProperties": {
+            "OriginalFilename": "seismic--amplitude_far_time--20180101.sgy",
+            "DrogonProject": "maap/drogon",
+            "OffsetClass": "FAR"
+          }
+        }
+      },
+      {
+        "kind": "osdu:wks:work-product-component--SeismicTraceData:1.2.0",
+        "id": "dev:work-product-component--SeismicTraceData:drogon-amp-near-time-20180101",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ],
+          "status": "compliant"
+        },
+        "data": {
+          "Name": "Drogon Amplitude Near Offset (Time) 2018-01-01",
+          "Description": "Drogon synthetic seismic \u2013 near offset amplitude in time domain. Vintage 2018-01-01.",
+          "ExistenceKind": "dev:reference-data--ExistenceKind:Prototype:",
+          "IsDiscoverable": true,
+          "IsExtendedLoad": false,
+          "Datasets": [
+            "dev:dataset--FileCollection.SEGY:drogon-amplitude-near-time-20180101"
+          ],
+          "Artefacts": [
+            {
+              "ResourceID": "dev:dataset--FileCollection.Bluware.OpenVDS:drogon-amplitude-near-time-20180101",
+              "ResourceKind": "osdu:wks:dataset--FileCollection.Bluware.OpenVDS:1.2.0",
+              "RoleID": "dev:reference-data--ArtefactRole:ConvertedContent:"
+            }
+          ],
+          "SeismicDomainTypeID": "dev:reference-data--SeismicDomainType:Time:",
+          "SeismicTraceDataDimensionalityTypeID": "dev:reference-data--SeismicTraceDataDimensionalityType:3D:",
+          "SeismicAttributeTypeID": "dev:reference-data--SeismicAttributeType:Amplitude:",
+          "SampleInterval": 1.0,
+          "SampleCount": 2000,
+          "StartTime": 0.0,
+          "EndTime": 1999.0,
+          "TraceDomainUOM": "dev:reference-data--UnitOfMeasure:ms:",
+          "InlineMin": 0,
+          "InlineMax": 435,
+          "CrosslineMin": 0,
+          "CrosslineMax": 275,
+          "InlineIncrement": 1,
+          "CrosslineIncrement": 1,
+          "TraceCount": 120336,
+          "ExtensionProperties": {
+            "OriginalFilename": "seismic--amplitude_near_time--20180101.sgy",
+            "DrogonProject": "maap/drogon",
+            "OffsetClass": "NEAR"
+          }
+        }
+      }
+    ]
+  }
+}

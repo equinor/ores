@@ -1,0 +1,26 @@
+{
+  "id": "dev:work-product-component--Document:Drogon-CRA-DG2-Report:1",
+  "kind": "osdu:wks:work-product-component--Document:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon - Cost Risk Assessment (CRA) DG2",
+    "Description": "Cost Risk Assessment for the Drogon field development DG2 Concept Select gate. Probabilistic cost estimate covering FPSO facility (eCalc model: ~9 MW baseload, WI pumps at 200 bar, gas compressor), drilling (6+2 contingent wells), and project management. Drilling cost range driven by: A4 horizontal well complexity (multi-segment, X-direction completions), sand control requirements (frac-pack + ICD), and potential Phase 2 infill wells depending on fault compartmentalisation.",
+    "DocumentType": "CRA",
+    "DocumentDate": "2026-02-15"
+  }
+}

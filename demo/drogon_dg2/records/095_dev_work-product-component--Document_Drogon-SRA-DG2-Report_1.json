@@ -1,0 +1,26 @@
+{
+  "id": "dev:work-product-component--Document:Drogon-SRA-DG2-Report:1",
+  "kind": "osdu:wks:work-product-component--Document:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon - Schedule Risk Assessment (SRA) DG2",
+    "Description": "Schedule Risk Assessment for the Drogon field development DG2 Concept Select gate. Monte Carlo schedule analysis covering FPSO preparation, drilling campaign (6 development wells: A1–A4 producers + A5–A6 injectors), and commissioning. Phased well startup sequence from real Eclipse schedule: A1 (Jan 2018), A2 (Mar 2018), A5 injection (May 2018), A3+A4 (Sep 2018), A6 injection (Dec 2018). Key risk drivers: A4 horizontal multi-segment completion complexity, VFP table uncertainty, and water injection pump commissioning timeline.",
+    "DocumentType": "SRA",
+    "DocumentDate": "2026-02-15"
+  }
+}

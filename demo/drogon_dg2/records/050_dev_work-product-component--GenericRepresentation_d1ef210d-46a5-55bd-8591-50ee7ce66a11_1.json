@@ -1,0 +1,48 @@
+{
+  "id": "dev:work-product-component--GenericRepresentation:d1ef210d-46a5-55bd-8591-50ee7ce66a11:1",
+  "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 - valysar--facies_fraction_coal",
+    "Description": "Facies fraction map: coal in Valysar zone",
+    "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
+    "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "NodeCountOnIAxis": 280,
+    "NodeCountOnJAxis": 440,
+    "BinWidthOnIaxis": 25.0,
+    "BinWidthOnJaxis": 25.0,
+    "DDMSDatasets": [
+      "eml:///dataspace('maap/drogon_dg')/resqml22.Grid2dRepresentation('d1ef210d-46a5-55bd-8591-50ee7ce66a11')"
+    ],
+    "FMU": {
+      "Content": "property",
+      "PropertyAttribute": "facies_fraction_coal",
+      "StratigraphicReference": "Valysar"
+    },
+    "DomainTypeID": "dev:reference-data--DomainType:Depth:",
+    "ZoneName": "Valysar",
+    "FacetIDs": [
+      "dev:reference-data--FacetType:statistics:",
+      "dev:reference-data--FacetRole:P50:"
+    ],
+    "data.ancestry.inputs": [
+      "dev:work-product-component--IjkGridRepresentation:45e80eba-2376-5d64-8989-66d7c8e94426:1",
+      "dev:dataset--ETPDataspace:maap-drogon_dg:1"
+    ]
+  }
+}

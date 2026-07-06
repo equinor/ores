@@ -1,0 +1,47 @@
+{
+  "acl": {
+    "owners": [],
+    "viewers": []
+  },
+  "kind": "osdu:wks:work-product-component--StructureMap:1.0.0",
+  "legal": {
+    "legaltags": [],
+    "otherRelevantDataCountries": [],
+    "status": "compliant"
+  },
+  "createTime": "2025-06-12T15:37:00.000Z",
+  "createUser": "Drogon Demo (Equinor)",
+  "id": "osdu:work-product-component--StructureMap:023e0b30-3822-41a3-b4ad-7b8d34b5f42a",
+  "modifyTime": "2025-06-12T15:37:00.000Z",
+  "modifyUser": "Drogon Demo (Equinor)",
+  "version": 1,
+  "data": {
+    "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+    "DDMSDatasets": [
+      "eml://reservoir-ddms1/dataspace('maap/drogon201')/resqml20.obj_Grid2dRepresentation(023e0b30-3822-41a3-b4ad-7b8d34b5f42a)"
+    ],
+    "IsDiscoverable": true,
+    "IsExtendedLoad": false,
+    "CreationDateTime": "2025-06-12T15:37:00.000Z",
+    "Description": "2D regular grid (surface map) representation: Depth Surface - Geogrid Extract. Drogon field, Norwegian Continental Shelf.",
+    "Name": "Depth Surface - Geogrid Extract",
+    "IndexableElementCount": [
+      {
+        "Count": 123200,
+        "IndexableElementID": "osdu:reference-data--IndexableElement:nodes:"
+      }
+    ],
+    "InterpretationID": "osdu:work-product-component--HorizonInterpretation:6c6eeb68-bb4d-4fa4-9eb4-b880b5bd7086:",
+    "InterpretationName": "TopTherys",
+    "LocalModelCompoundCrsID": "osdu:work-product-component--LocalModelCompoundCrs:0a0ae03b-aee1-4651-8f11-5433eeda0ec2:",
+    "NodeCountOnIAxis": 280,
+    "NodeCountOnJAxis": 440,
+    "DomainTypeID": "osdu:reference-data--DomainType:Depth:"
+  },
+  "meta": [
+    {
+      "kind": "CRS",
+      "persistableReference": ""
+    }
+  ]
+}

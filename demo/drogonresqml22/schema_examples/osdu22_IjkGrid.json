@@ -1,0 +1,42 @@
+{
+  "id": "opendes:work-product-component--IjkGridRepresentation:1.1.0:2c6de928-7e08-4601-b979-34048bd68c02",
+  "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.1.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@opendes.dataservices.energy"
+    ],
+    "viewers": [
+      "data.default.viewers@opendes.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "opendes-ReservoirDDMS-Legal-Tag"
+    ],
+    "otherRelevantDataCountries": [
+      "US"
+    ],
+    "status": "compliant"
+  },
+  "createTime": "2026-05-20T10:00:00.000Z",
+  "modifyTime": "2026-05-20T10:00:00.000Z",
+  "createUser": "Drogon Demo RESQML 2.2 (Equinor)",
+  "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
+  "version": 1,
+  "data": {
+    "Name": "Geogrid",
+    "Description": "3D corner-point grid representation of the Drogon reservoir model (Geogrid). Covers the Therys, Valysar and Volon formations, Norwegian Continental Shelf.",
+    "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+    "DDMSDatasets": [
+      "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.IjkGridRepresentation(2c6de928-7e08-4601-b979-34048bd68c02)"
+    ],
+    "DatasetIDs": [
+      "opendes:dataset--ETPDataspace:1.0.1:maap-drogon22"
+    ],
+    "CoordinateReferenceSystemID": "opendes:work-product-component--LocalModelCompoundCrs:1.2.0:0a0ae03b-aee1-4651-8f11-5433eeda0ec2",
+    "Ni": 92,
+    "Nj": 146,
+    "Nk": 69,
+    "CellCount": 925668
+  }
+}

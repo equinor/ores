@@ -1,0 +1,38 @@
+{
+  "id": "dev:work-product-component--GenericRepresentation:ffd18270-06b9-52cc-b817-e9de0f144b94:1",
+  "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 - Fault Lines at TopVolon",
+    "Description": "Fault line polygons at TopVolon horizon. Standard result: structure_depth_fault_lines.",
+    "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
+    "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "DDMSDatasets": [
+      "eml:///dataspace('maap/drogon_dg')/polygons/topvolon--faultlines.csv"
+    ],
+    "FMU": {
+      "Content": "polygons",
+      "PropertyAttribute": "fault_lines",
+      "HorizonName": "TopVolon",
+      "StandardResult": "structure_depth_fault_lines"
+    },
+    "data.ancestry.inputs": [
+      "dev:dataset--ETPDataspace:maap-drogon_dg:1"
+    ]
+  }
+}

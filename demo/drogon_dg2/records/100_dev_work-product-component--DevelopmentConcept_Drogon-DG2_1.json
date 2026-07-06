@@ -1,0 +1,282 @@
+{
+  "id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2:1",
+  "kind": "dev:wks:work-product-component--DevelopmentConcept:4.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 - Development Concept",
+    "Description": "Development concept for Drogon DG2 Concept Select, aligned with the official Drogon FMU model (equinor/fmu-drogon tutorial 26.0.0). FPSO-based offshore development with 4 producers (A1–A4) and 2 water injectors (A5–A6), targeting the Volantis Group (Valysar, Therys, Volon formations) across 7 fault-bounded regions. STOIIP ≈ 34.5 MSm³, GIIP ≈ 1.0 GSm³ (NorthHorst gas cap). 250 FMU realisations with one-by-one sensitivity design and OPM Flow dynamic simulation. History period Jan 2018 – Jul 2020; prediction period to Jan 2025. DST well test 55/33-1 (Jul 2015, max 935 Sm³/d oil). Peak field oil rate 14,259 Sm³/d (Oct 2018). Predicted RF ~40% at end-of-forecast.",
+    "Summary": "FPSO-based development targeting the Volantis Group (Valysar, Therys, Volon) across 7 fault-bounded regions at ~1595–1694 m TVD MSL. 4 horizontal/deviated producers (A1–A4; A4 is multi-segment horizontal) and 2 water injectors (A5–A6). Prediction: LRAT-controlled producers (A1/A4: 4,000, A2/A3: 2,500 Sm³/d liquid, BHP limit 150 bar), water injection 6,500 Sm³/d per well (BHP 500 bar). Gas cap in NorthHorst region (GOC ~1640 m TVD MSL). Black-oil fluid model (DISGAS+VAPOIL), ref. pressure 310 bar at 1750 m. APS facies model with seismic conditioning drives reservoir property assignment. FMU workflow: ERT → RMS (geomodel + Eclipse grid) → OPM Flow. eCalc FPSO facility model for emissions: gas compressor, WI pumps (200 bar), ~9 MW baseload.",
+    "DecisionGate": "DG2",
+    "DecisionLevelID": "dev:reference-data--DecisionLevel:DG2:",
+    "FacilityConcept": {
+      "FacilityType": "FPSO",
+      "FacilityTypeID": "dev:reference-data--FacilityType:FPSO:",
+      "HostFacility": "Drogon FPSO",
+      "HostDescription": "FPSO-based offshore production facility. eCalc model: single-speed water injection pumps (200 bar discharge), gas export compressor (PR EoS, polytropic efficiency 0.8), ~9 MW baseload + 2 MW booster pump. Fuel gas with CO2 emission factor 2.416 kg/Sm3.",
+      "Flowlines": [
+        {
+          "Type": "Production",
+          "Diameter_in": 10,
+          "Count": 2
+        },
+        {
+          "Type": "GasLift",
+          "Diameter_in": 6,
+          "Count": 1
+        },
+        {
+          "Type": "Umbilical",
+          "Count": 1
+        }
+      ],
+      "ArtificialLift": "GasLift",
+      "ArtificialLiftTypeID": "dev:reference-data--ArtificialLiftType:GasLift:",
+      "ProcessingCapacity": {
+        "LiquidRate_Sm3d": 13000,
+        "OilRate_Sm3d": 15000,
+        "WaterInjection_Sm3d": 13000,
+        "WaterInjectionPressure_bar": 200,
+        "WIPumpType": "Single-speed centrifugal",
+        "GasCompressor": "Simplified variable-speed train (max PR 3.5/stage)"
+      },
+      "EnergyModel": {
+        "Source": "ecalc/model/drogon_ecalc.tmpl",
+        "Baseload_MW": 9,
+        "BoosterPump_MW": 2,
+        "Recompressors_MW": 2,
+        "FuelType": "fuel_gas",
+        "CO2Factor": 2.416
+      },
+      "Provisions": "2 contingent well slots for infill. Flexibility for future tie-in of additional templates. Dual WI pump configuration for redundancy."
+    },
+    "WellPlan": {
+      "Producers": 4,
+      "Injectors": 2,
+      "ContingentWells": 2,
+      "TotalTargets": 8,
+      "MultilateralWells": 0,
+      "WellTypes": [
+        {
+          "Type": "Producer",
+          "Count": 3,
+          "Names": [
+            "A1",
+            "A2",
+            "A3"
+          ],
+          "CompletionDirection": "Z (vertical/deviated)",
+          "TargetZones": [
+            "Valysar",
+            "Therys",
+            "Volon"
+          ],
+          "VFPTables": [
+            1,
+            2,
+            3
+          ],
+          "RefDepths_m": [
+            1595.9,
+            1644.0,
+            1604.5
+          ],
+          "GridPositions_IJ": [
+            [
+              32,
+              33
+            ],
+            [
+              22,
+              30
+            ],
+            [
+              28,
+              41
+            ]
+          ]
+        },
+        {
+          "Type": "HorizontalProducer",
+          "Count": 1,
+          "Names": [
+            "A4"
+          ],
+          "CompletionDirection": "X (horizontal multi-segment)",
+          "TargetZone": "Valysar",
+          "VFPTable": 4,
+          "RefDepth_m": 1628.2,
+          "GridPosition_IJ": [
+            30,
+            52
+          ],
+          "Note": "A4 has X-direction completions spanning multiple I-cells"
+        },
+        {
+          "Type": "WaterInjector",
+          "Count": 2,
+          "Names": [
+            "A5",
+            "A6"
+          ],
+          "CompletionDirection": "Z",
+          "TargetZones": [
+            "Valysar",
+            "Therys",
+            "Volon"
+          ],
+          "RefDepths_m": [
+            1682.4,
+            1693.9
+          ],
+          "GridPositions_IJ": [
+            [
+              31,
+              20
+            ],
+            [
+              17,
+              42
+            ]
+          ]
+        },
+        {
+          "Type": "Appraisal (DST)",
+          "Count": 1,
+          "Names": [
+            "55_33-1"
+          ],
+          "CompletionDirection": "Z",
+          "TargetRegion": "CentralHorst",
+          "GridPosition_IJ": [
+            32,
+            32
+          ],
+          "DSTDate": "2015-07-28",
+          "DSTMaxOilRate_Sm3d": 935
+        }
+      ],
+      "RFTWells": {
+        "Names": [
+          "R_A2",
+          "R_A3",
+          "R_A4",
+          "R_A5",
+          "R_A6"
+        ],
+        "Note": "Defined at simulation start, kept SHUT for RFT pressure measurement"
+      },
+      "WellboreSize_in": 9.625,
+      "CompletionType": "Frac-pack + ICD lower completion",
+      "SandControl": "Frac-pack with gravel pack screens",
+      "InflowControl": "ICD (passive)"
+    },
+    "DrainageStrategy": {
+      "PrimaryRecoveryMechanism": "WaterInjection",
+      "ReservoirDriveMechanismTypeID": "dev:reference-data--ReservoirDriveMechanismType:WaterDrive:",
+      "InjectionType": "Water",
+      "InjectionStrategy": "Water injection for pressure support via A5 (6,500 Sm³/d) and A6 (6,500 Sm³/d), BHP limit 500 bar. Injection pumps at 200 bar discharge (single-speed centrifugal). Total field injection: 13,000 Sm³/d. History period had 8,000 Sm³/d per well (16,000 total) for initial reservoir fill-up.",
+      "ProductionControls": {
+        "ControlMode": "LRAT (liquid rate target)",
+        "A1_Target_Sm3d": 4000,
+        "A2_Target_Sm3d": 2500,
+        "A3_Target_Sm3d": 2500,
+        "A4_Target_Sm3d": 4000,
+        "FieldLiquidTarget_Sm3d": 13000,
+        "BHP_limit_bar": 150,
+        "Source": "eclipse/include_pred/schedule/drogon_pred_ref.sch"
+      },
+      "DevelopmentPhases": [
+        {
+          "Phase": "History (Phase 1)",
+          "Description": "Jan 2018: A1 online (RESV control, 4,000 Sm³/d). Mar 2018: A2 online. May 2018: A5 injection starts (8,000 Sm³/d). Sep 2018: A3 + A4 online → peak FOPR 14,259 Sm³/d (Oct 2018). Dec 2018: A6 injection starts. WCT rising from 0 to 0.58.",
+          "Wells": 6,
+          "Period": "2018-01 to 2020-07"
+        },
+        {
+          "Phase": "Prediction (Phase 1 cont.)",
+          "Description": "LRAT-controlled production (A1/A4: 4,000, A2/A3: 2,500 Sm³/d). Injection reduced from 16,000 to 13,000 Sm³/d. Oil rate declining as WCT rises: ~5,500 → ~2,900 Sm³/d. WCT 0.58 → 0.76. Pressure stabilised ~255 bar.",
+          "Wells": 6,
+          "Period": "2020-07 to 2025-01"
+        },
+        {
+          "Phase": "Phase 2 (contingent)",
+          "Description": "2–4 infill wells targeting isolated fault compartments",
+          "Wells": 2,
+          "Trigger": "Compartment connectivity confirmed by 4D seismic / tracer analysis"
+        }
+      ],
+      "AquiferSupport": "Active bottom-water aquifer in southern regions. Aquifer influx modelled with Fetkovich analytical model. Partial pressure support in CentralSouth and CentralRamp.",
+      "Tracers": "2 water tracers (WT1, WT2) planned for inter-well connectivity monitoring"
+    },
+    "ReservoirTarget": {
+      "FormationName": "Heimdal Formation (Drogon analogue: Valysar)",
+      "GroupName": "Volantis Group (Valysar, Therys, Volon)",
+      "Age": "Palaeocene",
+      "AgeID": "dev:reference-data--ChronoStratigraphy:Phanerozoic.Cenozoic.Paleogene.Paleocene:",
+      "FieldArea": "Drogon",
+      "DepthRange_mTVDMSL": {
+        "Min": 1595,
+        "Max": 1694
+      },
+      "Zones": [
+        "Valysar",
+        "Therys",
+        "Volon"
+      ],
+      "ReservoirSegmentIDs": [
+        "dev:master-data--ReservoirSegment:21cd47f4-15c9-4ab1-a347-6d28a18655b1:1",
+        "dev:master-data--ReservoirSegment:1a055370-f84f-430c-954b-d712d13781f0:1",
+        "dev:master-data--ReservoirSegment:01505396-8e72-42a7-9d80-059cf9e17c95:1",
+        "dev:master-data--ReservoirSegment:92dace46-399d-445c-bcc9-36448872ecfc:1",
+        "dev:master-data--ReservoirSegment:4dd0036d-eaea-4e54-8692-9d9aca547585:1",
+        "dev:master-data--ReservoirSegment:98b0c0d4-2c5d-4c94-b8c3-d7e41bf933f9:1",
+        "dev:master-data--ReservoirSegment:b47e81f4-c545-4f8d-ab45-4b9585cfeebb:1"
+      ],
+      "FluidModel": {
+        "Type": "Black oil (DISGAS + VAPOIL)",
+        "ReferencePressure_bar": 310,
+        "ReferenceDepth_m": 1750,
+        "Bo_ref": 1.434,
+        "Rs_ref_Sm3Sm3": 140.8,
+        "NorthHorst_Bo": 1.628,
+        "NorthHorst_Rs_Sm3Sm3": 195.9,
+        "NorthHorst_GasCap": true,
+        "GOC_NorthHorst_m": 1640.0
+      },
+      "STOIIP_MSm3": 34.5,
+      "GIIP_GSm3": 1.03,
+      "VolumeSource": "simgrid--vol.csv (truth case, all zones × all regions)"
+    },
+    "ProductionTechnology": {
+      "SandManagement": "Frac-pack with gravel pack screens. Standalone screens as fallback for clean Valysar sand intervals.",
+      "ScaleRisk": "BaSO4 scale risk identified from formation water analysis. Scale squeeze programme planned from year 3.",
+      "EmulsionRisk": "Low - clean oil, low asphaltene content.",
+      "CorrosionStrategy": "Corrosion-resistant alloy (CRA) in well tubulars, chemical inhibition in flowlines.",
+      "MeteringStrategy": "Subsea multiphase flow meters (MPFM) per well. Topside allocation via test separator.",
+      "WellAutomation": "Subsea choke control with remote optimisation from onshore.",
+      "WaterManagement": "Produced water treatment to <30 mg/L oil-in-water. Enhanced treatment module on FPSO for environmental compliance. Re-injection considered for Phase 2."
+    },
+    "ParentObjectID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+      ],
+      "children": []
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "acl": {
+    "owners": [],
+    "viewers": []
+  },
+  "kind": "osdu:wks:work-product-component--GenericProperty:1.2.0",
+  "legal": {
+    "legaltags": [],
+    "otherRelevantDataCountries": [],
+    "status": "compliant"
+  },
+  "createTime": "2025-06-12T15:37:00.000Z",
+  "createUser": "Drogon Demo (Equinor)",
+  "id": "osdu:work-product-component--GenericProperty:0490b8f5-8d1f-4315-a3c6-d062436a8feb",
+  "modifyTime": "2025-06-12T15:37:00.000Z",
+  "modifyUser": "Drogon Demo (Equinor)",
+  "version": 1,
+  "data": {
+    "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
+    "DDMSDatasets": [
+      "eml://reservoir-ddms1/dataspace('maap/drogon201')/resqml20.obj_ContinuousProperty(0490b8f5-8d1f-4315-a3c6-d062436a8feb)"
+    ],
+    "IsDiscoverable": true,
+    "IsExtendedLoad": false,
+    "CreationDateTime": "2025-06-12T15:37:00.000Z",
+    "Description": "Continuous property: Oil Bulk Volume. Drogon field, Norwegian Continental Shelf.",
+    "Name": "Oil Bulk Volume",
+    "PropertyType": {
+      "PropertyTypeID": "osdu:reference-data--PropertyType:2dc6dc83-e1f9-48f6-87f2-57bcdd42738b:",
+      "Name": "volume"
+    },
+    "ValueType": "number",
+    "IndexableElementID": "osdu:reference-data--IndexableElement:cells:",
+    "MaxValue": 12938.4873046875,
+    "MinValue": 0,
+    "PropertyTopologyID": "osdu:work-product-component--IjkGridRepresentation:2c6de928-7e08-4601-b979-34048bd68c02:",
+    "PropertyUnitID": "osdu:reference-data--UnitOfMeasure:m3:"
+  },
+  "meta": [
+    {
+      "kind": "CRS",
+      "persistableReference": ""
+    }
+  ]
+}

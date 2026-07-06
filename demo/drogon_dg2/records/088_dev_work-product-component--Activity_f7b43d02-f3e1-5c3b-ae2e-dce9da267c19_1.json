@@ -1,0 +1,335 @@
+{
+  "id": "dev:work-product-component--Activity:f7b43d02-f3e1-5c3b-ae2e-dce9da267c19:1",
+  "kind": "osdu:wks:work-product-component--Activity:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon - Full FMU Workflow Run (ERT design, 250 realisations, OPM Flow)",
+    "Description": "Comprehensive FMU activity for the Drogon reservoir model, capturing the complete input-to-output pipeline for decision gate assessment. Based on the official equinor/fmu-drogon tutorial (24.3.1). INPUTS: 3D/4D seismic, 4 horizons (Volantis Group), stratigraphic column (3 formations, 8 facies types), 6 active wells + 5 RFT wells, reservoir properties per zone/facies, 7-region fault model, history observations. WORKFLOW: ERT orchestration with 250 one-by-one sensitivity realisations. Forward model: DESIGN2PARAMS → DESIGN_KW → RMS (MAIN workflow: structural + facies + petro + grid) → ECLCOMPRESS → OPM Flow → post-processing (volumes, maps, sim2seis, RFT, tracers). 17 continuous uncertainty parameters (Kv/Kh, FWL, GOC, fault seal, relperm, facies probabilities) + 6 discrete model switches. OUTPUTS: STOIIP/GIIP volumes by region/zone/facies (P10/P50/P90), production forecasts (FOPR, FGPR, FWPR, FPR), HC thickness maps, grid properties (ROFF), synthetic seismic, well data (RFT, tracers, completions), Eclipse tables.",
+    "Originator": "markuslund.vevle@emerson.com",
+    "CreationDateTime": "2026-03-21T10:00:00.000Z",
+    "ActivityTemplateID": "dev:work-product-component--ActivityTemplate:be0cabb6-8f79-5aee-894e-4bda337bb6d4:1",
+    "WorkflowStatus": "Completed",
+    "ParentObjectID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "ParentWorkProductID": "dev:work-product:862b5d29-3d8b-4e9f-9d38-7b78185079f7:1",
+    "Parameters": [
+      {
+        "Title": "SeismicData",
+        "Description": "Drogon 3D/4D seismic: static 3D vintage (2018-01-01) with near/far offset amplitude and RelAI; 3 monitor 4D surveys (18h-18v, 19h-18v, 20h-18v). Used for APS facies conditioning in Valysar. Template cube at 21.0.0 resolution.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "StringParameter": "{\"static_3d\":{\"vintage\":\"2018-01-01\",\"near_amplitude\":\"owexport_ampl_near_time_2018.segy\",\"far_amplitude\":\"owexport_ampl_far_time_2018.segy\",\"near_relai\":\"owexport_rai_near_time_2018.segy\",\"far_relai\":\"owexport_rai_far_time_2018.segy\"},\"monitor_4d\":[{\"baseline\":\"2018-01-01\",\"monitor\":\"2018-07-01\",\"amplitude\":\"owexport_ampl_18h_18v.segy\"},{\"baseline\":\"2018-01-01\",\"monitor\":\"2019-07-01\",\"amplitude\":\"owexport_ampl_19h_18v.segy\"},{\"baseline\":\"2018-01-01\",\"monitor\":\"2020-07-01\",\"amplitude\":\"owexport_ampl_20h_18v.segy\"}]}"
+      },
+      {
+        "Title": "Horizons",
+        "Description": "Structural horizon surfaces forming the Volantis Group framework. Exported from RMS to Eclipse grid.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "StringParameter": "[\"TopVolantis\",\"TopTherys\",\"TopVolon\",\"BaseVolantis\"]"
+      },
+      {
+        "Title": "StratigraphicColumn",
+        "Description": "Volantis Group stratigraphy: Valysar Fm (fluvial: Floodplain, Channel, Crevasse, Coal), Therys Fm (marine: Offshore, Lowershoreface, Uppershoreface, Calcite), Volon Fm (fluvial: Floodplain, Channel, Calcite).",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "StringParameter": "{\"Zones\":[\"Valysar\",\"Therys\",\"Volon\"],\"Horizons\":[\"TopVolantis\",\"TopTherys\",\"TopVolon\",\"BaseVolantis\"],\"FaciesPerZone\":{\"Valysar\":{\"PORO\":{\"Floodplain\":0.1,\"Channel\":0.27,\"Crevasse\":0.22,\"Coal\":0.0},\"PERMH\":{\"Floodplain\":1.0,\"Channel\":1000.0,\"Crevasse\":100.0,\"Coal\":0.0}},\"Therys\":{\"PORO\":{\"Offshore\":0.1,\"Lowershoreface\":0.23,\"Uppershoreface\":0.31,\"Calcite\":0.0},\"PERMH\":{\"Offshore\":2.0,\"Lowershoreface\":40.0,\"Uppershoreface\":1200.0,\"Calcite\":0.0}},\"Volon\":{\"PORO\":{\"Floodplain\":0.13,\"Channel\":0.2,\"Calcite\":0.0},\"PERMH\":{\"Floodplain\":1.0,\"Channel\":1100.0,\"Calcite\":0.0}}}}"
+      },
+      {
+        "Title": "Wells",
+        "Description": "Drogon wells: 1 appraisal (55_33-1), 4 producers (A1-A4), 2 water injectors (A5-A6), 5 RFT reference wells (R_A2..R_A6). Well modelling input from rms/input/well_modelling.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "StringParameter": "{\"appraisal\":[\"55_33-1\"],\"producers\":[\"A1\",\"A2\",\"A3\",\"A4\"],\"injectors\":[\"A5\",\"A6\"],\"rft_wells\":[\"R_A2\",\"R_A3\",\"R_A4\",\"R_A5\",\"R_A6\"]}"
+      },
+      {
+        "Title": "ReservoirProperties",
+        "Description": "Reference petrophysical properties per zone/facies from global_variables.yml. Porosity (0.10–0.31), permeability (1–1200 mD), Kv/Kh (0.1–0.9), J-functions for Pc, PVT (Bo=1.434, Rs=140.8), fluid contacts per 7 regions.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "StringParameter": "{\"Properties\":{\"Valysar\":{\"PORO\":{\"Floodplain\":0.1,\"Channel\":0.27,\"Crevasse\":0.22,\"Coal\":0.0},\"PERMH\":{\"Floodplain\":1.0,\"Channel\":1000.0,\"Crevasse\":100.0,\"Coal\":0.0}},\"Therys\":{\"PORO\":{\"Offshore\":0.1,\"Lowershoreface\":0.23,\"Uppershoreface\":0.31,\"Calcite\":0.0},\"PERMH\":{\"Offshore\":2.0,\"Lowershoreface\":40.0,\"Uppershoreface\":1200.0,\"Calcite\":0.0}},\"Volon\":{\"PORO\":{\"Floodplain\":0.13,\"Channel\":0.2,\"Calcite\":0.0},\"PERMH\":{\"Floodplain\":1.0,\"Channel\":1100.0,\"Calcite\":0.0}}},\"Regions\":{\"WestLowland\":{\"NUM\":1,\"OWC\":1660.0,\"GOC\":1000.0},\"CentralSouth\":{\"NUM\":2,\"OWC\":1677.0,\"GOC\":1000.0},\"CentralNorth\":{\"NUM\":3,\"OWC\":1677.0,\"GOC\":1000.0},\"NorthHorst\":{\"NUM\":4,\"OWC\":1660.0,\"GOC\":1640.0},\"CentralRamp\":{\"NUM\":5,\"OWC\":1677.0,\"GOC\":1000.0},\"CentralHorst\":{\"NUM\":6,\"OWC\":1677.0,\"GOC\":1000.0},\"EastLowland\":{\"NUM\":7,\"OWC\":1660.0,\"GOC\":1000.0}}}"
+      },
+      {
+        "Title": "FaultModel",
+        "Description": "7-region fault framework with LOGUNIF(0.1, 10) fault seal scaling. MULTREGT template for inter-region transmissibility.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "StringParameter": "{\"Regions\":[\"WestLowland\",\"CentralSouth\",\"CentralNorth\",\"NorthHorst\",\"CentralRamp\",\"CentralHorst\",\"EastLowland\"],\"FaultSealScaling\":{\"Distribution\":\"LOGUNIF\",\"Min\":0.1,\"Max\":10},\"MultregtTemplate\":\"multregt.tmpl\"}"
+      },
+      {
+        "Title": "Observations",
+        "Description": "History matching observations from drogon_wbhp_rft_wct_gor_tracer_4d_plt.obs: bottom-hole pressure, RFT, water cut, GOR, tracers (WT1/WT2), 4D seismic, PLT profiles.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "StringParameter": "drogon_wbhp_rft_wct_gor_tracer_4d_plt.obs"
+      },
+      {
+        "Title": "ErtConfig",
+        "Description": "ERT orchestration config (drogon_design.ert): 250 realisations, one-by-one sensitivity, OPM Flow simulator, LSF queue, random seed 123456.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Workflow:",
+        "StringParameter": "{\"ConfigFile\":\"drogon_design.ert\",\"CaseDir\":\"01_drogon_design\",\"EclipseName\":\"DROGON\",\"RMSProject\":\"drogon.rms14.2.1\",\"RMSVersion\":\"14.2.1\",\"RMSWorkflow\":\"MAIN\",\"EclipseDataTemplate\":\"DROGON_HIST.DATA\",\"Simulator\":\"OPM_FLOW\",\"QueueSystem\":\"LSF\",\"NumCPU\":1,\"NumRealizations\":250,\"MaxRuntime\":18000,\"RandomSeed\":123456,\"ObservationsFile\":\"drogon_wbhp_rft_wct_gor_tracer_4d_plt.obs\"}"
+      },
+      {
+        "Title": "DesignMatrix",
+        "Description": "Design matrix (design_matrix_one_by_one.xlsx, DesignSheet01 + DefaultValues): 250 realisations, one-by-one sensitivity layout. Each parameter varied individually while others at base values.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Workflow:",
+        "StringParameter": "{\"FileName\":\"design_matrix_one_by_one.xlsx\",\"DesignSheet\":\"DesignSheet01\",\"DefaultSheet\":\"DefaultValues\",\"NumRealizations\":250,\"Type\":\"one-by-one sensitivity\",\"Description\":\"One-by-one sensitivity design: each uncertainty parameter is varied individually while others are kept at base values. Allows tornado chart analysis of parameter impact on response.\"}"
+      },
+      {
+        "Title": "UncertaintyParameters",
+        "Description": "17 uncertainty parameter distributions from global_variables.dist: Kv/Kh ratios (4), fluid contacts (3), fault seal (1), relperm interpolation (2), isocore trends (3), APS facies probabilities (4). All continuous uniform/loguniform.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Workflow:",
+        "StringParameter": "[{\"Name\":\"KVKH_CHANNEL\",\"Distribution\":\"UNIFORM\",\"Min\":0.4,\"Max\":0.8},{\"Name\":\"KVKH_CREVASSE\",\"Distribution\":\"UNIFORM\",\"Min\":0.1,\"Max\":0.5},{\"Name\":\"KVKH_US\",\"Distribution\":\"UNIFORM\",\"Min\":0.4,\"Max\":0.8},{\"Name\":\"KVKH_LS\",\"Distribution\":\"UNIFORM\",\"Min\":0.5,\"Max\":0.9},{\"Name\":\"FWL_CENTRAL\",\"Distribution\":\"UNIFORM\",\"Min\":1672,\"Max\":1682},{\"Name\":\"FWL_NORTH_HORST\",\"Distribution\":\"UNIFORM\",\"Min\":1655,\"Max\":1665},{\"Name\":\"GOC_NORTH_HORST\",\"Distribution\":\"UNIFORM\",\"Min\":1635,\"Max\":1645},{\"Name\":\"FAULT_SEAL_SCALING\",\"Distribution\":\"LOGUNIF\",\"Min\":0.1,\"Max\":10},{\"Name\":\"RELPERM_INT_WO\",\"Distribution\":\"UNIFORM\",\"Min\":-1,\"Max\":1},{\"Name\":\"RELPERM_INT_GO\",\"Distribution\":\"UNIFORM\",\"Min\":-1,\"Max\":1},{\"Name\":\"ISOTREND_ALT1W_VALYSAR\",\"Distribution\":\"UNIFORM\",\"Min\":0.8,\"Max\":1.0},{\"Name\":\"ISOTREND_ALT1W_THERYS\",\"Distribution\":\"UNIFORM\",\"Min\":0.8,\"Max\":1.0},{\"Name\":\"ISOTREND_ALT1W_VOLON\",\"Distribution\":\"UNIFORM\",\"Min\":0.4,\"Max\":0.6},{\"Name\":\"VALYSAR_APS_PROB_CHANNEL\",\"Distribution\":\"UNIFORM\",\"Min\":0.24,\"Max\":0.44},{\"Name\":\"THERYS_APS_PROB_LOWSHOREFACE\",\"Distribution\":\"UNIFORM\",\"Min\":0.2,\"Max\":0.4},{\"Name\":\"THERYS_APS_PROB_UPSHOREFACE\",\"Distribution\":\"UNIFORM\",\"Min\":0.1,\"Max\":0.3},{\"Name\":\"VOLON_APS_PROB_CHANNEL\",\"Distribution\":\"UNIFORM\",\"Min\":0.52,\"Max\":0.72}]"
+      },
+      {
+        "Title": "ModelSwitches",
+        "Description": "Discrete model alternative switches: depth conversion (V=a*Tmap+b), simulation mode, standard MVA petro, APS facies, seismic conditioning, belts-based Therys.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Workflow:",
+        "StringParameter": "{\"DCONV_ALTERNATIVE\":2,\"HUM_MODEL_MODE\":1,\"PETROMODEL_ALTERNATIVE\":1,\"FACIESMODEL_ALTERNATIVE\":1,\"FACIES_VALYSAR_SEISCOND\":1,\"FACIES_THERYS_ALT2\":1}"
+      },
+      {
+        "Title": "FmuConfig",
+        "Description": "fmuconfig global_variables.yml: complete model parameterisation. Includes dates, seismic paths, grid names, regions (7 with OWC/GOC), facies codes (8 types), petro properties, J-functions, relperm, masterdata (SMDA refs), stratigraphy definitions.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Workflow:",
+        "StringParameter": "{\"GlobalVariables\":\"fmuconfig/output/global_variables.yml\",\"GlobalVariablesTemplate\":\"fmuconfig/output/global_variables.yml.tmpl\",\"RateScaling\":\"fmuconfig/output/rate_scaling.yml\",\"RateScalingTemplate\":\"fmuconfig/output/rate_scaling.yml.tmpl\",\"CoordinateSystem\":\"ST_WGS84_UTM37N_P32637\",\"Field\":\"DROGON\",\"Country\":\"Norway\",\"ModelName\":\"ff\"}"
+      },
+      {
+        "Title": "ForwardModelChain",
+        "Description": "Ordered ERT forward model chain (22 steps): DESIGN2PARAMS → DESIGN_KW × 4 templates → COPY_DIRECTORY/COPY_FILE → RMS(MAIN) → ECLCOMPRESS → OPM_FLOW → PRTVOL2CSV → RES2CSV (summary, satfunc, pvt, vfp, gruptree, wellcompletiondata) → GRID3D_HC_THICKNESS → GRID3D_AVERAGE_MAP → EXPORT_ECL_ROFF → GEN_DATA_RFT/TRACER → SIM2SEIS → ERT_SUMMARY_PLOTTING.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Workflow:",
+        "StringParameter": "[\"DESIGN2PARAMS\",\"DESIGN_KW\",\"COPY_DIRECTORY\",\"COPY_FILE\",\"RMS\",\"ECLCOMPRESS\",\"OPM_FLOW\",\"MAKE_SYMLINK\",\"PRTVOL2CSV\",\"RES2CSV:summary\",\"RES2CSV:satfunc\",\"RES2CSV:pvt\",\"RES2CSV:vfp\",\"RES2CSV:gruptree\",\"RES2CSV:wellcompletiondata\",\"GRID3D_HC_THICKNESS\",\"GRID3D_AVERAGE_MAP\",\"EXPORT_ECL_ROFF\",\"GEN_DATA_RFT_WELLS\",\"GEN_DATA_TRACER\",\"SIM2SEIS\",\"ERT_SUMMARY_PLOTTING\"]"
+      },
+      {
+        "Title": "NumberOfRealizations",
+        "Description": "Number of realisations in the design (250)",
+        "ParameterKindID": "dev:reference-data--ParameterKind:Integer:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Workflow:",
+        "IntegerParameter": 250
+      },
+      {
+        "Title": "RmsProject",
+        "Description": "RMS project: drogon.rms14.2.1, workflow MAIN. Covers structural modelling, facies modelling (APS with seismic conditioning), petrophysical modelling (MVA), grid construction, upscaling.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Workflow:",
+        "StringParameter": "{\"Project\":\"drogon.rms14.2.1\",\"Version\":\"14.2.1\",\"Workflow\":\"MAIN\"}"
+      },
+      {
+        "Title": "EclipseDataTemplate",
+        "Description": "Eclipse/OPM Flow DATA template (DROGON_HIST.DATA): METRIC, OIL/GAS/WATER/DISGAS/VAPOIL, 2 water tracers. Includes for grid, properties, schedule, PVT, RXVD, VFP.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Workflow:",
+        "StringParameter": "DROGON_HIST.DATA"
+      },
+      {
+        "Title": "HookWorkflows",
+        "Description": "5 ERT hook workflows: echo_config_file (PRE_SIMULATION), run_fmuconfig (PRE_SIMULATION), run_fmuconfig_rate (PRE_SIMULATION), wf_fmuobs (PRE_SIMULATION), xhook_create_case_metadata (PRE_SIMULATION).",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Workflow:",
+        "StringParameter": "[{\"Name\":\"echo_config_file\",\"Hook\":\"PRE_SIMULATION\",\"Description\":\"Write ERT config file run information to scratch\"},{\"Name\":\"run_fmuconfig\",\"Hook\":\"PRE_SIMULATION\",\"Description\":\"Update global_variables.yml and .tmpl files\"},{\"Name\":\"run_fmuconfig_rate\",\"Hook\":\"PRE_SIMULATION\",\"Description\":\"Update rate_scaling.yml and .tmpl files\"},{\"Name\":\"wf_fmuobs\",\"Hook\":\"PRE_SIMULATION\",\"Description\":\"Create YAML version of ERT observations for Webviz\"},{\"Name\":\"xhook_create_case_metadata\",\"Hook\":\"PRE_SIMULATION\",\"Description\":\"Create case metadata using fmu-dataio\"}]"
+      },
+      {
+        "Title": "SummaryVectors",
+        "Description": "Eclipse summary vectors requested: field rates (FOPR, FGPR, FWPR), cumulatives (FOPT, FGPT), well-level (WOPR, WBHP), region (RPR, ROIP, ROE), tracers (WTPRWT1/2), performance (TCPU). ~60 unique vector types across field/group/well/region.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Workflow:",
+        "StringParameter": "{\"field_rates\":[\"FOPR\",\"FGPR\",\"FWPR\",\"FLPR\",\"FVPR\",\"FWIR\",\"FGIR\"],\"field_cumul\":[\"FOPT\",\"FGPT\",\"FWPT\",\"FWIT\",\"FGIT\"],\"field_ratios\":[\"FWCT\",\"FGOR\",\"FGLR\"],\"field_pressure\":[\"FPR\"],\"field_in_place\":[\"FOIP\",\"FGIP\",\"FWIP\"],\"well_rates\":[\"WOPR\",\"WGPR\",\"WWPR\",\"WLPR\",\"WWIR\",\"WGIR\"],\"well_cumul\":[\"WOPT\",\"WGPT\",\"WWPT\",\"WWIT\",\"WGIT\"],\"well_ratios\":[\"WWCT\",\"WGOR\"],\"well_perf\":[\"WBHP\",\"WTHP\",\"WPI\"],\"region_data\":[\"RPR\",\"ROIP\",\"ROE\",\"RGIP\"],\"tracers\":[\"WTPRWT1\",\"WTPRWT2\",\"WTPCWT1\",\"WTPCWT2\"]}"
+      },
+      {
+        "Title": "InputParameterTable",
+        "Description": "OSDU ColumnBasedTable WPC containing per-realisation uncertainty parameter values (OWC depths, porosity, Kv/Kh, etc.).",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:d8cd755c-2b7a-48ae-9db1-12d66aedf070:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "ColumnBasedTable-params"
+          }
+        ]
+      },
+      {
+        "Title": "GeoModelDataspace",
+        "Description": "RDDMS ETP dataspace with Drogon geomodel EPC files. Shared structural model - same dataspace as DG1.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "ETPDataspace"
+          }
+        ]
+      },
+      {
+        "Title": "OutputParameterTable",
+        "Description": "Generated per-realisation input parameter table (ColumnBasedTable WPC) from DESIGN2PARAMS + DESIGN_KW.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:d8cd755c-2b7a-48ae-9db1-12d66aedf070:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "ColumnBasedTable-params"
+          }
+        ]
+      },
+      {
+        "Title": "OutputVolumesRaw",
+        "Description": "Per-realisation estimated volumes (RAW REV WPC): STOIIP and GIIP by region (7), zone (3), and facies (8). From PRTVOL2CSV.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:26867eca-5fd5-4a5d-a260-67a40a91e76a:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "REV-raw"
+          }
+        ]
+      },
+      {
+        "Title": "OutputVolumesStats",
+        "Description": "Statistical aggregation of volumes (STAT REV WPC): P10/P50/P90 across 250 realisations. Field STOIIP P50 ≈ 45.4 MSm³, recovery factor P50 ≈ 33.5%.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:323329ac-acee-4c7d-bf76-c4bd9eab601b:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "REV-stats"
+          }
+        ]
+      },
+      {
+        "Title": "OutputProductionForecast",
+        "Description": "P50 production forecast (ColumnBasedTable WPC): field rates (FOPR, FGPR, FWPR), cumulatives (FOPT), injection (FWIR), pressure (FPR), water cut (FWCT). 4 producers, 2 injectors, 20-year profile 2018–2037.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "ProductionForecast"
+          }
+        ]
+      },
+      {
+        "Title": "OutputMaps",
+        "Description": "HC thickness maps (oil and gas, from GRID3D_HC_THICKNESS), good facies thickness maps, average parameter maps (from GRID3D_AVERAGE_MAP). Regular surface grids in .gri format.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "StringParameter": "{\"hc_thickness_oil\":\"share/results/maps/*oil_thickness*.gri\",\"hc_thickness_gas\":\"share/results/maps/*gas_thickness*.gri\",\"avg_parameter_maps\":\"share/results/maps/*average*.gri\",\"facies_thickness\":\"share/results/maps/*facies_thickness*.gri\"}"
+      },
+      {
+        "Title": "OutputGridProperties",
+        "Description": "Eclipse restart and init parameters exported to ROFF format for RMS co-visualization and Webviz. Includes PORO, PERMX, SWAT, PRESSURE, SGAS per timestep.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "StringParameter": "{\"roff_files\":\"share/results/grids/eclgrid--*.roff\",\"description\":\"Eclipse restart and init parameters in ROFF format\"}"
+      },
+      {
+        "Title": "OutputSim2Seis",
+        "Description": "Synthetic seismic from simulation results (SIM2SEIS forward model): 3D and 4D synthetics for comparison with observed seismic. Rock physics: Vp/Vs/density for carbonate and coal.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "StringParameter": "{\"synthetic_seismic\":\"share/results/seismic/*.segy\",\"description\":\"Simulated seismic from reservoir simulation results\"}"
+      },
+      {
+        "Title": "OutputWellData",
+        "Description": "RFT pressure data (GEN_DATA_RFT_WELLS), tracer breakthrough (GEN_DATA_TRACER for WT1/WT2), well completion data (RES2CSV:wellcompletiondata → Arrow).",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "StringParameter": "{\"summary_arrow\":\"share/results/tables/ecl_summary/DROGON-<IENS>.arrow\",\"satfunc_csv\":\"share/results/tables/relperm.csv\",\"pvt_csv\":\"share/results/tables/pvt.csv\",\"vfp_arrow\":\"share/results/tables/vfp/vfp*.arrow\",\"gruptree_csv\":\"share/results/tables/gruptree.csv\",\"wellcompletiondata_arrow\":\"share/results/tables/wellcompletiondata.arrow\"}"
+      },
+      {
+        "Title": "OutputEclipseTables",
+        "Description": "Eclipse-derived tables: saturation functions (relperm.csv), PVT tables (pvt.csv), VFP tables (vfp*.arrow), group tree (gruptree.csv), summary vectors (DROGON-<IENS>.arrow).",
+        "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "StringParameter": "{\"artifacts\":{\"summary_arrow\":\"share/results/tables/ecl_summary/DROGON-<IENS>.arrow\",\"satfunc_csv\":\"share/results/tables/relperm.csv\",\"pvt_csv\":\"share/results/tables/pvt.csv\",\"vfp_arrow\":\"share/results/tables/vfp/vfp*.arrow\",\"gruptree_csv\":\"share/results/tables/gruptree.csv\",\"wellcompletiondata_arrow\":\"share/results/tables/wellcompletiondata.arrow\"},\"volumes\":{\"eclipse_vol_csv\":\"share/results/volumes/eclipse--vol.csv\",\"description\":\"Eclipse PRT volumes per region at initial timestep\"}}"
+      },
+      {
+        "Title": "VolumeEstimates",
+        "Description": "P50 volume estimates: STOIIP 45.4 MSm³, GIIP 6.4 GSm³, recoverable oil 15.2 MSm³, RF 33.5%. Breakdown by 7 regions and 3 zones.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:323329ac-acee-4c7d-bf76-c4bd9eab601b:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "REV-stats-volumes"
+          }
+        ]
+      },
+      {
+        "Title": "ProductionProfileP50",
+        "Description": "P50 reference production profile: field-level FOPR, FGPR, FWPR, FWIR, FPR, FOPT, FWCT. Real OPM Flow output from realization-0, 31 monthly timesteps 2018–2020. Peak oil rate ~14.3 kSm³/d.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "ProductionProfile-P50"
+          }
+        ]
+      },
+      {
+        "Title": "ReservoirRecord",
+        "Description": "OSDU Reservoir master-data record for Drogon. Links to 7 ReservoirSegment records (WestLowland, CentralSouth, etc.).",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "Reservoir"
+          }
+        ]
+      },
+      {
+        "Title": "DevelopmentConcept",
+        "Description": "DG2 Development Concept record: subsea tieback to Ivar Aasen, 6 wells (A1-A4 prod + A5-A6 inj), FPSO host, waterflood IOR.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:Drogon-DG2:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "DevelopmentConcept"
+          }
+        ]
+      }
+    ],
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+      ],
+      "children": [
+        "dev:work-product-component--ColumnBasedTable:d8cd755c-2b7a-48ae-9db1-12d66aedf070:1",
+        "dev:work-product-component--ReservoirEstimatedVolumes:26867eca-5fd5-4a5d-a260-67a40a91e76a:1",
+        "dev:work-product-component--ReservoirEstimatedVolumes:323329ac-acee-4c7d-bf76-c4bd9eab601b:1",
+        "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1",
+        "dev:work-product-component--DevelopmentConcept:Drogon-DG2:1"
+      ]
+    }
+  }
+}

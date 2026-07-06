@@ -1,0 +1,103 @@
+{
+  "id": "dev:work-product-component--ColumnBasedTable:b8ac5e0a-a29b-5290-8ba3-757e861abf4a:1",
+  "kind": "osdu:wks:work-product-component--ColumnBasedTable:1.4.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 - Eclipse Summary Vectors (timeseries)",
+    "Description": "Simulator summary vectors (field and per-well rates, cumulatives, pressures, ratios, tracers) exported by RES2CSV:summary as Apache Arrow. Vectors: FOPR, FGPR, FWPR, FOPT, FGPT, FPR, FWCT, FGOR, WOPR, WBHP, RPR, ROIP, tracers (WTPRWT1/2). 31 monthly timesteps 2018-01 to 2020-07.",
+    "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "ColumnBasedTableTypeID": "dev:reference-data--ColumnBasedTableType:AdHoc:",
+    "Columns": [
+      {
+        "ColumnName": "DATE",
+        "ColumnRole": "Key",
+        "ValueType": "datetime"
+      },
+      {
+        "ColumnName": "FOPR",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Sm3/d:"
+      },
+      {
+        "ColumnName": "FGPR",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Sm3/d:"
+      },
+      {
+        "ColumnName": "FWPR",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Sm3/d:"
+      },
+      {
+        "ColumnName": "FWIR",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Sm3/d:"
+      },
+      {
+        "ColumnName": "FOPT",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Sm3:"
+      },
+      {
+        "ColumnName": "FGPT",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Sm3:"
+      },
+      {
+        "ColumnName": "FWPT",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Sm3:"
+      },
+      {
+        "ColumnName": "FPR",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:bar:"
+      },
+      {
+        "ColumnName": "FWCT",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:"
+      },
+      {
+        "ColumnName": "FGOR",
+        "ColumnRole": "Value",
+        "ValueType": "number",
+        "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Sm3/Sm3:"
+      }
+    ],
+    "DDMSDatasets": [
+      "eml:///dataspace('maap/drogon_dg')/share/results/tables/ecl_summary/DROGON.arrow"
+    ],
+    "FMU": {
+      "Content": "timeseries",
+      "FileReference": "share/results/tables/ecl_summary/DROGON.arrow"
+    },
+    "data.ancestry.inputs": [
+      "dev:dataset--ETPDataspace:maap-drogon_dg:1"
+    ]
+  }
+}

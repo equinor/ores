@@ -1,0 +1,43 @@
+{
+  "id": "dev:work-product-component--IjkGridRepresentation:ff1347d1-1024-5ae4-af63-91698685be83:1",
+  "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 - geogrid phit",
+    "Description": "Total porosity (PHIT)",
+    "SupportedByID": "dev:work-product-component--IjkGridRepresentation:45e80eba-2376-5d64-8989-66d7c8e94426:1",
+    "PropertyAttribute": "porosity",
+    "IsDiscrete": false,
+    "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:",
+    "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
+    "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "DDMSDatasets": [
+      "eml:///dataspace('maap/drogon_dg')/resqml22.ContinuousProperty('ff1347d1-1024-5ae4-af63-91698685be83')"
+    ],
+    "FMU": {
+      "Content": "property",
+      "PropertyAttribute": "porosity",
+      "IsDiscrete": false,
+      "StandardResult": "grid_model_static"
+    },
+    "data.ancestry.inputs": [
+      "dev:work-product-component--IjkGridRepresentation:45e80eba-2376-5d64-8989-66d7c8e94426:1",
+      "dev:dataset--ETPDataspace:maap-drogon_dg:1"
+    ]
+  }
+}

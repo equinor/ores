@@ -1,0 +1,31 @@
+{
+  "id": "dev:work-product:862b5d29-3d8b-4e9f-9d38-7b78185079f7:1",
+  "kind": "osdu:wks:work-product:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon Reservoir Study",
+    "Description": "Parent WorkProduct for Drogon estimated volumes",
+    "WorkflowStatus": "Active",
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+      ],
+      "children": []
+    }
+  }
+}
