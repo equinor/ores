@@ -31,9 +31,9 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
-SCRIPT_DIR = Path(__file__).resolve().parent          # demo/eqn/omegas/exploration/
-PARENT_DIR = SCRIPT_DIR.parent                        # demo/eqn/omegas/
-DEMO_DIR = PARENT_DIR.parent.parent                   # demo/
+SCRIPT_DIR = Path(__file__).resolve().parent          # demo/omegas/exploration/
+PARENT_DIR = SCRIPT_DIR.parent                        # demo/omegas/
+DEMO_DIR = PARENT_DIR.parent                          # demo/
 REPO_ROOT = DEMO_DIR.parent                           # ores/
 
 sys.path.insert(0, str(DEMO_DIR))

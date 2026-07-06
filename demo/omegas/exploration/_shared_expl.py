@@ -12,7 +12,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 PARENT_DIR = SCRIPT_DIR.parent
 
 sys.path.insert(0, str(PARENT_DIR))
-sys.path.insert(0, str(PARENT_DIR.parent.parent))
+sys.path.insert(0, str(PARENT_DIR.parent))
 
 from _shared import (  # noqa: E402, F401
     DEFAULT_ACL, DEFAULT_LEGAL, ID_PREFIX,

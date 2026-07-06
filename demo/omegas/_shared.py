@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 # ── Re-export auth helpers from central module ──────────────────────────
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from _auth import parse_dotenv, load_env, mint_from_env as get_access_token  # noqa: E402,F401
 
 
