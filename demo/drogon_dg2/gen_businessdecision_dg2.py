@@ -173,14 +173,22 @@ def main():
     # Reference to DG1 BD (prior decision gate)
     dg1_bd_id = f"{pfx}:master-data--BusinessDecision:Drogon-DG1-Identify:1"
 
-    # PersistedCollection WPC (evidence package)
+    # PersistedCollection WPC (evidence package - top-level)
     collection_id = ""
     if Path(args.collection).exists():
         coll_man = load_json(args.collection)
         for wpc in coll_man.get("Data", {}).get("WorkProductComponents", []):
             if "PersistedCollection" in wpc.get("kind", ""):
-                collection_id = wpc["id"]
-                break
+                wpc_id = wpc["id"]
+                if "EvidencePackage" in wpc_id:
+                    collection_id = wpc_id
+                    break
+        # Fallback: use last one (top-level is last in hierarchical manifest)
+        if not collection_id:
+            for wpc in reversed(coll_man.get("Data", {}).get("WorkProductComponents", [])):
+                if "PersistedCollection" in wpc.get("kind", ""):
+                    collection_id = wpc["id"]
+                    break
 
     # ETP dataspace for RESQML artefacts
     dataspace_id = f"{pfx}:dataset--ETPDataspace:maap-drogon_dg:1"
@@ -236,6 +244,17 @@ def main():
                 maps_wpc_ids=maps_wpc_ids,
                 simtable_wpc_ids=simtable_wpc_ids,
                 polygon_wpc_ids=polygon_wpc_ids,
+                seismic_wpc_ids=[
+                    f"{pfx}:dataset--FileCollection.Bluware.OpenVDS:drogon-amplitude-far-time-20180101",
+                    f"{pfx}:dataset--FileCollection.Bluware.OpenVDS:drogon-amplitude-near-time-20180101",
+                ],
+                sub_collection_ids=[
+                    f"{pfx}:work-product-component--PersistedCollection:Drogon-DG2-Geomodel:1",
+                    f"{pfx}:work-product-component--PersistedCollection:Drogon-DG2-Seismic:1",
+                    f"{pfx}:work-product-component--PersistedCollection:Drogon-DG2-Wells:1",
+                    f"{pfx}:work-product-component--PersistedCollection:Drogon-DG2-Simulation:1",
+                    f"{pfx}:work-product-component--PersistedCollection:Drogon-DG2-Documents:1",
+                ],
             ),
             # ── Canonical fields (survive OSDU ingestion) ──
             **_build_canonical_fields(pfx),
@@ -290,6 +309,8 @@ def _build_parameters(
     maps_wpc_ids: List[str] | None = None,
     simtable_wpc_ids: List[str] | None = None,
     polygon_wpc_ids: List[str] | None = None,
+    seismic_wpc_ids: List[str] | None = None,
+    sub_collection_ids: List[str] | None = None,
 ) -> List[Dict[str, Any]]:
     params: List[Dict[str, Any]] = [
         {
@@ -451,6 +472,47 @@ def _build_parameters(
             "DataObjectParameter": polygon_wpc_ids[0],
             "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "Polygons"}],
         })
+    # ── Seismic (SeismicTraceData WPCs via OpenVDS) ──────────────
+    if seismic_wpc_ids:
+        for s_id in seismic_wpc_ids:
+            offset = "FAR" if "far" in s_id.lower() else "NEAR"
+            params.append({
+                "Title": f"OpenVDS Drogon Amplitude {offset.title()} Offset (Time) 2018-01-01",
+                "Selection": (
+                    "Curated OpenVDS seismic volume supporting the DG2 concept selection "
+                    "evidence package."
+                ),
+                "ParameterKindID": f"{pfx}:reference-data--ParameterKind:DataObject:",
+                "ParameterRoleID": f"{pfx}:reference-data--ParameterRole:InputReference:",
+                "DataObjectParameter": s_id,
+                "Keys": [
+                    {"ParameterKey": "artifact", "StringParameterKey": f"OpenVDS-seismic-{offset.lower()}"},
+                    {"ParameterKey": "domain", "StringParameterKey": "SeismicTraceData"},
+                    {"ParameterKey": "format", "StringParameterKey": "OpenVDS"},
+                    {"ParameterKey": "offsetClass", "StringParameterKey": offset},
+                ],
+            })
+    # ── Sub-collections (domain-specific evidence packages) ──────
+    if sub_collection_ids:
+        sub_titles = {
+            "Geomodel": "Geomodel Package (grid + maps + polygons + RDDMS)",
+            "Seismic": "Seismic Package (BinGrid + TraceData far/near + OpenVDS)",
+            "Wells": "Wells & Stratigraphy Package",
+            "Simulation": "Simulation & Volumes Package (FMU + forecast + tables)",
+            "Documents": "Documents Package (SRA, CRA, PDO, PTR)",
+        }
+        for coll_id in sub_collection_ids:
+            # Extract domain from ID: ...:Drogon-DG2-{Domain}:1
+            domain = coll_id.split("Drogon-DG2-")[-1].split(":")[0]
+            title = sub_titles.get(domain, f"{domain} Package")
+            params.append({
+                "Title": title,
+                "Selection": "Domain-specific evidence sub-collection for DG2",
+                "ParameterKindID": f"{pfx}:reference-data--ParameterKind:DataObject:",
+                "ParameterRoleID": f"{pfx}:reference-data--ParameterRole:InputReference:",
+                "DataObjectParameter": coll_id,
+                "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "PersistedCollection"}],
+            })
     return params
 
 

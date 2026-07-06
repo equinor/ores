@@ -241,6 +241,121 @@
                 "StringParameterKey": "Polygons"
               }
             ]
+          },
+          {
+            "Title": "OpenVDS Drogon Amplitude Far Offset (Time) 2018-01-01",
+            "Selection": "Curated OpenVDS seismic volume supporting the DG2 concept selection evidence package.",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:dataset--FileCollection.Bluware.OpenVDS:drogon-amplitude-far-time-20180101",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "OpenVDS-seismic-far"
+              },
+              {
+                "ParameterKey": "domain",
+                "StringParameterKey": "SeismicTraceData"
+              },
+              {
+                "ParameterKey": "format",
+                "StringParameterKey": "OpenVDS"
+              },
+              {
+                "ParameterKey": "offsetClass",
+                "StringParameterKey": "FAR"
+              }
+            ]
+          },
+          {
+            "Title": "OpenVDS Drogon Amplitude Near Offset (Time) 2018-01-01",
+            "Selection": "Curated OpenVDS seismic volume supporting the DG2 concept selection evidence package.",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:dataset--FileCollection.Bluware.OpenVDS:drogon-amplitude-near-time-20180101",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "OpenVDS-seismic-near"
+              },
+              {
+                "ParameterKey": "domain",
+                "StringParameterKey": "SeismicTraceData"
+              },
+              {
+                "ParameterKey": "format",
+                "StringParameterKey": "OpenVDS"
+              },
+              {
+                "ParameterKey": "offsetClass",
+                "StringParameterKey": "NEAR"
+              }
+            ]
+          },
+          {
+            "Title": "Geomodel Package (grid + maps + polygons + RDDMS)",
+            "Selection": "Domain-specific evidence sub-collection for DG2",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:work-product-component--PersistedCollection:Drogon-DG2-Geomodel:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "PersistedCollection"
+              }
+            ]
+          },
+          {
+            "Title": "Seismic Package (BinGrid + TraceData far/near + OpenVDS)",
+            "Selection": "Domain-specific evidence sub-collection for DG2",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:work-product-component--PersistedCollection:Drogon-DG2-Seismic:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "PersistedCollection"
+              }
+            ]
+          },
+          {
+            "Title": "Wells & Stratigraphy Package",
+            "Selection": "Domain-specific evidence sub-collection for DG2",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:work-product-component--PersistedCollection:Drogon-DG2-Wells:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "PersistedCollection"
+              }
+            ]
+          },
+          {
+            "Title": "Simulation & Volumes Package (FMU + forecast + tables)",
+            "Selection": "Domain-specific evidence sub-collection for DG2",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:work-product-component--PersistedCollection:Drogon-DG2-Simulation:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "PersistedCollection"
+              }
+            ]
+          },
+          {
+            "Title": "Documents Package (SRA, CRA, PDO, PTR)",
+            "Selection": "Domain-specific evidence sub-collection for DG2",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:work-product-component--PersistedCollection:Drogon-DG2-Documents:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "PersistedCollection"
+              }
+            ]
           }
         ],
         "Personnel": [

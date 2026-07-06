@@ -14,18 +14,20 @@ from . import osdu  # for _eml_uri_from_parts
 Scalar = Union[str, int, float, bool, None]
 
 # ---------------------------------------------------------------------
-# OSDU ID detection (master-data and work-product/work-product-component)
+# OSDU ID detection (master-data, work-product/work-product-component, dataset)
 # Excludes reference-data by design.
 #
 # Examples accepted:
 #   "dev:master-data--Reservoir:f9585655-83d8-4549-ae3e-2dffc2cd5937:1"
 #   "dev:work-product-component--ReservoirEstimatedVolumes:5033c9e2-b1cf-424a-86c9-76b846942cf8:1"
+#   "dev:dataset--FileCollection.Bluware.OpenVDS:drogon-amplitude-far-time-20180101"
+#   "opendes:work-product-component--SeismicTraceData:drogon-amp-far-time-20180101:"
 # ---------------------------------------------------------------------
 _OSDU_ID_RE = re.compile(
     r"""^[\w\-.]+:
-        (?:(?:work-product(?:-component)?)|master-data)--[\w\-]+:
-        [\w\-.:%]+:
-        [0-9]+$""",
+        (?:(?:work-product(?:-component)?)|master-data|dataset)--[\w\-.]+:
+        [\w\-.:%]+
+        (?::[0-9]+)?$""",
     re.VERBOSE,
 )
 
@@ -54,7 +56,7 @@ def _role_from_path(path: str) -> str:
         return "evidence"
     if "collaborationprojectid" in p:
         return "project"
-    if "parameters" in p and "objectparameterkey" in p:
+    if "parameters" in p and ("objectparameterkey" in p or "dataobjectparameter" in p):
         return "parameter-object"
     if "ancestry.parents" in p:
         return "ancestry-parent"
