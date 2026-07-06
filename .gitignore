@@ -32,7 +32,8 @@ out.txt
 tmp/
 test/_pg_vs_rest_output
 demo/eqn/
-/home/maap/ores/demo/drogonresqml/src/
+demo/drogonresqml/src/
+demo/drogonresqml/drogon_demo_records.json 
 
 # ── Local runtime artifacts ──
 ores_tokens.db
