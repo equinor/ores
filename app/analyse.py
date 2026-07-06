@@ -481,15 +481,26 @@ async def analyse_compare(
                         return None
 
                     # Post-filter: verify this BD actually references the
-                    # selected reservoir via Parameters[].DataObjectParameter.
+                    # selected reservoir.  Check multiple locations:
+                    #   1. data.ReservoirIDs[] (OSDU canonical top-level field)
+                    #   2. data.Parameters[].DataObjectParameter (typed ref)
+                    #   3. data.ancestry (parent/child links)
                     # The full-text search may return false positives.
+                    reservoir_ids_field = data_block.get("ReservoirIDs") or []
+                    refs_via_top_level = reservoir_id in reservoir_ids_field
+
                     params = data_block.get("Parameters") or []
-                    refs_reservoir = any(
+                    refs_via_params = any(
                         isinstance(p, dict)
                         and reservoir_id in (p.get("DataObjectParameter") or "")
                         for p in params
                     )
-                    if not refs_reservoir:
+
+                    ancestry = data_block.get("ancestry") or {}
+                    ancestry_all = (ancestry.get("parents") or []) + (ancestry.get("children") or [])
+                    refs_via_ancestry = reservoir_id in ancestry_all
+
+                    if not (refs_via_top_level or refs_via_params or refs_via_ancestry):
                         log.debug(
                             "[ANALYSE] BD %s does not reference reservoir %s - skipping",
                             bid, reservoir_id,

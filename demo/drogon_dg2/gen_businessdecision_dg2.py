@@ -194,7 +194,7 @@ def main():
         "acl":   DEFAULT_ACL,
         "legal": DEFAULT_LEGAL,
         "data": {
-            "Name": "Drogon - Decision Gate 2 DG2 Concept Select",
+            "Name": "Drogon DG2 - Concept Select",
             "Description": (
                 "DG2 Concept Select for the Drogon field development, aligned with the "
                 "official Drogon FMU model (equinor/fmu-drogon tutorial 24.3.1). "

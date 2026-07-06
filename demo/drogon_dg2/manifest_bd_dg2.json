@@ -22,7 +22,7 @@
         ]
       },
       "data": {
-        "Name": "Drogon - Decision Gate 2 DG2 Concept Select",
+        "Name": "Drogon DG2 - Concept Select",
         "Description": "DG2 Concept Select for the Drogon field development, aligned with the official Drogon FMU model (equinor/fmu-drogon tutorial 24.3.1). Volantis Group (Valysar, Therys, Volon formations) across 7 fault-bounded reservoir regions (WestLowland, CentralSouth, CentralNorth, NorthHorst, CentralRamp, CentralHorst, EastLowland). 250 FMU realisations with one-by-one sensitivity design, OPM Flow simulator. 4 producers (A1\u2013A4), 2 water injectors (A5\u2013A6). STOIIP P50 45.4 MSm\u00b3, EUR P50 10.4 MSm\u00b3 oil, RF P50 33.5%. Recommended concept: subsea tie-back to FPSO with 2\u00d74-slot templates, 6 active wells + 2 contingent infill. NPV@10% 520 MUSD, CAPEX 8,500 MNOK, first oil 2028-H1.",
         "ProjectName": "Drogon Field Development",
         "DecisionLevelID": "dev:reference-data--DecisionLevel:DG2:",
