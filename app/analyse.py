@@ -392,41 +392,75 @@ async def analyse_compare(
 
     # 2. Search for BDs that reference this reservoir.
     # OSDU search v2 uses Lucene full-text; nested array field paths are
-    # not supported.  We use a plain full-text query containing the
-    # reservoir id (which is embedded in Parameters[].DataObjectParameter)
-    # and then filter the results in-memory to ensure the match is real.
+    # not always indexed.  We use multiple query strategies and merge:
+    #   a) Search by the reservoir name token (appears in BD Name/Description)
+    #   b) Search by the reservoir ID key (appears in Parameters[].DataObjectParameter)
+    #   c) Search all BDs if above fail (small result set expected)
+    # Then filter in-memory to ensure the match is real.
 
-    # Build a short search token from the reservoir id - use the UUID
-    # portion so we don't hit Lucene special-char issues with colons.
+    # Build search tokens from the reservoir id
     _rid_parts = reservoir_id.split(":")
-    # Typical id: dev:master-data--Reservoir:<uuid>:<ver>
+    # Typical id: dev:master-data--Reservoir:<name>:<ver>
     search_token = _rid_parts[-2] if len(_rid_parts) >= 3 else reservoir_id
-    bd_query = f'"{search_token}"'
-    payload = {
-        "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
-        "query": bd_query,
-        "limit": 50,
-        "returnedFields": ["id", "kind", "version"],
-        "trackTotalCount": True,
-    }
+
+    # Also use the reservoir name for full-text search (more reliably indexed)
+    # Quote the name to search as a phrase (handles special chars like ø)
+    reservoir_name_phrase = f'"{reservoir_name}"' if reservoir_name != reservoir_id else f'"{search_token}"'
+
+    # Strategy: try multiple queries and merge results
+    queries_to_try = [
+        f'"{search_token}"',                   # exact match on ID key
+        reservoir_name_phrase,                  # name phrase in description/name
+        f'data.Parameters.DataObjectParameter:"{reservoir_id}"',  # field-specific
+    ]
+    bd_kind = "osdu:wks:master-data--BusinessDecision:1.0.0"
 
     gates: List[Dict[str, Any]] = []
     try:
         async with osdu.http_client(timeout=120) as client:
-            # OSDU search (may return false positives - filtered below)
+            # OSDU search – try multiple query strategies and merge
             all_bd_ids: list = []
-            try:
-                r = await client.post(search_url, headers=hdr, json=payload)
-                r.raise_for_status()
-                all_bd_ids = [
-                    h.get("id") for h in r.json().get("results", []) if h.get("id")
-                ]
-            except Exception as e:
-                log.warning("[ANALYSE] BD OSDU search failed: %s", e)
+            seen_ids: set = set()
+            for q in queries_to_try:
+                try:
+                    payload = {
+                        "kind": bd_kind,
+                        "query": q,
+                        "limit": 50,
+                        "returnedFields": ["id", "kind", "version"],
+                        "trackTotalCount": True,
+                    }
+                    r = await client.post(search_url, headers=hdr, json=payload)
+                    if r.status_code == 200:
+                        for h in r.json().get("results", []):
+                            bid = h.get("id")
+                            if bid and bid not in seen_ids:
+                                all_bd_ids.append(bid)
+                                seen_ids.add(bid)
+                except Exception as e:
+                    log.debug("[ANALYSE] BD search query %r failed: %s", q, e)
+
+            # Fallback: if no results, fetch ALL BDs (typically small count)
+            if not all_bd_ids:
+                try:
+                    payload = {
+                        "kind": bd_kind,
+                        "query": "*",
+                        "limit": 100,
+                        "returnedFields": ["id", "kind", "version"],
+                    }
+                    r = await client.post(search_url, headers=hdr, json=payload)
+                    if r.status_code == 200:
+                        all_bd_ids = [
+                            h.get("id") for h in r.json().get("results", [])
+                            if h.get("id")
+                        ]
+                except Exception as e:
+                    log.warning("[ANALYSE] BD fallback search failed: %s", e)
 
             log.info(
-                "[ANALYSE] Found %d BD candidates for reservoir %s",
-                len(all_bd_ids), reservoir_id,
+                "[ANALYSE] Found %d BD candidates for reservoir %s (queries: %d)",
+                len(all_bd_ids), reservoir_id, len(queries_to_try),
             )
 
             # Process all BDs in parallel (was sequential)
