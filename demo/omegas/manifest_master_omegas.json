@@ -1,0 +1,538 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [
+    {
+      "id": "dev:master-data--Reservoir:OmegaSorAlfa:1",
+      "kind": "osdu:wks:master-data--Reservoir:2.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r Alfa",
+        "Description": "Oil accumulation in the Brent Group (Tarbert and Rannoch formations), block 34/4, PL057 Snorre area. Discovery well 34/4-19 S. Middle Jurassic shallow-marine to fluvial-deltaic sandstones. STOIIP mean 19.3 MSm\u00b3 oil.",
+        "FieldID": "dev:master-data--Field:Snorre:",
+        "DiscoveryID": "dev:master-data--Discovery:OmegaS\u00f8rAlfa:",
+        "CountryID": "dev:reference-data--Country:NO:",
+        "SpatialArea": {
+          "Wgs84Coordinates": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  2.05,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.4
+                ]
+              ]
+            ]
+          }
+        },
+        "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ED50-UTM31N:",
+        "ancestry": {
+          "parents": [],
+          "children": [
+            "dev:master-data--ReservoirSegment:OmegaSor-Tarbert:1",
+            "dev:master-data--ReservoirSegment:OmegaSor-Rannoch:1"
+          ]
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--ReservoirSegment:OmegaSor-Tarbert:1",
+      "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r \u2013 Tarbert Fm",
+        "Description": "Omega S\u00f8r Alfa reservoir segment. Upper Brent Group - Tarbert Formation. Shallow-marine, very fine- to fine-grained silty sandstone, micaceous, horizontal parallel bedding. STOIIP ~7.2 MSm\u00b3.",
+        "ancestry": {
+          "parents": [
+            "dev:master-data--Reservoir:OmegaSorAlfa:1"
+          ],
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--ReservoirSegment:OmegaSor-Rannoch:1",
+      "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r \u2013 Rannoch Fm",
+        "Description": "Omega S\u00f8r Alfa reservoir segment. Lower Brent Group - Rannoch Formation. Shallow-marine sandstones. Higher permeability uncertainty, potential injectivity issues. STOIIP ~10.8 MSm\u00b3. Deformation bands present near ISF.",
+        "ancestry": {
+          "parents": [
+            "dev:master-data--Reservoir:OmegaSorAlfa:1"
+          ],
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Well:34-4-19S:1",
+      "kind": "osdu:wks:master-data--Well:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "34/4-19 S",
+        "FacilityName": "34/4-19 S",
+        "Description": "Exploration well - Omega S\u00f8r Alfa discovery. Brent Group (Tarbert + Rannoch). Not formation-tested but extensive data acquisition.",
+        "FacilityOperator": "Equinor Energy AS",
+        "WellType": "Exploration",
+        "StatusID": "dev:reference-data--WellStatus:PluggedAndAbandoned:",
+        "WaterDepth": {
+          "Value": 381.0,
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m:"
+        },
+        "Block": "34/4",
+        "Licence": "PL057",
+        "SpatialArea": {
+          "Wgs84Coordinates": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  2.05,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.4
+                ]
+              ]
+            ]
+          }
+        },
+        "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ED50-UTM31N:"
+      }
+    },
+    {
+      "id": "dev:master-data--Wellbore:34-4-19S:1",
+      "kind": "osdu:wks:master-data--Wellbore:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "34/4-19 S (wellbore)",
+        "FacilityName": "34/4-19 S (Omega S\u00f8r Alfa)",
+        "Description": "Omega S\u00f8r Alfa discovery well 34/4-19 S \u2013 main bore. TD 3872 m TVD / 4090 m MD.",
+        "WellID": "dev:master-data--Well:34-4-19S:1",
+        "TotalDepthMeasured": {
+          "Value": 4090.0,
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m:"
+        },
+        "TotalDepthVertical": {
+          "Value": 3872.0,
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m:"
+        },
+        "PurposeID": "dev:reference-data--WellborePurpose:Exploration:",
+        "SequenceNumber": 1,
+        "SpatialArea": {
+          "Wgs84Coordinates": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  2.05,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.4
+                ]
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Well:OmegaSor-Producer1:1",
+      "kind": "osdu:wks:master-data--Well:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r Producer 1",
+        "FacilityName": "Omega S\u00f8r Producer 1",
+        "Description": "Planned production well \u2013 deep sidetrack from 34/4-19 S via CAP-X. Targets Tarbert and Rannoch formations. Phase 1 keeper producer.",
+        "FacilityOperator": "Equinor Energy AS",
+        "WellType": "Development",
+        "StatusID": "dev:reference-data--WellStatus:Planned:",
+        "WaterDepth": {
+          "Value": 381.0,
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m:"
+        },
+        "Block": "34/4",
+        "Licence": "PL057",
+        "SpatialArea": {
+          "Wgs84Coordinates": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  2.05,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.4
+                ]
+              ]
+            ]
+          }
+        },
+        "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ED50-UTM31N:"
+      }
+    },
+    {
+      "id": "dev:master-data--Wellbore:OmegaSor-Producer1:1",
+      "kind": "osdu:wks:master-data--Wellbore:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r Producer 1 (wellbore)",
+        "FacilityName": "Omega S\u00f8r Producer 1 (CAP-X ST)",
+        "Description": "Planned producer wellbore \u2013 sidetrack from 34/4-19 S. Perforated in both Tarbert and Rannoch. 8\" production flowline.",
+        "WellID": "dev:master-data--Well:OmegaSor-Producer1:1",
+        "PurposeID": "dev:reference-data--WellborePurpose:Production:",
+        "SequenceNumber": 1,
+        "SpatialArea": {
+          "Wgs84Coordinates": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  2.05,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.4
+                ]
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Well:OmegaSor-Injector1:1",
+      "kind": "osdu:wks:master-data--Well:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r Injector 1",
+        "FacilityName": "Omega S\u00f8r Injector 1",
+        "Description": "Planned water injection well \u2013 from 4-slot template as sidetrack from pilot well. Targets Tarbert Fm (base case). 6\" WI flowline. Placement 5\u201320 m above OWC for barium scale mitigation.",
+        "FacilityOperator": "Equinor Energy AS",
+        "WellType": "Development",
+        "StatusID": "dev:reference-data--WellStatus:Planned:",
+        "WaterDepth": {
+          "Value": 381.0,
+          "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m:"
+        },
+        "Block": "34/4",
+        "Licence": "PL057",
+        "SpatialArea": {
+          "Wgs84Coordinates": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  2.05,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.4
+                ]
+              ]
+            ]
+          }
+        },
+        "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ED50-UTM31N:"
+      }
+    },
+    {
+      "id": "dev:master-data--Wellbore:OmegaSor-Injector1:1",
+      "kind": "osdu:wks:master-data--Wellbore:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r Injector 1 (wellbore)",
+        "FacilityName": "Omega S\u00f8r Injector 1 (Template ST)",
+        "Description": "Planned injector wellbore \u2013 from 4-slot template. Base case: perforated in Tarbert only. Rannoch injection is upside (requires depletion + fracturing).",
+        "WellID": "dev:master-data--Well:OmegaSor-Injector1:1",
+        "PurposeID": "dev:reference-data--WellborePurpose:Injection:",
+        "SequenceNumber": 1,
+        "SpatialArea": {
+          "Wgs84Coordinates": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  2.05,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.4
+                ]
+              ]
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [],
+    "WorkProducts": [
+      {
+        "id": "dev:work-product:OmegaSor-ReservoirStudy:1",
+        "kind": "osdu:wks:work-product:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Omega S\u00f8r Reservoir Study",
+          "Description": "Parent WorkProduct for the Omega S\u00f8r Alfa field development subsurface evaluation (SSVP). Covers volumes, geomodel, well plans, and WPC decision support.",
+          "WorkflowStatus": "Active",
+          "ancestry": {
+            "parents": [
+              "dev:master-data--Reservoir:OmegaSorAlfa:1"
+            ],
+            "children": []
+          }
+        }
+      }
+    ]
+  }
+}

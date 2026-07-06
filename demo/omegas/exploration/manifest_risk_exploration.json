@@ -1,0 +1,245 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [
+    {
+      "id": "dev:master-data--Risk:OmegaSor-VolumeUncertainty:1",
+      "kind": "osdu:wks:master-data--Risk:1.2.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r \u2013 Subsurface volume and structural uncertainty",
+        "Summary": "OWC position, deformation bands, and subseismic faults create significant volume and recovery uncertainty.",
+        "Description": "OWC uncertainty: mean 3860 m MSL vs ODT 3772.5 m. Pre-drill OWC distribution ranges from proven (ODT) to structure-filled. Deformation bands observed in core/image logs near ISF \u2013 potential permeability reduction by orders of magnitude. Subseismic faults possible (seismic interpretation ongoing). STOIIP range: P90 15.8 \u2013 P10 22.9 MSm\u00b3. Northern volumes not captured in GEOX evaluation. Beta prospect (Pg=0.69) represents additional upside. Exploration well 34/4-19 S critical for OWC confirmation and reservoir characterization.",
+        "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+        "EffectiveDateTime": "2023-06-01T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Subsurface-Static:",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:",
+            "InherentSeverity": "S3",
+            "InherentProbability": "P4",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P3",
+            "AcceptedAsIs": false,
+            "Status": "OpenMitigation",
+            "MitigationActions": [
+              "Exploration well to prove deeper OWC and Tarbert presence",
+              "FMU sensitivity model with deformation band multiplier",
+              "Core analysis for deformation band characterization",
+              "Seismic reprocessing for improved fault imaging"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Risk:OmegaSor-GeologicalPlay:1",
+      "kind": "osdu:wks:master-data--Risk:1.2.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r \u2013 Geological play and trap risk",
+        "Summary": "Risk of inadequate trap integrity, seal capacity, or reservoir quality in the Brent Group target at Omega S\u00f8r Alfa prospect.",
+        "Description": "Play risk elements for the Omega S\u00f8r Alfa prospect: 1) Trap: 4-way dip closure on Top Brent, confirmed on 3D seismic but subseismic faults may breach seal \u2013 Pg(trap) = 0.85. 2) Seal: Drake Fm (shale) provides top seal; lateral seal by juxtaposition against Inner Snorre Fault \u2013 Pg(seal) = 0.90. 3) Reservoir: Brent Group (Tarbert + Rannoch) expected from regional correlation to Snorre wells \u2013 Pg(reservoir) = 0.95. 4) Charge: Draupne Fm source rock, lateral migration from Snorre kitchen \u2013 Pg(charge) = 0.95. Combined Pg = 0.69 (including Beta segment). Key uncertainty: actual sand quality and thickness in Tarbert at prospect location (no well penetration prior to 34/4-19 S).",
+        "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+        "EffectiveDateTime": "2023-06-01T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Exploration-Play:",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:",
+            "InherentSeverity": "S4",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P1",
+            "AcceptedAsIs": false,
+            "Status": "ClosedMitigated",
+            "MitigationActions": [
+              "Drill exploration well 34/4-19 S to confirm play elements",
+              "3D seismic interpretation for trap geometry and fault mapping",
+              "Regional correlation studies from Snorre/Vigdis analogues",
+              "Basin modelling for charge timing and migration pathway"
+            ],
+            "PostDrillOutcome": "34/4-19 S confirmed: oil in Tarbert + Rannoch (Brent Group), trap and seal effective, charge proven. Pg(play) \u2192 1.0 for proven elements."
+          }
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Risk:OmegaSor-DrillingCompletion:1",
+      "kind": "osdu:wks:master-data--Risk:1.2.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r \u2013 Drilling and completion risk",
+        "Summary": "Well design decisions (9\u215d\" shoe placement) and overburden management (Hordaland flow unit) present technical risks.",
+        "Description": "Key decisions: 9\u215d\" liner shoe placement \u2013 potential issues if placed too shallow for reservoir section TD requirements. Flow unit in Hordaland 1-2 creates P&A risk \u2013 need to de-risk to 'no flow potential' as on Snorre. Critical to have sufficient cement length and quality above flow unit in Heather Fm. For exploration well: cement integrity for P&A obligations, overburden management documentation (SUB9100) under QA. Shallow hazards assessment from site survey completed.",
+        "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+        "EffectiveDateTime": "2023-06-01T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Drilling:",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:",
+            "InherentSeverity": "S2",
+            "InherentProbability": "P2",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P1",
+            "AcceptedAsIs": false,
+            "Status": "ClosedMitigated",
+            "MitigationActions": [
+              "Site survey and shallow hazards assessment completed",
+              "SUB9100 documentation QA for overburden management",
+              "De-risk Hordaland flow unit (cement verification strategy)",
+              "Offset well analysis (Snorre wells for Hordaland behavior)"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Risk:OmegaSor-WellControl:1",
+      "kind": "osdu:wks:master-data--Risk:1.2.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r \u2013 Well control and kick risk",
+        "Summary": "Risk of influx/kick when penetrating the overpressured Brent Group reservoir with unknown pressure regime.",
+        "Description": "The Omega S\u00f8r Alfa prospect targets the Brent Group at ~3800-3870 m TVD. Pressure regime extrapolated from offset Snorre wells suggests moderate overpressure (EMW ~1.35-1.45 sg). However, compartmentalization or proximity to Inner Snorre Fault may create higher-than-expected pressures. Pre-drill pore pressure prediction based on seismic velocity analysis. Mud weight window modelling indicates narrow margin in reservoir section. BOP and well barrier verification per NORSOK D-010. Kick detection: MPD (Managed Pressure Drilling) considered but not required for base case. ECD management critical in 8\u00bd\" reservoir section.",
+        "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+        "EffectiveDateTime": "2023-06-01T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Drilling-WellControl:",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:",
+            "InherentSeverity": "S4",
+            "InherentProbability": "P2",
+            "ResidualSeverity": "S3",
+            "ResidualProbability": "P1",
+            "AcceptedAsIs": false,
+            "Status": "ClosedMitigated",
+            "MitigationActions": [
+              "Pore pressure prediction from seismic velocity (pre-drill)",
+              "Mud weight window modelling and ECD management plan",
+              "BOP verification and well barrier per NORSOK D-010",
+              "Real-time pore pressure monitoring while drilling (LWD sonic)",
+              "48 MDT pressure points acquired \u2013 confirms pressure regime"
+            ],
+            "PostDrillOutcome": "No influx events during drilling. Pore pressure as predicted. 48 MDT points confirmed reservoir pressure regime."
+          }
+        }
+      }
+    },
+    {
+      "id": "dev:master-data--Risk:OmegaSor-DataAcquisition:1",
+      "kind": "osdu:wks:master-data--Risk:1.2.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r \u2013 Data acquisition and sampling risk",
+        "Summary": "Risk that key subsurface data (cores, fluid samples, logs) cannot be acquired to sufficient quality for prospect evaluation.",
+        "Description": "Critical data objectives for 34/4-19 S exploration well: 1) Core Tarbert + Rannoch (target 120 m), 2) Formation water sample for barium content, 3) MDT pressure profile (depletion, contacts, barriers), 4) FMI image log for fracture/deformation band characterization, 5) CMR for permeability estimation. Risk: unable to obtain formation water sample from 34/4-19 S \u2013 this was realized (no water sample obtained despite attempts). Core recovery risk in poorly consolidated sands. FMI tool sticking risk in deviated section. Contingency: sidewall cores if conventional coring fails.",
+        "TypeID": "osdu:wks:reference-data--RiskType:risk:1.0.0",
+        "EffectiveDateTime": "2023-06-01T00:00:00Z",
+        "ext": {
+          "equinor": {
+            "CategoryID": "dev:reference-data--RiskCategory:Subsurface-DataAcquisition:",
+            "SeverityScaleID": "dev:reference-data--RiskSeverityScale:Equinor-5x5:",
+            "ProbabilityScaleID": "dev:reference-data--RiskProbabilityScale:Equinor-5x5:",
+            "InherentSeverity": "S3",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S3",
+            "ResidualProbability": "P2",
+            "AcceptedAsIs": false,
+            "Status": "ClosedPartial",
+            "MitigationActions": [
+              "Redundant logging suite (wireline + LWD backup)",
+              "Contingency sidewall cores if conventional coring fails",
+              "Multiple MDT attempts at different depths/zones",
+              "Extended pump-out for formation water sampling"
+            ],
+            "PostDrillOutcome": "120 m core recovered successfully (Tarbert + Rannoch). 48 MDT points acquired. FMI log obtained. FAILED: formation water sample not obtained \u2013 barium content remains unknown (critical input for development concept)."
+          }
+        }
+      }
+    }
+  ],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [],
+    "WorkProducts": []
+  }
+}

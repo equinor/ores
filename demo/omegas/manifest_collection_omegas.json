@@ -1,0 +1,546 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [
+    {
+      "id": "dev:master-data--CollaborationProject:OmegaSor-FieldDev:1",
+      "kind": "osdu:wks:master-data--CollaborationProject:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "ProjectName": "Omega S\u00f8r Alfa Field Development",
+        "ProjectID": "OmegaSor-FieldDev",
+        "Description": "Collaboration project for the Omega S\u00f8r Alfa field development (Snorre area, block 34/4, PL057). Covers subsurface evaluation, WPC well decision, drilling, and post-drill production follow-up. Reservoir: Brent Group (Tarbert + Rannoch formations). Operator: Equinor Energy AS.",
+        "Purpose": "Manage the full lifecycle of the Omega S\u00f8r field development from concept maturation through WPC approval, drilling execution, and post-drill reservoir surveillance. Provides a shared workspace for subsurface, drilling, and production engineering teams.",
+        "LifecycleStatusID": "dev:reference-data--CollaborationProjectLifecycleStatus:Open:",
+        "TrustedCollectionID": "dev:work-product-component--CollaborationProjectCollection:OmegaSor-FieldDev-Collection:1",
+        "ProjectBeginDate": "2025-06-01",
+        "Personnel": [
+          {
+            "PersonName": "Subsurface Lead",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:GeoscienceLead:"
+          },
+          {
+            "PersonName": "Reservoir Engineer",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:ReservoirEngineer:"
+          },
+          {
+            "PersonName": "Drilling & Wells Lead",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:DrillingWellsLead:"
+          },
+          {
+            "PersonName": "Production Technology",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:ProductionTechnology:"
+          }
+        ],
+        "Parameters": [
+          {
+            "Title": "SoR Geomodel Dataspace",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "DataObjectParameter": "eml:///dataspace('maap/omegas')"
+          },
+          {
+            "Title": "Target Reservoir",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "DataObjectParameter": "dev:master-data--Reservoir:OmegaSorAlfa:1"
+          }
+        ],
+        "LifecycleEvents": [
+          {
+            "EventID": "1",
+            "Name": "Project Created",
+            "DateTime": "2025-06-01T08:00:00Z",
+            "Remark": "Initial setup for Omega S\u00f8r field development evaluation."
+          },
+          {
+            "EventID": "2",
+            "Name": "SSVP Complete",
+            "DateTime": "2026-03-15T12:00:00Z",
+            "Remark": "Subsurface evaluation and volume estimation completed. 65-realisation FMU ensemble run."
+          },
+          {
+            "EventID": "3",
+            "Name": "WPC Evidence Package Frozen",
+            "DateTime": "2026-07-01T09:00:00Z",
+            "Remark": "Evidence package (PersistedCollection) frozen for WPC review. Decision due 2026-09-30."
+          }
+        ],
+        "SpatialArea": {
+          "Wgs84Coordinates": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  2.05,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.4
+                ]
+              ]
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [
+      {
+        "id": "dev:work-product-component--CollaborationProjectCollection:OmegaSor-FieldDev-Collection:1",
+        "kind": "osdu:wks:work-product-component--CollaborationProjectCollection:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Omega S\u00f8r Alfa \u2013 Trusted SoR Collection",
+          "Description": "Living collection of trusted system-of-record resources for the Omega S\u00f8r Alfa field development. Grows as new artifacts are approved per gate. Referenced by CollaborationProject.TrustedCollectionID.",
+          "ResourceIDs": [
+            "dev:master-data--Reservoir:OmegaSorAlfa:1",
+            "dev:master-data--ReservoirSegment:OmegaSor-Tarbert:1",
+            "dev:master-data--ReservoirSegment:OmegaSor-Rannoch:1",
+            "dev:master-data--Well:34-4-19S:1",
+            "dev:master-data--Wellbore:34-4-19S:1",
+            "dev:master-data--Well:OmegaSor-Producer1:1",
+            "dev:master-data--Wellbore:OmegaSor-Producer1:1",
+            "dev:master-data--Well:OmegaSor-Injector1:1",
+            "dev:master-data--Wellbore:OmegaSor-Injector1:1",
+            "dev:work-product:OmegaSor-ReservoirStudy:1",
+            "dev:work-product-component--ReservoirEstimatedVolumes:OmegaSor-SSVP-Statistics:1",
+            "dev:work-product-component--ColumnBasedTable:OmegaSor-SSVP-InPlace:1",
+            "dev:master-data--Risk:OmegaSor-BariumScale-00061:1",
+            "dev:master-data--Risk:OmegaSor-Injectivity:1",
+            "dev:master-data--Risk:OmegaSor-VolumeUncertainty:1",
+            "dev:master-data--Risk:OmegaSor-DrillingCompletion:1",
+            "dev:master-data--Risk:OmegaSor-ScheduleCost:1",
+            "dev:work-product-component--WellboreTrajectory:OmegaSor-Traj-34-4-19S:1",
+            "dev:work-product-component--WellboreTrajectory:OmegaSor-Traj-OmegaSor-Producer1:1",
+            "dev:work-product-component--WellboreTrajectory:OmegaSor-Traj-OmegaSor-Injector1:1",
+            "dev:work-product-component--Activity:OmegaSor-Drilling-34-4-19S:1",
+            "dev:work-product-component--Activity:OmegaSor-Drilling-Producer1:1",
+            "dev:work-product-component--Activity:OmegaSor-Drilling-Injector1:1",
+            "dev:work-product-component--Document:OmegaSor-SSVP-Presentation:1",
+            "dev:work-product-component--Document:OmegaSor-Wellbore-34-4-19S-Report:1",
+            "dev:work-product-component--Document:OmegaSor-NOD:1",
+            "dev:work-product-component--PersistedCollection:OmegaSor-Drilling-Evidence:1",
+            "dev:work-product-component--GenericProperty:0d6487c6-fee8-4297-9981-30c165069170",
+            "dev:work-product-component--GenericProperty:43f4f145-0b42-4cf7-942d-661cead80de6",
+            "dev:work-product-component--GenericProperty:50655321-fb98-4617-834d-5d8bbebaf186",
+            "dev:work-product-component--GenericProperty:5bd6477a-1ca9-47ff-bca6-368435096ff2",
+            "dev:work-product-component--GenericProperty:72df9461-8955-4ecf-bdd0-fab06af91fbc",
+            "dev:work-product-component--GenericProperty:798f2f1b-8632-4952-97f4-1057c0cf6baa",
+            "dev:work-product-component--GenericProperty:8e5e8b38-b098-41e2-94ee-30bf441ec9ac",
+            "dev:work-product-component--GenericProperty:acc5bf94-add2-4e74-b97b-24acdfd6a37b",
+            "dev:work-product-component--GenericProperty:bd3db397-77b5-44c6-a95f-d26a9724c5c7",
+            "dev:work-product-component--GenericProperty:d7356dd3-fcec-424c-a9c2-13cefa889708",
+            "dev:work-product-component--GenericProperty:e5091a85-91f2-47d0-beda-768d569c251b",
+            "dev:work-product-component--GenericProperty:228b3e8f-5909-4c36-a3e5-6fee06d11717",
+            "dev:work-product-component--GenericProperty:4ffa5593-b3ab-4b95-89c5-646a51b85d8c",
+            "dev:work-product-component--GenericProperty:8cd4f023-5749-40e3-a578-691cdbd1a30d",
+            "dev:work-product-component--GenericProperty:a069418e-7441-4096-867e-11f07f6ec46e",
+            "dev:work-product-component--GenericProperty:a3a5372f-866e-4a02-a3e5-17e64b40877a",
+            "dev:work-product-component--GenericProperty:aa5bb391-1c75-4f09-bd61-1c1ae5fe2d44",
+            "dev:work-product-component--GenericProperty:aae5507d-66e3-433b-bc01-6ddec20cb931",
+            "dev:work-product-component--GenericProperty:ad14ed29-0eb6-4ee8-858d-6342c6adafd9",
+            "dev:work-product-component--GenericProperty:b9a2e96d-1b8e-40d4-ae8e-adc95f1f91f7",
+            "dev:work-product-component--GenericProperty:c83f182c-ba78-4fb0-947a-f770b04c7153",
+            "dev:work-product-component--GenericProperty:d5fdee31-8349-42f2-b765-0ee61430173e",
+            "dev:work-product-component--GenericProperty:db9bf1cd-2dbf-4418-8fcf-0e6957c3a9c0",
+            "dev:work-product-component--GenericProperty:e3308586-183f-4101-8a97-8f43eebe91b9",
+            "dev:work-product-component--GenericProperty:f353825a-3566-452c-810d-59023c65b2c1",
+            "dev:work-product-component--FaultInterpretation:5aa7a47c-685c-491f-87b4-823b1a191cb1",
+            "dev:work-product-component--FaultInterpretation:601eb5c8-858d-418c-8d6f-ba48f508a2e0",
+            "dev:work-product-component--FaultInterpretation:7faf0ddf-e995-4a96-9bff-7946efac8b00",
+            "dev:work-product-component--FaultInterpretation:b1dd8f10-ed1a-4c70-9105-aca704e9537b",
+            "dev:work-product-component--FaultInterpretation:cdb33bbe-d98b-43c0-a1e4-2ac30e56fa96",
+            "dev:work-product-component--FaultInterpretation:f3b080c6-94c4-4668-ac26-d4880b0eadd8",
+            "dev:work-product-component--FaultInterpretation:f440c0a0-a7e4-4332-ac4c-e80b7c64db1a",
+            "dev:work-product-component--LocalBoundaryFeature:29e305a9-0e30-4e68-bd7c-68c65a8a79f0",
+            "dev:work-product-component--LocalBoundaryFeature:784e228e-4d78-41fe-9353-a1f1c08ae33c",
+            "dev:work-product-component--LocalBoundaryFeature:84c1495a-5d1a-4da9-bfa4-2c5928b433bd",
+            "dev:work-product-component--LocalBoundaryFeature:a3a308c3-f56f-4182-8d9b-12ef31e2a887",
+            "dev:work-product-component--LocalBoundaryFeature:bbf41d76-21ab-4045-b049-9393acdbf025",
+            "dev:work-product-component--LocalBoundaryFeature:e00049ac-5dee-4dc3-8711-366e82b46545",
+            "dev:work-product-component--GenericRepresentation:055cb562-32b3-42ab-b887-e55da64a0671",
+            "dev:work-product-component--GenericRepresentation:21f29fb1-3b93-46e7-8dac-44df5cb56ee5",
+            "dev:work-product-component--GenericRepresentation:47494f1e-b56b-4a4a-af0c-5f173f4f4127",
+            "dev:work-product-component--GenericRepresentation:70ba42de-0db1-4265-a8e3-40359ee56a07",
+            "dev:work-product-component--GenericRepresentation:941ab4c3-7953-4a64-8e97-f9024aeae618",
+            "dev:work-product-component--GenericRepresentation:9d5dcf90-9d6a-4845-950b-aabe50b5b1c1",
+            "dev:work-product-component--GenericRepresentation:a0a8e60f-95ca-4e79-a9fc-e60ba93cd252",
+            "dev:work-product-component--HorizonInterpretation:8477ca71-03d5-4277-a8e2-a02785e860e3",
+            "dev:work-product-component--HorizonInterpretation:9a18e356-2a4f-4c76-b7f7-7d9960b9e21f",
+            "dev:work-product-component--HorizonInterpretation:aff14de3-fbdb-4fb1-9834-f8c17e3e07cd",
+            "dev:work-product-component--HorizonInterpretation:ecc7cce1-8998-425f-afde-79ec4748c058",
+            "dev:work-product-component--HorizonInterpretation:edef44c6-7cec-4d48-ad26-2389047ca94e",
+            "dev:work-product-component--IjkGridRepresentation:1c338d6f-ace3-4980-9e08-f3cde15b27a0",
+            "dev:work-product-component--LocalModelCompoundCrs:e0694121-d181-47e6-9e1e-c859390fb672",
+            "dev:work-product-component--LocalModelFeature:41364ddf-2db9-4723-a390-c9bf36a5a8c8",
+            "dev:work-product-component--GenericRepresentation:0d58bc34-b0bf-4f04-8975-882cb5605661",
+            "dev:work-product-component--GenericRepresentation:0e1c9d8c-95b2-47e2-95fe-f987aa63ef4c",
+            "dev:work-product-component--GenericRepresentation:0fa5b07f-fe58-40dc-b25b-8b78e9e29f57",
+            "dev:work-product-component--GenericRepresentation:11a5c38d-b8b1-4391-b7e0-3b1fd337678e",
+            "dev:work-product-component--GenericRepresentation:1463113f-3ae4-4dcd-ba42-b0c0025e5b47",
+            "dev:work-product-component--GenericRepresentation:16c5f708-4f0b-4522-a5d4-6fcbb09b3aac",
+            "dev:work-product-component--GenericRepresentation:1856b2ef-b7a6-425f-8919-67e70ae40364",
+            "dev:work-product-component--GenericRepresentation:28e3db8b-a021-4288-984e-7c7a1ed036fc",
+            "dev:work-product-component--GenericRepresentation:395e5834-fbef-40c3-bd11-e6859725151c",
+            "dev:work-product-component--GenericRepresentation:4b94331e-be7d-4272-b949-d58e545b9187",
+            "dev:work-product-component--GenericRepresentation:64ad8614-6807-4653-95be-133574d00153",
+            "dev:work-product-component--GenericRepresentation:7441580a-510e-4c51-abd9-73d56ebe9ad5",
+            "dev:work-product-component--GenericRepresentation:760813ba-ebf8-4e2c-80c1-101229808082",
+            "dev:work-product-component--GenericRepresentation:76ac88d4-7d65-4dd4-881f-c6fd2c4d29f7",
+            "dev:work-product-component--GenericRepresentation:a8f0932c-bc9f-45a8-b7c1-84b70c0c4d4f",
+            "dev:work-product-component--GenericRepresentation:ae80fed4-0b56-4a86-ba3a-14305a0ef088",
+            "dev:work-product-component--GenericRepresentation:ae9c0f11-3aba-436d-ab4e-b387e15ef0c5",
+            "dev:work-product-component--GenericRepresentation:afb5afbb-15fe-47f4-9436-b2d326435538",
+            "dev:work-product-component--GenericRepresentation:bade4ea5-b1c2-4c99-aa19-28f12d423c9e",
+            "dev:work-product-component--GenericRepresentation:c1cc255d-3ac5-4620-9782-832f0c81cbd3",
+            "dev:work-product-component--GenericRepresentation:c3c669f1-3841-496b-9312-f652fdad7008",
+            "dev:work-product-component--GenericRepresentation:cb040b80-a9e4-42c6-acdb-2bdbcb188afe",
+            "dev:work-product-component--GenericRepresentation:d1759b94-d8d4-4793-b734-4b07d589986d",
+            "dev:work-product-component--GenericRepresentation:e4d16830-d2ea-4d1c-9cb2-976f33d998c4",
+            "dev:work-product-component--GenericRepresentation:e6a5c240-0bbd-40d7-9673-82eb7c501347",
+            "dev:work-product-component--GenericRepresentation:013ee523-6d7b-4c9b-8c0b-8ef517c27f6f",
+            "dev:work-product-component--GenericRepresentation:08c5c57e-8c16-477a-8cf9-f9d8793bc48e",
+            "dev:work-product-component--GenericRepresentation:44501674-4bf4-4822-a589-928df278312d",
+            "dev:work-product-component--GenericRepresentation:c13b3b85-cc80-44a4-8a64-b914453ce1c0",
+            "dev:work-product-component--GenericRepresentation:fdb902c6-afb8-46ac-a3f3-2d5edc4c8cb1",
+            "dev:work-product-component--StratigraphicColumnRankInterpretation:e8866c8d-f920-46f7-aaa3-01c03c585dfa",
+            "dev:work-product-component--StratigraphicColumn:4807b910-e2c8-491e-9394-f06be66ac77a",
+            "dev:work-product-component--LocalRockVolumeFeature:0e778c4c-bb1b-4efe-9d74-37542e211f54",
+            "dev:work-product-component--LocalRockVolumeFeature:2338c7e2-90c1-48cd-8480-d43bc76214e8",
+            "dev:work-product-component--LocalRockVolumeFeature:241523ae-e46f-4c02-b7ac-0c221be80af3",
+            "dev:work-product-component--LocalRockVolumeFeature:7373186e-472a-44d7-a284-e52753c7bfcf",
+            "dev:work-product-component--LocalRockVolumeFeature:b704ea16-f0e5-4bbc-a713-ee84fe1b14e3",
+            "dev:work-product-component--LocalRockVolumeFeature:d58a1a37-7cd4-4150-9911-576baa0f78de",
+            "dev:work-product-component--StratigraphicUnitInterpretation:497fda69-0164-4c70-86fa-5a98469a4bd5",
+            "dev:work-product-component--StratigraphicUnitInterpretation:b45c6860-d477-4bab-ae4f-525173b58d50",
+            "dev:work-product-component--StratigraphicUnitInterpretation:cff5a934-d539-4b5c-bc7e-9df71c6658e9",
+            "dev:work-product-component--StratigraphicUnitInterpretation:e2aba682-56ce-4577-b75b-c971cd65e551",
+            "dev:work-product-component--StratigraphicUnitInterpretation:ec81d72d-e650-4282-9d16-48ce37882fcd",
+            "dev:work-product-component--StratigraphicUnitInterpretation:fc453411-2dba-4334-9fce-73b973e33ad2",
+            "dev:work-product-component--ColumnBasedTable:0927e954-3f8e-4b8f-afd8-7b31e5b15974",
+            "dev:work-product-component--ColumnBasedTable:1788f40f-f4a2-4467-bd95-8b9d3f712b7b",
+            "dev:work-product-component--ColumnBasedTable:26f344b3-db11-418e-a225-edb2433b496a",
+            "dev:work-product-component--ColumnBasedTable:31ae20c4-627f-450f-b836-678d19f46bee",
+            "dev:work-product-component--ColumnBasedTable:32bf50a4-2918-4025-80c2-23e1d244f53b",
+            "dev:work-product-component--ColumnBasedTable:3d9947fc-ec49-441b-b1de-99616317bd19",
+            "dev:work-product-component--ColumnBasedTable:42f0b733-b23e-4ece-87eb-2278c422c54a",
+            "dev:work-product-component--ColumnBasedTable:439035d8-72fc-4d04-aa65-a4a6d768ae20",
+            "dev:work-product-component--ColumnBasedTable:65ec3007-ee1b-4b35-874d-9322cc44e6e8",
+            "dev:work-product-component--ColumnBasedTable:6dbc2983-c6d5-4de1-ad89-6a6a058f0447",
+            "dev:work-product-component--ColumnBasedTable:8157f479-0edf-4204-bf62-0cad198cb410",
+            "dev:work-product-component--ColumnBasedTable:b3910684-c95f-4d2d-917f-54dbbb180520",
+            "dev:work-product-component--ColumnBasedTable:bad88ef3-7650-4502-b18b-6d48ecfa2dce",
+            "dev:work-product-component--LocalBoundaryFeature:22fddf71-0363-450f-9637-0efe9242d9ad",
+            "dev:work-product-component--LocalBoundaryFeature:44b0c86e-0d6d-41ea-8cca-d94ae03b1e9f",
+            "dev:work-product-component--LocalBoundaryFeature:5043ea73-6cab-4275-ad54-7922807879f8",
+            "dev:work-product-component--LocalBoundaryFeature:7f4b1bcf-6e71-4fc9-aece-0620cc4a0fb5",
+            "dev:work-product-component--LocalBoundaryFeature:81d6e966-14f9-45ee-b809-0a5c5204f0f2",
+            "dev:work-product-component--LocalBoundaryFeature:a9570da5-3a84-451b-abdc-a56944b91761",
+            "dev:work-product-component--LocalBoundaryFeature:b95c66f1-f117-416d-9097-9dd76c08e875",
+            "dev:work-product-component--LocalBoundaryFeature:bc2727b0-f6e3-49f3-ad64-2c4e582d4e2a",
+            "dev:work-product-component--LocalBoundaryFeature:f280fd7d-c5b2-4d04-aeaf-08ca16bc9c5e",
+            "dev:work-product-component--LocalBoundaryFeature:f6b2e674-8c98-4ed1-828b-e9bd08bb2d14",
+            "dev:work-product-component--FaultInterpretation:085c591a-512e-4b34-ad51-3a3cf6d15a94",
+            "dev:work-product-component--FaultInterpretation:5304d333-4b0a-46d2-a71e-66fd13496d6a",
+            "dev:work-product-component--FaultInterpretation:4eeb1a8f-b47e-499f-855e-84faef740eba",
+            "dev:dataset--ETPDataspace:maap-omegas",
+            "dev:reference-data--PropertyType:0f8cd021-652c-545d-99ff-38144a8543c3",
+            "dev:reference-data--PropertyType:318390b6-d7f6-4b55-a910-8d200b3cfcc7",
+            "dev:reference-data--PropertyType:3a708aa1-0d72-4fe3-afb1-fb7f3538f6d5",
+            "dev:reference-data--PropertyType:8851760a-6651-4e49-99e0-8d234c53c70b",
+            "dev:reference-data--ExistenceKind:Actual",
+            "dev:reference-data--ExistenceKind:Prototype",
+            "dev:reference-data--IndexableElement:cells",
+            "dev:reference-data--UnitOfMeasure:Euc",
+            "dev:reference-data--UnitOfMeasure:mD",
+            "dev:reference-data--DomainType:Depth",
+            "dev:reference-data--RepresentationRole:Map",
+            "dev:reference-data--RepresentationType:Regular2DGrid",
+            "dev:reference-data--StratigraphicRoleType:Chronostratigraphic",
+            "dev:reference-data--IndexableElement:nodes",
+            "dev:reference-data--KDirectionType:down",
+            "dev:reference-data--PillarShapeType:straight",
+            "dev:reference-data--RepresentationType:PointSet",
+            "dev:reference-data--RepresentationType:PolylineSet",
+            "dev:reference-data--UnitQuantity:Euc",
+            "dev:reference-data--ColumnBasedTableType:Facies",
+            "dev:dataset--ETPDataspace:maap-omegas:1"
+          ]
+        }
+      },
+      {
+        "id": "dev:work-product-component--PersistedCollection:OmegaSor-WPC-Evidence:1",
+        "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Omega S\u00f8r WPC \u2013 Evidence Package",
+          "Description": "Frozen evidence snapshot for the Omega S\u00f8r WPC well planning decision. Bundles all subsurface evaluation artifacts: reservoir master-data, well records (exploration + planned), volume tables (statistical + in-place), 5 risks, RDDMS geomodel objects (IjkGrid, horizons, faults, trajectories), and the ETP dataspace reference.",
+          "DataReferences": [
+            "dev:master-data--Reservoir:OmegaSorAlfa:1",
+            "dev:master-data--ReservoirSegment:OmegaSor-Tarbert:1",
+            "dev:master-data--ReservoirSegment:OmegaSor-Rannoch:1",
+            "dev:master-data--Well:34-4-19S:1",
+            "dev:master-data--Wellbore:34-4-19S:1",
+            "dev:master-data--Well:OmegaSor-Producer1:1",
+            "dev:master-data--Wellbore:OmegaSor-Producer1:1",
+            "dev:master-data--Well:OmegaSor-Injector1:1",
+            "dev:master-data--Wellbore:OmegaSor-Injector1:1",
+            "dev:work-product:OmegaSor-ReservoirStudy:1",
+            "dev:work-product-component--ReservoirEstimatedVolumes:OmegaSor-SSVP-Statistics:1",
+            "dev:work-product-component--ColumnBasedTable:OmegaSor-SSVP-InPlace:1",
+            "dev:master-data--Risk:OmegaSor-BariumScale-00061:1",
+            "dev:master-data--Risk:OmegaSor-Injectivity:1",
+            "dev:master-data--Risk:OmegaSor-VolumeUncertainty:1",
+            "dev:master-data--Risk:OmegaSor-DrillingCompletion:1",
+            "dev:master-data--Risk:OmegaSor-ScheduleCost:1",
+            "dev:work-product-component--WellboreTrajectory:OmegaSor-Traj-34-4-19S:1",
+            "dev:work-product-component--WellboreTrajectory:OmegaSor-Traj-OmegaSor-Producer1:1",
+            "dev:work-product-component--WellboreTrajectory:OmegaSor-Traj-OmegaSor-Injector1:1",
+            "dev:work-product-component--Activity:OmegaSor-Drilling-34-4-19S:1",
+            "dev:work-product-component--Activity:OmegaSor-Drilling-Producer1:1",
+            "dev:work-product-component--Activity:OmegaSor-Drilling-Injector1:1",
+            "dev:work-product-component--Document:OmegaSor-SSVP-Presentation:1",
+            "dev:work-product-component--Document:OmegaSor-Wellbore-34-4-19S-Report:1",
+            "dev:work-product-component--Document:OmegaSor-NOD:1",
+            "dev:work-product-component--PersistedCollection:OmegaSor-Drilling-Evidence:1",
+            "dev:work-product-component--GenericProperty:0d6487c6-fee8-4297-9981-30c165069170",
+            "dev:work-product-component--GenericProperty:43f4f145-0b42-4cf7-942d-661cead80de6",
+            "dev:work-product-component--GenericProperty:50655321-fb98-4617-834d-5d8bbebaf186",
+            "dev:work-product-component--GenericProperty:5bd6477a-1ca9-47ff-bca6-368435096ff2",
+            "dev:work-product-component--GenericProperty:72df9461-8955-4ecf-bdd0-fab06af91fbc",
+            "dev:work-product-component--GenericProperty:798f2f1b-8632-4952-97f4-1057c0cf6baa",
+            "dev:work-product-component--GenericProperty:8e5e8b38-b098-41e2-94ee-30bf441ec9ac",
+            "dev:work-product-component--GenericProperty:acc5bf94-add2-4e74-b97b-24acdfd6a37b",
+            "dev:work-product-component--GenericProperty:bd3db397-77b5-44c6-a95f-d26a9724c5c7",
+            "dev:work-product-component--GenericProperty:d7356dd3-fcec-424c-a9c2-13cefa889708",
+            "dev:work-product-component--GenericProperty:e5091a85-91f2-47d0-beda-768d569c251b",
+            "dev:work-product-component--GenericProperty:228b3e8f-5909-4c36-a3e5-6fee06d11717",
+            "dev:work-product-component--GenericProperty:4ffa5593-b3ab-4b95-89c5-646a51b85d8c",
+            "dev:work-product-component--GenericProperty:8cd4f023-5749-40e3-a578-691cdbd1a30d",
+            "dev:work-product-component--GenericProperty:a069418e-7441-4096-867e-11f07f6ec46e",
+            "dev:work-product-component--GenericProperty:a3a5372f-866e-4a02-a3e5-17e64b40877a",
+            "dev:work-product-component--GenericProperty:aa5bb391-1c75-4f09-bd61-1c1ae5fe2d44",
+            "dev:work-product-component--GenericProperty:aae5507d-66e3-433b-bc01-6ddec20cb931",
+            "dev:work-product-component--GenericProperty:ad14ed29-0eb6-4ee8-858d-6342c6adafd9",
+            "dev:work-product-component--GenericProperty:b9a2e96d-1b8e-40d4-ae8e-adc95f1f91f7",
+            "dev:work-product-component--GenericProperty:c83f182c-ba78-4fb0-947a-f770b04c7153",
+            "dev:work-product-component--GenericProperty:d5fdee31-8349-42f2-b765-0ee61430173e",
+            "dev:work-product-component--GenericProperty:db9bf1cd-2dbf-4418-8fcf-0e6957c3a9c0",
+            "dev:work-product-component--GenericProperty:e3308586-183f-4101-8a97-8f43eebe91b9",
+            "dev:work-product-component--GenericProperty:f353825a-3566-452c-810d-59023c65b2c1",
+            "dev:work-product-component--FaultInterpretation:5aa7a47c-685c-491f-87b4-823b1a191cb1",
+            "dev:work-product-component--FaultInterpretation:601eb5c8-858d-418c-8d6f-ba48f508a2e0",
+            "dev:work-product-component--FaultInterpretation:7faf0ddf-e995-4a96-9bff-7946efac8b00",
+            "dev:work-product-component--FaultInterpretation:b1dd8f10-ed1a-4c70-9105-aca704e9537b",
+            "dev:work-product-component--FaultInterpretation:cdb33bbe-d98b-43c0-a1e4-2ac30e56fa96",
+            "dev:work-product-component--FaultInterpretation:f3b080c6-94c4-4668-ac26-d4880b0eadd8",
+            "dev:work-product-component--FaultInterpretation:f440c0a0-a7e4-4332-ac4c-e80b7c64db1a",
+            "dev:work-product-component--LocalBoundaryFeature:29e305a9-0e30-4e68-bd7c-68c65a8a79f0",
+            "dev:work-product-component--LocalBoundaryFeature:784e228e-4d78-41fe-9353-a1f1c08ae33c",
+            "dev:work-product-component--LocalBoundaryFeature:84c1495a-5d1a-4da9-bfa4-2c5928b433bd",
+            "dev:work-product-component--LocalBoundaryFeature:a3a308c3-f56f-4182-8d9b-12ef31e2a887",
+            "dev:work-product-component--LocalBoundaryFeature:bbf41d76-21ab-4045-b049-9393acdbf025",
+            "dev:work-product-component--LocalBoundaryFeature:e00049ac-5dee-4dc3-8711-366e82b46545",
+            "dev:work-product-component--GenericRepresentation:055cb562-32b3-42ab-b887-e55da64a0671",
+            "dev:work-product-component--GenericRepresentation:21f29fb1-3b93-46e7-8dac-44df5cb56ee5",
+            "dev:work-product-component--GenericRepresentation:47494f1e-b56b-4a4a-af0c-5f173f4f4127",
+            "dev:work-product-component--GenericRepresentation:70ba42de-0db1-4265-a8e3-40359ee56a07",
+            "dev:work-product-component--GenericRepresentation:941ab4c3-7953-4a64-8e97-f9024aeae618",
+            "dev:work-product-component--GenericRepresentation:9d5dcf90-9d6a-4845-950b-aabe50b5b1c1",
+            "dev:work-product-component--GenericRepresentation:a0a8e60f-95ca-4e79-a9fc-e60ba93cd252",
+            "dev:work-product-component--HorizonInterpretation:8477ca71-03d5-4277-a8e2-a02785e860e3",
+            "dev:work-product-component--HorizonInterpretation:9a18e356-2a4f-4c76-b7f7-7d9960b9e21f",
+            "dev:work-product-component--HorizonInterpretation:aff14de3-fbdb-4fb1-9834-f8c17e3e07cd",
+            "dev:work-product-component--HorizonInterpretation:ecc7cce1-8998-425f-afde-79ec4748c058",
+            "dev:work-product-component--HorizonInterpretation:edef44c6-7cec-4d48-ad26-2389047ca94e",
+            "dev:work-product-component--IjkGridRepresentation:1c338d6f-ace3-4980-9e08-f3cde15b27a0",
+            "dev:work-product-component--LocalModelCompoundCrs:e0694121-d181-47e6-9e1e-c859390fb672",
+            "dev:work-product-component--LocalModelFeature:41364ddf-2db9-4723-a390-c9bf36a5a8c8",
+            "dev:work-product-component--GenericRepresentation:0d58bc34-b0bf-4f04-8975-882cb5605661",
+            "dev:work-product-component--GenericRepresentation:0e1c9d8c-95b2-47e2-95fe-f987aa63ef4c",
+            "dev:work-product-component--GenericRepresentation:0fa5b07f-fe58-40dc-b25b-8b78e9e29f57",
+            "dev:work-product-component--GenericRepresentation:11a5c38d-b8b1-4391-b7e0-3b1fd337678e",
+            "dev:work-product-component--GenericRepresentation:1463113f-3ae4-4dcd-ba42-b0c0025e5b47",
+            "dev:work-product-component--GenericRepresentation:16c5f708-4f0b-4522-a5d4-6fcbb09b3aac",
+            "dev:work-product-component--GenericRepresentation:1856b2ef-b7a6-425f-8919-67e70ae40364",
+            "dev:work-product-component--GenericRepresentation:28e3db8b-a021-4288-984e-7c7a1ed036fc",
+            "dev:work-product-component--GenericRepresentation:395e5834-fbef-40c3-bd11-e6859725151c",
+            "dev:work-product-component--GenericRepresentation:4b94331e-be7d-4272-b949-d58e545b9187",
+            "dev:work-product-component--GenericRepresentation:64ad8614-6807-4653-95be-133574d00153",
+            "dev:work-product-component--GenericRepresentation:7441580a-510e-4c51-abd9-73d56ebe9ad5",
+            "dev:work-product-component--GenericRepresentation:760813ba-ebf8-4e2c-80c1-101229808082",
+            "dev:work-product-component--GenericRepresentation:76ac88d4-7d65-4dd4-881f-c6fd2c4d29f7",
+            "dev:work-product-component--GenericRepresentation:a8f0932c-bc9f-45a8-b7c1-84b70c0c4d4f",
+            "dev:work-product-component--GenericRepresentation:ae80fed4-0b56-4a86-ba3a-14305a0ef088",
+            "dev:work-product-component--GenericRepresentation:ae9c0f11-3aba-436d-ab4e-b387e15ef0c5",
+            "dev:work-product-component--GenericRepresentation:afb5afbb-15fe-47f4-9436-b2d326435538",
+            "dev:work-product-component--GenericRepresentation:bade4ea5-b1c2-4c99-aa19-28f12d423c9e",
+            "dev:work-product-component--GenericRepresentation:c1cc255d-3ac5-4620-9782-832f0c81cbd3",
+            "dev:work-product-component--GenericRepresentation:c3c669f1-3841-496b-9312-f652fdad7008",
+            "dev:work-product-component--GenericRepresentation:cb040b80-a9e4-42c6-acdb-2bdbcb188afe",
+            "dev:work-product-component--GenericRepresentation:d1759b94-d8d4-4793-b734-4b07d589986d",
+            "dev:work-product-component--GenericRepresentation:e4d16830-d2ea-4d1c-9cb2-976f33d998c4",
+            "dev:work-product-component--GenericRepresentation:e6a5c240-0bbd-40d7-9673-82eb7c501347",
+            "dev:work-product-component--GenericRepresentation:013ee523-6d7b-4c9b-8c0b-8ef517c27f6f",
+            "dev:work-product-component--GenericRepresentation:08c5c57e-8c16-477a-8cf9-f9d8793bc48e",
+            "dev:work-product-component--GenericRepresentation:44501674-4bf4-4822-a589-928df278312d",
+            "dev:work-product-component--GenericRepresentation:c13b3b85-cc80-44a4-8a64-b914453ce1c0",
+            "dev:work-product-component--GenericRepresentation:fdb902c6-afb8-46ac-a3f3-2d5edc4c8cb1",
+            "dev:work-product-component--StratigraphicColumnRankInterpretation:e8866c8d-f920-46f7-aaa3-01c03c585dfa",
+            "dev:work-product-component--StratigraphicColumn:4807b910-e2c8-491e-9394-f06be66ac77a",
+            "dev:work-product-component--LocalRockVolumeFeature:0e778c4c-bb1b-4efe-9d74-37542e211f54",
+            "dev:work-product-component--LocalRockVolumeFeature:2338c7e2-90c1-48cd-8480-d43bc76214e8",
+            "dev:work-product-component--LocalRockVolumeFeature:241523ae-e46f-4c02-b7ac-0c221be80af3",
+            "dev:work-product-component--LocalRockVolumeFeature:7373186e-472a-44d7-a284-e52753c7bfcf",
+            "dev:work-product-component--LocalRockVolumeFeature:b704ea16-f0e5-4bbc-a713-ee84fe1b14e3",
+            "dev:work-product-component--LocalRockVolumeFeature:d58a1a37-7cd4-4150-9911-576baa0f78de",
+            "dev:work-product-component--StratigraphicUnitInterpretation:497fda69-0164-4c70-86fa-5a98469a4bd5",
+            "dev:work-product-component--StratigraphicUnitInterpretation:b45c6860-d477-4bab-ae4f-525173b58d50",
+            "dev:work-product-component--StratigraphicUnitInterpretation:cff5a934-d539-4b5c-bc7e-9df71c6658e9",
+            "dev:work-product-component--StratigraphicUnitInterpretation:e2aba682-56ce-4577-b75b-c971cd65e551",
+            "dev:work-product-component--StratigraphicUnitInterpretation:ec81d72d-e650-4282-9d16-48ce37882fcd",
+            "dev:work-product-component--StratigraphicUnitInterpretation:fc453411-2dba-4334-9fce-73b973e33ad2",
+            "dev:work-product-component--ColumnBasedTable:0927e954-3f8e-4b8f-afd8-7b31e5b15974",
+            "dev:work-product-component--ColumnBasedTable:1788f40f-f4a2-4467-bd95-8b9d3f712b7b",
+            "dev:work-product-component--ColumnBasedTable:26f344b3-db11-418e-a225-edb2433b496a",
+            "dev:work-product-component--ColumnBasedTable:31ae20c4-627f-450f-b836-678d19f46bee",
+            "dev:work-product-component--ColumnBasedTable:32bf50a4-2918-4025-80c2-23e1d244f53b",
+            "dev:work-product-component--ColumnBasedTable:3d9947fc-ec49-441b-b1de-99616317bd19",
+            "dev:work-product-component--ColumnBasedTable:42f0b733-b23e-4ece-87eb-2278c422c54a",
+            "dev:work-product-component--ColumnBasedTable:439035d8-72fc-4d04-aa65-a4a6d768ae20",
+            "dev:work-product-component--ColumnBasedTable:65ec3007-ee1b-4b35-874d-9322cc44e6e8",
+            "dev:work-product-component--ColumnBasedTable:6dbc2983-c6d5-4de1-ad89-6a6a058f0447",
+            "dev:work-product-component--ColumnBasedTable:8157f479-0edf-4204-bf62-0cad198cb410",
+            "dev:work-product-component--ColumnBasedTable:b3910684-c95f-4d2d-917f-54dbbb180520",
+            "dev:work-product-component--ColumnBasedTable:bad88ef3-7650-4502-b18b-6d48ecfa2dce",
+            "dev:work-product-component--LocalBoundaryFeature:22fddf71-0363-450f-9637-0efe9242d9ad",
+            "dev:work-product-component--LocalBoundaryFeature:44b0c86e-0d6d-41ea-8cca-d94ae03b1e9f",
+            "dev:work-product-component--LocalBoundaryFeature:5043ea73-6cab-4275-ad54-7922807879f8",
+            "dev:work-product-component--LocalBoundaryFeature:7f4b1bcf-6e71-4fc9-aece-0620cc4a0fb5",
+            "dev:work-product-component--LocalBoundaryFeature:81d6e966-14f9-45ee-b809-0a5c5204f0f2",
+            "dev:work-product-component--LocalBoundaryFeature:a9570da5-3a84-451b-abdc-a56944b91761",
+            "dev:work-product-component--LocalBoundaryFeature:b95c66f1-f117-416d-9097-9dd76c08e875",
+            "dev:work-product-component--LocalBoundaryFeature:bc2727b0-f6e3-49f3-ad64-2c4e582d4e2a",
+            "dev:work-product-component--LocalBoundaryFeature:f280fd7d-c5b2-4d04-aeaf-08ca16bc9c5e",
+            "dev:work-product-component--LocalBoundaryFeature:f6b2e674-8c98-4ed1-828b-e9bd08bb2d14",
+            "dev:work-product-component--FaultInterpretation:085c591a-512e-4b34-ad51-3a3cf6d15a94",
+            "dev:work-product-component--FaultInterpretation:5304d333-4b0a-46d2-a71e-66fd13496d6a",
+            "dev:work-product-component--FaultInterpretation:4eeb1a8f-b47e-499f-855e-84faef740eba",
+            "dev:dataset--ETPDataspace:maap-omegas",
+            "dev:reference-data--PropertyType:0f8cd021-652c-545d-99ff-38144a8543c3",
+            "dev:reference-data--PropertyType:318390b6-d7f6-4b55-a910-8d200b3cfcc7",
+            "dev:reference-data--PropertyType:3a708aa1-0d72-4fe3-afb1-fb7f3538f6d5",
+            "dev:reference-data--PropertyType:8851760a-6651-4e49-99e0-8d234c53c70b",
+            "dev:reference-data--ExistenceKind:Actual",
+            "dev:reference-data--ExistenceKind:Prototype",
+            "dev:reference-data--IndexableElement:cells",
+            "dev:reference-data--UnitOfMeasure:Euc",
+            "dev:reference-data--UnitOfMeasure:mD",
+            "dev:reference-data--DomainType:Depth",
+            "dev:reference-data--RepresentationRole:Map",
+            "dev:reference-data--RepresentationType:Regular2DGrid",
+            "dev:reference-data--StratigraphicRoleType:Chronostratigraphic",
+            "dev:reference-data--IndexableElement:nodes",
+            "dev:reference-data--KDirectionType:down",
+            "dev:reference-data--PillarShapeType:straight",
+            "dev:reference-data--RepresentationType:PointSet",
+            "dev:reference-data--RepresentationType:PolylineSet",
+            "dev:reference-data--UnitQuantity:Euc",
+            "dev:reference-data--ColumnBasedTableType:Facies",
+            "dev:dataset--ETPDataspace:maap-omegas:1"
+          ],
+          "SpatialArea": {
+            "Wgs84Coordinates": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    2.05,
+                    61.4
+                  ],
+                  [
+                    2.25,
+                    61.4
+                  ],
+                  [
+                    2.25,
+                    61.5
+                  ],
+                  [
+                    2.05,
+                    61.5
+                  ],
+                  [
+                    2.05,
+                    61.4
+                  ]
+                ]
+              ]
+            }
+          },
+          "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ED50-UTM31N:"
+        }
+      }
+    ],
+    "WorkProducts": []
+  }
+}

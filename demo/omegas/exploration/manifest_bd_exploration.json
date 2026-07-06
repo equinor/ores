@@ -1,0 +1,438 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [
+    {
+      "id": "dev:master-data--BusinessDecision:OmegaSor-Exploration:1",
+      "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.office.global.viewers@dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "NO"
+        ]
+      },
+      "data": {
+        "Name": "Omega S\u00f8r \u2013 Exploration Well Decision (34/4-19 S)",
+        "Description": "Exploration well decision for the Omega S\u00f8r Alfa prospect (Snorre area, block 34/4, PL057). Approve drilling of exploration well 34/4-19 S targeting Brent Group (Tarbert + Rannoch formations) in a 4-way dip closure on Top Brent. Primary objectives: confirm hydrocarbon presence, determine OWC, characterize reservoir quality, and acquire formation water sample for barium content assessment. Prospect volumetrics: STOIIP P50 19.3 MSm\u00b3. Geological probability of success Pg = 0.69.",
+        "ProjectName": "Omega S\u00f8r Alfa Exploration",
+        "DecisionLevelID": "dev:reference-data--DecisionLevel:ExplorationDrilling:",
+        "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:",
+        "DecisionDueDate": "2023-06-01",
+        "DecisionSummary": "Approve drilling of exploration well 34/4-19 S to evaluate the Omega S\u00f8r Alfa prospect. Target: Brent Group (Tarbert + Rannoch Fm) at ~3800-3870 m TVD in 4-way dip closure. Data acquisition program: 120 m core (Tarbert+Rannoch), triple-combo + CMR + FMI logs, 48+ MDT pressure points, formation water sampling. Well to be drilled from semi-sub, plugged and abandoned after evaluation. Results feed directly into field development concept selection (WPC decision).",
+        "RiskIDs": [
+          "dev:master-data--Risk:OmegaSor-VolumeUncertainty:1",
+          "dev:master-data--Risk:OmegaSor-GeologicalPlay:1",
+          "dev:master-data--Risk:OmegaSor-DrillingCompletion:1",
+          "dev:master-data--Risk:OmegaSor-WellControl:1",
+          "dev:master-data--Risk:OmegaSor-DataAcquisition:1"
+        ],
+        "ReservoirIDs": [
+          "dev:master-data--Reservoir:OmegaSorAlfa:1"
+        ],
+        "ReservoirSegmentIDs": [
+          "dev:master-data--ReservoirSegment:OmegaSor-Tarbert:1",
+          "dev:master-data--ReservoirSegment:OmegaSor-Rannoch:1"
+        ],
+        "CollaborationProjectID": "dev:master-data--CollaborationProject:OmegaSor-FieldDev:1",
+        "EvidenceCollectionID": "dev:work-product-component--PersistedCollection:OmegaSor-Exploration-Evidence:1",
+        "DrillingEvidenceCollectionID": "dev:work-product-component--PersistedCollection:OmegaSor-Exploration-Drilling:1",
+        "GeoscienceEvidenceCollectionID": "dev:work-product-component--PersistedCollection:OmegaSor-Exploration-Geoscience:1",
+        "Parameters": [
+          {
+            "Title": "Target reservoir",
+            "Selection": "Omega S\u00f8r Alfa \u2013 Brent Group (Tarbert + Rannoch)",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:master-data--Reservoir:OmegaSorAlfa:1"
+          },
+          {
+            "Title": "Exploration well",
+            "Selection": "34/4-19 S \u2013 discovery well targeting Brent Group",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+            "DataObjectParameter": "dev:master-data--Well:34-4-19S:1",
+            "Keys": [
+              {
+                "ParameterKey": "wellType",
+                "StringParameterKey": "Exploration"
+              }
+            ]
+          },
+          {
+            "Title": "Geomodel dataspace (RDDMS)",
+            "Selection": "ETP dataspace with Omega S\u00f8r RMS RESQML model",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:dataset--ETPDataspace:maap-omegas:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "ETPDataspace"
+              }
+            ]
+          },
+          {
+            "Title": "Evidence package (PersistedCollection)",
+            "Selection": "Exploration well evidence snapshot",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:work-product-component--PersistedCollection:OmegaSor-Exploration-Evidence:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "PersistedCollection"
+              }
+            ]
+          },
+          {
+            "Title": "Collaboration project",
+            "Selection": "Omega S\u00f8r Alfa Field Development project (long-lived)",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:master-data--CollaborationProject:OmegaSor-FieldDev:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "CollaborationProject"
+              }
+            ]
+          },
+          {
+            "Title": "Drilling evidence package",
+            "Selection": "Trajectory, drilling program, wellbore reports, handover docs",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:work-product-component--PersistedCollection:OmegaSor-Exploration-Drilling:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "DrillingCollection"
+              }
+            ]
+          },
+          {
+            "Title": "Geoscience evidence package",
+            "Selection": "Seismic horizons, well tops, prospect maps, play assessment",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:work-product-component--PersistedCollection:OmegaSor-Exploration-Geoscience:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "GeoscienceCollection"
+              }
+            ]
+          },
+          {
+            "Title": "Target segment \u2013 Tarbert Fm",
+            "Selection": "Upper Brent Group, primary reservoir target",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:master-data--ReservoirSegment:OmegaSor-Tarbert:1"
+          },
+          {
+            "Title": "Target segment \u2013 Rannoch Fm",
+            "Selection": "Lower Brent Group, secondary reservoir target",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:master-data--ReservoirSegment:OmegaSor-Rannoch:1"
+          }
+        ],
+        "Personnel": [
+          {
+            "Name": "Exploration Lead",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:ExplorationLead:",
+            "Organisation": "Snorre Exploration"
+          },
+          {
+            "Name": "Geologist",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:Geologist:",
+            "Organisation": "Snorre Exploration"
+          },
+          {
+            "Name": "Geophysicist",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:Geophysicist:",
+            "Organisation": "Snorre Exploration"
+          },
+          {
+            "Name": "Petrophysicist",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:Petrophysicist:",
+            "Organisation": "Snorre Petec"
+          },
+          {
+            "Name": "Drilling & Wells Lead",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:DrillingWellsLead:",
+            "Organisation": "Snorre D&W"
+          },
+          {
+            "Name": "Well Site Geologist",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:WellSiteGeologist:",
+            "Organisation": "Snorre Exploration"
+          }
+        ],
+        "DecisionOwners": [
+          {
+            "Name": "Exploration Manager",
+            "Organisation": "Snorre Exploration"
+          }
+        ],
+        "DecisionMakers": [
+          {
+            "Name": "VP Exploration Norway",
+            "Organisation": "EPN Exploration"
+          }
+        ],
+        "Contributors": [
+          {
+            "Name": "Pre-Execution Team",
+            "Organisation": "D&W Pre-Execution"
+          },
+          {
+            "Name": "Geoscience QA",
+            "Organisation": "ST MSU Subsurface QA"
+          }
+        ],
+        "Remarks": [
+          {
+            "Remark": "Approve drilling of 34/4-19 S to confirm Omega S\u00f8r Alfa prospect",
+            "RemarkSource": "Exploration Decision"
+          },
+          {
+            "Remark": "Primary target: Brent Group (Tarbert + Rannoch Fm) in 4-way dip closure",
+            "RemarkSource": "Exploration Decision"
+          },
+          {
+            "Remark": "Data acquisition: 120 m core, triple-combo + CMR + FMI, 48+ MDT, water sample",
+            "RemarkSource": "Exploration Decision"
+          },
+          {
+            "Remark": "Prospect Pg = 0.69 (combined play elements including Beta segment)",
+            "RemarkSource": "Exploration Decision"
+          },
+          {
+            "Remark": "Pre-drill STOIIP P50 = 19.3 MSm\u00b3 (volumetrics from GEOX evaluation)",
+            "RemarkSource": "Exploration Decision"
+          },
+          {
+            "Remark": "Well feeds directly into field development concept (WPC decision)",
+            "RemarkSource": "Exploration Decision"
+          },
+          {
+            "Remark": "Post-drill: oil confirmed in Tarbert + Rannoch, water sample NOT obtained",
+            "RemarkSource": "Exploration Decision"
+          }
+        ],
+        "ProjectSpecifications": [
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:PreDrillSTOIIP_P50:",
+            "DataQuantityParameter": 19.3,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MSm3:"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:GeologicalProbability:",
+            "DataQuantityParameter": 0.69,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:fraction:"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:WellCost:",
+            "DataQuantityParameter": 45,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MUSD:"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:DrillingDays:",
+            "DataQuantityParameter": 74,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:days:"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:CoreRecovery:",
+            "DataQuantityParameter": 120,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:m:"
+          },
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:MDTPoints:",
+            "DataQuantityParameter": 48,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:count:"
+          }
+        ],
+        "ActivityStates": [
+          {
+            "EffectiveDateTime": "2023-03-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+            "Remark": "Prospect maturation and GEOX evaluation"
+          },
+          {
+            "EffectiveDateTime": "2023-06-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+            "Remark": "Exploration drilling decision (DG2)"
+          },
+          {
+            "EffectiveDateTime": "2023-06-15",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+            "Remark": "DW112 Activity Program signature"
+          },
+          {
+            "EffectiveDateTime": "2023-07-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+            "Remark": "Handover MWP \u2192 Pre-Execution"
+          },
+          {
+            "EffectiveDateTime": "2023-08-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+            "Remark": "Handover Pre-Execution \u2192 Operations Centre"
+          },
+          {
+            "EffectiveDateTime": "2023-09-15",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+            "Remark": "Spud date"
+          },
+          {
+            "EffectiveDateTime": "2023-11-28",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+            "Remark": "TD reached (4090 m MD / 3872 m TVD)"
+          },
+          {
+            "EffectiveDateTime": "2023-12-15",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+            "Remark": "P&A and rig release"
+          },
+          {
+            "EffectiveDateTime": "2024-02-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+            "Remark": "EOWR (End of Well Report)"
+          },
+          {
+            "EffectiveDateTime": "2024-03-01",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+            "Remark": "DW100 Handover exploration wells \u2013 D&W to Licence"
+          }
+        ],
+        "SpatialArea": {
+          "Wgs84Coordinates": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  2.05,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.4
+                ],
+                [
+                  2.25,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.5
+                ],
+                [
+                  2.05,
+                  61.4
+                ]
+              ]
+            ]
+          }
+        },
+        "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ED50-UTM31N:",
+        "ancestry": {
+          "parents": [],
+          "children": [
+            "dev:master-data--Well:34-4-19S:1",
+            "dev:master-data--BusinessDecision:OmegaSor-WPC:1"
+          ]
+        },
+        "ext": {
+          "equinor": {
+            "Alternatives": [
+              {
+                "Name": "Alt-A: Drill exploration well (recommended)",
+                "Rank": 1,
+                "Rationale": "Drill 34/4-19 S to confirm Omega S\u00f8r Alfa prospect. 4-way dip closure on Top Brent, Pg = 0.69. Data acquisition: core + logs + MDT + water sample. Confirms play elements and provides input to development concept selection. Estimated well cost 45 MUSD. Success case feeds into high-value WPC development decision (NPV 116 MUSD if developed).",
+                "RecommendedAction": "Approve"
+              },
+              {
+                "Name": "Alt-B: Defer \u2013 acquire additional seismic first",
+                "Rank": 2,
+                "Rationale": "Acquire additional 3D seismic (reprocessing or new survey) to improve fault imaging and reduce structural uncertainty before committing to exploration well. Pro: reduced risk of dry well. Con: 12-18 month delay, potential loss of rig window, and seismic unlikely to resolve OWC or barium question.",
+                "RecommendedAction": "Consider"
+              },
+              {
+                "Name": "Alt-C: Do not drill \u2013 farm out or relinquish",
+                "Rank": 3,
+                "Rationale": "Farm out exploration commitment or evaluate relinquishment at next licence renewal. Eliminates well cost exposure. Con: high Pg (0.69) and significant volumes make this unattractive given licence commitment schedule.",
+                "RecommendedAction": "Reject"
+              }
+            ],
+            "ProspectAssessment": {
+              "ProspectName": "Omega S\u00f8r Alfa",
+              "PlayName": "Middle Jurassic Brent Group (Tampen Spur)",
+              "TrapType": "4-way dip closure on Top Brent, fault-bounded to east (ISF)",
+              "ProbabilityOfSuccess": {
+                "Pg_Combined": 0.69,
+                "Pg_Trap": 0.85,
+                "Pg_Seal": 0.9,
+                "Pg_Reservoir": 0.95,
+                "Pg_Charge": 0.95
+              },
+              "PreDrillVolumes": {
+                "STOIIP_P90_MSm3": 15.8,
+                "STOIIP_P50_MSm3": 19.3,
+                "STOIIP_P10_MSm3": 22.9,
+                "Recoverable_P50_MSm3": 5.4
+              },
+              "SourceRock": "Draupne Fm (Upper Jurassic)",
+              "MigrationPathway": "Lateral from Snorre kitchen, short distance",
+              "ReservoirFormations": [
+                "Tarbert Fm",
+                "Rannoch Fm"
+              ],
+              "SealFormation": "Drake Fm (top), ISF juxtaposition (lateral)",
+              "DepthTarget_mTVD": 3840,
+              "AnalogueFields": [
+                "Snorre",
+                "Vigdis"
+              ]
+            },
+            "DataAcquisitionProgram": {
+              "CoreProgram": "120 m conventional core (Tarbert + Rannoch), contingency SWC",
+              "LoggingProgram": "Triple-combo + CMR + FMI (wireline), LWD/MWD backup",
+              "PressureProgram": "48+ MDT stations across Tarbert + Rannoch + cap rock",
+              "FluidSampling": "Formation water sample (MDT extended pump-out) \u2013 CRITICAL for Ba content",
+              "WellTesting": "No formation test (P&A well) \u2013 MDT data sufficient for prospect evaluation"
+            },
+            "PostDrillResults": {
+              "Outcome": "Discovery \u2013 oil confirmed",
+              "OilShows": "Oil in Tarbert Fm and Rannoch Fm (both zones oil-bearing)",
+              "OWC_Confirmed": false,
+              "OWC_Remark": "ODT at 3772.5 m, OWC not penetrated (deeper than TD)",
+              "WaterSampleObtained": false,
+              "WaterSampleRemark": "Unable to obtain formation water sample \u2013 barium content unknown",
+              "CoreRecovery_m": 120,
+              "MDTPoints": 48,
+              "ReservoirQuality": "Tarbert: good (50-200 mD). Rannoch: moderate (20-80 mD, deformation bands near ISF)",
+              "FeedToNextDecision": "WPC field development decision (2026)"
+            },
+            "SharePointSite": "https://statoilsrm.sharepoint.com/sites/WCPNO344-19S"
+          }
+        }
+      }
+    }
+  ],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [],
+    "WorkProducts": []
+  }
+}
