@@ -672,26 +672,64 @@ async def keys_objects(
                         if u:
                             rel_types_by_uuid[u] = [rel.get("type_name", "") for rel in rels]
             else:
-                # REST: bounded-concurrency /targets lookups (remote dataspaces).
+                # REST: try batch graph_search (M27+), fall back to N+1 /targets.
                 typ_clean = _sanitize_type(typ)
-                sem = asyncio.Semaphore(8)
-
-                async def _targets_for(u: str) -> Tuple[str, List[str]]:
-                    async with sem:
-                        try:
-                            tg = await osdu.list_targets(at, enc, typ_clean, u)
-                        except Exception:
-                            return u, []
-                    tns: List[str] = []
-                    for t in tg or []:
-                        tn = _infer_type_path(t) or (t.get("contentType") or "")
-                        if tn:
-                            tns.append(tn)
-                    return u, tns
-
                 uuids = [it["uuid"] for it in out if it.get("uuid")][:200]
-                pairs = await asyncio.gather(*[_targets_for(u) for u in uuids])
-                rel_types_by_uuid = {u: tns for u, tns in pairs}
+
+                # Build EML URIs for all objects
+                obj_uris = [
+                    osdu._eml_uri_from_parts(ds, typ_clean, u) for u in uuids
+                ]
+
+                graph_done = False
+                if await osdu.rddms_supports_discovery(at):
+                    try:
+                        graph = await osdu.graph_search(
+                            at, obj_uris, scope="targets", depth=1,
+                        )
+                        # Index: uri → [target type names]
+                        uri_to_uuid = {uri: u for uri, u in zip(obj_uris, uuids)}
+                        for link in graph.get("links", []):
+                            src_uri = link.get("source", "")
+                            tgt_uri = link.get("target", "")
+                            u = uri_to_uuid.get(src_uri)
+                            if u and tgt_uri:
+                                # Resolve target type from graph resources
+                                tgt_res = next(
+                                    (r for r in graph.get("resources", []) if r.get("uri") == tgt_uri),
+                                    None,
+                                )
+                                tn = ""
+                                if tgt_res:
+                                    tn = _infer_type_path(tgt_res) or tgt_res.get("contentType", "")
+                                elif "/" in tgt_uri and "(" in tgt_uri:
+                                    # Parse type from URI: .../<type>(<uuid>)
+                                    tn = tgt_uri.rsplit("/", 1)[-1].split("(")[0]
+                                if tn:
+                                    rel_types_by_uuid.setdefault(u, []).append(tn)
+                        graph_done = True
+                    except Exception as e:
+                        log.debug("keys_objects graph_search fallback: %s", e)
+
+                if not graph_done:
+                    # Legacy N+1 REST fallback
+                    sem = asyncio.Semaphore(8)
+
+                    async def _targets_for(u: str) -> Tuple[str, List[str]]:
+                        async with sem:
+                            try:
+                                tg = await osdu.list_targets(at, enc, typ_clean, u)
+                            except Exception:
+                                return u, []
+                        tns: List[str] = []
+                        for t in tg or []:
+                            tn = _infer_type_path(t) or (t.get("contentType") or "")
+                            if tn:
+                                tns.append(tn)
+                        return u, tns
+
+                    pairs = await asyncio.gather(*[_targets_for(u) for u in uuids])
+                    rel_types_by_uuid = {u: tns for u, tns in pairs}
 
             for it in out:
                 tns = rel_types_by_uuid.get(it.get("uuid") or "")
@@ -769,30 +807,68 @@ async def dataspaces_manifest_build_uris(
     uris: Set[str] = { osdu._eml_uri_from_parts(ds, typ_s, uuid_s) }
     t0 = time.monotonic()
 
-    # Expand refs via graph endpoints (parallel)
+    # Expand refs via graph endpoints
     if include_refs:
-        async def _get_sources():
+        primary_uri = list(uris)[0]
+        refs_done = False
+
+        # Try batch graph_search (M27+) — one call gets all refs at depth 2
+        if await osdu.rddms_supports_discovery(at):
             try:
-                return await osdu.list_sources(at, enc, typ_s, uuid_s)
+                graph = await osdu.graph_search(
+                    at, [primary_uri], scope="targetsOrSelf", depth=2,
+                )
+                graph_src = await osdu.graph_search(
+                    at, [primary_uri], scope="sources", depth=1,
+                )
+                # Collect all resource URIs from graph
+                for res in graph.get("resources", []):
+                    uri = res.get("uri", "")
+                    if uri:
+                        uris.add(uri)
+                for res in graph_src.get("resources", []):
+                    uri = res.get("uri", "")
+                    if uri:
+                        uris.add(uri)
+                # Also collect from links (in case resource list is sparse)
+                for link in graph.get("links", []):
+                    for k in ("source", "target"):
+                        if link.get(k):
+                            uris.add(link[k])
+                for link in graph_src.get("links", []):
+                    for k in ("source", "target"):
+                        if link.get(k):
+                            uris.add(link[k])
+                refs_done = True
+                log.info("build-uris: graph_search refs resolved in %.1fs (uris=%d)",
+                         time.monotonic() - t0, len(uris))
             except Exception as e:
-                log.warning("build-uris: list_sources failed: %s", e)
-                return []
+                log.debug("build-uris: graph_search failed, falling back to N+1: %s", e)
 
-        async def _get_targets():
-            try:
-                return await osdu.list_targets(at, enc, typ_s, uuid_s)
-            except Exception as e:
-                log.warning("build-uris: list_targets failed: %s", e)
-                return []
+        if not refs_done:
+            # Legacy N+1 fallback
+            async def _get_sources():
+                try:
+                    return await osdu.list_sources(at, enc, typ_s, uuid_s)
+                except Exception as e:
+                    log.warning("build-uris: list_sources failed: %s", e)
+                    return []
 
-        sources, targets = await asyncio.gather(_get_sources(), _get_targets())
-        log.info("build-uris: refs resolved in %.1fs (sources=%d, targets=%d)",
-                 time.monotonic() - t0, len(sources or []), len(targets or []))
+            async def _get_targets():
+                try:
+                    return await osdu.list_targets(at, enc, typ_s, uuid_s)
+                except Exception as e:
+                    log.warning("build-uris: list_targets failed: %s", e)
+                    return []
 
-        for node in (sources or []):
-            if isinstance(node, dict): _add_node_uri(node, uris, ds)
-        for node in (targets or []):
-            if isinstance(node, dict): _add_node_uri(node, uris, ds)
+            sources, targets = await asyncio.gather(_get_sources(), _get_targets())
+            log.info("build-uris: refs resolved in %.1fs (sources=%d, targets=%d)",
+                     time.monotonic() - t0, len(sources or []), len(targets or []))
+
+            for node in (sources or []):
+                if isinstance(node, dict): _add_node_uri(node, uris, ds)
+            for node in (targets or []):
+                if isinstance(node, dict): _add_node_uri(node, uris, ds)
 
     safe_uris, skipped = _filter_manifest_uris(uris)
     if not safe_uris:
@@ -1830,17 +1906,62 @@ async def keys_object_graph(
             log.debug("graph: PG relations failed: %s", e)
 
         if not pg_graph_done:
-            # RDDMS graph endpoints (official API)
-            try:
-                sources = await osdu.list_sources(at, enc, typ_s, uuid_s)
-            except Exception as e:
-                log.warning("graph: list_sources failed: %s", e)
-                sources = []
-            try:
-                targets = await osdu.list_targets(at, enc, typ_s, uuid_s)
-            except Exception as e:
-                log.warning("graph: list_targets failed: %s", e)
-                targets = []
+            # Try batch graph_search (M27+) — single call replaces 2 REST calls
+            graph_search_done = False
+            if await osdu.rddms_supports_discovery(at):
+                try:
+                    primary_uri = primary["uri"]
+                    graph = await osdu.graph_search(
+                        at, [primary_uri], scope="targetsOrSelf", depth=1,
+                    )
+                    # Also fetch sources in one call
+                    graph_src = await osdu.graph_search(
+                        at, [primary_uri], scope="sources", depth=1,
+                    )
+                    # Parse targets from first graph call
+                    for link in graph.get("links", []):
+                        if link.get("source") == primary_uri:
+                            tgt_uri = link.get("target", "")
+                            tgt_res = next(
+                                (r for r in graph.get("resources", []) if r.get("uri") == tgt_uri), {}
+                            )
+                            targets.append({
+                                "$type": _infer_type_path(tgt_res) or "",
+                                "contentType": tgt_res.get("contentType", ""),
+                                "UUID": tgt_res.get("uuid") or (tgt_uri.split("(")[-1].rstrip(")'") if "(" in tgt_uri else ""),
+                                "Citation": {"Title": tgt_res.get("name", "")},
+                                "uri": tgt_uri,
+                            })
+                    # Parse sources
+                    for link in graph_src.get("links", []):
+                        if link.get("target") == primary_uri:
+                            src_uri = link.get("source", "")
+                            src_res = next(
+                                (r for r in graph_src.get("resources", []) if r.get("uri") == src_uri), {}
+                            )
+                            sources.append({
+                                "$type": _infer_type_path(src_res) or "",
+                                "contentType": src_res.get("contentType", ""),
+                                "UUID": src_res.get("uuid") or (src_uri.split("(")[-1].rstrip(")'") if "(" in src_uri else ""),
+                                "Citation": {"Title": src_res.get("name", "")},
+                                "uri": src_uri,
+                            })
+                    graph_search_done = True
+                except Exception as e:
+                    log.debug("graph.json: graph_search failed, falling back to N+1 REST: %s", e)
+
+            if not graph_search_done:
+                # Legacy N+1 REST fallback (two separate calls)
+                try:
+                    sources = await osdu.list_sources(at, enc, typ_s, uuid_s)
+                except Exception as e:
+                    log.warning("graph: list_sources failed: %s", e)
+                    sources = []
+                try:
+                    targets = await osdu.list_targets(at, enc, typ_s, uuid_s)
+                except Exception as e:
+                    log.warning("graph: list_targets failed: %s", e)
+                    targets = []
 
         # CRS: scan for DataObjectReference-like entries mentioning CRS
         for edge in _extract_refs_any(obj_raw):

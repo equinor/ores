@@ -471,11 +471,72 @@ async def list_targets(access_token: str, ds_enc: str, typ: str, uuid: str) -> l
 
 # ── Discovery / Deep Search (requires MR 271 endpoints) ──────────────
 
-# Feature gate: set RDDMS_DISCOVERY=1 to enable batch graph search and
-# deleted-resources endpoints.  These require open-etp-client >= MR 271
-# which adds POST /query/graph/search and GET /dataspaces/{id}/deleted.
-# Default OFF until MR 271 is merged and deployed on target ADME instance.
-RDDMS_DISCOVERY_ENABLED: bool = os.getenv("RDDMS_DISCOVERY", "").strip() in ("1", "true", "yes")
+# Feature gate: set RDDMS_DISCOVERY=1 to force-enable, or =0 to force-disable.
+# When unset (default), auto-detects at runtime by probing /health/info version.
+# Requires open-etp-client >= 1.3.0 (MR 271) which adds:
+#   POST /query/graph/search   — batch graph traversal
+#   GET  /dataspaces/{id}/deleted — list deleted resources
+_RDDMS_DISCOVERY_ENV: str = os.getenv("RDDMS_DISCOVERY", "").strip().lower()
+RDDMS_DISCOVERY_ENABLED: bool = _RDDMS_DISCOVERY_ENV in ("1", "true", "yes")
+
+# Minimum RDDMS server version that supports graph/search and discovery endpoints
+_MIN_DISCOVERY_VERSION: tuple[int, ...] = (1, 3, 0)
+
+# Cached probe result: None = not yet probed, True/False = result
+_discovery_probe_result: bool | None = (
+    True if _RDDMS_DISCOVERY_ENV in ("1", "true", "yes")
+    else False if _RDDMS_DISCOVERY_ENV in ("0", "false", "no")
+    else None
+)
+_discovery_probe_lock = asyncio.Lock()
+
+
+def _parse_semver(version_str: str) -> tuple[int, ...]:
+    """Parse a version string like '1.3.0' into a tuple of ints."""
+    import re
+    parts = re.findall(r"\d+", version_str)
+    return tuple(int(p) for p in parts[:3]) if parts else (0, 0, 0)
+
+
+async def rddms_supports_discovery(access_token: str | None = None) -> bool:
+    """Check if the connected RDDMS server supports graph/search (M27+).
+
+    Probes GET /health/info once and caches the result for the process lifetime.
+    Returns True if the server version >= 1.3.0.
+    Falls back to True if env RDDMS_DISCOVERY=1 is set.
+    """
+    global _discovery_probe_result, RDDMS_DISCOVERY_ENABLED
+
+    if _discovery_probe_result is not None:
+        return _discovery_probe_result
+
+    async with _discovery_probe_lock:
+        # Double-check after acquiring lock
+        if _discovery_probe_result is not None:
+            return _discovery_probe_result
+
+        try:
+            async with _http(timeout=10) as client:
+                r = await client.get(_rddms_url("/health/info"))
+                if r.status_code == 200:
+                    info = r.json()
+                    version = info.get("version", "0.0.0")
+                    parsed = _parse_semver(version)
+                    _discovery_probe_result = parsed >= _MIN_DISCOVERY_VERSION
+                    log.info(
+                        "RDDMS version probe: %s → discovery %s",
+                        version, "enabled" if _discovery_probe_result else "disabled",
+                    )
+                else:
+                    log.warning("RDDMS /health/info returned %s; disabling discovery", r.status_code)
+                    _discovery_probe_result = False
+        except Exception as e:
+            log.warning("RDDMS version probe failed (%s); disabling discovery", e)
+            _discovery_probe_result = False
+
+        # Update the module-level flag so existing code paths use it
+        RDDMS_DISCOVERY_ENABLED = _discovery_probe_result
+        return _discovery_probe_result
 
 
 async def graph_search(

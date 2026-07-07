@@ -16,6 +16,7 @@ ORES provides multiple ways to search and explore reservoir data - from a visual
 | Search across multiple dataspaces at once | [Multi-dataspace Search](#deep-search--multiple-dataspaces) |
 | Search OSDU catalog + RDDMS together | [Federated Search](#federated-search-osdu--rddms) |
 | Inspect array data (depths, values, stats) | [Array Statistics](#array-statistics--samples) |
+| Batch graph traversal (many objects at once) | [Discovery Graph Search](#i-discovery-batch-graph-search) |
 | Get full XML of a single object | [RDDMS REST](#rddms-rest-api) |
 | Bulk import/export EPC files | ETP CLI |
 
@@ -432,15 +433,18 @@ graph LR
 
 ### Backend Selection Order
 
-`deep_search_impl` tries backends in this order (first success wins):
+All query paths (GraphQL `deepSearch`, keys routes, manifest build) follow the same priority chain:
 
 ```
-1. Discovery  (RDDMS_DISCOVERY=1)  →  POST /query/graph/search  (1 batch call)
-   ↓ fallback if endpoint unavailable
-2. PostgreSQL (GRAPHQL_PG_CONN_STRING set)  →  SQL JOINs  (fastest, local only)
+1. PostgreSQL    (GRAPHQL_PG_CONN_STRING set)      → SQL JOINs, batch queries  (fastest, local only)
    ↓ fallback if dataspace not in PG
-3. REST       (always available)  →  N+1 individual calls  (M26 compatible)
+2. Discovery     (RDDMS server ≥ 1.3.0 / M27)     → POST /query/graph/search  (1 batch call)
+   ↓ fallback if server is pre-M27 or endpoint fails
+3. REST N+1      (always available)                → individual list_sources / list_targets per object
 ```
+
+Discovery support is **auto-detected** at runtime via `GET /health/info` (version ≥ 1.3.0).
+Override with `RDDMS_DISCOVERY=1` (force on) or `RDDMS_DISCOVERY=0` (force off).
 
 The `backend` field in `DeepSearchResult` tells you which path was used:
 `"Discovery"`, `"PostgreSQL"`, or `"REST"`.
@@ -449,16 +453,23 @@ The `backend` field in `DeepSearchResult` tells you which path was used:
 
 ## B. RDDMS REST API
 
-| Endpoint | Purpose |
-|----------|---------|
-| `GET /dataspaces` | List all dataspaces |
-| `GET /dataspaces/{ds}/types` | Types with counts |
-| `GET /dataspaces/{ds}/types/{type}/resources` | List objects |
-| `GET /dataspaces/{ds}/types/{type}/resources/{uuid}` | Single object |
-| `GET .../resources/{uuid}/targets` | Forward references |
-| `GET .../resources/{uuid}/sources` | Reverse references |
-| `GET .../resources/{uuid}/arrays` | List arrays |
-| `GET .../resources/{uuid}/arrays/{path}` | Read array data |
+| Endpoint | Purpose | Min Version |
+|----------|---------|-------------|
+| `GET /dataspaces` | List all dataspaces | any |
+| `GET /dataspaces/{ds}/resources` | Types with counts | any |
+| `GET /dataspaces/{ds}/resources/{type}` | List objects | any |
+| `GET /dataspaces/{ds}/resources/{type}/{uuid}` | Single object (XML) | any |
+| `GET .../resources/{type}/{uuid}/targets` | Forward references | any |
+| `GET .../resources/{type}/{uuid}/sources` | Reverse references | any |
+| `GET .../resources/{type}/{uuid}/arrays` | List arrays | any |
+| `GET .../resources/{type}/{uuid}/arrays/{path}` | Read array data | any |
+| `POST /query/graph/search` | **Batch graph traversal** (multi-URI, configurable depth) | 1.3.0 (M27) |
+| `POST /query/resources/find` | Flat resource enumeration (DiscoveryQuery) | 1.3.0 (M27) |
+| `POST /query/objects/find` | Search + fetch full XML content | 1.3.0 (M27) |
+| `GET /dataspaces/{ds}/deleted` | List deleted resources since timestamp | 1.3.0 (M27) |
+| `POST /manifests/build` | Build OSDU manifest from ETP dataspace/URIs | any |
+| `GET /health/info` | Server version, commit, build time | any |
+| `GET /health/readiness` | ETP server reachability check | any |
 
 > **Performance note:** Each REST call carries ~40–100 ms overhead (TLS, Azure gateway, JSON serialization). Deep queries that touch N objects × M properties × K arrays result in (N+M+K) serial HTTP calls - the _N+1 problem_. Prefer GraphQL+PG when available.
 
@@ -607,8 +618,9 @@ _Measured on `maap/drogon` data (swedev). ETP values are reasoned estimates._
 ### Performance Tips
 
 1. **Always prefer GraphQL + PG** when `GRAPHQL_PG_CONN_STRING` is set - the resolver auto-selects the fastest backend.
-2. **Enable Discovery** (`RDDMS_DISCOVERY=1`) on ADME/remote deployments where PG is not available - it replaces N+1 REST calls with a single batch graph call.
-3. **Use `category` for broad searches** - `category: "well"` searches all 10 well-related types in one query.
+2. **Discovery is auto-detected** — on M27+ RDDMS servers (≥ 1.3.0), ORES automatically uses batch `graph_search` instead of N+1 REST calls. No env var needed.
+3. **Force-override** with `RDDMS_DISCOVERY=1` (always use) or `RDDMS_DISCOVERY=0` (never use) if auto-detection gets it wrong.
+4. **Use `category` for broad searches** - `category: "well"` searches all 10 well-related types in one query.
 4. **Avoid REST for deep queries** - 10 grids × 3 properties = ~80 serial HTTP calls (~5 s). Discovery: ~0.5 s. PG: ~0.2 s.
 5. **Batch optimization (PG):** Deep search of 20 objects with properties requires ~6 SQL round-trips instead of ~80.
 6. **Batch optimization (Discovery):** `POST /query/graph/search` sends all candidate URIs in a single ETP session - no N+1.
@@ -657,6 +669,154 @@ curl -X POST http://localhost:8000/api/graphql/query \
 | `ary` | Array metadata (path, type, dimensions) |
 | `bin` | Array binary data (chunks) |
 | `typ` | Type registry |
+
+---
+
+## I. Discovery Batch Graph Search
+
+The `POST /query/graph/search` endpoint (available on RDDMS ≥ 1.3.0 / M27) wraps ETP Discovery Protocol 3 in a single REST call. It replaces the N+1 pattern of calling `/sources` and `/targets` per object.
+
+### Request
+
+```http
+POST /api/reservoir-ddms/v2/query/graph/search
+Authorization: Bearer <token>
+Content-Type: application/json
+data-partition-id: <partition>
+
+{
+  "uris": [
+    "eml:///dataspace('demo/drogon')/resqml20.obj_IjkGridRepresentation('uuid1')",
+    "eml:///dataspace('demo/drogon')/resqml20.obj_IjkGridRepresentation('uuid2')"
+  ],
+  "scope": "targets",
+  "depth": 1,
+  "dataObjectTypes": ["resqml20.obj_ContinuousProperty"],
+  "countObjects": true,
+  "includeSecondaryTargets": false,
+  "includeSecondarySources": false
+}
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `uris` | string[] | required | EML URIs of root objects to traverse from |
+| `scope` | string | `"targets"` | `self`, `sources`, `targets`, `sourcesOrSelf`, `targetsOrSelf` |
+| `depth` | int | 1 | Graph traversal depth (1 = immediate neighbours) |
+| `dataObjectTypes` | string[] | `[]` | Filter results to these types only (empty = all) |
+| `countObjects` | bool | false | Include source/target counts per resource |
+| `includeSecondaryTargets` | bool | false | Follow secondary target edges |
+| `includeSecondarySources` | bool | false | Follow secondary source edges |
+
+### Response
+
+```json
+{
+  "resources": [
+    { "uri": "eml:///dataspace('demo/drogon')/resqml20.obj_ContinuousProperty('uuid3')",
+      "name": "PORO", "contentType": "resqml20.obj_ContinuousProperty",
+      "uuid": "uuid3", "sourceCount": 0, "targetCount": 1 }
+  ],
+  "links": [
+    { "source": "eml:///...uuid3...", "target": "eml:///...uuid1..." }
+  ]
+}
+```
+
+### Version Detection
+
+ORES auto-detects M27+ support by probing `GET /health/info` on first use:
+
+```python
+# app/osdu.py
+await osdu.rddms_supports_discovery(access_token)  # True if version >= 1.3.0
+```
+
+The result is cached for the process lifetime. Override with env:
+- `RDDMS_DISCOVERY=1` — force enable (skip probe)
+- `RDDMS_DISCOVERY=0` — force disable (never use graph/search)
+- unset — auto-detect at runtime
+
+---
+
+## J. Keys Routes — Backend Selection Design
+
+The `/keys` endpoints serve the keys.html explorer page. Each endpoint follows the same three-tier fallback:
+
+### Route Map
+
+| Route | Purpose | PG query | Discovery (M27+) | REST fallback |
+|-------|---------|----------|-------------------|---------------|
+| `GET /keys/dataspaces.json` | List dataspaces | `pg_list_dataspaces` | — | `GET /dataspaces` |
+| `GET /keys/types.json` | Types in dataspace | `pg_list_types` | — | `GET /dataspaces/{ds}/resources` |
+| `GET /keys/objects.json` | List objects + labels | `pg_list_resources` + `pg_batch_relations` | `POST /query/graph/search` (label enrichment) | N × `GET .../targets` |
+| `GET /keys/object.json` | Single object detail | `pg_get_object_and_arrays` | — | `GET .../resources/{type}/{uuid}` |
+| `GET /keys/object/graph.json` | Object graph (sources+targets) | `pg_list_relations` | `POST /query/graph/search` (×2: targets+sources) | `GET .../sources` + `GET .../targets` |
+| `GET /keys/object/array.json` | Array values + stats | `pg_read_array` | — | `GET .../arrays/{path}` |
+| `POST /dataspaces/manifest/build-uris` | Manifest ref expansion | — | `POST /query/graph/search` (depth=2, both scopes) | `GET .../sources` + `GET .../targets` |
+| `POST /dataspaces/manifest/build-from-selection` | Multi-object manifest | — | `POST /query/graph/search` (batch) | N × `GET .../sources/targets` |
+
+### Fallback Logic
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  keys/objects.json  (relation enrichment for representation     │
+│  labels — e.g. disambiguate "TopVolantis Depth" vs "Time")      │
+├─────────────────────────────────────────────────────────────────┤
+│  1. PG available + rows have obj_id?                            │
+│     → pg_batch_relations(pool, ds, obj_ids)   [1 SQL, ~5ms]    │
+│                                                                 │
+│  2. rddms_supports_discovery(token)?                            │
+│     → graph_search(uris, scope="targets", depth=1)   [1 call]  │
+│     ← parse links[] → rel_types_by_uuid                        │
+│                                                                 │
+│  3. Legacy fallback                                             │
+│     → asyncio.gather(list_targets(u) for u in uuids[:200])     │
+│       [N calls, semaphore=8]                                    │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│  keys/object/graph.json  (full source+target graph)             │
+├─────────────────────────────────────────────────────────────────┤
+│  1. PG available?                                               │
+│     → pg_list_relations(pool, ds, typ, uuid, "both")            │
+│                                                                 │
+│  2. rddms_supports_discovery(token)?                            │
+│     → graph_search([uri], scope="targetsOrSelf", depth=1)       │
+│     → graph_search([uri], scope="sources", depth=1)             │
+│     ← merge into sources[] + targets[]                          │
+│                                                                 │
+│  3. Legacy fallback                                             │
+│     → list_sources(at, enc, typ, uuid)                          │
+│     → list_targets(at, enc, typ, uuid)                          │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│  dataspaces/manifest/build-uris  (ref expansion before build)   │
+├─────────────────────────────────────────────────────────────────┤
+│  1. rddms_supports_discovery(token)?                            │
+│     → graph_search([primary_uri], scope="targetsOrSelf", d=2)   │
+│     → graph_search([primary_uri], scope="sources", depth=1)     │
+│     ← collect all resource URIs + link endpoints into uris set  │
+│                                                                 │
+│  2. Legacy fallback                                             │
+│     → asyncio.gather(list_sources, list_targets)                │
+│     ← parse nodes into uris set                                 │
+│                                                                 │
+│  Then: filter out _MANIFEST_SKIP_TYPES                          │
+│  Then: POST /manifests/build with safe_uris                     │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Performance Impact
+
+| Scenario (remote dataspace, 50 objects) | Before (REST N+1) | After (Discovery) | Improvement |
+|----------------------------------------|--------------------|--------------------|-------------|
+| Object listing with labels | 50 × 80ms = ~4s | 1 × 150ms = ~0.15s | **~25× faster** |
+| Object graph (1 object) | 2 × 80ms = ~160ms | 2 × 100ms = ~200ms | ~same (small N) |
+| Manifest ref expansion | 2 × 80ms = ~160ms | 2 × 120ms = ~240ms (but depth=2) | More refs found |
+
+The biggest win is in object listing (N=50+). Single-object graph is similar in latency but gains configurable depth for manifest builds.
 
 ---
 
