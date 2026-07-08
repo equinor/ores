@@ -31,7 +31,7 @@
           "IsDiscoverable": true,
           "IsExtendedLoad": false,
           "Datasets": [
-            "dev:dataset--FileCollection.SEGY:drogon-amplitude-far-time-20180101"
+            "dev:dataset--FileCollection.Bluware.OpenVDS:drogon-amplitude-far-time-20180101"
           ],
           "Artefacts": [
             {
@@ -40,6 +40,9 @@
               "RoleID": "dev:reference-data--ArtefactRole:ConvertedContent:"
             }
           ],
+          "DDMSDatasets": ["sd://dev/drogon-amplitude-far-time-20180101"],
+          "BinGridID": "dev:work-product-component--SeismicBinGrid:drogon-seismic-bingrid",
+          "CoordinateReferenceSystemID": "dev:work-product-component--LocalModelCompoundCrs:1.2.0:96fb7643-0012-4033-8e55-7b1b4652ed33",
           "SeismicDomainTypeID": "dev:reference-data--SeismicDomainType:Time:",
           "SeismicTraceDataDimensionalityTypeID": "dev:reference-data--SeismicTraceDataDimensionalityType:3D:",
           "SeismicAttributeTypeID": "dev:reference-data--SeismicAttributeType:Amplitude:",
@@ -59,6 +62,18 @@
             "OriginalFilename": "seismic--amplitude_far_time--20180101.sgy",
             "DrogonProject": "maap/drogon",
             "OffsetClass": "FAR"
+          },
+          "SpatialArea": {
+            "Wgs84Coordinates": {
+              "type": "FeatureCollection",
+              "features": [{
+                "type": "Feature",
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [[[2.173688, 61.150078], [2.377312, 61.150078], [2.377312, 61.212876], [2.173688, 61.212876], [2.173688, 61.150078]]]
+                }
+              }]
+            }
           }
         }
       },
@@ -89,7 +104,7 @@
           "IsDiscoverable": true,
           "IsExtendedLoad": false,
           "Datasets": [
-            "dev:dataset--FileCollection.SEGY:drogon-amplitude-near-time-20180101"
+            "dev:dataset--FileCollection.Bluware.OpenVDS:drogon-amplitude-near-time-20180101"
           ],
           "Artefacts": [
             {
@@ -98,6 +113,9 @@
               "RoleID": "dev:reference-data--ArtefactRole:ConvertedContent:"
             }
           ],
+          "DDMSDatasets": ["sd://dev/drogon-amplitude-near-time-20180101"],
+          "BinGridID": "dev:work-product-component--SeismicBinGrid:drogon-seismic-bingrid",
+          "CoordinateReferenceSystemID": "dev:work-product-component--LocalModelCompoundCrs:1.2.0:96fb7643-0012-4033-8e55-7b1b4652ed33",
           "SeismicDomainTypeID": "dev:reference-data--SeismicDomainType:Time:",
           "SeismicTraceDataDimensionalityTypeID": "dev:reference-data--SeismicTraceDataDimensionalityType:3D:",
           "SeismicAttributeTypeID": "dev:reference-data--SeismicAttributeType:Amplitude:",
@@ -117,6 +135,18 @@
             "OriginalFilename": "seismic--amplitude_near_time--20180101.sgy",
             "DrogonProject": "maap/drogon",
             "OffsetClass": "NEAR"
+          },
+          "SpatialArea": {
+            "Wgs84Coordinates": {
+              "type": "FeatureCollection",
+              "features": [{
+                "type": "Feature",
+                "geometry": {
+                  "type": "Polygon",
+                  "coordinates": [[[2.173688, 61.150078], [2.377312, 61.150078], [2.377312, 61.212876], [2.173688, 61.212876], [2.173688, 61.150078]]]
+                }
+              }]
+            }
           }
         }
       }

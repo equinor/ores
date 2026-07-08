@@ -79,6 +79,32 @@ KIND_SEISMIC_TRACE_DATA = "osdu:wks:work-product-component--SeismicTraceData:1.2
 KIND_FILE_COLLECTION_SEGY = "osdu:wks:dataset--FileCollection.SEGY:1.0.0"
 KIND_FILE_COLLECTION_VDS = "osdu:wks:dataset--FileCollection.Bluware.OpenVDS:1.2.0"
 
+# ── Drogon spatial extent (WGS84 bounding box from BinGrid UTM 31N) ──────
+DROGON_SPATIAL_AREA = {
+    "Wgs84Coordinates": {
+        "type": "FeatureCollection",
+        "features": [{
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[[2.173688, 61.150078], [2.377312, 61.150078],
+                                 [2.377312, 61.212876], [2.173688, 61.212876],
+                                 [2.173688, 61.150078]]]
+            }
+        }]
+    }
+}
+
+# LocalModelCompoundCrs UUID (same object on both instances, different ID format)
+_LOCAL_TIME_CRS_UUID = "96fb7643-0012-4033-8e55-7b1b4652ed33"
+
+
+def _local_time_crs_id(partition: str) -> str:
+    """Return the Local Time CRS record ID for the given partition."""
+    if partition == "opendes":
+        return f"opendes:work-product-component--LocalModelCompoundCrs:{_LOCAL_TIME_CRS_UUID}"
+    return f"{partition}:work-product-component--LocalModelCompoundCrs:1.2.0:{_LOCAL_TIME_CRS_UUID}"
+
 
 # ═══════════════════════════════════════════════════════════════════════════
 # Config
@@ -344,8 +370,12 @@ def build_seismic_trace_data_record(
 ) -> dict:
     """
     Build a SeismicTraceData WPC record using the proper schema-conformant
-    Datasets + Artefacts pattern instead of DDMSDatasets.
+    Datasets + Artefacts pattern. VDS is the primary dataset; SEGY is input only.
     """
+    # DDMSDatasets sd:// path derived from VDS record ID
+    vds_id_base = vds_record_id.split(":")[-1].rstrip(":")
+    sd_path = f"sd://{cfg.partition}/{vds_id_base}"
+
     return {
         "kind": KIND_SEISMIC_TRACE_DATA,
         "id": _wpc_record_id(cfg.partition, wpc_id_base),
@@ -354,15 +384,15 @@ def build_seismic_trace_data_record(
         "data": {
             "Name": display_name,
             "Description": (
-                f"Drogon synthetic seismic – {offset_class.lower()} offset amplitude "
+                f"Drogon synthetic seismic \u2013 {offset_class.lower()} offset amplitude "
                 f"in time domain. Vintage 2018-01-01."
             ),
             "ExistenceKind": f"{cfg.partition}:reference-data--ExistenceKind:Prototype:",
             "IsDiscoverable": True,
             "IsExtendedLoad": False,
-            # Datasets: points to the SEG-Y FileCollection record
-            "Datasets": [segy_record_id],
-            # Artefacts: points to the OpenVDS FileCollection (converted content)
+            # Datasets: VDS is the primary dataset (SEGY is input only)
+            "Datasets": [vds_record_id],
+            # Artefacts: same VDS as converted content artefact
             "Artefacts": [
                 {
                     "ResourceID": vds_record_id,
@@ -370,8 +400,13 @@ def build_seismic_trace_data_record(
                     "RoleID": f"{cfg.partition}:reference-data--ArtefactRole:ConvertedContent:",
                 }
             ],
+            # DDMSDatasets: sd:// path to VDS data (populates UI Dataspace column)
+            "DDMSDatasets": [sd_path],
             # BinGrid: references SeismicBinGrid (required by SeismicTraceData schema)
             "BinGridID": bingrid_record_id,
+            # CRS + Spatial for geo-search
+            "CoordinateReferenceSystemID": _local_time_crs_id(cfg.partition),
+            "SpatialArea": DROGON_SPATIAL_AREA,
             # Seismic metadata
             "SeismicDomainTypeID": f"{cfg.partition}:reference-data--SeismicDomainType:Time:",
             "SeismicTraceDataDimensionalityTypeID": (
@@ -419,7 +454,7 @@ def build_seismic_bingrid_record(cfg: Config) -> dict:
         "legal": cfg.legal(),
         "data": {
             "Name": "Drogon Seismic Bin Grid",
-            "Description": "Shared seismic bin grid geometry for Drogon 3D survey (436×276 bins).",
+            "Description": "Shared seismic bin grid geometry for Drogon 3D survey (436\u00d7276 bins).",
             "ExistenceKind": f"{cfg.partition}:reference-data--ExistenceKind:Prototype:",
             "InlineMin": 0,
             "InlineMax": 435,
@@ -438,6 +473,8 @@ def build_seismic_bingrid_record(cfg: Config) -> dict:
             "P6BinNodeIncrementOnIaxis": {"X": 25.0, "Y": 0.0},
             "P6BinNodeIncrementOnJaxis": {"X": 0.0, "Y": 25.0},
             "P6TransformationMethod": "9666",
+            "CoordinateReferenceSystemID": _local_time_crs_id(cfg.partition),
+            "SpatialArea": DROGON_SPATIAL_AREA,
         },
     }
 
