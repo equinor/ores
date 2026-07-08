@@ -7,6 +7,8 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   .search-form { width: 100%; max-width: 100%; }
   .kind-row { display: grid; grid-template-columns: 220px 1fr auto; gap: .5rem; align-items: center; }
+  .field-clear { background:none; border:1px solid #ccc; border-radius:50%; width:1.4rem; height:1.4rem; font-size:.75rem; cursor:pointer; color:#888; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; line-height:1; }
+  .field-clear:hover { background:#fee; color:#c33; border-color:#c33; }
   .chips { display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0; }
   .chip { background: #e1dfdd; border-radius: 999px; padding: .15rem .6rem; font-size: .85rem; }
   .record-sections { display: grid; gap: .75rem; }
@@ -247,6 +249,7 @@
       {% if current_group.value %}</optgroup>{% endif %}
     </select>
     <input type="text" id="kindInput" name="kind" value="{{ kind or '' }}" list="kindCatalog" placeholder="osdu:wks:... (edit version or leave :* for all)">
+    <button type="button" class="field-clear" data-clear="kindInput" data-preset="kindPreset" title="Clear kind">✕</button>
   </div>
 
   <!-- ── Saved queries ── -->
@@ -265,6 +268,7 @@
   <label>query</label>
   <div style="display:flex;gap:.4rem;align-items:center;width:100%;">
     <input type="text" name="query" id="searchQuery" value="{{ q or '*' }}" style="flex:1;">
+    <button type="button" class="field-clear" data-clear="searchQuery" data-default="*" title="Clear query">✕</button>
     <span class="examples-wrap">
       <button type="button" class="btn-ex" id="btn-examples">Examples ▾</button>
       <div class="examples-popup" id="examples-popup">
@@ -494,18 +498,9 @@
       item.addEventListener('click', function() {
         var q = item.getAttribute('data-q');
         var target = item.getAttribute('data-target');
-        var kindVal = item.getAttribute('data-kind');
         var inp = target ? document.getElementById(target) : null;
         if (inp && q != null) inp.value = q;
-        if (kindVal) {
-          var kindInp = document.getElementById('kindInput');
-          if (kindInp) kindInp.value = kindVal;
-          // Also update the preset selector to match
-          var preset = document.getElementById('kindPreset');
-          if (preset) {
-            preset.value = kindVal;
-          }
-        }
+        // Do NOT override the kind – user's current selection is preserved
         exPopup.classList.remove('open');
       });
     });
@@ -550,10 +545,23 @@
         if (delBtn) delBtn.style.display = 'none';
       });
     }
+
+    // Per-field clear buttons
+    document.querySelectorAll('.field-clear').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var targetId = btn.getAttribute('data-clear');
+        var presetId = btn.getAttribute('data-preset');
+        var defaultVal = btn.getAttribute('data-default') || '';
+        var inp = document.getElementById(targetId);
+        if (inp) inp.value = defaultVal;
+        if (presetId) {
+          var preset = document.getElementById(presetId);
+          if (preset) preset.selectedIndex = 0;
+        }
+      });
+    });
   })();
 </script>
-
-<!-- ── Saved queries ── -->
 <script>
 (function() {
   const sel = document.getElementById('savedQuerySelect');
