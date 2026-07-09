@@ -348,7 +348,29 @@ erDiagram
 
 ---
 
-## 11. References
+## 11. RDDMS Implementation Details
+
+### Converter Files
+
+| File | Purpose |
+|---|---|
+| `src/lib/jsonTypes/MilestoneKinds.ts` | Kind registration (`M27: "1.0.0"`) |
+| `src/lib/jsonTypes/CollaborationProject.ts` | Converter: dataspace → CP record |
+| `src/lib/jsonTypes/Generated/master-data/CollaborationProject.1.0.0.ts` | Type interface |
+| `src/lib/jsonTypes/Manifest.ts` | S5 integration (emits CP per dataspace) |
+| `src/lib/jsonTypes/ResqmlOsdu.ts` | Re-exports `CollaborationProjectManifest` |
+
+### Future Work
+
+- [ ] Event-driven sync: push CP update on dataspace lock/unlock (not just at manifest time)
+- [ ] `TrustedCollectionID`: link CP to a `CollaborationProjectCollection` for SoR input tracking
+- [ ] `LifecycleEvents`: record state transitions (Open→Closed→Published) with timestamps
+- [ ] Cross-DDMS coordination: shared CP across reservoir/seismic/well DDMS via external ID
+- [ ] Deletion reconciliation: detect deleted dataspaces and mark CP as archived
+
+---
+
+## 12. References
 
 | Topic | Link |
 |-------|------|
