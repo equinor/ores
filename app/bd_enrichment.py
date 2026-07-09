@@ -590,8 +590,9 @@ async def _enrich_bd_production(
         if "ColumnBasedTable" not in dop:
             continue
         keys = p.get("Keys") or []
-        if any("ProductionForecast" in (kv.get("StringParameterKey") or "")
-               for kv in keys if isinstance(kv, dict)):
+        if any(k in (kv.get("StringParameterKey") or "")
+               for kv in keys if isinstance(kv, dict)
+               for k in ("ProductionForecast", "ProductionProfile")):
             target_id = dop
             break
 
@@ -629,24 +630,28 @@ def _parse_cbt_production(d: Dict[str, Any], target_id: str = "") -> Dict[str, A
 
     # Build ordered column name list: KeyColumns first, then Columns
     all_col_defs = key_cols + val_cols
-    if len(all_col_defs) != len(col_values):
-        log.warning("[BD-PROD] Column count mismatch: %d defs vs %d value arrays",
-                    len(all_col_defs), len(col_values))
 
-    # Extract values from each positional entry
-    # Each entry is {"IntegerColumn": [...]} or {"NumberColumn": [...]}
+    # Extract values — handle both positional-array and dict formats
     col_data: Dict[str, list] = {}
-    for i, cv_entry in enumerate(col_values):
-        if not isinstance(cv_entry, dict):
-            continue
-        name = all_col_defs[i].get("ColumnName", f"col_{i}") if i < len(all_col_defs) else f"col_{i}"
-        # Pick whichever typed array is present
-        vals = (cv_entry.get("IntegerColumn")
-                or cv_entry.get("NumberColumn")
-                or cv_entry.get("StringColumn")
-                or cv_entry.get("BooleanColumn")
-                or [])
-        col_data[name] = vals
+    if isinstance(col_values, dict):
+        # Dict format: {"Year": [...], "OilRate_Sm3d": [...], ...}
+        col_data = {k: v for k, v in col_values.items() if isinstance(v, list)}
+    else:
+        # Positional-array format: [{"IntegerColumn": [...]}, ...]
+        if len(all_col_defs) != len(col_values):
+            log.warning("[BD-PROD] Column count mismatch: %d defs vs %d value arrays",
+                        len(all_col_defs), len(col_values))
+        for i, cv_entry in enumerate(col_values):
+            if not isinstance(cv_entry, dict):
+                continue
+            name = all_col_defs[i].get("ColumnName", f"col_{i}") if i < len(all_col_defs) else f"col_{i}"
+            # Pick whichever typed array is present
+            vals = (cv_entry.get("IntegerColumn")
+                    or cv_entry.get("NumberColumn")
+                    or cv_entry.get("StringColumn")
+                    or cv_entry.get("BooleanColumn")
+                    or [])
+            col_data[name] = vals
 
     # Map CBT column names → template keys
     # Supports both generic names (OilRate) and OPM Flow names (FOPR)
@@ -672,6 +677,12 @@ def _parse_cbt_production(d: Dict[str, Any], target_id: str = "") -> Dict[str, A
         "FGOR": "FGOR",
         "ProducersOnline": "WellsOnline",
         "InjectorsOnline": "InjectorsOnline",
+        # Omega-style explicit-unit column names
+        "OilRate_Sm3d": "OilRate_kSm3d",
+        "GasRate_kSm3d": "GasRate_kSm3d",
+        "WaterRate_Sm3d": "WaterRate_kSm3d",
+        "WaterInjection_Sm3d": "WaterInjRate_kSm3d",
+        "CumulativeOil_MSm3": "CumOil_MSm3",
     }
 
     result: Dict[str, Any] = {}
