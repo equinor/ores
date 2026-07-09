@@ -35,7 +35,8 @@ OSDU prefers a **Bound CRS** (projected CRS pinned to an explicit datum transfor
 | EPSG:23037 | ED50 UTM 37S (Drogon) | `BoundProjected:EPSG::23037_EPSG::1612` | **yes** |
 | EPSG:5714 | MSL height | `Vertical:EPSG::5714` | - |
 | WKT + `TOWGS84[...]` | legacy ED50 | extract shift → match EPSG CT → BoundProjected | **yes** |
-| `VerticalUnknownCrs` | old models | `verticalCRSID: null` (keep uom/direction in localFrame) | - |
+| `VerticalUnknownCrs` (no WKT) | old models | `verticalCRSID: null` (keep uom/direction in localFrame) | - |
+| `VerticalUnknownCrs` (with WKT) | WKT in Unknown field | `VerticalCRS:WKT:<title>` + raw WKT as persistableRef | - |
 
 ### Worked example - Drogon (`maap/drogon2`)
 
@@ -81,8 +82,9 @@ Projected/vertical identification forms (EnergyML Common): `ProjectedEpsgCrs` (p
 
 - **`ArealRotation` is a measure, not a number** - `{ "_": 15, "Uom": "dega" }` or `Uom: "rad"`. Always read the `Uom`.
 - **Z is positive-down when `ZIncreasingDownward: true`** (the usual depth case). Do not assume math convention.
-- **Vertical CRS is often `VerticalUnknownCrs`** - there is no EPSG code; only the uom/direction is meaningful → `verticalCRSID: null`.
+- **Vertical CRS is often `VerticalUnknownCrs`** - if the `Unknown` field contains WKT (`VERTCRS[` for WKT2, `VERT_CS[` for WKT1) it is now extracted as `persistableReferenceVerticalCrs`; otherwise `verticalCRSID: null`.
 - **WKT can hide in `ProjectedUnknownCrs.Unknown`** - detected only if it matches `/^PROJC(RS|S)\[/`; other strings are ignored.
+- **WKT can hide in `VerticalUnknownCrs.Unknown`** - detected only if it matches `/^VERT(CRS|_CS)\[/`; other strings are ignored.
 - **`TOWGS84[...]` inside WKT is the datum shift** - it is what justifies a BoundProjected ID.
 - **Offsets keep coordinates small** - global = offset + rotated local; never store the offset in the OSDU CRS record.
 
@@ -94,8 +96,8 @@ For each `Local*3dCrs` the ETP client produces a **`LocalModelCompoundCrs:1.2.0`
 |------------|--------|---------|
 | `FrameOfReferenceCRS.coordinateReferenceSystemID` | projected CRS | `...:Projected:EPSG::25832` / `...:BoundProjected:EPSG::23037_EPSG::1612` / `...Projected:WKT:<title>` |
 | `FrameOfReferenceCRS.persistableReference` | raw WKT or `""` | `PROJCS["ED50 / UTM zone 31N",...]` |
-| `SpatialPoint.AsIngestedCoordinates.VerticalCoordinateReferenceSystemID` | vertical CRS | `...:Vertical:EPSG::5714` |
-| `SpatialPoint.AsIngestedCoordinates.persistableReferenceVerticalCrs` | vertical EPSG | `{"authCode":{"auth":"EPSG","code":5714}}` |
+| `SpatialPoint.AsIngestedCoordinates.VerticalCoordinateReferenceSystemID` | vertical CRS | `...:Vertical:EPSG::5714` / `VerticalCRS:WKT:<title>` |
+| `SpatialPoint.AsIngestedCoordinates.persistableReferenceVerticalCrs` | vertical EPSG or WKT | `{"authCode":{"auth":"EPSG","code":5714}}` / raw VERTCRS WKT |
 
 A missing vertical CRS is left **undefined** (not an error).
 
