@@ -1,0 +1,56 @@
+[
+  {
+    "id": "dev:reference-data--ProjectType:FieldDevelopment:",
+    "kind": "osdu:wks:reference-data--ProjectType:1.0.0",
+    "data": {
+      "Code": "FieldDevelopment",
+      "Name": "Field Development",
+      "Description": "Full-field subsea/platform/FPSO development (DG0 through First Oil and production plateau)"
+    }
+  },
+  {
+    "id": "dev:reference-data--ProjectType:FieldDevWells:",
+    "kind": "osdu:wks:reference-data--ProjectType:1.0.0",
+    "data": {
+      "Code": "FieldDevWells",
+      "Name": "Field Development Wells",
+      "Description": "Well delivery within an approved field development (well concept through drilling and handover)"
+    }
+  },
+  {
+    "id": "dev:reference-data--ProjectType:ExplorationWell:",
+    "kind": "osdu:wks:reference-data--ProjectType:1.0.0",
+    "data": {
+      "Code": "ExplorationWell",
+      "Name": "Exploration Well",
+      "Description": "Exploration well from prospect identification through drilling and post-well evaluation"
+    }
+  },
+  {
+    "id": "dev:reference-data--ProjectType:CCS:",
+    "kind": "osdu:wks:reference-data--ProjectType:1.0.0",
+    "data": {
+      "Code": "CCS",
+      "Name": "CCS / Carbon Storage",
+      "Description": "Carbon capture and storage from site screening through injection and monitoring"
+    }
+  },
+  {
+    "id": "dev:reference-data--ProjectType:IOR:",
+    "kind": "osdu:wks:reference-data--ProjectType:1.0.0",
+    "data": {
+      "Code": "IOR",
+      "Name": "IOR / Infill Campaign",
+      "Description": "Improved oil recovery or infill well campaign within an existing producing field"
+    }
+  },
+  {
+    "id": "dev:reference-data--ProjectType:Decommissioning:",
+    "kind": "osdu:wks:reference-data--ProjectType:1.0.0",
+    "data": {
+      "Code": "Decommissioning",
+      "Name": "Decommissioning",
+      "Description": "Field decommissioning from cessation of production through removal and site verification"
+    }
+  }
+]

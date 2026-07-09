@@ -23,6 +23,7 @@ Provides:
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import os
 import uuid
@@ -34,6 +35,15 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
 from . import osdu
+
+# ── ActivityStateTemplates (loaded once from bundled JSON) ──────────────────
+_TEMPLATES_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)), "demo", "activity_state_templates.json"
+)
+_ACTIVITY_STATE_TEMPLATES: List[Dict[str, Any]] = []
+if os.path.isfile(_TEMPLATES_PATH):
+    with open(_TEMPLATES_PATH, "r") as _f:
+        _ACTIVITY_STATE_TEMPLATES = json.load(_f)
 
 log = logging.getLogger("rddms-admin.addgate")
 
@@ -132,6 +142,24 @@ async def _search_reservoirs(
     at = _access_token(request)
     from .common import search_reservoirs
     return await search_reservoirs(at, query=query, limit=limit)
+
+
+# ── ActivityStateTemplates endpoint ──────────────────────────────────────────
+
+@router.get("/add-dg/schedule-templates", summary="JSON: ActivityStateTemplate list")
+async def schedule_templates_json(request: Request):
+    """Return all ActivityStateTemplate WPCs for the schedule/milestone UI."""
+    out = []
+    for tpl in _ACTIVITY_STATE_TEMPLATES:
+        data = tpl.get("data", {})
+        out.append({
+            "id": tpl.get("id", ""),
+            "name": data.get("Name", ""),
+            "description": data.get("Description", ""),
+            "project_type_id": data.get("ProjectTypeID", ""),
+            "milestones": data.get("Milestones", []),
+        })
+    return JSONResponse(out)
 
 
 @router.get("/add-dg/reservoirs", summary="JSON: reservoir list")
@@ -364,6 +392,46 @@ async def create_bd(request: Request):
         bd_data["DecisionDueDate"] = decision_due_date
     if decision_summary:
         bd_data["DecisionSummary"] = decision_summary
+
+    # ── ActivityStates from schedule template ──
+    activity_states: List[Dict[str, Any]] = body.get("activity_states", [])
+    if activity_states:
+        bd_data["ActivityStates"] = activity_states
+        # Set ext.equinor.ActivityStateTemplateID if a template was used
+        template_id = body.get("activity_state_template_id", "").strip()
+        project_type_id = body.get("project_type_id", "").strip()
+        if template_id or project_type_id:
+            ext_eq: Dict[str, Any] = bd_data.setdefault("ext", {}).setdefault("equinor", {})
+            if template_id:
+                ext_eq["ActivityStateTemplateID"] = template_id
+            if project_type_id:
+                ext_eq["ProjectTypeID"] = project_type_id
+
+    # ── Alternatives (ext.equinor.Alternatives[]) ──
+    alternatives: List[Dict[str, Any]] = body.get("alternatives", [])
+    if alternatives:
+        ext_eq = bd_data.setdefault("ext", {}).setdefault("equinor", {})
+        ext_eq["Alternatives"] = [
+            {
+                "Name": a.get("name", ""),
+                "Rank": a.get("rank", i + 1),
+                "Rationale": a.get("rationale", ""),
+                "RecommendedAction": a.get("action", "Consider"),
+            }
+            for i, a in enumerate(alternatives) if a.get("name")
+        ]
+
+    # ── Economics (ProjectSpecifications[]) ──
+    economics: List[Dict[str, Any]] = body.get("economics", [])
+    if economics:
+        bd_data["ProjectSpecifications"] = [
+            {
+                "ParameterTypeID": f"{id_prefix}:reference-data--ParameterType:{e['type']}:",
+                "DataQuantityParameter": float(e["value"]) if e.get("value") else 0,
+                "UnitOfMeasureID": f"{id_prefix}:reference-data--UnitOfMeasure:{e.get('unit', '')}:",
+            }
+            for e in economics if e.get("type") and e.get("value")
+        ]
 
     bd_record = {
         "id": bd_id,
@@ -740,6 +808,96 @@ async def fetch_record(request: Request, id: str = Query(...)):
         return JSONResponse(
             {"ok": False, "error": r.text[:800], "status": r.status_code},
             status_code=r.status_code,
+        )
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Create ActivityStateTemplate (Schedule Template)
+# ──────────────────────────────────────────────────────────────────────────────
+
+@router.post("/add-dg/create-schedule-template", summary="Create ActivityStateTemplate WPC")
+async def create_schedule_template(request: Request):
+    """Build and ingest an ActivityStateTemplate WPC record.
+
+    Expects JSON body:
+      name, description, project_type_id,
+      milestones[{Sequence, MilestoneID, Name, TypicalDurationMonths}]
+    """
+    at = _access_token(request)
+    body = await request.json()
+
+    name = body.get("name", "").strip()
+    if not name:
+        raise HTTPException(400, "name is required")
+
+    description = body.get("description", "").strip()
+    project_type_id = body.get("project_type_id", "").strip()
+    milestones: List[Dict[str, Any]] = body.get("milestones", [])
+
+    if not milestones:
+        raise HTTPException(400, "At least one milestone is required")
+
+    # Derive ID prefix
+    id_prefix = "dev"
+    if project_type_id and ":" in project_type_id:
+        id_prefix = project_type_id.split(":")[0]
+
+    # Generate ID from name
+    slug = name.replace(" ", "-").replace("/", "-")[:60]
+    record_id = f"{id_prefix}:work-product-component--ActivityStateTemplate:{slug}:1"
+
+    acl = {"owners": osdu.DEFAULT_OWNERS, "viewers": osdu.DEFAULT_VIEWERS}
+    legal = {
+        "legaltags": [osdu.DEFAULT_LEGAL_TAG],
+        "otherRelevantDataCountries": osdu.DEFAULT_COUNTRIES,
+    }
+
+    data: Dict[str, Any] = {
+        "Name": name,
+        "Description": description or f"Schedule milestone template: {name}",
+        "Milestones": milestones,
+    }
+    if project_type_id:
+        data["ProjectTypeID"] = project_type_id
+
+    record = {
+        "id": record_id,
+        "kind": "osdu:wks:work-product-component--ActivityStateTemplate:1.0.0",
+        "acl": acl,
+        "legal": legal,
+        "data": data,
+    }
+
+    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
+    hdr = osdu.headers(at)
+
+    try:
+        async with osdu.http_client(timeout=30) as client:
+            r = await client.put(storage_url, json=[record], headers=hdr)
+            status = r.status_code
+            from .common import sanitize_upstream_error
+            resp_body = sanitize_upstream_error(r) if status >= 400 else r.text[:2000]
+    except Exception as e:
+        log.error("Storage API PUT (ScheduleTemplate) failed: %s", e)
+        from .common import safe_error_detail
+        return JSONResponse({"ok": False, "error": safe_error_detail(e)}, status_code=502)
+
+    if status in (200, 201):
+        log.info("ActivityStateTemplate created: %s (status=%d)", record_id, status)
+        # Also add to in-memory templates list for immediate availability
+        _ACTIVITY_STATE_TEMPLATES.append(record)
+        return JSONResponse({
+            "ok": True,
+            "record_id": record_id,
+            "status": status,
+            "milestone_count": len(milestones),
+            "response": resp_body,
+        })
+    else:
+        log.warning("ActivityStateTemplate ingest failed (%d): %s", status, resp_body)
+        return JSONResponse(
+            {"ok": False, "record_id": record_id, "status": status, "response": resp_body},
+            status_code=status,
         )
 
 

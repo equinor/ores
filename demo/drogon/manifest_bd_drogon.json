@@ -202,21 +202,25 @@
         ],
         "ActivityStates": [
           {
+            "MilestoneID": "DG1",
             "EffectiveDateTime": "2025-12-15",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
             "Remark": "DG1 Identify & Assess"
           },
           {
+            "MilestoneID": "DG2",
             "EffectiveDateTime": "2026-03-01",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
             "Remark": "DG2 Concept Select"
           },
           {
+            "MilestoneID": "DG3",
             "EffectiveDateTime": "2027-01-01",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
             "Remark": "DG3 FEED"
           },
           {
+            "MilestoneID": "DG4",
             "EffectiveDateTime": "2027-07-01",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
             "Remark": "FID / DG4"
@@ -230,21 +234,23 @@
         },
         "ext": {
           "equinor": {
+            "ActivityStateTemplateID": "dev:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
+            "ProjectTypeID": "dev:reference-data--ProjectType:FieldDevelopment:",
             "Alternatives": [
               {
-                "Name": "Proceed to DG2 \u2014 full 7-segment development",
+                "Name": "Proceed to DG2 - full 7-segment development",
                 "Rank": 1,
                 "Rationale": "All 7 segments show commercial volumes; porosity risk manageable.",
                 "RecommendedAction": "Approve"
               },
               {
-                "Name": "Reduced scope \u2014 CentralHorst + CentralSouth only",
+                "Name": "Reduced scope - CentralHorst + CentralSouth only",
                 "Rank": 2,
                 "Rationale": "Best economics, lowest uncertainty; leaves ~40% upside for later.",
                 "RecommendedAction": "Consider"
               },
               {
-                "Name": "Defer \u2014 acquire more appraisal data",
+                "Name": "Defer - acquire more appraisal data",
                 "Rank": 3,
                 "Rationale": "Floodplain porosity poorly constrained; more core data recommended.",
                 "RecommendedAction": "Fallback"

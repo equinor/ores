@@ -1336,6 +1336,11 @@
                 {% if wp.get('PilotStrategy') %}
                 <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Pilot Strategy</div><div class="bd-value">{{ wp.get('PilotStrategy') }}</div></div>
                 {% endif %}
+                {% if wp.get('CriticalDecisions') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Critical Decisions</div><div class="bd-value"><ul style="margin:0;padding-left:1.2rem;">
+                  {% for cd in wp.get('CriticalDecisions') %}<li>{{ cd }}</li>{% endfor %}
+                </ul></div></div>
+                {% endif %}
               </div>
               {% endif %}
 
@@ -1377,6 +1382,17 @@
                 {% endif %}
                 {% if rtgt.get('ReservoirSegmentIDs') %}
                 <div class="bd-devcon-item"><div class="bd-label">Segments</div><div class="bd-value">{{ rtgt.get('ReservoirSegmentIDs') | length }} referenced</div></div>
+                {% endif %}
+                {% set contacts = rtgt.get('Contacts') or {} %}
+                {% if contacts.get('OWC_mTVDSS') is not none or contacts.get('ODT_mTVDSS') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Contacts</div><div class="bd-value">{% if contacts.get('OWC_mTVDSS') is not none %}OWC {{ contacts.get('OWC_mTVDSS') }}m{% endif %}{% if contacts.get('ODT_mTVDSS') is not none %}{% if contacts.get('OWC_mTVDSS') is not none %} · {% endif %}ODT {{ contacts.get('ODT_mTVDSS') }}m{% endif %}</div></div>
+                {% endif %}
+                {% set fm = rtgt.get('FluidModel') or {} %}
+                {% if fm.get('ReferencePressure_bar') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Reservoir P/T</div><div class="bd-value">{{ fm.get('ReferencePressure_bar') }} bar{% if fm.get('Temperature_degC') is not none %} / {{ fm.get('Temperature_degC') }}°C{% endif %} @ {{ fm.get('ReferenceDepth_m', '') }} m</div></div>
+                {% endif %}
+                {% if fm.get('API_gravity') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Fluid</div><div class="bd-value">{{ fm.get('Type', 'Oil') }}{% if fm.get('API_gravity') %}, {{ fm.get('API_gravity') }}° API{% endif %}{% if fm.get('GOR_Sm3Sm3') %}, GOR {{ fm.get('GOR_Sm3Sm3') }} Sm³/Sm³{% endif %}</div></div>
                 {% endif %}
               </div>
               {% endif %}

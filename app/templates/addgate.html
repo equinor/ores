@@ -199,6 +199,13 @@
   .help-box-tpl { background:rgba(255,18,67,.06); border:1px solid var(--eq-red); color:var(--eq-charcoal); }
   .help-box-act { background:rgba(0,112,121,.06); border:1px solid var(--eq-link); color:var(--eq-charcoal); }
   .help-arrow { font-size:22px; color:var(--eq-red); }
+
+  /* Milestone schedule table */
+  .milestone-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .milestone-table th { text-align:left; font-weight:600; padding:4px 6px; border-bottom:2px solid var(--eq-red); color:var(--eq-charcoal); }
+  .milestone-table td { padding:4px 6px; border-bottom:1px solid #eee; }
+  .milestone-table input.ms-date { width:100%; font-size:12px; padding:2px 4px; border:1px solid #ccc; border-radius:3px; }
+  .milestone-table select.ms-status { width:100%; font-size:12px; padding:2px 4px; border:1px solid #ccc; border-radius:3px; }
 </style>
 {% endblock %}
 
@@ -220,7 +227,40 @@
   <h2>Add Decision Gate</h2>
   <p class="muted" style="margin-top:-.5rem;margin-bottom:1rem;">
     Create a new <code>BusinessDecision</code> record linked to an existing Reservoir and its data records, then ingest it to OSDU.
+    Start from a <b>preset</b> or build from scratch.
   </p>
+
+  <!-- ═══ 0. Preset selector ═══ -->
+  <div class="addgate-panel">
+    <h3>0. Project Preset</h3>
+    <p class="muted" style="margin-top:-.4rem;font-size:.82rem;">Optional: select a preset to auto-fill schedule, alternatives, and economics scaffolding.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:8px;">
+      <button class="act-preset-card" onclick="selectBdPreset('blank')" id="bdp-blank">
+        <span class="ap-label">Blank</span>
+        <span class="ap-desc">Build from scratch</span>
+      </button>
+      <button class="act-preset-card" onclick="selectBdPreset('field_dev_dg1')" id="bdp-field_dev_dg1">
+        <span class="ap-label">Field Dev DG1</span>
+        <span class="ap-desc">Identify &amp; Assess</span>
+      </button>
+      <button class="act-preset-card" onclick="selectBdPreset('field_dev_dg2')" id="bdp-field_dev_dg2">
+        <span class="ap-label">Field Dev DG2</span>
+        <span class="ap-desc">Concept Select</span>
+      </button>
+      <button class="act-preset-card" onclick="selectBdPreset('exploration')" id="bdp-exploration">
+        <span class="ap-label">Exploration Well</span>
+        <span class="ap-desc">Drill decision</span>
+      </button>
+      <button class="act-preset-card" onclick="selectBdPreset('wpc')" id="bdp-wpc">
+        <span class="ap-label">WPC (Wells)</span>
+        <span class="ap-desc">Well Planning Committee</span>
+      </button>
+      <button class="act-preset-card" onclick="selectBdPreset('ccs')" id="bdp-ccs">
+        <span class="ap-label">CCS</span>
+        <span class="ap-desc">Carbon storage gate</span>
+      </button>
+    </div>
+  </div>
 
   <!-- ═══ 1. Reservoir selection ═══ -->
   <div class="addgate-panel">
@@ -280,9 +320,25 @@
     </div>
   </div>
 
-  <!-- ═══ 3. Linked records ═══ -->
+  <!-- ═══ 3. Schedule / Milestones ═══ -->
   <div class="addgate-panel">
-    <h3>3. Linked Records (Parameters)</h3>
+    <h3>3. Schedule / Milestones</h3>
+    <p class="muted" style="margin-top:-.4rem; font-size:.82rem;">
+      Select a project type to auto-populate standard milestones. Fill in dates and mark completed gates.
+    </p>
+    <div class="form-grid">
+      <label for="bd-project-type">Project type</label>
+      <select id="bd-project-type" onchange="loadScheduleTemplate()">
+        <option value="">- none (no schedule) -</option>
+      </select>
+      <span class="hint">Drives which milestones are available</span>
+    </div>
+    <div id="schedule-milestones" style="margin-top:.6rem;"></div>
+  </div>
+
+  <!-- ═══ 4. Linked Records (Parameters) ═══ -->
+  <div class="addgate-panel">
+    <h3>4. Linked Records (Parameters)</h3>
     <p class="muted" style="margin-top:-.4rem; font-size:.82rem;">
       Link the decision to existing OSDU data. You can paste record IDs directly or use
       <strong>Browse</strong> to search.
@@ -354,9 +410,9 @@
     <div class="risk-list" id="custom-rec-list"></div>
   </div>
 
-  <!-- ═══ 4. Risks ═══ -->
+  <!-- ═══ 5. Risks ═══ -->
   <div class="addgate-panel">
-    <h3>4. Risk Records</h3>
+    <h3>5. Risk Records</h3>
     <p class="muted" style="margin-top:-.4rem; font-size:.82rem;">
       Link <code>master-data--Risk</code> records to this decision.
     </p>
@@ -368,9 +424,29 @@
     <div class="risk-list" id="risk-list"></div>
   </div>
 
-  <!-- ═══ 5. Preview & submit ═══ -->
+  <!-- ═══ 6. Alternatives ═══ -->
   <div class="addgate-panel">
-    <h3>5. Review & Ingest</h3>
+    <h3>6. Alternatives <span class="muted" style="font-size:.75rem;font-weight:400;">(ext.equinor)</span></h3>
+    <p class="muted" style="margin-top:-.4rem; font-size:.82rem;">
+      Define ranked development alternatives with economics. Stored in <code>ext.equinor.Alternatives[]</code>.
+    </p>
+    <div id="bd-alternatives-list"></div>
+    <button class="btn" type="button" onclick="addBdAlternative()" style="font-size:12px;margin-top:6px;">+ Add Alternative</button>
+  </div>
+
+  <!-- ═══ 7. Economics (ProjectSpecifications) ═══ -->
+  <div class="addgate-panel">
+    <h3>7. Economics <span class="muted" style="font-size:.75rem;font-weight:400;">(ProjectSpecifications)</span></h3>
+    <p class="muted" style="margin-top:-.4rem; font-size:.82rem;">
+      Key economic parameters. Stored in <code>data.ProjectSpecifications[]</code>.
+    </p>
+    <div id="bd-economics-list"></div>
+    <button class="btn" type="button" onclick="addBdEconomic()" style="font-size:12px;margin-top:6px;">+ Add KPI</button>
+  </div>
+
+  <!-- ═══ 8. Preview & submit ═══ -->
+  <div class="addgate-panel">
+    <h3>8. Review & Ingest</h3>
     <div style="display:flex;gap:.5rem;">
       <button class="btn" type="button" onclick="previewRecord()">Preview JSON</button>
       <button class="btn btn-primary" type="button" onclick="submitRecord()">Create & Ingest to OSDU</button>
@@ -586,6 +662,7 @@
   <div class="act-subtabs">
     <button class="act-subtab active" data-act="tpl" onclick="switchActSub('tpl')">Create Template</button>
     <button class="act-subtab" data-act="run" onclick="switchActSub('run')">Create Activity</button>
+    <button class="act-subtab" data-act="sched" onclick="switchActSub('sched')">Schedule Template</button>
   </div>
 
   <!-- ═══ Sub-tab: Create Template ═══ -->
@@ -602,6 +679,18 @@
       <button class="act-preset-card" onclick="selectTplPreset('reservoir_sim')" id="apc-reservoir_sim">
         <span class="ap-label">Reservoir Simulation</span>
         <span class="ap-desc">Multi-realisation reservoir modelling</span>
+      </button>
+      <button class="act-preset-card" onclick="selectTplPreset('fmu_ensemble')" id="apc-fmu_ensemble">
+        <span class="ap-label">FMU Ensemble</span>
+        <span class="ap-desc">Full ERT + forward model chain</span>
+      </button>
+      <button class="act-preset-card" onclick="selectTplPreset('drilling')" id="apc-drilling">
+        <span class="ap-label">Drilling &amp; Completion</span>
+        <span class="ap-desc">Well drilling activity</span>
+      </button>
+      <button class="act-preset-card" onclick="selectTplPreset('production_test')" id="apc-production_test">
+        <span class="ap-label">Production Test</span>
+        <span class="ap-desc">DST / PLT / well test</span>
       </button>
       <button class="act-preset-card" onclick="selectTplPreset('interpretation')" id="apc-interpretation">
         <span class="ap-label">Interpretation</span>
@@ -709,6 +798,46 @@
     <div id="act-result-area"></div>
   </div>
   </div><!-- /act-sub-run -->
+
+  <!-- ═══ Sub-tab: Create ActivityStateTemplate ═══ -->
+  <div class="act-subpanel" id="act-sub-sched">
+  <div class="addgate-panel">
+    <h3>1. Schedule Template Basics</h3>
+    <p class="muted" style="margin-top:-.4rem;font-size:.82rem;">
+      Define a reusable milestone sequence for a project type. BDs and CPs reference this template for consistent schedule tracking.
+    </p>
+    <div class="form-grid">
+      <label for="sched-name">Template Name *</label>
+      <input type="text" id="sched-name" placeholder="e.g. Field Development Lifecycle" />
+
+      <label for="sched-desc">Description</label>
+      <textarea id="sched-desc" rows="2" placeholder="Standard milestones for this project type"></textarea>
+
+      <label for="sched-project-type">Project Type ID</label>
+      <input type="text" id="sched-project-type" placeholder="e.g. dev:reference-data--ProjectType:FieldDevelopment:" />
+    </div>
+  </div>
+
+  <div class="addgate-panel">
+    <h3>2. Milestones</h3>
+    <p class="muted" style="margin-top:-.4rem;font-size:.82rem;">
+      Ordered list of milestone definitions. Each has a unique ID and display name.
+    </p>
+    <div id="sched-milestone-list"></div>
+    <button class="btn" type="button" onclick="addSchedMilestone()" style="font-size:12px;margin-top:6px;">+ Add Milestone</button>
+  </div>
+
+  <div class="addgate-panel">
+    <h3>3. Review &amp; Ingest</h3>
+    <div style="display:flex;gap:.5rem;">
+      <button class="btn" type="button" onclick="previewSchedRecord()">Preview JSON</button>
+      <button class="btn btn-primary" type="button" onclick="submitSchedRecord()">Create Schedule Template</button>
+    </div>
+    <div class="preview-wrap" id="sched-preview-wrap" style="display:none;"><pre id="sched-preview-json"></pre></div>
+    <div id="sched-result-area"></div>
+  </div>
+  </div><!-- /act-sub-sched -->
+
   </div><!-- /mode-act -->
 
   <!-- ════════════════════════════════════════════════════════════════════ -->

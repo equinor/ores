@@ -264,10 +264,10 @@ def main():
             ],
             # ── ActivityStates[] ← ScheduleMilestones ──
             "ActivityStates": [
-                {"EffectiveDateTime": "2025-12-15", "ActivityStatusID": f"{args.id_prefix}:reference-data--ActivityStatus:Completed:", "Remark": "DG1 Identify & Assess"},
-                {"EffectiveDateTime": "2026-03-01", "ActivityStatusID": f"{args.id_prefix}:reference-data--ActivityStatus:Planned:",   "Remark": "DG2 Concept Select"},
-                {"EffectiveDateTime": "2027-01-01", "ActivityStatusID": f"{args.id_prefix}:reference-data--ActivityStatus:Planned:",   "Remark": "DG3 FEED"},
-                {"EffectiveDateTime": "2027-07-01", "ActivityStatusID": f"{args.id_prefix}:reference-data--ActivityStatus:Planned:",   "Remark": "FID / DG4"},
+                {"MilestoneID": "DG1", "EffectiveDateTime": "2025-12-15", "ActivityStatusID": f"{args.id_prefix}:reference-data--ActivityStatus:Completed:", "Remark": "DG1 Identify & Assess"},
+                {"MilestoneID": "DG2", "EffectiveDateTime": "2026-03-01", "ActivityStatusID": f"{args.id_prefix}:reference-data--ActivityStatus:Planned:",   "Remark": "DG2 Concept Select"},
+                {"MilestoneID": "DG3", "EffectiveDateTime": "2027-01-01", "ActivityStatusID": f"{args.id_prefix}:reference-data--ActivityStatus:Planned:",   "Remark": "DG3 FEED"},
+                {"MilestoneID": "DG4", "EffectiveDateTime": "2027-07-01", "ActivityStatusID": f"{args.id_prefix}:reference-data--ActivityStatus:Planned:",   "Remark": "FID / DG4"},
             ],
             "ancestry": {
                 "parents": [activity_id] if activity_id else [],
@@ -275,6 +275,8 @@ def main():
             },
             "ext": {
                 "equinor": {
+                    "ActivityStateTemplateID": f"{args.id_prefix}:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
+                    "ProjectTypeID": f"{args.id_prefix}:reference-data--ProjectType:FieldDevelopment:",
                     "Alternatives": [
                         {
                             "Name": "Proceed to DG2 - full 7-segment development",

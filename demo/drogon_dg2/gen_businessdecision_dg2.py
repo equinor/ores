@@ -568,13 +568,13 @@ def _build_canonical_fields(pfx: str) -> Dict[str, Any]:
         ],
         # ── ActivityStates[] ← ScheduleMilestones ──
         "ActivityStates": [
-            {"EffectiveDateTime": "2026-02-28", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Completed:", "Remark": "DG2 Concept Select"},
-            {"EffectiveDateTime": "2027-01-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:",   "Remark": "DG3 FEED"},
-            {"EffectiveDateTime": "2027-07-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:",   "Remark": "FID / DG4"},
-            {"EffectiveDateTime": "2027-10-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:",   "Remark": "FPSO Drydock Start"},
-            {"EffectiveDateTime": "2028-01-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:",   "Remark": "Subsea Installation"},
-            {"EffectiveDateTime": "2028-06-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:",   "Remark": "First Oil"},
-            {"EffectiveDateTime": "2029-01-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:",   "Remark": "Plateau Production"},
+            {"MilestoneID": "DG2",       "EffectiveDateTime": "2026-02-28", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Completed:", "Remark": "DG2 Concept Select"},
+            {"MilestoneID": "DG3",       "EffectiveDateTime": "2027-01-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:",   "Remark": "DG3 FEED"},
+            {"MilestoneID": "DG4",       "EffectiveDateTime": "2027-07-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:",   "Remark": "FID / DG4"},
+            {"MilestoneID": "INSTALL",   "EffectiveDateTime": "2027-10-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:",   "Remark": "FPSO Drydock Start"},
+            {"MilestoneID": "INSTALL",   "EffectiveDateTime": "2028-01-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:",   "Remark": "Subsea Installation"},
+            {"MilestoneID": "FIRST_OIL", "EffectiveDateTime": "2028-06-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:",   "Remark": "First Oil"},
+            {"MilestoneID": "PLATEAU",   "EffectiveDateTime": "2029-01-01", "ActivityStatusID": f"{pfx}:reference-data--ActivityStatus:Planned:",   "Remark": "Plateau Production"},
         ],
     }
 
@@ -585,6 +585,10 @@ def _build_canonical_fields(pfx: str) -> Dict[str, Any]:
 
 def _build_ext_equinor(pfx: str, risk_ids: List[str]) -> Dict[str, Any]:
     return {
+
+        # ── Template references ──────────────────────────────────────
+        "ActivityStateTemplateID": f"{pfx}:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
+        "ProjectTypeID": f"{pfx}:reference-data--ProjectType:FieldDevelopment:",
 
         # ── Alternatives with per-alternative economics ──────────────
         "Alternatives": [

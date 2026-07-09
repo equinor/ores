@@ -480,36 +480,43 @@
         ],
         "ActivityStates": [
           {
+            "MilestoneID": "DG2",
             "EffectiveDateTime": "2026-02-28",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
             "Remark": "DG2 Concept Select"
           },
           {
+            "MilestoneID": "DG3",
             "EffectiveDateTime": "2027-01-01",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
             "Remark": "DG3 FEED"
           },
           {
+            "MilestoneID": "DG4",
             "EffectiveDateTime": "2027-07-01",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
             "Remark": "FID / DG4"
           },
           {
+            "MilestoneID": "INSTALL",
             "EffectiveDateTime": "2027-10-01",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
             "Remark": "FPSO Drydock Start"
           },
           {
+            "MilestoneID": "INSTALL",
             "EffectiveDateTime": "2028-01-01",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
             "Remark": "Subsea Installation"
           },
           {
+            "MilestoneID": "FIRST_OIL",
             "EffectiveDateTime": "2028-06-01",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
             "Remark": "First Oil"
           },
           {
+            "MilestoneID": "PLATEAU",
             "EffectiveDateTime": "2029-01-01",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
             "Remark": "Plateau Production"
@@ -525,6 +532,8 @@
         },
         "ext": {
           "equinor": {
+            "ActivityStateTemplateID": "dev:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
+            "ProjectTypeID": "dev:reference-data--ProjectType:FieldDevelopment:",
             "Alternatives": [
               {
                 "Name": "Alt-A: Subsea tie-back to FPSO (4 prod + 2 inj, 2\u00d74-slot templates)",

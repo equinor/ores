@@ -600,10 +600,13 @@ The ORES web app provides an interactive **Activity tab** at [/add-dg](/add-dg) 
 ### 11.1 Create Template Sub-tab
 
 1. **Choose a preset** or start from scratch:
-   - **Reservoir Simulation** - pre-populates slots for simulation workflows
-   - **Interpretation** - pre-populates slots for seismic/geo interpretation sessions
-   - **QC / Validation** - pre-populates slots for quality check workflows
-   - **Custom** - empty template
+   - **Custom** - empty template (build from scratch)
+   - **Reservoir Simulation** - pre-populates slots for multi-realisation simulation (InputParameters, Process, NumberOfRealizations, Variables, DesignMatrix → OutputVolumes, ReportTable)
+   - **FMU Ensemble** - full ERT + forward model chain (CaseCollection, DesignMatrix, ForwardModel, Simulator, InputSurfaces → OutputVolumes, OutputStatistics, OutputSurfaces, OutputProfiles)
+   - **Drilling & Completion** - well drilling activity (WellDesign, TrajectoryPlan, RigContract, SpudDate, TDDate → ActualTrajectory, CompletionReport, EOWR)
+   - **Production Test** - DST / PLT / well test (Well, TestType, TestDuration → FlowRate, Pressure, TestReport)
+   - **Interpretation** - seismic / geo interpretation session
+   - **QC / Validation** - quality check workflow
 
 2. **Fill template basics**: name, description, originator
 
@@ -623,7 +626,18 @@ The ORES web app provides an interactive **Activity tab** at [/add-dg](/add-dg) 
 
 5. **Preview & ingest**: review and submit
 
-### 11.3 Quick Guide Popup
+### 11.3 Create Schedule Template Sub-tab (ActivityStateTemplate)
+
+The **Schedule Template** sub-tab (under the Activity section) lets you define reusable milestone sequences for project lifecycle tracking:
+
+1. **Name & description**: Give the template a meaningful name (e.g. "CCS Project Lifecycle")
+2. **Project Type**: Select or paste a `ProjectTypeID` reference
+3. **Define milestones**: Add rows with Sequence, MilestoneID (short code), Name (display), and TypicalDurationMonths
+4. **Preview & ingest**: Creates a `work-product-component--ActivityStateTemplate` WPC record
+
+Created templates are immediately available in the Decision Gate tab's "Schedule / Milestones" picker.
+
+### 11.4 Quick Guide Popup
 
 Click the **? Guide** button next to the Activity tab header to open the inline quick-reference popup. It shows:
 - Template → Activity relationship diagram
@@ -727,3 +741,116 @@ python demo/run_pipeline.py --show demo/drogon
 | BD Demo guide | [Drogon Demo](/howto/bd-demo) |
 | Uncertainty guide | [Uncertainty](/howto/uncertainty) |
 | SeisInt guide | [SeisInt](/howto/seismic-interp) |
+
+---
+
+## 15. ActivityStateTemplate - Schedule Milestone Blueprints
+
+> **Not to be confused with `ActivityTemplate`** (workflow provenance blueprints). `ActivityStateTemplate` defines the **milestone sequence** for a project lifecycle, while `ActivityTemplate` defines parameter slots for workflow inputs/outputs.
+
+### 15.1 Problem
+
+The `ActivityStates[]` field on `BusinessDecision` and `CollaborationProject` (inherited from `AbstractProjectActivity`) uses free-text `Remark` fields for milestone names. This leads to:
+- Inconsistent naming across instances
+- Copy-paste of the same milestone sequence into every record
+- No way to auto-scaffold milestones when creating a new BD/CP
+- No controlled vocabulary for milestone identity
+
+### 15.2 Solution: `ActivityStateTemplate` (WPC)
+
+A `work-product-component--ActivityStateTemplate` record defines the ordered milestone sequence for a given project type. Instances reference the template and only supply dates + status overrides.
+
+```json
+{
+  "kind": "osdu:wks:work-product-component--ActivityStateTemplate:1.0.0",
+  "id": "dev:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
+  "data": {
+    "Name": "Field Development Lifecycle",
+    "Description": "Standard DG0–DG4 + execution milestones for NCS field development",
+    "ProjectTypeID": "dev:reference-data--ProjectType:FieldDevelopment:",
+    "Milestones": [
+      {"Sequence": 1, "MilestoneID": "SSVP",      "Name": "SSVP / PVP Assessment",    "TypicalDurationMonths": null},
+      {"Sequence": 2, "MilestoneID": "DG0",       "Name": "WPC Decision (DG0)",        "TypicalDurationMonths": 6},
+      {"Sequence": 3, "MilestoneID": "DG1",       "Name": "DG1 Identify & Assess",     "TypicalDurationMonths": 6},
+      {"Sequence": 4, "MilestoneID": "DG2",       "Name": "DG2 Concept Select",        "TypicalDurationMonths": 9},
+      {"Sequence": 5, "MilestoneID": "DG3",       "Name": "DG3 FEED",                  "TypicalDurationMonths": 12},
+      {"Sequence": 6, "MilestoneID": "DG4",       "Name": "FID / DG4 Sanction",        "TypicalDurationMonths": 6},
+      {"Sequence": 7, "MilestoneID": "INSTALL",   "Name": "Subsea / Topsides Install", "TypicalDurationMonths": 12},
+      {"Sequence": 8, "MilestoneID": "FIRST_OIL", "Name": "First Oil",                 "TypicalDurationMonths": 6},
+      {"Sequence": 9, "MilestoneID": "PLATEAU",   "Name": "Plateau Production",        "TypicalDurationMonths": 12}
+    ]
+  }
+}
+```
+
+### 15.3 Available Templates
+
+| Template | ProjectType | Milestones | Use for |
+|----------|-------------|------------|---------|
+| **Field Development Lifecycle** | FieldDevelopment | SSVP→DG0→DG1→DG2→DG3→DG4→Install→First Oil→Plateau | Full-field greenfield projects |
+| **Field Development Wells** | FieldDevWells | Well Concept→DG2→DG3→Rig→Spud→TD→Complete→Handover | Well delivery within approved dev |
+| **Exploration Well** | ExplorationWell | Prospect ID→Play Mature→Drill Decision→Design→Spud→TD→Evaluate→Report | Exploration drilling |
+| **CCS / Carbon Storage** | CCS | Site Screen→Permit→DG3→Appraisal→FID→Inject→Steady State→Monitor | Carbon storage projects |
+| **IOR / Infill Campaign** | IOR | Screen→Feasibility→Concept→DG3→Execute→First Response→Evaluate | IOR within producing fields |
+| **Decommissioning** | Decommissioning | COP→Decom Plan→Well P&A→Topsides→Subsea→Site Verify | Field removal projects |
+
+### 15.4 Usage on BusinessDecision
+
+When creating a BD, select a project type → the template auto-populates milestone rows. Only fill in dates and status for known milestones:
+
+```json
+{
+  "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+  "data": {
+    "Name": "Drogon - DG2 Concept Select",
+    "DecisionLevelID": "dev:reference-data--DecisionLevel:DG2:",
+    "ActivityStates": [
+      {"MilestoneID": "DG1",       "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "EffectiveDateTime": "2025-12-15", "Remark": "DG1 Identify & Assess"},
+      {"MilestoneID": "DG2",       "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "EffectiveDateTime": "2026-02-28", "Remark": "DG2 Concept Select"},
+      {"MilestoneID": "DG3",       "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",   "EffectiveDateTime": "2027-01-01", "Remark": "DG3 FEED"},
+      {"MilestoneID": "DG4",       "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",   "EffectiveDateTime": "2027-07-01", "Remark": "FID / DG4 Sanction"}
+    ],
+    "ext": {
+      "equinor": {
+        "ActivityStateTemplateID": "dev:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
+        "ProjectTypeID": "dev:reference-data--ProjectType:FieldDevelopment:"
+      }
+    }
+  }
+}
+```
+
+### 15.5 Comparison: ActivityTemplate vs ActivityStateTemplate
+
+| | ActivityTemplate | ActivityStateTemplate |
+|---|---|---|
+| **Purpose** | Workflow provenance (what inputs/outputs a workflow produces) | Lifecycle milestones (what gates a project passes through) |
+| **Schema** | `work-product-component--ActivityTemplate:1.0.0` | `work-product-component--ActivityStateTemplate:1.0.0` |
+| **Defines** | Parameter slots (`ParameterTemplates[]`) | Milestone sequence (`Milestones[]`) |
+| **Used by** | `Activity` (via `ActivityTemplateID`) | `BusinessDecision`, `CollaborationProject` (via `ext.equinor.ActivityStateTemplateID`) |
+| **Reuse** | Same template for every simulation run | Same template for every field dev BD |
+
+### 15.6 Creating via Web UI
+
+The ORES [/add-dg](/add-dg) page supports full self-service creation of demo records without scripts:
+
+| Tab | Section | Capability |
+|-----|---------|------------|
+| **Decision Gate** | 0. Project Preset | Pick a preset (Field Dev DG1, DG2, Exploration, CCS, etc.) → auto-fills milestones, alternatives, economics |
+| **Decision Gate** | 3. Schedule / Milestones | Load a template → edit milestone dates and statuses → included in BD `ActivityStates[]` |
+| **Decision Gate** | 6. Alternatives | Add ranked development alternatives (Name, Rank, RecommendedAction, Rationale) |
+| **Decision Gate** | 7. Economics | Add KPIs (NPV, IRR, CAPEX, OPEX, etc.) with value and unit |
+| **Activity** | Template presets | 7 presets: Custom, Reservoir Sim, FMU Ensemble, Drilling, Production Test, Interpretation, QC |
+| **Activity** | Schedule Template | Create new `ActivityStateTemplate` WPC records with custom milestone sequences |
+
+This enables **complete demo record creation entirely from the browser** — no `demo/` scripts needed.
+
+### 15.7 Files
+
+| File | Description |
+|------|-------------|
+| `demo/activity_state_templates.json` | All 6 ActivityStateTemplate WPC records |
+| `demo/reference_data_project_types.json` | ProjectType reference data |
+| `demo/ingest_schedule_templates.py` | Script to bulk-ingest templates + project types |
+| `/add-dg` → Decision Gate tab | UI with project type selector and milestone scaffolding |
+| `/add-dg` → Activity tab → Schedule Template | UI for creating new templates interactively |

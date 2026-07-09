@@ -335,4 +335,67 @@ The BD references this collection via `Parameters[]` (`ParameterRole: InputRefer
 7. **PersistedCollection snapshots one gate** - DG2+ packages all artefacts into a single searchable collection
 8. **CollaborationProjectCollection accumulates across gates** - the SoR grows; PersistedCollection freezes
 
+---
 
+## 9. Creating Demo Records via the Web UI
+
+The ORES [/add-dg](/add-dg) page now supports **full self-service creation** of BusinessDecision records - including all the linked metadata typically provided by scripts. This enables creating new demo datasets entirely from the browser.
+
+### 9.1 Decision Gate Tab - Full BD Creation
+
+| Panel | What it fills | BD Field |
+|-------|--------------|----------|
+| **0. Project Preset** | One-click scaffold for common gate types (Field Dev DG1, DG2, Exploration, WPC Wells, CCS, Blank) | Auto-fills milestones, alternatives, economics |
+| **1. Identity** | Name, DecisionLevel, ProjectName, DecisionSummary | `data.Name`, `data.DecisionLevelID`, etc. |
+| **2. Reservoir & Links** | ReservoirID, CollaborationProjectID, EvidencePackageID | `data.Parameters[]` |
+| **3. Schedule / Milestones** | Pick template → auto-populate rows, set dates/status per milestone | `data.ActivityStates[]`, `ext.equinor.ActivityStateTemplateID` |
+| **4. Linked Records** | DataObject parameters (REV, ColumnBasedTable, DevelopmentConcept, etc.) | `data.Parameters[]` with role semantics |
+| **5. Risks** | RiskIDs array | `data.RiskIDs[]` |
+| **6. Alternatives** | Ranked development alternatives with rationale | `ext.equinor.Alternatives[]` |
+| **7. Economics** | KPI name/value/unit (NPV, IRR, CAPEX, OPEX, etc.) | `data.ProjectSpecifications[]` |
+| **8. Preview** | Full JSON payload review before submission | — |
+
+### 9.2 Preset-Based Workflow
+
+The fastest way to create a demo-quality BD:
+
+1. **Select preset** (e.g. "Field Dev – DG2") → auto-fills:
+   - Decision level: DG2
+   - Schedule milestones: DG1(completed), DG2(completed), DG3(planned), DG4(planned), Install, First Oil, Plateau
+   - Alternatives: 3 placeholder concepts (Subsea tieback, Standalone, Not matured)
+   - Economics: NPV, IRR, CAPEX, Breakeven price
+2. **Customise**: fill in real names, dates, record IDs for linked evidence
+3. **Preview & submit**: validates and PUTs to OSDU Storage API
+
+### 9.3 ActivityStateTemplate (Schedule Milestones)
+
+Pre-loaded templates auto-scaffold milestones per project type:
+
+| Template | Milestones |
+|----------|-----------|
+| Field Development | SSVP → DG0 → DG1 → DG2 → DG3 → DG4 → Install → First Oil → Plateau |
+| Field Dev Wells | Well Concept → DG2 → DG3 → Rig → Spud → TD → Complete → Handover |
+| Exploration Well | Prospect ID → Play Mature → Drill Decision → Design → Spud → TD → Evaluate → Report |
+| CCS | Site Screen → Permit → DG3 → Appraisal → FID → Inject → Steady State → Monitor |
+| IOR | Screen → Feasibility → Concept → DG3 → Execute → First Response → Evaluate |
+| Decommissioning | COP → Decom Plan → Well P&A → Topsides → Subsea → Site Verify |
+
+New templates can be created interactively from the **Activity tab → Schedule Template** sub-tab.
+
+### 9.4 When to Use Scripts vs Web UI
+
+| Use case | Recommended approach |
+|----------|---------------------|
+| One-off demo BD (workshop, talk, test) | **Web UI** — fast, visual, no code needed |
+| Bulk ingestion (100+ records, seismic, RDDMS manifests) | **Scripts** (`demo/ingest_*.py`) |
+| Reproducible CI/CD pipeline | **Scripts** (git-tracked, deterministic) |
+| Exploring schema structure | **Web UI** — see payload preview before committing |
+| Updating existing demo data | **Scripts** (versioned manifests) |
+
+### 9.5 Activity Tab - Workflow Provenance Records
+
+The Activity tab supports creating both `ActivityTemplate` and `Activity` records with 7 presets:
+
+- **Custom** / **Reservoir Simulation** / **FMU Ensemble** / **Drilling & Completion** / **Production Test** / **Interpretation** / **QC**
+
+Each preset pre-fills parameter slots appropriate to that workflow type. See [Activity guide §11](/howto/activity) for full details.

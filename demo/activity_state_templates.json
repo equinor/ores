@@ -1,0 +1,114 @@
+[
+  {
+    "id": "dev:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
+    "kind": "osdu:wks:work-product-component--ActivityStateTemplate:1.0.0",
+    "data": {
+      "Name": "Field Development Lifecycle",
+      "Description": "Standard E&P field development decision gate sequence (DG0 through First Oil and beyond). Applicable to greenfield subsea, platform, and FPSO developments on NCS.",
+      "ProjectTypeID": "dev:reference-data--ProjectType:FieldDevelopment:",
+      "Milestones": [
+        {"Sequence": 1, "MilestoneID": "SSVP",       "Name": "SSVP / PVP Assessment",       "TypicalDurationMonths": null},
+        {"Sequence": 2, "MilestoneID": "DG0",        "Name": "WPC Decision (DG0)",           "TypicalDurationMonths": 6},
+        {"Sequence": 3, "MilestoneID": "DG1",        "Name": "DG1 Identify & Assess",        "TypicalDurationMonths": 6},
+        {"Sequence": 4, "MilestoneID": "DG2",        "Name": "DG2 Concept Select",           "TypicalDurationMonths": 9},
+        {"Sequence": 5, "MilestoneID": "DG3",        "Name": "DG3 FEED",                     "TypicalDurationMonths": 12},
+        {"Sequence": 6, "MilestoneID": "DG4",        "Name": "FID / DG4 Sanction",           "TypicalDurationMonths": 6},
+        {"Sequence": 7, "MilestoneID": "INSTALL",    "Name": "Subsea / Topsides Install",    "TypicalDurationMonths": 12},
+        {"Sequence": 8, "MilestoneID": "FIRST_OIL",  "Name": "First Oil",                    "TypicalDurationMonths": 6},
+        {"Sequence": 9, "MilestoneID": "PLATEAU",    "Name": "Plateau Production",           "TypicalDurationMonths": 12}
+      ]
+    }
+  },
+  {
+    "id": "dev:work-product-component--ActivityStateTemplate:FieldDevWells:1",
+    "kind": "osdu:wks:work-product-component--ActivityStateTemplate:1.0.0",
+    "data": {
+      "Name": "Field Development Wells",
+      "Description": "Well delivery lifecycle within an approved field development. Covers well concept through drilling, completion, and handover to operations.",
+      "ProjectTypeID": "dev:reference-data--ProjectType:FieldDevWells:",
+      "Milestones": [
+        {"Sequence": 1, "MilestoneID": "WELL_CONCEPT", "Name": "Well Concept Select",        "TypicalDurationMonths": null},
+        {"Sequence": 2, "MilestoneID": "WELL_DG2",     "Name": "Well DG2 - Detailed Design", "TypicalDurationMonths": 4},
+        {"Sequence": 3, "MilestoneID": "WELL_DG3",     "Name": "Well DG3 - AFE Approved",    "TypicalDurationMonths": 3},
+        {"Sequence": 4, "MilestoneID": "RIG_CONTRACT",  "Name": "Rig Contract Award",        "TypicalDurationMonths": 3},
+        {"Sequence": 5, "MilestoneID": "SPUD",         "Name": "Spud",                       "TypicalDurationMonths": 3},
+        {"Sequence": 6, "MilestoneID": "TD",           "Name": "Total Depth (TD)",           "TypicalDurationMonths": 2},
+        {"Sequence": 7, "MilestoneID": "COMPLETE",     "Name": "Completion Run",             "TypicalDurationMonths": 1},
+        {"Sequence": 8, "MilestoneID": "HANDOVER",     "Name": "Handover to Operations",     "TypicalDurationMonths": 1}
+      ]
+    }
+  },
+  {
+    "id": "dev:work-product-component--ActivityStateTemplate:ExplorationWell:1",
+    "kind": "osdu:wks:work-product-component--ActivityStateTemplate:1.0.0",
+    "data": {
+      "Name": "Exploration Well",
+      "Description": "Exploration well lifecycle from prospect identification through drilling and post-well evaluation.",
+      "ProjectTypeID": "dev:reference-data--ProjectType:ExplorationWell:",
+      "Milestones": [
+        {"Sequence": 1, "MilestoneID": "PROSPECT_ID",   "Name": "Prospect Identification",   "TypicalDurationMonths": null},
+        {"Sequence": 2, "MilestoneID": "PLAY_MATURE",   "Name": "Play Maturation",           "TypicalDurationMonths": 12},
+        {"Sequence": 3, "MilestoneID": "DRILL_DECISION","Name": "Drill Decision",            "TypicalDurationMonths": 6},
+        {"Sequence": 4, "MilestoneID": "WELL_DESIGN",   "Name": "Well Design & Permit",      "TypicalDurationMonths": 6},
+        {"Sequence": 5, "MilestoneID": "SPUD",          "Name": "Spud",                      "TypicalDurationMonths": 4},
+        {"Sequence": 6, "MilestoneID": "TD",            "Name": "Total Depth (TD)",          "TypicalDurationMonths": 2},
+        {"Sequence": 7, "MilestoneID": "EVALUATE",      "Name": "Post-Well Evaluation",      "TypicalDurationMonths": 3},
+        {"Sequence": 8, "MilestoneID": "REPORT",        "Name": "Final Well Report",         "TypicalDurationMonths": 3}
+      ]
+    }
+  },
+  {
+    "id": "dev:work-product-component--ActivityStateTemplate:CCS:1",
+    "kind": "osdu:wks:work-product-component--ActivityStateTemplate:1.0.0",
+    "data": {
+      "Name": "CCS / Carbon Storage",
+      "Description": "Carbon capture and storage project lifecycle from site screening through injection and long-term monitoring.",
+      "ProjectTypeID": "dev:reference-data--ProjectType:CCS:",
+      "Milestones": [
+        {"Sequence": 1, "MilestoneID": "SITE_SCREEN",   "Name": "Site Screening",             "TypicalDurationMonths": null},
+        {"Sequence": 2, "MilestoneID": "PERMIT_APP",    "Name": "Storage Permit Application",  "TypicalDurationMonths": 12},
+        {"Sequence": 3, "MilestoneID": "DG3_FEED",      "Name": "DG3 FEED",                    "TypicalDurationMonths": 12},
+        {"Sequence": 4, "MilestoneID": "APPRAISAL",     "Name": "Appraisal Well",              "TypicalDurationMonths": 9},
+        {"Sequence": 5, "MilestoneID": "FID",           "Name": "FID / Sanction",              "TypicalDurationMonths": 6},
+        {"Sequence": 6, "MilestoneID": "INJECT_START",  "Name": "First Injection",             "TypicalDurationMonths": 18},
+        {"Sequence": 7, "MilestoneID": "STEADY_STATE",  "Name": "Steady-State Injection",      "TypicalDurationMonths": 12},
+        {"Sequence": 8, "MilestoneID": "MONITOR",       "Name": "Long-Term Monitoring",        "TypicalDurationMonths": null}
+      ]
+    }
+  },
+  {
+    "id": "dev:work-product-component--ActivityStateTemplate:IOR:1",
+    "kind": "osdu:wks:work-product-component--ActivityStateTemplate:1.0.0",
+    "data": {
+      "Name": "IOR / Infill Campaign",
+      "Description": "Improved oil recovery or infill well campaign within an existing producing field.",
+      "ProjectTypeID": "dev:reference-data--ProjectType:IOR:",
+      "Milestones": [
+        {"Sequence": 1, "MilestoneID": "SCREEN",        "Name": "Opportunity Screening",       "TypicalDurationMonths": null},
+        {"Sequence": 2, "MilestoneID": "FEASIBILITY",   "Name": "Feasibility Study",           "TypicalDurationMonths": 6},
+        {"Sequence": 3, "MilestoneID": "CONCEPT",       "Name": "Concept Select",              "TypicalDurationMonths": 4},
+        {"Sequence": 4, "MilestoneID": "DG3",           "Name": "DG3 / AFE Approval",          "TypicalDurationMonths": 4},
+        {"Sequence": 5, "MilestoneID": "EXECUTE",       "Name": "Execute (Drill / Workover)",  "TypicalDurationMonths": 6},
+        {"Sequence": 6, "MilestoneID": "FIRST_RESPONSE","Name": "First Response",              "TypicalDurationMonths": 3},
+        {"Sequence": 7, "MilestoneID": "EVALUATE",      "Name": "Performance Evaluation",      "TypicalDurationMonths": 12}
+      ]
+    }
+  },
+  {
+    "id": "dev:work-product-component--ActivityStateTemplate:Decommissioning:1",
+    "kind": "osdu:wks:work-product-component--ActivityStateTemplate:1.0.0",
+    "data": {
+      "Name": "Decommissioning",
+      "Description": "Decommissioning and removal lifecycle from cessation of production through site verification.",
+      "ProjectTypeID": "dev:reference-data--ProjectType:Decommissioning:",
+      "Milestones": [
+        {"Sequence": 1, "MilestoneID": "COP",           "Name": "Cessation of Production",     "TypicalDurationMonths": null},
+        {"Sequence": 2, "MilestoneID": "DECOM_PLAN",    "Name": "Decom Plan Approved",         "TypicalDurationMonths": 12},
+        {"Sequence": 3, "MilestoneID": "WELL_PA",       "Name": "Well P&A Complete",           "TypicalDurationMonths": 18},
+        {"Sequence": 4, "MilestoneID": "TOPSIDES",      "Name": "Topsides Removal",            "TypicalDurationMonths": 6},
+        {"Sequence": 5, "MilestoneID": "SUBSEA",        "Name": "Subsea Removal / Remediation","TypicalDurationMonths": 6},
+        {"Sequence": 6, "MilestoneID": "SITE_VERIFY",   "Name": "Site Verification Survey",    "TypicalDurationMonths": 6}
+      ]
+    }
+  }
+]

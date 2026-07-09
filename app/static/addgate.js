@@ -116,11 +116,258 @@
     closeBrowse();
   };
 
+  // ── Schedule templates ──
+  var scheduleTemplates = [];
+  var selectedTemplate = null;
+
+  // Load templates on page init
+  fetch('/add-dg/schedule-templates')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      scheduleTemplates = data;
+      var sel = document.getElementById('bd-project-type');
+      if (!sel) return;
+      data.forEach(function(tpl) {
+        var opt = document.createElement('option');
+        opt.value = tpl.id;
+        opt.textContent = tpl.name;
+        opt.title = tpl.description;
+        sel.appendChild(opt);
+      });
+    })
+    .catch(function() { /* silently ignore if templates unavailable */ });
+
+  window.loadScheduleTemplate = function() {
+    var sel = document.getElementById('bd-project-type');
+    var container = document.getElementById('schedule-milestones');
+    var tplId = sel.value;
+
+    if (!tplId) {
+      selectedTemplate = null;
+      container.innerHTML = '';
+      return;
+    }
+
+    selectedTemplate = scheduleTemplates.find(function(t) { return t.id === tplId; });
+    if (!selectedTemplate) { container.innerHTML = ''; return; }
+
+    var html = '<table class="milestone-table"><thead><tr>' +
+      '<th style="width:30px">#</th><th>Milestone</th><th style="width:120px">Date</th>' +
+      '<th style="width:120px">Status</th></tr></thead><tbody>';
+
+    selectedTemplate.milestones.forEach(function(m, i) {
+      html += '<tr>' +
+        '<td>' + m.Sequence + '</td>' +
+        '<td>' + escHtml(m.Name) + ' <span class="muted" style="font-size:11px">(' + escHtml(m.MilestoneID) + ')</span></td>' +
+        '<td><input type="date" id="ms-date-' + i + '" class="ms-date" /></td>' +
+        '<td><select id="ms-status-' + i + '" class="ms-status">' +
+          '<option value="">- skip -</option>' +
+          '<option value="Planned">Planned</option>' +
+          '<option value="InProgress">In Progress</option>' +
+          '<option value="Completed">Completed</option>' +
+        '</select></td></tr>';
+    });
+    html += '</tbody></table>';
+    html += '<p class="muted" style="font-size:.78rem;margin-top:.3rem;">Only milestones with a date and status will be included in ActivityStates[].</p>';
+    container.innerHTML = html;
+  };
+
+  function buildActivityStates() {
+    if (!selectedTemplate) return [];
+    var states = [];
+    var idPrefix = (document.getElementById('reservoir-select').value || 'dev').split(':')[0] || 'dev';
+    selectedTemplate.milestones.forEach(function(m, i) {
+      var dateVal = document.getElementById('ms-date-' + i).value;
+      var statusVal = document.getElementById('ms-status-' + i).value;
+      if (dateVal && statusVal) {
+        states.push({
+          "MilestoneID": m.MilestoneID,
+          "ActivityStatusID": idPrefix + ":reference-data--ActivityStatus:" + statusVal + ":",
+          "EffectiveDateTime": dateVal,
+          "Remark": m.Name
+        });
+      }
+    });
+    return states;
+  }
+
+  // ── BD Presets ──
+  var BD_PRESETS = {
+    blank: { level: '', alternatives: [], economics: [], templateId: '' },
+    field_dev_dg1: {
+      level: 'DG1', templateId: 'FieldDevelopment',
+      alternatives: [
+        {name: 'Proceed to DG2 - full development', rank: 1, action: 'Approve', rationale: ''},
+        {name: 'Reduced scope', rank: 2, action: 'Consider', rationale: ''},
+        {name: 'Defer - acquire more data', rank: 3, action: 'Fallback', rationale: ''},
+      ],
+      economics: [
+        {type: 'NPV_10pct', value: '', unit: 'MUSD'},
+        {type: 'IRR', value: '', unit: '%'},
+        {type: 'CAPEX', value: '', unit: 'MNOK'},
+        {type: 'BreakevenOil', value: '', unit: 'USD/bbl'},
+      ],
+    },
+    field_dev_dg2: {
+      level: 'DG2', templateId: 'FieldDevelopment',
+      alternatives: [
+        {name: 'Alt-A: Full development (recommended)', rank: 1, action: 'Approve', rationale: ''},
+        {name: 'Alt-B: Reduced scope', rank: 2, action: 'Consider', rationale: ''},
+        {name: 'Alt-C: Defer / acquire more data', rank: 3, action: 'Fallback', rationale: ''},
+      ],
+      economics: [
+        {type: 'NPV_10pct', value: '', unit: 'MUSD'},
+        {type: 'IRR', value: '', unit: '%'},
+        {type: 'CAPEX', value: '', unit: 'MNOK'},
+        {type: 'OPEX_pa', value: '', unit: 'MNOK'},
+        {type: 'BreakevenOil', value: '', unit: 'USD/bbl'},
+        {type: 'Payback', value: '', unit: 'a'},
+      ],
+    },
+    exploration: {
+      level: 'DG1', templateId: 'ExplorationWell',
+      alternatives: [
+        {name: 'Drill exploration well', rank: 1, action: 'Approve', rationale: ''},
+        {name: 'Farm-out / co-drill', rank: 2, action: 'Consider', rationale: ''},
+        {name: 'Relinquish licence', rank: 3, action: 'Fallback', rationale: ''},
+      ],
+      economics: [
+        {type: 'Well_Cost', value: '', unit: 'MUSD'},
+        {type: 'EMV', value: '', unit: 'MUSD'},
+        {type: 'CoS', value: '', unit: '%'},
+      ],
+    },
+    wpc: {
+      level: 'WPC', templateId: 'FieldDevelopment',
+      alternatives: [
+        {name: 'Base case (recommended)', rank: 1, action: 'Approve', rationale: ''},
+        {name: 'Alternative drainage strategy', rank: 2, action: 'Consider', rationale: ''},
+        {name: 'Defer - pilot well first', rank: 3, action: 'Consider', rationale: ''},
+        {name: 'Do not proceed', rank: 4, action: 'Fallback', rationale: ''},
+      ],
+      economics: [
+        {type: 'NPV_10pct', value: '', unit: 'MUSD'},
+        {type: 'IRR', value: '', unit: '%'},
+        {type: 'CAPEX', value: '', unit: 'MUSD'},
+        {type: 'BreakevenOil', value: '', unit: 'USD/bbl'},
+        {type: 'Production', value: '', unit: 'Mboe'},
+      ],
+    },
+    ccs: {
+      level: 'DG2', templateId: 'CCS',
+      alternatives: [
+        {name: 'Proceed with injection', rank: 1, action: 'Approve', rationale: ''},
+        {name: 'Additional appraisal', rank: 2, action: 'Consider', rationale: ''},
+        {name: 'Alternative storage site', rank: 3, action: 'Consider', rationale: ''},
+      ],
+      economics: [
+        {type: 'Storage_Capacity', value: '', unit: 'MtCO2'},
+        {type: 'CAPEX', value: '', unit: 'MNOK'},
+        {type: 'InjectionRate', value: '', unit: 'MtCO2/yr'},
+      ],
+    },
+  };
+
+  window.selectBdPreset = function(presetName) {
+    var preset = BD_PRESETS[presetName];
+    if (!preset) return;
+    // Highlight card
+    document.querySelectorAll('#mode-bd .act-preset-card').forEach(function(c) {
+      c.classList.toggle('selected', c.id === 'bdp-' + presetName);
+    });
+    // Set decision level
+    if (preset.level) {
+      var sel = document.getElementById('bd-level');
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === preset.level) { sel.selectedIndex = i; break; }
+      }
+    }
+    // Set schedule template
+    if (preset.templateId) {
+      var ptSel = document.getElementById('bd-project-type');
+      for (var j = 0; j < ptSel.options.length; j++) {
+        if (ptSel.options[j].value.indexOf(preset.templateId) >= 0) {
+          ptSel.selectedIndex = j;
+          loadScheduleTemplate();
+          break;
+        }
+      }
+    }
+    // Set alternatives
+    bdAlternatives = (preset.alternatives || []).map(function(a) {
+      return {name: a.name, rank: a.rank, action: a.action, rationale: a.rationale || ''};
+    });
+    renderBdAlternatives();
+    // Set economics
+    bdEconomics = (preset.economics || []).map(function(e) {
+      return {type: e.type, value: e.value, unit: e.unit};
+    });
+    renderBdEconomics();
+  };
+
+  // ── Alternatives management ──
+  var bdAlternatives = [];
+
+  window.addBdAlternative = function() {
+    var nextRank = bdAlternatives.length + 1;
+    bdAlternatives.push({name: '', rank: nextRank, action: 'Consider', rationale: ''});
+    renderBdAlternatives();
+  };
+  window.removeBdAlternative = function(i) { bdAlternatives.splice(i, 1); renderBdAlternatives(); };
+
+  function renderBdAlternatives() {
+    var el = document.getElementById('bd-alternatives-list');
+    if (!bdAlternatives.length) {
+      el.innerHTML = '<span class="muted" style="font-size:13px;">No alternatives yet.</span>';
+      return;
+    }
+    el.innerHTML = bdAlternatives.map(function(a, i) {
+      return '<div class="param-row" style="flex-wrap:wrap;gap:4px;">' +
+        '<span style="font-weight:700;font-size:12px;min-width:22px;color:var(--eq-red);">#' + a.rank + '</span>' +
+        '<input class="pk" placeholder="Alternative name" value="' + escAttr(a.name) + '" oninput="bdAlternatives['+i+'].name=this.value" style="min-width:200px;" />' +
+        '<select style="width:100px;font-size:12px;" onchange="bdAlternatives['+i+'].action=this.value">' +
+          '<option value="Approve"' + (a.action==='Approve'?' selected':'') + '>Approve</option>' +
+          '<option value="Consider"' + (a.action==='Consider'?' selected':'') + '>Consider</option>' +
+          '<option value="Fallback"' + (a.action==='Fallback'?' selected':'') + '>Fallback</option>' +
+        '</select>' +
+        '<input class="pv" placeholder="Rationale" value="' + escAttr(a.rationale) + '" oninput="bdAlternatives['+i+'].rationale=this.value" style="flex:1;min-width:180px;" />' +
+        '<button class="remove-btn" onclick="removeBdAlternative('+i+')" title="Remove">&times;</button>' +
+        '</div>';
+    }).join('');
+  }
+  renderBdAlternatives();
+
+  // ── Economics management ──
+  var bdEconomics = [];
+
+  window.addBdEconomic = function() {
+    bdEconomics.push({type: '', value: '', unit: ''});
+    renderBdEconomics();
+  };
+  window.removeBdEconomic = function(i) { bdEconomics.splice(i, 1); renderBdEconomics(); };
+
+  function renderBdEconomics() {
+    var el = document.getElementById('bd-economics-list');
+    if (!bdEconomics.length) {
+      el.innerHTML = '<span class="muted" style="font-size:13px;">No economics KPIs yet.</span>';
+      return;
+    }
+    el.innerHTML = bdEconomics.map(function(e, i) {
+      return '<div class="param-row">' +
+        '<input class="pk" placeholder="KPI type (e.g. NPV_10pct)" value="' + escAttr(e.type) + '" oninput="bdEconomics['+i+'].type=this.value" style="width:150px;" />' +
+        '<input class="pv" placeholder="Value" value="' + escAttr(e.value) + '" oninput="bdEconomics['+i+'].value=this.value" style="width:100px;" type="number" step="any" />' +
+        '<input class="pv" placeholder="Unit" value="' + escAttr(e.unit) + '" oninput="bdEconomics['+i+'].unit=this.value" style="width:80px;" />' +
+        '<button class="remove-btn" onclick="removeBdEconomic('+i+')" title="Remove">&times;</button>' +
+        '</div>';
+    }).join('');
+  }
+  renderBdEconomics();
+
   // ── Build record payload ──
   function buildPayload() {
     var levelSel = document.getElementById('bd-level').value;
     var levelVal = levelSel === '__custom__' ? document.getElementById('bd-level-custom').value.trim() : levelSel;
-    return {
+    var payload = {
       reservoir_id:          document.getElementById('reservoir-select').value,
       name:                  document.getElementById('bd-name').value,
       project_name:          document.getElementById('bd-project').value,
@@ -141,6 +388,26 @@
       risk_ids:              riskIds.slice(),
       custom_records:        customRecords.slice(),
     };
+    // Attach schedule / milestones
+    var activityStates = buildActivityStates();
+    if (activityStates.length) {
+      payload.activity_states = activityStates;
+      if (selectedTemplate) {
+        payload.activity_state_template_id = selectedTemplate.id;
+        payload.project_type_id = selectedTemplate.project_type_id;
+      }
+    }
+    // Attach alternatives
+    var alts = bdAlternatives.filter(function(a) { return a.name; });
+    if (alts.length) {
+      payload.alternatives = alts;
+    }
+    // Attach economics
+    var econs = bdEconomics.filter(function(e) { return e.type && e.value; });
+    if (econs.length) {
+      payload.economics = econs;
+    }
+    return payload;
   }
 
   // ── Preview ──
@@ -430,6 +697,48 @@
         {title:'OutputParameters',desc:'Per-realisation output table', isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
         {title:'OutputVolumes',   desc:'Aggregated volume results',    isInput:false, isOutput:true,  kind:'DataObject', min:1, max:1},
         {title:'ReportTable',     desc:'Summary report table',         isInput:false, isOutput:true,  kind:'DataObject', min:1, max:1},
+      ]
+    },
+    fmu_ensemble: {
+      name: 'FMU Ensemble Workflow',
+      desc: 'Full FMU ensemble run (ERT + forward model chain)',
+      params: [
+        {title:'CaseCollection',  desc:'FMU case/ensemble collection', isInput:true,  isOutput:false, kind:'DataObject', min:1, max:1},
+        {title:'DesignMatrix',    desc:'Design matrix (sensitivity/MC)', isInput:true, isOutput:false, kind:'DataObject', min:1, max:1},
+        {title:'ForwardModel',    desc:'Forward model chain description', isInput:true, isOutput:false, kind:'string',  min:1, max:1},
+        {title:'NumberOfRealizations', desc:'Total realisations',       isInput:true,  isOutput:false, kind:'integer',   min:1, max:1},
+        {title:'Simulator',       desc:'Flow simulator (OPM/Eclipse)',  isInput:true,  isOutput:false, kind:'string',    min:0, max:1},
+        {title:'InputSurfaces',   desc:'Input surfaces/grids',         isInput:true,  isOutput:false, kind:'DataObject', min:0, max:1},
+        {title:'OutputVolumes',   desc:'Raw per-realisation volumes',   isInput:false, isOutput:true,  kind:'DataObject', min:1, max:1},
+        {title:'OutputStatistics',desc:'P10/P50/P90 aggregated',       isInput:false, isOutput:true,  kind:'DataObject', min:1, max:1},
+        {title:'OutputSurfaces',  desc:'Generated output surfaces',    isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+        {title:'OutputProfiles',  desc:'Production profiles',          isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+      ]
+    },
+    drilling: {
+      name: 'Drilling & Completion',
+      desc: 'Well drilling and completion activity',
+      params: [
+        {title:'WellDesign',      desc:'Well design / programme',      isInput:true,  isOutput:false, kind:'DataObject', min:1, max:1},
+        {title:'TrajectoryPlan',  desc:'Planned trajectory',           isInput:true,  isOutput:false, kind:'DataObject', min:1, max:1},
+        {title:'RigContract',     desc:'Rig contract reference',       isInput:true,  isOutput:false, kind:'string',     min:0, max:1},
+        {title:'SpudDate',        desc:'Actual spud date',             isInput:true,  isOutput:false, kind:'string',     min:0, max:1},
+        {title:'TDDate',          desc:'Total depth reached date',     isInput:true,  isOutput:false, kind:'string',     min:0, max:1},
+        {title:'ActualTrajectory',desc:'As-drilled trajectory',        isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+        {title:'CompletionReport',desc:'Completion report document',   isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+        {title:'EOWR',            desc:'End-of-well report',           isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+      ]
+    },
+    production_test: {
+      name: 'Production / Well Test',
+      desc: 'Well test or production logging activity',
+      params: [
+        {title:'Well',            desc:'Well being tested',            isInput:true,  isOutput:false, kind:'DataObject', min:1, max:1},
+        {title:'TestType',        desc:'DST / PLT / RFT / MDT',       isInput:true,  isOutput:false, kind:'string',     min:1, max:1},
+        {title:'TestDuration',    desc:'Duration in hours',            isInput:true,  isOutput:false, kind:'integer',    min:0, max:1},
+        {title:'FlowRate',        desc:'Measured flow rate',           isInput:false, isOutput:true,  kind:'string',     min:0, max:1},
+        {title:'Pressure',        desc:'Measured pressure data',       isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+        {title:'TestReport',      desc:'Test interpretation report',   isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
       ]
     },
     interpretation: {
@@ -781,6 +1090,95 @@
     .catch(function(err) {
       document.getElementById('submit-overlay').classList.remove('active');
       document.getElementById('act-result-area').innerHTML =
+        '<div class="result-err"><strong>Network error:</strong> ' + escHtml(err.message) + '</div>';
+    });
+  };
+
+  // ══════════════════════════════════════════════════════════════════════
+  // Schedule Template (ActivityStateTemplate) form logic
+  // ══════════════════════════════════════════════════════════════════════
+
+  var schedMilestones = [];
+
+  window.addSchedMilestone = function() {
+    var seq = schedMilestones.length + 1;
+    schedMilestones.push({seq: seq, id: '', name: '', duration: ''});
+    renderSchedMilestones();
+  };
+  window.removeSchedMilestone = function(i) { schedMilestones.splice(i, 1); renderSchedMilestones(); };
+
+  function renderSchedMilestones() {
+    var el = document.getElementById('sched-milestone-list');
+    if (!schedMilestones.length) {
+      el.innerHTML = '<span class="muted" style="font-size:13px;">No milestones yet. Click + to add.</span>';
+      return;
+    }
+    el.innerHTML = schedMilestones.map(function(m, i) {
+      return '<div class="param-row">' +
+        '<span style="font-weight:700;font-size:12px;min-width:22px;color:var(--eq-red);">' + (i+1) + '</span>' +
+        '<input class="pk" placeholder="MilestoneID (e.g. DG2)" value="' + escAttr(m.id) + '" oninput="schedMilestones['+i+'].id=this.value" style="width:120px;" />' +
+        '<input class="pv" placeholder="Display name" value="' + escAttr(m.name) + '" oninput="schedMilestones['+i+'].name=this.value" style="flex:1;" />' +
+        '<input class="pv" placeholder="Months" value="' + escAttr(m.duration) + '" oninput="schedMilestones['+i+'].duration=this.value" style="width:60px;" type="number" title="Typical duration (months)" />' +
+        '<button class="remove-btn" onclick="removeSchedMilestone('+i+')" title="Remove">&times;</button>' +
+        '</div>';
+    }).join('');
+  }
+  renderSchedMilestones();
+
+  function buildSchedPayload() {
+    return {
+      name:            document.getElementById('sched-name').value.trim(),
+      description:     document.getElementById('sched-desc').value.trim(),
+      project_type_id: document.getElementById('sched-project-type').value.trim(),
+      milestones: schedMilestones.filter(function(m) { return m.id && m.name; }).map(function(m, i) {
+        return {
+          Sequence: i + 1,
+          MilestoneID: m.id,
+          Name: m.name,
+          TypicalDurationMonths: m.duration ? parseInt(m.duration) : null,
+        };
+      }),
+    };
+  }
+
+  window.previewSchedRecord = function() {
+    var payload = buildSchedPayload();
+    var pre = document.getElementById('sched-preview-json');
+    pre.textContent = JSON.stringify(payload, null, 2);
+    document.getElementById('sched-preview-wrap').style.display = 'block';
+  };
+
+  window.submitSchedRecord = function() {
+    var payload = buildSchedPayload();
+    if (!payload.name) { alert('Template name is required.'); return; }
+    if (!payload.milestones.length) { alert('Add at least one milestone.'); return; }
+
+    document.getElementById('submit-overlay').classList.add('active');
+    document.getElementById('sched-result-area').innerHTML = '';
+
+    fetch('/add-dg/create-schedule-template', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    })
+    .then(function(r) { return r.json().then(function(d) { return {status: r.status, data: d}; }); })
+    .then(function(res) {
+      document.getElementById('submit-overlay').classList.remove('active');
+      var area = document.getElementById('sched-result-area');
+      if (res.data.ok) {
+        area.innerHTML = '<div class="result-ok">' +
+          '<strong>&#10003; ActivityStateTemplate created</strong><br>' +
+          '<span class="bd-id">' + escHtml(res.data.record_id) + '</span><br>' +
+          '<span class="muted">' + res.data.milestone_count + ' milestones &middot; Status: ' + res.status + '</span></div>';
+      } else {
+        area.innerHTML = '<div class="result-err"><strong>Ingest failed (HTTP ' + res.status + ')</strong><br>' +
+          '<pre style="margin:.4rem 0 0;font-size:12px;white-space:pre-wrap;">' +
+          escHtml(res.data.response || res.data.error || JSON.stringify(res.data)) + '</pre></div>';
+      }
+    })
+    .catch(function(err) {
+      document.getElementById('submit-overlay').classList.remove('active');
+      document.getElementById('sched-result-area').innerHTML =
         '<div class="result-err"><strong>Network error:</strong> ' + escHtml(err.message) + '</div>';
     });
   };

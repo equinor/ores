@@ -367,3 +367,25 @@ The Record Explorer (`/strat`) provides:
 - **Metadata cards** - grouped into Identity, Details, References, Extensions
 - **Table viewer** - renders both `Volumes` and `Table` ColumnBasedTable data with key highlighting and UoM
 - **Clickable links** - OSDU ID references navigate to the linked record
+
+---
+
+## Web UI Alternative (Script-Free)
+
+For workshops, talks, or quick testing, the ORES [/add-dg](/add-dg) web UI can create a complete BusinessDecision record interactively — equivalent to what `gen_businessdecision_drogon.py` produces:
+
+| Step | UI Panel | Script equivalent |
+|------|----------|-------------------|
+| Pick project type & gate | **Project Preset** → "Field Dev – DG1" | `gen_businessdecision_drogon.py` (`DecisionLevelID`) |
+| Set milestones & dates | **Schedule / Milestones** → FieldDevelopment template | `ActivityStates[]` array |
+| Add alternatives | **Alternatives** panel → 3 concepts | `ext.equinor.Alternatives[]` |
+| Add economics | **Economics** panel → NPV, IRR, CAPEX | `data.ProjectSpecifications[]` |
+| Link evidence | **Linked Records** → REV, ColumnBasedTable, Activity IDs | `data.Parameters[]` |
+| Add risks | **Risks** panel → Risk record IDs | `data.RiskIDs[]` |
+| Submit | **Preview** → Ingest | `ingest_records_batch.py` |
+
+The UI also supports creating **ActivityTemplate** and **Activity** records (Activity tab) with the "Reservoir Simulation" preset matching the Drogon template schema exactly.
+
+**When to use which:**
+- **Scripts** (`run_pipeline.ps1`): reproducible, version-controlled, full pipeline including REV/CBT/RDDMS
+- **Web UI** (`/add-dg`): one-off demos, exploring BD structure, rapid prototyping without Python setup
