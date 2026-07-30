@@ -358,157 +358,143 @@
 
   <!-- ═══ 4. Linked Records (Parameters) ═══ -->
   <div class="addgate-panel">
-    <h3>4. Linked Records (Parameters)</h3>
+    <h3>4. Linked Records</h3>
     <p class="muted" style="margin-top:-.4rem; font-size:.82rem;">
-      Link the decision to existing OSDU data. You can paste record IDs directly or use
-      <strong>Browse</strong> to search.
+      Link the decision to existing OSDU evidence. Paste record IDs or use <strong>Browse</strong>.
+      <em>If using "Create Full Package" below, the evidence package and risks are auto-created — only fill in source data references here.</em>
     </p>
 
-    <div class="link-section">
-      <div class="link-row">
-        <label>In-place vol. stats <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-rev-stats" placeholder="dev:work-product-component--ReservoirEstimatedVolumes:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-rev-stats','osdu:wks:work-product-component--ReservoirEstimatedVolumes:*')">Browse</button>
+    <!-- ── Subsurface & Volumes ── -->
+    <details open style="margin-bottom:.6rem;">
+      <summary style="font-weight:600;font-size:13px;cursor:pointer;color:var(--eq-charcoal);">Subsurface & Volumes</summary>
+      <div class="link-section" style="margin-top:.4rem;">
+        <div class="link-row">
+          <label>In-place vol. stats <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-rev-stats" placeholder="dev:work-product-component--ReservoirEstimatedVolumes:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-rev-stats','osdu:wks:work-product-component--ReservoirEstimatedVolumes:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>In-place vol. raw <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-rev-raw" placeholder="dev:work-product-component--ReservoirEstimatedVolumes:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-rev-raw','osdu:wks:work-product-component--ReservoirEstimatedVolumes:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>Production profile <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-production-profile" placeholder="dev:work-product-component--ProductionProfile:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-production-profile','osdu:wks:work-product-component--ColumnBasedTable:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>GeoLabelSet <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-geolabelset" placeholder="dev:work-product-component--GeoLabelSet:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-geolabelset','osdu:wks:work-product-component--GeoLabelSet:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>Design matrix <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-params" placeholder="dev:work-product-component--ColumnBasedTable:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-params','osdu:wks:work-product-component--ColumnBasedTable:*')">Browse</button>
+        </div>
       </div>
+    </details>
 
-      <div class="link-row">
-        <label>In-place vol. raw <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-rev-raw" placeholder="dev:work-product-component--ReservoirEstimatedVolumes:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-rev-raw','osdu:wks:work-product-component--ReservoirEstimatedVolumes:*')">Browse</button>
+    <!-- ── Geomodel & Dataspace ── -->
+    <details open style="margin-bottom:.6rem;">
+      <summary style="font-weight:600;font-size:13px;cursor:pointer;color:var(--eq-charcoal);">Geomodel & Dataspace</summary>
+      <div class="link-section" style="margin-top:.4rem;">
+        <div class="link-row">
+          <label>RDDMS Dataspace <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-dataspace" placeholder="dev:dataset--ETPDataspace:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-dataspace','osdu:wks:dataset--ETPDataspace:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>Dev Concept <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-devconcept" placeholder="dev:work-product-component--DevelopmentConcept:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-devconcept','osdu:wks:work-product-component--DevelopmentConcept:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>Activity <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-activity" placeholder="dev:work-product-component--Activity:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-activity','osdu:wks:work-product-component--Activity:*')">Browse</button>
+        </div>
       </div>
+    </details>
 
-      <div class="link-row">
-        <label>Production profile <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-production-profile" placeholder="dev:work-product-component--ProductionProfile:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-production-profile','osdu:wks:work-product-component--ColumnBasedTable:*')">Browse</button>
+    <!-- ── Well & Drilling (shown for WPC / Dev Well / Exploration presets) ── -->
+    <details id="well-links-section" style="display:none; margin-bottom:.6rem;">
+      <summary style="font-weight:600;font-size:13px;cursor:pointer;color:var(--eq-charcoal);">Well & Drilling <span class="link-badge optional" style="font-size:.65rem;vertical-align:middle;">preset-driven</span></summary>
+      <div class="link-section" style="margin-top:.4rem;">
+        <div class="link-row">
+          <label>Producer Well <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-well-prod" placeholder="dev:master-data--Well:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-well-prod','osdu:wks:master-data--Well:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>Injector Well <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-well-inj" placeholder="dev:master-data--Well:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-well-inj','osdu:wks:master-data--Well:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>Wellbore <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-wellbore" placeholder="dev:master-data--Wellbore:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-wellbore','osdu:wks:master-data--Wellbore:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>Trajectory <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-trajectory" placeholder="dev:work-product-component--WellboreTrajectory:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-trajectory','osdu:wks:work-product-component--WellboreTrajectory:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>Well Cost AFE <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-wellcost" placeholder="dev:work-product-component--ColumnBasedTable:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-wellcost','osdu:wks:work-product-component--ColumnBasedTable:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>Completion <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-tubular" placeholder="dev:work-product-component--TubularAssembly:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-tubular','osdu:wks:work-product-component--TubularAssembly:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>Drilling Pkg <span class="link-badge optional">optional</span></label>
+          <input type="text" id="link-drilling-collection" placeholder="dev:work-product-component--PersistedCollection:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-drilling-collection','osdu:wks:work-product-component--PersistedCollection:*')">Browse</button>
+        </div>
       </div>
+    </details>
 
-      <div class="link-row">
-        <label>GeoLabelSet <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-geolabelset" placeholder="dev:work-product-component--GeoLabelSet:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-geolabelset','osdu:wks:work-product-component--GeoLabelSet:*')">Browse</button>
+    <!-- ── Inherited from prior gate (shown for DG3/DG4 / Well DG2/DG3) ── -->
+    <details id="inherit-links-section" style="display:none; margin-bottom:.6rem;">
+      <summary style="font-weight:600;font-size:13px;cursor:pointer;color:var(--eq-charcoal);">Inherited from Prior Gate <span class="link-badge optional" style="font-size:.65rem;vertical-align:middle;">preset-driven</span></summary>
+      <p class="muted" id="inherit-note" style="margin-top:.4rem; font-size:.82rem; display:none;"></p>
+      <div class="link-section" style="margin-top:.4rem;">
+        <div class="link-row">
+          <label>Prior BD <span class="link-badge optional">recommended</span></label>
+          <input type="text" id="link-prior-bd" placeholder="dev:master-data--BusinessDecision:previous-gate:1" />
+          <button class="btn" type="button" onclick="openBrowse('link-prior-bd','osdu:wks:master-data--BusinessDecision:*')">Browse</button>
+        </div>
+        <div class="link-row">
+          <label>Collab Project <span class="link-badge optional">recommended</span></label>
+          <input type="text" id="link-collab-project" placeholder="dev:master-data--CollaborationProject:…" />
+          <button class="btn" type="button" onclick="openBrowse('link-collab-project','osdu:wks:master-data--CollaborationProject:*')">Browse</button>
+        </div>
+        <p class="muted" style="margin-top:2px; font-size:.75rem;">
+          Links this decision to the preceding gate. Evidence package, collaboration project, and activity carry forward automatically.
+        </p>
       </div>
+    </details>
 
-      <div class="link-row">
-        <label>Parameters <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-params" placeholder="dev:work-product-component--ColumnBasedTable:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-params','osdu:wks:work-product-component--ColumnBasedTable:*')">Browse</button>
-      </div>
-
-      <div class="link-row">
-        <label>Activity <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-activity" placeholder="dev:work-product-component--Activity:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-activity','osdu:wks:work-product-component--Activity:*')">Browse</button>
-      </div>
-
-      <div class="link-row">
-        <label>Dataspace <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-dataspace" placeholder="dev:dataset--ETPDataspace:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-dataspace','osdu:wks:dataset--ETPDataspace:*')">Browse</button>
-      </div>
-
-      <div class="link-row">
-        <label>Collection <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-collection" placeholder="dev:work-product-component--PersistedCollection:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-collection','osdu:wks:work-product-component--PersistedCollection:*')">Browse</button>
-      </div>
-    </div>
-
-    <!-- ── Well-specific linked records (shown for WPC / Dev Well / Exploration presets) ── -->
-    <div id="well-links-section" style="display:none; margin-top:.8rem; border-top:1px dashed var(--eq-border); padding-top:.8rem;">
-      <h4 style="margin:0 0 .5rem;font-size:14px;font-weight:600;color:var(--eq-charcoal);">
-        Well-Specific Records <span class="link-badge optional" style="font-size:.7rem;vertical-align:middle;">preset-driven</span>
-      </h4>
-      <p class="muted" style="margin-top:0; font-size:.82rem;">
-        Well references for WPC, development well, or exploration well decisions. Links the decision to specific wells and drilling artifacts.
+    <!-- ── Additional records (user-defined) ── -->
+    <details style="margin-bottom:.4rem;">
+      <summary style="font-weight:600;font-size:13px;cursor:pointer;color:var(--eq-charcoal);">Additional Records <span class="link-badge optional" style="font-size:.65rem;vertical-align:middle;">optional</span></summary>
+      <p class="muted" style="margin-top:.4rem; font-size:.82rem;">
+        Attach arbitrary records (seismic surveys, reports, etc.) to this decision.
       </p>
-
-      <div class="link-row">
-        <label>Producer Well <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-well-prod" placeholder="dev:master-data--Well:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-well-prod','osdu:wks:master-data--Well:*')">Browse</button>
+      <div style="display:flex;gap:.5rem;margin-bottom:.5rem;align-items:center;margin-top:.4rem;">
+        <input type="text" id="custom-rec-label" placeholder="Label (e.g. Seismic Survey)" style="width:180px;" />
+        <input type="text" id="custom-rec-id" placeholder="Record ID (e.g. dev:work-product-component--…)" style="flex:1;" />
+        <button class="btn" type="button" onclick="openBrowse('custom-rec-id','osdu:wks:*:*')">Browse</button>
+        <button class="btn" type="button" onclick="addCustomRecord()">+ Add</button>
       </div>
-
-      <div class="link-row">
-        <label>Injector Well <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-well-inj" placeholder="dev:master-data--Well:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-well-inj','osdu:wks:master-data--Well:*')">Browse</button>
-      </div>
-
-      <div class="link-row">
-        <label>Wellbore <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-wellbore" placeholder="dev:master-data--Wellbore:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-wellbore','osdu:wks:master-data--Wellbore:*')">Browse</button>
-      </div>
-
-      <div class="link-row">
-        <label>Trajectory <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-trajectory" placeholder="dev:work-product-component--WellboreTrajectory:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-trajectory','osdu:wks:work-product-component--WellboreTrajectory:*')">Browse</button>
-      </div>
-
-      <div class="link-row">
-        <label>Dev Concept <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-devconcept" placeholder="dev:work-product-component--DevelopmentConcept:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-devconcept','osdu:wks:work-product-component--DevelopmentConcept:*')">Browse</button>
-      </div>
-
-      <div class="link-row">
-        <label>Well Cost AFE <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-wellcost" placeholder="dev:work-product-component--ColumnBasedTable:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-wellcost','osdu:wks:work-product-component--ColumnBasedTable:*')">Browse</button>
-      </div>
-
-      <div class="link-row">
-        <label>Completion <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-tubular" placeholder="dev:work-product-component--TubularAssembly:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-tubular','osdu:wks:work-product-component--TubularAssembly:*')">Browse</button>
-      </div>
-
-      <div class="link-row">
-        <label>Drilling Pkg <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-drilling-collection" placeholder="dev:work-product-component--PersistedCollection:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-drilling-collection','osdu:wks:work-product-component--PersistedCollection:*')">Browse</button>
-      </div>
-
-      <div class="link-row">
-        <label>Collab Project <span class="link-badge optional">optional</span></label>
-        <input type="text" id="link-collab-project" placeholder="dev:master-data--CollaborationProject:…" />
-        <button class="btn" type="button" onclick="openBrowse('link-collab-project','osdu:wks:master-data--CollaborationProject:*')">Browse</button>
-      </div>
-    </div>
-
-    <!-- ── Inheritance section (shown for DG3/DG4 presets that build on prior gates) ── -->
-    <div id="inherit-links-section" style="display:none; margin-top:.8rem; border-top:1px dashed var(--eq-border); padding-top:.8rem;">
-      <h4 style="margin:0 0 .5rem;font-size:14px;font-weight:600;color:var(--eq-charcoal);">
-        Inherited from Prior Gate <span class="link-badge optional" style="font-size:.7rem;vertical-align:middle;">preset-driven</span>
-      </h4>
-      <p class="muted" id="inherit-note" style="margin-top:0; font-size:.82rem; display:none;"></p>
-
-      <div class="link-row">
-        <label>Prior BD <span class="link-badge optional">recommended</span></label>
-        <input type="text" id="link-prior-bd" placeholder="dev:master-data--BusinessDecision:previous-gate:1" />
-        <button class="btn" type="button" onclick="openBrowse('link-prior-bd','osdu:wks:master-data--BusinessDecision:*')">Browse</button>
-      </div>
-      <p class="muted" style="margin-top:2px; font-size:.75rem;">
-        Links this decision to the preceding gate. The prior BD's evidence package, collaboration project, and activity are automatically referenced.
-      </p>
-    </div>
-
-    <!-- ── User-defined additional records ── -->
-    <h4 style="margin:1rem 0 .4rem;font-size:14px;font-weight:600;color:var(--eq-charcoal);">
-      Additional records <span class="link-badge optional" style="font-size:.7rem;vertical-align:middle;">optional</span>
-    </h4>
-    <p class="muted" style="margin-top:0; font-size:.82rem;">
-      Attach arbitrary additional records to this decision. Provide a label and record ID for each.
-    </p>
-    <div style="display:flex;gap:.5rem;margin-bottom:.5rem;align-items:center;">
-      <input type="text" id="custom-rec-label" placeholder="Label (e.g. Seismic Survey)" style="width:180px;" />
-      <input type="text" id="custom-rec-id" placeholder="Record ID (e.g. dev:work-product-component--…)" style="flex:1;" />
-      <button class="btn" type="button" onclick="openBrowse('custom-rec-id','osdu:wks:*:*')">Browse</button>
-      <button class="btn" type="button" onclick="addCustomRecord()">+ Add</button>
-    </div>
-    <div class="risk-list" id="custom-rec-list"></div>
+      <div class="risk-list" id="custom-rec-list"></div>
+    </details>
   </div>
 
   <!-- ═══ 5. Risks ═══ -->

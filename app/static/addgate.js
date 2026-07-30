@@ -422,12 +422,16 @@
     var hints = preset.linkedRecordHints || {};
     var wellSection = document.getElementById('well-links-section');
     if (wellSection) {
-      wellSection.style.display = (hints.wellProd || hints.wellInj || hints.wellExploration || hints.trajectory || hints.tubularAssembly || hints.devConcept || hints.wellCostAFE || hints.drillingCollection || hints.geoscienceCollection) ? '' : 'none';
+      var showWell = (hints.wellProd || hints.wellInj || hints.wellExploration || hints.trajectory || hints.tubularAssembly || hints.devConcept || hints.wellCostAFE || hints.drillingCollection || hints.geoscienceCollection);
+      wellSection.style.display = showWell ? '' : 'none';
+      if (showWell) wellSection.open = true;
     }
     // Show/hide inheritance fields (Prior BD, Collab Project) for later-gate presets
     var inheritSection = document.getElementById('inherit-links-section');
     if (inheritSection) {
-      inheritSection.style.display = (hints.priorBD || hints.collabProject) ? '' : 'none';
+      var showInherit = (hints.priorBD || hints.collabProject);
+      inheritSection.style.display = showInherit ? '' : 'none';
+      if (showInherit) inheritSection.open = true;
     }
     // Show inheritance note
     var inheritNote = document.getElementById('inherit-note');
@@ -518,7 +522,6 @@
       params_id:             document.getElementById('link-params').value,
       activity_id:           document.getElementById('link-activity').value,
       dataspace_id:          document.getElementById('link-dataspace').value,
-      collection_id:         document.getElementById('link-collection').value,
       risk_ids:              riskIds.slice(),
       custom_records:        customRecords.slice(),
       // Well-specific linked records
