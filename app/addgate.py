@@ -1542,15 +1542,15 @@ async def create_package(request: Request):
     # ── 2. Create PersistedCollections (hierarchical evidence package) ──
     # Structure differs by preset:
     #   WPC / Dev Well / Exploration → well-focused sub-collections:
-    #     1. Undergrunn (subsurface: volumes, geomodel, GeoLabelSet)
-    #     2. Brønn & Boring (well & drilling: trajectory, completion, cost, wellbore)
-    #     3. Risiko & Beslutning (risks, DevConcept, activity)
+    #     1. Subsurface (volumes, geomodel, GeoLabelSet)
+    #     2. Well & Drilling (trajectory, completion, cost, wellbore)
+    #     3. Risk & Decision (risks, DevConcept, activity)
     #     → Top-level evidence package referencing sub-collections
     #
-    #   Field Dev DG1/DG2 → domain sub-collections (Drogon pattern):
-    #     1. Geomodell (grid, maps, polygons, dataspace)
-    #     2. Simulering & Volum (volumes raw/stat, params, production)
-    #     3. Dokumenter & Risiko (risks, documents, activity)
+    #   Field Dev DG0-DG4 → domain sub-collections (Drogon pattern):
+    #     1. Geomodel (grid, maps, polygons, dataspace)
+    #     2. Simulation & Volumes (volumes raw/stat, params, production)
+    #     3. Risk & Documents (risks, documents, activity)
     #     → Top-level evidence package referencing sub-collections
 
     collection_id_created = ""
