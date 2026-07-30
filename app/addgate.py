@@ -83,10 +83,12 @@ async def add_dg_page(request: Request):
 # ── Decision-level reference data ──────────────────────────────────────────
 
 _FALLBACK_LEVELS = [
+    {"id": "DG0", "name": "DG0 - Screening / SSVP"},
     {"id": "DG1", "name": "DG1 - Identify & Assess"},
     {"id": "DG2", "name": "DG2 - Concept Select"},
-    {"id": "DG3", "name": "DG3 - Define & Execute"},
-    {"id": "DG4", "name": "DG4 - Operate & Improve"},
+    {"id": "DG3", "name": "DG3 - Sanction / FID"},
+    {"id": "DG4", "name": "DG4 - Start-up"},
+    {"id": "WPC", "name": "WPC - Well Planning Committee"},
 ]
 
 
@@ -1253,7 +1255,7 @@ async def create_generic(request: Request):
       type   - "string" | "number" | "boolean" | "json" | "array" | "auto"
 
     Array and nested-object fields use dot-notation for keys:
-      "Tags"       type=array  value="Drogon, EvidencePackage"
+      "Tags"       type=array  value="MyField, EvidencePackage"
       "RiskIDs"    type=array  value="dev:master-data--Risk:foo:1, dev:..."
       "ext.custom" type=string value="hello"
 
@@ -1547,7 +1549,7 @@ async def create_package(request: Request):
     #     3. Risk & Decision (risks, DevConcept, activity)
     #     → Top-level evidence package referencing sub-collections
     #
-    #   Field Dev DG0-DG4 → domain sub-collections (Drogon pattern):
+    #   Field Dev DG0-DG4 → domain sub-collections:
     #     1. Geomodel (grid, maps, polygons, dataspace)
     #     2. Simulation & Volumes (volumes raw/stat, params, production)
     #     3. Risk & Documents (risks, documents, activity)

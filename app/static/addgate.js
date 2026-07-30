@@ -194,6 +194,18 @@
   // ── BD Presets ──
   var BD_PRESETS = {
     blank: { level: '', alternatives: [], economics: [], templateId: '' },
+    field_dev_dg0: {
+      level: 'DG0', templateId: 'FieldDevelopment',
+      alternatives: [
+        {name: 'Proceed to screening / SSVP', rank: 1, action: 'Approve', rationale: ''},
+        {name: 'Desk study only', rank: 2, action: 'Consider', rationale: ''},
+        {name: 'Do not pursue', rank: 3, action: 'Fallback', rationale: ''},
+      ],
+      economics: [
+        {type: 'Recoverable_P50', value: '', unit: 'MSm3'},
+        {type: 'NPV_screening', value: '', unit: 'MNOK'},
+      ],
+    },
     field_dev_dg1: {
       level: 'DG1', templateId: 'FieldDevelopment',
       alternatives: [
@@ -249,10 +261,10 @@
     wpc: {
       level: 'WPC', templateId: 'FieldDevWells',
       alternatives: [
-        {name: 'Base case – WI + producers, subsea template', rank: 1, action: 'Approve', rationale: 'Highest NPV. Inject in target formation, tieback to host.'},
-        {name: 'Depletion / limited injection (scale risk)', rank: 2, action: 'Consider', rationale: 'Fallback if formation water incompatibility makes injection infeasible.'},
-        {name: 'WAG injection (if gas available)', rank: 3, action: 'Consider', rationale: 'Evaluate gas injection in next phase. Avoids water-related risks.'},
-        {name: 'Defer – pilot well data first', rank: 4, action: 'Fallback', rationale: 'Acquire subsurface data to reduce uncertainty before committing to full wells.'},
+        {name: 'Proceed with well programme (recommended)', rank: 1, action: 'Approve', rationale: 'Execute planned wells per approved drainage strategy.'},
+        {name: 'Revised well count / phasing', rank: 2, action: 'Consider', rationale: 'Adjust number or sequencing of wells based on updated subsurface model.'},
+        {name: 'Alternative drainage strategy', rank: 3, action: 'Consider', rationale: 'Evaluate alternative completion or injection approach.'},
+        {name: 'Defer – acquire more data', rank: 4, action: 'Fallback', rationale: 'Postpone well commitment until key subsurface uncertainties are resolved.'},
       ],
       economics: [
         {type: 'NPV_10pct', value: '', unit: 'MNOK'},
@@ -277,9 +289,9 @@
       level: 'DG2', templateId: 'FieldDevWells',
       inheritsFrom: 'WPC',
       alternatives: [
-        {name: 'Proceed with detailed design (recommended)', rank: 1, action: 'Approve', rationale: 'Well concept approved at WPC, proceed to detailed well design and AFE preparation.'},
-        {name: 'Revised drainage strategy', rank: 2, action: 'Consider', rationale: 'Adjust target/completion based on pilot well or updated model results.'},
-        {name: 'Defer – await pilot data', rank: 3, action: 'Fallback', rationale: 'Hold detailed design until key subsurface uncertainties resolved.'},
+        {name: 'Proceed with detailed design (recommended)', rank: 1, action: 'Approve', rationale: 'Well concept approved at WPC, proceed to detailed well design and AFE.'},
+        {name: 'Revised well target or completion', rank: 2, action: 'Consider', rationale: 'Adjust based on updated reservoir model or new data.'},
+        {name: 'Defer – await further data', rank: 3, action: 'Fallback', rationale: 'Hold detailed design until key uncertainties are resolved.'},
       ],
       economics: [
         {type: 'Well_Cost_estimate', value: '', unit: 'MNOK'},
@@ -303,9 +315,9 @@
       level: 'DG3', templateId: 'FieldDevWells',
       inheritsFrom: 'Well DG2',
       alternatives: [
-        {name: 'Drill as designed (recommended)', rank: 1, action: 'Approve', rationale: 'Execute well programme per approved AFE.'},
-        {name: 'Modified trajectory / target', rank: 2, action: 'Consider', rationale: 'Adjust well path based on updated subsurface model.'},
-        {name: 'Defer to next rig slot', rank: 3, action: 'Fallback', rationale: 'Postpone if rig or budget constraints apply.'},
+        {name: 'Execute well as designed (recommended)', rank: 1, action: 'Approve', rationale: 'Drill per approved AFE and well programme.'},
+        {name: 'Modified well path or target', rank: 2, action: 'Consider', rationale: 'Adjust trajectory based on updated model or offset well results.'},
+        {name: 'Defer to next rig slot', rank: 3, action: 'Fallback', rationale: 'Postpone if rig availability or budget constraints require delay.'},
       ],
       economics: [
         {type: 'Well_Cost', value: '', unit: 'MNOK'},
@@ -390,12 +402,15 @@
     document.querySelectorAll('#mode-bd .act-preset-card').forEach(function(c) {
       c.classList.toggle('selected', c.id === 'bdp-' + presetName);
     });
-    // Set decision level
+    // Set decision level (substring match to handle varying OSDU codes)
     if (preset.level) {
       var sel = document.getElementById('bd-level');
+      var lvl = preset.level.toUpperCase();
       for (var i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].value === preset.level) { sel.selectedIndex = i; break; }
+        var optVal = sel.options[i].value.toUpperCase();
+        if (optVal === lvl || optVal.indexOf(lvl) >= 0) { sel.selectedIndex = i; break; }
       }
+      sel.dispatchEvent(new Event('change'));
     }
     // Set schedule template
     if (preset.templateId) {
