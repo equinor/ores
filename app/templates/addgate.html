@@ -469,14 +469,16 @@
           <label>Prior BD <span class="link-badge optional">recommended</span></label>
           <input type="text" id="link-prior-bd" placeholder="dev:master-data--BusinessDecision:previous-gate:1" />
           <button class="btn" type="button" onclick="openBrowse('link-prior-bd','osdu:wks:master-data--BusinessDecision:*')">Browse</button>
+          <button class="btn" type="button" onclick="loadFromPriorBd()" style="font-size:11px;background:var(--eq-link);color:#fff;border-color:var(--eq-link);" title="Fetch prior BD and populate form fields (economics, alternatives, linked records)">Load &amp; Populate</button>
         </div>
+        <div id="inherit-load-status" style="display:none;margin:4px 0;font-size:12px;"></div>
         <div class="link-row">
           <label>Collab Project <span class="link-badge optional">recommended</span></label>
           <input type="text" id="link-collab-project" placeholder="dev:master-data--CollaborationProject:…" />
           <button class="btn" type="button" onclick="openBrowse('link-collab-project','osdu:wks:master-data--CollaborationProject:*')">Browse</button>
         </div>
         <p class="muted" style="margin-top:2px; font-size:.75rem;">
-          Links this decision to the preceding gate. Evidence package, collaboration project, and activity carry forward automatically.
+          Links this decision to the preceding gate. <strong>Load &amp; Populate</strong> fetches the prior BD's economics, alternatives, and linked records into this form — all fields remain editable for override.
         </p>
       </div>
     </details>
@@ -486,10 +488,29 @@
       <summary style="font-weight:600;font-size:13px;cursor:pointer;color:var(--eq-charcoal);">Additional Records <span class="link-badge optional" style="font-size:.65rem;vertical-align:middle;">optional</span></summary>
       <p class="muted" style="margin-top:.4rem; font-size:.82rem;">
         Attach arbitrary records (seismic surveys, reports, etc.) to this decision.
+        Use <strong>Replaces</strong> to override a specific inherited linked-record field.
       </p>
-      <div style="display:flex;gap:.5rem;margin-bottom:.5rem;align-items:center;margin-top:.4rem;">
-        <input type="text" id="custom-rec-label" placeholder="Label (e.g. Seismic Survey)" style="width:180px;" />
-        <input type="text" id="custom-rec-id" placeholder="Record ID (e.g. dev:work-product-component--…)" style="flex:1;" />
+      <div style="display:flex;gap:.5rem;margin-bottom:.5rem;align-items:center;flex-wrap:wrap;margin-top:.4rem;">
+        <input type="text" id="custom-rec-label" placeholder="Label (e.g. Updated Trajectory)" style="width:170px;" />
+        <input type="text" id="custom-rec-id" placeholder="Record ID (e.g. dev:work-product-component--…)" style="flex:1;min-width:200px;" />
+        <select id="custom-rec-replaces" style="width:150px;font-size:12px;" title="Optionally replace a linked-record field">
+          <option value="">Replaces: (none)</option>
+          <option value="link-rev-stats">In-place vol. stats</option>
+          <option value="link-rev-raw">In-place vol. raw</option>
+          <option value="link-production-profile">Production profile</option>
+          <option value="link-geolabelset">GeoLabelSet</option>
+          <option value="link-params">Design matrix</option>
+          <option value="link-activity">Activity</option>
+          <option value="link-dataspace">RDDMS Dataspace</option>
+          <option value="link-devconcept">Dev Concept</option>
+          <option value="link-well-prod">Producer Well</option>
+          <option value="link-well-inj">Injector Well</option>
+          <option value="link-wellbore">Wellbore</option>
+          <option value="link-trajectory">Trajectory</option>
+          <option value="link-wellcost">Well Cost AFE</option>
+          <option value="link-tubular">Completion</option>
+          <option value="link-drilling-collection">Drilling Pkg</option>
+        </select>
         <button class="btn" type="button" onclick="openBrowse('custom-rec-id','osdu:wks:*:*')">Browse</button>
         <button class="btn" type="button" onclick="addCustomRecord()">+ Add</button>
       </div>

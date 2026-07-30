@@ -11,14 +11,42 @@
   // ── Custom records management ──
   var customRecords = [];
 
+  // Map of replaceable linked-record fields for custom record override
+  var REPLACEABLE_FIELDS = {
+    '': '(none — additional record)',
+    'link-rev-stats': 'In-place vol. stats',
+    'link-rev-raw': 'In-place vol. raw',
+    'link-production-profile': 'Production profile',
+    'link-geolabelset': 'GeoLabelSet',
+    'link-params': 'Design matrix',
+    'link-activity': 'Activity',
+    'link-dataspace': 'RDDMS Dataspace',
+    'link-devconcept': 'Dev Concept',
+    'link-well-prod': 'Producer Well',
+    'link-well-inj': 'Injector Well',
+    'link-wellbore': 'Wellbore',
+    'link-trajectory': 'Trajectory',
+    'link-wellcost': 'Well Cost AFE',
+    'link-tubular': 'Completion',
+    'link-drilling-collection': 'Drilling Pkg',
+  };
+
   window.addCustomRecord = function() {
     var labelInp = document.getElementById('custom-rec-label');
     var idInp = document.getElementById('custom-rec-id');
+    var replacesInp = document.getElementById('custom-rec-replaces');
     var lbl = labelInp.value.trim();
     var rid = idInp.value.trim();
+    var replaces = replacesInp ? replacesInp.value : '';
     if (!lbl || !rid) { alert('Both a label and a record ID are required.'); return; }
-    customRecords.push({label: lbl, id: rid});
+    customRecords.push({label: lbl, id: rid, replaces: replaces});
     labelInp.value = ''; idInp.value = '';
+    if (replacesInp) replacesInp.value = '';
+    // If replacing a linked-record field, update it immediately
+    if (replaces) {
+      var target = document.getElementById(replaces);
+      if (target) target.value = rid;
+    }
     renderCustomRecords();
   };
 
@@ -32,7 +60,8 @@
     var el = document.getElementById('custom-rec-list');
     if (!customRecords.length) { el.innerHTML = '<span class="muted" style="font-size:13px;">No custom records added yet.</span>'; return; }
     el.innerHTML = customRecords.map(function(rec, i) {
-      return '<div class="risk-item"><strong style="min-width:120px;font-size:12px;color:var(--eq-charcoal);">' + escHtml(rec.label) + '</strong>' +
+      var badge = rec.replaces ? '<span style="font-size:10px;background:#e8f4fd;color:var(--eq-link);padding:1px 5px;border-radius:3px;margin-left:6px;">replaces ' + escHtml(REPLACEABLE_FIELDS[rec.replaces] || rec.replaces) + '</span>' : '';
+      return '<div class="risk-item"><strong style="min-width:120px;font-size:12px;color:var(--eq-charcoal);">' + escHtml(rec.label) + badge + '</strong>' +
              '<span class="risk-id">' + escHtml(rec.id) + '</span>' +
              '<button class="remove-btn" onclick="removeCustomRecord(' + i + ')" title="Remove">&times;</button></div>';
     }).join('');
@@ -456,6 +485,75 @@
         inheritNote.textContent = 'This gate inherits from ' + preset.inheritsFrom + ' \u2014 link the prior BD and collaboration project to carry forward evidence.';
       }
     }
+  };
+
+  // ── Load from prior BD ──
+  window.loadFromPriorBd = function() {
+    var bdId = document.getElementById('link-prior-bd').value.trim();
+    if (!bdId) { alert('Enter or browse a Prior BD record ID first.'); return; }
+
+    var status = document.getElementById('inherit-load-status');
+    status.style.display = '';
+    status.innerHTML = '<span class="muted">Loading prior BD\u2026</span>';
+
+    fetch('/add-dg/load-prior-bd?id=' + encodeURIComponent(bdId))
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) {
+          status.innerHTML = '<span style="color:var(--eq-red);">\u2717 ' + escHtml(data.error) + '</span>';
+          return;
+        }
+        // Populate economics (carry forward, clear values for re-assessment)
+        if (data.economics && data.economics.length) {
+          bdEconomics = data.economics.map(function(e) {
+            return {type: e.type || '', value: '', unit: e.unit || ''};
+          });
+          renderBdEconomics();
+        }
+        // Populate alternatives (carry forward names/rationale, reset action to Consider)
+        if (data.alternatives && data.alternatives.length) {
+          bdAlternatives = data.alternatives.map(function(a, i) {
+            return {name: a.name || '', rank: i + 1, action: 'Consider', rationale: a.rationale || ''};
+          });
+          renderBdAlternatives();
+        }
+        // Populate linked records where available
+        if (data.linked_records) {
+          var lr = data.linked_records;
+          if (lr.rev_stats_id) document.getElementById('link-rev-stats').value = lr.rev_stats_id;
+          if (lr.rev_raw_id) document.getElementById('link-rev-raw').value = lr.rev_raw_id;
+          if (lr.production_profile_id) document.getElementById('link-production-profile').value = lr.production_profile_id;
+          if (lr.geolabelset_id) document.getElementById('link-geolabelset').value = lr.geolabelset_id;
+          if (lr.params_id) document.getElementById('link-params').value = lr.params_id;
+          if (lr.activity_id) document.getElementById('link-activity').value = lr.activity_id;
+          if (lr.dataspace_id) document.getElementById('link-dataspace').value = lr.dataspace_id;
+          if (lr.devconcept_id) document.getElementById('link-devconcept').value = lr.devconcept_id;
+          if (lr.collab_project_id) document.getElementById('link-collab-project').value = lr.collab_project_id;
+          // Well-specific
+          var wp = document.getElementById('link-well-prod');
+          var wi = document.getElementById('link-well-inj');
+          if (lr.well_prod_id && wp) wp.value = lr.well_prod_id;
+          if (lr.well_inj_id && wi) wi.value = lr.well_inj_id;
+          if (lr.trajectory_id) (document.getElementById('link-trajectory') || {}).value = lr.trajectory_id;
+          if (lr.tubular_id) (document.getElementById('link-tubular') || {}).value = lr.tubular_id;
+          if (lr.drilling_collection_id) (document.getElementById('link-drilling-collection') || {}).value = lr.drilling_collection_id;
+        }
+        // Carry forward project name and reservoir if empty
+        if (data.project_name && !document.getElementById('bd-project').value) {
+          document.getElementById('bd-project').value = data.project_name;
+        }
+        if (data.reservoir_id) {
+          var resSel = document.getElementById('reservoir-select');
+          for (var i = 0; i < resSel.options.length; i++) {
+            if (resSel.options[i].value === data.reservoir_id) { resSel.selectedIndex = i; break; }
+          }
+        }
+        var count = (data.economics ? data.economics.length : 0) + (data.alternatives ? data.alternatives.length : 0);
+        status.innerHTML = '<span style="color:var(--eq-green);">\u2713 Loaded from prior gate (' + count + ' items). All fields are editable \u2014 update values for this gate.</span>';
+      })
+      .catch(function(err) {
+        status.innerHTML = '<span style="color:var(--eq-red);">\u2717 ' + escHtml(err.message) + '</span>';
+      });
   };
 
   // ── Alternatives management ──

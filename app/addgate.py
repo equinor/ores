@@ -932,6 +932,103 @@ async def fetch_record(request: Request, id: str = Query(...)):
         )
 
 
+@router.get("/add-dg/load-prior-bd", summary="Load prior BD data for inheritance")
+async def load_prior_bd(request: Request, id: str = Query(...)):
+    """Fetch a BusinessDecision record and extract fields useful for next-gate inheritance.
+
+    Returns economics (types/units, values cleared for re-assessment),
+    alternatives, linked record IDs, project name, and reservoir ID.
+    All returned data is meant for pre-filling — the user can override everything.
+    """
+    at = _access_token(request)
+    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records/{id}"
+    hdr = osdu.headers(at)
+    try:
+        async with osdu.http_client(timeout=20) as client:
+            r = await client.get(storage_url, headers=hdr)
+    except Exception as e:
+        log.error("Load prior BD %s failed: %s", id, e)
+        return JSONResponse({"error": f"Failed to fetch record: {e}"}, status_code=502)
+
+    if not r.is_success:
+        return JSONResponse({"error": f"Storage API returned {r.status_code}"}, status_code=r.status_code)
+
+    rec = r.json()
+    data = rec.get("data", {})
+    ext = data.get("ext", {}).get("equinor", {})
+
+    # Extract economics from ProjectSpecifications
+    economics = []
+    for spec in data.get("ProjectSpecifications", []):
+        economics.append({
+            "type": spec.get("ParameterTypeID", "").split(":")[-2] if ":" in spec.get("ParameterTypeID", "") else spec.get("ParameterTypeID", ""),
+            "value": spec.get("ParameterValue", ""),
+            "unit": spec.get("UnitOfMeasureID", "").split(":")[-2] if ":" in spec.get("UnitOfMeasureID", "") else spec.get("UnitOfMeasureID", ""),
+        })
+
+    # Extract alternatives from ext.equinor.Alternatives
+    alternatives = []
+    for alt in ext.get("Alternatives", []):
+        alternatives.append({
+            "name": alt.get("Name", ""),
+            "rank": alt.get("Rank", 0),
+            "action": alt.get("Action", "Consider"),
+            "rationale": alt.get("Rationale", ""),
+        })
+
+    # Extract linked records from ParameterValueIDs and known fields
+    linked_records = {}
+    param_ids = data.get("ParameterValueIDs", [])
+
+    # Scan parameter IDs for known record types
+    for pid in param_ids:
+        pid_lower = pid.lower()
+        if "reservoirestimatedvolumes" in pid_lower:
+            if "linked_records" not in linked_records or not linked_records.get("rev_stats_id"):
+                linked_records["rev_stats_id"] = pid
+        elif "productionprofile" in pid_lower or ("columnbasedtable" in pid_lower and "production" in pid_lower):
+            linked_records["production_profile_id"] = pid
+        elif "geolabelset" in pid_lower:
+            linked_records["geolabelset_id"] = pid
+        elif "columnbasedtable" in pid_lower and not linked_records.get("params_id"):
+            linked_records["params_id"] = pid
+        elif "activity" in pid_lower and "template" not in pid_lower:
+            linked_records["activity_id"] = pid
+        elif "etpdataspace" in pid_lower:
+            linked_records["dataspace_id"] = pid
+        elif "developmentconcept" in pid_lower:
+            linked_records["devconcept_id"] = pid
+        elif "persistedcollection" in pid_lower:
+            linked_records["drilling_collection_id"] = pid
+        elif "wellboretrajectory" in pid_lower:
+            linked_records["trajectory_id"] = pid
+        elif "tubularassembly" in pid_lower:
+            linked_records["tubular_id"] = pid
+
+    # Check for CollaborationProjectID
+    cp_id = data.get("CollaborationProjectID", "") or ext.get("CollaborationProjectID", "")
+    if cp_id:
+        linked_records["collab_project_id"] = cp_id
+
+    # Reservoir from parent
+    reservoir_id = ""
+    for rel in data.get("GeoContexts", []):
+        if "Reservoir" in rel.get("GeoContextTypeID", ""):
+            reservoir_id = rel.get("GeoContextID", "")
+            break
+    if not reservoir_id:
+        reservoir_id = data.get("ReservoirID", "")
+
+    return JSONResponse({
+        "economics": economics,
+        "alternatives": alternatives,
+        "linked_records": linked_records,
+        "project_name": data.get("ProjectName", "") or data.get("Name", ""),
+        "reservoir_id": reservoir_id,
+        "prior_level": data.get("DecisionLevelID", ""),
+    })
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Create ActivityStateTemplate (Schedule Template)
 # ──────────────────────────────────────────────────────────────────────────────
