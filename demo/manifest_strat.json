@@ -1,0 +1,300 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "Data": {
+    "Datasets": [
+      {
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@dev.dataservices.energy"
+          ]
+        },
+        "kind": "osdu:wks:dataset--ETPDataspace:1.0.1",
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [],
+          "status": "compliant"
+        },
+        "createTime": "2026-03-25T12:41:07.278Z",
+        "id": "dev:dataset--ETPDataspace:maap-strat",
+        "modifyTime": "2026-04-20T13:43:06.144Z",
+        "version": 1,
+        "data": {
+          "ExistenceKind": "dev:reference-data--ExistenceKind:Actual:",
+          "DatasetProperties": {
+            "URI": "eml:///dataspace('maap/strat')"
+          },
+          "Name": "maap/strat",
+          "ExtensionProperties": {
+            "otherRelevantDataCountries": "[\"NO\"]"
+          },
+          "TotalSize": "442368"
+        }
+      }
+    ],
+    "WorkProductComponents": [
+      {
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@dev.dataservices.energy"
+          ]
+        },
+        "kind": "osdu:wks:work-product-component--Activity:1.4.0",
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [],
+          "status": "compliant"
+        },
+        "createTime": "2026-03-25T12:57:09.703Z",
+        "createUser": "osdu_user",
+        "id": "dev:work-product-component--Activity:dbcf0925-fc63-477a-a937-ac5952f538d1",
+        "modifyTime": "2026-03-25T12:57:09.703Z",
+        "modifyUser": "osdu_user",
+        "version": 1,
+        "authoringSoftware": "pdgm:portal-import:1",
+        "data": {
+          "ExistenceKind": "dev:reference-data--ExistenceKind:Prototype:",
+          "DDMSDatasets": [
+            "eml://reservoir-ddms2/dataspace('maap/strat')/resqml20.obj_Activity(dbcf0925-fc63-477a-a937-ac5952f538d1)"
+          ],
+          "IsDiscoverable": true,
+          "IsExtendedLoad": false,
+          "CreationDateTime": "2026-03-25T12:57:09.703Z",
+          "Name": "Scenario_automated_import_2026-03-25T12:57:09.703Z",
+          "ActivityTemplateID": "dev:master-data--ActivityTemplate:1801db47-12c3-4f8b-8ae3-25baeb528c23:",
+          "Parameters": [
+            {
+              "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+              "Title": "imported",
+              "Index": 0,
+              "StringParameter": "3 object(s)"
+            }
+          ],
+          "ExtensionProperties": {
+            "AuthoringSoftware": "pdgm:portal-import:1"
+          }
+        }
+      },
+      {
+        "id": "dev:work-product-component--Activity:0a77af8b-9e76-5d90-b935-44ff73db3775",
+        "kind": "osdu:wks:work-product-component--Activity:1.2.0",
+        "acl": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [],
+          "status": "compliant"
+        },
+        "data": {
+          "Name": "RDDMS Manifest Build",
+          "Description": "Auto-generated lineage: 1 work-product-component(s) produced from ETP dataspace objects.",
+          "Parameters": [
+            {
+              "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+              "Title": "Output",
+              "DataObjectParameter": "dev:work-product-component--Activity:dbcf0925-fc63-477a-a937-ac5952f538d1:"
+            }
+          ],
+          "SoftwareSpecifications": [
+            {
+              "SoftwareName": "RDDMS",
+              "Version": "1.0"
+            }
+          ],
+          "ActivityTemplateID": "dev:master-data--ActivityTemplate:RDDMSManifestBuild:"
+        },
+        "createTime": "2026-07-09T20:20:04.229Z",
+        "modifyTime": "2026-07-09T20:20:04.229Z"
+      }
+    ]
+  },
+  "MasterData": [
+    {
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.default.viewers@dev.dataservices.energy"
+        ]
+      },
+      "kind": "osdu:wks:master-data--CollaborationProject:1.0.0",
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [],
+        "status": "compliant"
+      },
+      "createTime": "2026-03-25T12:41:07.278Z",
+      "modifyTime": "2026-04-20T13:43:06.144Z",
+      "id": "dev:master-data--CollaborationProject:b252064d-aaa9-5fef-b680-408b9a1a374e",
+      "version": 1,
+      "data": {
+        "ExistenceKind": "dev:reference-data--ExistenceKind:Actual:",
+        "Name": "maap/strat",
+        "ProjectName": "maap/strat",
+        "Description": "Collaboration project for ETP dataspace 'maap/strat'",
+        "Namespace": "maap/strat",
+        "LifecycleStatusID": "dev:reference-data--CollaborationProjectLifecycleStatus:Open:",
+        "CreationDateTime": "2026-03-25T12:41:07.278Z",
+        "DefaultWIPACL": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@dev.dataservices.energy"
+          ]
+        },
+        "ProjectContributorACL": {
+          "owners": [
+            "data.default.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.default.viewers@dev.dataservices.energy"
+          ]
+        },
+        "ExtensionProperties": {
+          "DataspaceURI": "eml:///dataspace('maap/strat')"
+        }
+      }
+    },
+    {
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.default.viewers@dev.dataservices.energy"
+        ]
+      },
+      "kind": "osdu:wks:master-data--ActivityTemplate:1.1.0",
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [],
+        "status": "compliant"
+      },
+      "createTime": "2026-03-25T12:57:09.703Z",
+      "createUser": "osdu_user",
+      "id": "dev:master-data--ActivityTemplate:1801db47-12c3-4f8b-8ae3-25baeb528c23",
+      "modifyTime": "2026-03-25T12:57:09.703Z",
+      "modifyUser": "osdu_user",
+      "version": 1,
+      "authoringSoftware": "pdgm:portal-import:1",
+      "data": {
+        "ExistenceKind": "dev:reference-data--ExistenceKind:Prototype:",
+        "Parameters": [
+          {
+            "IsInput": false,
+            "IsOutput": true,
+            "MaxOccurs": -1,
+            "MinOccurs": 1,
+            "Title": "imported"
+          }
+        ]
+      }
+    }
+  ],
+  "ReferenceData": [
+    {
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.default.viewers@dev.dataservices.energy"
+        ]
+      },
+      "createTime": "2026-07-09T20:20:04.564Z",
+      "id": "dev:reference-data--ExistenceKind:Actual",
+      "kind": "osdu:wks:reference-data--ExistenceKind:1.0.0",
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [],
+        "status": "compliant"
+      },
+      "version": 1,
+      "data": {
+        "ExistenceKind": "dev:reference-data--ExistenceKind:Actual:",
+        "Code": "Actual",
+        "Name": "ExistenceKind-Actual",
+        "CommitDate": "2026-07-09T20:20:04.564Z"
+      }
+    },
+    {
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.default.viewers@dev.dataservices.energy"
+        ]
+      },
+      "createTime": "2026-07-09T20:20:04.564Z",
+      "id": "dev:reference-data--ExistenceKind:Prototype",
+      "kind": "osdu:wks:reference-data--ExistenceKind:1.0.0",
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [],
+        "status": "compliant"
+      },
+      "version": 1,
+      "data": {
+        "ExistenceKind": "dev:reference-data--ExistenceKind:Actual:",
+        "Code": "Prototype",
+        "Name": "ExistenceKind-Prototype",
+        "CommitDate": "2026-07-09T20:20:04.564Z"
+      }
+    },
+    {
+      "acl": {
+        "owners": [
+          "data.default.owners@dev.dataservices.energy"
+        ],
+        "viewers": [
+          "data.default.viewers@dev.dataservices.energy"
+        ]
+      },
+      "createTime": "2026-07-09T20:20:04.564Z",
+      "id": "dev:reference-data--ParameterKind:DataObject",
+      "kind": "osdu:wks:reference-data--ParameterKind:1.0.0",
+      "legal": {
+        "legaltags": [
+          "dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [],
+        "status": "compliant"
+      },
+      "version": 1,
+      "data": {
+        "ExistenceKind": "dev:reference-data--ExistenceKind:Actual:",
+        "Code": "DataObject",
+        "Name": "ParameterKind-DataObject",
+        "CommitDate": "2026-07-09T20:20:04.564Z"
+      }
+    }
+  ]
+}

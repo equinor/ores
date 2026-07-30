@@ -19,6 +19,7 @@ Provides:
   POST /add-dg/create-activity-template → JSON: build ActivityTemplate, PUT to Storage API
   POST /add-dg/create-activity      → JSON: build Activity record, PUT to Storage API
   POST /add-dg/create-generic       → JSON: build any record, PUT to Storage API
+  POST /add-dg/create-package       → JSON: batch-create BD + linked records in one shot
 """
 from __future__ import annotations
 
@@ -257,6 +258,17 @@ async def create_bd(request: Request):
     risk_ids = [r.strip() for r in body.get("risk_ids", []) if r.strip()]
     custom_records: List[Dict[str, str]] = body.get("custom_records", [])
 
+    # Well-specific linked records (WPC / Dev Well / Exploration presets)
+    well_prod_id = body.get("well_prod_id", "").strip()
+    well_inj_id = body.get("well_inj_id", "").strip()
+    wellbore_id = body.get("wellbore_id", "").strip()
+    trajectory_id = body.get("trajectory_id", "").strip()
+    devconcept_id = body.get("devconcept_id", "").strip()
+    wellcost_id = body.get("wellcost_id", "").strip()
+    tubular_id = body.get("tubular_id", "").strip()
+    drilling_collection_id = body.get("drilling_collection_id", "").strip()
+    collab_project_id = body.get("collab_project_id", "").strip()
+
     # ACL and legal from OSDU defaults
     acl = {
         "owners": osdu.DEFAULT_OWNERS,
@@ -340,6 +352,97 @@ async def create_bd(request: Request):
             "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "PersistedCollection"}],
         })
 
+    # ── Well-specific parameters (WPC / Dev Well / Exploration) ──
+    if well_prod_id:
+        parameters.append({
+            "Title": "Planned producer well",
+            "Selection": "Development/production well subject of this decision",
+            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Output:1",
+            "DataObjectParameter": well_prod_id,
+            "Keys": [{"ParameterKey": "wellType", "StringParameterKey": "Producer"}],
+        })
+
+    if well_inj_id:
+        parameters.append({
+            "Title": "Planned injector well",
+            "Selection": "Injection well subject of this decision",
+            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Output:1",
+            "DataObjectParameter": well_inj_id,
+            "Keys": [{"ParameterKey": "wellType", "StringParameterKey": "Injector"}],
+        })
+
+    if wellbore_id:
+        parameters.append({
+            "Title": "Target wellbore",
+            "Selection": "Wellbore reference for well decision",
+            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Output:1",
+            "DataObjectParameter": wellbore_id,
+            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "Wellbore"}],
+        })
+
+    if trajectory_id:
+        parameters.append({
+            "Title": "Wellbore trajectory",
+            "Selection": "Planned or as-drilled wellbore trajectory",
+            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": trajectory_id,
+            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "WellboreTrajectory"}],
+        })
+
+    if devconcept_id:
+        parameters.append({
+            "Title": "Development Concept",
+            "Selection": "Well plan, facilities, drainage strategy for this decision",
+            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": devconcept_id,
+            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "DevelopmentConcept"}],
+        })
+
+    if wellcost_id:
+        parameters.append({
+            "Title": "Well Cost AFE",
+            "Selection": "Cost breakdown per phase (AFE estimate)",
+            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": wellcost_id,
+            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "WellCostAFE"}],
+        })
+
+    if tubular_id:
+        parameters.append({
+            "Title": "Completion design (TubularAssembly)",
+            "Selection": "Casing, completion, tubing design for well",
+            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
+            "DataObjectParameter": tubular_id,
+            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "TubularAssembly"}],
+        })
+
+    if drilling_collection_id:
+        parameters.append({
+            "Title": "Drilling evidence package",
+            "Selection": "Trajectories, drilling programs, wellbore reports",
+            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": drilling_collection_id,
+            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "DrillingCollection"}],
+        })
+
+    if collab_project_id:
+        parameters.append({
+            "Title": "Collaboration project",
+            "Selection": "Long-lived project namespace for this field development",
+            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
+            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:InputReference:1",
+            "DataObjectParameter": collab_project_id,
+            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "CollaborationProject"}],
+        })
+
     # User-defined arbitrary records
     for crec in custom_records:
         clabel = crec.get("label", "").strip()
@@ -392,6 +495,19 @@ async def create_bd(request: Request):
         bd_data["DecisionDueDate"] = decision_due_date
     if decision_summary:
         bd_data["DecisionSummary"] = decision_summary
+
+    # ── Well references (for WPC / Dev Well / Exploration) ──
+    if collab_project_id:
+        bd_data["CollaborationProjectID"] = collab_project_id
+    if collection_id:
+        bd_data["EvidenceCollectionID"] = collection_id
+    if drilling_collection_id:
+        bd_data["DrillingEvidenceCollectionID"] = drilling_collection_id
+
+    # ancestry.children → wells being created by this decision
+    well_children = [w for w in [well_prod_id, well_inj_id, wellbore_id] if w]
+    if well_children:
+        bd_data["ancestry"]["children"] = well_children
 
     # ── ActivityStates from schedule template ──
     activity_states: List[Dict[str, Any]] = body.get("activity_states", [])
@@ -1248,6 +1364,313 @@ async def create_generic(request: Request):
             status_code=status,
         )
 
+
+def _auto_type(val: str) -> Any:
+    """Best-effort auto-type conversion for generic field values."""
+    if val == "":
+        return ""
+    low = val.lower()
+    if low in ("true", "false"):
+        return low == "true"
+    if low == "null":
+        return None
+    try:
+        return int(val)
+    except ValueError:
+        pass
+    try:
+        return float(val)
+    except ValueError:
+        pass
+    return val
+
+
+def _set_nested(d: Dict[str, Any], dotkey: str, val: Any) -> None:
+    """Set a value in a nested dict using dot-notation. E.g. 'ext.custom' → d[ext][custom]."""
+    parts = dotkey.split(".")
+    for part in parts[:-1]:
+        if part not in d or not isinstance(d[part], dict):
+            d[part] = {}
+        d = d[part]
+    d[parts[-1]] = val
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Batch Create Package - create BD + standard linked records in one shot
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Default risk scaffolds per preset type
+_WPC_DEFAULT_RISKS = [
+    {"Name": "Geological uncertainty – target zone presence/quality",
+     "Description": "Risk that target formation is absent, thinner, or lower quality than predicted from offset wells.",
+     "RiskCategoryID": "Subsurface", "InherentProbability": "Medium", "InherentSeverity": "High",
+     "MitigationPlan": "Pilot well data acquisition; real-time LWD evaluation during drilling."},
+    {"Name": "Drilling hazard – shallow gas / HP zone",
+     "Description": "Risk of encountering shallow gas or abnormal pressure during drilling operations.",
+     "RiskCategoryID": "Drilling", "InherentProbability": "Low", "InherentSeverity": "High",
+     "MitigationPlan": "Detailed well planning; managed pressure drilling capability on standby."},
+    {"Name": "Well cost overrun (>20% AFE)",
+     "Description": "Risk of significant cost overrun due to operational issues, weather, or subsurface surprises.",
+     "RiskCategoryID": "Commercial", "InherentProbability": "Medium", "InherentSeverity": "Medium",
+     "MitigationPlan": "Contingency budget included; clear decision tree for non-productive time."},
+    {"Name": "HSE – environmental / personnel safety",
+     "Description": "Risk of HSE incident during drilling and completion operations.",
+     "RiskCategoryID": "HSE", "InherentProbability": "Low", "InherentSeverity": "Critical",
+     "MitigationPlan": "Full HAZOP and HAZID completed; bridging document with rig operator."},
+    {"Name": "Formation water incompatibility (scale/barium)",
+     "Description": "Risk that formation water chemistry prevents water injection strategy.",
+     "RiskCategoryID": "Subsurface", "InherentProbability": "Medium", "InherentSeverity": "Medium",
+     "MitigationPlan": "Formation water sampling in pilot well; alternative drainage strategies prepared."},
+]
+
+_EXPLORATION_DEFAULT_RISKS = [
+    {"Name": "Trap / seal integrity",
+     "Description": "Risk that the trapping mechanism is breached or the seal is insufficient to retain hydrocarbons.",
+     "RiskCategoryID": "Subsurface", "InherentProbability": "Low", "InherentSeverity": "High",
+     "MitigationPlan": "Seismic amplitude analysis and fault seal assessment completed."},
+    {"Name": "Reservoir presence / quality",
+     "Description": "Risk that target reservoir is absent or has insufficient quality for commercial flow rates.",
+     "RiskCategoryID": "Subsurface", "InherentProbability": "Medium", "InherentSeverity": "High",
+     "MitigationPlan": "Offset well analogues and seismic inversion support presence prediction."},
+    {"Name": "Hydrocarbon charge / migration",
+     "Description": "Risk that hydrocarbons have not migrated to or been retained in the prospect.",
+     "RiskCategoryID": "Subsurface", "InherentProbability": "Low", "InherentSeverity": "Critical",
+     "MitigationPlan": "Basin modelling shows viable migration pathway; DHI indicators present on seismic."},
+    {"Name": "Drilling operations risk",
+     "Description": "Risk of operational issues during exploration well drilling.",
+     "RiskCategoryID": "Drilling", "InherentProbability": "Medium", "InherentSeverity": "Medium",
+     "MitigationPlan": "Detailed well design with offset well learnings; contingency plans for key scenarios."},
+]
+
+
+@router.post("/add-dg/create-package", summary="Batch-create BD + linked records")
+async def create_package(request: Request):
+    """
+    One-click full package creation: creates standard linked records
+    (Risks, PersistedCollection, optionally CollaborationProject) and then
+    creates the BusinessDecision record linking everything together.
+
+    This reduces the manual work of creating records one-by-one across
+    multiple tabs and copying IDs back and forth.
+
+    Expects JSON body with all standard BD fields PLUS:
+      preset_type      - "wpc" | "exploration" | "dev_well" | "field_dev" | ""
+      create_risks     - bool: auto-create standard risks for this preset
+      create_collection - bool: auto-create PersistedCollection evidence package
+      create_collab_project - bool: auto-create CollaborationProject
+      risk_overrides   - [{Name, Description, ...}] optional custom risk list
+    """
+    at = _access_token(request)
+    body = await request.json()
+
+    preset_type = body.get("preset_type", "").strip()
+    create_risks = body.get("create_risks", True)
+    create_collection = body.get("create_collection", True)
+    create_collab_project = body.get("create_collab_project", False)
+
+    reservoir_id = body.get("reservoir_id", "").strip()
+    name = body.get("name", "").strip()
+    if not reservoir_id:
+        raise HTTPException(400, "reservoir_id is required")
+    if not name:
+        raise HTTPException(400, "name is required")
+
+    id_prefix = reservoir_id.split(":")[0] if ":" in reservoir_id else "dev"
+    bd_slug = name.replace(" ", "-").replace("/", "-")[:80]
+
+    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
+    hdr = osdu.headers(at)
+    acl = {"owners": osdu.DEFAULT_OWNERS, "viewers": osdu.DEFAULT_VIEWERS}
+    legal = {
+        "legaltags": [osdu.DEFAULT_LEGAL_TAG],
+        "otherRelevantDataCountries": osdu.DEFAULT_COUNTRIES,
+    }
+
+    created_records: List[Dict[str, Any]] = []
+    errors: List[str] = []
+
+    # ── 1. Create Risks ─────────────────────────────────────────────────
+    created_risk_ids: List[str] = []
+    if create_risks:
+        risk_overrides = body.get("risk_overrides", [])
+        if risk_overrides:
+            risk_defs = risk_overrides
+        elif preset_type == "exploration":
+            risk_defs = _EXPLORATION_DEFAULT_RISKS
+        else:
+            risk_defs = _WPC_DEFAULT_RISKS
+
+        risk_records = []
+        for i, rdef in enumerate(risk_defs):
+            risk_name = rdef.get("Name", f"Risk-{i+1}")
+            risk_slug = risk_name.replace(" ", "-").replace("/", "-")[:50]
+            risk_id = f"{id_prefix}:master-data--Risk:{bd_slug}-{risk_slug}:1"
+            created_risk_ids.append(risk_id)
+
+            cat_id = rdef.get("RiskCategoryID", "General")
+            risk_records.append({
+                "id": risk_id,
+                "kind": "osdu:wks:master-data--Risk:1.2.0",
+                "acl": acl,
+                "legal": legal,
+                "data": {
+                    "Name": risk_name,
+                    "Description": rdef.get("Description", ""),
+                    "RiskCategoryID": f"{id_prefix}:reference-data--RiskCategory:{cat_id}:",
+                    "InherentRiskProbabilityID": f"{id_prefix}:reference-data--RiskProbabilityScale:{rdef.get('InherentProbability', 'Medium')}:",
+                    "InherentRiskSeverityID": f"{id_prefix}:reference-data--RiskSeverityScale:{rdef.get('InherentSeverity', 'Medium')}:",
+                    "MitigationPlan": rdef.get("MitigationPlan", ""),
+                    "RiskOwner": rdef.get("RiskOwner", ""),
+                },
+            })
+
+        try:
+            async with osdu.http_client(timeout=30) as client:
+                r = await client.put(storage_url, json=risk_records, headers=hdr)
+                if r.status_code in (200, 201):
+                    created_records.append({"type": "Risk", "count": len(risk_records), "ids": created_risk_ids})
+                else:
+                    errors.append(f"Risk creation failed ({r.status_code}): {r.text[:300]}")
+                    created_risk_ids = []
+        except Exception as e:
+            errors.append(f"Risk creation error: {e}")
+            created_risk_ids = []
+
+    # ── 2. Create PersistedCollection (evidence package) ────────────────
+    collection_id_created = ""
+    if create_collection:
+        pc_id = f"{id_prefix}:work-product-component--PersistedCollection:{bd_slug}-Evidence:1"
+        # Gather all references that will go into this collection
+        data_refs = [r for r in [
+            body.get("rev_stats_id", "").strip(),
+            body.get("rev_raw_id", "").strip(),
+            body.get("production_profile_id", "").strip(),
+            body.get("geolabelset_id", "").strip(),
+            body.get("params_id", "").strip(),
+            body.get("activity_id", "").strip(),
+            body.get("dataspace_id", "").strip(),
+            body.get("well_prod_id", "").strip(),
+            body.get("well_inj_id", "").strip(),
+            body.get("wellbore_id", "").strip(),
+            body.get("trajectory_id", "").strip(),
+            body.get("devconcept_id", "").strip(),
+            body.get("wellcost_id", "").strip(),
+            body.get("tubular_id", "").strip(),
+        ] if r] + created_risk_ids
+
+        pc_record = {
+            "id": pc_id,
+            "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+            "acl": acl,
+            "legal": legal,
+            "data": {
+                "Name": f"{name} – Evidence Package",
+                "Description": f"Auto-generated evidence package for: {name}",
+                "DataReferences": data_refs,
+                "Tags": [preset_type or "decision-gate", "evidence-package", "auto-generated"],
+            },
+        }
+
+        try:
+            async with osdu.http_client(timeout=30) as client:
+                r = await client.put(storage_url, json=[pc_record], headers=hdr)
+                if r.status_code in (200, 201):
+                    collection_id_created = pc_id
+                    created_records.append({"type": "PersistedCollection", "id": pc_id, "refs": len(data_refs)})
+                else:
+                    errors.append(f"Collection creation failed ({r.status_code}): {r.text[:300]}")
+        except Exception as e:
+            errors.append(f"Collection creation error: {e}")
+
+    # ── 3. Create CollaborationProject (if requested) ───────────────────
+    cp_id_created = ""
+    if create_collab_project:
+        project_name = body.get("project_name", "").strip() or name
+        cp_slug = project_name.replace(" ", "-")[:60]
+        cp_id = f"{id_prefix}:master-data--CollaborationProject:{cp_slug}:1"
+
+        cp_record = {
+            "id": cp_id,
+            "kind": "osdu:wks:master-data--CollaborationProject:1.0.0",
+            "acl": acl,
+            "legal": legal,
+            "data": {
+                "ProjectName": project_name,
+                "Description": f"Field development project for {project_name}. Long-lived namespace bridging collaboration (SoE) and trusted data (SoR).",
+                "Namespace": f"project-{cp_slug.lower()}",
+                "LifecycleStatusID": f"{id_prefix}:reference-data--CollaborationProjectLifecycleStatus:Open:",
+                "Parameters": [{
+                    "Title": "Reservoir scope",
+                    "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:",
+                    "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:InputReference:",
+                    "DataObjectParameter": reservoir_id,
+                }],
+            },
+        }
+        if collection_id_created:
+            cp_record["data"]["TrustedCollectionID"] = collection_id_created
+
+        try:
+            async with osdu.http_client(timeout=30) as client:
+                r = await client.put(storage_url, json=[cp_record], headers=hdr)
+                if r.status_code in (200, 201):
+                    cp_id_created = cp_id
+                    created_records.append({"type": "CollaborationProject", "id": cp_id})
+                else:
+                    errors.append(f"CP creation failed ({r.status_code}): {r.text[:300]}")
+        except Exception as e:
+            errors.append(f"CP creation error: {e}")
+
+    # ── 4. Now create the BD, merging all auto-created IDs ──────────────
+    # Merge auto-created risk IDs with any user-supplied ones
+    existing_risk_ids = [r.strip() for r in body.get("risk_ids", []) if r.strip()]
+    all_risk_ids = existing_risk_ids + created_risk_ids
+
+    # Override collection/cp IDs if we created them
+    if collection_id_created:
+        body["collection_id"] = collection_id_created
+    if cp_id_created:
+        body["collab_project_id"] = cp_id_created
+    body["risk_ids"] = all_risk_ids
+
+    # Delegate to the standard create_bd logic via internal call
+    # Re-inject the modified body so create_bd picks up all auto-created IDs
+    from starlette.requests import Request as StarletteRequest
+
+    # Build a new request-like object with updated body
+    class _PatchedRequest:
+        def __init__(self, original, new_body):
+            self._original = original
+            self._body = new_body
+        def __getattr__(self, name):
+            return getattr(self._original, name)
+        async def json(self):
+            return self._body
+
+    patched = _PatchedRequest(request, body)
+    bd_response = await create_bd(patched)
+
+    # Parse BD response
+    bd_result = json.loads(bd_response.body.decode("utf-8"))
+
+    return JSONResponse({
+        "ok": bd_result.get("ok", False),
+        "bd_id": bd_result.get("bd_id", ""),
+        "created_records": created_records,
+        "errors": errors,
+        "bd_response": bd_result,
+        "summary": {
+            "risks_created": len(created_risk_ids),
+            "collection_created": bool(collection_id_created),
+            "collab_project_created": bool(cp_id_created),
+            "total_records": len(created_records) + (1 if bd_result.get("ok") else 0),
+        },
+    })
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Helpers for create_generic
+# ──────────────────────────────────────────────────────────────────────────────
 
 def _auto_type(val: str) -> Any:
     """Best-effort auto-type conversion for generic field values."""

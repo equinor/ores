@@ -255,6 +255,10 @@
         <span class="ap-label">WPC (Wells)</span>
         <span class="ap-desc">Well Planning Committee</span>
       </button>
+      <button class="act-preset-card" onclick="selectBdPreset('dev_well')" id="bdp-dev_well">
+        <span class="ap-label">Dev Well (AFE)</span>
+        <span class="ap-desc">Single well execution</span>
+      </button>
       <button class="act-preset-card" onclick="selectBdPreset('ccs')" id="bdp-ccs">
         <span class="ap-label">CCS</span>
         <span class="ap-desc">Carbon storage gate</span>
@@ -394,6 +398,70 @@
       </div>
     </div>
 
+    <!-- ── Well-specific linked records (shown for WPC / Dev Well / Exploration presets) ── -->
+    <div id="well-links-section" style="display:none; margin-top:.8rem; border-top:1px dashed var(--eq-border); padding-top:.8rem;">
+      <h4 style="margin:0 0 .5rem;font-size:14px;font-weight:600;color:var(--eq-charcoal);">
+        Well-Specific Records <span class="link-badge optional" style="font-size:.7rem;vertical-align:middle;">preset-driven</span>
+      </h4>
+      <p class="muted" style="margin-top:0; font-size:.82rem;">
+        Well references for WPC, development well, or exploration well decisions. Links the decision to specific wells and drilling artifacts.
+      </p>
+
+      <div class="link-row">
+        <label>Producer Well <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-well-prod" placeholder="dev:master-data--Well:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-well-prod','osdu:wks:master-data--Well:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>Injector Well <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-well-inj" placeholder="dev:master-data--Well:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-well-inj','osdu:wks:master-data--Well:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>Wellbore <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-wellbore" placeholder="dev:master-data--Wellbore:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-wellbore','osdu:wks:master-data--Wellbore:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>Trajectory <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-trajectory" placeholder="dev:work-product-component--WellboreTrajectory:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-trajectory','osdu:wks:work-product-component--WellboreTrajectory:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>Dev Concept <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-devconcept" placeholder="dev:work-product-component--DevelopmentConcept:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-devconcept','osdu:wks:work-product-component--DevelopmentConcept:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>Well Cost AFE <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-wellcost" placeholder="dev:work-product-component--ColumnBasedTable:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-wellcost','osdu:wks:work-product-component--ColumnBasedTable:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>Completion <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-tubular" placeholder="dev:work-product-component--TubularAssembly:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-tubular','osdu:wks:work-product-component--TubularAssembly:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>Drilling Pkg <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-drilling-collection" placeholder="dev:work-product-component--PersistedCollection:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-drilling-collection','osdu:wks:work-product-component--PersistedCollection:*')">Browse</button>
+      </div>
+
+      <div class="link-row">
+        <label>Collab Project <span class="link-badge optional">optional</span></label>
+        <input type="text" id="link-collab-project" placeholder="dev:master-data--CollaborationProject:…" />
+        <button class="btn" type="button" onclick="openBrowse('link-collab-project','osdu:wks:master-data--CollaborationProject:*')">Browse</button>
+      </div>
+    </div>
+
     <!-- ── User-defined additional records ── -->
     <h4 style="margin:1rem 0 .4rem;font-size:14px;font-weight:600;color:var(--eq-charcoal);">
       Additional records <span class="link-badge optional" style="font-size:.7rem;vertical-align:middle;">optional</span>
@@ -447,9 +515,24 @@
   <!-- ═══ 8. Preview & submit ═══ -->
   <div class="addgate-panel">
     <h3>8. Review & Ingest</h3>
-    <div style="display:flex;gap:.5rem;">
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
       <button class="btn" type="button" onclick="previewRecord()">Preview JSON</button>
       <button class="btn btn-primary" type="button" onclick="submitRecord()">Create & Ingest to OSDU</button>
+      <button class="btn" type="button" onclick="submitPackage()" style="background:var(--eq-link);color:#fff;border-color:var(--eq-link);" title="Creates Risks + Collection + BD in one shot">Create Full Package</button>
+    </div>
+    <p class="muted" style="margin-top:.4rem;font-size:.78rem;">
+      <strong>Create Full Package</strong> auto-creates standard risks (based on preset), an evidence PersistedCollection, and the BusinessDecision record — all linked together. Minimum effort, no orphans.
+    </p>
+    <div style="margin-top:.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
+      <label style="font-size:12px;display:flex;align-items:center;gap:4px;">
+        <input type="checkbox" id="pkg-create-risks" checked /> Auto-create risks
+      </label>
+      <label style="font-size:12px;display:flex;align-items:center;gap:4px;">
+        <input type="checkbox" id="pkg-create-collection" checked /> Auto-create evidence package
+      </label>
+      <label style="font-size:12px;display:flex;align-items:center;gap:4px;">
+        <input type="checkbox" id="pkg-create-cp" /> Auto-create Collab. Project
+      </label>
     </div>
     <div class="preview-wrap" id="preview-wrap" style="display:none;">
       <pre id="preview-json"></pre>

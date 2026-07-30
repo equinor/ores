@@ -197,74 +197,115 @@
     field_dev_dg1: {
       level: 'DG1', templateId: 'FieldDevelopment',
       alternatives: [
-        {name: 'Proceed to DG2 - full development', rank: 1, action: 'Approve', rationale: ''},
-        {name: 'Reduced scope', rank: 2, action: 'Consider', rationale: ''},
-        {name: 'Defer - acquire more data', rank: 3, action: 'Fallback', rationale: ''},
+        {name: 'Videre til DG2 – full utbygging', rank: 1, action: 'Approve', rationale: ''},
+        {name: 'Redusert omfang', rank: 2, action: 'Consider', rationale: ''},
+        {name: 'Utsett – innhent mer data', rank: 3, action: 'Fallback', rationale: ''},
       ],
       economics: [
-        {type: 'NPV_10pct', value: '', unit: 'MUSD'},
+        {type: 'NPV_10pct', value: '', unit: 'MNOK'},
         {type: 'IRR', value: '', unit: '%'},
         {type: 'CAPEX', value: '', unit: 'MNOK'},
-        {type: 'BreakevenOil', value: '', unit: 'USD/bbl'},
+        {type: 'BreakevenOil', value: '', unit: 'USD/fat'},
       ],
     },
     field_dev_dg2: {
       level: 'DG2', templateId: 'FieldDevelopment',
       alternatives: [
-        {name: 'Alt-A: Full development (recommended)', rank: 1, action: 'Approve', rationale: ''},
-        {name: 'Alt-B: Reduced scope', rank: 2, action: 'Consider', rationale: ''},
-        {name: 'Alt-C: Defer / acquire more data', rank: 3, action: 'Fallback', rationale: ''},
+        {name: 'Alt-A: Full utbygging (anbefalt)', rank: 1, action: 'Approve', rationale: ''},
+        {name: 'Alt-B: Redusert omfang', rank: 2, action: 'Consider', rationale: ''},
+        {name: 'Alt-C: Utsett / innhent mer data', rank: 3, action: 'Fallback', rationale: ''},
       ],
       economics: [
-        {type: 'NPV_10pct', value: '', unit: 'MUSD'},
+        {type: 'NPV_10pct', value: '', unit: 'MNOK'},
         {type: 'IRR', value: '', unit: '%'},
         {type: 'CAPEX', value: '', unit: 'MNOK'},
         {type: 'OPEX_pa', value: '', unit: 'MNOK'},
-        {type: 'BreakevenOil', value: '', unit: 'USD/bbl'},
-        {type: 'Payback', value: '', unit: 'a'},
+        {type: 'BreakevenOil', value: '', unit: 'USD/fat'},
+        {type: 'Tilbakebetalingstid', value: '', unit: 'år'},
       ],
     },
     exploration: {
       level: 'DG1', templateId: 'ExplorationWell',
       alternatives: [
-        {name: 'Drill exploration well', rank: 1, action: 'Approve', rationale: ''},
-        {name: 'Farm-out / co-drill', rank: 2, action: 'Consider', rationale: ''},
-        {name: 'Relinquish licence', rank: 3, action: 'Fallback', rationale: ''},
+        {name: 'Bore letebrønn (anbefalt)', rank: 1, action: 'Approve', rationale: 'Bekreft HC-tilstedeværelse, bestem kontakter, karakteriser reservoarkvalitet.'},
+        {name: 'Farm-out / sam-boring med partner', rank: 2, action: 'Consider', rationale: 'Reduser enbrønnsrisiko og oppretthold operatørskap.'},
+        {name: 'Utsett – innhent tilleggsseismikk', rank: 3, action: 'Consider', rationale: 'Forbedre prospektdefinisjon, men forsinker bekreftelse 12+ mnd.'},
+        {name: 'Tilbakelever lisens', rank: 4, action: 'Fallback', rationale: 'Returner areal hvis prospektøkonomi ikke møter porteføljeterskel.'},
       ],
       economics: [
-        {type: 'Well_Cost', value: '', unit: 'MUSD'},
-        {type: 'EMV', value: '', unit: 'MUSD'},
-        {type: 'CoS', value: '', unit: '%'},
+        {type: 'Brønnkostnad', value: '', unit: 'MNOK'},
+        {type: 'EMV', value: '', unit: 'MNOK'},
+        {type: 'Funnsannsynlighet', value: '', unit: '%'},
+        {type: 'STOIIP_P50', value: '', unit: 'MSm3'},
+        {type: 'Utvinnbart_P50', value: '', unit: 'MSm3'},
+        {type: 'Utvinningsgrad', value: '', unit: '%'},
       ],
+      linkedRecordHints: {
+        wellExploration: true,
+        geoscienceCollection: true,
+        drillingCollection: true,
+      },
     },
     wpc: {
-      level: 'WPC', templateId: 'FieldDevelopment',
+      level: 'WPC', templateId: 'FieldDevWells',
       alternatives: [
-        {name: 'Base case (recommended)', rank: 1, action: 'Approve', rationale: ''},
-        {name: 'Alternative drainage strategy', rank: 2, action: 'Consider', rationale: ''},
-        {name: 'Defer - pilot well first', rank: 3, action: 'Consider', rationale: ''},
-        {name: 'Do not proceed', rank: 4, action: 'Fallback', rationale: ''},
+        {name: 'Base case – WI + producers, subsea template', rank: 1, action: 'Approve', rationale: 'Highest NPV. Inject in target formation, tieback to host.'},
+        {name: 'Depletion / limited injection (scale risk)', rank: 2, action: 'Consider', rationale: 'Fallback if formation water incompatibility makes injection infeasible.'},
+        {name: 'WAG injection (if gas available)', rank: 3, action: 'Consider', rationale: 'Evaluate gas injection in next phase. Avoids water-related risks.'},
+        {name: 'Defer – pilot well data first', rank: 4, action: 'Fallback', rationale: 'Acquire subsurface data to reduce uncertainty before committing to full wells.'},
       ],
       economics: [
-        {type: 'NPV_10pct', value: '', unit: 'MUSD'},
+        {type: 'NPV_10pct', value: '', unit: 'MNOK'},
         {type: 'IRR', value: '', unit: '%'},
-        {type: 'CAPEX', value: '', unit: 'MUSD'},
-        {type: 'BreakevenOil', value: '', unit: 'USD/bbl'},
-        {type: 'Production', value: '', unit: 'Mboe'},
+        {type: 'CAPEX', value: '', unit: 'MNOK'},
+        {type: 'BreakevenOil', value: '', unit: 'USD/fat'},
+        {type: 'Recoverable_P50', value: '', unit: 'MSm3'},
+        {type: 'Well_Cost', value: '', unit: 'MNOK'},
+        {type: 'Well_Duration', value: '', unit: 'dager'},
+        {type: 'Rigg_Rate', value: '', unit: 'MNOK/dag'},
       ],
+      linkedRecordHints: {
+        wellProd: true,
+        wellInj: true,
+        devConcept: true,
+        wellCostAFE: true,
+        tubularAssembly: true,
+        drillingCollection: true,
+      },
     },
     ccs: {
       level: 'DG2', templateId: 'CCS',
       alternatives: [
-        {name: 'Proceed with injection', rank: 1, action: 'Approve', rationale: ''},
-        {name: 'Additional appraisal', rank: 2, action: 'Consider', rationale: ''},
-        {name: 'Alternative storage site', rank: 3, action: 'Consider', rationale: ''},
+        {name: 'Fortsett med injeksjon', rank: 1, action: 'Approve', rationale: ''},
+        {name: 'Ytterligere vurdering', rank: 2, action: 'Consider', rationale: ''},
+        {name: 'Alternativt lagringssted', rank: 3, action: 'Consider', rationale: ''},
       ],
       economics: [
-        {type: 'Storage_Capacity', value: '', unit: 'MtCO2'},
+        {type: 'Lagringskapasitet', value: '', unit: 'MtCO2'},
         {type: 'CAPEX', value: '', unit: 'MNOK'},
-        {type: 'InjectionRate', value: '', unit: 'MtCO2/yr'},
+        {type: 'Injeksjonsrate', value: '', unit: 'MtCO2/år'},
       ],
+    },
+    dev_well: {
+      level: 'DG3', templateId: 'FieldDevWells',
+      alternatives: [
+        {name: 'Bor iht. design (anbefalt)', rank: 1, action: 'Approve', rationale: 'Utfør brønnprogram iht. godkjent AFE.'},
+        {name: 'Modifisert bane / mål', rank: 2, action: 'Consider', rationale: 'Juster brønnbane basert på oppdatert undergrunnsmodell.'},
+        {name: 'Utsett til neste riggslott', rank: 3, action: 'Fallback', rationale: 'Utsett ved rigg- eller budsjettbegrensninger.'},
+      ],
+      economics: [
+        {type: 'Brønnkostnad', value: '', unit: 'MNOK'},
+        {type: 'Varighet', value: '', unit: 'dager'},
+        {type: 'Rigg_Rate', value: '', unit: 'MNOK/dag'},
+        {type: 'Kontingens', value: '', unit: '%'},
+        {type: 'PA_Kostnad', value: '', unit: 'MNOK'},
+      ],
+      linkedRecordHints: {
+        wellProd: true,
+        trajectory: true,
+        tubularAssembly: true,
+        drillingCollection: true,
+      },
     },
   };
 
@@ -303,6 +344,12 @@
       return {type: e.type, value: e.value, unit: e.unit};
     });
     renderBdEconomics();
+    // Show/hide well-specific linked record fields based on preset hints
+    var hints = preset.linkedRecordHints || {};
+    var wellSection = document.getElementById('well-links-section');
+    if (wellSection) {
+      wellSection.style.display = (hints.wellProd || hints.wellInj || hints.wellExploration || hints.trajectory || hints.tubularAssembly || hints.devConcept || hints.wellCostAFE || hints.drillingCollection || hints.geoscienceCollection) ? '' : 'none';
+    }
   };
 
   // ── Alternatives management ──
@@ -387,6 +434,16 @@
       collection_id:         document.getElementById('link-collection').value,
       risk_ids:              riskIds.slice(),
       custom_records:        customRecords.slice(),
+      // Well-specific linked records
+      well_prod_id:          (document.getElementById('link-well-prod') || {}).value || '',
+      well_inj_id:           (document.getElementById('link-well-inj') || {}).value || '',
+      wellbore_id:           (document.getElementById('link-wellbore') || {}).value || '',
+      trajectory_id:         (document.getElementById('link-trajectory') || {}).value || '',
+      devconcept_id:         (document.getElementById('link-devconcept') || {}).value || '',
+      wellcost_id:           (document.getElementById('link-wellcost') || {}).value || '',
+      tubular_id:            (document.getElementById('link-tubular') || {}).value || '',
+      drilling_collection_id: (document.getElementById('link-drilling-collection') || {}).value || '',
+      collab_project_id:     (document.getElementById('link-collab-project') || {}).value || '',
     };
     // Attach schedule / milestones
     var activityStates = buildActivityStates();
@@ -449,6 +506,90 @@
           '<strong>Ingest failed (HTTP ' + res.status + ')</strong><br>' +
           '<pre style="margin:.4rem 0 0;font-size:12px;white-space:pre-wrap;">' +
           escHtml(res.data.response || res.data.error || JSON.stringify(res.data)) + '</pre></div>';
+      }
+    })
+    .catch(function(err) {
+      document.getElementById('submit-overlay').classList.remove('active');
+      document.getElementById('result-area').innerHTML =
+        '<div class="result-err"><strong>Network error:</strong> ' + escHtml(err.message) + '</div>';
+    });
+  };
+
+  // ── Submit Full Package (batch creation) ──
+  window.submitPackage = function() {
+    var payload = buildPayload();
+    if (!payload.reservoir_id) { alert('Please select a Reservoir.'); return; }
+    if (!payload.name) { alert('Please enter a BD name.'); return; }
+
+    // Determine preset type from selected card
+    var selectedPreset = '';
+    document.querySelectorAll('#mode-bd .act-preset-card.selected').forEach(function(c) {
+      selectedPreset = (c.id || '').replace('bdp-', '');
+    });
+
+    payload.preset_type = selectedPreset;
+    payload.create_risks = document.getElementById('pkg-create-risks').checked;
+    payload.create_collection = document.getElementById('pkg-create-collection').checked;
+    payload.create_collab_project = document.getElementById('pkg-create-cp').checked;
+
+    if (!confirm(
+      'Create Full Package will auto-generate:\n\n' +
+      (payload.create_risks ? '• Standard risks for "' + (selectedPreset || 'general') + '" preset\n' : '') +
+      (payload.create_collection ? '• Evidence PersistedCollection bundling all linked records\n' : '') +
+      (payload.create_collab_project ? '• CollaborationProject (long-lived namespace)\n' : '') +
+      '• BusinessDecision record linking everything\n\n' +
+      'Proceed?'
+    )) return;
+
+    document.getElementById('submit-overlay').classList.add('active');
+    document.getElementById('result-area').innerHTML = '';
+
+    fetch('/add-dg/create-package', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    })
+    .then(function(r) { return r.json().then(function(d) { return {status: r.status, data: d}; }); })
+    .then(function(res) {
+      document.getElementById('submit-overlay').classList.remove('active');
+      var area = document.getElementById('result-area');
+      var d = res.data;
+      if (d.ok) {
+        var summary = d.summary || {};
+        var html = '<div class="result-ok">' +
+          '<strong>&#10003; Full Package created successfully</strong><br>' +
+          '<span class="bd-id">' + escHtml(d.bd_id) + '</span><br>' +
+          '<span class="muted">' + (summary.total_records || 0) + ' records created total</span><br>';
+        if (d.created_records && d.created_records.length) {
+          html += '<ul style="margin:.4rem 0;font-size:12px;padding-left:1.2rem;">';
+          d.created_records.forEach(function(cr) {
+            if (cr.type === 'Risk') {
+              html += '<li><strong>' + cr.count + ' Risks</strong> created and linked</li>';
+            } else {
+              html += '<li><strong>' + cr.type + '</strong>: <code style="font-size:11px;">' + escHtml(cr.id || '') + '</code></li>';
+            }
+          });
+          html += '</ul>';
+        }
+        if (d.errors && d.errors.length) {
+          html += '<div style="margin-top:.4rem;padding:6px 10px;background:#fffbf0;border:1px solid #fbd38d;border-radius:4px;font-size:12px;">' +
+            '<strong>Warnings:</strong><br>' + d.errors.map(escHtml).join('<br>') + '</div>';
+        }
+        html += '</div>';
+        area.innerHTML = html;
+      } else {
+        var errHtml = '<div class="result-err">' +
+          '<strong>Package creation failed</strong><br>';
+        if (d.errors && d.errors.length) {
+          errHtml += '<ul style="font-size:12px;margin:.4rem 0;padding-left:1.2rem;">' +
+            d.errors.map(function(e) { return '<li>' + escHtml(e) + '</li>'; }).join('') + '</ul>';
+        }
+        if (d.bd_response) {
+          errHtml += '<pre style="margin:.4rem 0 0;font-size:11px;white-space:pre-wrap;">' +
+            escHtml(JSON.stringify(d.bd_response, null, 2)) + '</pre>';
+        }
+        errHtml += '</div>';
+        area.innerHTML = errHtml;
       }
     })
     .catch(function(err) {

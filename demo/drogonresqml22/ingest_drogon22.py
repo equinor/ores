@@ -53,9 +53,9 @@ sys.path.insert(0, str(DEMO_DIR))
 from _auth import get_token, load_instance  # noqa: E402
 
 # ── Constants ─────────────────────────────────────────────────────────────
-DATASPACE_DEFAULT = "maap/drogon22"
+DATASPACE_DEFAULT = "maap/drogon221"
 DATASPACE_OVERRIDE = {}
-EPC_FILE = SCRIPT_DIR / "drogon22_subset.epc"
+EPC_FILE = SCRIPT_DIR / "drogon22.epc"
 MANIFEST_FILE = SCRIPT_DIR / "manifest_drogon22_subset.json"
 IMAGE_SSL = "osdu-etp-sslclient"
 
@@ -484,6 +484,8 @@ def main():
         description="Ingest Drogon RESQML 2.2 demo EPC into an OSDU instance")
     ap.add_argument("instance", choices=["interop", "eqndev"],
                     help="Target OSDU instance name")
+    ap.add_argument("--dataspace", default=None,
+                    help="Override dataspace (default: maap/drogon221)")
     ap.add_argument("--skip-etp", action="store_true",
                     help="Skip ETP import (manifest only)")
     ap.add_argument("--purge", action="store_true",
@@ -502,6 +504,8 @@ def main():
     args = ap.parse_args()
 
     cfg = InstanceConfig(args.instance)
+    if args.dataspace:
+        cfg.dataspace = args.dataspace
 
     print(f"{'═' * 60}")
     print(f"  Drogon RESQML 2.2 Demo → {cfg.name} ({cfg.host})")

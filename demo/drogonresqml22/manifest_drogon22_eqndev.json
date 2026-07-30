@@ -28,11 +28,11 @@
         "modifyUser": "Drogon Demo RESQML 2.2 (Equinor)",
         "version": 1,
         "data": {
-          "Name": "maap/drogon22",
+          "Name": "maap/drogon221",
           "Description": "RDDMS dataspace for Drogon RESQML 2.2 demo",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DatasetProperties": {
-            "URI": "eml:///dataspace('maap/drogon22')"
+            "URI": "eml:///dataspace('maap/drogon221')"
           },
           "ResqmlVersion": "2.2"
         }
@@ -70,7 +70,7 @@
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "BoundaryType": "horizon",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(0c402b9f-fa0e-4c36-a08f-37f292115e01)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.BoundaryFeature(0c402b9f-fa0e-4c36-a08f-37f292115e01)"
           ],
           "FieldNames": [
             "Drogon"
@@ -108,7 +108,7 @@
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "BoundaryType": "horizon",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(2d66e9f5-f120-43c4-93ca-1c8220846fbb)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.BoundaryFeature(2d66e9f5-f120-43c4-93ca-1c8220846fbb)"
           ],
           "FieldNames": [
             "Drogon"
@@ -146,7 +146,7 @@
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "BoundaryType": "horizon",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(49cd1075-1eef-4950-8e50-2bec81ca4275)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.BoundaryFeature(49cd1075-1eef-4950-8e50-2bec81ca4275)"
           ],
           "FieldNames": [
             "Drogon"
@@ -184,7 +184,7 @@
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "BoundaryType": "horizon",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(67349b6a-2004-43ed-94bc-43e90b584aad)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.BoundaryFeature(67349b6a-2004-43ed-94bc-43e90b584aad)"
           ],
           "FieldNames": [
             "Drogon"
@@ -222,7 +222,7 @@
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "BoundaryType": "horizon",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(6e9dd9ee-bcde-4e49-9fbf-4b7271c055e9)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.BoundaryFeature(6e9dd9ee-bcde-4e49-9fbf-4b7271c055e9)"
           ],
           "FieldNames": [
             "Drogon"
@@ -260,7 +260,7 @@
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "BoundaryType": "horizon",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(8ee397de-c017-4d5a-bed3-102475128c0d)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.BoundaryFeature(8ee397de-c017-4d5a-bed3-102475128c0d)"
           ],
           "FieldNames": [
             "Drogon"
@@ -298,7 +298,7 @@
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "BoundaryType": "horizon",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(a579fa9b-6e89-411c-aa90-88b1fa58e022)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.BoundaryFeature(a579fa9b-6e89-411c-aa90-88b1fa58e022)"
           ],
           "FieldNames": [
             "Drogon"
@@ -336,7 +336,7 @@
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "BoundaryType": "horizon",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(b84423b7-412b-4ad5-a1bb-2e66bbb975fb)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.BoundaryFeature(b84423b7-412b-4ad5-a1bb-2e66bbb975fb)"
           ],
           "FieldNames": [
             "Drogon"
@@ -374,7 +374,7 @@
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "BoundaryType": "horizon",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(c2d89ecc-f0a2-4e17-982b-acecf8b0506f)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.BoundaryFeature(c2d89ecc-f0a2-4e17-982b-acecf8b0506f)"
           ],
           "FieldNames": [
             "Drogon"
@@ -412,7 +412,7 @@
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "BoundaryType": "horizon",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(d9593949-6e2a-4514-802f-001d0a6c3708)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.BoundaryFeature(d9593949-6e2a-4514-802f-001d0a6c3708)"
           ],
           "FieldNames": [
             "Drogon"
@@ -450,7 +450,7 @@
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "BoundaryType": "horizon",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(e185b471-9f88-446d-b36e-00c77a7cf0b8)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.BoundaryFeature(e185b471-9f88-446d-b36e-00c77a7cf0b8)"
           ],
           "FieldNames": [
             "Drogon"
@@ -488,7 +488,7 @@
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "BoundaryType": "horizon",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.BoundaryFeature(f9578d62-0123-4c9a-bb25-d87ea7c2726d)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.BoundaryFeature(f9578d62-0123-4c9a-bb25-d87ea7c2726d)"
           ],
           "FieldNames": [
             "Drogon"
@@ -525,7 +525,7 @@
           "Description": "Wellbore 55/33-A-1 - Drogon field",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(50495987-88f4-4e39-95c8-0b2624298c47)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFeature(50495987-88f4-4e39-95c8-0b2624298c47)"
           ],
           "FieldNames": [
             "Drogon"
@@ -563,7 +563,7 @@
           "Description": "Wellbore 55/33-A-2 - Drogon field",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(53e2c61e-9ef6-40fc-9d35-7c740287c0ca)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFeature(53e2c61e-9ef6-40fc-9d35-7c740287c0ca)"
           ],
           "FieldNames": [
             "Drogon"
@@ -601,7 +601,7 @@
           "Description": "Wellbore OP5_Y1 - Drogon field",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(5977521b-9f69-4572-906f-4f5e4f8004bc)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFeature(5977521b-9f69-4572-906f-4f5e4f8004bc)"
           ],
           "FieldNames": [
             "Drogon"
@@ -639,7 +639,7 @@
           "Description": "Wellbore 55/33-1 - Drogon field",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(6400c518-246f-41c3-9e0e-ba336ee5b5f1)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFeature(6400c518-246f-41c3-9e0e-ba336ee5b5f1)"
           ],
           "FieldNames": [
             "Drogon"
@@ -677,7 +677,7 @@
           "Description": "Wellbore 55/33-A-4 - Drogon field",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(66ba7e66-4f87-46ea-9e55-e4b8f1b2c7bc)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFeature(66ba7e66-4f87-46ea-9e55-e4b8f1b2c7bc)"
           ],
           "FieldNames": [
             "Drogon"
@@ -715,7 +715,7 @@
           "Description": "Wellbore 55/33-A-3 - Drogon field",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(7e602daa-95cd-4bc6-9950-f389e252d35a)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFeature(7e602daa-95cd-4bc6-9950-f389e252d35a)"
           ],
           "FieldNames": [
             "Drogon"
@@ -753,7 +753,7 @@
           "Description": "Wellbore 55/33-2 - Drogon field",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(830ae7e3-5f03-43b6-b066-a1977194ff2a)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFeature(830ae7e3-5f03-43b6-b066-a1977194ff2a)"
           ],
           "FieldNames": [
             "Drogon"
@@ -791,7 +791,7 @@
           "Description": "Wellbore OP6 - Drogon field",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(a1f4af0a-934a-483b-b0d7-8dcdbd4ea51a)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFeature(a1f4af0a-934a-483b-b0d7-8dcdbd4ea51a)"
           ],
           "FieldNames": [
             "Drogon"
@@ -829,7 +829,7 @@
           "Description": "Wellbore OP5_Y2 - Drogon field",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(cf76d1a8-fc2b-4f83-afe4-b96cc2bb41b7)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFeature(cf76d1a8-fc2b-4f83-afe4-b96cc2bb41b7)"
           ],
           "FieldNames": [
             "Drogon"
@@ -867,7 +867,7 @@
           "Description": "Wellbore 55/33-A-5 - Drogon field",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(d3727dbc-0025-407b-89a1-c93337f1fe25)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFeature(d3727dbc-0025-407b-89a1-c93337f1fe25)"
           ],
           "FieldNames": [
             "Drogon"
@@ -905,7 +905,7 @@
           "Description": "Wellbore 55/33-3 - Drogon field",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(df2828a0-ebb9-4edd-84fb-51c946d57f1d)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFeature(df2828a0-ebb9-4edd-84fb-51c946d57f1d)"
           ],
           "FieldNames": [
             "Drogon"
@@ -943,7 +943,7 @@
           "Description": "Wellbore 55/33-A-6 - Drogon field",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFeature(e1c757ee-9ad7-4575-9f9c-d15a60e3ef1a)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFeature(e1c757ee-9ad7-4575-9f9c-d15a60e3ef1a)"
           ],
           "FieldNames": [
             "Drogon"
@@ -983,7 +983,7 @@
           "Description": "Local depth coordinate reference system. Projected CRS: ED50 / UTM zone 37S (EPSG:23037). Vertical: MSL.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.LocalDepth3dCrs(0a0ae03b-aee1-4651-8f11-5433eeda0ec2)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.LocalDepth3dCrs(0a0ae03b-aee1-4651-8f11-5433eeda0ec2)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1023,7 +1023,7 @@
           "Description": "Local time coordinate reference system. Projected CRS: ED50 / UTM zone 37S (EPSG:23037). Vertical: Two-way time.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.LocalTime3dCrs(96fb7643-0012-4033-8e55-7b1b4652ed33)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.LocalTime3dCrs(96fb7643-0012-4033-8e55-7b1b4652ed33)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1104,7 +1104,7 @@
           "Description": "Horizon interpretation: BaseVelmodel. Drogon field.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(011ae8ee-bfa5-4804-a675-1f4704b1730c)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.HorizonInterpretation(011ae8ee-bfa5-4804-a675-1f4704b1730c)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1143,7 +1143,7 @@
           "Description": "Horizon interpretation: TopVolantis. Drogon field.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(02e954a9-d7db-4b57-aef7-12b8ebf47a65)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.HorizonInterpretation(02e954a9-d7db-4b57-aef7-12b8ebf47a65)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1182,7 +1182,7 @@
           "Description": "Horizon interpretation: BaseVolantis. Drogon field.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(3657ca0b-d21f-41ca-801b-4a6a7eb1f426)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.HorizonInterpretation(3657ca0b-d21f-41ca-801b-4a6a7eb1f426)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1221,7 +1221,7 @@
           "Description": "Horizon interpretation: TopTherys. Drogon field.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(6c6eeb68-bb4d-4fa4-9eb4-b880b5bd7086)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.HorizonInterpretation(6c6eeb68-bb4d-4fa4-9eb4-b880b5bd7086)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1260,7 +1260,7 @@
           "Description": "Horizon interpretation: MSL. Drogon field.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(7da0e4d7-1955-4031-8eaf-68a93515414d)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.HorizonInterpretation(7da0e4d7-1955-4031-8eaf-68a93515414d)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1299,7 +1299,7 @@
           "Description": "Horizon interpretation: TopVolon. Drogon field.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.HorizonInterpretation(db54a781-84ad-41e5-8bdd-c510246375cd)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.HorizonInterpretation(db54a781-84ad-41e5-8bdd-c510246375cd)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1338,7 +1338,7 @@
           "Description": "Fault interpretation: F1. Drogon field.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.FaultInterpretation(67eb8600-bc7b-4f34-87ce-ed4c2cb287e8)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.FaultInterpretation(67eb8600-bc7b-4f34-87ce-ed4c2cb287e8)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1375,7 +1375,7 @@
           "Description": "Fault interpretation: F4. Drogon field.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.FaultInterpretation(79dfdaf9-1781-4908-861a-0773c12b50cb)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.FaultInterpretation(79dfdaf9-1781-4908-861a-0773c12b50cb)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1412,7 +1412,7 @@
           "Description": "Fault interpretation: F5. Drogon field.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.FaultInterpretation(80f6a885-7eab-4d49-9dce-eac3093ce284)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.FaultInterpretation(80f6a885-7eab-4d49-9dce-eac3093ce284)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1449,7 +1449,7 @@
           "Description": "Fault interpretation: F2. Drogon field.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.FaultInterpretation(893841bd-2fec-4716-ab0f-032693a152e3)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.FaultInterpretation(893841bd-2fec-4716-ab0f-032693a152e3)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1486,7 +1486,7 @@
           "Description": "Fault interpretation: F6. Drogon field.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.FaultInterpretation(9396f818-78bf-44af-879d-c82f74816510)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.FaultInterpretation(9396f818-78bf-44af-879d-c82f74816510)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1523,7 +1523,7 @@
           "Description": "Fault interpretation: F3. Drogon field.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.FaultInterpretation(db9f8a3e-4cca-46bc-8c1e-09fb88c1a3a5)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.FaultInterpretation(db9f8a3e-4cca-46bc-8c1e-09fb88c1a3a5)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1560,7 +1560,7 @@
           "Description": "Structural organization combining 6 horizons and 6 faults for the Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StructuralOrganizationInterpretation(33978839-0c63-40d2-a2be-346fc3b37eaf)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.StructuralOrganizationInterpretation(33978839-0c63-40d2-a2be-346fc3b37eaf)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1613,7 +1613,7 @@
           "Description": "Structural organisation feature for the Drogon reservoir model.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.Model(79115ac7-01c0-4046-ad69-b3f87fd06c55)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.Model(79115ac7-01c0-4046-ad69-b3f87fd06c55)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1650,7 +1650,7 @@
           "Description": "2D regular grid (surface map) representation: Time Surface - Interpreted. Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.Grid2dRepresentation(b1920f99-6252-43b1-a2d7-0d316b8f8107)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.Grid2dRepresentation(b1920f99-6252-43b1-a2d7-0d316b8f8107)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1696,7 +1696,7 @@
           "Description": "2D regular grid (surface map) representation: Depth Surface - Interpreted. Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.Grid2dRepresentation(dbae5c23-e9b0-46bb-b4bc-c243271ae4eb)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.Grid2dRepresentation(dbae5c23-e9b0-46bb-b4bc-c243271ae4eb)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1742,7 +1742,7 @@
           "Description": "Polyline set: Fault Sticks (Time). Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PolylineSetRepresentation(0fef5933-342a-4a95-9abc-e963b7adeafd)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PolylineSetRepresentation(0fef5933-342a-4a95-9abc-e963b7adeafd)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1781,7 +1781,7 @@
           "Description": "Polyline set: Fault Sticks (Time). Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PolylineSetRepresentation(3eba1cea-4a3d-4a93-acc0-7f5e765ba8c5)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PolylineSetRepresentation(3eba1cea-4a3d-4a93-acc0-7f5e765ba8c5)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1820,7 +1820,7 @@
           "Description": "Polyline set: Fault Sticks (Time). Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PolylineSetRepresentation(6cef9e9d-1a5c-492c-bd50-818f872207ca)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PolylineSetRepresentation(6cef9e9d-1a5c-492c-bd50-818f872207ca)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1859,7 +1859,7 @@
           "Description": "Polyline set: Fault Sticks (Time). Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PolylineSetRepresentation(6f834832-d5fe-4961-bc62-d90b7552bc0a)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PolylineSetRepresentation(6f834832-d5fe-4961-bc62-d90b7552bc0a)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1898,7 +1898,7 @@
           "Description": "Polyline set: Fault Sticks (Time). Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PolylineSetRepresentation(7beb6e90-8f63-4c28-a93f-71ca27785c90)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PolylineSetRepresentation(7beb6e90-8f63-4c28-a93f-71ca27785c90)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1937,7 +1937,7 @@
           "Description": "Polyline set: Fault Sticks (Time). Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PolylineSetRepresentation(d93d8f14-049e-44b8-ae60-09f12a9c6710)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PolylineSetRepresentation(d93d8f14-049e-44b8-ae60-09f12a9c6710)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -1976,7 +1976,7 @@
           "Description": "Point set representation: Extracted Fault Points. Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(17831789-e8cc-4830-a8bb-6c6662739a6d)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PointSetRepresentation(17831789-e8cc-4830-a8bb-6c6662739a6d)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2015,7 +2015,7 @@
           "Description": "Point set representation: Extracted Fault Points. Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(32cc597e-6c56-4a56-af78-953d05453336)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PointSetRepresentation(32cc597e-6c56-4a56-af78-953d05453336)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2054,7 +2054,7 @@
           "Description": "Point set representation: Fault Points (Truth Model). Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(38664cf8-7150-426f-82a0-f1386a11bbc8)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PointSetRepresentation(38664cf8-7150-426f-82a0-f1386a11bbc8)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2093,7 +2093,7 @@
           "Description": "Point set representation: Extracted Fault Points. Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(843c1d3a-c859-43b6-b23b-88e82aa07e23)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PointSetRepresentation(843c1d3a-c859-43b6-b23b-88e82aa07e23)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2132,7 +2132,7 @@
           "Description": "Point set representation: Extracted Fault Points. Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(a1b80900-06a2-4bb0-82f3-ad9b4ebe96c1)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PointSetRepresentation(a1b80900-06a2-4bb0-82f3-ad9b4ebe96c1)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2171,7 +2171,7 @@
           "Description": "Point set representation: Extracted Fault Points. Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(e82d77f4-5cbb-4fa5-882b-dda38ef148f6)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PointSetRepresentation(e82d77f4-5cbb-4fa5-882b-dda38ef148f6)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2210,7 +2210,7 @@
           "Description": "Point set representation: Extracted Fault Points. Drogon field, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.PointSetRepresentation(f3e33c91-2cc7-483a-9b9e-bfa7bbf0e589)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.PointSetRepresentation(f3e33c91-2cc7-483a-9b9e-bfa7bbf0e589)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2249,7 +2249,7 @@
           "Description": "3D corner-point grid representation of the Drogon reservoir model (Geogrid). Covers the Therys, Valysar and Volon formations, Norwegian Continental Shelf.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.IjkGridRepresentation(2c6de928-7e08-4601-b979-34048bd68c02)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.IjkGridRepresentation(2c6de928-7e08-4601-b979-34048bd68c02)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2291,7 +2291,7 @@
           "Description": "Trajectory for Planned",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(2656fc33-2e42-479c-8826-a7bbf0239d1b)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreTrajectoryRepresentation(2656fc33-2e42-479c-8826-a7bbf0239d1b)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2329,7 +2329,7 @@
           "Description": "Trajectory for Drilled trajectory",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(403b1cd4-056c-43df-ae69-cb6ab1c6c445)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreTrajectoryRepresentation(403b1cd4-056c-43df-ae69-cb6ab1c6c445)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2367,7 +2367,7 @@
           "Description": "Trajectory for Drilled trajectory",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(4800aa84-6290-42b9-82fb-6f2b6f021dea)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreTrajectoryRepresentation(4800aa84-6290-42b9-82fb-6f2b6f021dea)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2405,7 +2405,7 @@
           "Description": "Trajectory for Drilled trajectory",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(50ea6f8c-24b4-4e0f-8633-919b4e279f42)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreTrajectoryRepresentation(50ea6f8c-24b4-4e0f-8633-919b4e279f42)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2443,7 +2443,7 @@
           "Description": "Trajectory for Planned",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(652e5d95-034a-4c6b-905e-915887bcb953)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreTrajectoryRepresentation(652e5d95-034a-4c6b-905e-915887bcb953)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2481,7 +2481,7 @@
           "Description": "Trajectory for Drilled trajectory",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(8ba77da6-6c54-4fe4-969a-f8366555b3df)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreTrajectoryRepresentation(8ba77da6-6c54-4fe4-969a-f8366555b3df)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2519,7 +2519,7 @@
           "Description": "Trajectory for Planned",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(92c9d6a8-9d43-4780-8bfc-532afb066fb6)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreTrajectoryRepresentation(92c9d6a8-9d43-4780-8bfc-532afb066fb6)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2557,7 +2557,7 @@
           "Description": "Trajectory for Drilled trajectory",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(9b20558b-06fc-418a-b13a-bfa5bd46b0d2)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreTrajectoryRepresentation(9b20558b-06fc-418a-b13a-bfa5bd46b0d2)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2595,7 +2595,7 @@
           "Description": "Trajectory for Drilled trajectory",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(a6edb5b1-ba51-46c8-9494-ad0b47aa00d0)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreTrajectoryRepresentation(a6edb5b1-ba51-46c8-9494-ad0b47aa00d0)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2633,7 +2633,7 @@
           "Description": "Trajectory for Drilled trajectory",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(b21869ff-bc7c-459d-aefb-1383a80342f3)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreTrajectoryRepresentation(b21869ff-bc7c-459d-aefb-1383a80342f3)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2671,7 +2671,7 @@
           "Description": "Trajectory for Drilled trajectory",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(e7ee1dc9-ca95-4c6a-a752-926bba5ba379)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreTrajectoryRepresentation(e7ee1dc9-ca95-4c6a-a752-926bba5ba379)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2709,7 +2709,7 @@
           "Description": "Trajectory for Drilled trajectory",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreTrajectoryRepresentation(f74cec60-70f0-4da7-a4bc-101e9b9e5efc)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreTrajectoryRepresentation(f74cec60-70f0-4da7-a4bc-101e9b9e5efc)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2747,7 +2747,7 @@
           "Description": "Log curves on Well Log Frame",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(0086eb99-eca4-485b-882a-af15bc9add89)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(0086eb99-eca4-485b-882a-af15bc9add89)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2786,7 +2786,7 @@
           "Description": "Log curves on Stratigraphic Marker Set",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(25e1b59c-8a37-446c-ae28-878f760bb6d6)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(25e1b59c-8a37-446c-ae28-878f760bb6d6)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2825,7 +2825,7 @@
           "Description": "Log curves on Stratigraphic Marker Set",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(2ceca2ec-0066-4090-b14c-9850f70f1339)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(2ceca2ec-0066-4090-b14c-9850f70f1339)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2864,7 +2864,7 @@
           "Description": "Log curves on Well Log Frame",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(3df9933e-4833-48e2-b611-97d18f0c5e42)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(3df9933e-4833-48e2-b611-97d18f0c5e42)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2903,7 +2903,7 @@
           "Description": "Log curves on Well Log Frame",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(4695cc9b-601e-48c8-8c64-6c209f5ab7bd)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(4695cc9b-601e-48c8-8c64-6c209f5ab7bd)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2942,7 +2942,7 @@
           "Description": "Log curves on Well Log Frame",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(4b34a6d6-e838-4578-b193-e0d898db0e04)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(4b34a6d6-e838-4578-b193-e0d898db0e04)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -2981,7 +2981,7 @@
           "Description": "Log curves on Stratigraphic Marker Set",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(6b7237b4-9b6b-4ac9-ac9f-352b5a16db63)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(6b7237b4-9b6b-4ac9-ac9f-352b5a16db63)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3020,7 +3020,7 @@
           "Description": "Log curves on Stratigraphic Marker Set",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(7a5b4432-bf84-4828-9e7d-363cc229cb33)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(7a5b4432-bf84-4828-9e7d-363cc229cb33)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3059,7 +3059,7 @@
           "Description": "Log curves on Stratigraphic Marker Set",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(8e7ad4d4-95f8-491c-8750-0d6eb0b4eadd)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(8e7ad4d4-95f8-491c-8750-0d6eb0b4eadd)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3098,7 +3098,7 @@
           "Description": "Log curves on Stratigraphic Marker Set",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(95878ba3-6888-415a-8c3f-d349630a6ef9)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(95878ba3-6888-415a-8c3f-d349630a6ef9)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3137,7 +3137,7 @@
           "Description": "Log curves on Well Log Frame",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(a8215264-4971-4700-acf8-b6855a8fac36)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(a8215264-4971-4700-acf8-b6855a8fac36)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3176,7 +3176,7 @@
           "Description": "Log curves on Well Log Frame",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(a8f0ff64-b396-4cec-a3a3-ce2bb6b3f29e)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(a8f0ff64-b396-4cec-a3a3-ce2bb6b3f29e)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3215,7 +3215,7 @@
           "Description": "Log curves on Well Log Frame",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(aa325d5d-3709-4dd2-97e4-fd15b2ccb1a3)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(aa325d5d-3709-4dd2-97e4-fd15b2ccb1a3)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3254,7 +3254,7 @@
           "Description": "Log curves on Stratigraphic Marker Set",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(b19c312f-110b-4fea-b36c-fce25bcc2344)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(b19c312f-110b-4fea-b36c-fce25bcc2344)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3293,7 +3293,7 @@
           "Description": "Log curves on Well Log Frame",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(b3c89e44-09a1-46c2-8f53-d0958b0dcfcd)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(b3c89e44-09a1-46c2-8f53-d0958b0dcfcd)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3332,7 +3332,7 @@
           "Description": "Log curves on Stratigraphic Marker Set",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(bae84971-88a5-41e0-8050-bb4e7538b1ce)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(bae84971-88a5-41e0-8050-bb4e7538b1ce)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3371,7 +3371,7 @@
           "Description": "Log curves on Well Log Frame",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(f1790979-894e-44fe-8ea7-ef10589556e0)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(f1790979-894e-44fe-8ea7-ef10589556e0)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3410,7 +3410,7 @@
           "Description": "Log curves on Stratigraphic Marker Set",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.WellboreFrameRepresentation(f2d8a5f5-2dd1-4823-9e98-2494963925ce)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.WellboreFrameRepresentation(f2d8a5f5-2dd1-4823-9e98-2494963925ce)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3449,7 +3449,7 @@
           "Description": "Stratigraphic column for the Drogon reservoir model. Defines the vertical succession of formations.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicColumn(6b079bdd-93ef-48ea-a7f3-abe0bc229deb)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.StratigraphicColumn(6b079bdd-93ef-48ea-a7f3-abe0bc229deb)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3486,7 +3486,7 @@
           "Description": "Stratigraphic column rank interpretation for the Drogon reservoir model.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicColumnRankInterpretation(1a90dd88-4d6f-4d2c-9945-9696c28b1dae)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.StratigraphicColumnRankInterpretation(1a90dd88-4d6f-4d2c-9945-9696c28b1dae)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3523,7 +3523,7 @@
           "Description": "Stratigraphic unit: Above Top Volantis. Drogon reservoir model.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.RockVolumeFeature(1227da48-72a0-4375-a01a-ef67b544ee1a)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.RockVolumeFeature(1227da48-72a0-4375-a01a-ef67b544ee1a)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3560,7 +3560,7 @@
           "Description": "Stratigraphic unit: Valysar. Drogon reservoir model.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.RockVolumeFeature(76a2a884-4cdc-43e8-8b8d-0341dd571c35)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.RockVolumeFeature(76a2a884-4cdc-43e8-8b8d-0341dd571c35)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3597,7 +3597,7 @@
           "Description": "Stratigraphic unit: Volon. Drogon reservoir model.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.RockVolumeFeature(95fb8abd-6164-4961-8712-497e32bb5842)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.RockVolumeFeature(95fb8abd-6164-4961-8712-497e32bb5842)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3634,7 +3634,7 @@
           "Description": "Stratigraphic unit: Therys. Drogon reservoir model.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.RockVolumeFeature(ab851c51-0100-41bb-bf10-7e8311f5b437)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.RockVolumeFeature(ab851c51-0100-41bb-bf10-7e8311f5b437)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3671,7 +3671,7 @@
           "Description": "Stratigraphic unit: Below Base Volantis. Drogon reservoir model.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.RockVolumeFeature(e3e87371-e005-4a29-be22-84489d6f5abf)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.RockVolumeFeature(e3e87371-e005-4a29-be22-84489d6f5abf)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3708,7 +3708,7 @@
           "Description": "Stratigraphic unit interpretation: Valysar. Drogon reservoir model.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicUnitInterpretation(0b257a04-c38c-4c56-9e18-987b03583830)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.StratigraphicUnitInterpretation(0b257a04-c38c-4c56-9e18-987b03583830)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3745,7 +3745,7 @@
           "Description": "Stratigraphic unit interpretation: Below Base Volantis. Drogon reservoir model.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicUnitInterpretation(2d0b751e-0f4f-45d3-aa1d-7ee0aa763228)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.StratigraphicUnitInterpretation(2d0b751e-0f4f-45d3-aa1d-7ee0aa763228)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3782,7 +3782,7 @@
           "Description": "Stratigraphic unit interpretation: Therys. Drogon reservoir model.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicUnitInterpretation(7c70894a-2442-4735-a219-c954f87ba07d)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.StratigraphicUnitInterpretation(7c70894a-2442-4735-a219-c954f87ba07d)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3819,7 +3819,7 @@
           "Description": "Stratigraphic unit interpretation: Above Top Volantis. Drogon reservoir model.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicUnitInterpretation(935cdfef-94fc-4df5-8362-4abadfb0b8ca)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.StratigraphicUnitInterpretation(935cdfef-94fc-4df5-8362-4abadfb0b8ca)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
@@ -3856,7 +3856,7 @@
           "Description": "Stratigraphic unit interpretation: Volon. Drogon reservoir model.",
           "ExistenceKind": "osdu:reference-data--ExistenceKind:Prototype:",
           "DDMSDatasets": [
-            "eml://reservoir-ddms1/dataspace('maap/drogon22')/resqml22.StratigraphicUnitInterpretation(e3be3316-0ea0-4c20-9722-14a2174ce7ab)"
+            "eml://reservoir-ddms1/dataspace('maap/drogon221')/resqml22.StratigraphicUnitInterpretation(e3be3316-0ea0-4c20-9722-14a2174ce7ab)"
           ],
           "DatasetIDs": [
             "dev:dataset--ETPDataspace:1.0.1:maap-drogon22"
