@@ -239,6 +239,10 @@
         <span class="ap-label">Blank</span>
         <span class="ap-desc">Build from scratch</span>
       </button>
+      <button class="act-preset-card" onclick="selectBdPreset('field_dev_dg0')" id="bdp-field_dev_dg0">
+        <span class="ap-label">Field Dev DG0</span>
+        <span class="ap-desc">Screening / SSVP</span>
+      </button>
       <button class="act-preset-card" onclick="selectBdPreset('field_dev_dg1')" id="bdp-field_dev_dg1">
         <span class="ap-label">Field Dev DG1</span>
         <span class="ap-desc">Identify &amp; Assess</span>
@@ -246,6 +250,14 @@
       <button class="act-preset-card" onclick="selectBdPreset('field_dev_dg2')" id="bdp-field_dev_dg2">
         <span class="ap-label">Field Dev DG2</span>
         <span class="ap-desc">Concept Select</span>
+      </button>
+      <button class="act-preset-card" onclick="selectBdPreset('field_dev_dg3')" id="bdp-field_dev_dg3">
+        <span class="ap-label">Field Dev DG3</span>
+        <span class="ap-desc">Sanction (inherits DG2)</span>
+      </button>
+      <button class="act-preset-card" onclick="selectBdPreset('field_dev_dg4')" id="bdp-field_dev_dg4">
+        <span class="ap-label">Field Dev DG4</span>
+        <span class="ap-desc">Start-up (inherits DG3)</span>
       </button>
       <button class="act-preset-card" onclick="selectBdPreset('exploration')" id="bdp-exploration">
         <span class="ap-label">Exploration Well</span>
@@ -255,9 +267,13 @@
         <span class="ap-label">WPC (Wells)</span>
         <span class="ap-desc">Well Planning Committee</span>
       </button>
+      <button class="act-preset-card" onclick="selectBdPreset('well_dg2')" id="bdp-well_dg2">
+        <span class="ap-label">Well DG2</span>
+        <span class="ap-desc">Detailed design (inherits WPC)</span>
+      </button>
       <button class="act-preset-card" onclick="selectBdPreset('dev_well')" id="bdp-dev_well">
-        <span class="ap-label">Dev Well (AFE)</span>
-        <span class="ap-desc">Single well execution</span>
+        <span class="ap-label">Well DG3 (AFE)</span>
+        <span class="ap-desc">Execution (inherits Well DG2)</span>
       </button>
       <button class="act-preset-card" onclick="selectBdPreset('ccs')" id="bdp-ccs">
         <span class="ap-label">CCS</span>
@@ -462,6 +478,23 @@
       </div>
     </div>
 
+    <!-- ── Inheritance section (shown for DG3/DG4 presets that build on prior gates) ── -->
+    <div id="inherit-links-section" style="display:none; margin-top:.8rem; border-top:1px dashed var(--eq-border); padding-top:.8rem;">
+      <h4 style="margin:0 0 .5rem;font-size:14px;font-weight:600;color:var(--eq-charcoal);">
+        Inherited from Prior Gate <span class="link-badge optional" style="font-size:.7rem;vertical-align:middle;">preset-driven</span>
+      </h4>
+      <p class="muted" id="inherit-note" style="margin-top:0; font-size:.82rem; display:none;"></p>
+
+      <div class="link-row">
+        <label>Prior BD <span class="link-badge optional">recommended</span></label>
+        <input type="text" id="link-prior-bd" placeholder="dev:master-data--BusinessDecision:previous-gate:1" />
+        <button class="btn" type="button" onclick="openBrowse('link-prior-bd','osdu:wks:master-data--BusinessDecision:*')">Browse</button>
+      </div>
+      <p class="muted" style="margin-top:2px; font-size:.75rem;">
+        Links this decision to the preceding gate. The prior BD's evidence package, collaboration project, and activity are automatically referenced.
+      </p>
+    </div>
+
     <!-- ── User-defined additional records ── -->
     <h4 style="margin:1rem 0 .4rem;font-size:14px;font-weight:600;color:var(--eq-charcoal);">
       Additional records <span class="link-badge optional" style="font-size:.7rem;vertical-align:middle;">optional</span>
@@ -526,13 +559,13 @@
     </p>
     <div style="margin-top:.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
       <label style="font-size:12px;display:flex;align-items:center;gap:4px;">
-        <input type="checkbox" id="pkg-create-risks" checked /> Auto-opprett risikoer
+        <input type="checkbox" id="pkg-create-risks" checked /> Auto-create risks
       </label>
       <label style="font-size:12px;display:flex;align-items:center;gap:4px;">
-        <input type="checkbox" id="pkg-create-collection" checked /> Auto-opprett evidenspakke (hierarkisk)
+        <input type="checkbox" id="pkg-create-collection" checked /> Auto-create evidence package (hierarchical)
       </label>
       <label style="font-size:12px;display:flex;align-items:center;gap:4px;">
-        <input type="checkbox" id="pkg-create-cp" /> Auto-opprett samarbeidsprosjekt
+        <input type="checkbox" id="pkg-create-cp" /> Auto-create collaboration project
       </label>
     </div>
     <div class="preview-wrap" id="preview-wrap" style="display:none;">
