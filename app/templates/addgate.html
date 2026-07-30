@@ -518,20 +518,21 @@
     <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
       <button class="btn" type="button" onclick="previewRecord()">Preview JSON</button>
       <button class="btn btn-primary" type="button" onclick="submitRecord()">Create & Ingest to OSDU</button>
-      <button class="btn" type="button" onclick="submitPackage()" style="background:var(--eq-link);color:#fff;border-color:var(--eq-link);" title="Creates Risks + Collection + BD in one shot">Create Full Package</button>
+      <button class="btn" type="button" onclick="submitPackage()" style="background:var(--eq-link);color:#fff;border-color:var(--eq-link);" title="Oppretter Risikoer + Evidenspakke + BD i ett steg">Opprett full pakke</button>
     </div>
     <p class="muted" style="margin-top:.4rem;font-size:.78rem;">
-      <strong>Create Full Package</strong> auto-creates standard risks (based on preset), an evidence PersistedCollection, and the BusinessDecision record — all linked together. Minimum effort, no orphans.
+      <strong>Opprett full pakke</strong> auto-genererer standard risikoer (basert på valgt preset),
+      hierarkisk evidenspakke med underpakker per fagområde (undergrunn / brønn / risiko), og BusinessDecision-posten — alt koblet sammen. Minimalt arbeid, ingen foreldreløse poster.
     </p>
     <div style="margin-top:.5rem;display:flex;gap:1rem;flex-wrap:wrap;">
       <label style="font-size:12px;display:flex;align-items:center;gap:4px;">
-        <input type="checkbox" id="pkg-create-risks" checked /> Auto-create risks
+        <input type="checkbox" id="pkg-create-risks" checked /> Auto-opprett risikoer
       </label>
       <label style="font-size:12px;display:flex;align-items:center;gap:4px;">
-        <input type="checkbox" id="pkg-create-collection" checked /> Auto-create evidence package
+        <input type="checkbox" id="pkg-create-collection" checked /> Auto-opprett evidenspakke (hierarkisk)
       </label>
       <label style="font-size:12px;display:flex;align-items:center;gap:4px;">
-        <input type="checkbox" id="pkg-create-cp" /> Auto-create Collab. Project
+        <input type="checkbox" id="pkg-create-cp" /> Auto-opprett samarbeidsprosjekt
       </label>
     </div>
     <div class="preview-wrap" id="preview-wrap" style="display:none;">

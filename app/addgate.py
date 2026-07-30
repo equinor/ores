@@ -1536,47 +1536,233 @@ async def create_package(request: Request):
             errors.append(f"Risk creation error: {e}")
             created_risk_ids = []
 
-    # ── 2. Create PersistedCollection (evidence package) ────────────────
+    # ── 2. Create PersistedCollections (hierarchical evidence package) ──
+    # Structure differs by preset:
+    #   WPC / Dev Well / Exploration → well-focused sub-collections:
+    #     1. Undergrunn (subsurface: volumes, geomodel, GeoLabelSet)
+    #     2. Brønn & Boring (well & drilling: trajectory, completion, cost, wellbore)
+    #     3. Risiko & Beslutning (risks, DevConcept, activity)
+    #     → Top-level evidence package referencing sub-collections
+    #
+    #   Field Dev DG1/DG2 → domain sub-collections (Drogon pattern):
+    #     1. Geomodell (grid, maps, polygons, dataspace)
+    #     2. Simulering & Volum (volumes raw/stat, params, production)
+    #     3. Dokumenter & Risiko (risks, documents, activity)
+    #     → Top-level evidence package referencing sub-collections
+
     collection_id_created = ""
     if create_collection:
-        pc_id = f"{id_prefix}:work-product-component--PersistedCollection:{bd_slug}-Evidence:1"
-        # Gather all references that will go into this collection
-        data_refs = [r for r in [
-            body.get("rev_stats_id", "").strip(),
-            body.get("rev_raw_id", "").strip(),
-            body.get("production_profile_id", "").strip(),
-            body.get("geolabelset_id", "").strip(),
-            body.get("params_id", "").strip(),
-            body.get("activity_id", "").strip(),
-            body.get("dataspace_id", "").strip(),
-            body.get("well_prod_id", "").strip(),
-            body.get("well_inj_id", "").strip(),
-            body.get("wellbore_id", "").strip(),
-            body.get("trajectory_id", "").strip(),
-            body.get("devconcept_id", "").strip(),
-            body.get("wellcost_id", "").strip(),
-            body.get("tubular_id", "").strip(),
-        ] if r] + created_risk_ids
+        main_pc_id = f"{id_prefix}:work-product-component--PersistedCollection:{bd_slug}-Evidenspakke:1"
 
-        pc_record = {
-            "id": pc_id,
+        # Categorize all linked record IDs into domain buckets
+        rev_stats = body.get("rev_stats_id", "").strip()
+        rev_raw = body.get("rev_raw_id", "").strip()
+        production_id = body.get("production_profile_id", "").strip()
+        geolabelset = body.get("geolabelset_id", "").strip()
+        params = body.get("params_id", "").strip()
+        activity = body.get("activity_id", "").strip()
+        dataspace = body.get("dataspace_id", "").strip()
+        well_prod = body.get("well_prod_id", "").strip()
+        well_inj = body.get("well_inj_id", "").strip()
+        wellbore = body.get("wellbore_id", "").strip()
+        trajectory = body.get("trajectory_id", "").strip()
+        devconcept = body.get("devconcept_id", "").strip()
+        wellcost = body.get("wellcost_id", "").strip()
+        tubular = body.get("tubular_id", "").strip()
+        drilling_coll = body.get("drilling_collection_id", "").strip()
+
+        sub_collection_records: List[Dict[str, Any]] = []
+        sub_collection_ids: List[str] = []
+
+        is_well_preset = preset_type in ("wpc", "dev_well", "exploration")
+
+        if is_well_preset:
+            # ── WPC / Dev Well / Exploration: well-focused structure ──
+
+            # Sub 1: Undergrunn (Subsurface)
+            undergrunn_refs = [r for r in [
+                rev_stats, rev_raw, production_id, geolabelset, params, dataspace,
+            ] if r]
+            if undergrunn_refs:
+                sub1_id = f"{id_prefix}:work-product-component--PersistedCollection:{bd_slug}-Undergrunn:1"
+                sub_collection_ids.append(sub1_id)
+                sub_collection_records.append({
+                    "id": sub1_id,
+                    "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+                    "acl": acl, "legal": legal,
+                    "data": {
+                        "Name": f"{name} – Undergrunn",
+                        "Description": (
+                            "Undergrunnsdata: volumestimater (rå + statistikk), "
+                            "produksjonsprofil, GeoLabelSet, designmatrise, "
+                            "og RDDMS geomodell-dataspace."
+                        ),
+                        "DataReferences": undergrunn_refs,
+                        "Tags": ["undergrunn", "volum", "geomodell", preset_type],
+                    },
+                })
+
+            # Sub 2: Brønn & Boring (Well & Drilling)
+            bronn_refs = [r for r in [
+                well_prod, well_inj, wellbore, trajectory,
+                wellcost, tubular, drilling_coll,
+            ] if r]
+            if bronn_refs:
+                sub2_id = f"{id_prefix}:work-product-component--PersistedCollection:{bd_slug}-Bronn:1"
+                sub_collection_ids.append(sub2_id)
+                sub_collection_records.append({
+                    "id": sub2_id,
+                    "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+                    "acl": acl, "legal": legal,
+                    "data": {
+                        "Name": f"{name} – Brønn & Boring",
+                        "Description": (
+                            "Brønnrelatert evidens: planlagte brønner (produsent/injektor), "
+                            "brønnbane (trajectory), kompletteringsdesign (TubularAssembly), "
+                            "brønnkostnad (AFE), og borepakke."
+                        ),
+                        "DataReferences": bronn_refs,
+                        "Tags": ["brønn", "boring", "komplettering", "trajectory", preset_type],
+                    },
+                })
+
+            # Sub 3: Risiko & Beslutning (Risks & Decision context)
+            risiko_refs = created_risk_ids + [r for r in [devconcept, activity] if r]
+            if risiko_refs:
+                sub3_id = f"{id_prefix}:work-product-component--PersistedCollection:{bd_slug}-Risiko:1"
+                sub_collection_ids.append(sub3_id)
+                sub_collection_records.append({
+                    "id": sub3_id,
+                    "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+                    "acl": acl, "legal": legal,
+                    "data": {
+                        "Name": f"{name} – Risiko & Beslutning",
+                        "Description": (
+                            "Risikoregisteret og beslutningskontekst: "
+                            "identifiserte risikoer, utbyggingskonsept "
+                            "(DevelopmentConcept), og aktivitetshistorikk."
+                        ),
+                        "DataReferences": risiko_refs,
+                        "Tags": ["risiko", "beslutning", "konsept", preset_type],
+                    },
+                })
+
+        else:
+            # ── Field Dev DG1/DG2 / CCS: domain-focused structure ──
+
+            # Sub 1: Geomodell (Geomodel)
+            geo_refs = [r for r in [dataspace, geolabelset] if r]
+            if geo_refs:
+                sub1_id = f"{id_prefix}:work-product-component--PersistedCollection:{bd_slug}-Geomodell:1"
+                sub_collection_ids.append(sub1_id)
+                sub_collection_records.append({
+                    "id": sub1_id,
+                    "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+                    "acl": acl, "legal": legal,
+                    "data": {
+                        "Name": f"{name} – Geomodell",
+                        "Description": (
+                            "Statisk geomodell: RDDMS dataspace (EPC-objekter), "
+                            "GeoLabelSet (nøkkeltall per segment), flater og grid."
+                        ),
+                        "DataReferences": geo_refs,
+                        "Tags": ["geomodell", "RDDMS", "GeoLabelSet", preset_type],
+                    },
+                })
+
+            # Sub 2: Simulering & Volum (Simulation & Volumes)
+            sim_refs = [r for r in [rev_stats, rev_raw, params, production_id] if r]
+            if sim_refs:
+                sub2_id = f"{id_prefix}:work-product-component--PersistedCollection:{bd_slug}-Simulering:1"
+                sub_collection_ids.append(sub2_id)
+                sub_collection_records.append({
+                    "id": sub2_id,
+                    "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+                    "acl": acl, "legal": legal,
+                    "data": {
+                        "Name": f"{name} – Simulering & Volum",
+                        "Description": (
+                            "Dynamisk simulering og volumestimater: "
+                            "råvolum per realisering, P10/P50/P90 statistikk, "
+                            "designmatrise, og produksjonsprofil."
+                        ),
+                        "DataReferences": sim_refs,
+                        "Tags": ["simulering", "volum", "FMU", "statistikk", preset_type],
+                    },
+                })
+
+            # Sub 3: Risiko, Dokumenter & Aktivitet
+            risk_doc_refs = created_risk_ids + [r for r in [devconcept, activity] if r]
+            if risk_doc_refs:
+                sub3_id = f"{id_prefix}:work-product-component--PersistedCollection:{bd_slug}-RisikoDok:1"
+                sub_collection_ids.append(sub3_id)
+                sub_collection_records.append({
+                    "id": sub3_id,
+                    "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+                    "acl": acl, "legal": legal,
+                    "data": {
+                        "Name": f"{name} – Risiko & Dokumenter",
+                        "Description": (
+                            "Risikoregisteret, utbyggingskonsept, og "
+                            "aktivitetshistorikk (provenance)."
+                        ),
+                        "DataReferences": risk_doc_refs,
+                        "Tags": ["risiko", "dokumenter", "aktivitet", preset_type],
+                    },
+                })
+
+        # ── Top-level evidence package (references sub-collections + reservoir) ──
+        # Ordered: sub-collections first (logical grouping), then reservoir context
+        all_top_refs = sub_collection_ids + [
+            r for r in [reservoir_id] if r
+        ]
+
+        # Also include any custom_records the user added
+        custom_recs: List[Dict[str, str]] = body.get("custom_records", [])
+        for cr in custom_recs:
+            cid = cr.get("id", "").strip()
+            if cid:
+                all_top_refs.append(cid)
+
+        main_pc_record = {
+            "id": main_pc_id,
             "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
-            "acl": acl,
-            "legal": legal,
+            "acl": acl, "legal": legal,
             "data": {
-                "Name": f"{name} – Evidence Package",
-                "Description": f"Auto-generated evidence package for: {name}",
-                "DataReferences": data_refs,
-                "Tags": [preset_type or "decision-gate", "evidence-package", "auto-generated"],
+                "Name": f"{name} – Evidenspakke",
+                "Description": (
+                    f"Samlet evidenspakke for beslutningen «{name}». "
+                    f"Inneholder {len(sub_collection_ids)} underpakker "
+                    f"organisert etter fagområde, pluss reservoar-kontekst. "
+                    f"Totalt {sum(len(r.get('data',{}).get('DataReferences',[])) for r in sub_collection_records)} "
+                    f"individuelle datareferanser."
+                ),
+                "DataReferences": all_top_refs,
+                "Tags": [preset_type or "beslutningsgate", "evidenspakke", "auto-generert"],
             },
         }
 
+        # Ingest all: sub-collections first, then main package
+        all_pc_records = sub_collection_records + [main_pc_record]
+
         try:
             async with osdu.http_client(timeout=30) as client:
-                r = await client.put(storage_url, json=[pc_record], headers=hdr)
+                r = await client.put(storage_url, json=all_pc_records, headers=hdr)
                 if r.status_code in (200, 201):
-                    collection_id_created = pc_id
-                    created_records.append({"type": "PersistedCollection", "id": pc_id, "refs": len(data_refs)})
+                    collection_id_created = main_pc_id
+                    created_records.append({
+                        "type": "Evidenspakke (hierarkisk)",
+                        "id": main_pc_id,
+                        "sub_collections": [
+                            {"id": rec["id"], "name": rec["data"]["Name"],
+                             "refs": len(rec["data"]["DataReferences"])}
+                            for rec in sub_collection_records
+                        ],
+                        "total_refs": sum(
+                            len(r2.get("data", {}).get("DataReferences", []))
+                            for r2 in all_pc_records
+                        ),
+                    })
                 else:
                     errors.append(f"Collection creation failed ({r.status_code}): {r.text[:300]}")
         except Exception as e:

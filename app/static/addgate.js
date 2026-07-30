@@ -557,16 +557,23 @@
       if (d.ok) {
         var summary = d.summary || {};
         var html = '<div class="result-ok">' +
-          '<strong>&#10003; Full Package created successfully</strong><br>' +
+          '<strong>&#10003; Full evidenspakke opprettet</strong><br>' +
           '<span class="bd-id">' + escHtml(d.bd_id) + '</span><br>' +
-          '<span class="muted">' + (summary.total_records || 0) + ' records created total</span><br>';
+          '<span class="muted">' + (summary.total_records || 0) + ' poster opprettet totalt</span><br>';
         if (d.created_records && d.created_records.length) {
           html += '<ul style="margin:.4rem 0;font-size:12px;padding-left:1.2rem;">';
           d.created_records.forEach(function(cr) {
             if (cr.type === 'Risk') {
-              html += '<li><strong>' + cr.count + ' Risks</strong> created and linked</li>';
+              html += '<li><strong>' + cr.count + ' Risikoer</strong> opprettet og koblet</li>';
+            } else if (cr.sub_collections) {
+              html += '<li><strong>' + escHtml(cr.type) + '</strong>: <code style="font-size:11px;">' + escHtml(cr.id || '') + '</code>';
+              html += '<ul style="font-size:11px;margin:.2rem 0;padding-left:1rem;">';
+              cr.sub_collections.forEach(function(sc) {
+                html += '<li>' + escHtml(sc.name) + ' <span class="muted">(' + sc.refs + ' ref.)</span></li>';
+              });
+              html += '</ul></li>';
             } else {
-              html += '<li><strong>' + cr.type + '</strong>: <code style="font-size:11px;">' + escHtml(cr.id || '') + '</code></li>';
+              html += '<li><strong>' + escHtml(cr.type) + '</strong>: <code style="font-size:11px;">' + escHtml(cr.id || '') + '</code></li>';
             }
           });
           html += '</ul>';
