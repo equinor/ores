@@ -32,10 +32,22 @@ out.txt
 tmp/
 test/_pg_vs_rest_output
 demo/eqn/
+demo/_auth.py
+demo/gettoken.py
+demo/osdu_search.py
 demo/drogonresqml/src/
 demo/drogonresqml/drogon_demo_records.json
+demo/drogonresqml/demo_records/
+demo/drogonresqml/manifest_*_eqndev.json
+demo/drogonresqml/manifest_*_interop.json
+demo/drogonresqml/manifest_*linked*
+demo/drogonresqml/manifest_full_*
+demo/drogonresqml/manifest_seismic_*
+demo/drogonresqml22/manifest_drogon22_*.json
+!demo/drogonresqml22/manifest_drogon221_eqndev.json
 demo/scripts/inputs/*omegas*
 demo/scripts/inputs/examples/*omegas*
+demo/scripts/inputs/records/
 
 # ── Local runtime artifacts ──
 ores_tokens.db

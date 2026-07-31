@@ -159,6 +159,22 @@ Examples:
                         help="Rotate refresh token (print new token pair)")
     p_auth.add_argument("--show-token", action="store_true",
                         help="Print the access token (for pasting into other tools)")
+    p_auth.add_argument("--export", action="store_true",
+                        help="Print export TOKEN=... for eval in shell")
+    p_auth.add_argument("--list", action="store_true",
+                        help="List available instances")
+
+    # ── search ───────────────────────────────────────────────────────────
+    p_search = sub.add_parser("search", help="Search OSDU records by kind")
+    p_search.add_argument("kinds", nargs="*", help="OSDU kind pattern(s)")
+    p_search.add_argument("-q", "--query", default="*", help="Search query")
+    p_search.add_argument("-l", "--limit", type=int, default=50, help="Max results")
+    p_search.add_argument("--target", "-t", default="eqndev", help="Instance")
+    p_search.add_argument("--id", dest="record_id", help="Fetch record by ID")
+    p_search.add_argument("--list-kinds", dest="kind_pattern", help="List kinds matching pattern")
+    p_search.add_argument("-o", "--output", choices=["table", "json"], default="table")
+    p_search.add_argument("--token", help="Bearer token")
+    p_search.add_argument("--config-file", help="Instance config file path")
 
     args = parser.parse_args()
 
@@ -179,6 +195,7 @@ Examples:
         "run-generator": cmd_run_generator,
         "list-instances": cmd_list_instances,
         "auth": cmd_auth,
+        "search": cmd_search,
     }
     handlers[args.command](args)
 
@@ -430,7 +447,26 @@ def cmd_auth(args):
     """Test authentication / mint token for an instance."""
     from scripts.auth import rotate_token as _rotate_token
 
+    # --list: show all instances
+    if args.list:
+        cmd_list_instances(args)
+        return
+
     target = args.target
+
+    # --export: print eval-able shell exports
+    if args.export:
+        try:
+            tok = get_token(target)
+            inst = resolve_instance(target)
+            print(f"export TOKEN='{tok}'")
+            print(f"export OSDU_HOST='{inst.host}'")
+            print(f"export OSDU_PARTITION='{inst.partition}'")
+        except RuntimeError as e:
+            print(f"# Auth failed: {e}", file=sys.stderr)
+            sys.exit(1)
+        return
+
     print(f"Instance: {target}")
 
     if args.rotate:
@@ -469,6 +505,86 @@ def cmd_auth(args):
     except RuntimeError as e:
         print(f"  ✗ Auth failed: {e}")
         sys.exit(1)
+
+
+def cmd_search(args):
+    """Search OSDU records by kind, fetch by ID, or list kinds."""
+    import httpx
+
+    target = args.target
+    tok = args.token or os.environ.get("OSDU_TOKEN") or get_token(target)
+    inst = resolve_instance(target)
+    hdr = {
+        "Authorization": f"Bearer {tok}",
+        "Content-Type": "application/json",
+        "data-partition-id": inst.partition,
+    }
+
+    # Fetch single record by ID
+    if args.record_id:
+        url = f"{inst.host}/api/storage/v2/records/{args.record_id}"
+        resp = httpx.get(url, headers=hdr, timeout=30)
+        if resp.status_code != 200:
+            print(f"ERROR {resp.status_code}: {resp.text[:200]}", file=sys.stderr)
+            sys.exit(1)
+        rec = resp.json()
+        if args.output == "json":
+            print(json.dumps(rec, indent=2))
+        else:
+            print(f"  id:   {rec.get('id')}")
+            print(f"  kind: {rec.get('kind')}")
+            print(f"  Name: {(rec.get('data') or {}).get('Name', '')}")
+            print(f"  keys: {list((rec.get('data') or {}).keys())}")
+        return
+
+    # List kinds matching a pattern
+    if args.kind_pattern:
+        pattern = args.kind_pattern
+        url = f"{inst.host}/api/search/v2/query"
+        for prefix in ["master-data", "work-product-component", "reference-data", "work-product", "dataset"]:
+            kind = f"osdu:wks:{prefix}--*{pattern}*:*"
+            payload = {"kind": kind, "query": "*", "limit": 0, "trackTotalCount": True}
+            resp = httpx.post(url, headers=hdr, json=payload, timeout=30)
+            if resp.status_code == 200:
+                total = resp.json().get("totalCount", 0)
+                if total > 0:
+                    print(f"  {prefix}--*{pattern}*  →  {total} records")
+        return
+
+    # Search by kind(s)
+    if not args.kinds:
+        print("Provide kind pattern(s) or use --id / --list-kinds", file=sys.stderr)
+        sys.exit(1)
+
+    url = f"{inst.host}/api/search/v2/query"
+    for kind in args.kinds:
+        short = kind.split("--")[-1].split(":")[0] if "--" in kind else kind
+        payload = {
+            "kind": kind,
+            "query": args.query,
+            "limit": args.limit,
+            "returnedFields": ["id", "kind", "version", "data.Name"],
+            "trackTotalCount": True,
+        }
+        resp = httpx.post(url, headers=hdr, json=payload, timeout=30)
+        if resp.status_code != 200:
+            print(f"ERROR {resp.status_code} for {short}", file=sys.stderr)
+            continue
+        data = resp.json()
+        total = data.get("totalCount", "?")
+        results = data.get("results") or []
+
+        print(f"\n{'━' * 60}")
+        print(f"  {short}  —  {total} total, showing {len(results)}")
+        print(f"{'━' * 60}")
+
+        if args.output == "json":
+            print(json.dumps(results, indent=2))
+        else:
+            for i, rec in enumerate(results, 1):
+                name = ((rec.get("data") or {}).get("Name")) or "(unnamed)"
+                print(f"  {i:3d}. {name}")
+                print(f"       {rec.get('id', '?')}")
 
 
 # ═══════════════════════════════════════════════════════════════════════════

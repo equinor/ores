@@ -53,7 +53,7 @@ import hashlib
 from pathlib import Path
 from typing import Any, Dict, List
 
-from ._common import load_json, load_ref, rand_uuid, default_acl, default_legal
+from ._common import load_json, load_ref, det_uuid, default_acl, default_legal
 from ._registry import register
 
 ID_PREFIX = "dev"  # overridden by pfx
@@ -70,6 +70,7 @@ def generate(
     legal = spec.get("legal") or default_legal(pfx)
     project = spec.get("project", "")
     rddms_ds = spec.get("rddms_dataspace", "")
+    uid_pfx = spec.get("uuid_prefix", "markers")
 
     # Load wellbore IDs
     wells_man = load_ref(spec, refs, "wells_manifest", "wells", base_dir)
@@ -102,7 +103,7 @@ def generate(
             wb_id = wb_map.get(wb_name, "")
             seed = depth_seeds.get(wb_name, 0)
             markers = _markers_for_wellbore(wb_name, field_fms, seed)
-            rec_id = f"{pfx}:work-product-component--WellboreMarkerSet:{rand_uuid()}:"
+            rec_id = f"{pfx}:work-product-component--WellboreMarkerSet:{det_uuid(f'{uid_pfx}-wbms-{wb_name}')}:"
             records.append({
                 "id": rec_id,
                 "kind": "osdu:wks:work-product-component--WellboreMarkerSet:1.2.0",

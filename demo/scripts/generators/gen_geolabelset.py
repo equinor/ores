@@ -22,7 +22,7 @@ from typing import Any, Dict, List
 
 from ._common import (
     load_ref,
-    load_json, rand_uuid,
+    load_json, det_uuid,
     resolve_acl_legal, resolve_reservoir_id,
 )
 from ._registry import register
@@ -82,7 +82,8 @@ def generate(
             "PropertyName": label_prop,
         })
 
-    wpc_id = f"{pfx}:work-product-component--GeoLabelSet:{rand_uuid()}:1"
+    uid_pfx = spec.get("uuid_prefix", "geolabel")
+    wpc_id = f"{pfx}:work-product-component--GeoLabelSet:{det_uuid(f'{uid_pfx}-gls')}:1"
 
     data: Dict[str, Any] = {
         "Name": f"{project} - GeoLabelSet ({label_prop} volumes)" if project else f"GeoLabelSet ({label_prop})",
