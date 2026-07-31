@@ -1,0 +1,180 @@
+{
+  "project": "Northern Lights",
+  "gate": "DG3",
+  "description": "Northern Lights Phase 2 — CCS storage expansion. DG3 FEED approval.",
+  "records": [
+    {
+      "type": "reservoir",
+      "slug": "northern-lights-storage",
+      "data": {
+        "Name": "Northern Lights CO2 Storage Complex",
+        "Description": "Saline aquifer CO2 storage, Johansen/Cook formations, offshore Norway.",
+        "FieldName": "Northern Lights",
+        "BasinName": "North Sea",
+        "CountryID": "NO"
+      }
+    },
+    {
+      "type": "activity_template",
+      "slug": "ccs-storage-assessment-workflow",
+      "data": {
+        "Name": "CCS Storage Site Assessment Workflow",
+        "Description": "Geological screening → injectivity modelling → containment risk → capacity estimation → monitoring plan",
+        "ParameterTemplates": [
+          {"Title": "GeologicalModel", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "DataObject"},
+          {"Title": "InjectivityModel", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "ContainmentRisk", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "StorageCapacity", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "MonitoringPlan", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"}
+        ]
+      }
+    },
+    {
+      "type": "activity",
+      "slug": "northern-lights-dg3-assessment",
+      "data": {
+        "Name": "Northern Lights Phase 2 - Storage Assessment",
+        "Description": "Dynamic simulation: 25 Mtpa injection over 25 years, plume migration, pressure buildup, well integrity",
+        "Parameters": [
+          {"Title": "GeologicalModel", "Selection": "Johansen Fm + Cook Fm, 200m net sand, k=100-500 mD"},
+          {"Title": "StorageCapacity", "Selection": "Certified capacity: 5 Mt/yr × 25 yr = 125 Mt total"},
+          {"Title": "ContainmentRisk", "Selection": "Seal integrity confirmed (Dunlin Gp shale, 300m thick)"}
+        ]
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "northern-lights-dg3-risk-injectivity",
+      "data": {
+        "Name": "Injectivity Decline Risk",
+        "Description": "Salt precipitation and fines migration may reduce near-wellbore injectivity over field life.",
+        "RiskCategoryID": "Subsurface",
+        "RiskDisciplineID": "Reservoir",
+        "MitigationStatus": "InProgress",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S3",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P2",
+            "MitigationActions": ["Core flood experiments", "Geochemical modelling", "Remedial acid stimulation contingency"]
+          }
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "northern-lights-dg3-risk-containment",
+      "data": {
+        "Name": "CO2 Containment - Legacy Well Integrity",
+        "Description": "Three legacy exploration wells penetrate the storage complex; cement bond integrity uncertain.",
+        "RiskCategoryID": "Subsurface",
+        "RiskDisciplineID": "Drilling",
+        "MitigationStatus": "InProgress",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S5",
+            "InherentProbability": "P2",
+            "ResidualSeverity": "S4",
+            "ResidualProbability": "P1",
+            "MitigationActions": ["Cement bond log review", "P&A workover planning for 2 wells", "Monitoring well near legacy wells"]
+          }
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "northern-lights-dg3-risk-regulatory",
+      "data": {
+        "Name": "Regulatory - Storage Permit Timeline",
+        "Description": "EU ETS eligibility and Norwegian storage permit approval may take 18-24 months.",
+        "RiskCategoryID": "Regulatory",
+        "RiskDisciplineID": "Operations",
+        "MitigationStatus": "Open",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S3",
+            "InherentProbability": "P4",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P3",
+            "MitigationActions": ["Early engagement with NPD/MPE", "Parallel EU CCS directive compliance"]
+          }
+        }
+      }
+    },
+    {
+      "type": "document",
+      "slug": "northern-lights-dg3-containment-report",
+      "data": {
+        "Name": "Northern Lights Phase 2 - Containment Assessment Report",
+        "Description": "Storage complex characterisation, seal integrity, fault analysis, and quantitative risk assessment.",
+        "DocumentType": "TechnicalNote",
+        "Authors": ["CCS Subsurface Team"]
+      }
+    },
+    {
+      "type": "development_concept",
+      "slug": "northern-lights-dg3-concept",
+      "data": {
+        "Name": "Northern Lights Phase 2 - Expansion Concept",
+        "Description": "Additional injection well + onshore CO2 receiving terminal expansion. 5 Mtpa capacity.",
+        "DecisionGate": "DG3",
+        "FacilityConcept": {
+          "Type": "SubseaTieback",
+          "HostFacility": "Northern Lights onshore terminal (Øygarden)",
+          "Templates": ["Subsea injection template"],
+          "Slots": ["INJ-3", "INJ-4"]
+        },
+        "WellPlan": {
+          "Producers": 0,
+          "Injectors": 2,
+          "ArtificialLift": "None"
+        },
+        "ProductionStrategy": {
+          "PeakOilRate_Sm3d": 0,
+          "PlateauDuration_years": 25,
+          "FieldLife_years": 30,
+          "WaterInjection": false,
+          "GasInjection": false
+        }
+      }
+    },
+    {
+      "type": "persisted_collection",
+      "slug": "northern-lights-dg3-evidence",
+      "data": {
+        "Name": "Northern Lights DG3 - Evidence Package",
+        "Description": "Complete FEED-stage evidence for CCS storage expansion approval",
+        "Hierarchy": [
+          {"Name": "Storage Assessment", "Description": "Capacity, injectivity, containment"},
+          {"Name": "Risks", "Description": "Subsurface, well integrity, regulatory"},
+          {"Name": "Concept Design", "Description": "Facilities, wells, monitoring"},
+          {"Name": "Permits & Compliance", "Description": "Storage permit, ETS, environmental"}
+        ]
+      }
+    },
+    {
+      "type": "business_decision",
+      "slug": "northern-lights-dg3-feed-approval",
+      "data": {
+        "Name": "Northern Lights Phase 2 - DG3 FEED Approval",
+        "Description": "Approve FEED for CCS storage expansion (Phase 2: +5 Mtpa injection capacity)",
+        "ProjectName": "Northern Lights CCS",
+        "DecisionLevelID": "DG3",
+        "ApprovalStatusID": "Pending",
+        "DecisionDueDate": "2027-03-31",
+        "DecisionSummary": "Approve FEED. Certified storage 125 Mt. Containment risk acceptable (legacy wells to be P&A'd). FEED estimate €450M CAPEX for 2 wells + terminal expansion.",
+        "ext": {
+          "equinor": {
+            "ProjectTypeID": "CCS",
+            "Alternatives": [
+              {"Name": "Phase 2 Expansion (2 wells)", "Rank": 1, "Rationale": "Meets 5 Mtpa target, leverages Phase 1 infrastructure"},
+              {"Name": "Accelerated Phase 2+3 (4 wells)", "Rank": 2, "Rationale": "Higher capacity but requires new pipeline corridor"},
+              {"Name": "Defer to 2028", "Rank": 3, "Rationale": "Wait for Phase 1 injection performance data (12 months)"}
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

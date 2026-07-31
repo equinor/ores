@@ -1,0 +1,29 @@
+{
+  "data": {
+    "Name": "",
+    "Description": "",
+    "RiskCategoryID": "",
+    "RiskDisciplineID": "",
+    "MitigationStatus": "",
+    "ext": {
+      "equinor": {
+        "InherentSeverity": "",
+        "InherentProbability": "",
+        "ResidualSeverity": "",
+        "ResidualProbability": "",
+        "MitigationActions": []
+      }
+    }
+  },
+  "_meta": {
+    "description": "Risk record — subsurface, HSE, schedule, or commercial risk with severity/probability ratings (5×5 matrix).",
+    "required_fields": ["Name"],
+    "reference_data": {
+      "RiskCategoryID": "{partition}:reference-data--RiskCategory:{Subsurface|HSE|Schedule|Commercial|Regulatory}:",
+      "RiskDisciplineID": "{partition}:reference-data--RiskDiscipline:{Reservoir|Drilling|Facilities|Operations}:"
+    },
+    "severity_scale": ["S1 (Negligible)", "S2 (Minor)", "S3 (Moderate)", "S4 (Major)", "S5 (Critical)"],
+    "probability_scale": ["P1 (Rare)", "P2 (Unlikely)", "P3 (Possible)", "P4 (Likely)", "P5 (Almost Certain)"],
+    "mitigation_statuses": ["Open", "InProgress", "Mitigated", "Accepted", "Closed"]
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "project": "Omegas",
+  "gate": "WPC",
+  "description": "Omegas prospect — Work Program Committee assessment. Exploration well candidate.",
+  "records": [
+    {
+      "type": "reservoir",
+      "slug": "omegas-prospect",
+      "data": {
+        "Name": "Omegas Prospect",
+        "Description": "Omegas exploration prospect, deepwater Barents Sea. Cretaceous turbidite play.",
+        "FieldName": "Omegas",
+        "BasinName": "Barents Sea",
+        "CountryID": "NO"
+      }
+    },
+    {
+      "type": "activity_template",
+      "slug": "omegas-exploration-workflow",
+      "data": {
+        "Name": "Omegas - Exploration Assessment Workflow",
+        "Description": "Seismic interpretation → AVO analysis → prospect risking → volumetrics → well design",
+        "ParameterTemplates": [
+          {"Title": "Seismic3D", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "DataObject"},
+          {"Title": "AVOAnalysis", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "ProspectRisking", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "Volumetrics", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"}
+        ]
+      }
+    },
+    {
+      "type": "activity",
+      "slug": "omegas-wpc-assessment",
+      "data": {
+        "Name": "Omegas WPC - Prospect Assessment",
+        "Description": "AVO-supported amplitude anomaly, 3-way dip closure against fault. COS: 25%.",
+        "Parameters": [
+          {"Title": "Seismic3D", "Selection": "2022 3D broadband survey, full-stack + near/far"},
+          {"Title": "AVOAnalysis", "Selection": "Class III AVO response, DHI confidence: moderate"},
+          {"Title": "Volumetrics", "Selection": "Unrisked P50: 45 MMboe; risked EMV: 12 MMboe"}
+        ]
+      }
+    },
+    {
+      "type": "reservoir_volumes",
+      "slug": "omegas-wpc-volumes",
+      "data": {
+        "Name": "Omegas WPC - Prospect Volumes (unrisked)",
+        "Description": "Monte Carlo volumetrics: trap area × net pay × porosity × Sw × FVF × RF",
+        "VolumeType": "Statistical",
+        "Statistics": {
+          "STOIIP_P10": 28.5,
+          "STOIIP_P50": 52.3,
+          "STOIIP_P90": 95.1,
+          "RecOil_P10": 8.6,
+          "RecOil_P50": 18.3,
+          "RecOil_P90": 38.0,
+          "Unit": "MMboe"
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "omegas-wpc-risk-source",
+      "data": {
+        "Name": "Source Rock Maturity",
+        "Description": "Jurassic source rock maturity at prospect depth uncertain — limited well control in area.",
+        "RiskCategoryID": "Subsurface",
+        "RiskDisciplineID": "Reservoir",
+        "MitigationStatus": "Open",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S5",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S5",
+            "ResidualProbability": "P2",
+            "MitigationActions": ["Basin modelling update", "Geochemical analogue study"]
+          }
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "omegas-wpc-risk-seal",
+      "data": {
+        "Name": "Top Seal Integrity",
+        "Description": "Cretaceous shale seal — fault juxtaposition may create leak path at eastern closure.",
+        "RiskCategoryID": "Subsurface",
+        "RiskDisciplineID": "Reservoir",
+        "MitigationStatus": "Open",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S4",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S3",
+            "ResidualProbability": "P2",
+            "MitigationActions": ["Fault seal analysis (SGR/AFSA)", "Seismic attribute extraction at seal level"]
+          }
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "omegas-wpc-risk-reservoir-quality",
+      "data": {
+        "Name": "Reservoir Quality",
+        "Description": "Turbidite channel-fill facies: porosity 15-25%, but net-to-gross highly uncertain (analogue range: 30-80%).",
+        "RiskCategoryID": "Subsurface",
+        "RiskDisciplineID": "Reservoir",
+        "MitigationStatus": "Open",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S3",
+            "InherentProbability": "P4",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P3",
+            "MitigationActions": ["Seismic inversion for NTG proxy", "Analogue database review (Nise/Lysing)"]
+          }
+        }
+      }
+    },
+    {
+      "type": "document",
+      "slug": "omegas-wpc-prospect-evaluation",
+      "data": {
+        "Name": "Omegas - Prospect Evaluation Report",
+        "Description": "Full prospect evaluation: seismic interpretation, trap geometry, risking, volumetrics, and drilling recommendation.",
+        "DocumentType": "TechnicalNote",
+        "Authors": ["Exploration Team"]
+      }
+    },
+    {
+      "type": "persisted_collection",
+      "slug": "omegas-wpc-evidence",
+      "data": {
+        "Name": "Omegas WPC - Evidence Package",
+        "Description": "Evidence for Work Program Committee drill/defer decision",
+        "Hierarchy": [
+          {"Name": "Seismic & Interpretation", "Description": "3D seismic, AVO, horizons"},
+          {"Name": "Prospect Risking", "Description": "COS elements, risk register"},
+          {"Name": "Volumetrics", "Description": "Monte Carlo volumes, EMV"},
+          {"Name": "Well Design", "Description": "Preliminary well concept and cost estimate"}
+        ]
+      }
+    },
+    {
+      "type": "business_decision",
+      "slug": "omegas-wpc-drill-decision",
+      "data": {
+        "Name": "Omegas WPC - Drill Decision",
+        "Description": "Work Program Committee: recommend drill or defer for the Omegas exploration prospect",
+        "ProjectName": "Omegas Exploration",
+        "DecisionLevelID": "WPC",
+        "ApprovalStatusID": "Pending",
+        "DecisionDueDate": "2026-12-15",
+        "DecisionSummary": "Recommend drill. COS 25%, unrisked P50 52 MMboe, risked EMV 12 MMboe. Estimated well cost $85M. Positive EMV at >$60/bbl.",
+        "ext": {
+          "equinor": {
+            "ProjectTypeID": "ExplorationWell",
+            "Alternatives": [
+              {"Name": "Drill 2027 Q3", "Rank": 1, "Rationale": "Rig available, optimal weather window, seismic data mature"},
+              {"Name": "Defer to 2028", "Rank": 2, "Rationale": "Wait for offset well results (Block 7324) for analogue data"},
+              {"Name": "Farm-out 50%", "Rank": 3, "Rationale": "Reduce exposure, but lose operatorship"}
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

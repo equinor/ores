@@ -1,0 +1,260 @@
+{
+  "project": "Drogon",
+  "gate": "DG2",
+  "description": "Drogon field development - Concept Select (DG2). Subsea tieback to existing FPSO.",
+  "records": [
+    {
+      "type": "reservoir",
+      "slug": "drogon-reservoir",
+      "data": {
+        "Name": "Drogon Reservoir",
+        "Description": "Drogon oil and gas field, Norwegian Continental Shelf. Jurassic sandstone reservoir (Volantis/Therys/Volon formations).",
+        "FieldName": "Drogon",
+        "BasinName": "North Sea",
+        "CountryID": "NO"
+      }
+    },
+    {
+      "type": "column_based_table",
+      "slug": "drogon-dg2-parameters",
+      "data": {
+        "Name": "Drogon DG2 - Design Parameters",
+        "Description": "Uncertainty parameters driving the FMU ensemble (100 realisations)",
+        "Columns": [
+          {"Name": "Realisation", "Kind": "integer"},
+          {"Name": "MULTZ_ILE", "Kind": "double", "Description": "Transmissibility multiplier ILE"},
+          {"Name": "RMS_SEED", "Kind": "integer", "Description": "Geomodel random seed"},
+          {"Name": "FWL_CENTRAL", "Kind": "double", "Unit": "m", "Description": "Free water level central segment"},
+          {"Name": "COHIBA_MEAN_0", "Kind": "double", "Description": "Cohiba trend parameter"}
+        ]
+      }
+    },
+    {
+      "type": "reservoir_volumes",
+      "slug": "drogon-dg2-volumes-raw",
+      "data": {
+        "Name": "Drogon DG2 - Raw Volumes (per realisation)",
+        "Description": "STOIIP and recoverable volumes from 100-member FMU ensemble",
+        "VolumeType": "Raw"
+      }
+    },
+    {
+      "type": "reservoir_volumes",
+      "slug": "drogon-dg2-volumes-stats",
+      "data": {
+        "Name": "Drogon DG2 - Volume Statistics (P10/P50/P90)",
+        "Description": "Statistical summary of ensemble volumes",
+        "VolumeType": "Statistical",
+        "Statistics": {
+          "STOIIP_P10": 95.2,
+          "STOIIP_P50": 128.4,
+          "STOIIP_P90": 168.7,
+          "RecOil_P10": 33.3,
+          "RecOil_P50": 51.4,
+          "RecOil_P90": 72.1,
+          "Unit": "MSm3"
+        }
+      }
+    },
+    {
+      "type": "activity_template",
+      "slug": "drogon-fmu-workflow-template",
+      "data": {
+        "Name": "Drogon - Full FMU Workflow (ERT → RMS → OPM Flow)",
+        "Description": "Comprehensive uncertainty workflow: seismic + horizons + wells + stratigraphy → ERT → RMS → OPM Flow → volumes, maps, production profiles",
+        "ParameterTemplates": [
+          {"Title": "SeismicData", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "DataObject"},
+          {"Title": "Horizons", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "DataObject"},
+          {"Title": "Wells", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "DataObject"},
+          {"Title": "StratigraphicColumn", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "DataObject"},
+          {"Title": "ReservoirProperties", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "DataObject"},
+          {"Title": "DesignParameters", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "DataObject"},
+          {"Title": "OutputVolumes", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "OutputMaps", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "OutputProduction", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"}
+        ]
+      }
+    },
+    {
+      "type": "activity",
+      "slug": "drogon-dg2-fmu-run",
+      "data": {
+        "Name": "Drogon DG2 - FMU Volumetrics Execution",
+        "Description": "100-member ensemble: DESIGN2PARAMS → RMS (facies + petrophysics) → OPM Flow → volume extraction",
+        "Parameters": [
+          {"Title": "SeismicData", "Selection": "3D/4D seismic: near/far offset, amplitude/RelAI"},
+          {"Title": "DesignParameters", "Selection": "100-member Latin Hypercube design matrix"},
+          {"Title": "OutputVolumes", "Selection": "Per-realisation STOIIP, GIIP, recoverable (7 segments × 100 realisations)"}
+        ]
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "drogon-dg2-risk-porosity",
+      "data": {
+        "Name": "Porosity and Cementation Uncertainty",
+        "Description": "Volantis Fm porosity ranges 0.18–0.28; cementation exponent impacts Sw calculation. Key uncertainty for STOIIP.",
+        "RiskCategoryID": "Subsurface",
+        "RiskDisciplineID": "Reservoir",
+        "MitigationStatus": "InProgress",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S3",
+            "InherentProbability": "P4",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P3",
+            "MitigationActions": ["Core porosity calibration from offset wells", "Log-derived porosity cross-validation"]
+          }
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "drogon-dg2-risk-fault",
+      "data": {
+        "Name": "Fault Compartmentalisation",
+        "Description": "Seven fault-bounded segments; cross-fault transmissibility controls drainage connectivity and sweep efficiency.",
+        "RiskCategoryID": "Subsurface",
+        "RiskDisciplineID": "Reservoir",
+        "MitigationStatus": "InProgress",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S4",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S3",
+            "ResidualProbability": "P2",
+            "MitigationActions": ["RFT pressure analysis", "4D seismic connectivity study", "Interference test planning"]
+          }
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "drogon-dg2-risk-hse",
+      "data": {
+        "Name": "HSE - Environmental Discharge Risk",
+        "Description": "Produced water handling capacity and subsea leak detection during tie-in operations.",
+        "RiskCategoryID": "HSE",
+        "RiskDisciplineID": "Operations",
+        "MitigationStatus": "Open",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S4",
+            "InherentProbability": "P2",
+            "ResidualSeverity": "S3",
+            "ResidualProbability": "P1",
+            "MitigationActions": ["Dual-barrier PW system design", "Subsea leak detection ROV inspection plan"]
+          }
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "drogon-dg2-risk-schedule",
+      "data": {
+        "Name": "Schedule Risk - FPSO Availability",
+        "Description": "Host FPSO turnaround schedule may delay tie-in window by 3–6 months.",
+        "RiskCategoryID": "Schedule",
+        "RiskDisciplineID": "Facilities",
+        "MitigationStatus": "Open",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S3",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P2",
+            "MitigationActions": ["Early FPSO slot reservation", "Parallel subsea installation campaign"]
+          }
+        }
+      }
+    },
+    {
+      "type": "document",
+      "slug": "drogon-dg2-sra",
+      "data": {
+        "Name": "Drogon DG2 - Subsurface Risk Assessment (SRA)",
+        "Description": "Comprehensive subsurface uncertainty and risk evaluation for Concept Select gate.",
+        "DocumentType": "SRA",
+        "Authors": ["Subsurface Team"]
+      }
+    },
+    {
+      "type": "document",
+      "slug": "drogon-dg2-cra",
+      "data": {
+        "Name": "Drogon DG2 - Commercial Risk Assessment (CRA)",
+        "Description": "Economic analysis, NPV sensitivity, and commercial risk evaluation.",
+        "DocumentType": "CRA",
+        "Authors": ["Commercial Team"]
+      }
+    },
+    {
+      "type": "development_concept",
+      "slug": "drogon-dg2-devconcept",
+      "data": {
+        "Name": "Drogon DG2 - Subsea Tieback Concept",
+        "Description": "4-slot subsea template tied back to host FPSO via 12km flowline. Gas lift assisted.",
+        "DecisionGate": "DG2",
+        "FacilityConcept": {
+          "Type": "SubseaTieback",
+          "HostFacility": "Existing FPSO (15 km NW)",
+          "Templates": ["4-slot manifold"],
+          "Slots": ["P1", "P2", "I1", "I2"]
+        },
+        "WellPlan": {
+          "Producers": 2,
+          "Injectors": 2,
+          "ArtificialLift": "GasLift"
+        },
+        "ReservoirTargeting": {
+          "TargetFormation": "Volantis Fm (upper)",
+          "SegmentIDs": ["Seg-A", "Seg-B", "Seg-C"]
+        },
+        "ProductionStrategy": {
+          "PeakOilRate_Sm3d": 15000,
+          "PlateauDuration_years": 4,
+          "FieldLife_years": 20,
+          "WaterInjection": true,
+          "GasInjection": false
+        }
+      }
+    },
+    {
+      "type": "persisted_collection",
+      "slug": "drogon-dg2-evidence-package",
+      "data": {
+        "Name": "Drogon DG2 - Evidence Package",
+        "Description": "Complete evidence bundle for Concept Select decision gate",
+        "Hierarchy": [
+          {"Name": "Volumes & Parameters", "Description": "FMU ensemble results"},
+          {"Name": "Risks", "Description": "Subsurface, HSE, and schedule risks"},
+          {"Name": "Documents", "Description": "SRA, CRA, and technical reports"},
+          {"Name": "Development Concept", "Description": "Facility and well plan"}
+        ]
+      }
+    },
+    {
+      "type": "business_decision",
+      "slug": "drogon-dg2-concept-select",
+      "data": {
+        "Name": "Drogon DG2 - Concept Select",
+        "Description": "Approve subsea tieback concept for the Drogon field development",
+        "ProjectName": "Drogon Field Development",
+        "DecisionLevelID": "DG2",
+        "ApprovalStatusID": "Pending",
+        "DecisionDueDate": "2026-09-30",
+        "DecisionSummary": "Approve subsea tieback to host FPSO. 2P+2I wells, gas-lift assisted, 15 kbopd peak. NPV positive at $55/bbl.",
+        "ext": {
+          "equinor": {
+            "ProjectTypeID": "FieldDevelopment",
+            "Alternatives": [
+              {"Name": "Subsea Tieback to FPSO", "Rank": 1, "Rationale": "Best NPV, lowest CAPEX, leverages existing infrastructure"},
+              {"Name": "Standalone FPSO", "Rank": 2, "Rationale": "Higher recovery but 3× CAPEX, longer schedule"},
+              {"Name": "Extended Reach from Platform", "Rank": 3, "Rationale": "Technically challenging, limited reservoir coverage"}
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "data": {
+    "Name": "",
+    "Description": "",
+    "ReservoirID": "",
+    "VolumeType": "",
+    "Realisations": [],
+    "Statistics": {}
+  },
+  "_meta": {
+    "description": "ReservoirEstimatedVolumes — STOIIP, GIIP, recoverable volumes (raw realisations or P10/P50/P90 statistics).",
+    "required_fields": ["Name", "ReservoirID"],
+    "volume_types": ["Raw", "Statistical"],
+    "statistics_fields": {
+      "P10": 0.0,
+      "P50": 0.0,
+      "P90": 0.0,
+      "Mean": 0.0,
+      "Unit": "MSm3"
+    },
+    "realisation_entry": {
+      "RealisationNumber": 1,
+      "STOIIP_MSm3": 0.0,
+      "GIIP_GSm3": 0.0,
+      "RecoverableOil_MSm3": 0.0,
+      "RecoverableGas_GSm3": 0.0
+    }
+  }
+}

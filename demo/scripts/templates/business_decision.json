@@ -1,0 +1,42 @@
+{
+  "data": {
+    "Name": "",
+    "Description": "",
+    "ProjectName": "",
+    "DecisionLevelID": "",
+    "ApprovalStatusID": "",
+    "DecisionDueDate": "",
+    "DecisionSummary": "",
+    "RiskIDs": [],
+    "PriorActivityIDs": [],
+    "Parameters": [],
+    "ancestry": {
+      "parents": [],
+      "children": []
+    },
+    "ext": {
+      "equinor": {
+        "ActivityStateTemplateID": "",
+        "ProjectTypeID": "",
+        "Alternatives": [],
+        "ActivityStates": []
+      }
+    }
+  },
+  "_meta": {
+    "description": "Business Decision record — captures a decision gate approval with linked evidence (risks, volumes, activities, documents).",
+    "required_fields": ["Name", "DecisionLevelID"],
+    "reference_data": {
+      "DecisionLevelID": "{partition}:reference-data--DecisionLevel:{DG0|DG1|DG2|DG3|DG4|WPC}:",
+      "ApprovalStatusID": "{partition}:reference-data--DecisionApprovalStatus:{Pending|Approved|Rejected|Deferred}:"
+    },
+    "parameter_template": {
+      "Title": "Evidence item name",
+      "Selection": "Description of what this evidence provides",
+      "ParameterKindID": "{partition}:reference-data--ParameterKind:{DataObject|String|Integer|Double}:",
+      "ParameterRoleID": "{partition}:reference-data--ParameterRole:{Input|Output|InputReference}:",
+      "DataObjectParameter": "{partition}:{category}--{Entity}:{id}:{version}",
+      "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "label"}]
+    }
+  }
+}

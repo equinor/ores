@@ -1,0 +1,18 @@
+{
+  "data": {
+    "Name": "",
+    "Description": "",
+    "MemberIDs": [],
+    "Hierarchy": []
+  },
+  "_meta": {
+    "description": "PersistedCollection — a named bundle of related records (evidence packages, decision gate collections). Supports hierarchical nesting.",
+    "required_fields": ["Name"],
+    "member_id_format": "{partition}:{category}--{Entity}:{id}:{version}",
+    "hierarchy_entry": {
+      "Name": "Sub-collection label",
+      "Description": "What this group contains",
+      "MemberIDs": ["record_id_1", "record_id_2"]
+    }
+  }
+}

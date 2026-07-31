@@ -1,0 +1,21 @@
+{
+  "data": {
+    "Name": "",
+    "Description": "",
+    "ProjectTypeID": "",
+    "Status": "",
+    "StartDate": "",
+    "EndDate": "",
+    "ParticipantIDs": [],
+    "ObjectiveIDs": [],
+    "DeliverableIDs": []
+  },
+  "_meta": {
+    "description": "CollaborationProject — a shared project space linking participants, objectives, deliverables, and timeline.",
+    "required_fields": ["Name"],
+    "reference_data": {
+      "ProjectTypeID": "{partition}:reference-data--ProjectType:{FieldDevelopment|ExplorationWell|CCS|IOR|Decommissioning}:",
+      "Status": "Active|Planned|Completed|OnHold|Cancelled"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "data": {
+    "Name": "",
+    "Description": "",
+    "ActivityTemplateID": "",
+    "Parameters": []
+  },
+  "_meta": {
+    "description": "Activity record — represents an executed workflow (FMU run, study, analysis) linked to an ActivityTemplate.",
+    "required_fields": ["Name"],
+    "parameter_template": {
+      "Title": "Parameter name (matches ActivityTemplate.ParameterTemplates[].Title)",
+      "Selection": "Description of the specific value/object used",
+      "ParameterKindID": "{partition}:reference-data--ParameterKind:{DataObject|String|Integer|Double}:",
+      "ParameterRoleID": "{partition}:reference-data--ParameterRole:{Input|Output}:",
+      "DataObjectParameter": "{partition}:{category}--{Entity}:{id}:{version}",
+      "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "label"}]
+    }
+  }
+}

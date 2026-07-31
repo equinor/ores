@@ -1,0 +1,21 @@
+{
+  "data": {
+    "Name": "",
+    "Description": "",
+    "ReservoirID": "",
+    "Segments": []
+  },
+  "_meta": {
+    "description": "GeoLabelSet — segment-level KPIs summarizing reservoir properties and volumes per fault block.",
+    "required_fields": ["Name", "ReservoirID"],
+    "segment_entry": {
+      "SegmentID": "{partition}:master-data--ReservoirSegment:{id}:{version}",
+      "SegmentName": "Segment name",
+      "STOIIP_MSm3": 0.0,
+      "NetPayAvg_m": 0.0,
+      "PorosityAvg": 0.0,
+      "PermAvg_mD": 0.0,
+      "SwAvg": 0.0
+    }
+  }
+}

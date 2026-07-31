@@ -1,0 +1,26 @@
+{
+  "data": {
+    "Name": "",
+    "Description": "",
+    "ProjectTypeID": "",
+    "Milestones": []
+  },
+  "_meta": {
+    "description": "ActivityStateTemplate — defines the milestone sequence for a project type lifecycle (FieldDevelopment, CCS, ExplorationWell, etc.).",
+    "required_fields": ["Name", "ProjectTypeID", "Milestones"],
+    "milestone_entry": {
+      "Sequence": 1,
+      "MilestoneID": "SHORT_CODE",
+      "Name": "Human-readable milestone name",
+      "TypicalDurationMonths": null
+    },
+    "predefined_templates": [
+      "FieldDevelopment (9 milestones: SSVP → Plateau)",
+      "FieldDevWells (8 milestones: Concept → Handover)",
+      "ExplorationWell (8 milestones: Prospect ID → Report)",
+      "CCS (8 milestones: Site Screen → Monitoring)",
+      "IOR (7 milestones: Screen → Steady State)",
+      "Decommissioning (6 milestones: Cessation → Post-Decom)"
+    ]
+  }
+}

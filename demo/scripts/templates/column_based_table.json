@@ -1,0 +1,30 @@
+{
+  "data": {
+    "Name": "",
+    "Description": "",
+    "Columns": [],
+    "Data": {}
+  },
+  "_meta": {
+    "description": "ColumnBasedTable — generic tabular data (design matrix, production profiles, parameter sets). Columns define schema, Data holds arrays.",
+    "required_fields": ["Name", "Columns"],
+    "column_entry": {
+      "Name": "ColumnName",
+      "Kind": "string|integer|double|boolean",
+      "Unit": "optional unit (Sm3, m, mD, etc.)",
+      "Description": "What this column represents"
+    },
+    "example": {
+      "Columns": [
+        {"Name": "Realisation", "Kind": "integer"},
+        {"Name": "STOIIP_MSm3", "Kind": "double", "Unit": "MSm3"},
+        {"Name": "RecFactor", "Kind": "double"}
+      ],
+      "Data": {
+        "Realisation": [1, 2, 3, 4, 5],
+        "STOIIP_MSm3": [120.5, 135.2, 98.7, 142.1, 115.8],
+        "RecFactor": [0.35, 0.38, 0.32, 0.40, 0.36]
+      }
+    }
+  }
+}

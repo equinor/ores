@@ -1,0 +1,35 @@
+{
+  "data": {
+    "Name": "",
+    "Description": "",
+    "DecisionGate": "",
+    "FacilityConcept": {
+      "Type": "",
+      "HostFacility": "",
+      "Templates": [],
+      "Slots": []
+    },
+    "WellPlan": {
+      "Producers": 0,
+      "Injectors": 0,
+      "ArtificialLift": ""
+    },
+    "ReservoirTargeting": {
+      "TargetFormation": "",
+      "SegmentIDs": []
+    },
+    "ProductionStrategy": {
+      "PeakOilRate_Sm3d": 0,
+      "PlateauDuration_years": 0,
+      "FieldLife_years": 0,
+      "WaterInjection": false,
+      "GasInjection": false
+    }
+  },
+  "_meta": {
+    "description": "DevelopmentConcept — subsea/platform/FPSO facility concept, well plan, and production strategy for a field development.",
+    "required_fields": ["Name", "DecisionGate"],
+    "facility_types": ["SubseaTieback", "StandaloneFPSO", "FixedPlatform", "TLP", "Spar", "Semisubmersible", "JackUp", "Onshore"],
+    "artificial_lift_options": ["GasLift", "ESP", "SRP", "PCP", "JetPump", "None"]
+  }
+}

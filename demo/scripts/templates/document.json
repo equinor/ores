@@ -1,0 +1,16 @@
+{
+  "data": {
+    "Name": "",
+    "Description": "",
+    "DocumentType": "",
+    "MimeType": "application/pdf",
+    "Url": "",
+    "Authors": [],
+    "PublicationDate": ""
+  },
+  "_meta": {
+    "description": "Document record — reference to a report, study, or deliverable (SRA, CRA, PDO, PTR, Basis of Design, etc.).",
+    "required_fields": ["Name", "DocumentType"],
+    "document_types": ["SRA", "CRA", "PDO", "PTR", "BasisOfDesign", "WellPlan", "FacilityDesign", "EnvironmentalImpact", "EconomicAnalysis", "TechnicalNote", "Presentation", "Other"]
+  }
+}
