@@ -1,0 +1,28 @@
+{
+  "id": "dev:work-product-component--HorizonInterpretation:MSL:",
+  "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "MSL",
+    "Description": "Mean Sea Level datum",
+    "IsStratigraphic": false,
+    "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_HorizonInterpretation('7da0e4d7-1955-4031-8eaf-68a93515414d')",
+    "ResourceID": "7da0e4d7-1955-4031-8eaf-68a93515414d",
+    "GeneticBoundaryFeatureID": "0c402b9f-fa0e-4c36-a08f-37f292115e01"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "id": "dev:work-product-component--StratigraphicColumn:Drogon-Volve-Lithostratigraphy:",
+  "kind": "osdu:wks:work-product-component--StratigraphicColumn:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon-Volve Lithostratigraphy",
+    "Description": "Combined lithostratigraphic column for the Drogon and Volve well sets",
+    "StratigraphicColumnRankInterpretationIDs": [
+      "dev:work-product-component--StratigraphicColumnRankInterpretation:Drogon-Volve-Lithostratigraphy-Group:",
+      "dev:work-product-component--StratigraphicColumnRankInterpretation:Drogon-Volve-Lithostratigraphy-Formation:",
+      "dev:work-product-component--StratigraphicColumnRankInterpretation:Drogon-Volve-Lithostratigraphy-Member:"
+    ]
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "generator": "wells",
+  "uuid_prefix": "dg2-well",
+  "wells": [
+    {
+      "name": "55/33-A-1", "facility": "55/33-A-1", "field": "Drogon",
+      "description": "Drogon exploration well - discovery well targeting Valysar Fm.",
+      "wellbores": [
+        {"name": "55/33-A-1", "facility": "55/33-A-1",
+         "description": "Main bore of discovery well 55/33-A-1",
+         "target": "Valysar Fm", "seq": 1}
+      ]
+    },
+    {
+      "name": "55/33-A-2", "facility": "55/33-A-2", "field": "Drogon",
+      "description": "Drogon appraisal well - delineation of Central Horst compartment.",
+      "wellbores": [
+        {"name": "55/33-A-2", "facility": "55/33-A-2",
+         "description": "Main bore of appraisal well 55/33-A-2",
+         "target": "Valysar Fm", "seq": 1},
+        {"name": "55/33-A-2 T2", "facility": "55/33-A-2 T2",
+         "description": "Side-track targeting West Lowland segment",
+         "target": "Valysar Fm", "seq": 2}
+      ]
+    },
+    {
+      "name": "55/33-A-3", "facility": "55/33-A-3", "field": "Drogon",
+      "description": "Drogon appraisal well - delineation of East Lowland compartment.",
+      "wellbores": [
+        {"name": "55/33-A-3", "facility": "55/33-A-3",
+         "description": "Main bore of appraisal well 55/33-A-3",
+         "target": "Valysar Fm", "seq": 1}
+      ]
+    },
+    {
+      "name": "15/9-F-1", "facility": "15/9-F-1", "field": "Volve",
+      "description": "Volve production well - Hugin Fm, NCS licence PL 252.",
+      "wellbores": [
+        {"name": "15/9-F-1 C", "facility": "15/9-F-1 C",
+         "description": "Re-entry wellbore-C, Hugin Fm producer",
+         "target": "Hugin Fm", "seq": 1}
+      ]
+    },
+    {
+      "name": "15/9-F-4", "facility": "15/9-F-4", "field": "Volve",
+      "description": "Volve production well - Hugin Fm, NCS licence PL 252.",
+      "wellbores": [
+        {"name": "15/9-F-4", "facility": "15/9-F-4",
+         "description": "Main bore, Hugin Fm producer",
+         "target": "Hugin Fm", "seq": 1}
+      ]
+    },
+    {
+      "name": "15/9-F-5", "facility": "15/9-F-5", "field": "Volve",
+      "description": "Volve water injection well - Hugin Fm, NCS licence PL 252.",
+      "wellbores": [
+        {"name": "15/9-F-5", "facility": "15/9-F-5",
+         "description": "Main bore, Hugin Fm water injector",
+         "target": "Hugin Fm", "seq": 1}
+      ]
+    },
+    {
+      "name": "15/9-F-7", "facility": "15/9-F-7", "field": "Volve",
+      "description": "Volve production well - Hugin Fm, NCS licence PL 252.",
+      "wellbores": [
+        {"name": "15/9-F-7", "facility": "15/9-F-7",
+         "description": "Main bore, Hugin Fm producer",
+         "target": "Hugin Fm", "seq": 1}
+      ]
+    },
+    {
+      "name": "15/9-F-11", "facility": "15/9-F-11", "field": "Volve",
+      "description": "Volve production well - Hugin Fm, NCS licence PL 252.",
+      "wellbores": [
+        {"name": "15/9-F-11 A", "facility": "15/9-F-11 A",
+         "description": "Bore A, Hugin Fm producer",
+         "target": "Hugin Fm", "seq": 1}
+      ]
+    },
+    {
+      "name": "15/9-F-15", "facility": "15/9-F-15", "field": "Volve",
+      "description": "Volve production / injection well - Hugin Fm, NCS licence PL 252.",
+      "wellbores": [
+        {"name": "15/9-F-15 D", "facility": "15/9-F-15 D",
+         "description": "Re-entry D, Hugin Fm producer/injector",
+         "target": "Hugin Fm", "seq": 1},
+        {"name": "15/9-F-15 S", "facility": "15/9-F-15 S",
+         "description": "Side-track S, Hugin Fm",
+         "target": "Hugin Fm", "seq": 2}
+      ]
+    }
+  ]
+}

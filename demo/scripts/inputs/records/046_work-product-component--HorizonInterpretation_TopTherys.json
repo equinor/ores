@@ -1,0 +1,28 @@
+{
+  "id": "dev:work-product-component--HorizonInterpretation:TopTherys:",
+  "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "TopTherys",
+    "Description": "Top Therys source rock boundary",
+    "IsStratigraphic": true,
+    "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_HorizonInterpretation('6c6eeb68-bb4d-4fa4-9eb4-b880b5bd7086')",
+    "ResourceID": "6c6eeb68-bb4d-4fa4-9eb4-b880b5bd7086",
+    "GeneticBoundaryFeatureID": "49cd1075-1eef-4950-8e50-2bec81ca4275"
+  }
+}

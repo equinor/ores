@@ -1,0 +1,301 @@
+{
+  "project": "Drogon",
+  "gate": "DG2",
+  "description": "Drogon DG2 Concept Select \u2013 COMPLETE evidence package. All OSDU record types produced from generic generators + template configs. Covers: master data, wells, stratigraphy, grid model, surfaces, polygons, sim tables, volumes, geo-labels, risks, documents, activity, BD, development concept, collections, ETP dataspace.",
+
+  "generators": [
+    "demo/scripts/inputs/generators/drogon/master.json",
+    "demo/scripts/inputs/generators/drogon/wells.json",
+    "demo/scripts/inputs/generators/drogon/markers.json",
+    "demo/scripts/inputs/generators/drogon/grid.json",
+    "demo/scripts/inputs/generators/drogon/maps.json",
+    "demo/scripts/inputs/generators/drogon/polygons.json",
+    "demo/scripts/inputs/generators/drogon/simtables.json",
+    "demo/scripts/inputs/generators/drogon/volumes_raw.json",
+    "demo/scripts/inputs/generators/drogon/volumes_stat.json",
+    "demo/scripts/inputs/generators/drogon/geolabelset.json"
+  ],
+
+  "records": [
+    {
+      "type": "etp_dataspace",
+      "slug": "maap-drogon_dg",
+      "data": {
+        "Name": "Drogon DG2 - RDDMS Dataspace",
+        "Description": "ETP/RDDMS dataspace containing the Drogon DG2 geomodel objects (grids, surfaces, wells, properties). Served via OpenETP.",
+        "DataspaceName": "maap/drogon_dg",
+        "ConnectionString": "eml:///dataspace('maap/drogon_dg')"
+      }
+    },
+
+    {
+      "type": "activity_template",
+      "slug": "Drogon-DG2-FMU-template",
+      "data": {
+        "Name": "Drogon DG2 FMU Workflow Template",
+        "Description": "Fast Model Update uncertainty workflow for Drogon DG2 Concept Select. Chains: ERT sensitivity \u2192 RMS geomodel \u2192 OPM Flow simulation \u2192 post-processing \u2192 volume aggregation.",
+        "ParameterTemplates": [
+          {"Title": "UncertaintyParameters", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "DataObject", "Description": "Design matrix / sensitivity parameters (OWC, PHIT, fault throw, etc.)"},
+          {"Title": "GeomodelGrid",         "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject", "Description": "Static geomodel grid (IjkGridRepresentation)"},
+          {"Title": "ReservoirProperties",  "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject", "Description": "Grid properties (porosity, permeability, saturation, facies)"},
+          {"Title": "DepthSurfaces",        "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject", "Description": "Depth structure surfaces per horizon"},
+          {"Title": "AmplitudeMaps",        "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject", "Description": "Seismic amplitude extractions"},
+          {"Title": "FaciesFractionMaps",   "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject", "Description": "Facies fraction maps per zone"},
+          {"Title": "SimulationResults",    "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject", "Description": "Eclipse summary vectors, completion data, group tree"},
+          {"Title": "VolumeEstimates",      "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject", "Description": "ReservoirEstimatedVolumes (RAW + STAT)"},
+          {"Title": "ETPDataspace",         "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject", "Description": "RDDMS dataspace storing all RESQML objects"}
+        ]
+      }
+    },
+
+    {
+      "type": "activity",
+      "slug": "Drogon-DG2-FMU-run-001",
+      "data": {
+        "Name": "Drogon DG2 FMU Run 001 (drogon_design)",
+        "Description": "Execution of the Drogon DG2 FMU workflow: 250 realisations, ERT one-by-one design, RMS 13.1 geomodel, OPM Flow 2023.04 reservoir simulation. Case: drogon_design. Run date: 2026-02-15.",
+        "Parameters": [
+          {"Title": "UncertaintyParameters", "Selection": "250-realisation one-by-one design matrix", "ParameterKindID": "DataObject"},
+          {"Title": "GeomodelGrid",         "Selection": "92\u00d7146\u00d769 corner-point grid (Valysar/Therys/Volon)", "ParameterKindID": "DataObject"},
+          {"Title": "SimulationResults",    "Selection": "250 Eclipse runs, 31 monthly timesteps 2018-01 to 2020-07", "ParameterKindID": "DataObject"},
+          {"Title": "VolumeEstimates",      "Selection": "RAW per-realisation + P10/P50/P90 statistics", "ParameterKindID": "DataObject"},
+          {"Title": "ETPDataspace",         "Selection": "maap/drogon_dg", "ParameterKindID": "DataObject"}
+        ]
+      }
+    },
+
+    {
+      "type": "risk",
+      "slug": "Drogon-DG2-PorosityAndCementation",
+      "data": {
+        "Name": "Porosity and Cementation Uncertainty",
+        "Description": "Risk of lower-than-expected porosity due to carbonate cementation in the Valysar Fm. Diagenetic overprint may reduce effective pore space by 3-8 p.u. in the Central Horst and East Lowland segments.",
+        "RiskCategoryID": "Subsurface-Static",
+        "ext": {"equinor": {"InherentSeverity": "S3", "InherentProbability": "P4", "ResidualSeverity": "S2", "ResidualProbability": "P3", "MitigationActions": ["Acquired core data from 55/33-A-2 T2", "Calibrated porosity model with NMR logs"]}}
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "Drogon-DG2-OWCPosition",
+      "data": {
+        "Name": "Oil-Water Contact Position",
+        "Description": "Uncertainty in OWC depth across Drogon segments due to limited well penetrations. Only 3 wells with pressure data, OWC varies by \u00b115m between segments.",
+        "RiskCategoryID": "Subsurface-Static",
+        "ext": {"equinor": {"InherentSeverity": "S4", "InherentProbability": "P3", "ResidualSeverity": "S3", "ResidualProbability": "P2", "MitigationActions": ["Included OWC as sensitivity parameter in FMU", "Constrained by pressure gradients"]}}
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "Drogon-DG2-FaultSeal",
+      "data": {
+        "Name": "Fault Seal and Compartmentalization",
+        "Description": "Risk that faults between segments are sealing, reducing connected volumes and recovery. Cross-fault juxtaposition analysis suggests potential barriers in CentralRamp-NorthHorst boundary.",
+        "RiskCategoryID": "Subsurface-Static",
+        "ext": {"equinor": {"InherentSeverity": "S4", "InherentProbability": "P3", "ResidualSeverity": "S3", "ResidualProbability": "P3", "MitigationActions": ["Fault seal analysis completed", "Cross-fault pressure testing planned"]}}
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "Drogon-DG2-RelPermUncertainty",
+      "data": {
+        "Name": "Relative Permeability Uncertainty",
+        "Description": "Limited SCAL data \u2014 only 4 core plugs from one segment. Relperm curves may not represent all facies, particularly channel vs. crevasse in Valysar zone.",
+        "RiskCategoryID": "Subsurface-Dynamic",
+        "ext": {"equinor": {"InherentSeverity": "S3", "InherentProbability": "P4", "ResidualSeverity": "S2", "ResidualProbability": "P3", "MitigationActions": ["Varied relperm endpoints in FMU sensitivity", "Additional SCAL planned for DG3"]}}
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "Drogon-DG2-AquiferSupport",
+      "data": {
+        "Name": "Aquifer Support Strength",
+        "Description": "Uncertainty in aquifer size and connectivity. Strong aquifer support would improve sweep but may cause early water breakthrough in Volon zone producers.",
+        "RiskCategoryID": "Subsurface-Dynamic",
+        "ext": {"equinor": {"InherentSeverity": "S3", "InherentProbability": "P3", "ResidualSeverity": "S2", "ResidualProbability": "P3", "MitigationActions": ["Aquifer multiplier included in sensitivity design", "Pressure monitoring planned"]}}
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "Drogon-DG2-ScheduleDelay",
+      "data": {
+        "Name": "Subsea Template Delivery Delay",
+        "Description": "Supply chain risk for subsea template fabrication. Lead time 24-30 months, sole-source vendor. Delay would postpone first oil by 6-12 months.",
+        "RiskCategoryID": "Schedule",
+        "ext": {"equinor": {"InherentSeverity": "S4", "InherentProbability": "P2", "ResidualSeverity": "S3", "ResidualProbability": "P2", "MitigationActions": ["Dual-vendor qualification initiated", "Long-lead order placed"]}}
+      }
+    },
+
+    {
+      "type": "document",
+      "slug": "Drogon-DG2-SRA-Report",
+      "data": {
+        "Name": "Drogon DG2 - Subsurface Readiness Assessment",
+        "Description": "SRA report for DG2 Concept Select. Covers reservoir description, uncertainty assessment, volume estimates, recovery factor analysis, and subsurface risk register.",
+        "DocumentType": "SRA",
+        "PublicationDate": "2026-02-15"
+      }
+    },
+    {
+      "type": "document",
+      "slug": "Drogon-DG2-CRA-Report",
+      "data": {
+        "Name": "Drogon DG2 - Concept Readiness Assessment",
+        "Description": "CRA report for DG2 Concept Select. Covers facility concept screening, well plan, production profiles, CAPEX/OPEX estimates, and development schedule.",
+        "DocumentType": "CRA",
+        "PublicationDate": "2026-02-28"
+      }
+    },
+    {
+      "type": "document",
+      "slug": "Drogon-DG2-BOD",
+      "data": {
+        "Name": "Drogon DG2 - Basis of Design",
+        "Description": "Basis of Design document for the Drogon subsea tieback development. Defines design criteria, metocean conditions, well specifications, and host facility interface requirements.",
+        "DocumentType": "BasisOfDesign",
+        "PublicationDate": "2026-03-01"
+      }
+    },
+    {
+      "type": "document",
+      "slug": "Drogon-DG2-PTR",
+      "data": {
+        "Name": "Drogon DG2 - Peer Technical Review Report",
+        "Description": "PTR report from independent technical review of the Drogon DG2 concept select package.",
+        "DocumentType": "PTR",
+        "PublicationDate": "2026-03-10"
+      }
+    },
+
+    {
+      "type": "development_concept",
+      "slug": "Drogon-DG2-SubseaTieback",
+      "data": {
+        "Name": "Drogon DG2 - Subsea Tieback to Njord A",
+        "Description": "Preferred development concept: 4 production wells + 2 water injection wells tied back to Njord A platform via 25 km multiphase pipeline. Gas-lift for artificial lift.",
+        "DecisionGate": "DG2",
+        "FacilityConcept": {
+          "Type": "SubseaTieback",
+          "HostFacility": "Njord A",
+          "Templates": [
+            {"Name": "Production template", "Slots": 4, "Description": "4-slot production template, Valysar Fm"},
+            {"Name": "Injection template",  "Slots": 2, "Description": "2-slot water injection template"}
+          ],
+          "Slots": [
+            {"Name": "A-1", "Type": "Producer", "Target": "Central Horst - Valysar"},
+            {"Name": "A-2", "Type": "Producer", "Target": "West Lowland - Valysar"},
+            {"Name": "A-3", "Type": "Producer", "Target": "East Lowland - Valysar"},
+            {"Name": "A-4", "Type": "Producer", "Target": "North Horst - Valysar"},
+            {"Name": "A-5", "Type": "WaterInjector", "Target": "Central Ramp - Valysar"},
+            {"Name": "A-6", "Type": "WaterInjector", "Target": "Central South - Valysar"}
+          ]
+        },
+        "WellPlan": {
+          "Producers": 4,
+          "Injectors": 2,
+          "ArtificialLift": "GasLift"
+        },
+        "ReservoirTargeting": {
+          "TargetFormation": "Valysar Formation (Volantis Fm)",
+          "SegmentIDs": ["CentralHorst", "WestLowland", "EastLowland", "NorthHorst", "CentralRamp", "CentralSouth"]
+        },
+        "ProductionStrategy": {
+          "PeakOilRate_Sm3d": 12000,
+          "PlateauDuration_years": 3,
+          "FieldLife_years": 25,
+          "WaterInjection": true,
+          "GasInjection": false
+        }
+      }
+    },
+
+    {
+      "type": "persisted_collection",
+      "slug": "Drogon-DG2-EvidencePackage",
+      "data": {
+        "Name": "Drogon DG2 - Decision Gate Evidence Package",
+        "Description": "Complete evidence package for the Drogon DG2 Concept Select decision gate. Bundles all subsurface, facility, risk, and economic evidence.",
+        "Hierarchy": [
+          {"Name": "Subsurface Model", "Description": "Geomodel, surfaces, properties, and volumes", "MemberIDs": []},
+          {"Name": "Simulation Results", "Description": "Simulator tables, production profiles, and timeseries", "MemberIDs": []},
+          {"Name": "Risk Register", "Description": "Subsurface, dynamic, and schedule risks", "MemberIDs": []},
+          {"Name": "Reports & Documents", "Description": "SRA, CRA, BOD, and PTR", "MemberIDs": []},
+          {"Name": "Development Concept", "Description": "Facility concept, well plan, and production strategy", "MemberIDs": []},
+          {"Name": "Workflow Provenance", "Description": "Activity template, execution record, and dataspace", "MemberIDs": []}
+        ]
+      }
+    },
+
+    {
+      "type": "collaboration_project",
+      "slug": "Drogon-Field-Development",
+      "data": {
+        "Name": "Drogon Field Development Project",
+        "Description": "Collaborative workspace for the Drogon field development team. Tracks all decision gates (DG0\u2192DG4), evidence packages, and cross-discipline deliverables."
+      }
+    },
+
+    {
+      "type": "activity_state_template",
+      "slug": "Drogon-Decision-Gate-Schedule",
+      "data": {
+        "Name": "Drogon Decision Gate Schedule",
+        "Description": "Decision gate milestones for the Drogon field development.",
+        "ActivityStates": [
+          {"StateName": "DG0 - Identify",         "StateDate": "2024-06-15", "StateStatus": "Completed"},
+          {"StateName": "DG1 - Assess",            "StateDate": "2025-03-01", "StateStatus": "Completed"},
+          {"StateName": "DG2 - Concept Select",    "StateDate": "2026-03-15", "StateStatus": "InProgress"},
+          {"StateName": "DG3 - FEED",              "StateDate": "2027-06-01", "StateStatus": "Planned"},
+          {"StateName": "DG4 - Sanction",           "StateDate": "2028-09-01", "StateStatus": "Planned"}
+        ]
+      }
+    },
+
+    {
+      "type": "business_decision",
+      "slug": "Drogon-DG2-ConceptSelect",
+      "data": {
+        "Name": "Drogon DG2 - Concept Select Decision",
+        "Description": "Business decision for Drogon DG2 Concept Select gate. Recommends subsea tieback to Njord A with 4P+2I wells, first oil 2030. NPV(10%) = 850 MNOK, IRR = 22%.",
+        "ProjectName": "Drogon",
+        "DecisionLevelID": "DG2",
+        "ApprovalStatusID": "Pending",
+        "DecisionDueDate": "2026-03-15",
+        "DecisionSummary": "Subsea tieback concept selected based on highest NPV and acceptable risk profile. Key uncertainties (porosity, OWC, fault seal) adequately captured in FMU sensitivity analysis. Residual risks within tolerance for DG2 gate passage.",
+        "Parameters": [
+          {"Title": "SRA Report",          "Selection": "DG2 SRA complete \u2014 volumes confirmed", "ParameterKindID": "DataObject"},
+          {"Title": "CRA Report",          "Selection": "DG2 CRA complete \u2014 concept feasibility confirmed", "ParameterKindID": "DataObject"},
+          {"Title": "Volume Estimates",    "Selection": "Oil P50: 45 MSm3, P10: 62 MSm3, P90: 28 MSm3", "ParameterKindID": "DataObject"},
+          {"Title": "Risk Register",       "Selection": "6 risks, all residual \u2264 S3/P3", "ParameterKindID": "DataObject"},
+          {"Title": "Development Concept", "Selection": "Subsea tieback to Njord A, 4P+2I", "ParameterKindID": "DataObject"},
+          {"Title": "FMU Workflow Run",    "Selection": "250 realisations, drogon_design case", "ParameterKindID": "DataObject"},
+          {"Title": "Grid Model",          "Selection": "92\u00d7146\u00d769 static geomodel", "ParameterKindID": "DataObject"},
+          {"Title": "Evidence Package",    "Selection": "DG2 complete evidence package", "ParameterKindID": "DataObject"}
+        ],
+        "ext": {
+          "equinor": {
+            "ProjectTypeID": "FieldDevelopment",
+            "Alternatives": [
+              {
+                "Name": "Alt 1 - Subsea Tieback to Njord A",
+                "Description": "4P+2I subsea wells, 25 km multiphase pipeline, gas lift",
+                "IsSelected": true,
+                "Economics": {"NPV_MNOK": 850, "IRR_pct": 22, "Breakeven_USD_bbl": 35, "CAPEX_MNOK": 4200, "OPEX_MNOK_pa": 280, "Payback_years": 4.5}
+              },
+              {
+                "Name": "Alt 2 - Standalone FPSO",
+                "Description": "Leased FPSO, 6P+3I subsea wells",
+                "IsSelected": false,
+                "Economics": {"NPV_MNOK": 620, "IRR_pct": 16, "Breakeven_USD_bbl": 42, "CAPEX_MNOK": 7800, "OPEX_MNOK_pa": 450, "Payback_years": 6.2}
+              }
+            ],
+            "ActivityStates": [
+              {"StateName": "DG0 - Identify",      "StateDate": "2024-06-15", "StateStatus": "Completed"},
+              {"StateName": "DG1 - Assess",         "StateDate": "2025-03-01", "StateStatus": "Completed"},
+              {"StateName": "DG2 - Concept Select", "StateDate": "2026-03-15", "StateStatus": "InProgress"}
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -219,9 +219,405 @@ def test_all_example_configs():
     print(f"  ✓ All example configs valid ({len(list(examples_dir.glob('*.json')))} files)")
 
 
+def test_generators():
+    """All generator data specs produce records."""
+    from scripts.generators import run_generator
+
+    gen_dir = SCRIPT_DIR / "inputs" / "generators" / "drogon"
+    if not gen_dir.exists():
+        print("  ⚠ Generator specs not found (skipped)")
+        return
+
+    expected_counts = {
+        "grid": 11,
+        "maps": 49,
+        "markers": 33,
+        "master": 9,
+        "polygons": 7,
+        "simtables": 5,
+        "volumes_raw": 1,
+        "volumes_stat": 1,
+        "wells": 20,
+    }
+
+    for spec_file in sorted(gen_dir.glob("*.json")):
+        spec = json.loads(spec_file.read_text("utf-8"))
+        gen_type = spec.get("generator", "?")
+        records = run_generator(spec, "dev", spec_file.parent)
+        assert len(records) > 0, f"{spec_file.name}: no records generated"
+        # Verify each record has required fields
+        for rec in records:
+            assert "id" in rec, f"{spec_file.name}: record missing 'id'"
+            assert "kind" in rec, f"{spec_file.name}: record missing 'kind'"
+            assert "data" in rec, f"{spec_file.name}: record missing 'data'"
+        # Verify expected counts
+        expected = expected_counts.get(gen_type)
+        if expected is not None:
+            assert len(records) == expected, (
+                f"{spec_file.name}: expected {expected} records, got {len(records)}"
+            )
+
+    print(f"  ✓ All generators valid ({len(list(gen_dir.glob('*.json')))} specs, "
+          f"{sum(expected_counts.values())} total records)")
+
+
+def test_generator_pipeline():
+    """Pipeline config with generators produces correct record count."""
+    inst = OsduInstance(
+        name="t", partition="dev", host="https://x.com",
+        legal_tag="dev-tag", owners=["o@dev"], viewers=["v@dev"],
+    )
+    config_file = SCRIPT_DIR / "inputs" / "drogon_DG2_generated.json"
+    if not config_file.exists():
+        print("  ⚠ Generator pipeline config not found (skipped)")
+        return
+    config = json.loads(config_file.read_text("utf-8"))
+    records = generate_records_from_input(
+        config, inst, config_dir=config_file.parent
+    )
+    # 10 generators produce 137 records + 18 template records = 155
+    assert len(records) == 155, f"Expected 155 records, got {len(records)}"
+    print(f"  ✓ Generator pipeline ({len(records)} records)")
+
+
+def test_record_type_coverage():
+    """DG2 generated pipeline covers all expected OSDU entity types."""
+    inst = OsduInstance(
+        name="t", partition="dev", host="https://x.com",
+        legal_tag="dev-tag", owners=["o@dev"], viewers=["v@dev"],
+    )
+    config_file = SCRIPT_DIR / "inputs" / "drogon_DG2_generated.json"
+    config = json.loads(config_file.read_text("utf-8"))
+    records = generate_records_from_input(config, inst, config_dir=config_file.parent)
+
+    # Extract entity types from kind strings
+    entities = set()
+    for r in records:
+        kind = r.get("kind", "")
+        # kind format: osdu:wks:category--Entity:version
+        parts = kind.split("--")
+        if len(parts) >= 2:
+            entities.add(parts[-1].split(":")[0])
+
+    expected_entities = {
+        # From generators
+        "Reservoir", "ReservoirSegment", "Well", "Wellbore",
+        "WellboreMarkerSet", "StratigraphicColumn",
+        "StratigraphicColumnRankInterpretation", "StratigraphicUnitInterpretation",
+        "HorizonInterpretation", "IjkGridRepresentation",
+        "StructureMap", "GenericRepresentation", "ColumnBasedTable",
+        "ReservoirEstimatedVolumes", "GeoLabelSet",
+        # From template records
+        "BusinessDecision", "Risk", "Activity", "ActivityTemplate",
+        "Document", "DevelopmentConcept", "PersistedCollection",
+        "CollaborationProject", "ActivityStateTemplate", "ETPDataspace",
+    }
+    # WorkProduct is from generators too
+    missing = expected_entities - entities
+    assert not missing, f"Missing entity types: {missing}"
+    assert len(entities) >= 25, f"Expected ≥25 entity types, got {len(entities)}: {entities}"
+    print(f"  ✓ Record type coverage ({len(entities)} unique OSDU types)")
+
+
+def test_deterministic_generation():
+    """Template-based record IDs are deterministic across runs."""
+    inst = OsduInstance(
+        name="t", partition="dev", host="https://x.com",
+        legal_tag="dev-tag", owners=["o@dev"], viewers=["v@dev"],
+    )
+    # Use a template-only config (no generators with random UUIDs)
+    config_file = SCRIPT_DIR / "inputs" / "examples" / "drogon_DG2.json"
+    config = json.loads(config_file.read_text("utf-8"))
+
+    run1 = generate_records_from_input(config, inst)
+    run2 = generate_records_from_input(config, inst)
+
+    assert len(run1) == len(run2), "Different record counts between runs"
+    for r1, r2 in zip(run1, run2):
+        assert r1["id"] == r2["id"], f"ID mismatch: {r1['id']} != {r2['id']}"
+        assert r1["kind"] == r2["kind"], f"Kind mismatch for {r1['id']}"
+    print(f"  ✓ Deterministic generation ({len(run1)} template records identical across 2 runs)")
+
+
+def test_partition_rewriting():
+    """Partition rewriting updates IDs, ACLs, legal tags, and data references."""
+    from scripts.ingest import _rewrite_record
+
+    inst = OsduInstance(
+        name="target", partition="prod", host="https://x.com",
+        legal_tag="prod-legal", owners=["o@prod"], viewers=["v@prod"],
+    )
+    record = {
+        "id": "dev:master-data--Risk:abc:1",
+        "kind": "osdu:wks:master-data--Risk:1.2.0",
+        "acl": {"owners": ["data.owners@dev.example.com"],
+                "viewers": ["data.viewers@dev.example.com"]},
+        "legal": {"legaltags": ["dev-legal"],
+                  "otherRelevantDataCountries": ["NO"]},
+        "data": {
+            "Name": "Test",
+            "SomeRef": "dev:master-data--Other:xyz:1",
+            "Nested": {"RefList": ["dev:work-product--WP:aaa:1"]},
+        },
+    }
+    rewritten = _rewrite_record(record, "prod", inst)
+
+    assert rewritten["id"] == "prod:master-data--Risk:abc:1"
+    assert rewritten["acl"] == inst.acl
+    assert rewritten["legal"] == inst.legal
+    assert rewritten["data"]["SomeRef"] == "prod:master-data--Other:xyz:1"
+    assert rewritten["data"]["Nested"]["RefList"][0] == "prod:work-product--WP:aaa:1"
+    # Original unchanged
+    assert record["id"] == "dev:master-data--Risk:abc:1"
+    print("  ✓ Partition rewriting (ID, ACL, legal, nested refs)")
+
+
+def test_generator_registry():
+    """All expected generators are registered."""
+    from scripts.generators._registry import GENERATORS, _import_all
+
+    _import_all()
+    expected = {"master", "wells", "markers", "grid", "maps", "polygons",
+                "simtables", "volumes_raw", "volumes_stat", "params",
+                "geolabelset"}
+    registered = set(GENERATORS.keys())
+    missing = expected - registered
+    assert not missing, f"Missing generators: {missing}"
+    # Each entry must be callable
+    for name, fn in GENERATORS.items():
+        assert callable(fn), f"Generator '{name}' is not callable"
+    print(f"  ✓ Generator registry ({len(registered)} generators registered)")
+
+
+def test_generator_record_structure():
+    """Every generated record has required OSDU envelope fields."""
+    from scripts.generators import run_generator
+
+    gen_dir = SCRIPT_DIR / "inputs" / "generators" / "drogon"
+    all_records = []
+    for spec_file in sorted(gen_dir.glob("*.json")):
+        spec = json.loads(spec_file.read_text("utf-8"))
+        records = run_generator(spec, "dev", spec_file.parent)
+        all_records.extend(records)
+
+    required_keys = {"id", "kind", "acl", "legal", "data"}
+    for rec in all_records:
+        missing = required_keys - set(rec.keys())
+        assert not missing, f"Record {rec.get('id','?')} missing: {missing}"
+        # ID format: partition:category--Entity:uuid:version
+        assert ":" in rec["id"], f"Invalid ID format: {rec['id']}"
+        assert "osdu:wks:" in rec["kind"], f"Invalid kind format: {rec['kind']}"
+        assert isinstance(rec["acl"], dict), f"ACL not dict: {rec['id']}"
+        assert isinstance(rec["legal"], dict), f"Legal not dict: {rec['id']}"
+        assert isinstance(rec["data"], dict), f"Data not dict: {rec['id']}"
+    print(f"  ✓ Generator record structure ({len(all_records)} records validated)")
+
+
+def test_all_generated_records_valid():
+    """All records from DG2 pipeline pass client-side validation."""
+    inst = OsduInstance(
+        name="t", partition="dev", host="https://x.com",
+        legal_tag="dev-tag", owners=["o@dev"], viewers=["v@dev"],
+    )
+    config_file = SCRIPT_DIR / "inputs" / "drogon_DG2_generated.json"
+    config = json.loads(config_file.read_text("utf-8"))
+    records = generate_records_from_input(config, inst, config_dir=config_file.parent)
+
+    client = OsduClient(inst, token="dummy")
+    errors = client.validate_records(records)
+    assert not errors, f"Validation errors: {errors}"
+    print(f"  ✓ All generated records valid ({len(records)} records)")
+
+
+def test_manifest_include_pipeline():
+    """Pipeline with include_manifests loads pre-generated records."""
+    inst = OsduInstance(
+        name="t", partition="dev", host="https://x.com",
+        legal_tag="dev-tag", owners=["o@dev"], viewers=["v@dev"],
+    )
+    # Use drogon_DG1_full which has include_manifests
+    config_file = SCRIPT_DIR / "inputs" / "drogon_DG1_full.json"
+    if not config_file.exists():
+        print("  ⚠ drogon_DG1_full.json not found (skipped)")
+        return
+    config = json.loads(config_file.read_text("utf-8"))
+    records = generate_records_from_input(config, inst, config_dir=config_file.parent)
+    assert len(records) > 0, "No records from include_manifests pipeline"
+    # Validate all
+    client = OsduClient(inst, token="dummy")
+    errors = client.validate_records(records)
+    assert not errors, f"Validation errors: {errors}"
+    print(f"  ✓ Manifest include pipeline ({len(records)} records from DG1)")
+
+
+def test_template_data_merge():
+    """Template data fields are properly merged, not overwritten."""
+    inst = OsduInstance(
+        name="t", partition="dev", host="https://x.com",
+        legal_tag="dev-tag", owners=["o@dev"], viewers=["v@dev"],
+    )
+    # Generate a business_decision with partial data
+    rec = generate_record("business_decision", inst, {
+        "Name": "TestBD",
+        "ext": {"equinor": {"Alternatives": [{"Name": "Alt1"}]}},
+    }, slug="merge-test")
+    # Template fields should be present even if not explicitly set
+    assert rec["data"]["Name"] == "TestBD"
+    # ext should contain our data
+    assert rec["data"]["ext"]["equinor"]["Alternatives"][0]["Name"] == "Alt1"
+    print("  ✓ Template data merge (deep fields preserved)")
+
+
+def test_invalid_record_type():
+    """Unknown record type raises a clear error."""
+    inst = OsduInstance(
+        name="t", partition="dev", host="https://x.com",
+        legal_tag="dev-tag", owners=["o@dev"], viewers=["v@dev"],
+    )
+    try:
+        generate_record("nonexistent_type", inst, {"Name": "X"}, slug="x")
+        assert False, "Should have raised an error"
+    except (KeyError, FileNotFoundError, ValueError):
+        pass
+    print("  ✓ Invalid record type raises error")
+
+
+def test_generator_unknown_type():
+    """Unknown generator type raises a clear error."""
+    from scripts.generators import run_generator
+    try:
+        run_generator({"generator": "nonexistent_gen"}, "dev", Path("."))
+        assert False, "Should have raised an error"
+    except (KeyError, ValueError):
+        pass
+    print("  ✓ Unknown generator type raises error")
+
+
+def test_empty_records_config():
+    """Config with empty records list produces no records."""
+    inst = OsduInstance(
+        name="t", partition="dev", host="https://x.com",
+        legal_tag="dev-tag", owners=["o@dev"], viewers=["v@dev"],
+    )
+    config = {"project": "Empty", "gate": "DG0", "records": []}
+    records = generate_records_from_input(config, inst)
+    assert len(records) == 0
+    print("  ✓ Empty records config produces 0 records")
+
+
+def test_all_pipeline_configs():
+    """All pipeline configs in inputs/ generate valid records."""
+    inst = OsduInstance(
+        name="t", partition="dev", host="https://x.com",
+        legal_tag="dev-tag", owners=["o@dev"], viewers=["v@dev"],
+    )
+    inputs_dir = SCRIPT_DIR / "inputs"
+    count = 0
+    for config_file in sorted(inputs_dir.glob("*.json")):
+        config = json.loads(config_file.read_text("utf-8"))
+        records = generate_records_from_input(
+            config, inst, config_dir=config_file.parent
+        )
+        assert len(records) >= 0, f"{config_file.name}: generation failed"
+        # Validate
+        client = OsduClient(inst, token="dummy")
+        errors = client.validate_records(records)
+        assert not errors, f"{config_file.name}: {errors}"
+        count += 1
+    print(f"  ✓ All pipeline configs valid ({count} configs)")
+
+
+def test_generator_wells_wellbore_refs():
+    """Wells generator creates matching Well→Wellbore references."""
+    from scripts.generators import run_generator
+
+    spec_file = SCRIPT_DIR / "inputs" / "generators" / "drogon" / "wells.json"
+    spec = json.loads(spec_file.read_text("utf-8"))
+    records = run_generator(spec, "dev", spec_file.parent)
+
+    wells = [r for r in records if "--Well:" in r["kind"]]
+    wellbores = [r for r in records if "--Wellbore:" in r["kind"]]
+
+    assert len(wells) == 9, f"Expected 9 wells, got {len(wells)}"
+    assert len(wellbores) == 11, f"Expected 11 wellbores, got {len(wellbores)}"
+
+    # Each wellbore should reference a well that exists
+    well_ids = {w["id"] for w in wells}
+    for wb in wellbores:
+        well_ref = wb["data"].get("WellID", "")
+        if well_ref:
+            assert well_ref in well_ids, f"Wellbore {wb['id']} references unknown well {well_ref}"
+    print(f"  ✓ Well→Wellbore references valid ({len(wells)} wells, {len(wellbores)} wellbores)")
+
+
+def test_generator_master_segments():
+    """Master generator creates Reservoir + ReservoirSegment + WorkProduct."""
+    from scripts.generators import run_generator
+
+    spec_file = SCRIPT_DIR / "inputs" / "generators" / "drogon" / "master.json"
+    spec = json.loads(spec_file.read_text("utf-8"))
+    records = run_generator(spec, "dev", spec_file.parent)
+
+    reservoirs = [r for r in records if "--Reservoir:" in r["kind"]]
+    segments = [r for r in records if "--ReservoirSegment:" in r["kind"]]
+    wps = [r for r in records if "work-product" in r["kind"].lower()]
+
+    assert len(reservoirs) == 1, f"Expected 1 Reservoir, got {len(reservoirs)}"
+    assert len(segments) == 7, f"Expected 7 ReservoirSegments, got {len(segments)}"
+    assert len(wps) == 1, f"Expected 1 WorkProduct, got {len(wps)}"
+
+    # Each segment should reference the reservoir
+    res_id = reservoirs[0]["id"]
+    for seg in segments:
+        assert res_id in str(seg["data"]), f"Segment {seg['id']} doesn't reference reservoir"
+    print(f"  ✓ Master generator: 1 reservoir, {len(segments)} segments, 1 WP")
+
+
+def test_generator_markers_stratigraphy():
+    """Markers generator builds full stratigraphic hierarchy."""
+    from scripts.generators import run_generator
+
+    spec_file = SCRIPT_DIR / "inputs" / "generators" / "drogon" / "markers.json"
+    spec = json.loads(spec_file.read_text("utf-8"))
+    records = run_generator(spec, "dev", spec_file.parent)
+
+    marker_sets = [r for r in records if "--WellboreMarkerSet:" in r["kind"]]
+    strat_cols = [r for r in records if "--StratigraphicColumn:" in r["kind"]]
+    rank_interps = [r for r in records if "RankInterpretation" in r["kind"]]
+    unit_interps = [r for r in records if "UnitInterpretation" in r["kind"]]
+    horizon_interps = [r for r in records if "HorizonInterpretation" in r["kind"]]
+
+    assert len(marker_sets) >= 1, "No WellboreMarkerSets"
+    assert len(strat_cols) == 1, f"Expected 1 StratigraphicColumn, got {len(strat_cols)}"
+    assert len(rank_interps) >= 1, "No RankInterpretations"
+    assert len(unit_interps) >= 1, "No UnitInterpretations"
+    assert len(horizon_interps) >= 1, "No HorizonInterpretations"
+    print(f"  ✓ Markers: {len(marker_sets)} marker sets, {len(strat_cols)} strat col, "
+          f"{len(rank_interps)} ranks, {len(unit_interps)} units, {len(horizon_interps)} horizons")
+
+
+def test_ingest_dry_run():
+    """Dry-run ingestion reports what would be sent without HTTP calls."""
+    inst = OsduInstance(
+        name="t", partition="dev", host="https://x.com",
+        legal_tag="dev-tag", owners=["o@dev"], viewers=["v@dev"],
+    )
+    client = OsduClient(inst, token="dummy")
+    records = [
+        generate_record("risk", inst, {"Name": f"R{i}"}, slug=f"dry-{i}")
+        for i in range(3)
+    ]
+    result = ingest_records(records, client, dry_run=True)
+    assert result["mode"] == "dry-run"
+    assert result["totalCount"] == 3
+    assert len(result["recordIds"]) == 3
+    print("  ✓ Dry-run ingestion (3 records, no HTTP calls)")
+
+
 def main():
     print("═══ Script Suite Tests ═══\n")
     tests = [
+        # Core functionality
         test_instance,
         test_record_types,
         test_make_ids,
@@ -232,7 +628,31 @@ def main():
         test_manifest_roundtrip,
         test_manifest_split,
         test_validate,
+        # Config validation
         test_all_example_configs,
+        test_all_pipeline_configs,
+        # Generator framework
+        test_generator_registry,
+        test_generators,
+        test_generator_record_structure,
+        test_generator_pipeline,
+        # Record type coverage
+        test_record_type_coverage,
+        test_deterministic_generation,
+        test_all_generated_records_valid,
+        # Cross-reference integrity
+        test_generator_wells_wellbore_refs,
+        test_generator_master_segments,
+        test_generator_markers_stratigraphy,
+        # Pipeline features
+        test_manifest_include_pipeline,
+        test_partition_rewriting,
+        test_template_data_merge,
+        test_ingest_dry_run,
+        # Edge cases
+        test_invalid_record_type,
+        test_generator_unknown_type,
+        test_empty_records_config,
     ]
 
     passed = 0

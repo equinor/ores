@@ -1,0 +1,128 @@
+{
+  "id": "dev:work-product-component--WellboreMarkerSet:46d94278-13ff-48d4-8687-a6217dd3c459:",
+  "kind": "osdu:wks:work-product-component--WellboreMarkerSet:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "55/33-A-1 \u2013 Formation Tops",
+    "Description": "Formation top picks for wellbore 55/33-A-1",
+    "WellboreID": "",
+    "Markers": [
+      {
+        "MarkerName": "Seabed",
+        "MarkerMeasuredDepth": 445.6,
+        "MarkerSubSeaVerticalDepth": 445.6,
+        "MarkerObservationNumber": 1,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopNordland",
+        "MarkerMeasuredDepth": 1313.1,
+        "MarkerSubSeaVerticalDepth": 1308.1,
+        "MarkerObservationNumber": 2,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopShetland",
+        "MarkerMeasuredDepth": 1886.7,
+        "MarkerSubSeaVerticalDepth": 1876.7,
+        "MarkerObservationNumber": 3,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopTherys",
+        "MarkerMeasuredDepth": 2713.2,
+        "MarkerSubSeaVerticalDepth": 2698.2,
+        "MarkerObservationNumber": 4,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopVolon",
+        "MarkerMeasuredDepth": 2943.4,
+        "MarkerSubSeaVerticalDepth": 2925.4,
+        "MarkerObservationNumber": 5,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopVolantis",
+        "MarkerMeasuredDepth": 3060.8,
+        "MarkerSubSeaVerticalDepth": 3040.8,
+        "MarkerObservationNumber": 6,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "BaseVolantis",
+        "MarkerMeasuredDepth": 3383.9,
+        "MarkerSubSeaVerticalDepth": 3361.9,
+        "MarkerObservationNumber": 7,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "BaseVolon",
+        "MarkerMeasuredDepth": 3422.8,
+        "MarkerSubSeaVerticalDepth": 3398.8,
+        "MarkerObservationNumber": 8,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopPre-Jurassic",
+        "MarkerMeasuredDepth": 3729.0,
+        "MarkerSubSeaVerticalDepth": 3701.0,
+        "MarkerObservationNumber": 9,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      }
+    ],
+    "StratigraphicColumnID": "dev:work-product-component--StratigraphicColumn:Drogon-Volve-Lithostratigraphy:",
+    "StratigraphicColumnRankInterpretationID": ""
+  }
+}

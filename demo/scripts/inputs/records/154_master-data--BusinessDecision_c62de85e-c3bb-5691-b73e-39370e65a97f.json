@@ -1,0 +1,127 @@
+{
+  "id": "dev:master-data--BusinessDecision:c62de85e-c3bb-5691-b73e-39370e65a97f:1",
+  "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.default.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 - Concept Select Decision",
+    "Description": "Business decision for Drogon DG2 Concept Select gate. Recommends subsea tieback to Njord A with 4P+2I wells, first oil 2030. NPV(10%) = 850 MNOK, IRR = 22%.",
+    "ProjectName": "Drogon",
+    "DecisionLevelID": "DG2",
+    "ApprovalStatusID": "Pending",
+    "DecisionDueDate": "2026-03-15",
+    "DecisionSummary": "Subsea tieback concept selected based on highest NPV and acceptable risk profile. Key uncertainties (porosity, OWC, fault seal) adequately captured in FMU sensitivity analysis. Residual risks within tolerance for DG2 gate passage.",
+    "RiskIDs": [],
+    "PriorActivityIDs": [],
+    "Parameters": [
+      {
+        "Title": "SRA Report",
+        "Selection": "DG2 SRA complete \u2014 volumes confirmed",
+        "ParameterKindID": "DataObject"
+      },
+      {
+        "Title": "CRA Report",
+        "Selection": "DG2 CRA complete \u2014 concept feasibility confirmed",
+        "ParameterKindID": "DataObject"
+      },
+      {
+        "Title": "Volume Estimates",
+        "Selection": "Oil P50: 45 MSm3, P10: 62 MSm3, P90: 28 MSm3",
+        "ParameterKindID": "DataObject"
+      },
+      {
+        "Title": "Risk Register",
+        "Selection": "6 risks, all residual \u2264 S3/P3",
+        "ParameterKindID": "DataObject"
+      },
+      {
+        "Title": "Development Concept",
+        "Selection": "Subsea tieback to Njord A, 4P+2I",
+        "ParameterKindID": "DataObject"
+      },
+      {
+        "Title": "FMU Workflow Run",
+        "Selection": "250 realisations, drogon_design case",
+        "ParameterKindID": "DataObject"
+      },
+      {
+        "Title": "Grid Model",
+        "Selection": "92\u00d7146\u00d769 static geomodel",
+        "ParameterKindID": "DataObject"
+      },
+      {
+        "Title": "Evidence Package",
+        "Selection": "DG2 complete evidence package",
+        "ParameterKindID": "DataObject"
+      }
+    ],
+    "ancestry": {
+      "parents": [],
+      "children": []
+    },
+    "ext": {
+      "equinor": {
+        "ProjectTypeID": "FieldDevelopment",
+        "Alternatives": [
+          {
+            "Name": "Alt 1 - Subsea Tieback to Njord A",
+            "Description": "4P+2I subsea wells, 25 km multiphase pipeline, gas lift",
+            "IsSelected": true,
+            "Economics": {
+              "NPV_MNOK": 850,
+              "IRR_pct": 22,
+              "Breakeven_USD_bbl": 35,
+              "CAPEX_MNOK": 4200,
+              "OPEX_MNOK_pa": 280,
+              "Payback_years": 4.5
+            }
+          },
+          {
+            "Name": "Alt 2 - Standalone FPSO",
+            "Description": "Leased FPSO, 6P+3I subsea wells",
+            "IsSelected": false,
+            "Economics": {
+              "NPV_MNOK": 620,
+              "IRR_pct": 16,
+              "Breakeven_USD_bbl": 42,
+              "CAPEX_MNOK": 7800,
+              "OPEX_MNOK_pa": 450,
+              "Payback_years": 6.2
+            }
+          }
+        ],
+        "ActivityStates": [
+          {
+            "StateName": "DG0 - Identify",
+            "StateDate": "2024-06-15",
+            "StateStatus": "Completed"
+          },
+          {
+            "StateName": "DG1 - Assess",
+            "StateDate": "2025-03-01",
+            "StateStatus": "Completed"
+          },
+          {
+            "StateName": "DG2 - Concept Select",
+            "StateDate": "2026-03-15",
+            "StateStatus": "InProgress"
+          }
+        ]
+      }
+    }
+  }
+}

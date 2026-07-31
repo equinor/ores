@@ -1,0 +1,30 @@
+{
+  "id": "dev:master-data--ReservoirSegment:b7a769bd-4abe-4c12-9ad3-7f3267edfa9d:1",
+  "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "West Lowland",
+    "Description": "Western lowland fault block of the Valysar formation, Drogon field",
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Reservoir:013f355c-3994-4fb4-98dd-e945c405b5f8:1"
+      ],
+      "children": []
+    }
+  }
+}

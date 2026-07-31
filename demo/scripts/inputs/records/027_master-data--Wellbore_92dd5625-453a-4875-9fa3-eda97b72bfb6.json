@@ -1,0 +1,41 @@
+{
+  "id": "dev:master-data--Wellbore:92dd5625-453a-4875-9fa3-eda97b72bfb6:1",
+  "kind": "osdu:wks:master-data--Wellbore:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "15/9-F-15 D",
+    "FacilityName": "15/9-F-15 D",
+    "Description": "Re-entry D, Hugin Fm producer/injector",
+    "WellID": "dev:master-data--Well:83c2c308-b8a9-44ee-93f5-1bf693052e38:1",
+    "SequenceNumber": 1,
+    "TargetFormation": "Hugin Fm",
+    "DefaultVerticalMeasurementID": "",
+    "DefinitiveTrajectoryID": "",
+    "DrillingReasons": [],
+    "KickOffWellbore": "",
+    "PrimaryMaterialID": "",
+    "TrajectoryTypeID": "",
+    "VerticalMeasurements": [],
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Well:83c2c308-b8a9-44ee-93f5-1bf693052e38:1"
+      ],
+      "children": []
+    }
+  }
+}

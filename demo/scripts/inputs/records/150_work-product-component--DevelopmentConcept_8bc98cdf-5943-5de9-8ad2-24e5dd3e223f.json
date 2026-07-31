@@ -1,0 +1,96 @@
+{
+  "id": "dev:work-product-component--DevelopmentConcept:8bc98cdf-5943-5de9-8ad2-24e5dd3e223f:1",
+  "kind": "osdu:wks:work-product-component--DevelopmentConcept:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.default.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 - Subsea Tieback to Njord A",
+    "Description": "Preferred development concept: 4 production wells + 2 water injection wells tied back to Njord A platform via 25 km multiphase pipeline. Gas-lift for artificial lift.",
+    "DecisionGate": "DG2",
+    "FacilityConcept": {
+      "Type": "SubseaTieback",
+      "HostFacility": "Njord A",
+      "Templates": [
+        {
+          "Name": "Production template",
+          "Slots": 4,
+          "Description": "4-slot production template, Valysar Fm"
+        },
+        {
+          "Name": "Injection template",
+          "Slots": 2,
+          "Description": "2-slot water injection template"
+        }
+      ],
+      "Slots": [
+        {
+          "Name": "A-1",
+          "Type": "Producer",
+          "Target": "Central Horst - Valysar"
+        },
+        {
+          "Name": "A-2",
+          "Type": "Producer",
+          "Target": "West Lowland - Valysar"
+        },
+        {
+          "Name": "A-3",
+          "Type": "Producer",
+          "Target": "East Lowland - Valysar"
+        },
+        {
+          "Name": "A-4",
+          "Type": "Producer",
+          "Target": "North Horst - Valysar"
+        },
+        {
+          "Name": "A-5",
+          "Type": "WaterInjector",
+          "Target": "Central Ramp - Valysar"
+        },
+        {
+          "Name": "A-6",
+          "Type": "WaterInjector",
+          "Target": "Central South - Valysar"
+        }
+      ]
+    },
+    "WellPlan": {
+      "Producers": 4,
+      "Injectors": 2,
+      "ArtificialLift": "GasLift"
+    },
+    "ReservoirTargeting": {
+      "TargetFormation": "Valysar Formation (Volantis Fm)",
+      "SegmentIDs": [
+        "CentralHorst",
+        "WestLowland",
+        "EastLowland",
+        "NorthHorst",
+        "CentralRamp",
+        "CentralSouth"
+      ]
+    },
+    "ProductionStrategy": {
+      "PeakOilRate_Sm3d": 12000,
+      "PlateauDuration_years": 3,
+      "FieldLife_years": 25,
+      "WaterInjection": true,
+      "GasInjection": false
+    }
+  }
+}

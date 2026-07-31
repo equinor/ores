@@ -133,6 +133,21 @@ Examples:
     # ── list-types ───────────────────────────────────────────────────────
     sub.add_parser("list-types", help="List all supported record types")
 
+    # ── list-generators ──────────────────────────────────────────────────
+    sub.add_parser("list-generators", help="List all available data generators")
+
+    # ── run-generator ────────────────────────────────────────────────────
+    p_rgen = sub.add_parser("run-generator", help="Run a single data generator from a spec file")
+    p_rgen.add_argument("--spec", "-s", required=True,
+                        help="Generator spec JSON file")
+    p_rgen.add_argument("--output", "-o", default="./output",
+                        help="Output directory or manifest path")
+    p_rgen.add_argument("--target", "-t", default="default",
+                        help="Target instance (for partition prefix)")
+    p_rgen.add_argument("--format", choices=["records", "manifest"], default="manifest",
+                        help="Output format")
+    p_rgen.add_argument("--config-file", help="Instance config file path")
+
     # ── list-instances ───────────────────────────────────────────────────
     sub.add_parser("list-instances", help="List available OSDU instances")
 
@@ -160,6 +175,8 @@ Examples:
         "validate": cmd_validate,
         "split": cmd_split,
         "list-types": cmd_list_types,
+        "list-generators": cmd_list_generators,
+        "run-generator": cmd_run_generator,
         "list-instances": cmd_list_instances,
         "auth": cmd_auth,
     }
@@ -192,7 +209,8 @@ def cmd_pipeline(args):
 
     # 1. Generate records
     print("── Step 1: Generate records ──")
-    records = generate_records_from_input(input_config, instance)
+    records = generate_records_from_input(input_config, instance,
+                                          config_dir=config_path.parent)
     print(f"  Generated {len(records)} records")
 
     # 2. Write to disk
@@ -227,7 +245,8 @@ def cmd_generate(args):
     input_config = json.loads(input_path.read_text(encoding="utf-8"))
     instance = _load_instance(args)
 
-    records = generate_records_from_input(input_config, instance)
+    records = generate_records_from_input(input_config, instance,
+                                          config_dir=input_path.parent)
     print(f"Generated {len(records)} records")
 
     output_dir = Path(args.output)
@@ -339,6 +358,59 @@ def cmd_list_types(args):
         except FileNotFoundError:
             desc = "(no template)"
         print(f"  {rt:<30} {desc[:70]}")
+
+
+def cmd_list_generators(args):
+    """List available data generators."""
+    from scripts.generators import GENERATORS
+    from scripts.generators._registry import _import_all
+    _import_all()
+    print("Available data generators:\n")
+    for name in sorted(GENERATORS):
+        fn = GENERATORS[name]
+        desc = (fn.__doc__ or "").strip().split("\n")[0][:70]
+        print(f"  {name:<20} {desc}")
+    print()
+    print("Data spec files: demo/scripts/inputs/generators/")
+
+
+def cmd_run_generator(args):
+    """Run a single data generator from a spec file."""
+    from scripts.generators import run_generator
+    from scripts.generators._common import build_manifest
+
+    spec_path = Path(args.spec)
+    if not spec_path.exists():
+        sys.exit(f"Spec not found: {args.spec}")
+
+    spec = json.loads(spec_path.read_text(encoding="utf-8"))
+    instance = _load_instance(args)
+    pfx = instance.partition if instance.partition else "dev"
+
+    records = run_generator(spec, pfx, spec_path.parent)
+    print(f"Generated {len(records)} records from '{spec.get('generator')}'")
+
+    output = Path(args.output)
+    if args.format == "manifest":
+        output.parent.mkdir(parents=True, exist_ok=True)
+        if output.is_dir():
+            out_path = output / f"manifest_{spec.get('generator', 'output')}.json"
+        else:
+            out_path = output
+        manifest = build_manifest(
+            master_data=[r for r in records if "master-data" in r.get("kind", "")],
+            wpcs=[r for r in records if "work-product-component" in r.get("kind", "")],
+            datasets=[r for r in records if "dataset--" in r.get("kind", "")],
+            work_products=[r for r in records if "work-product:" in r.get("kind", "")],
+        )
+        out_path.write_text(json.dumps(manifest, indent=2) + "\n", "utf-8")
+        print(f"Written manifest to {out_path}")
+    else:
+        output.mkdir(parents=True, exist_ok=True)
+        for i, rec in enumerate(records):
+            fname = f"{i:03d}_{_safe_fn(rec['id'])}.json"
+            (output / fname).write_text(json.dumps(rec, indent=2) + "\n", "utf-8")
+        print(f"Written {len(records)} record files to {output}/")
 
 
 def cmd_list_instances(args):

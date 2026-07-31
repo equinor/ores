@@ -1,0 +1,52 @@
+{
+  "id": "dev:work-product-component--Activity:265aa821-b046-5bee-8fa9-ab871dbc31ce:1",
+  "kind": "osdu:wks:work-product-component--Activity:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.default.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 FMU Run 001 (drogon_design)",
+    "Description": "Execution of the Drogon DG2 FMU workflow: 250 realisations, ERT one-by-one design, RMS 13.1 geomodel, OPM Flow 2023.04 reservoir simulation. Case: drogon_design. Run date: 2026-02-15.",
+    "ActivityTemplateID": "",
+    "Parameters": [
+      {
+        "Title": "UncertaintyParameters",
+        "Selection": "250-realisation one-by-one design matrix",
+        "ParameterKindID": "DataObject"
+      },
+      {
+        "Title": "GeomodelGrid",
+        "Selection": "92\u00d7146\u00d769 corner-point grid (Valysar/Therys/Volon)",
+        "ParameterKindID": "DataObject"
+      },
+      {
+        "Title": "SimulationResults",
+        "Selection": "250 Eclipse runs, 31 monthly timesteps 2018-01 to 2020-07",
+        "ParameterKindID": "DataObject"
+      },
+      {
+        "Title": "VolumeEstimates",
+        "Selection": "RAW per-realisation + P10/P50/P90 statistics",
+        "ParameterKindID": "DataObject"
+      },
+      {
+        "Title": "ETPDataspace",
+        "Selection": "maap/drogon_dg",
+        "ParameterKindID": "DataObject"
+      }
+    ]
+  }
+}

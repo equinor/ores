@@ -1,0 +1,33 @@
+{
+  "generator": "polygons",
+  "project": "Drogon DG2",
+  "rddms_dataspace": "maap/drogon_dg",
+  "crs": "ST_WGS84_UTM37N_P32637",
+  "uuid_prefix": "dg2-polygon",
+  "fault_lines": {
+    "horizons": ["TopVolantis", "TopTherys", "TopVolon", "BaseVolantis"]
+  },
+  "polygons": [
+    {
+      "name": "field_outline",
+      "title": "Drogon DG2 - Field Outline",
+      "description": "Field boundary polygon for the Drogon reservoir. Standard result: field_outline.",
+      "content": "field_outline",
+      "standard_result": "field_outline"
+    },
+    {
+      "name": "fluid_contact_outline_goc",
+      "title": "Drogon DG2 - Fluid Contact Outline (GOC)",
+      "description": "Gas-oil contact outline polygon.",
+      "content": "fluid_contact",
+      "standard_result": "fluid_contact_outline"
+    },
+    {
+      "name": "fluid_contact_outline_fwl",
+      "title": "Drogon DG2 - Fluid Contact Outline (FWL)",
+      "description": "Free water level outline polygon.",
+      "content": "fluid_contact",
+      "standard_result": "fluid_contact_outline"
+    }
+  ]
+}

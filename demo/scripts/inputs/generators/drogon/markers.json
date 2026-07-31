@@ -1,0 +1,71 @@
+{
+  "generator": "markers",
+  "uuid_prefix": "dg2-markers",
+  "project": "Drogon",
+  "rddms_dataspace": "maap/drogon",
+  "formations": {
+    "Drogon": [
+      {"name": "Seabed",           "md_min": 400,  "md_max": 450,  "tvd_offset": 0},
+      {"name": "TopNordland",      "md_min": 1200, "md_max": 1350, "tvd_offset": -5},
+      {"name": "TopShetland",      "md_min": 1800, "md_max": 1950, "tvd_offset": -10},
+      {"name": "TopTherys",        "md_min": 2650, "md_max": 2800, "tvd_offset": -15},
+      {"name": "TopVolon",         "md_min": 2850, "md_max": 3000, "tvd_offset": -18},
+      {"name": "TopVolantis",      "md_min": 3050, "md_max": 3200, "tvd_offset": -20},
+      {"name": "BaseVolantis",     "md_min": 3250, "md_max": 3400, "tvd_offset": -22},
+      {"name": "BaseVolon",        "md_min": 3350, "md_max": 3500, "tvd_offset": -24},
+      {"name": "TopPre-Jurassic",  "md_min": 3600, "md_max": 3800, "tvd_offset": -28}
+    ],
+    "Volve": [
+      {"name": "Seabed",       "md_min": 100,  "md_max": 120,  "tvd_offset": 0},
+      {"name": "TopNordland",  "md_min": 900,  "md_max": 1000, "tvd_offset": -3},
+      {"name": "TopShetland",  "md_min": 2400, "md_max": 2550, "tvd_offset": -8},
+      {"name": "TopDraupne",   "md_min": 2800, "md_max": 2900, "tvd_offset": -12},
+      {"name": "TopHeather",   "md_min": 2950, "md_max": 3050, "tvd_offset": -14},
+      {"name": "TopHugin",     "md_min": 3100, "md_max": 3200, "tvd_offset": -16},
+      {"name": "BaseHugin",    "md_min": 3250, "md_max": 3350, "tvd_offset": -18},
+      {"name": "TopSleipner",  "md_min": 3350, "md_max": 3450, "tvd_offset": -20},
+      {"name": "TopSkagerrak", "md_min": 3500, "md_max": 3600, "tvd_offset": -22},
+      {"name": "TopBasement",  "md_min": 3700, "md_max": 3850, "tvd_offset": -25}
+    ]
+  },
+  "field_wellbore_map": {
+    "Drogon": ["55/33-A-1", "55/33-A-2", "55/33-A-2 T2", "55/33-A-3"],
+    "Volve":  ["15/9-F-1 C", "15/9-F-4", "15/9-F-5", "15/9-F-7", "15/9-F-11 A", "15/9-F-15 D", "15/9-F-15 S"]
+  },
+  "depth_seeds": {
+    "55/33-A-1": 0, "55/33-A-2": 40, "55/33-A-2 T2": 80, "55/33-A-3": -20,
+    "15/9-F-1 C": 0, "15/9-F-4": 15, "15/9-F-5": -10, "15/9-F-7": 25,
+    "15/9-F-11 A": 35, "15/9-F-15 D": 50, "15/9-F-15 S": 65
+  },
+  "strat_column": {
+    "name": "Drogon-Volve Lithostratigraphy",
+    "description": "Combined lithostratigraphic column for the Drogon and Volve well sets",
+    "units": [
+      {"name": "Nordland Group",       "rank": "Group",     "older_age": 23.0,  "younger_age": 0.0,   "description": "Neogene\u2013Quaternary overburden, North Sea"},
+      {"name": "Shetland Group",       "rank": "Group",     "older_age": 66.0,  "younger_age": 23.0,  "description": "Palaeocene\u2013Eocene chalk and marl"},
+      {"name": "Therys Formation",     "rank": "Formation", "older_age": 170.0, "younger_age": 163.0, "description": "Source rock unit, Drogon area"},
+      {"name": "Volon Formation",      "rank": "Formation", "older_age": 163.0, "younger_age": 157.0, "description": "Lower reservoir unit, Drogon field"},
+      {"name": "Volantis Formation",   "rank": "Formation", "older_age": 157.0, "younger_age": 145.0, "description": "Main reservoir unit, Drogon field"},
+      {"name": "Draupne Formation",    "rank": "Formation", "older_age": 155.0, "younger_age": 145.0, "description": "Late Jurassic source/cap rock, Viking Graben"},
+      {"name": "Heather Formation",    "rank": "Formation", "older_age": 164.0, "younger_age": 155.0, "description": "Marine shale, mid-Jurassic, Viking Graben"},
+      {"name": "Hugin Formation",      "rank": "Formation", "older_age": 170.0, "younger_age": 164.0, "description": "Reservoir sandstone, Volve field"},
+      {"name": "Sleipner Formation",   "rank": "Formation", "older_age": 175.0, "younger_age": 170.0, "description": "Lower Jurassic marine limestone/sandstone"},
+      {"name": "Skagerrak Formation",  "rank": "Formation", "older_age": 250.0, "younger_age": 200.0, "description": "Triassic red beds and evaporites"},
+      {"name": "Upper Volantis Member","rank": "Member",    "older_age": 157.0, "younger_age": 152.0, "description": "Upper reservoir sand, Drogon"},
+      {"name": "Lower Volantis Member","rank": "Member",    "older_age": 152.0, "younger_age": 145.0, "description": "Lower reservoir sand, Drogon"}
+    ]
+  },
+  "horizons": [
+    {"name": "TopVolantis",  "horizon_uuid": "02e954a9-d7db-4b57-aef7-12b8ebf47a65", "feature_uuid": "2d66e9f5-f120-43c4-93ca-1c8220846fbb", "is_stratigraphic": true,  "description": "Top Volantis reservoir boundary"},
+    {"name": "TopTherys",    "horizon_uuid": "6c6eeb68-bb4d-4fa4-9eb4-b880b5bd7086", "feature_uuid": "49cd1075-1eef-4950-8e50-2bec81ca4275", "is_stratigraphic": true,  "description": "Top Therys source rock boundary"},
+    {"name": "TopVolon",     "horizon_uuid": "db54a781-84ad-41e5-8bdd-c510246375cd", "feature_uuid": "e185b471-9f88-446d-b36e-00c77a7cf0b8", "is_stratigraphic": true,  "description": "Top Volon lower reservoir boundary"},
+    {"name": "BaseVolantis", "horizon_uuid": "3657ca0b-d21f-41ca-801b-4a6a7eb1f426", "feature_uuid": "67349b6a-2004-43ed-94bc-43e90b584aad", "is_stratigraphic": true,  "description": "Base Volantis seal contact"},
+    {"name": "MSL",          "horizon_uuid": "7da0e4d7-1955-4031-8eaf-68a93515414d", "feature_uuid": "0c402b9f-fa0e-4c36-a08f-37f292115e01", "is_stratigraphic": false, "description": "Mean Sea Level datum"},
+    {"name": "BaseVelmodel", "horizon_uuid": "011ae8ee-bfa5-4804-a675-1f4704b1730c", "feature_uuid": "d9593949-6e2a-4514-802f-001d0a6c3708", "is_stratigraphic": false, "description": "Base of velocity model"}
+  ],
+  "unit_xrefs": {
+    "Volantis Formation": {"uuid": "0b257a04-c38c-4c56-9e18-987b03583830", "alias": "Valysar"},
+    "Therys Formation":   {"uuid": "7c70894a-2442-4735-a219-c954f87ba07d", "alias": "Therys"},
+    "Volon Formation":    {"uuid": "e3be3316-0ea0-4c20-9722-14a2174ce7ab", "alias": "Volon"}
+  }
+}

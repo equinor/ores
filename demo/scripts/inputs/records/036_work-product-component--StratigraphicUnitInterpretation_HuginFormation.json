@@ -1,0 +1,30 @@
+{
+  "id": "dev:work-product-component--StratigraphicUnitInterpretation:HuginFormation:",
+  "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Hugin Formation",
+    "Description": "Reservoir sandstone, Volve field",
+    "StratigraphicRoleTypeID": "",
+    "ChronoStratigraphyID": "",
+    "OlderPossibleAge": 170.0,
+    "YoungerPossibleAge": 164.0,
+    "ColumnStratigraphicHorizonTopID": "",
+    "ColumnStratigraphicHorizonBaseID": ""
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "dev:master-data--Risk:33cc7bb4-80a8-5731-b8d9-e8de89dda13d:1",
+  "kind": "osdu:wks:master-data--Risk:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.default.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Porosity and Cementation Uncertainty",
+    "Description": "Risk of lower-than-expected porosity due to carbonate cementation in the Valysar Fm. Diagenetic overprint may reduce effective pore space by 3-8 p.u. in the Central Horst and East Lowland segments.",
+    "RiskCategoryID": "Subsurface-Static",
+    "RiskDisciplineID": "",
+    "MitigationStatus": "",
+    "ext": {
+      "equinor": {
+        "InherentSeverity": "S3",
+        "InherentProbability": "P4",
+        "ResidualSeverity": "S2",
+        "ResidualProbability": "P3",
+        "MitigationActions": [
+          "Acquired core data from 55/33-A-2 T2",
+          "Calibrated porosity model with NMR logs"
+        ]
+      }
+    }
+  }
+}

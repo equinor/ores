@@ -1,0 +1,39 @@
+{
+  "id": "dev:master-data--Risk:b592e3ff-0b8b-5414-a65f-4802c7225a60:1",
+  "kind": "osdu:wks:master-data--Risk:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.default.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Oil-Water Contact Position",
+    "Description": "Uncertainty in OWC depth across Drogon segments due to limited well penetrations. Only 3 wells with pressure data, OWC varies by \u00b115m between segments.",
+    "RiskCategoryID": "Subsurface-Static",
+    "RiskDisciplineID": "",
+    "MitigationStatus": "",
+    "ext": {
+      "equinor": {
+        "InherentSeverity": "S4",
+        "InherentProbability": "P3",
+        "ResidualSeverity": "S3",
+        "ResidualProbability": "P2",
+        "MitigationActions": [
+          "Included OWC as sensitivity parameter in FMU",
+          "Constrained by pressure gradients"
+        ]
+      }
+    }
+  }
+}

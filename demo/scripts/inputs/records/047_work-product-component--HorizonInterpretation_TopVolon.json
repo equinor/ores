@@ -1,0 +1,28 @@
+{
+  "id": "dev:work-product-component--HorizonInterpretation:TopVolon:",
+  "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "TopVolon",
+    "Description": "Top Volon lower reservoir boundary",
+    "IsStratigraphic": true,
+    "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_HorizonInterpretation('db54a781-84ad-41e5-8bdd-c510246375cd')",
+    "ResourceID": "db54a781-84ad-41e5-8bdd-c510246375cd",
+    "GeneticBoundaryFeatureID": "e185b471-9f88-446d-b36e-00c77a7cf0b8"
+  }
+}

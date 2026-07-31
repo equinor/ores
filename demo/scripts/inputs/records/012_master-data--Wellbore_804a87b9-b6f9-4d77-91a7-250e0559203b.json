@@ -1,0 +1,41 @@
+{
+  "id": "dev:master-data--Wellbore:804a87b9-b6f9-4d77-91a7-250e0559203b:1",
+  "kind": "osdu:wks:master-data--Wellbore:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "55/33-A-2",
+    "FacilityName": "55/33-A-2",
+    "Description": "Main bore of appraisal well 55/33-A-2",
+    "WellID": "dev:master-data--Well:53c25d19-f26d-430f-b961-16ca9544cfe4:1",
+    "SequenceNumber": 1,
+    "TargetFormation": "Valysar Fm",
+    "DefaultVerticalMeasurementID": "",
+    "DefinitiveTrajectoryID": "",
+    "DrillingReasons": [],
+    "KickOffWellbore": "",
+    "PrimaryMaterialID": "",
+    "TrajectoryTypeID": "",
+    "VerticalMeasurements": [],
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Well:53c25d19-f26d-430f-b961-16ca9544cfe4:1"
+      ],
+      "children": []
+    }
+  }
+}

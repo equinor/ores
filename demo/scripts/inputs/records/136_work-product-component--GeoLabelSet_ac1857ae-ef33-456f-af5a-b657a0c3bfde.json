@@ -1,0 +1,83 @@
+{
+  "id": "dev:work-product-component--GeoLabelSet:ac1857ae-ef33-456f-af5a-b657a0c3bfde:1",
+  "kind": "osdu:wks:work-product-component--GeoLabelSet:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon - GeoLabelSet (Oil volumes)",
+    "Description": "Per-segment volume labels (Oil P10/P50/P90) derived from stat volumes",
+    "Labels": [
+      {
+        "SegmentName": "Central Horst",
+        "P50": 6.14,
+        "P10": 5.65,
+        "P90": 7.41,
+        "UnitOfMeasure": "MSm3",
+        "PropertyName": "Oil"
+      },
+      {
+        "SegmentName": "Central North",
+        "P50": 1.65,
+        "P10": 1.52,
+        "P90": 2.21,
+        "UnitOfMeasure": "MSm3",
+        "PropertyName": "Oil"
+      },
+      {
+        "SegmentName": "Central Ramp",
+        "P50": 0.66,
+        "P10": 0.64,
+        "P90": 0.84,
+        "UnitOfMeasure": "MSm3",
+        "PropertyName": "Oil"
+      },
+      {
+        "SegmentName": "Central South",
+        "P50": 3.84,
+        "P10": 3.46,
+        "P90": 4.61,
+        "UnitOfMeasure": "MSm3",
+        "PropertyName": "Oil"
+      },
+      {
+        "SegmentName": "East Lowland",
+        "P50": 0.03,
+        "P10": 0.03,
+        "P90": 0.04,
+        "UnitOfMeasure": "MSm3",
+        "PropertyName": "Oil"
+      },
+      {
+        "SegmentName": "North Horst",
+        "P50": 0.11,
+        "P10": 0.1,
+        "P90": 0.12,
+        "UnitOfMeasure": "MSm3",
+        "PropertyName": "Oil"
+      },
+      {
+        "SegmentName": "West Lowland",
+        "P50": 0.47,
+        "P10": 0.39,
+        "P90": 0.6,
+        "UnitOfMeasure": "MSm3",
+        "PropertyName": "Oil"
+      }
+    ],
+    "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+  }
+}

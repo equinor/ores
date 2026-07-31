@@ -1,0 +1,36 @@
+{
+  "id": "dev:master-data--Well:301c4cb8-b895-402b-bdeb-10ada59bf0fa:1",
+  "kind": "osdu:wks:master-data--Well:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "55/33-A-3",
+    "FacilityName": "55/33-A-3",
+    "Description": "Drogon appraisal well - delineation of East Lowland compartment.",
+    "FieldName": "Drogon",
+    "DefaultVerticalCRSID": "",
+    "DefaultVerticalMeasurementID": "",
+    "InterestTypeID": "",
+    "VerticalMeasurements": [],
+    "ancestry": {
+      "parents": [],
+      "children": [
+        "dev:master-data--Wellbore:9e6cfe80-8a55-4cd2-8893-802beed30295:1"
+      ]
+    }
+  }
+}

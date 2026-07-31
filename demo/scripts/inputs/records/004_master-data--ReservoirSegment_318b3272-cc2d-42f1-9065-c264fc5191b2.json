@@ -1,0 +1,30 @@
+{
+  "id": "dev:master-data--ReservoirSegment:318b3272-cc2d-42f1-9065-c264fc5191b2:1",
+  "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "North Horst",
+    "Description": "Northern horst block of the Valysar formation, Drogon field - contains gas cap",
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Reservoir:bce09477-3531-4a34-914d-e1aa23e35c80:1"
+      ],
+      "children": []
+    }
+  }
+}

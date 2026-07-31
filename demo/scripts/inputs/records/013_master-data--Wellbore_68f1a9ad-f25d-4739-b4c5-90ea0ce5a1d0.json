@@ -1,0 +1,41 @@
+{
+  "id": "dev:master-data--Wellbore:68f1a9ad-f25d-4739-b4c5-90ea0ce5a1d0:1",
+  "kind": "osdu:wks:master-data--Wellbore:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "55/33-A-2 T2",
+    "FacilityName": "55/33-A-2 T2",
+    "Description": "Side-track targeting West Lowland segment",
+    "WellID": "dev:master-data--Well:7b5bfa19-3738-4411-9457-d8545b9f5fa5:1",
+    "SequenceNumber": 2,
+    "TargetFormation": "Valysar Fm",
+    "DefaultVerticalMeasurementID": "",
+    "DefinitiveTrajectoryID": "",
+    "DrillingReasons": [],
+    "KickOffWellbore": "",
+    "PrimaryMaterialID": "",
+    "TrajectoryTypeID": "",
+    "VerticalMeasurements": [],
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Well:7b5bfa19-3738-4411-9457-d8545b9f5fa5:1"
+      ],
+      "children": []
+    }
+  }
+}

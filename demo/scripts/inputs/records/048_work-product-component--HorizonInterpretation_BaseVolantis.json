@@ -1,0 +1,28 @@
+{
+  "id": "dev:work-product-component--HorizonInterpretation:BaseVolantis:",
+  "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "BaseVolantis",
+    "Description": "Base Volantis seal contact",
+    "IsStratigraphic": true,
+    "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_HorizonInterpretation('3657ca0b-d21f-41ca-801b-4a6a7eb1f426')",
+    "ResourceID": "3657ca0b-d21f-41ca-801b-4a6a7eb1f426",
+    "GeneticBoundaryFeatureID": "67349b6a-2004-43ed-94bc-43e90b584aad"
+  }
+}

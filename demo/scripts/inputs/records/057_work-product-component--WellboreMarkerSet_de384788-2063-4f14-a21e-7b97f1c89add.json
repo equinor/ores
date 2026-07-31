@@ -1,0 +1,139 @@
+{
+  "id": "dev:work-product-component--WellboreMarkerSet:de384788-2063-4f14-a21e-7b97f1c89add:",
+  "kind": "osdu:wks:work-product-component--WellboreMarkerSet:1.2.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "15/9-F-5 \u2013 Formation Tops",
+    "Description": "Formation top picks for wellbore 15/9-F-5",
+    "WellboreID": "",
+    "Markers": [
+      {
+        "MarkerName": "Seabed",
+        "MarkerMeasuredDepth": 103.0,
+        "MarkerSubSeaVerticalDepth": 103.0,
+        "MarkerObservationNumber": 1,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopNordland",
+        "MarkerMeasuredDepth": 976.7,
+        "MarkerSubSeaVerticalDepth": 973.7,
+        "MarkerObservationNumber": 2,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopShetland",
+        "MarkerMeasuredDepth": 2522.8,
+        "MarkerSubSeaVerticalDepth": 2514.8,
+        "MarkerObservationNumber": 3,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopDraupne",
+        "MarkerMeasuredDepth": 2841.3,
+        "MarkerSubSeaVerticalDepth": 2829.3,
+        "MarkerObservationNumber": 4,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopHeather",
+        "MarkerMeasuredDepth": 3030.7,
+        "MarkerSubSeaVerticalDepth": 3016.7,
+        "MarkerObservationNumber": 5,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopHugin",
+        "MarkerMeasuredDepth": 3183.1,
+        "MarkerSubSeaVerticalDepth": 3167.1,
+        "MarkerObservationNumber": 6,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "BaseHugin",
+        "MarkerMeasuredDepth": 3338.1,
+        "MarkerSubSeaVerticalDepth": 3320.1,
+        "MarkerObservationNumber": 7,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopSleipner",
+        "MarkerMeasuredDepth": 3399.4,
+        "MarkerSubSeaVerticalDepth": 3379.4,
+        "MarkerObservationNumber": 8,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopSkagerrak",
+        "MarkerMeasuredDepth": 3575.7,
+        "MarkerSubSeaVerticalDepth": 3553.7,
+        "MarkerObservationNumber": 9,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      },
+      {
+        "MarkerName": "TopBasement",
+        "MarkerMeasuredDepth": 3815.8,
+        "MarkerSubSeaVerticalDepth": 3790.8,
+        "MarkerObservationNumber": 10,
+        "Missing": "",
+        "MarkerTypeID": "",
+        "InterpretationID": "",
+        "MarkerInterpreter": "gen_markers",
+        "GeologicalAge": ""
+      }
+    ],
+    "StratigraphicColumnID": "dev:work-product-component--StratigraphicColumn:Drogon-Volve-Lithostratigraphy:",
+    "StratigraphicColumnRankInterpretationID": ""
+  }
+}

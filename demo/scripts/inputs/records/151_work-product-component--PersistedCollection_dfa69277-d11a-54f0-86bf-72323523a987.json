@@ -1,0 +1,57 @@
+{
+  "id": "dev:work-product-component--PersistedCollection:dfa69277-d11a-54f0-86bf-72323523a987:1",
+  "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.default.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 - Decision Gate Evidence Package",
+    "Description": "Complete evidence package for the Drogon DG2 Concept Select decision gate. Bundles all subsurface, facility, risk, and economic evidence.",
+    "MemberIDs": [],
+    "Hierarchy": [
+      {
+        "Name": "Subsurface Model",
+        "Description": "Geomodel, surfaces, properties, and volumes",
+        "MemberIDs": []
+      },
+      {
+        "Name": "Simulation Results",
+        "Description": "Simulator tables, production profiles, and timeseries",
+        "MemberIDs": []
+      },
+      {
+        "Name": "Risk Register",
+        "Description": "Subsurface, dynamic, and schedule risks",
+        "MemberIDs": []
+      },
+      {
+        "Name": "Reports & Documents",
+        "Description": "SRA, CRA, BOD, and PTR",
+        "MemberIDs": []
+      },
+      {
+        "Name": "Development Concept",
+        "Description": "Facility concept, well plan, and production strategy",
+        "MemberIDs": []
+      },
+      {
+        "Name": "Workflow Provenance",
+        "Description": "Activity template, execution record, and dataspace",
+        "MemberIDs": []
+      }
+    ]
+  }
+}

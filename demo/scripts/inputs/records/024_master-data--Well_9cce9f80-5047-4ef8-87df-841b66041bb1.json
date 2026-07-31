@@ -1,0 +1,36 @@
+{
+  "id": "dev:master-data--Well:9cce9f80-5047-4ef8-87df-841b66041bb1:1",
+  "kind": "osdu:wks:master-data--Well:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "15/9-F-11",
+    "FacilityName": "15/9-F-11",
+    "Description": "Volve production well - Hugin Fm, NCS licence PL 252.",
+    "FieldName": "Volve",
+    "DefaultVerticalCRSID": "",
+    "DefaultVerticalMeasurementID": "",
+    "InterestTypeID": "",
+    "VerticalMeasurements": [],
+    "ancestry": {
+      "parents": [],
+      "children": [
+        "dev:master-data--Wellbore:d7060c1b-b292-4904-b852-31ded9ec3ae9:1"
+      ]
+    }
+  }
+}

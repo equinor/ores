@@ -1,0 +1,9 @@
+{
+  "generator": "volumes_stat",
+  "uuid_prefix": "dg2-volstat",
+  "name": "Drogon Valysar - Reservoir Estimated Volumes (STAT)",
+  "description": "P10/P50/P90/Mean statistics aggregated from RAW volumes. Groups by SegmentID, Zone, Facies. Includes segment-level and grand TOTALs.",
+  "raw_manifest": "demo/drogon/manifest_wpcraw_drogon.json",
+  "group_by": ["Realisation", "SegmentID", "Zone", "Facies"],
+  "total_columns": ["SegmentID", "Zone", "Facies"]
+}

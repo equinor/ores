@@ -1,0 +1,104 @@
+{
+  "generator": "simtables",
+  "project": "Drogon DG2",
+  "rddms_dataspace": "maap/drogon_dg",
+  "uuid_prefix": "dg2-simtable",
+  "tables": [
+    {
+      "name": "relperm",
+      "title": "Drogon DG2 - Relative Permeability (saturation functions)",
+      "description": "Relative permeability and capillary pressure curves per SATNUM region. Exported by RES2CSV:satfunc from Eclipse restart data. Covers water-oil (SWOF) and gas-oil (SGOF) tables for all 7 FIP regions.",
+      "fmu_content": "relperm",
+      "file_ref": "share/results/tables/relperm.csv",
+      "key_columns": [
+        {"ColumnName": "SATNUM",  "ColumnRole": "Key", "ValueType": "integer"},
+        {"ColumnName": "KEYWORD", "ColumnRole": "Key", "ValueType": "string"}
+      ],
+      "value_columns": [
+        {"ColumnName": "SW",   "ColumnRole": "Value", "ValueType": "number", "UOM": "Euc"},
+        {"ColumnName": "SG",   "ColumnRole": "Value", "ValueType": "number", "UOM": "Euc"},
+        {"ColumnName": "KRW",  "ColumnRole": "Value", "ValueType": "number", "UOM": "Euc"},
+        {"ColumnName": "KROW", "ColumnRole": "Value", "ValueType": "number", "UOM": "Euc"},
+        {"ColumnName": "KRG",  "ColumnRole": "Value", "ValueType": "number", "UOM": "Euc"},
+        {"ColumnName": "KROG", "ColumnRole": "Value", "ValueType": "number", "UOM": "Euc"},
+        {"ColumnName": "PCOW", "ColumnRole": "Value", "ValueType": "number", "UOM": "bar"},
+        {"ColumnName": "PCOG", "ColumnRole": "Value", "ValueType": "number", "UOM": "bar"}
+      ]
+    },
+    {
+      "name": "pvt",
+      "title": "Drogon DG2 - PVT Data (fluid properties)",
+      "description": "PVT data per PVT region (7 regions with distinct BO, RS, BG, RV). Exported by RES2CSV:pvt.",
+      "fmu_content": "pvt",
+      "file_ref": "share/results/tables/pvt.csv",
+      "key_columns": [
+        {"ColumnName": "PVTNUM",  "ColumnRole": "Key", "ValueType": "integer"},
+        {"ColumnName": "KEYWORD", "ColumnRole": "Key", "ValueType": "string"}
+      ],
+      "value_columns": [
+        {"ColumnName": "PRESSURE",        "ColumnRole": "Value", "ValueType": "number", "UOM": "bar"},
+        {"ColumnName": "VOLUMEFACTOR",     "ColumnRole": "Value", "ValueType": "number", "UOM": "Euc"},
+        {"ColumnName": "VISCOSITY",        "ColumnRole": "Value", "ValueType": "number", "UOM": "cP"},
+        {"ColumnName": "RS",               "ColumnRole": "Value", "ValueType": "number", "UOM": "Sm3/Sm3"},
+        {"ColumnName": "RV",               "ColumnRole": "Value", "ValueType": "number", "UOM": "Sm3/Sm3"}
+      ]
+    },
+    {
+      "name": "summary",
+      "title": "Drogon DG2 - Eclipse Summary Vectors (timeseries)",
+      "description": "Simulator summary vectors (field and per-well rates, cumulatives, pressures, ratios). Exported by RES2CSV:summary. 31 monthly timesteps 2018-01 to 2020-07.",
+      "fmu_content": "timeseries",
+      "file_ref": "share/results/tables/ecl_summary/DROGON.arrow",
+      "key_columns": [
+        {"ColumnName": "DATE", "ColumnRole": "Key", "ValueType": "datetime"}
+      ],
+      "value_columns": [
+        {"ColumnName": "FOPR", "ColumnRole": "Value", "ValueType": "number", "UOM": "Sm3/d"},
+        {"ColumnName": "FGPR", "ColumnRole": "Value", "ValueType": "number", "UOM": "Sm3/d"},
+        {"ColumnName": "FWPR", "ColumnRole": "Value", "ValueType": "number", "UOM": "Sm3/d"},
+        {"ColumnName": "FWIR", "ColumnRole": "Value", "ValueType": "number", "UOM": "Sm3/d"},
+        {"ColumnName": "FOPT", "ColumnRole": "Value", "ValueType": "number", "UOM": "Sm3"},
+        {"ColumnName": "FGPT", "ColumnRole": "Value", "ValueType": "number", "UOM": "Sm3"},
+        {"ColumnName": "FWPT", "ColumnRole": "Value", "ValueType": "number", "UOM": "Sm3"},
+        {"ColumnName": "FPR",  "ColumnRole": "Value", "ValueType": "number", "UOM": "bar"},
+        {"ColumnName": "FWCT", "ColumnRole": "Value", "ValueType": "number", "UOM": "Euc"},
+        {"ColumnName": "FGOR", "ColumnRole": "Value", "ValueType": "number", "UOM": "Sm3/Sm3"}
+      ]
+    },
+    {
+      "name": "wellcompletiondata",
+      "title": "Drogon DG2 - Well Completion Data",
+      "description": "Well completion intervals, connection factors, skin per well per timestep. Exported by RES2CSV:wellcompletiondata.",
+      "fmu_content": "well_completions",
+      "file_ref": "share/results/tables/wellcompletiondata.arrow",
+      "key_columns": [
+        {"ColumnName": "WELL",  "ColumnRole": "Key", "ValueType": "string"},
+        {"ColumnName": "DATE",  "ColumnRole": "Key", "ValueType": "datetime"},
+        {"ColumnName": "I",     "ColumnRole": "Key", "ValueType": "integer"},
+        {"ColumnName": "J",     "ColumnRole": "Key", "ValueType": "integer"},
+        {"ColumnName": "K",     "ColumnRole": "Key", "ValueType": "integer"}
+      ],
+      "value_columns": [
+        {"ColumnName": "OP/SH", "ColumnRole": "Value", "ValueType": "string"},
+        {"ColumnName": "CF",    "ColumnRole": "Value", "ValueType": "number", "UOM": "m3/d/bar"},
+        {"ColumnName": "KH",    "ColumnRole": "Value", "ValueType": "number", "UOM": "mD.m"},
+        {"ColumnName": "SKIN",  "ColumnRole": "Value", "ValueType": "number", "UOM": "Euc"}
+      ]
+    },
+    {
+      "name": "gruptree",
+      "title": "Drogon DG2 - Group Tree (well hierarchy)",
+      "description": "Eclipse group/well hierarchy per timestep. Exported by RES2CSV:gruptree.",
+      "fmu_content": "table",
+      "file_ref": "share/results/tables/gruptree.csv",
+      "key_columns": [
+        {"ColumnName": "DATE",   "ColumnRole": "Key", "ValueType": "datetime"},
+        {"ColumnName": "CHILD",  "ColumnRole": "Key", "ValueType": "string"}
+      ],
+      "value_columns": [
+        {"ColumnName": "PARENT",  "ColumnRole": "Value", "ValueType": "string"},
+        {"ColumnName": "KEYWORD", "ColumnRole": "Value", "ValueType": "string"}
+      ]
+    }
+  ]
+}

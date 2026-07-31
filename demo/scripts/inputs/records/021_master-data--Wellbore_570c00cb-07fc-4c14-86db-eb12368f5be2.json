@@ -1,0 +1,41 @@
+{
+  "id": "dev:master-data--Wellbore:570c00cb-07fc-4c14-86db-eb12368f5be2:1",
+  "kind": "osdu:wks:master-data--Wellbore:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "15/9-F-5",
+    "FacilityName": "15/9-F-5",
+    "Description": "Main bore, Hugin Fm water injector",
+    "WellID": "dev:master-data--Well:132c6de3-1628-4dcd-b9a1-9ffab2e44f72:1",
+    "SequenceNumber": 1,
+    "TargetFormation": "Hugin Fm",
+    "DefaultVerticalMeasurementID": "",
+    "DefinitiveTrajectoryID": "",
+    "DrillingReasons": [],
+    "KickOffWellbore": "",
+    "PrimaryMaterialID": "",
+    "TrajectoryTypeID": "",
+    "VerticalMeasurements": [],
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Well:132c6de3-1628-4dcd-b9a1-9ffab2e44f72:1"
+      ],
+      "children": []
+    }
+  }
+}

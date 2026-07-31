@@ -1,0 +1,89 @@
+{
+  "id": "dev:work-product-component--ActivityTemplate:313fb39d-0372-5b6a-bd0e-ed52384906c1:1",
+  "kind": "osdu:wks:work-product-component--ActivityTemplate:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.default.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 FMU Workflow Template",
+    "Description": "Fast Model Update uncertainty workflow for Drogon DG2 Concept Select. Chains: ERT sensitivity \u2192 RMS geomodel \u2192 OPM Flow simulation \u2192 post-processing \u2192 volume aggregation.",
+    "ParameterTemplates": [
+      {
+        "Title": "UncertaintyParameters",
+        "IsInput": true,
+        "IsOutput": false,
+        "DefaultParameterKind": "DataObject",
+        "Description": "Design matrix / sensitivity parameters (OWC, PHIT, fault throw, etc.)"
+      },
+      {
+        "Title": "GeomodelGrid",
+        "IsInput": false,
+        "IsOutput": true,
+        "DefaultParameterKind": "DataObject",
+        "Description": "Static geomodel grid (IjkGridRepresentation)"
+      },
+      {
+        "Title": "ReservoirProperties",
+        "IsInput": false,
+        "IsOutput": true,
+        "DefaultParameterKind": "DataObject",
+        "Description": "Grid properties (porosity, permeability, saturation, facies)"
+      },
+      {
+        "Title": "DepthSurfaces",
+        "IsInput": false,
+        "IsOutput": true,
+        "DefaultParameterKind": "DataObject",
+        "Description": "Depth structure surfaces per horizon"
+      },
+      {
+        "Title": "AmplitudeMaps",
+        "IsInput": false,
+        "IsOutput": true,
+        "DefaultParameterKind": "DataObject",
+        "Description": "Seismic amplitude extractions"
+      },
+      {
+        "Title": "FaciesFractionMaps",
+        "IsInput": false,
+        "IsOutput": true,
+        "DefaultParameterKind": "DataObject",
+        "Description": "Facies fraction maps per zone"
+      },
+      {
+        "Title": "SimulationResults",
+        "IsInput": false,
+        "IsOutput": true,
+        "DefaultParameterKind": "DataObject",
+        "Description": "Eclipse summary vectors, completion data, group tree"
+      },
+      {
+        "Title": "VolumeEstimates",
+        "IsInput": false,
+        "IsOutput": true,
+        "DefaultParameterKind": "DataObject",
+        "Description": "ReservoirEstimatedVolumes (RAW + STAT)"
+      },
+      {
+        "Title": "ETPDataspace",
+        "IsInput": false,
+        "IsOutput": true,
+        "DefaultParameterKind": "DataObject",
+        "Description": "RDDMS dataspace storing all RESQML objects"
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "data": {
+    "Name": "",
+    "Description": "",
+    "DataspaceName": "",
+    "ConnectionString": ""
+  },
+  "_meta": {
+    "description": "ETPDataspace — reference to an ETP/RDDMS dataspace containing RESQML objects (grids, surfaces, wells, etc.).",
+    "required_fields": ["Name", "DataspaceName"],
+    "dataspace_format": "eml:///dataspace('{name}')",
+    "examples": {
+      "DataspaceName": "maap/drogon_dg",
+      "ConnectionString": "eml:///dataspace('maap/drogon_dg')"
+    }
+  }
+}

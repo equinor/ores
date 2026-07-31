@@ -1,0 +1,11 @@
+{
+  "project": "Stratigraphic Framework",
+  "gate": "Reference",
+  "description": "ICS2017 stratigraphic reference - Full pipeline. Chronostratigraphy, horizons, and strat column.",
+  "include_manifests": [
+    "demo/strat/manifest_chronostratics.json",
+    "demo/strat/manifest_horizons.json",
+    "demo/strat/manifest_stratcolumn.json"
+  ],
+  "records": []
+}

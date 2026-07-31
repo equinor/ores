@@ -1,0 +1,38 @@
+{
+  "generator": "maps",
+  "project": "Drogon DG2",
+  "rddms_dataspace": "maap/drogon_dg",
+  "crs": "ST_WGS84_UTM37N_P32637",
+  "uuid_prefix": "dg2-map",
+  "grid_geometry": {"ni": 280, "nj": 440, "increment": 25.0},
+  "depth_surfaces": {
+    "horizons": ["TopVolantis", "TopTherys", "TopVolon", "BaseVolon", "BaseVolantis", "MSL"],
+    "sources": ["ds_extract_geogrid", "ds_extract_postprocess"],
+    "standard_results": {
+      "ds_extract_geogrid": "grid_extracted_depth_surface",
+      "ds_extract_postprocess": "structure_depth_surface"
+    }
+  },
+  "amplitude_maps": {
+    "horizons": ["TopVolantis", "TopTherys", "TopVolon", "BaseVolon", "BaseVolantis"],
+    "attributes": ["near", "far"],
+    "vintage": "2018"
+  },
+  "facies_fraction_maps": {
+    "Valysar": ["channel", "crevasse", "floodplain", "coal"],
+    "Therys":  ["uppershoreface", "lowershoreface", "offshore", "calcite"],
+    "Volon":   ["channel", "floodplain", "calcite", "coal"]
+  },
+  "average_property_maps": {
+    "zones": ["Valysar", "Therys", "Volon"],
+    "properties": [
+      {"name": "phit",  "attribute": "porosity"},
+      {"name": "klogh", "attribute": "permeability"}
+    ]
+  },
+  "probability_maps": {
+    "Valysar": ["channel", "crevasse", "floodplain"],
+    "Therys":  ["uppershoreface", "lowershoreface", "offshore"],
+    "Volon":   ["channel", "floodplain", "calcite"]
+  }
+}

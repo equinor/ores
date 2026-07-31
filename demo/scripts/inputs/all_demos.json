@@ -1,0 +1,48 @@
+{
+  "project": "All Demos",
+  "gate": "Full",
+  "description": "Complete demo dataset - DG1 + DG2 + Stratigraphic + Omega Sør. Equivalent to running `ingest_demo.py` with all datasets.",
+  "include_manifests": [
+    "demo/drogon/manifest_masterwp_drogon.json",
+    "demo/drogon/manifest_wpcparams_drogon.json",
+    "demo/drogon/manifest_wpcraw_drogon.json",
+    "demo/drogon/manifest_wpcstat_drogon.json",
+    "demo/drogon/manifest_wells_drogon.json",
+    "demo/drogon/manifest_markers_drogon.json",
+    "demo/drogon/manifest_litho_strat_drogon.json",
+    "demo/drogon/manifest_activity_drogon.json",
+    "demo/drogon/manifest_risk_drogon.json",
+    "demo/drogon/manifest_documents_drogon.json",
+    "demo/drogon/manifest_cp_drogon.json",
+    "demo/drogon/manifest_bd_drogon.json",
+
+    "demo/drogon_dg2/manifest_wpcparams_dg2.json",
+    "demo/drogon_dg2/manifest_wpcraw_dg2.json",
+    "demo/drogon_dg2/manifest_wpcstat_dg2.json",
+    "demo/drogon_dg2/manifest_wpc_production_dg2.json",
+    "demo/drogon_dg2/manifest_geolabelset_dg2.json",
+    "demo/drogon_dg2/manifest_grid_dg2.json",
+    "demo/drogon_dg2/manifest_maps_dg2.json",
+    "demo/drogon_dg2/manifest_simtables_dg2.json",
+    "demo/drogon_dg2/manifest_polygons_dg2.json",
+    "demo/drogon_dg2/manifest_activity_dg2.json",
+    "demo/drogon_dg2/manifest_risk_dg2.json",
+    "demo/drogon_dg2/manifest_documents_dg2.json",
+    "demo/drogon_dg2/manifest_devconcept_dg2.json",
+    "demo/drogon_dg2/manifest_collection_dg2.json",
+    "demo/drogon_dg2/manifest_bd_dg2.json",
+
+    "demo/strat/manifest_chronostratics.json",
+    "demo/strat/manifest_horizons.json",
+    "demo/strat/manifest_stratcolumn.json",
+
+    "demo/eqn/omegas/manifest_master_omegas.json",
+    "demo/eqn/omegas/manifest_volumes_omegas.json",
+    "demo/eqn/omegas/manifest_drilling_omegas.json",
+    "demo/eqn/omegas/manifest_welltechnical_omegas.json",
+    "demo/eqn/omegas/manifest_risk_omegas.json",
+    "demo/eqn/omegas/manifest_collection_omegas.json",
+    "demo/eqn/omegas/manifest_bd_omegas.json"
+  ],
+  "records": []
+}

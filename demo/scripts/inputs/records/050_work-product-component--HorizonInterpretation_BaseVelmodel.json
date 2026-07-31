@@ -1,0 +1,28 @@
+{
+  "id": "dev:work-product-component--HorizonInterpretation:BaseVelmodel:",
+  "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "BaseVelmodel",
+    "Description": "Base of velocity model",
+    "IsStratigraphic": false,
+    "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_HorizonInterpretation('011ae8ee-bfa5-4804-a675-1f4704b1730c')",
+    "ResourceID": "011ae8ee-bfa5-4804-a675-1f4704b1730c",
+    "GeneticBoundaryFeatureID": "d9593949-6e2a-4514-802f-001d0a6c3708"
+  }
+}

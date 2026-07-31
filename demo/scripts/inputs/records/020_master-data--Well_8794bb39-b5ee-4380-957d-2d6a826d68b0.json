@@ -1,0 +1,36 @@
+{
+  "id": "dev:master-data--Well:8794bb39-b5ee-4380-957d-2d6a826d68b0:1",
+  "kind": "osdu:wks:master-data--Well:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "15/9-F-5",
+    "FacilityName": "15/9-F-5",
+    "Description": "Volve water injection well - Hugin Fm, NCS licence PL 252.",
+    "FieldName": "Volve",
+    "DefaultVerticalCRSID": "",
+    "DefaultVerticalMeasurementID": "",
+    "InterestTypeID": "",
+    "VerticalMeasurements": [],
+    "ancestry": {
+      "parents": [],
+      "children": [
+        "dev:master-data--Wellbore:65e249cb-2a88-471c-8155-c26f4549526c:1"
+      ]
+    }
+  }
+}

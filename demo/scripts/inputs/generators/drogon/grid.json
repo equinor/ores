@@ -1,0 +1,37 @@
+{
+  "generator": "grid",
+  "project": "Drogon DG2",
+  "rddms_dataspace": "maap/drogon_dg",
+  "crs": "ST_WGS84_UTM37N_P32637",
+  "uuid_prefix": "dg2-geogrid",
+  "grid": {
+    "ni": 92, "nj": 146, "nk": 69,
+    "k_direction": "down",
+    "handedness": "right",
+    "description": "Corner-point grid exported from RMS (fmu-drogon tutorial 26.0.0). 92\u00d7146\u00d769 cells, 3 zones (Valysar k0-19, Therys k20-53, Volon k54-68), 7 reservoir segments. Grid geometry stored in RDDMS dataspace (maap/drogon_dg). Standard result: grid_model_static.",
+    "standard_result": "grid_model_static",
+    "fmu": {
+      "CaseName": "drogon_design",
+      "DataioVersion": "2.23",
+      "SchemaVersion": "0.19.0",
+      "Content": "grid"
+    },
+    "zones": [
+      {"Name": "Valysar", "KStart": 0,  "KEnd": 19},
+      {"Name": "Therys",  "KStart": 20, "KEnd": 53},
+      {"Name": "Volon",   "KStart": 54, "KEnd": 68}
+    ]
+  },
+  "properties": [
+    {"name": "phit",    "attribute": "porosity",                 "uom": "Euc",   "is_discrete": false, "description": "Total porosity (PHIT)"},
+    {"name": "klogh",   "attribute": "permeability",             "uom": "mD",    "is_discrete": false, "description": "Horizontal log-permeability (KLOGH)"},
+    {"name": "kv",      "attribute": "permeability_vertical",    "uom": "mD",    "is_discrete": false, "description": "Vertical permeability (Kv)"},
+    {"name": "sw",      "attribute": "saturation_water",         "uom": "Euc",   "is_discrete": false, "description": "Initial water saturation (Sw)"},
+    {"name": "swl",     "attribute": "saturation_water_connate", "uom": "Euc",   "is_discrete": false, "description": "Connate water saturation (Swl)"},
+    {"name": "sg",      "attribute": "saturation_gas",           "uom": "Euc",   "is_discrete": false, "description": "Initial gas saturation (Sg)"},
+    {"name": "vsh",     "attribute": "volume_shale",             "uom": "Euc",   "is_discrete": false, "description": "Shale volume indicator (Vsh)"},
+    {"name": "facies",  "attribute": "facies",                   "uom": "Euc",   "is_discrete": true,  "description": "Facies code (discrete: Floodplain, Channel, Crevasse, \u2026)"},
+    {"name": "region",  "attribute": "region",                   "uom": "Euc",   "is_discrete": true,  "description": "Reservoir region (discrete: 7 segments)"},
+    {"name": "zone",    "attribute": "zone",                     "uom": "Euc",   "is_discrete": true,  "description": "Stratigraphic zone (discrete: Valysar, Therys, Volon)"}
+  ]
+}

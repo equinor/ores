@@ -1,0 +1,30 @@
+{
+  "id": "dev:master-data--ReservoirSegment:9d96cbcd-db7a-4cb6-93b7-44836956af37:1",
+  "kind": "osdu:wks:master-data--ReservoirSegment:2.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Central South",
+    "Description": "Central-south structural compartment of the Valysar formation, Drogon field",
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Reservoir:bce09477-3531-4a34-914d-e1aa23e35c80:1"
+      ],
+      "children": []
+    }
+  }
+}

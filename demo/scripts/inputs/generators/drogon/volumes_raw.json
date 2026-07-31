@@ -1,0 +1,37 @@
+{
+  "generator": "volumes_raw",
+  "uuid_prefix": "dg2-volraw",
+  "csv_file": "demo/drogon/valysar_volumes.csv",
+  "name": "Drogon Valysar - Reservoir Estimated Volumes (RAW, per realisation)",
+  "description": "Uncertainty realisation table for the Valysar zone of the Drogon field. 12 phase-qualified volume columns, 3 realisations \u00d7 7 segments \u00d7 4 facies.",
+  "segment_names": {
+    "WestLowland":  "West Lowland",
+    "CentralSouth": "Central South",
+    "CentralNorth": "Central North",
+    "NorthHorst":   "North Horst",
+    "CentralRamp":  "Central Ramp",
+    "CentralHorst": "Central Horst",
+    "EastLowland":  "East Lowland"
+  },
+  "key_columns": [
+    {"ColumnName": "Realisation", "ColumnRole": "Key", "ValueType": "integer"},
+    {"ColumnName": "Zone",        "ColumnRole": "Key", "ValueType": "string"},
+    {"ColumnName": "SegmentID",   "ColumnRole": "Key", "ValueType": "string",
+     "KindID": "osdu:wks:master-data--ReservoirSegment:2.0.0"},
+    {"ColumnName": "Facies",      "ColumnRole": "Key", "ValueType": "string"}
+  ],
+  "value_columns": [
+    {"ColumnName": "BulkOil",            "base_type": "Bulk",            "UOM": "m3"},
+    {"ColumnName": "PoreOil",            "base_type": "Pore",            "UOM": "m3"},
+    {"ColumnName": "HydrocarbonPoreOil", "base_type": "HydrocarbonPore", "UOM": "m3"},
+    {"ColumnName": "Oil",                "base_type": "Oil",             "UOM": "m3"},
+    {"ColumnName": "AssociatedGas",      "base_type": "AssociatedGas",   "UOM": "m3"},
+    {"ColumnName": "BulkGas",            "base_type": "Bulk",            "UOM": "m3"},
+    {"ColumnName": "PoreGas",            "base_type": "Pore",            "UOM": "m3"},
+    {"ColumnName": "HydrocarbonPoreGas", "base_type": "HydrocarbonPore", "UOM": "m3"},
+    {"ColumnName": "Gas",                "base_type": "Gas",             "UOM": "m3"},
+    {"ColumnName": "AssociatedLiquid",   "base_type": "AssociatedLiquid","UOM": "m3"},
+    {"ColumnName": "Bulk",               "base_type": "Bulk",            "UOM": "m3"},
+    {"ColumnName": "Pore",               "base_type": "Pore",            "UOM": "m3"}
+  ]
+}

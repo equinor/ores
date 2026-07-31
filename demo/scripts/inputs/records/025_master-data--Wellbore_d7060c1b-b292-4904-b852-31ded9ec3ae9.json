@@ -1,0 +1,41 @@
+{
+  "id": "dev:master-data--Wellbore:d7060c1b-b292-4904-b852-31ded9ec3ae9:1",
+  "kind": "osdu:wks:master-data--Wellbore:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "15/9-F-11 A",
+    "FacilityName": "15/9-F-11 A",
+    "Description": "Bore A, Hugin Fm producer",
+    "WellID": "dev:master-data--Well:9cce9f80-5047-4ef8-87df-841b66041bb1:1",
+    "SequenceNumber": 1,
+    "TargetFormation": "Hugin Fm",
+    "DefaultVerticalMeasurementID": "",
+    "DefinitiveTrajectoryID": "",
+    "DrillingReasons": [],
+    "KickOffWellbore": "",
+    "PrimaryMaterialID": "",
+    "TrajectoryTypeID": "",
+    "VerticalMeasurements": [],
+    "ancestry": {
+      "parents": [
+        "dev:master-data--Well:9cce9f80-5047-4ef8-87df-841b66041bb1:1"
+      ],
+      "children": []
+    }
+  }
+}
