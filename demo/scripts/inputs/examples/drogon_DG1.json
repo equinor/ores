@@ -1,0 +1,222 @@
+{
+  "project": "Drogon",
+  "gate": "DG1",
+  "description": "Drogon field development - Identify & Assess (DG1). P10/P50/P90 oil & gas volume estimates across 7 segments.",
+  "records": [
+    {
+      "type": "reservoir",
+      "slug": "drogon-reservoir",
+      "data": {
+        "Name": "Drogon Reservoir",
+        "Description": "Drogon oil and gas field, Norwegian Continental Shelf. Jurassic sandstone reservoir (Valysar formation — Volantis/Therys/Volon members). 7 fault-bounded segments.",
+        "FieldName": "Drogon",
+        "BasinName": "North Sea",
+        "CountryID": "NO"
+      }
+    },
+    {
+      "type": "activity_template",
+      "slug": "drogon-valysar-volumetrics-template",
+      "data": {
+        "Name": "Drogon Valysar - Volumetrics Workflow Template",
+        "Description": "3-step FMU workflow: parameter generation → RMS geomodel (facies + petrophysics) → volume aggregation to P10/P50/P90. DecisionExample workflow, 3 realisations.",
+        "ParameterTemplates": [
+          {"Title": "OWC_Skirt", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "Double", "Description": "Oil-water contact skirt segments (1,4,7) in m MSL"},
+          {"Title": "OWC_Centre", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "Double", "Description": "Oil-water contact central segments (2,3,5,6) in m MSL"},
+          {"Title": "Porosity_Channel", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "Double", "Description": "Channel facies porosity (range 0.265–0.285)"},
+          {"Title": "Porosity_Crevasse", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "Double", "Description": "Crevasse facies porosity (range 0.199–0.219)"},
+          {"Title": "Porosity_Floodplain", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "Double", "Description": "Floodplain facies porosity (range 0.090–0.113)"},
+          {"Title": "RMS_Seed", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "integer"},
+          {"Title": "OutputVolumes_Raw", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "OutputVolumes_Stats", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "ReportTable", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"}
+        ]
+      }
+    },
+    {
+      "type": "activity",
+      "slug": "drogon-dg1-volumetrics-run",
+      "data": {
+        "Name": "Drogon Valysar - DG1 Volumetrics Workflow Run",
+        "Description": "3-realisation FMU run (Low/Base/High): DESIGN2PARAMS → RMS (facies + petrophysics) → volume extraction per segment. OWC range 1650–1687 m MSL.",
+        "Parameters": [
+          {"Title": "OWC_Skirt", "Selection": "1650/1660/1670 m MSL (Low/Base/High)"},
+          {"Title": "OWC_Centre", "Selection": "1667/1677/1687 m MSL (Low/Base/High)"},
+          {"Title": "Porosity_Channel", "Selection": "0.265/0.275/0.285 (Low/Base/High)"},
+          {"Title": "OutputVolumes_Raw", "Selection": "Per-realisation STOIIP per segment (7 segments × 3 realisations)"},
+          {"Title": "OutputVolumes_Stats", "Selection": "P10/P50/P90 aggregates across segments"}
+        ]
+      }
+    },
+    {
+      "type": "column_based_table",
+      "slug": "drogon-dg1-parameters",
+      "data": {
+        "Name": "Drogon DG1 - Valysar Parameters",
+        "Description": "OWC depths and porosity per segment/facies — 3-realisation design matrix (Low/Base/High)",
+        "Columns": [
+          {"Name": "Realisation", "Kind": "integer"},
+          {"Name": "OWC_Skirt_m", "Kind": "double", "Unit": "m MSL"},
+          {"Name": "OWC_Centre_m", "Kind": "double", "Unit": "m MSL"},
+          {"Name": "PHIT_Channel", "Kind": "double"},
+          {"Name": "PHIT_Crevasse", "Kind": "double"},
+          {"Name": "PHIT_Floodplain", "Kind": "double"}
+        ],
+        "Data": {
+          "Realisation": [1, 2, 3],
+          "OWC_Skirt_m": [1660, 1650, 1670],
+          "OWC_Centre_m": [1677, 1667, 1687],
+          "PHIT_Channel": [0.275, 0.265, 0.285],
+          "PHIT_Crevasse": [0.209, 0.199, 0.219],
+          "PHIT_Floodplain": [0.103, 0.090, 0.113]
+        }
+      }
+    },
+    {
+      "type": "reservoir_volumes",
+      "slug": "drogon-dg1-volumes-raw",
+      "data": {
+        "Name": "Drogon DG1 - Raw Volumes (per realisation)",
+        "Description": "Per-realisation STOIIP from 3-member FMU ensemble across 7 fault-bounded segments",
+        "VolumeType": "Raw"
+      }
+    },
+    {
+      "type": "reservoir_volumes",
+      "slug": "drogon-dg1-volumes-stats",
+      "data": {
+        "Name": "Drogon DG1 - Volume Statistics (P10/P50/P90)",
+        "Description": "Statistical summary of Valysar volumes",
+        "VolumeType": "Statistical",
+        "Statistics": {
+          "STOIIP_P90": 28.5,
+          "STOIIP_P50": 34.5,
+          "STOIIP_P10": 42.0,
+          "RecOil_P90": 5.8,
+          "RecOil_P50": 8.2,
+          "RecOil_P10": 11.5,
+          "RF_P90_pct": 22.0,
+          "RF_P50_pct": 27.5,
+          "RF_P10_pct": 32.0,
+          "Unit": "MSm3"
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "drogon-dg1-risk-porosity",
+      "data": {
+        "Name": "Porosity and cementation uncertainty",
+        "Description": "Porosity variation in Valysar fluvial deposits (Floodplain ~0.10, Channel ~0.28, Crevasse ~0.21) drives volume and recovery factor uncertainty across 7 segments.",
+        "RiskCategoryID": "Subsurface",
+        "RiskDisciplineID": "Reservoir",
+        "MitigationStatus": "Open",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S3",
+            "InherentProbability": "P4",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P3",
+            "MitigationActions": ["Core calibration from 55/33-A-1 discovery well", "Log-derived porosity cross-validation (density/neutron/sonic)"]
+          }
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "drogon-dg1-risk-fault",
+      "data": {
+        "Name": "Fault transmissibility and reservoir compartmentalization",
+        "Description": "Fault transmissibility may compartmentalize reservoir, restricting pressure communication and drainage. Could require additional infill wells beyond the 12-well plan (50–150 MUSD impact).",
+        "RiskCategoryID": "Subsurface",
+        "RiskDisciplineID": "Reservoir",
+        "MitigationStatus": "Open",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S4",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S3",
+            "ResidualProbability": "P2",
+            "MitigationActions": ["RFT pressure analysis from appraisal wells", "4D seismic connectivity study", "Cross-fault transmissibility multiplier sensitivity (MULTZ)"]
+          }
+        }
+      }
+    },
+    {
+      "type": "document",
+      "slug": "drogon-dg1-sra",
+      "data": {
+        "Name": "Drogon - Subsurface Risk Assessment (SRA) DG1",
+        "Description": "P50 first oil June 2028, P90 March 2029. Key drivers: FPSO drydock slot, subsea template fabrication.",
+        "DocumentType": "SRA",
+        "Authors": ["Subsurface Team"],
+        "PublicationDate": "2026-02-15"
+      }
+    },
+    {
+      "type": "document",
+      "slug": "drogon-dg1-cra",
+      "data": {
+        "Name": "Drogon - Cost Risk Assessment (CRA) DG1",
+        "Description": "P50 CAPEX 8,200 MNOK, P90 10,100 MNOK. Main drivers: drilling duration (12–16 wells), FPSO water treatment.",
+        "DocumentType": "CRA",
+        "Authors": ["Commercial Team"],
+        "PublicationDate": "2026-02-15"
+      }
+    },
+    {
+      "type": "document",
+      "slug": "drogon-dg1-pdo-draft",
+      "data": {
+        "Name": "Drogon - Plan for Development and Operation (PDO) Draft",
+        "Description": "Field description, subsea tieback to FPSO, well planning, environmental/regulatory alignment.",
+        "DocumentType": "PDO",
+        "Authors": ["Development Team"],
+        "PublicationDate": "2026-03-01"
+      }
+    },
+    {
+      "type": "persisted_collection",
+      "slug": "drogon-dg1-evidence-package",
+      "data": {
+        "Name": "Drogon DG1 - Evidence Package",
+        "Description": "Complete evidence bundle for Identify & Assess decision gate",
+        "Hierarchy": [
+          {"Name": "Volumes & Parameters", "Description": "3-realisation FMU results, P10/P50/P90 aggregates"},
+          {"Name": "Risks", "Description": "Porosity and fault compartmentalisation risks"},
+          {"Name": "Documents", "Description": "SRA, CRA, PDO draft"},
+          {"Name": "Geomodel", "Description": "RDDMS EPC (maap-drogon_dg)"}
+        ]
+      }
+    },
+    {
+      "type": "business_decision",
+      "slug": "drogon-dg1-identify-assess",
+      "data": {
+        "Name": "Drogon DG1 - Identify & Assess",
+        "Description": "DG1 volume assessment of the Valysar formation, Drogon field. P10/P50/P90 oil & gas estimates across 7 segments.",
+        "ProjectName": "Drogon Field Development",
+        "DecisionLevelID": "DG1",
+        "ApprovalStatusID": "Approved",
+        "DecisionDueDate": "2026-03-15",
+        "DecisionSummary": "Assess Valysar in-place volumes and recommend proceed/no-go for DG2. NPV(10%) 280 MUSD, IRR 12%, CAPEX 6,500 MNOK, break-even 55 USD/bbl.",
+        "ext": {
+          "equinor": {
+            "ProjectTypeID": "FieldDevelopment",
+            "Alternatives": [
+              {"Name": "Proceed to DG2 - full 7-segment development", "Rank": 1, "Rationale": "Recommended: highest expected value, leverages full reservoir extent"},
+              {"Name": "Reduced scope - CentralHorst + CentralSouth only", "Rank": 2, "Rationale": "Lower risk but sacrifices 40% of recoverable volume"},
+              {"Name": "Defer - acquire more appraisal data", "Rank": 3, "Rationale": "Fallback if porosity/fault risk unacceptable at current maturity"}
+            ],
+            "ActivityStates": [
+              {"MilestoneID": "DG1", "Status": "Completed", "PlannedStartDate": "2025-12-15"},
+              {"MilestoneID": "DG2", "Status": "Planned", "PlannedStartDate": "2026-03-01"},
+              {"MilestoneID": "DG3", "Status": "Planned", "PlannedStartDate": "2027-01-01"},
+              {"MilestoneID": "DG4", "Status": "Planned", "PlannedStartDate": "2027-07-01"}
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

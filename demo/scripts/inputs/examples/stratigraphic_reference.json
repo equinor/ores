@@ -1,0 +1,50 @@
+{
+  "project": "Stratigraphic Framework",
+  "gate": "Reference",
+  "description": "ICS2017 chronostratigraphic reference framework — standard stratigraphic column for seismic/well correlation across projects.",
+  "records": [
+    {
+      "type": "activity_template",
+      "slug": "strat-column-build-workflow",
+      "data": {
+        "Name": "Stratigraphic Column Build Workflow",
+        "Description": "SMDA/RESQML stratigraphic model → OSDU StratigraphicColumn + HorizonInterpretation records → deploy to RDDMS dataspace (maap-strat)",
+        "ParameterTemplates": [
+          {"Title": "SourceModel", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "string", "Description": "SMDA or RESQML stratigraphic model source"},
+          {"Title": "ChronoScheme", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "string", "Description": "Chronostratigraphic scheme (ICS2017)"},
+          {"Title": "StratColumn", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "Horizons", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "ETPDataspace", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"}
+        ]
+      }
+    },
+    {
+      "type": "activity",
+      "slug": "strat-column-deployment",
+      "data": {
+        "Name": "Stratigraphic Framework - ICS2017 Deployment",
+        "Description": "Deployed ICS2017 chronostratigraphic scheme to RDDMS dataspace maap-strat. Includes Phanerozoic eons, periods, and age boundaries.",
+        "Parameters": [
+          {"Title": "SourceModel", "Selection": "ICS2017 International Commission on Stratigraphy"},
+          {"Title": "ChronoScheme", "Selection": "Hadean → Archean → Proterozoic → Phanerozoic (full hierarchy)"},
+          {"Title": "StratColumn", "Selection": "Master column integrating chrono- and lithostratigraphy"},
+          {"Title": "Horizons", "Selection": "Chronostratigraphic boundaries: Top Phanerozoic (0 Ma), Top Northgrippian (0.0042 Ma), etc."}
+        ]
+      }
+    },
+    {
+      "type": "persisted_collection",
+      "slug": "strat-framework-collection",
+      "data": {
+        "Name": "Stratigraphic Framework - Reference Data Package",
+        "Description": "ICS2017 chronostratigraphic reference data for use across all projects",
+        "Hierarchy": [
+          {"Name": "Chronostratigraphy", "Description": "ICS2017 eons, eras, periods, epochs with age boundaries"},
+          {"Name": "Lithostratigraphy", "Description": "NCS formation/group hierarchy (Brent, Viking, Dunlin, etc.)"},
+          {"Name": "Horizons", "Description": "Type boundaries with absolute ages (Ma)"},
+          {"Name": "RDDMS Dataspace", "Description": "maap-strat ETP dataspace record"}
+        ]
+      }
+    }
+  ]
+}

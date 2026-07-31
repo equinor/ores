@@ -1,0 +1,31 @@
+{
+  "project": "Gullfaks Faults",
+  "gate": "Reference",
+  "description": "Gullfaks field fault framework — boundary features and fault interpretations for compartmentalisation analysis.",
+  "records": [
+    {
+      "type": "reservoir",
+      "slug": "gullfaks-field",
+      "data": {
+        "Name": "Gullfaks Field",
+        "Description": "Gullfaks oil field, Northern North Sea. Complex faulted Brent Group reservoir with multiple compartments. Source: OpenWorks/FROST_BG.GULLFAKS.ALL_DATA.",
+        "FieldName": "Gullfaks",
+        "BasinName": "North Sea",
+        "CountryID": "NO"
+      }
+    },
+    {
+      "type": "persisted_collection",
+      "slug": "gullfaks-fault-framework",
+      "data": {
+        "Name": "Gullfaks - Fault Framework",
+        "Description": "Systematic fault registry with geometry and transmissibility for compartmentalisation analysis",
+        "Hierarchy": [
+          {"Name": "Major Faults", "Description": "H1_H2, G3_G4, G1_G2 — field-bounding faults"},
+          {"Name": "Internal Faults", "Description": "Intra-block faults controlling segment connectivity"},
+          {"Name": "Fault Interpretations", "Description": "Geometry, throw, and transmissibility per fault"}
+        ]
+      }
+    }
+  ]
+}

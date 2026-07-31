@@ -1,0 +1,61 @@
+{
+  "project": "Drogon RESQML",
+  "gate": "Geomodel",
+  "description": "Drogon RESQML geomodel — ETP dataspace records for RDDMS catalogue. RESQML 2.0.1 and 2.2 representations.",
+  "records": [
+    {
+      "type": "reservoir",
+      "slug": "drogon-resqml-reservoir",
+      "data": {
+        "Name": "Drogon Field - RESQML Geomodel Context",
+        "Description": "Drogon field geomodel stored in RDDMS via ETP protocol. Contains IjkGrid (92×146×69), structural surfaces, fault interpretations, wellbore trajectories, and properties (PHIT, KLOGH, FACIES, ZONE).",
+        "FieldName": "Drogon",
+        "BasinName": "North Sea",
+        "CountryID": "NO"
+      }
+    },
+    {
+      "type": "activity_template",
+      "slug": "drogon-resqml-import-workflow",
+      "data": {
+        "Name": "RESQML EPC Import to RDDMS Workflow",
+        "Description": "Import EPC file → create ETP dataspace → push RESQML objects → generate OSDU manifest → ingest catalogue records",
+        "ParameterTemplates": [
+          {"Title": "EPC_File", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "string", "Description": "Path to .epc file"},
+          {"Title": "Dataspace", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "string", "Description": "Target RDDMS dataspace (e.g. maap/drogon_dg)"},
+          {"Title": "ETPDataspace_Record", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "CatalogueManifest", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"}
+        ]
+      }
+    },
+    {
+      "type": "activity",
+      "slug": "drogon-resqml-import-run",
+      "data": {
+        "Name": "Drogon RESQML - EPC Import (v2.0.1 + v2.2)",
+        "Description": "Imported drogon.epc (v2.0.1) and drogon22.epc (v2.2) into RDDMS dataspaces. Contains grids, surfaces, faults, wellbores, and reservoir properties.",
+        "Parameters": [
+          {"Title": "EPC_File", "Selection": "drogon.epc (2.0.1) + drogon22.epc (2.2)"},
+          {"Title": "Dataspace", "Selection": "maap/drogon_dg (2.0.1), maap/drogon22 (2.2)"},
+          {"Title": "Objects", "Selection": "IjkGrid 92×146×69, 11+ structural surfaces, 7 fault interpretations, 5 wellbore trajectories, 6+ property sets"}
+        ]
+      }
+    },
+    {
+      "type": "persisted_collection",
+      "slug": "drogon-resqml-geomodel-collection",
+      "data": {
+        "Name": "Drogon RESQML - Geomodel Package",
+        "Description": "Complete RESQML geomodel catalogue: grids, surfaces, faults, wells, properties. Both v2.0.1 and v2.2 representations.",
+        "Hierarchy": [
+          {"Name": "Grids", "Description": "IjkGridRepresentation 92×146×69, 3 zones (Valysar k0-19, Therys k20-53, Volon k54-68)"},
+          {"Name": "Surfaces", "Description": "11+ depth surfaces (TopVolantis, TopTherys, TopVolon, P50/P90 variants)"},
+          {"Name": "Faults", "Description": "7 fault interpretations bounding reservoir segments"},
+          {"Name": "Wells", "Description": "5 wellbore trajectories with completions"},
+          {"Name": "Properties", "Description": "PHIT, KLOGH, KV, FACIES, ZONE, Sw per grid cell"},
+          {"Name": "Seismic", "Description": "OpenVDS: near/far offset, amplitude/RelAI (Bluware format)"}
+        ]
+      }
+    }
+  ]
+}

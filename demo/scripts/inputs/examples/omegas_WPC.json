@@ -1,30 +1,32 @@
 {
-  "project": "Omegas",
+  "project": "Omega Sør Alfa",
   "gate": "WPC",
-  "description": "Omegas prospect — Work Program Committee assessment. Exploration well candidate.",
+  "description": "Omega Sør Alfa — Work Program Committee. Approve 1 producer (CAP-X sidetrack from 34/4-19 S) + 1 injector targeting Brent Group (Tarbert + Rannoch). Block 34/4, PL057, Snorre area.",
   "records": [
     {
       "type": "reservoir",
-      "slug": "omegas-prospect",
+      "slug": "omega-sor-alfa-reservoir",
       "data": {
-        "Name": "Omegas Prospect",
-        "Description": "Omegas exploration prospect, deepwater Barents Sea. Cretaceous turbidite play.",
-        "FieldName": "Omegas",
-        "BasinName": "Barents Sea",
+        "Name": "Omega Sør Alfa",
+        "Description": "Brent Group reservoir (Tarbert + Rannoch formations). Discovery well: 34/4-19 S. Water depth 381 m. Block 34/4, Licence PL057, Snorre area, Northern North Sea.",
+        "FieldName": "Omega Sør",
+        "BasinName": "North Sea",
         "CountryID": "NO"
       }
     },
     {
       "type": "activity_template",
-      "slug": "omegas-exploration-workflow",
+      "slug": "omegas-well-planning-workflow",
       "data": {
-        "Name": "Omegas - Exploration Assessment Workflow",
-        "Description": "Seismic interpretation → AVO analysis → prospect risking → volumetrics → well design",
+        "Name": "Omega Sør - Well Planning Assessment Workflow",
+        "Description": "Well cost estimate → drilling design → injectivity assessment → pilot well dependency evaluation → WPC evidence assembly",
         "ParameterTemplates": [
-          {"Title": "Seismic3D", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "DataObject"},
-          {"Title": "AVOAnalysis", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
-          {"Title": "ProspectRisking", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
-          {"Title": "Volumetrics", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"}
+          {"Title": "ReservoirModel", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "DataObject"},
+          {"Title": "WellDesign", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "DataObject"},
+          {"Title": "InjectivityAssessment", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "ScaleRiskAssessment", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "Volumetrics", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"},
+          {"Title": "EconomicAnalysis", "IsInput": false, "IsOutput": true, "DefaultParameterKind": "DataObject"}
         ]
       }
     },
@@ -32,12 +34,14 @@
       "type": "activity",
       "slug": "omegas-wpc-assessment",
       "data": {
-        "Name": "Omegas WPC - Prospect Assessment",
-        "Description": "AVO-supported amplitude anomaly, 3-way dip closure against fault. COS: 25%.",
+        "Name": "Omega Sør WPC - Well Planning Assessment",
+        "Description": "65-realisation Monte Carlo volumetrics + well design optimisation + Ba scale decision tree evaluation",
         "Parameters": [
-          {"Title": "Seismic3D", "Selection": "2022 3D broadband survey, full-stack + near/far"},
-          {"Title": "AVOAnalysis", "Selection": "Class III AVO response, DHI confidence: moderate"},
-          {"Title": "Volumetrics", "Selection": "Unrisked P50: 45 MMboe; risked EMV: 12 MMboe"}
+          {"Title": "ReservoirModel", "Selection": "Brent Group: Tarbert (upper, shallow-marine) + Rannoch (lower, higher perm uncertainty)"},
+          {"Title": "WellDesign", "Selection": "Producer: CAP-X sidetrack 34/4-19 S, perforate Tarbert+Rannoch. Injector: 4-slot template sidetrack, Tarbert only."},
+          {"Title": "InjectivityAssessment", "Selection": "Rannoch <50 mD, injection pressure limited. Cold-water injection + fracturing after depletion contingency."},
+          {"Title": "ScaleRiskAssessment", "Selection": "Ba decision tree: <50 mg/L proceed, 50-100 evaluate depletion/GAG, >100 concept change."},
+          {"Title": "Volumetrics", "Selection": "STOIIP P50 19.3 MSm3 (Tarbert 7.2 + Rannoch 10.8). Recoverable P50 5.4 MSm3, RF 28.5%."}
         ]
       }
     },
@@ -45,76 +49,116 @@
       "type": "reservoir_volumes",
       "slug": "omegas-wpc-volumes",
       "data": {
-        "Name": "Omegas WPC - Prospect Volumes (unrisked)",
-        "Description": "Monte Carlo volumetrics: trap area × net pay × porosity × Sw × FVF × RF",
+        "Name": "Omega Sør WPC - Volumes (65-realisation Monte Carlo)",
+        "Description": "Static in-place volumes per zone: Tarbert ~7.2 MSm3, Rannoch ~10.8 MSm3. OWC range: ODT 3772.5 m vs mean 3860 m.",
         "VolumeType": "Statistical",
         "Statistics": {
-          "STOIIP_P10": 28.5,
-          "STOIIP_P50": 52.3,
-          "STOIIP_P90": 95.1,
-          "RecOil_P10": 8.6,
-          "RecOil_P50": 18.3,
-          "RecOil_P90": 38.0,
-          "Unit": "MMboe"
+          "STOIIP_P90": 15.8,
+          "STOIIP_P50": 19.3,
+          "STOIIP_P10": 22.9,
+          "RecOil_P50": 5.4,
+          "RF_P50_pct": 28.5,
+          "Production_Mboe": 16.5,
+          "Unit": "MSm3"
         }
       }
     },
     {
       "type": "risk",
-      "slug": "omegas-wpc-risk-source",
+      "slug": "omegas-wpc-risk-barium-scale",
       "data": {
-        "Name": "Source Rock Maturity",
-        "Description": "Jurassic source rock maturity at prospect depth uncertain — limited well control in area.",
+        "Name": "Barium scale risk (PIMS #00061)",
+        "Description": "Decision tree: Ba <50 mg/L → proceed; 50–100 mg/L → evaluate depletion/GAG; >100 mg/L → concept change. Key WPC risk driver.",
         "RiskCategoryID": "Subsurface",
         "RiskDisciplineID": "Reservoir",
-        "MitigationStatus": "Open",
-        "ext": {
-          "equinor": {
-            "InherentSeverity": "S5",
-            "InherentProbability": "P3",
-            "ResidualSeverity": "S5",
-            "ResidualProbability": "P2",
-            "MitigationActions": ["Basin modelling update", "Geochemical analogue study"]
-          }
-        }
-      }
-    },
-    {
-      "type": "risk",
-      "slug": "omegas-wpc-risk-seal",
-      "data": {
-        "Name": "Top Seal Integrity",
-        "Description": "Cretaceous shale seal — fault juxtaposition may create leak path at eastern closure.",
-        "RiskCategoryID": "Subsurface",
-        "RiskDisciplineID": "Reservoir",
-        "MitigationStatus": "Open",
+        "MitigationStatus": "InProgress",
         "ext": {
           "equinor": {
             "InherentSeverity": "S4",
             "InherentProbability": "P3",
             "ResidualSeverity": "S3",
-            "ResidualProbability": "P2",
-            "MitigationActions": ["Fault seal analysis (SGR/AFSA)", "Seismic attribute extraction at seal level"]
+            "ResidualProbability": "P3",
+            "MitigationActions": ["Pilot well Ba sampling", "HPHT scale inhibitor qualification", "WI placement 5-20 m above OWC", "Depletion/GAG contingency plan"]
           }
         }
       }
     },
     {
       "type": "risk",
-      "slug": "omegas-wpc-risk-reservoir-quality",
+      "slug": "omegas-wpc-risk-injectivity",
       "data": {
-        "Name": "Reservoir Quality",
-        "Description": "Turbidite channel-fill facies: porosity 15-25%, but net-to-gross highly uncertain (analogue range: 30-80%).",
+        "Name": "Low permeability & injectivity",
+        "Description": "Rannoch Fm permeability <50 mD, injection pressure limited. Requires cold-water injection + fracturing after depletion, IMR vessel possible.",
         "RiskCategoryID": "Subsurface",
         "RiskDisciplineID": "Reservoir",
-        "MitigationStatus": "Open",
+        "MitigationStatus": "InProgress",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S3",
+            "InherentProbability": "P3",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P2",
+            "MitigationActions": ["Cold-water injection design", "Fracturing after depletion contingency", "IMR vessel capacity assessment", "Injectivity fall-off test plan"]
+          }
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "omegas-wpc-risk-volume",
+      "data": {
+        "Name": "Volume & structural uncertainty",
+        "Description": "OWC range (ODT 3772.5 m vs mean 3860 m). STOIIP range P90 15.8 – P10 22.9 MSm3. Deformation bands near ISF may restrict drainage.",
+        "RiskCategoryID": "Subsurface",
+        "RiskDisciplineID": "Reservoir",
+        "MitigationStatus": "InProgress",
         "ext": {
           "equinor": {
             "InherentSeverity": "S3",
             "InherentProbability": "P4",
             "ResidualSeverity": "S2",
             "ResidualProbability": "P3",
-            "MitigationActions": ["Seismic inversion for NTG proxy", "Analogue database review (Nise/Lysing)"]
+            "MitigationActions": ["Pilot well OWC determination", "FMU sensitivity to OWC", "Core analysis for deformation bands", "Seismic re-interpretation (amplitude support)"]
+          }
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "omegas-wpc-risk-drilling",
+      "data": {
+        "Name": "Drilling & completion risk",
+        "Description": "9⅝\" shoe placement decision, Hordaland flow unit P&A risk. Stratigraphy confirmation needed from pilot well.",
+        "RiskCategoryID": "Subsurface",
+        "RiskDisciplineID": "Drilling",
+        "MitigationStatus": "InProgress",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S2",
+            "InherentProbability": "P2",
+            "ResidualSeverity": "S2",
+            "ResidualProbability": "P1",
+            "MitigationActions": ["Pilot well stratigraphy confirmation", "SUB9100 QA review", "Cement bond verification plan"]
+          }
+        }
+      }
+    },
+    {
+      "type": "risk",
+      "slug": "omegas-wpc-risk-schedule-cost",
+      "data": {
+        "Name": "Schedule & cost overrun",
+        "Description": "Robustness scenario: +20% CAPEX, -10% production, +1 year delay still economic (break-even 25 USD/bbl headroom).",
+        "RiskCategoryID": "Commercial",
+        "RiskDisciplineID": "Facilities",
+        "MitigationStatus": "Accepted",
+        "ext": {
+          "equinor": {
+            "InherentSeverity": "S2",
+            "InherentProbability": "P2",
+            "ResidualSeverity": "S1",
+            "ResidualProbability": "P2",
+            "MitigationActions": ["Early rig slot reservation", "Parallel procurement for long-lead items", "Robustness analysis at break-even 25 USD/bbl"]
           }
         }
       }
@@ -123,44 +167,86 @@
       "type": "document",
       "slug": "omegas-wpc-prospect-evaluation",
       "data": {
-        "Name": "Omegas - Prospect Evaluation Report",
-        "Description": "Full prospect evaluation: seismic interpretation, trap geometry, risking, volumetrics, and drilling recommendation.",
+        "Name": "Omega Sør - WPC Prospect Evaluation Report",
+        "Description": "Full WPC evidence: reservoir characterisation, well design, Ba scale risk assessment, economics, drilling programme.",
         "DocumentType": "TechnicalNote",
-        "Authors": ["Exploration Team"]
+        "Authors": ["Subsurface Team", "Drilling & Wells"]
+      }
+    },
+    {
+      "type": "development_concept",
+      "slug": "omegas-wpc-well-concept",
+      "data": {
+        "Name": "Omega Sør WPC - Well Development Concept",
+        "Description": "1 producer (CAP-X sidetrack from 34/4-19 S) + 1 injector (4-slot template). Subsea tieback to Snorre N-template.",
+        "DecisionGate": "WPC",
+        "FacilityConcept": {
+          "Type": "SubseaTieback",
+          "HostFacility": "Snorre N-template (existing)",
+          "Templates": ["4-slot manifold"],
+          "Slots": ["P1 (CAP-X ST)", "I1 (template ST)"]
+        },
+        "WellPlan": {
+          "Producers": 1,
+          "Injectors": 1,
+          "ArtificialLift": "None"
+        },
+        "ReservoirTargeting": {
+          "TargetFormation": "Brent Group (Tarbert + Rannoch)",
+          "SegmentIDs": ["Tarbert", "Rannoch"]
+        },
+        "ProductionStrategy": {
+          "PeakOilRate_Sm3d": 5000,
+          "PlateauDuration_years": 3,
+          "FieldLife_years": 15,
+          "WaterInjection": true,
+          "GasInjection": false
+        }
       }
     },
     {
       "type": "persisted_collection",
-      "slug": "omegas-wpc-evidence",
+      "slug": "omegas-wpc-evidence-package",
       "data": {
-        "Name": "Omegas WPC - Evidence Package",
-        "Description": "Evidence for Work Program Committee drill/defer decision",
+        "Name": "Omega Sør WPC - Evidence Package",
+        "Description": "Complete evidence bundle for Work Program Committee drill/defer decision",
         "Hierarchy": [
-          {"Name": "Seismic & Interpretation", "Description": "3D seismic, AVO, horizons"},
-          {"Name": "Prospect Risking", "Description": "COS elements, risk register"},
-          {"Name": "Volumetrics", "Description": "Monte Carlo volumes, EMV"},
-          {"Name": "Well Design", "Description": "Preliminary well concept and cost estimate"}
+          {"Name": "Reservoir Characterisation", "Description": "Brent Group model, OWC, segments"},
+          {"Name": "Volumetrics", "Description": "65-realisation Monte Carlo, per-zone STOIIP"},
+          {"Name": "Well Design", "Description": "Producer (CAP-X ST) + Injector (4-slot)"},
+          {"Name": "Ba Scale Assessment", "Description": "Decision tree, pilot well dependency"},
+          {"Name": "Risks", "Description": "5 risks: Ba scale, injectivity, volume, drilling, schedule"},
+          {"Name": "Economics", "Description": "NPV 116 MUSD, IRR 62%, break-even 25 USD/bbl"}
         ]
       }
     },
     {
       "type": "business_decision",
-      "slug": "omegas-wpc-drill-decision",
+      "slug": "omegas-wpc-well-decision",
       "data": {
-        "Name": "Omegas WPC - Drill Decision",
-        "Description": "Work Program Committee: recommend drill or defer for the Omegas exploration prospect",
-        "ProjectName": "Omegas Exploration",
+        "Name": "Omega Sør – WPC Well Planning Committee Decision",
+        "Description": "Approve 1 producer (CAP-X sidetrack) & 1 injector (4-slot template) targeting Brent Group. P50 STOIIP 19.3 MSm3, recoverable 5.4 MSm3, RF 28.5%.",
+        "ProjectName": "Omega Sør Alfa Field Development",
         "DecisionLevelID": "WPC",
         "ApprovalStatusID": "Pending",
-        "DecisionDueDate": "2026-12-15",
-        "DecisionSummary": "Recommend drill. COS 25%, unrisked P50 52 MMboe, risked EMV 12 MMboe. Estimated well cost $85M. Positive EMV at >$60/bbl.",
+        "DecisionDueDate": "2026-09-30",
+        "DecisionSummary": "Approve Alt-A: 1 WI (Tarbert) + 1 producer (CAP-X ST). NPV 116 MUSD, IRR 62%, CAPEX 213 MUSD, break-even 25 USD/bbl. First oil Jan 2029. Pilot well required for OWC/Ba confirmation.",
         "ext": {
           "equinor": {
-            "ProjectTypeID": "ExplorationWell",
+            "ProjectTypeID": "FieldDevelopment",
             "Alternatives": [
-              {"Name": "Drill 2027 Q3", "Rank": 1, "Rationale": "Rig available, optimal weather window, seismic data mature"},
-              {"Name": "Defer to 2028", "Rank": 2, "Rationale": "Wait for offset well results (Block 7324) for analogue data"},
-              {"Name": "Farm-out 50%", "Rank": 3, "Rationale": "Reduce exposure, but lose operatorship"}
+              {"Name": "Alt-A Base: 1 WI (Tarbert) + 1 producer, 4-slot template", "Rank": 1, "Rationale": "Best NPV 116 MUSD, IRR 62%, first oil Jan 2029. Recommended."},
+              {"Name": "Alt-B Depletion: Limited injection if Ba >100 mg/L", "Rank": 2, "Rationale": "Fallback if Ba concentration unacceptable."},
+              {"Name": "Alt-C WAG: Gas from Snorre, upside for later", "Rank": 3, "Rationale": "Higher recovery potential but gas availability uncertain."},
+              {"Name": "Alt-D Defer: Wait for pilot well data", "Rank": 4, "Rationale": "Defer 12 months for OWC/Ba confirmation. Rig slot risk."}
+            ],
+            "ActivityStates": [
+              {"MilestoneID": "SSVP", "Status": "Completed", "PlannedStartDate": "2026-06-15"},
+              {"MilestoneID": "DG0", "Status": "Planned", "PlannedStartDate": "2026-09-30"},
+              {"MilestoneID": "DG3", "Status": "Planned", "PlannedStartDate": "2027-03-01"},
+              {"MilestoneID": "DG4", "Status": "Planned", "PlannedStartDate": "2027-09-01"},
+              {"MilestoneID": "DRILL_PILOT", "Status": "Planned", "PlannedStartDate": "2028-06-01"},
+              {"MilestoneID": "FIRST_OIL", "Status": "Planned", "PlannedStartDate": "2029-01-01"}
             ]
           }
         }
