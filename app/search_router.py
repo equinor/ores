@@ -864,7 +864,12 @@ async def search_run(
                     return None
 
             full_records = await asyncio.gather(*[_fetch_full(rid) for rid in all_hit_ids])
-            valid_records = [f for f in full_records if f is not None]
+            valid_records = [
+                f for f in full_records
+                if f is not None
+                and (f.get("data") or {}).get("IsDiscoverable") is not False
+                and (f.get("data") or {}).get("Name") not in (".", "")
+            ]
 
             # Phase 3: Light enrichment for the result list (no deep BD
             # enrichment - that happens on individual record view only).
