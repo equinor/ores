@@ -163,7 +163,7 @@ Each filled parameter carries the actual value:
 
 ## 5. Worked Example: Reservoir Simulation (Drogon)
 
-The Drogon demo pipeline (`demo/drogon/gen_activity_drogon.py`) generates a complete Activity + Template pair for a multi-realisation volumetrics workflow.
+The Drogon demo pipeline (`demo/drogon_dg1/gen_activity_drogon.py`) generates a complete Activity + Template pair for a multi-realisation volumetrics workflow.
 
 ### 5.1 Workflow Overview
 
@@ -653,13 +653,13 @@ For this full guide, visit [/howto/activity](/howto/activity) or navigate via th
 
 ### 12.1 Generator Script Pattern
 
-The `demo/drogon/gen_activity_drogon.py` script demonstrates the pipeline approach:
+The `demo/drogon_dg1/gen_activity_drogon.py` script demonstrates the pipeline approach:
 
 ```bash
 # Generate the activity manifest (no OSDU interaction needed)
-python demo/drogon/gen_activity_drogon.py
+python demo/drogon_dg1/gen_activity_drogon.py
 
-# Output: demo/drogon/manifest_activity_drogon.json
+# Output: demo/drogon_dg1/manifest_activity_drogon.json
 # Contains: ETPDataspace + ActivityTemplate + Activity records
 ```
 
@@ -734,8 +734,8 @@ python demo/run_pipeline.py --show demo/drogon
 | OSDU Activity schema | [ActivityTemplate.1.0.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/ActivityTemplate.1.0.0.md) |
 | OSDU Activity schema | [Activity.1.0.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/Activity.1.0.0.md) |
 | AbstractProjectActivity | [AbstractProjectActivity.1.2.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/abstract/AbstractProjectActivity.1.2.0.md) |
-| Drogon Activity generator | `demo/drogon/gen_activity_drogon.py` |
-| Drogon Activity manifest | `demo/drogon/manifest_activity_drogon.json` |
+| Drogon Activity generator | `demo/drogon_dg1/gen_activity_drogon.py` |
+| Drogon Activity manifest | `demo/drogon_dg1/manifest_activity_drogon.json` |
 | ORES Activity tab | `/add-dg` → Activity tab |
 | BD guide | [BusinessDecision](/howto/business-decision) |
 | BD Demo guide | [Drogon Demo](/howto/bd-demo) |

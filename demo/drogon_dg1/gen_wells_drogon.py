@@ -10,7 +10,7 @@ Creates proper OSDU hierarchy:
 Output:  manifest_wells_drogon.json
 
 Usage:
-    python demo/drogon/gen_wells_drogon.py
+    python demo/drogon_dg1/gen_wells_drogon.py
 """
 from __future__ import annotations
 

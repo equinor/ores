@@ -1,7 +1,7 @@
 # DevelopmentConcept - Schema & Data Model
 
 > **Schema version**: `dev:wks:work-product-component--DevelopmentConcept:4.0.0`
-> **Schema source**: [`demo/drogon/schema_devconcept.json`](../demo/drogon/schema_devconcept.json)
+> **Schema source**: [`demo/drogon_dg1/schema_devconcept.json`](../demo/drogon_dg1/schema_devconcept.json)
 
 ---
 

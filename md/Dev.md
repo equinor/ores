@@ -188,7 +188,7 @@ python demo/run_pipeline.py --list                     # list profiles
 
 ### Pipeline steps (Drogon DG1)
 
-The Drogon pipeline (`demo/drogon/`) generates ~19 OSDU records from a single FMU export CSV:
+The Drogon pipeline (`demo/drogon_dg1/`) generates ~19 OSDU records from a single FMU export CSV:
 
 | Step | Script | Output |
 |------|--------|--------|
@@ -206,7 +206,7 @@ The Drogon pipeline (`demo/drogon/`) generates ~19 OSDU records from a single FM
 
 | Dataset | Pipeline | Records | Purpose |
 |---------|----------|---------|---------|
-| **Drogon DG1** | `demo/drogon/` | ~19 | Identify & Assess (7 segments, 3 facies) |
+| **Drogon DG1** | `demo/drogon_dg1/` | ~19 | Identify & Assess (7 segments, 3 facies) |
 | **Drogon DG2** | `demo/drogon_dg2/` | ~31 | Concept Select (porosity scenario, PersistedCollection) |
 | **Drogon RESQML** | `demo/drogonresqml/` | 161 | Full structural model, grid, wells, properties (RDDMS + catalog) |
 

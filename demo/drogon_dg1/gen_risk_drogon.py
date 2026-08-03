@@ -10,7 +10,7 @@ Output:
   manifest_risk_drogon.json
 
 Usage:
-  py demo/drogon/gen_risk_drogon.py
+  py demo/drogon_dg1/gen_risk_drogon.py
 """
 
 import argparse

@@ -164,8 +164,8 @@ carries an inline **`Markers[]`** array - directly analogous to the RESQML marke
 
 ### 4.1 Record shape (as generated in this repo)
 
-See [demo/drogon/gen_markers_strat_drogon.py](../demo/drogon/gen_markers_strat_drogon.py)
-and [demo/drogon/manifest_markers_drogon.json](../demo/drogon/manifest_markers_drogon.json).
+See [demo/drogon_dg1/gen_markers_strat_drogon.py](../demo/drogon_dg1/gen_markers_strat_drogon.py)
+and [demo/drogon_dg1/manifest_markers_drogon.json](../demo/drogon_dg1/manifest_markers_drogon.json).
 
 ```jsonc
 {
@@ -304,6 +304,6 @@ Real assets have several picks of the same boundary (different interpreters / vi
 |---|---|
 | 3D rendering (MD → XYZ, dip disks) | [app/resqml_viz.py](../app/resqml_viz.py) - `_interp_along_traj`, `_dip_to_normal` |
 | Marker frame export from correlation | [app/weco_router.py](../app/weco_router.py) - `WellboreMarkerFrame` builder |
-| OSDU `WellboreMarkerSet` generation | [demo/drogon/gen_markers_strat_drogon.py](../demo/drogon/gen_markers_strat_drogon.py) |
-| Sample manifest | [demo/drogon/manifest_markers_drogon.json](../demo/drogon/manifest_markers_drogon.json) |
+| OSDU `WellboreMarkerSet` generation | [demo/drogon_dg1/gen_markers_strat_drogon.py](../demo/drogon_dg1/gen_markers_strat_drogon.py) |
+| Sample manifest | [demo/drogon_dg1/manifest_markers_drogon.json](../demo/drogon_dg1/manifest_markers_drogon.json) |
 | Stratigraphic-column context | [md/StratColumn.md](StratColumn.md) |

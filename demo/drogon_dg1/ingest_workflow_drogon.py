@@ -11,9 +11,9 @@ which processes the manifest atomically - no eventual-consistency race on
 ancestry parents.
 
 Usage:
-  py demo/drogon/ingest_workflow_drogon.py --env-file .env
-  py demo/drogon/ingest_workflow_drogon.py --env-file .env --dry-run
-  py demo/drogon/ingest_workflow_drogon.py --env-file .env manifest_wpcraw_drogon.json
+  py demo/drogon_dg1/ingest_workflow_drogon.py --env-file .env
+  py demo/drogon_dg1/ingest_workflow_drogon.py --env-file .env --dry-run
+  py demo/drogon_dg1/ingest_workflow_drogon.py --env-file .env manifest_wpcraw_drogon.json
 """
 
 import argparse

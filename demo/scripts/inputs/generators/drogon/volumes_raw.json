@@ -1,7 +1,7 @@
 {
   "generator": "volumes_raw",
   "uuid_prefix": "dg2-volraw",
-  "csv_file": "demo/drogon/valysar_volumes.csv",
+  "csv_file": "demo/drogon_dg1/valysar_volumes.csv",
   "name": "Drogon Valysar - Reservoir Estimated Volumes (RAW, per realisation)",
   "description": "Uncertainty realisation table for the Valysar zone of the Drogon field. 12 phase-qualified volume columns, 3 realisations \u00d7 7 segments \u00d7 4 facies.",
   "segment_names": {

@@ -17,7 +17,7 @@ Output:
   manifest_documents_drogon.json
 
 Usage:
-  py demo/drogon/gen_documents_drogon.py
+  py demo/drogon_dg1/gen_documents_drogon.py
 """
 
 import argparse

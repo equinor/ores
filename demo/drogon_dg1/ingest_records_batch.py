@@ -11,8 +11,8 @@ Reads config from .env (same as 4ingest.py).  Falls back to .env.template
 values for non-secret fields.
 
 Usage:
-  py demo/drogon/ingest_records_batch.py --env-file .env
-  py demo/drogon/ingest_records_batch.py --env-file .env --dry-run
+  py demo/drogon_dg1/ingest_records_batch.py --env-file .env
+  py demo/drogon_dg1/ingest_records_batch.py --env-file .env --dry-run
 """
 
 import argparse

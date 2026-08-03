@@ -15,7 +15,7 @@ Output:
   manifest_bd_drogon.json
 
 Usage:
-  py demo/drogon/gen_businessdecision_drogon.py
+  py demo/drogon_dg1/gen_businessdecision_drogon.py
 """
 
 import argparse

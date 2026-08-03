@@ -1,0 +1,133 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [
+    {
+      "id": "dev:master-data--BusinessDecision:Drogon-DG0-EvaluateOpportunity:1",
+      "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+      "acl": {
+        "owners": ["data.default.owners@dev.dataservices.energy"],
+        "viewers": ["data.default.viewers@dev.dataservices.energy"]
+      },
+      "legal": {
+        "legaltags": ["dev-equinor-private-default"],
+        "otherRelevantDataCountries": ["NO"]
+      },
+      "data": {
+        "Name": "Drogon DG0 - Evaluate Opportunity",
+        "Description": "DG0 initial opportunity screening for the Drogon prospect. Valysar formation in Volantis Group, 7 fault-bounded segments. Pre-drill analogue-based volumetric estimate, geological risk screening, and strategic fit assessment. Recommends proceed to DG1 Identify & Assess.",
+        "ProjectName": "Drogon Field Development",
+        "DecisionLevelID": "dev:reference-data--DecisionLevel:DG0:",
+        "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:",
+        "DecisionDueDate": "2025-06-01",
+        "DecisionDate": "2025-05-15",
+        "DecisionSummary": "Screen Drogon prospect for field development potential. Analogue-based STOIIP estimate 25–45 MSm³ oil in Valysar formation. 7 fault-bounded segments identified from seismic interpretation. Strategic fit confirmed (Snorre area infrastructure). Approve proceed to DG1 with initial FMU volumetric assessment.",
+        "RiskIDs": [
+          "dev:master-data--Risk:Drogon-DG0-ProspectRisk:1",
+          "dev:master-data--Risk:Drogon-DG0-DataMaturity:1",
+          "dev:master-data--Risk:Drogon-DG0-CommercialViability:1",
+          "dev:master-data--Risk:Drogon-DG0-InfrastructureAccess:1",
+          "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+          "dev:master-data--Risk:Drogon-FaultCompartment:1"
+        ],
+        "Parameters": [
+          {
+            "Title": "Reservoir scope",
+            "Selection": "Valysar reservoir – 7 fault-bounded segments in Volantis Group",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:master-data--Reservoir:Drogon-Valysar:1"
+          },
+          {
+            "Title": "GeoModel Dataspace (RDDMS)",
+            "Selection": "RDDMS ETP dataspace with Drogon seismic interpretation and initial geomodel",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "ETPDataspace"
+              }
+            ]
+          }
+        ],
+        "Personnel": [
+          {
+            "Name": "Inge Lehmann",
+            "ProjectRoleID": "dev:reference-data--ProjectRole:GeoscienceLead:",
+            "Organisation": "Drogon Subsurface"
+          }
+        ],
+        "DecisionOwners": [
+          {
+            "Name": "Inge Lehmann",
+            "Organisation": "Drogon Subsurface Lead"
+          }
+        ],
+        "DecisionMakers": [
+          {
+            "Name": "Pyotr Kropotkin",
+            "Organisation": "Drogon Project Director"
+          }
+        ],
+        "Remarks": [
+          {
+            "Remark": "Proceed to DG1 with FMU Level 2 static volumetrics (3+ realisations)",
+            "RemarkSource": "DG0 Recommendations"
+          },
+          {
+            "Remark": "Assess OWC uncertainty across all 7 segments using available well data",
+            "RemarkSource": "DG0 Recommendations"
+          },
+          {
+            "Remark": "Evaluate porosity risk from Floodplain vs Channel facies distribution",
+            "RemarkSource": "DG0 Recommendations"
+          }
+        ],
+        "ProjectSpecifications": [
+          {
+            "ParameterTypeID": "dev:reference-data--ParameterType:STOIIP_Analogue:",
+            "DataQuantityParameter": 35,
+            "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MSm3:"
+          }
+        ],
+        "ActivityStates": [
+          {
+            "MilestoneID": "DG0",
+            "EffectiveDateTime": "2025-05-15",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+            "Remark": "DG0 Evaluate Opportunity"
+          },
+          {
+            "MilestoneID": "DG1",
+            "EffectiveDateTime": "2025-12-15",
+            "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
+            "Remark": "DG1 Identify & Assess"
+          }
+        ],
+        "SpatialArea": {
+          "Wgs84Coordinates": {
+            "type": "Polygon",
+            "coordinates": [
+              [[2.65, 58.85], [2.9, 58.85], [2.9, 59.0], [2.65, 59.0], [2.65, 58.85]]
+            ]
+          }
+        },
+        "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ED50-UTM31N:",
+        "ancestry": {
+          "parents": [],
+          "children": [
+            "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1"
+          ]
+        },
+        "IsDiscoverable": true
+      }
+    }
+  ],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [],
+    "WorkProducts": []
+  }
+}

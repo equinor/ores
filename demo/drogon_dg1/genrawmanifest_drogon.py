@@ -20,7 +20,7 @@ Output:
   manifest_wpcraw_drogon.json
 
 Usage:
-  py demo/drogon/genrawmanifest_drogon.py
+  py demo/drogon_dg1/genrawmanifest_drogon.py
 """
 
 import argparse

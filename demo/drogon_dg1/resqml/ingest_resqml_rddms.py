@@ -19,13 +19,13 @@ Prerequisites:
   - For cloud mode: .env file with refresh_token, tenant, client_id, etc.
 
 Usage - local RDDMS (localhost:9100):
-  py demo/drogon/resqml/ingest_resqml_rddms.py --local
-  py demo/drogon/resqml/ingest_resqml_rddms.py --local --dry-run
-  py demo/drogon/resqml/ingest_resqml_rddms.py --local --dataspace demo/Drogon
+  py demo/drogon_dg1/resqml/ingest_resqml_rddms.py --local
+  py demo/drogon_dg1/resqml/ingest_resqml_rddms.py --local --dry-run
+  py demo/drogon_dg1/resqml/ingest_resqml_rddms.py --local --dataspace demo/Drogon
 
 Usage - cloud OSDU RDDMS:
-  py demo/drogon/resqml/ingest_resqml_rddms.py
-  py demo/drogon/resqml/ingest_resqml_rddms.py --dataspace maap/drogon-resqml
+  py demo/drogon_dg1/resqml/ingest_resqml_rddms.py
+  py demo/drogon_dg1/resqml/ingest_resqml_rddms.py --dataspace maap/drogon-resqml
 """
 
 from __future__ import annotations
@@ -37,8 +37,8 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
-HERE = Path(__file__).resolve().parent          # demo/drogon/resqml/
-DROGON = HERE.parent                            # demo/drogon/
+HERE = Path(__file__).resolve().parent          # demo/drogon_dg1/resqml/
+DROGON = HERE.parent                            # demo/drogon_dg1/
 REPO_ROOT = DROGON.parent.parent                # ores/
 
 # EPC files to import (order matters: tables first, then activity)

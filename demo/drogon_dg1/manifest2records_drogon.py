@@ -2,13 +2,13 @@
 # -*- coding: utf-8 -*-
 """
 manifest2records_drogon.py - Split all Drogon manifests into individual
-JSON record files under demo/drogon/records/.
+JSON record files under demo/drogon_dg1/records/.
 
 One file per record, named from the record id.
 
 Usage:
-  py demo/drogon/manifest2records_drogon.py
-  py demo/drogon/manifest2records_drogon.py --outdir demo/drogon/records --namespace dev
+  py demo/drogon_dg1/manifest2records_drogon.py
+  py demo/drogon_dg1/manifest2records_drogon.py --outdir demo/drogon_dg1/records --namespace dev
 """
 
 import argparse

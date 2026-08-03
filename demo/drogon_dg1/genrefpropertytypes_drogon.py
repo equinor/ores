@@ -8,10 +8,10 @@ Duplicated from demo/grand/py/5genrefpropertytypes.py so the Drogon tree is
 self-contained and independent of grand/.
 
 Output:
-  demo/drogon/reftypes_revpropertytypes.json
+  demo/drogon_dg1/reftypes_revpropertytypes.json
 
 Usage:
-  py demo/drogon/genrefpropertytypes_drogon.py
+  py demo/drogon_dg1/genrefpropertytypes_drogon.py
 """
 import argparse
 import json

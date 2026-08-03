@@ -1,0 +1,10 @@
+{
+  "project": "Drogon",
+  "gate": "DG0",
+  "description": "Drogon DG0 - Evaluate Opportunity. Risks + BD only (no data records, references DG1 elements).",
+  "include_manifests": [
+    "demo/drogon_dg0/manifest_risk_dg0.json",
+    "demo/drogon_dg0/manifest_bd_dg0.json"
+  ],
+  "records": []
+}

@@ -29,7 +29,7 @@ Stable UUIDs (uuid5 from namespace a0000000-d509-4e00-8000-000000000000):
   Activity         : ead6e342-fa77-5485-b13b-7b3b2030c6e6
 
 Usage:
-  py demo/drogon/gen_activity_drogon.py
+  py demo/drogon_dg1/gen_activity_drogon.py
 """
 
 from __future__ import annotations

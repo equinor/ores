@@ -3,19 +3,19 @@
   "gate": "DG1",
   "description": "Drogon DG1 - Full pipeline. Includes all pre-generated manifests (master data, volumes, risks, activity, documents, wells, markers, strat) + governance records.",
   "include_manifests": [
-    "demo/drogon/manifest_masterwp_drogon.json",
-    "demo/drogon/manifest_wpcparams_drogon.json",
-    "demo/drogon/manifest_wpcraw_drogon.json",
-    "demo/drogon/manifest_wpcstat_drogon.json",
-    "demo/drogon/manifest_wells_drogon.json",
-    "demo/drogon/manifest_markers_drogon.json",
-    "demo/drogon/manifest_litho_strat_drogon.json",
-    "demo/drogon/manifest_activity_drogon.json",
-    "demo/drogon/manifest_risk_drogon.json",
-    "demo/drogon/manifest_documents_drogon.json",
-    "demo/drogon/manifest_collection_drogon.json",
-    "demo/drogon/manifest_cp_drogon.json",
-    "demo/drogon/manifest_bd_drogon.json"
+    "demo/drogon_dg1/manifest_masterwp_drogon.json",
+    "demo/drogon_dg1/manifest_wpcparams_drogon.json",
+    "demo/drogon_dg1/manifest_wpcraw_drogon.json",
+    "demo/drogon_dg1/manifest_wpcstat_drogon.json",
+    "demo/drogon_dg1/manifest_wells_drogon.json",
+    "demo/drogon_dg1/manifest_markers_drogon.json",
+    "demo/drogon_dg1/manifest_litho_strat_drogon.json",
+    "demo/drogon_dg1/manifest_activity_drogon.json",
+    "demo/drogon_dg1/manifest_risk_drogon.json",
+    "demo/drogon_dg1/manifest_documents_drogon.json",
+    "demo/drogon_dg1/manifest_collection_drogon.json",
+    "demo/drogon_dg1/manifest_cp_drogon.json",
+    "demo/drogon_dg1/manifest_bd_drogon.json"
   ],
   "records": []
 }

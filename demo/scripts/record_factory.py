@@ -205,7 +205,7 @@ def generate_records_from_input(
             ...
         ],
         "include_manifests": [
-            "demo/drogon/manifest_masterwp_drogon.json",
+            "demo/drogon_dg1/manifest_masterwp_drogon.json",
             "demo/drogon_dg2/manifest_wpcparams_dg2.json"
         ],
         "include_records_dirs": [

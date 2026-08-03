@@ -8,10 +8,10 @@ Duplicated from demo/grand/py/5genreffacetrole.py so the Drogon tree is
 self-contained and independent of grand/.
 
 Output:
-  demo/drogon/reftypes_facetroles.json
+  demo/drogon_dg1/reftypes_facetroles.json
 
 Usage:
-  py demo/drogon/genreffacetrole_drogon.py
+  py demo/drogon_dg1/genreffacetrole_drogon.py
 """
 import argparse
 import json

@@ -284,11 +284,11 @@ flowchart LR
 .\demo\drogon\run_pipeline.ps1 -SkipIngest
 
 # Re-ingest single record (e.g. after editing BD)
-py demo/drogon/ingest_records_batch.py --start 14 --delay 0
+py demo/drogon_dg1/ingest_records_batch.py --start 14 --delay 0
 
 # RDDMS ingestion (requires Docker + open-etp-sslclient image)
-pwsh demo/drogon/resqml/ingest_rddms.ps1
-pwsh demo/drogon/resqml/ingest_rddms.ps1 -SkipCreate   # reuse existing dataspace
+pwsh demo/drogon_dg1/resqml/ingest_rddms.ps1
+pwsh demo/drogon_dg1/resqml/ingest_rddms.ps1 -SkipCreate   # reuse existing dataspace
 ```
 
 ---

@@ -7,8 +7,8 @@ for Drogon / Valysar, reading segment names from valysar_volumes.csv.
 Output: manifest_masterwp_drogon.json
 
 Usage:
-  py demo/drogon/genmaster_drogon.py
-  py demo/drogon/genmaster_drogon.py --reservoir-name "Drogon" --is-segmented
+  py demo/drogon_dg1/genmaster_drogon.py
+  py demo/drogon_dg1/genmaster_drogon.py --reservoir-name "Drogon" --is-segmented
 """
 
 import argparse

@@ -15,7 +15,7 @@ Output:
   manifest_wpcstat_drogon.json
 
 Usage:
-  py demo/drogon/genstatmanifest_drogon.py
+  py demo/drogon_dg1/genstatmanifest_drogon.py
 """
 
 import argparse

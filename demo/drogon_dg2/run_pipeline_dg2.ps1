@@ -9,7 +9,7 @@
 # This PowerShell script is kept for backward compatibility.
 #
 # Pre-requisite: DG1 pipeline has been run (shared master data manifests
-# must exist in demo/drogon/).
+# must exist in demo/drogon_dg1/).
 #
 # Pipeline:
 #   DG2 params (×0.8) → DG2 raw volumes (×0.8) → DG2 statistics →

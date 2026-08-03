@@ -14,9 +14,9 @@ Re-running is safe - the Schema Service will return 409 if the version
 already exists.
 
 Usage:
-  py demo/drogon/register_schema_devconcept.py
-  py demo/drogon/register_schema_devconcept.py --env-file .env
-  py demo/drogon/register_schema_devconcept.py --dry-run
+  py demo/drogon_dg1/register_schema_devconcept.py
+  py demo/drogon_dg1/register_schema_devconcept.py --env-file .env
+  py demo/drogon_dg1/register_schema_devconcept.py --dry-run
 """
 
 import argparse

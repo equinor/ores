@@ -24,7 +24,7 @@ Output:
   manifest_litho_strat_drogon.json – StratColumn + Rank + Unit + Horizon records
 
 Usage:
-    python demo/drogon/gen_markers_strat_drogon.py
+    python demo/drogon_dg1/gen_markers_strat_drogon.py
 """
 from __future__ import annotations
 

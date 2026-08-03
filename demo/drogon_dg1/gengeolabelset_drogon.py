@@ -16,8 +16,8 @@ Output:
   Overwrites the existing GeoLabelSet record file in records/
 
 Usage:
-  python demo/drogon/gengeolabelset_drogon.py
-  python demo/drogon/gengeolabelset_drogon.py --gate dg2 \
+  python demo/drogon_dg1/gengeolabelset_drogon.py
+  python demo/drogon_dg1/gengeolabelset_drogon.py --gate dg2 \
       --stat-manifest demo/drogon_dg2/manifest_wpcstat_dg2.json \
       --output demo/drogon_dg2/records/026_dev_work-product-component--GeoLabelSet_e4b7a1c3-5f28-4d9e-8a61-7c3d9e0f2b85_1.json \
       --record-id dev:work-product-component--GeoLabelSet:e4b7a1c3-5f28-4d9e-8a61-7c3d9e0f2b85:1 \

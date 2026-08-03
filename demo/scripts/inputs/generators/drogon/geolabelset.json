@@ -2,9 +2,9 @@
   "generator": "geolabelset",
   "uuid_prefix": "dg2-geolabel",
   "project": "Drogon",
-  "stat_manifest": "demo/drogon/manifest_wpcstat_drogon.json",
+  "stat_manifest": "demo/drogon_dg1/manifest_wpcstat_drogon.json",
   "label_property": "Oil",
   "label_uom": "MSm3",
   "scale_divisor": 1000000,
-  "masterwp_manifest": "demo/drogon/manifest_masterwp_drogon.json"
+  "masterwp_manifest": "demo/drogon_dg1/manifest_masterwp_drogon.json"
 }

@@ -3,7 +3,7 @@
 """
 ingest_records_batch.py - Batch ingestion of DG2 records via Storage API.
 
-Identical logic to demo/drogon/ingest_records_batch.py but reads from
+Identical logic to demo/drogon_dg1/ingest_records_batch.py but reads from
 the drogon_dg2/records/ directory by default.
 
 Usage:

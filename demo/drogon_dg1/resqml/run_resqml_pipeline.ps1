@@ -24,7 +24,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path   # demo/drogon/resqml
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path   # demo/drogon_dg1/resqml
 $RepoRoot  = (Resolve-Path "$ScriptDir\..\..\..").Path
 $DrogonDir = (Resolve-Path "$ScriptDir\..").Path
 
