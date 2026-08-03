@@ -28,6 +28,7 @@ MANIFEST_ORDER = [
     "manifest_wpcparams_drogon.json",       # input parameters (ColumnBasedTable)
     "manifest_activity_drogon.json",        # ActivityTemplate + Activity (merged workflow)
     "manifest_risk_drogon.json",            # Risk
+    "manifest_collection_drogon.json",      # DG1 Evidence Package
     "manifest_bd_drogon.json",              # BusinessDecision (references everything)
     "manifest_cp_drogon.json",              # CollaborationProject + Collection
 ]

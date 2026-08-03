@@ -20,7 +20,7 @@
   "data": {
     "Name": "Drogon DG2 - Eclipse Summary Vectors (timeseries)",
     "Description": "Simulator summary vectors (field and per-well rates, cumulatives, pressures, ratios, tracers) exported by RES2CSV:summary as Apache Arrow. Vectors: FOPR, FGPR, FWPR, FOPT, FGPT, FPR, FWCT, FGOR, WOPR, WBHP, RPR, ROIP, tracers (WTPRWT1/2). 31 monthly timesteps 2018-01 to 2020-07.",
-    "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
     "ColumnBasedTableTypeID": "dev:reference-data--ColumnBasedTableType:AdHoc:",
     "Columns": [
       {

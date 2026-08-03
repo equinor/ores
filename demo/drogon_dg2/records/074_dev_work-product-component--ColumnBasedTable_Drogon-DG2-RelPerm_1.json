@@ -1,5 +1,5 @@
 {
-  "id": "dev:work-product-component--ColumnBasedTable:99e99521-6929-5c59-b94e-ef16fefa6075:1",
+  "id": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-RelPerm:1",
   "kind": "osdu:wks:work-product-component--ColumnBasedTable:1.4.0",
   "acl": {
     "owners": [
@@ -20,7 +20,7 @@
   "data": {
     "Name": "Drogon DG2 - Relative Permeability (saturation functions)",
     "Description": "Relative permeability and capillary pressure curves per SATNUM region. Exported by RES2CSV:satfunc from Eclipse restart data. Covers water-oil (SWOF) and gas-oil (SGOF) tables for all 7 FIP regions.",
-    "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
     "ColumnBasedTableTypeID": "dev:reference-data--ColumnBasedTableType:AdHoc:",
     "Columns": [
       {

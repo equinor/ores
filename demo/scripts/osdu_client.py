@@ -147,17 +147,40 @@ class OsduClient:
     # ── Storage API ──────────────────────────────────────────────────────
 
     def put_records(self, records: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """PUT records to Storage API in batches. Returns aggregated response."""
+        """PUT records to Storage API in batches. Returns aggregated response.
+
+        If a batch fails with 403, retries each record individually so that
+        one unauthorised record does not block the rest of the batch.
+        """
         url = f"{self.instance.host}/api/storage/v2/records"
         all_ids: List[str] = []
         all_errors: List[Dict[str, Any]] = []
 
         for i in range(0, len(records), BATCH_SIZE):
             batch = records[i:i + BATCH_SIZE]
-            resp_data = self._put_batch(url, batch)
-            all_ids.extend(resp_data.get("recordIds", []))
-            if "errors" in resp_data:
-                all_errors.extend(resp_data["errors"])
+            try:
+                resp_data = self._put_batch(url, batch)
+                all_ids.extend(resp_data.get("recordIds", []))
+                if "errors" in resp_data:
+                    all_errors.extend(resp_data["errors"])
+            except RuntimeError as batch_err:
+                if "403" in str(batch_err) and len(batch) > 1:
+                    # Batch rejected — retry each record individually
+                    print(f"  ⚠ Batch {i//BATCH_SIZE + 1} rejected (403), "
+                          f"retrying {len(batch)} records individually…")
+                    for rec in batch:
+                        try:
+                            resp_data = self._put_batch(url, [rec])
+                            all_ids.extend(resp_data.get("recordIds", []))
+                        except RuntimeError:
+                            rec_id = rec.get("id", "?")
+                            all_errors.append({
+                                "record": rec_id,
+                                "error": "403 - not authorised to update",
+                            })
+                            print(f"    ✗ {rec_id[:70]}")
+                else:
+                    raise
 
         result: Dict[str, Any] = {"recordIds": all_ids, "totalCount": len(all_ids)}
         if all_errors:

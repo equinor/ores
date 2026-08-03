@@ -1,5 +1,5 @@
 {
-  "id": "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1",
+  "id": "dev:work-product-component--Activity:Drogon-DG1-VolumetricsWorkflow:1",
   "kind": "osdu:wks:work-product-component--Activity:1.0.0",
   "acl": {
     "owners": [
@@ -22,9 +22,9 @@
     "Description": "Single merged activity capturing the full three-step DG1 volumetrics workflow for the Valysar formation of the Drogon field. Step 1: generate per-realisation input parameters (OWC depths for 7 fault blocks, PHIT for Floodplain/Channel/Crevasse). Step 2: run the RMS DecisionExample workflow producing 3 realisations of reservoir estimated volumes. Step 3: aggregate realisations into P10/P50/P90 statistical volumes. Scenario configuration (design matrix + variables) is taken verbatim from the RESQML obj_Activity document (obj_Activity_MISSING.xml → drogon_activity.epc).",
     "Originator": "markuslund.vevle@emerson.com",
     "CreationDateTime": "2026-02-13T10:21:57.365Z",
-    "ActivityTemplateID": "dev:work-product-component--ActivityTemplate:aa2791c8-e2ea-5aa5-871d-25db294aad8a:1",
+    "ActivityTemplateID": "dev:work-product-component--ActivityTemplate:Drogon-DG1-VolumetricsTemplate:1",
     "WorkflowStatus": "Completed",
-    "ParentObjectID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "ParentObjectID": "dev:master-data--Reservoir:Drogon-Valysar:1",
     "ParentWorkProductID": "dev:work-product:862b5d29-3d8b-4e9f-9d38-7b78185079f7:1",
     "Parameters": [
       {
@@ -32,7 +32,7 @@
         "Description": "Per-realisation OWC depth and PHIT input parameter table",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:9f4d496c-d9ea-4d36-907a-a94542c03bea:1",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG1-InputParameters:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -94,7 +94,7 @@
         "Description": "Generated per-realisation input parameter table (ColumnBasedTable WPC)",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:9f4d496c-d9ea-4d36-907a-a94542c03bea:1",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG1-InputParameters:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -107,7 +107,7 @@
         "Description": "Per-realisation estimated volumes (RAW REV WPC)",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:dac100b4-4eb8-4b43-9630-9aa2d3d15837:1",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Raw:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -120,7 +120,7 @@
         "Description": "Statistical aggregation of realisations (STAT REV WPC: P10/P50/P90)",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:f9da5b21-f9b1-4596-bae0-04e09cc988dd:1",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -144,12 +144,12 @@
     ],
     "ancestry": {
       "parents": [
-        "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+        "dev:master-data--Reservoir:Drogon-Valysar:1"
       ],
       "children": [
-        "dev:work-product-component--ColumnBasedTable:9f4d496c-d9ea-4d36-907a-a94542c03bea:1",
-        "dev:work-product-component--ReservoirEstimatedVolumes:dac100b4-4eb8-4b43-9630-9aa2d3d15837:1",
-        "dev:work-product-component--ReservoirEstimatedVolumes:f9da5b21-f9b1-4596-bae0-04e09cc988dd:1"
+        "dev:work-product-component--ColumnBasedTable:Drogon-DG1-InputParameters:1",
+        "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Raw:1",
+        "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1"
       ]
     }
   }

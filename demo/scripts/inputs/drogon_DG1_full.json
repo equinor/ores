@@ -13,6 +13,7 @@
     "demo/drogon/manifest_activity_drogon.json",
     "demo/drogon/manifest_risk_drogon.json",
     "demo/drogon/manifest_documents_drogon.json",
+    "demo/drogon/manifest_collection_drogon.json",
     "demo/drogon/manifest_cp_drogon.json",
     "demo/drogon/manifest_bd_drogon.json"
   ],

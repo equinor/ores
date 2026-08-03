@@ -1,6 +1,6 @@
 {
-  "id": "dev:work-product-component--CollaborationProjectCollection:Drogon-DG2-TrustedData:1",
-  "kind": "osdu:wks:work-product-component--CollaborationProjectCollection:1.0.0",
+  "id": "dev:work-product-component--PersistedCollection:Drogon-DG2-Wells:1",
+  "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
   "acl": {
     "owners": [
       "data.default.owners@dev.dataservices.energy"
@@ -18,20 +18,9 @@
     ]
   },
   "data": {
-    "Name": "Drogon DG2 Geomodelling - Trusted Data Collection",
-    "Description": "System-of-record resources consumed by the Drogon DG2 geomodelling collaboration project. Contains references to reservoir master data, volumetric WPCs, parameter tables, GeoLabelSets, and the RDDMS ETP dataspace.",
-    "CreationDateTime": "2025-12-15T09:00:00Z",
-    "ResourceIDs": [
-      "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
-      "dev:dataset--ETPDataspace:maap-drogon_dg:1",
-      "dev:work-product-component--ReservoirEstimatedVolumes:dac100b4-4eb8-4b43-9630-9aa2d3d15837:1",
-      "dev:work-product-component--ReservoirEstimatedVolumes:f9da5b21-f9b1-4596-bae0-04e09cc988dd:1",
-      "dev:work-product-component--ColumnBasedTable:9f4d496c-d9ea-4d36-907a-a94542c03bea:1",
-      "dev:work-product-component--GeoLabelSet:f5c8b2d4-6a39-4eaf-9b72-8d4eaf1a3c96:1",
-      "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1",
-      "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
-      "dev:master-data--Risk:Drogon-FaultCompartment:1",
-      "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
+    "Name": "Drogon DG2 – Wells & Stratigraphy Package",
+    "Description": "Well data evidence for DG2 Concept Select. Drogon wells (55/33-A-1 through A-6) + wellbores, lithostratigraphic column (Volantis Group: Valysar, Therys, Volon), wellbore marker sets (formation tops per wellbore). 53 data references.",
+    "DataReferences": [
       "dev:master-data--Well:8d2ed785-d692-4bf4-b44e-8a47770b8fbb:1",
       "dev:master-data--Wellbore:acf53067-62fa-4f7e-895f-45d86f1126d4:1",
       "dev:master-data--Well:c229e605-e616-41f8-a640-356a74d31ca7:1",
@@ -68,17 +57,30 @@
       "dev:work-product-component--StratigraphicColumnRankInterpretation:Drogon-Volve-Litho-Formation:",
       "dev:work-product-component--StratigraphicColumnRankInterpretation:Drogon-Volve-Litho-Member:",
       "dev:work-product-component--StratigraphicColumn:Drogon-Volve-Lithostratigraphy:",
-      "dev:work-product-component--WellboreMarkerSet:642c2619-95d2-4a30-9953-1221fa7fcace:",
-      "dev:work-product-component--WellboreMarkerSet:29526cad-6cf8-45d0-9ba1-481607a2f359:",
-      "dev:work-product-component--WellboreMarkerSet:46571213-b79d-4774-b4fa-fa85a1b52d20:",
-      "dev:work-product-component--WellboreMarkerSet:386bb65d-8136-4ff1-ae6d-d2c7155efc8b:",
-      "dev:work-product-component--WellboreMarkerSet:5f26d0a7-2c44-46d8-bfe6-7c82bb61589b:",
-      "dev:work-product-component--WellboreMarkerSet:4b4871e4-3b34-4eb6-a768-eeb5eeb071e3:",
-      "dev:work-product-component--WellboreMarkerSet:dd88b694-27aa-40a2-8390-a2b6405fc972:",
-      "dev:work-product-component--WellboreMarkerSet:82ff53e6-24fd-4c65-ab75-19c01e8eb0dc:",
-      "dev:work-product-component--WellboreMarkerSet:fe28bbf8-7721-4436-b4e2-f3042fbf67d0:",
-      "dev:work-product-component--WellboreMarkerSet:42fe1b8a-cab8-4579-a775-63f80c9593dc:",
-      "dev:work-product-component--WellboreMarkerSet:bd2688e1-bd2d-4c11-b1d1-cc9cbf8f2ba3:"
+      "dev:work-product-component--HorizonInterpretation:02e954a9-d7db-4b57-aef7-12b8ebf47a65:",
+      "dev:work-product-component--HorizonInterpretation:6c6eeb68-bb4d-4fa4-9eb4-b880b5bd7086:",
+      "dev:work-product-component--HorizonInterpretation:db54a781-84ad-41e5-8bdd-c510246375cd:",
+      "dev:work-product-component--HorizonInterpretation:3657ca0b-d21f-41ca-801b-4a6a7eb1f426:",
+      "dev:work-product-component--HorizonInterpretation:7da0e4d7-1955-4031-8eaf-68a93515414d:",
+      "dev:work-product-component--HorizonInterpretation:011ae8ee-bfa5-4804-a675-1f4704b1730c:",
+      "dev:work-product-component--WellboreMarkerSet:e0e6cf87-349e-49ec-bf7e-30ff0c5c884b:",
+      "dev:work-product-component--WellboreMarkerSet:9ac945e3-a655-4a7e-9c40-e8eecd9b0274:",
+      "dev:work-product-component--WellboreMarkerSet:b11bf81e-f8bc-48b5-a03d-9ac45f3af276:",
+      "dev:work-product-component--WellboreMarkerSet:d53ce054-4f4e-4a60-80dd-93ea23477299:",
+      "dev:work-product-component--WellboreMarkerSet:afa8497b-a51c-4971-8d52-191d07e8fa97:",
+      "dev:work-product-component--WellboreMarkerSet:19076723-13d3-42b2-acd1-ab0a682c4891:",
+      "dev:work-product-component--WellboreMarkerSet:4e638fda-a7a0-4f1a-abfb-b8e1bfd58cc4:",
+      "dev:work-product-component--WellboreMarkerSet:e7960826-ca8a-4ecd-8d6b-092a6a25da2d:",
+      "dev:work-product-component--WellboreMarkerSet:042fdd2e-5e59-4e5b-9616-e8959272fc9c:",
+      "dev:work-product-component--WellboreMarkerSet:d71134b7-2203-4e72-81fe-f0cbf574f4e5:",
+      "dev:work-product-component--WellboreMarkerSet:a401228b-b628-42e2-b9ab-db94f75bfff6:"
+    ],
+    "Tags": [
+      "DG2",
+      "Drogon",
+      "Wells",
+      "Stratigraphy",
+      "WellboreMarkerSet"
     ]
   }
 }

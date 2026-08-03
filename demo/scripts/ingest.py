@@ -33,27 +33,57 @@ def ingest_records(
     """
     Ingest records into OSDU via Storage API.
 
+    Always ensures records have correct ACL, legal, and partition for the
+    target instance.  If *rewrite_partition* is given it is used as the
+    explicit source partition to rewrite FROM; otherwise the source
+    partition is auto-detected from the first record's ID prefix.
+
     Args:
         records: List of OSDU records (with id, kind, acl, legal, data)
         client: Authenticated OsduClient
         dry_run: If True, validate only, don't push
-        rewrite_partition: If set, rewrite all record IDs/references from
-                          source partition to this target partition
+        rewrite_partition: Explicit source partition to rewrite FROM
+                          (e.g. "dev" when targeting interop/opendes).
+                          If None the source partition is auto-detected.
         progress_callback: Optional callable(current, total, record_id)
 
     Returns:
         {"recordIds": [...], "totalCount": N, "errors": [...]}
     """
     instance = client.instance
+    target_partition = instance.partition
 
-    # Rewrite partition/ACL/legal if targeting a different instance
-    if rewrite_partition:
-        records = [_rewrite_record(r, rewrite_partition, instance) for r in records]
-    else:
-        # Always ensure ACL/legal match target instance
-        for r in records:
-            r["acl"] = instance.acl
-            r["legal"] = instance.legal
+    # Always rewrite every record to ensure correct partition, ACL and legal.
+    records = [
+        _rewrite_record(r, target_partition, instance,
+                        src_override=rewrite_partition)
+        for r in records
+    ]
+
+    # Deduplicate by record ID (last occurrence wins, preserving manifest order).
+    seen: Dict[str, int] = {}
+    for idx, r in enumerate(records):
+        seen[r["id"]] = idx
+    if len(seen) < len(records):
+        deduped = [records[i] for i in sorted(seen.values())]
+        print(f"  ⊘ Deduplicated {len(records)} → {len(deduped)} records "
+              f"({len(records) - len(deduped)} duplicates removed)")
+        records = deduped
+
+    # Skip reference-data records that are platform-owned and can't be updated
+    # by service principals (they already exist in the target instance).
+    owned_records = []
+    skipped_refdata = 0
+    for r in records:
+        rid = r.get("id", "")
+        if ":reference-data--" in rid:
+            skipped_refdata += 1
+        else:
+            owned_records.append(r)
+    if skipped_refdata:
+        print(f"  ⊘ Skipped {skipped_refdata} reference-data records "
+              f"(platform-owned)")
+    records = owned_records
 
     # Validate
     errors = client.validate_records(records)
@@ -145,18 +175,25 @@ def _rewrite_record(
     record: Dict[str, Any],
     target_partition: str,
     instance: OsduInstance,
+    *,
+    src_override: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Rewrite a record's partition, ACL, legal, and internal references."""
+    """Rewrite a record's partition, ACL, legal, and internal references.
+
+    *src_override* is the explicit source partition to rewrite FROM.
+    When None the source partition is auto-detected from the record ID.
+    """
     rec = json.loads(json.dumps(record))  # deep copy
 
-    # Detect source partition from record ID
-    src_partition = rec["id"].split(":")[0] if ":" in rec.get("id", "") else ""
+    # Detect source partition from record ID (or use explicit override)
+    id_partition = rec["id"].split(":")[0] if ":" in rec.get("id", "") else ""
+    src_partition = src_override or id_partition
 
     # Rewrite ID
-    if src_partition and src_partition != target_partition:
-        rec["id"] = rec["id"].replace(f"{src_partition}:", f"{target_partition}:", 1)
+    if src_partition and src_partition != target_partition and id_partition:
+        rec["id"] = rec["id"].replace(f"{id_partition}:", f"{target_partition}:", 1)
 
-    # Set ACL and legal
+    # Set ACL and legal from target instance
     rec["acl"] = instance.acl
     rec["legal"] = instance.legal
 

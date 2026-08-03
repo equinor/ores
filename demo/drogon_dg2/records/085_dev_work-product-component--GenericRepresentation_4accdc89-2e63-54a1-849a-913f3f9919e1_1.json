@@ -21,7 +21,7 @@
     "Name": "Drogon DG2 - Fluid Contact Outline (FWL)",
     "Description": "Free water level outline polygon.",
     "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-    "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
     "DDMSDatasets": [
       "eml:///dataspace('maap/drogon_dg')/polygons/fluid_contact_outline_fwl.csv"
     ],

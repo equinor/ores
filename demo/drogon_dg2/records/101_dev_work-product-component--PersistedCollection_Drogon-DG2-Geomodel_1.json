@@ -1,0 +1,102 @@
+{
+  "id": "dev:work-product-component--PersistedCollection:Drogon-DG2-Geomodel:1",
+  "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+  "acl": {
+    "owners": [
+      "data.default.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 – Geomodel Package",
+    "Description": "Static geomodel evidence for DG2 Concept Select. IjkGridRepresentation (92×146×69, 10 properties: PHIT, KLOGH, KV, SW, SWL, SG, VSH, FACIES, REGION, ZONE), 49 depth/property surfaces (StructureMap + GenericRepresentation), fault polygons and outlines, and RDDMS dataspace. 68 data references.",
+    "DataReferences": [
+      "dev:work-product-component--IjkGridRepresentation:Drogon-DG2-Geogrid:1",
+      "dev:work-product-component--IjkGridRepresentation:ff1347d1-1024-5ae4-af63-91698685be83:1",
+      "dev:work-product-component--IjkGridRepresentation:107139d7-6724-5261-b548-9d00acf33fc5:1",
+      "dev:work-product-component--IjkGridRepresentation:00b85345-ad12-5be3-9dbf-a54d2a174ad1:1",
+      "dev:work-product-component--IjkGridRepresentation:fb9e7e8d-478f-55b3-b42d-c753dec9bcaa:1",
+      "dev:work-product-component--IjkGridRepresentation:5b3adc9e-18b4-59a2-8e47-83c9746f23c8:1",
+      "dev:work-product-component--IjkGridRepresentation:c44eeb4e-d63d-5910-93f9-a684b0576e5b:1",
+      "dev:work-product-component--IjkGridRepresentation:0befcea0-9b28-5f32-ab10-683d629a3c43:1",
+      "dev:work-product-component--IjkGridRepresentation:3b27a6de-fb31-5227-898e-3970e2477800:1",
+      "dev:work-product-component--IjkGridRepresentation:e5035b09-9b6a-5c8d-b373-0092ae990e35:1",
+      "dev:work-product-component--IjkGridRepresentation:944aeb74-0930-5e7d-9b58-b33f1c8172f8:1",
+      "dev:work-product-component--StructureMap:Drogon-DG2-TopVolantis-DepthMap:1",
+      "dev:work-product-component--StructureMap:2de22e3c-e08e-5528-a4cf-88b33e4ee263:1",
+      "dev:work-product-component--StructureMap:0939e107-61a7-53c3-bcc9-c5bccdcdfde7:1",
+      "dev:work-product-component--StructureMap:21039ea3-e548-5c3c-afbd-9fbe8a8bfb98:1",
+      "dev:work-product-component--StructureMap:1ab82e18-6b21-5406-923f-fd431c2d0b35:1",
+      "dev:work-product-component--StructureMap:b28f0a44-b40a-5504-abe6-c6c8d5ab61e2:1",
+      "dev:work-product-component--StructureMap:84f6b78f-c921-552b-a34b-bb967fed7ab9:1",
+      "dev:work-product-component--StructureMap:1a461033-5224-5702-8300-519f8c251bb5:1",
+      "dev:work-product-component--StructureMap:46d05577-73c8-5685-affd-3b94dcd2a25b:1",
+      "dev:work-product-component--StructureMap:0a9d8bff-cd6b-55fc-9899-6418b4d46081:1",
+      "dev:work-product-component--StructureMap:84101b9a-c354-5911-a219-149a357c75fb:1",
+      "dev:work-product-component--StructureMap:d561fffc-3d90-5ab2-aae5-1ffe02e13663:1",
+      "dev:work-product-component--GenericRepresentation:678d8fa9-00c4-5ba0-9cb7-611409fcb6d9:1",
+      "dev:work-product-component--GenericRepresentation:2c5613f9-d5ae-59f9-b666-2c38f1231b1c:1",
+      "dev:work-product-component--GenericRepresentation:f7158e2b-187f-549c-adc4-dcf79be4d09a:1",
+      "dev:work-product-component--GenericRepresentation:91bffd73-dda4-5f60-bb44-1c5c084caf7a:1",
+      "dev:work-product-component--GenericRepresentation:c14205b9-0be2-534d-846f-ffb58eea02de:1",
+      "dev:work-product-component--GenericRepresentation:ac2621b8-1fc1-5cf4-a6f0-468c67651ffb:1",
+      "dev:work-product-component--GenericRepresentation:75b84560-c668-55ff-9cee-0190ce003f41:1",
+      "dev:work-product-component--GenericRepresentation:5f9287e7-2819-5646-91eb-00fe9e1c069d:1",
+      "dev:work-product-component--GenericRepresentation:d17dbd9f-42d2-5a0f-8bf7-e4b373d02926:1",
+      "dev:work-product-component--GenericRepresentation:56ed587f-d13e-539e-8c7a-0bdb8d528bd8:1",
+      "dev:work-product-component--GenericRepresentation:779a2142-909b-5080-a189-d289a0f3ba63:1",
+      "dev:work-product-component--GenericRepresentation:b37eed56-4662-5d76-93e3-888ef7f3f3bf:1",
+      "dev:work-product-component--GenericRepresentation:750b200c-a07a-5baf-8993-bee1994fde01:1",
+      "dev:work-product-component--GenericRepresentation:d1ef210d-46a5-55bd-8591-50ee7ce66a11:1",
+      "dev:work-product-component--GenericRepresentation:fb7329d4-f297-54e8-a7ed-a1295fee3441:1",
+      "dev:work-product-component--GenericRepresentation:92067d3c-3702-5ba8-a349-118e26a42017:1",
+      "dev:work-product-component--GenericRepresentation:a61f2a8d-8e52-5a35-9114-93853ed91fdc:1",
+      "dev:work-product-component--GenericRepresentation:041e334f-3394-5263-8682-b5a45ae336ce:1",
+      "dev:work-product-component--GenericRepresentation:4a72120a-e5af-55e9-ae9c-38a3720e01f0:1",
+      "dev:work-product-component--GenericRepresentation:886c2bef-1f73-59e8-882e-e5b6b3114294:1",
+      "dev:work-product-component--GenericRepresentation:f6c2f70e-f7de-58ab-9233-15cc44724ea5:1",
+      "dev:work-product-component--GenericRepresentation:c276437a-ba03-5a62-9c58-1b5ce98c5497:1",
+      "dev:work-product-component--GenericRepresentation:442e4cf1-7a50-5c2f-8174-13c5d4717312:1",
+      "dev:work-product-component--GenericRepresentation:6a8f8fd1-ce57-5cde-9d6d-73b4d64fc238:1",
+      "dev:work-product-component--GenericRepresentation:d8afdf57-fa76-5cf1-b7a4-83492ed3ccbe:1",
+      "dev:work-product-component--GenericRepresentation:a166af88-3986-5eb6-85d1-e50990eec2ca:1",
+      "dev:work-product-component--GenericRepresentation:8d5194b1-ef9a-5f09-8d34-23544c682dfd:1",
+      "dev:work-product-component--GenericRepresentation:be92eecc-13d4-516c-93aa-eee5299f2679:1",
+      "dev:work-product-component--GenericRepresentation:589b46a8-8f9b-5d03-b2de-5d78ab9f7eb1:1",
+      "dev:work-product-component--GenericRepresentation:beabddad-5dc4-58d1-8297-e4fa5f1c2e83:1",
+      "dev:work-product-component--GenericRepresentation:ee06f8f5-86b7-5094-af71-5a5a47e9e845:1",
+      "dev:work-product-component--GenericRepresentation:02759303-c2ba-5f7c-a408-aeadfb92debc:1",
+      "dev:work-product-component--GenericRepresentation:59faba76-450d-5c75-9a59-ead3557000da:1",
+      "dev:work-product-component--GenericRepresentation:d0cffe34-8d46-5ee9-824d-3b5d0c8ba3d3:1",
+      "dev:work-product-component--GenericRepresentation:45546478-26f3-5326-a6d2-77d7fba58bb6:1",
+      "dev:work-product-component--GenericRepresentation:9f8af31d-7b5b-582a-a169-4315b56296e2:1",
+      "dev:work-product-component--GenericRepresentation:55fc2fad-dd9a-525c-b8c5-f99b73af492b:1",
+      "dev:work-product-component--GenericRepresentation:Drogon-DG2-FaultLines-TopVolantis:1",
+      "dev:work-product-component--GenericRepresentation:c8d46942-b523-50a0-8bff-3647f3749d90:1",
+      "dev:work-product-component--GenericRepresentation:ffd18270-06b9-52cc-b817-e9de0f144b94:1",
+      "dev:work-product-component--GenericRepresentation:9173f5d6-8ee4-5722-a322-f18b31e4fc18:1",
+      "dev:work-product-component--GenericRepresentation:94b04e94-2ba6-54fc-b4c2-8f5e83daccb7:1",
+      "dev:work-product-component--GenericRepresentation:a732daa9-17af-53dd-b03e-911918f21367:1",
+      "dev:work-product-component--GenericRepresentation:4accdc89-2e63-54a1-849a-913f3f9919e1:1",
+      "dev:dataset--ETPDataspace:maap-drogon_dg:1"
+    ],
+    "Tags": [
+      "DG2",
+      "Drogon",
+      "Geomodel",
+      "Grid",
+      "Maps",
+      "Polygons"
+    ]
+  }
+}

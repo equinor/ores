@@ -18,13 +18,12 @@
     ]
   },
   "data": {
-    "ProjectName": "Drogon DG2 Geomodelling",
-    "Description": "Collaboration workspace for the Drogon DG2 Concept Select phase. Covers seismic interpretation, structural modelling, facies modelling, petrophysical property population, and FMU-driven uncertainty quantification across the Valysar formation (7 reservoir segments, 3 facies types). The project uses RMS for geomodel construction, exports RESQML to RDDMS, and produces volumetric inputs for the DG2 decision.",
-    "Purpose": "Build and iterate on the Drogon static reservoir geomodel for DG2 Concept Select. Deliver uncertainty-quantified in-place volumes (P10/P50/P90) per segment and facies, structural framework (faults + horizons), and property models (porosity, NTG, saturation) to support the DG2 investment recommendation.",
-    "Namespace": "project-drogon-dg2-geomodelling",
+    "ProjectName": "Drogon Geomodelling",
+    "Description": "Geomodelling namespace for Drogon - bridges collaboration (SoE) with trusted data (SoR). Persists across decision gates.",
+    "Purpose": "Steward the Drogon geomodel lifecycle from DG1 through FID. Curate trusted volumes, properties and RESQML artefacts per gate.",
+    "Namespace": "project-drogon-geomodelling",
     "LifecycleStatusID": "dev:reference-data--CollaborationProjectLifecycleStatus:Open:",
     "ProjectBeginDate": "2025-12-15T00:00:00Z",
-    "ProjectEndDate": "2026-06-30T00:00:00Z",
     "ParentProjectID": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
     "ProjectContributorACL": {
       "owners": [
@@ -46,7 +45,7 @@
     "Parameters": [
       {
         "Title": "GeoModel Dataspace (RDDMS)",
-        "Selection": "RDDMS ETP dataspace with Drogon DG2 geomodel EPC files (RMS export: structural framework, grids, properties)",
+        "Selection": "RDDMS geomodel EPC store",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
         "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
@@ -59,17 +58,17 @@
       },
       {
         "Title": "Reservoir scope",
-        "Selection": "Master-data for the Drogon Valysar reservoir",
+        "Selection": "Valysar reservoir",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
-        "DataObjectParameter": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+        "DataObjectParameter": "dev:master-data--Reservoir:Drogon-Valysar:1"
       },
       {
         "Title": "In-place volumes raw (per realisation)",
-        "Selection": "Raw FMU output volumes per realisation feeding the statistical aggregation",
+        "Selection": "Per-realisation FMU output",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:dac100b4-4eb8-4b43-9630-9aa2d3d15837:1",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Raw:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -79,10 +78,10 @@
       },
       {
         "Title": "In-place volumes statistics (P10/P50/P90)",
-        "Selection": "Aggregated volumetric statistics used for the DG2 assessment",
+        "Selection": "P10/P50/P90 aggregates",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:f9da5b21-f9b1-4596-bae0-04e09cc988dd:1",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -92,10 +91,10 @@
       },
       {
         "Title": "Input parameters (OWC, porosity per segment/facies)",
-        "Selection": "ColumnBasedTable with per-segment per-facies input parameter distributions",
+        "Selection": "Per-segment/facies inputs",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:9f4d496c-d9ea-4d36-907a-a94542c03bea:1",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG1-InputParameters:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -105,10 +104,10 @@
       },
       {
         "Title": "GeoLabelSet (segment volumes + properties)",
-        "Selection": "Per-segment P10/P50/P90 volumes and petrophysical summaries",
+        "Selection": "Segment volume labels",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--GeoLabelSet:f5c8b2d4-6a39-4eaf-9b72-8d4eaf1a3c96:1",
+        "DataObjectParameter": "dev:work-product-component--GeoLabelSet:Drogon-DG1-GeoLabelSet:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -118,14 +117,14 @@
       },
       {
         "Title": "FMU Workflow Activity",
-        "Selection": "Activity record covering the full FMU uncertainty workflow (parameter generation, RMS run, aggregation)",
+        "Selection": "FMU uncertainty run",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1"
+        "DataObjectParameter": "dev:work-product-component--Activity:Drogon-DG1-VolumetricsWorkflow:1"
       },
       {
         "Title": "Seismic interpretation (horizon picks)",
-        "Selection": "Seismic horizon interpretation feeding the structural framework - linked via RDDMS dataspace",
+        "Selection": "Horizon picks via RDDMS",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
         "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
@@ -139,71 +138,70 @@
     ],
     "Personnel": [
       {
-        "PersonName": "Erik Stensrud",
+        "PersonName": "Abraham G. Werner",
         "ProjectRoleID": "dev:reference-data--ProjectRole:FMULead:",
         "CompanyOrganisationID": "dev:master-data--Organisation:Equinor:"
       },
       {
-        "PersonName": "Anna-Lise Tveit",
+        "PersonName": "Friedrich Mohs",
         "ProjectRoleID": "dev:reference-data--ProjectRole:Petrophysicist:",
         "CompanyOrganisationID": "dev:master-data--Organisation:Equinor:"
       },
       {
-        "PersonName": "Henrik Bjornstad",
+        "PersonName": "Vladimir Vernadsky",
         "ProjectRoleID": "dev:reference-data--ProjectRole:ReservoirEngineer:",
         "CompanyOrganisationID": "dev:master-data--Organisation:Equinor:"
       },
       {
-        "PersonName": "Kristin Haugen",
+        "PersonName": "Inge Lehmann",
         "ProjectRoleID": "dev:reference-data--ProjectRole:GeoscienceLead:",
         "CompanyOrganisationID": "dev:master-data--Organisation:Equinor:"
       }
     ],
     "ProjectSpecifications": [
       {
-        "ParameterTypeID": "dev:reference-data--ParameterType:RealisationCount:",
-        "ProjectSpecificationQuantity": 3,
-        "ProjectSpecificationText": "Number of FMU uncertainty realisations"
-      },
-      {
         "ParameterTypeID": "dev:reference-data--ParameterType:SegmentCount:",
         "ProjectSpecificationQuantity": 7,
-        "ProjectSpecificationText": "Reservoir segments: NorthSea, NorthHorst, CentralHorst, CentralFlanks, CentralSouth, SouthWing, EastLobe"
-      },
-      {
-        "ParameterTypeID": "dev:reference-data--ParameterType:FaciesCount:",
-        "ProjectSpecificationQuantity": 3,
-        "ProjectSpecificationText": "Facies types: Channel, Crevasse, Floodplain"
+        "ProjectSpecificationText": "NorthSea, NorthHorst, CentralHorst, CentralFlanks, CentralSouth, SouthWing, EastLobe"
       }
     ],
     "ActivityStates": [
       {
+        "MilestoneID": "DG1",
         "EffectiveDateTime": "2025-12-15T00:00:00Z",
-        "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
-        "Remark": "Project initiated after DG1 approval - seismic interpretation phase"
+        "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+        "Remark": "DG1 Identify & Assess"
       },
       {
+        "MilestoneID": "DG2",
         "EffectiveDateTime": "2026-01-15T00:00:00Z",
         "ActivityStatusID": "dev:reference-data--ActivityStatus:InProgress:",
-        "Remark": "Structural framework and facies modelling underway"
+        "Remark": "DG2 Concept Select"
       },
       {
-        "EffectiveDateTime": "2026-03-01T00:00:00Z",
-        "ActivityStatusID": "dev:reference-data--ActivityStatus:InProgress:",
-        "Remark": "FMU uncertainty workflow running - volumetric outputs under review"
+        "MilestoneID": "DG3",
+        "EffectiveDateTime": "2027-01-01T00:00:00Z",
+        "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
+        "Remark": "DG3 FEED"
+      },
+      {
+        "MilestoneID": "DG4",
+        "EffectiveDateTime": "2027-07-01T00:00:00Z",
+        "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
+        "Remark": "FID / DG4"
       }
     ],
     "LastActivityState": {
-      "EffectiveDateTime": "2026-03-01T00:00:00Z",
+      "EffectiveDateTime": "2026-01-15T00:00:00Z",
       "ActivityStatusID": "dev:reference-data--ActivityStatus:InProgress:",
-      "Remark": "FMU uncertainty workflow running - volumetric outputs under review"
+      "Remark": "DG2 Concept Select"
     },
     "LifecycleEvents": [
       {
         "EventID": "CreationEvent",
         "Name": "Project created",
         "DateTime": "2025-12-15T09:00:00Z",
-        "Remark": "Collaboration project created after DG1 Identify & Assess approval",
+        "Remark": "Post-DG1 project creation",
         "ResourceCollectionID": "dev:work-product-component--CollaborationProjectCollection:Drogon-DG2-TrustedData:1"
       }
     ],
@@ -211,14 +209,14 @@
       "equinor": {
         "WorkflowToolchain": "RMS 2024.1 -> fmu-ensemble-framework -> ORES",
         "ModellingScope": [
-          "Seismic interpretation (horizons: Top Valysar, Base Valysar, fault network)",
-          "Structural modelling (pillar gridding, fault compartmentalisation)",
-          "Facies modelling (object-based Channel + Crevasse, background Floodplain)",
-          "Petrophysical properties (porosity, NTG, Sw - facies-conditioned)",
-          "Volumetrics (STOIIP, GIIP per segment per facies, P10/P50/P90)"
+          "Seismic interpretation",
+          "Structural modelling",
+          "Facies modelling",
+          "Petrophysical properties",
+          "Volumetrics (P10/P50/P90)"
         ],
         "RDDMSDataspace": "maap/drogon_dg",
-        "TargetDecisionGate": "DG2 Concept Select"
+        "TargetDecisionGate": "Current: DG2 Concept Select"
       }
     }
   }

@@ -21,7 +21,7 @@
     "Name": "Drogon DG2 - valysar--facies_fraction_crevasse",
     "Description": "Facies fraction map: crevasse in Valysar zone",
     "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-    "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
     "NodeCountOnIAxis": 280,
     "NodeCountOnJAxis": 440,
     "BinWidthOnIaxis": 25.0,
@@ -41,7 +41,7 @@
       "dev:reference-data--FacetRole:P50:"
     ],
     "data.ancestry.inputs": [
-      "dev:work-product-component--IjkGridRepresentation:45e80eba-2376-5d64-8989-66d7c8e94426:1",
+      "dev:work-product-component--IjkGridRepresentation:Drogon-DG2-Geogrid:1",
       "dev:dataset--ETPDataspace:maap-drogon_dg:1"
     ]
   }

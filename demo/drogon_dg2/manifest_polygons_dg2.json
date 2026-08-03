@@ -6,7 +6,7 @@
     "Datasets": [],
     "WorkProductComponents": [
       {
-        "id": "dev:work-product-component--GenericRepresentation:23e9a27d-ae8d-5511-bec3-f1893847bd8a:1",
+        "id": "dev:work-product-component--GenericRepresentation:Drogon-DG2-FaultLines-TopVolantis:1",
         "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
         "acl": {
           "owners": [
@@ -28,7 +28,7 @@
           "Name": "Drogon DG2 - Fault Lines at TopVolantis",
           "Description": "Fault line polygons at TopVolantis horizon. Standard result: structure_depth_fault_lines.",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/polygons/topvolantis--faultlines.csv"
           ],
@@ -66,7 +66,7 @@
           "Name": "Drogon DG2 - Fault Lines at TopTherys",
           "Description": "Fault line polygons at TopTherys horizon. Standard result: structure_depth_fault_lines.",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/polygons/toptherys--faultlines.csv"
           ],
@@ -104,7 +104,7 @@
           "Name": "Drogon DG2 - Fault Lines at TopVolon",
           "Description": "Fault line polygons at TopVolon horizon. Standard result: structure_depth_fault_lines.",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/polygons/topvolon--faultlines.csv"
           ],
@@ -142,7 +142,7 @@
           "Name": "Drogon DG2 - Fault Lines at BaseVolantis",
           "Description": "Fault line polygons at BaseVolantis horizon. Standard result: structure_depth_fault_lines.",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/polygons/basevolantis--faultlines.csv"
           ],
@@ -180,7 +180,7 @@
           "Name": "Drogon DG2 - Field Outline",
           "Description": "Field boundary polygon for the Drogon reservoir. Standard result: field_outline.",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/polygons/field_outline.csv"
           ],
@@ -217,7 +217,7 @@
           "Name": "Drogon DG2 - Fluid Contact Outline (GOC)",
           "Description": "Gas-oil contact outline polygon.",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/polygons/fluid_contact_outline_goc.csv"
           ],
@@ -254,7 +254,7 @@
           "Name": "Drogon DG2 - Fluid Contact Outline (FWL)",
           "Description": "Free water level outline polygon.",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/polygons/fluid_contact_outline_fwl.csv"
           ],

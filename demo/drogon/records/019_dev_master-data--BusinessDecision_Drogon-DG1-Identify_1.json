@@ -18,28 +18,54 @@
     ]
   },
   "data": {
-    "Name": "Drogon - Decision Gate 1 DG1 Identify & Assess",
-    "Description": "DG1 evaluation of the Valysar fluvial formation in the Drogon field, covering static in-place volume estimation across 7 reservoir segments (NorthSea, NorthHorst, CentralHorst, CentralFlanks, CentralSouth, SouthWing, EastLobe) with three facies types (Channel, Crevasse, Floodplain). The assessment uses FMU-driven uncertainty realisations to derive P10/P50/P90 oil and gas volumes, forming the basis for the DG2 Concept Select recommendation.",
+    "Name": "Drogon DG1 - Identify & Assess",
+    "Description": "DG1 volume assessment of the Valysar formation, Drogon field. P10/P50/P90 oil & gas estimates across 7 segments.",
     "ProjectName": "Drogon Field Development",
     "DecisionLevelID": "dev:reference-data--DecisionLevel:DG1:",
     "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:",
     "DecisionDueDate": "2026-03-15",
     "DecisionDate": "2026-02-28",
-    "DecisionSummary": "Evaluate the Valysar formation of the Drogon field. Assess in-place volumes (oil + gas) across 7 reservoir segments with facies-dependent porosity uncertainty. Determine whether to proceed to DG2 Concept Select.",
+    "DecisionSummary": "Assess Valysar in-place volumes and recommend proceed/no-go for DG2.",
     "RiskIDs": [
       "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
       "dev:master-data--Risk:Drogon-FaultCompartment:1"
     ],
     "PriorActivityIDs": [
-      "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1"
+      "dev:work-product-component--Activity:Drogon-DG1-VolumetricsWorkflow:1"
     ],
     "Parameters": [
       {
-        "Title": "Raw volumes (per realisation)",
-        "Selection": "Raw per-realisation volumes feeding the statistical summary",
+        "Title": "DG1 Evidence Package",
+        "Selection": "Top-level evidence collection bundling all DG1 volumetrics artifacts, reservoir context, risks, and workflow provenance",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:work-product-component--PersistedCollection:Drogon-DG1-EvidencePackage:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "PersistedCollection"
+          }
+        ]
+      },
+      {
+        "Title": "Headline volumes & reservoir properties (GeoLabelSet)",
+        "Selection": "P10/P50/P90 headline volumes per segment, derived from stat REV",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:dac100b4-4eb8-4b43-9630-9aa2d3d15837:1",
+        "DataObjectParameter": "dev:work-product-component--GeoLabelSet:Drogon-DG1-GeoLabelSet:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "GeoLabelSet"
+          }
+        ]
+      },
+      {
+        "Title": "Raw volumes (per realisation)",
+        "Selection": "Per-realisation FMU output (3 realisations × 7 segments × 4 facies)",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Raw:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -49,10 +75,10 @@
       },
       {
         "Title": "Statistical volumes (P10/P50/P90)",
-        "Selection": "Aggregated statistics used for the DG1 assessment",
+        "Selection": "P10/P50/P90 aggregates across realisations",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:f9da5b21-f9b1-4596-bae0-04e09cc988dd:1",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -61,11 +87,11 @@
         ]
       },
       {
-        "Title": "Valysar parameters (OWC, porosity)",
-        "Selection": "Per-segment, per-facies input parameters",
+        "Title": "Input parameters (OWC depths, porosity per segment/facies)",
+        "Selection": "Per-segment/facies uncertainty inputs for 7 fault blocks",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:9f4d496c-d9ea-4d36-907a-a94542c03bea:1",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG1-InputParameters:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -75,14 +101,14 @@
       },
       {
         "Title": "Reservoir scope",
-        "Selection": "Master-data context for the decision",
+        "Selection": "Valysar reservoir (7 segments: WestLowland, CentralSouth, CentralNorth, NorthHorst, CentralRamp, CentralHorst, EastLowland)",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
-        "DataObjectParameter": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+        "DataObjectParameter": "dev:master-data--Reservoir:Drogon-Valysar:1"
       },
       {
-        "Title": "GeoModelDataspace",
-        "Selection": "RDDMS ETP dataspace with the Drogon DG2 geomodel EPC files (RMS export)",
+        "Title": "GeoModel Dataspace (RDDMS)",
+        "Selection": "RDDMS ETP dataspace hosting the Drogon geomodel EPC files",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
         "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
@@ -92,88 +118,75 @@
             "StringParameterKey": "ETPDataspace"
           }
         ]
-      },
-      {
-        "Title": "GeoLabelSet (segment volumes + properties)",
-        "Selection": "Per-segment P10/P50/P90 volumes and petro-physical summaries",
-        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
-        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:work-product-component--GeoLabelSet:f5c8b2d4-6a39-4eaf-9b72-8d4eaf1a3c96:1",
-        "Keys": [
-          {
-            "ParameterKey": "artifact",
-            "StringParameterKey": "GeoLabelSet"
-          }
-        ]
       }
     ],
     "Personnel": [
       {
-        "Name": "Kristin Haugen",
+        "Name": "Inge Lehmann",
         "ProjectRoleID": "dev:reference-data--ProjectRole:GeoscienceLead:",
         "Organisation": "Drogon Subsurface"
       },
       {
-        "Name": "Henrik Bjørnstad",
+        "Name": "Vladimir Vernadsky",
         "ProjectRoleID": "dev:reference-data--ProjectRole:ReservoirEngineer:",
         "Organisation": "Drogon Reservoir Management"
       },
       {
-        "Name": "Anna-Lise Tveit",
+        "Name": "Friedrich Mohs",
         "ProjectRoleID": "dev:reference-data--ProjectRole:Petrophysicist:",
         "Organisation": "Drogon Petec"
       },
       {
-        "Name": "Erik Stensrud",
+        "Name": "Abraham G. Werner",
         "ProjectRoleID": "dev:reference-data--ProjectRole:FMULead:",
         "Organisation": "Drogon Geomodelling"
       }
     ],
     "DecisionOwners": [
       {
-        "Name": "Kristin Haugen",
+        "Name": "Inge Lehmann",
         "Organisation": "Drogon Subsurface Lead"
       }
     ],
     "DecisionMakers": [
       {
-        "Name": "Lars Kongsvik",
+        "Name": "Pyotr Kropotkin",
         "Organisation": "Drogon Project Director"
       }
     ],
     "Contributors": [
       {
-        "Name": "Erik Stensrud",
+        "Name": "Abraham G. Werner",
         "Organisation": "Drogon Geomodelling"
       },
       {
-        "Name": "Marte Nygaard",
+        "Name": "Alexander von Humboldt",
         "Organisation": "ST MSU Subsurface QA"
       }
     ],
     "Remarks": [
       {
-        "Remark": "Implement Level 3 FMU uncertainty workflow with increased realisation count (target 50+) for DG2",
+        "Remark": "Upgrade FMU to Level 3 with 50+ realisations for DG2",
         "RemarkSource": "DG1 Recommendations"
       },
       {
-        "Remark": "Acquire additional core data from NorthSea and EastLobe segments to reduce porosity uncertainty",
+        "Remark": "Acquire core data in NorthSea and EastLobe for porosity calibration",
         "RemarkSource": "DG1 Recommendations"
       },
       {
-        "Remark": "Evaluate seismic reprocessing for improved depth conversion of Valysar top reservoir",
+        "Remark": "Evaluate seismic reprocessing for Valysar depth conversion",
         "RemarkSource": "DG1 Recommendations"
       },
       {
-        "Remark": "Conduct cross-discipline review of OWC sensitivity on recovery factor estimates",
+        "Remark": "Cross-discipline OWC sensitivity review on recovery factors",
         "RemarkSource": "DG1 Recommendations"
       },
       {
-        "Remark": "Execute production testing programme across suspected fault blocks to establish pressure connectivity and constrain dynamic simulation models (target DG2 input, 2027-Q2)",
+        "Remark": "Production testing across fault blocks for pressure connectivity (target DG2, 2027-Q2)",
         "RemarkSource": "DG1 Recommendations"
       },
       {
-        "Remark": "Plan up to 4 additional infill wells targeting isolated fault compartments; include CAPEX range 50–150 MUSD in DG2 cost estimate and sensitivity analysis",
+        "Remark": "Plan up to 4 infill wells; include CAPEX 50-150 MUSD in DG2 sensitivity",
         "RemarkSource": "DG1 Recommendations"
       }
     ],
@@ -211,21 +224,25 @@
     ],
     "ActivityStates": [
       {
+        "MilestoneID": "DG1",
         "EffectiveDateTime": "2025-12-15",
         "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
         "Remark": "DG1 Identify & Assess"
       },
       {
+        "MilestoneID": "DG2",
         "EffectiveDateTime": "2026-03-01",
         "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
         "Remark": "DG2 Concept Select"
       },
       {
+        "MilestoneID": "DG3",
         "EffectiveDateTime": "2027-01-01",
         "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
         "Remark": "DG3 FEED"
       },
       {
+        "MilestoneID": "DG4",
         "EffectiveDateTime": "2027-07-01",
         "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
         "Remark": "FID / DG4"
@@ -233,37 +250,39 @@
     ],
     "ancestry": {
       "parents": [
-        "dev:work-product-component--Activity:ead6e342-fa77-5485-b13b-7b3b2030c6e6:1"
+        "dev:work-product-component--Activity:Drogon-DG1-VolumetricsWorkflow:1"
       ],
       "children": []
     },
     "ext": {
       "equinor": {
+        "ActivityStateTemplateID": "dev:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
+        "ProjectTypeID": "dev:reference-data--ProjectType:FieldDevelopment:",
         "Alternatives": [
           {
-            "Name": "Proceed to DG2 with full 7-segment development",
+            "Name": "Proceed to DG2 - full 7-segment development",
             "Rank": 1,
-            "Rationale": "Static in-place volumes support commercial viability across all 7 segments; porosity risk manageable with appraisal data. Full scope maximises resource capture from CentralHorst (highest Oil concentration) through EastLobe.",
+            "Rationale": "All 7 segments show commercial volumes; porosity risk manageable.",
             "RecommendedAction": "Approve"
           },
           {
-            "Name": "Reduced scope - focus on CentralHorst and CentralSouth",
+            "Name": "Reduced scope - CentralHorst + CentralSouth only",
             "Rank": 2,
-            "Rationale": "CentralHorst and CentralSouth carry the highest Oil density and lowest porosity uncertainty (Channel facies dominant). De-risks early production but leaves ~40% of upside for later phases.",
+            "Rationale": "Best economics, lowest uncertainty; leaves ~40% upside for later.",
             "RecommendedAction": "Consider"
           },
           {
-            "Name": "Defer - acquire additional appraisal data",
+            "Name": "Defer - acquire more appraisal data",
             "Rank": 3,
-            "Rationale": "Floodplain facies porosity (avg 0.10) and cementation effects in deeper segments remain poorly constrained. Additional core data from NorthSea and EastLobe segments would reduce volume uncertainty range before committing to DG2.",
+            "Rationale": "Floodplain porosity poorly constrained; more core data recommended.",
             "RecommendedAction": "Fallback"
           }
         ],
         "UncertaintySummary": {
-          "Basis": "FMU static in-place volumes from 3 uncertainty realisations across 7 segments and 3 facies types",
-          "Note": "See stat WPC for full P10/P50/P90 breakdown per segment & facies. Volume Unit: m³.",
+          "Basis": "FMU static volumes, 3 realisations, 7 segments, 3 facies",
+          "Note": "See stat WPC for P10/P50/P90 per segment & facies (m³).",
           "TotalRealisations": 3,
-          "MethodologyReference": "FMU Level 2 static uncertainty workflow (Valysar geomodel v1)",
+          "MethodologyReference": "FMU Level 2 static uncertainty workflow (Valysar v1)",
           "StaticInPlace_Oil_MSm3": {
             "P90": 28.5,
             "P50": 34.5,

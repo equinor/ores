@@ -1,5 +1,5 @@
 {
-  "id": "dev:work-product-component--Activity:f7b43d02-f3e1-5c3b-ae2e-dce9da267c19:1",
+  "id": "dev:work-product-component--Activity:Drogon-DG2-FMU-Workflow:1",
   "kind": "osdu:wks:work-product-component--Activity:1.0.0",
   "acl": {
     "owners": [
@@ -22,9 +22,9 @@
     "Description": "Comprehensive FMU activity for the Drogon reservoir model, capturing the complete input-to-output pipeline for decision gate assessment. Based on the official equinor/fmu-drogon tutorial (24.3.1). INPUTS: 3D/4D seismic, 4 horizons (Volantis Group), stratigraphic column (3 formations, 8 facies types), 6 active wells + 5 RFT wells, reservoir properties per zone/facies, 7-region fault model, history observations. WORKFLOW: ERT orchestration with 250 one-by-one sensitivity realisations. Forward model: DESIGN2PARAMS → DESIGN_KW → RMS (MAIN workflow: structural + facies + petro + grid) → ECLCOMPRESS → OPM Flow → post-processing (volumes, maps, sim2seis, RFT, tracers). 17 continuous uncertainty parameters (Kv/Kh, FWL, GOC, fault seal, relperm, facies probabilities) + 6 discrete model switches. OUTPUTS: STOIIP/GIIP volumes by region/zone/facies (P10/P50/P90), production forecasts (FOPR, FGPR, FWPR, FPR), HC thickness maps, grid properties (ROFF), synthetic seismic, well data (RFT, tracers, completions), Eclipse tables.",
     "Originator": "markuslund.vevle@emerson.com",
     "CreationDateTime": "2026-03-21T10:00:00.000Z",
-    "ActivityTemplateID": "dev:work-product-component--ActivityTemplate:be0cabb6-8f79-5aee-894e-4bda337bb6d4:1",
+    "ActivityTemplateID": "dev:work-product-component--ActivityTemplate:Drogon-DG2-FMU-Template:1",
     "WorkflowStatus": "Completed",
-    "ParentObjectID": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+    "ParentObjectID": "dev:master-data--Reservoir:Drogon-Valysar:1",
     "ParentWorkProductID": "dev:work-product:862b5d29-3d8b-4e9f-9d38-7b78185079f7:1",
     "Parameters": [
       {
@@ -158,7 +158,7 @@
         "Description": "OSDU ColumnBasedTable WPC containing per-realisation uncertainty parameter values (OWC depths, porosity, Kv/Kh, etc.).",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:d8cd755c-2b7a-48ae-9db1-12d66aedf070:1",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-DesignMatrix:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -184,7 +184,7 @@
         "Description": "Generated per-realisation input parameter table (ColumnBasedTable WPC) from DESIGN2PARAMS + DESIGN_KW.",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:d8cd755c-2b7a-48ae-9db1-12d66aedf070:1",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-DesignMatrix:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -197,7 +197,7 @@
         "Description": "Per-realisation estimated volumes (RAW REV WPC): STOIIP and GIIP by region (7), zone (3), and facies (8). From PRTVOL2CSV.",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:26867eca-5fd5-4a5d-a260-67a40a91e76a:1",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Raw:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -210,7 +210,7 @@
         "Description": "Statistical aggregation of volumes (STAT REV WPC): P10/P50/P90 across 250 realisations. Field STOIIP P50 ≈ 45.4 MSm³, recovery factor P50 ≈ 33.5%.",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:323329ac-acee-4c7d-bf76-c4bd9eab601b:1",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -271,7 +271,7 @@
         "Description": "P50 volume estimates: STOIIP 45.4 MSm³, GIIP 6.4 GSm³, recoverable oil 15.2 MSm³, RF 33.5%. Breakdown by 7 regions and 3 zones.",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:323329ac-acee-4c7d-bf76-c4bd9eab601b:1",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -297,7 +297,7 @@
         "Description": "OSDU Reservoir master-data record for Drogon. Links to 7 ReservoirSegment records (WestLowland, CentralSouth, etc.).",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1",
+        "DataObjectParameter": "dev:master-data--Reservoir:Drogon-Valysar:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -321,12 +321,12 @@
     ],
     "ancestry": {
       "parents": [
-        "dev:master-data--Reservoir:5b8dc759-4be9-493a-9bd3-eb0e55fd078e:1"
+        "dev:master-data--Reservoir:Drogon-Valysar:1"
       ],
       "children": [
-        "dev:work-product-component--ColumnBasedTable:d8cd755c-2b7a-48ae-9db1-12d66aedf070:1",
-        "dev:work-product-component--ReservoirEstimatedVolumes:26867eca-5fd5-4a5d-a260-67a40a91e76a:1",
-        "dev:work-product-component--ReservoirEstimatedVolumes:323329ac-acee-4c7d-bf76-c4bd9eab601b:1",
+        "dev:work-product-component--ColumnBasedTable:Drogon-DG2-DesignMatrix:1",
+        "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Raw:1",
+        "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1",
         "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1",
         "dev:work-product-component--DevelopmentConcept:Drogon-DG2:1"
       ]
