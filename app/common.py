@@ -11,7 +11,7 @@ import asyncio
 import json
 import logging
 import urllib.parse
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import httpx
 from fastapi import HTTPException, Request
@@ -230,19 +230,23 @@ async def search_reservoirs(
                         best[base] = {**rec, "version": str(ver)}
 
                 # Parallel fetch names
-                async def _fetch_name(rec: Dict[str, Any]) -> Dict[str, str]:
+                async def _fetch_name(rec: Dict[str, Any]) -> Optional[Dict[str, str]]:
                     rid = rec.get("id", "")
                     name = rid
                     try:
                         rf = await client.get(f"{storage_url}/{rid}", headers=hdr)
                         if rf.status_code == 200:
                             d = (rf.json() or {}).get("data", {}) or {}
+                            if d.get("IsDiscoverable") is False:
+                                return None
                             name = d.get("Name") or d.get("Description") or rid
+                            if name in (".", ""):
+                                return None
                     except Exception:
                         pass
                     return {"id": rid, "name": name, "version": rec.get("version", "")}
 
-                out = list(await asyncio.gather(*[_fetch_name(rec) for rec in best.values()]))
+                out = [r for r in await asyncio.gather(*[_fetch_name(rec) for rec in best.values()]) if r]
                 return sorted(out, key=lambda x: x.get("name", ""))
 
         except Exception as e:

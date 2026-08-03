@@ -480,6 +480,12 @@ async def analyse_compare(
                     if not data_block:
                         return None
 
+                    # Skip superseded / hidden records
+                    if data_block.get("IsDiscoverable") is False:
+                        return None
+                    if (data_block.get("Name") or "") in (".", ""):
+                        return None
+
                     # Post-filter: verify this BD actually references the
                     # selected reservoir.  Check multiple locations:
                     #   1. data.ReservoirIDs[] (OSDU canonical top-level field)
