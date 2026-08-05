@@ -469,11 +469,17 @@ async def analyse_compare(
                     refs_via_ancestry = reservoir_id in ancestry_all
 
                     if not (refs_via_top_level or refs_via_params or refs_via_ancestry):
-                        log.debug(
-                            "[ANALYSE] BD %s does not reference reservoir %s - skipping",
-                            bid, reservoir_id,
+                        log.info(
+                            "[ANALYSE] BD %s (%s) does not reference reservoir %s - skipping",
+                            bid, data_block.get("Name", "?"), reservoir_id,
                         )
                         return None
+
+                    log.info(
+                        "[ANALYSE] BD %s (%s) matched reservoir %s via: ReservoirIDs=%s Params=%s Ancestry=%s",
+                        bid, data_block.get("Name", "?"), reservoir_id,
+                        refs_via_top_level, refs_via_params, refs_via_ancestry,
+                    )
 
                     gls = await _enrich_geolabel(
                         data_block, client, storage_url, hdr
