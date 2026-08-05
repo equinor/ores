@@ -1380,11 +1380,24 @@ async def view_record(request: Request, record_id: str):
         )
     except HTTPStatusError as e:
         from .common import sanitize_upstream_error
+        status = e.response.status_code or 500
+        if status == 404:
+            # Extract entity type from ID for a helpful message
+            etype = record_id.split("--")[1].split(":")[0] if "--" in record_id else "Record"
+            error_msg = f"{etype} not found"
+            detail = (
+                f"The record <code>{record_id}</code> is referenced "
+                "but does not exist in this OSDU instance. "
+                "It may not have been ingested yet."
+            )
+        else:
+            error_msg = f"Record fetch failed: {status}"
+            detail = sanitize_upstream_error(e.response)
         return templates.TemplateResponse(
             request, "search.html",
             {
-                "error": f"Record fetch failed: {e.response.status_code}",
-                "error_detail": sanitize_upstream_error(e.response),
+                "error": error_msg,
+                "error_detail": detail,
                 "kind": "",
                 "kinds_extra": "",
                 "kind_options": _MANIFEST_KINDS,
@@ -1392,7 +1405,7 @@ async def view_record(request: Request, record_id: str):
                 "q": record_id,
                 "limit": 1,
             },
-            status_code=e.response.status_code or 500,
+            status_code=status,
         )
     except Exception as e:
         log.exception("[VIEW] Unexpected error: %s", e)
