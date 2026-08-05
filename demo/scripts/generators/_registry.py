@@ -69,4 +69,5 @@ def _import_all():
         gen_params,
         gen_markers,
         gen_geolabelset,
+        gen_ontology,
     )

@@ -1,0 +1,178 @@
+{
+  "generator": "ontology",
+  "project": "Omegas",
+  "gate": "WPC",
+  "description": "Omegas Well Planning Committee — ontology demo: multi-well decision, relationships to prospects/risks/simulations",
+
+  "business_decision": {
+    "id": "dev:master-data--BusinessDecision:Omegas-WPC-SSVP2026:1",
+    "name": "Omegas WPC — SSVP 2026",
+    "slug": "Omegas-WPC-SSVP2026",
+    "description": "Well Planning Committee decision for Omegas SSVP 2026. Approve 3-well infill programme (2P + 1I) targeting OWC uncertainty and NW compartment.",
+    "project_name": "Omegas Infill 2026",
+    "decision_level": "WPC",
+    "approval_status": "Approved",
+    "decision_date": "2026-03-20",
+    "decision_summary": "Approve 3-well infill: OM-7P (NW producer), OM-8P (SE producer), OM-9I (NW injector). Targets OWC uncertainty reduction and NW compartment drainage.",
+
+    "risk_ids": [
+      "dev:master-data--Risk:Omegas-OWC-Uncertainty:1",
+      "dev:master-data--Risk:Omegas-NW-Compartment:1",
+      "dev:master-data--Risk:Omegas-InjectivityDecline:1"
+    ],
+
+    "relationships": [
+      {
+        "title": "Evidence: Prospect assessment",
+        "target_id": "dev:work-product-component--PersistedCollection:Omegas-WPC-ProspectPack:1",
+        "type": "evidences",
+        "artifact": "PersistedCollection",
+        "selection": "Prospect maturation package (12 artifacts)"
+      },
+      {
+        "title": "Prior: 2024 infill campaign",
+        "target_id": "dev:master-data--BusinessDecision:Omegas-WPC-2024:1",
+        "type": "supersedes",
+        "selection": "2024 campaign achieved 85% uptime. Lessons learned incorporated."
+      },
+      {
+        "title": "Reservoir simulation (NW sector)",
+        "target_id": "dev:work-product-component--ColumnBasedTable:Omegas-WPC-SimForecast:1",
+        "type": "evidences",
+        "artifact": "ColumnBasedTable",
+        "selection": "OPM Flow: NW sector model. 3-well vs 2-well scenario."
+      },
+      {
+        "title": "OWC uncertainty (constraining)",
+        "target_id": "dev:master-data--Risk:Omegas-OWC-Uncertainty:1",
+        "type": "constrains",
+        "selection": "OWC depth ±12m. Impacts producer standoff. Core needed."
+      },
+      {
+        "title": "NW compartment isolation risk",
+        "target_id": "dev:master-data--Risk:Omegas-NW-Compartment:1",
+        "type": "constrains",
+        "selection": "Fault seal uncertain. Pressure data contradictory."
+      },
+      {
+        "title": "Well plan informs field economics",
+        "target_id": "dev:master-data--BusinessDecision:Omegas-FD-DG3:1",
+        "type": "informs",
+        "selection": "3-well programme NPV feeds into DG3 full-field economics."
+      },
+      {
+        "title": "GeoModel (RDDMS)",
+        "target_id": "dev:dataset--ETPDataspace:maap-omegas-wpc:1",
+        "type": "evidences",
+        "artifact": "ETPDataspace",
+        "selection": "Sector geomodel NW compartment"
+      }
+    ],
+
+    "economics": {
+      "NPV_10pct": {"value": 180, "unit": "MUSD"},
+      "IRR": {"value": 28, "unit": "%"},
+      "CAPEX": {"value": 950, "unit": "MNOK"},
+      "BreakevenOil": {"value": 38, "unit": "USD/bbl"},
+      "Payback": {"value": 3.5, "unit": "a"}
+    },
+
+    "uncertainty_summary": {
+      "Basis": "Sector simulation: NW compartment with 100 realisations (tornado sensitivity)",
+      "TotalRealisations": 100,
+      "DesignType": "tornado sensitivity",
+      "Simulator": "OPM_FLOW",
+      "RecoverableInfill_Oil_MSm3": {"P90": 1.8, "P50": 3.2, "P10": 5.1},
+      "RecoveryFactor_pct": {"P90": 15.0, "P50": 22.0, "P10": 30.0}
+    },
+
+    "alternatives": [
+      {"name": "3-well infill (2P+1I)", "rank": 1, "rationale": "Optimal drainage of NW + SE. Injector supports pressure.", "action": "Approve"},
+      {"name": "2-well infill (2P only)", "rank": 2, "rationale": "Lower cost but risk of pressure decline in NW.", "action": "Fallback"},
+      {"name": "Single appraisal well + data", "rank": 3, "rationale": "De-risk OWC before commitment. Delays production.", "action": "Defer"}
+    ],
+
+    "remarks": [
+      {"source": "WPC-Discussion", "text": "NW compartment pressure data from OM-4 suggests partial seal. 3-well programme mitigates."},
+      {"source": "WPC-Discussion", "text": "OWC uncertainty ±12m. OM-7P planned 15m above OWC — sufficient standoff for P90 case."},
+      {"source": "WPC-Condition", "text": "Run OM-7P as pilot. If OWC confirmed within ±5m, proceed with OM-8P and OM-9I."},
+      {"source": "WPC-Condition", "text": "FDP update required before OM-9I spud (injection rates depend on fracture gradient)."},
+      {"source": "Audit-Note", "text": "Supersedes 2024 WPC decision. Lessons: slot sharing reduced rig time 15%."}
+    ],
+
+    "activity_states": [
+      {"milestone_id": "WPC-Submit", "date": "2026-03-01T00:00:00Z", "status": "Completed", "remark": "Well programme submitted"},
+      {"milestone_id": "WPC-Review", "date": "2026-03-15T00:00:00Z", "status": "Completed", "remark": "Technical review complete"},
+      {"milestone_id": "WPC-Approve", "date": "2026-03-20T00:00:00Z", "status": "Completed", "remark": "Approved with conditions"},
+      {"milestone_id": "OM-7P-Spud", "date": "2026-06-15T00:00:00Z", "status": "Planned", "remark": "Pilot well"},
+      {"milestone_id": "OM-8P-Spud", "date": "2026-09-01T00:00:00Z", "status": "Planned", "remark": "Contingent on OM-7P results"},
+      {"milestone_id": "OM-9I-Spud", "date": "2026-11-01T00:00:00Z", "status": "Planned", "remark": "Contingent on FDP update"}
+    ]
+  },
+
+  "collaboration_project": {
+    "id": "dev:master-data--CollaborationProject:Omegas-WPC-2026:1",
+    "name": "Omegas WPC 2026 Collaboration",
+    "slug": "Omegas-WPC-2026-CP",
+    "description": "Collaboration namespace for Omegas 2026 infill campaign. Tracks WPC deliverables and well-by-well progression.",
+    "purpose": "Coordinate subsurface, drilling, facilities teams for 3-well programme",
+    "namespace": "project-omegas-wpc2026",
+    "parent_bd": "auto",
+    "begin_date": "2026-01-15T00:00:00Z",
+
+    "lifecycle_events": [
+      {"event_id": "WPCKick", "name": "WPC preparation started", "datetime": "2026-01-15T08:00:00Z", "remark": "Subsurface team initiates prospect maturation."},
+      {"event_id": "SectorModel", "name": "Sector model complete", "datetime": "2026-02-10T16:00:00Z", "remark": "NW compartment: 100 realisations delivered."},
+      {"event_id": "ProspectPack", "name": "Prospect package assembled", "datetime": "2026-02-25T14:00:00Z", "remark": "12 artifacts: maps, sections, risk register, sim results."},
+      {"event_id": "WPCApproved", "name": "WPC Approved", "datetime": "2026-03-20T10:00:00Z", "remark": "3-well programme approved. Conditions: pilot first, FDP update."},
+      {"event_id": "SlotAlloc", "name": "Rig slots allocated", "datetime": "2026-04-01T09:00:00Z", "remark": "Deepsea Stavanger: Jun–Nov 2026 window."},
+      {"event_id": "OM7Design", "name": "OM-7P well design finalized", "datetime": "2026-05-01T14:00:00Z", "remark": "Horizontal, 1200m lateral, NW flank."}
+    ],
+
+    "gate_checklist": [
+      {"milestone_id": "WPC-ProspectMat", "status": "Completed", "date": "2026-02-25T00:00:00Z", "remark": "Prospect maturation: maps + risks + economics"},
+      {"milestone_id": "WPC-Simulation", "status": "Completed", "date": "2026-02-10T00:00:00Z", "remark": "Sector sim 100 realisations (OPM Flow)"},
+      {"milestone_id": "WPC-WellDesign", "status": "Completed", "date": "2026-05-01T00:00:00Z", "remark": "OM-7P design finalized"},
+      {"milestone_id": "WPC-RigContract", "status": "Completed", "date": "2026-04-01T00:00:00Z", "remark": "Deepsea Stavanger allocated"},
+      {"milestone_id": "WPC-FDPUpdate", "status": "Outstanding", "date": "2026-08-01T00:00:00Z", "remark": "Required before OM-9I injector"},
+      {"milestone_id": "WPC-PilotEval", "status": "Outstanding", "date": "2026-08-15T00:00:00Z", "remark": "OM-7P results needed for go/no-go on OM-8P"}
+    ],
+
+    "relationships": [
+      {"title": "Sector GeoModel", "target_id": "dev:dataset--ETPDataspace:maap-omegas-wpc:1", "type": "evidences", "artifact": "ETPDataspace", "selection": "NW compartment sector model"},
+      {"title": "Prospect Package", "target_id": "dev:work-product-component--PersistedCollection:Omegas-WPC-ProspectPack:1", "type": "evidences", "artifact": "PersistedCollection"},
+      {"title": "Simulation forecast", "target_id": "dev:work-product-component--ColumnBasedTable:Omegas-WPC-SimForecast:1", "type": "evidences", "artifact": "ColumnBasedTable"},
+      {"title": "Feeds DG3 economics", "target_id": "dev:master-data--BusinessDecision:Omegas-FD-DG3:1", "type": "informs"}
+    ]
+  },
+
+  "activities": [
+    {
+      "template_name": "Prospect Maturation Action",
+      "template_description": "Assemble prospect maturation package for WPC submission.",
+      "name": "Prospect maturation — NW compartment assessment",
+      "description": "Evaluated NW compartment: OWC uncertainty, fault seal, drainage scenarios. Package with 12 artifacts.",
+      "start": "2026-01-20T08:00:00Z",
+      "end": "2026-02-25T14:00:00Z",
+      "parameters": [
+        {"title": "Target WPC Decision", "target_id": "dev:master-data--BusinessDecision:Omegas-WPC-SSVP2026:1", "type": "informs", "role": "InputReference"},
+        {"title": "Prospect Package", "target_id": "dev:work-product-component--PersistedCollection:Omegas-WPC-ProspectPack:1", "type": "evidences", "artifact": "PersistedCollection", "role": "Output"},
+        {"title": "Scope", "value": "NW compartment: maps, cross-sections, risk assessment, economics, simulation."}
+      ]
+    },
+    {
+      "template_name": "Sector Simulation Action",
+      "template_description": "Run sector reservoir simulation to support well-count decision.",
+      "name": "NW sector simulation — 100 realisations",
+      "description": "OPM Flow: NW sector, 100 realisations, 3-well vs 2-well scenario comparison.",
+      "start": "2026-01-25T08:00:00Z",
+      "end": "2026-02-10T16:00:00Z",
+      "parameters": [
+        {"title": "Target WPC Decision", "target_id": "dev:master-data--BusinessDecision:Omegas-WPC-SSVP2026:1", "type": "informs", "role": "InputReference"},
+        {"title": "Simulation Output", "target_id": "dev:work-product-component--ColumnBasedTable:Omegas-WPC-SimForecast:1", "type": "evidences", "artifact": "ColumnBasedTable", "role": "Output"},
+        {"title": "Method", "value": "OPM Flow, 100 realisations, tornado sensitivity design. NW sector only."},
+        {"title": "Conclusion", "value": "3-well scenario recovers 60% more than 2-well (P50). Injector critical for pressure support."}
+      ]
+    }
+  ]
+}
