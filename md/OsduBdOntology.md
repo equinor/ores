@@ -301,9 +301,9 @@ The `Keys[]` array adds metadata to any parameter link — transforming a simple
 
 | File | Content |
 |---|---|
-| `demo/drogon_dg1/ontology_examples/` | Drogon DG1+DG2 ontology records (BD, CP, Activity) |
+| `demo/ontology/specs/` | All ontology generator specs (Drogon DG1/DG2, Omegas WPC) |
+| `demo/ontology/ingest.py` | Unified generate + ingest script |
 | `demo/scripts/generators/gen_ontology.py` | Generic ontology record generator |
-| `demo/scripts/inputs/generators/ontology_drogon_DG2.json` | Drogon DG2 generator config |
 | `app/bd_enrichment.py` | Backend enrichment (resolves CP, checklist, relationships) |
 | `app/templates/bd_ontology_panels.html` | GUI components (gate, graph, timeline) |
 | `md/BusinessDecision.md` | BD schema & linking patterns guide |
