@@ -1,0 +1,150 @@
+{
+  "_comment": "DG1 BusinessDecision with relationship Keys[] and typed Remarks[] — baseline for cross-gate tracking",
+  "id": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
+  "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+  "acl": {
+    "owners": ["data.default.owners@dev.dataservices.energy"],
+    "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+  },
+  "legal": {
+    "legaltags": ["dev-equinor-private-default"],
+    "otherRelevantDataCountries": ["NO"]
+  },
+  "data": {
+    "Name": "Drogon DG1 - Identify & Assess",
+    "Description": "DG1 volume assessment of the Valysar formation, Drogon field. P10/P50/P90 oil & gas estimates across 7 segments.",
+    "ProjectName": "Drogon Field Development",
+    "DecisionLevelID": "dev:reference-data--DecisionLevel:DG1:",
+    "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:",
+    "DecisionDueDate": "2026-03-15",
+    "DecisionDate": "2026-02-28",
+    "DecisionSummary": "Assess Valysar in-place volumes and recommend proceed/no-go for DG2.",
+
+    "RiskIDs": [
+      "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+      "dev:master-data--Risk:Drogon-FaultCompartment:1"
+    ],
+
+    "PriorActivityIDs": [
+      "dev:work-product-component--Activity:Drogon-DG1-VolumetricsWorkflow:1"
+    ],
+
+    "Parameters": [
+      {
+        "Title": "DG1 Evidence Package",
+        "Selection": "All DG1 volumetrics artifacts, reservoir context, risks",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:work-product-component--PersistedCollection:Drogon-DG1-EvidencePackage:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "PersistedCollection"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "Headline volumes (GeoLabelSet)",
+        "Selection": "P10/P50/P90 per segment, derived from stat REV",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:work-product-component--GeoLabelSet:Drogon-DG1-GeoLabelSet:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "GeoLabelSet"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "In-place volumes (P10/P50/P90)",
+        "Selection": "Statistical aggregates from FMU run #47",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "REV-stats"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "Input parameters table",
+        "Selection": "OWC, porosity, NTG per segment/facies",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG1-InputParameters:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ColumnBasedTable-params"},
+          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+        ]
+      },
+      {
+        "Title": "Geomodel dataspace (RDDMS)",
+        "Selection": "Structural + property model",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "Porosity risk",
+        "Selection": "Floodplain facies porosity poorly constrained",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "constrains"}
+        ]
+      },
+      {
+        "Title": "Fault compartment risk",
+        "Selection": "NE fault communication uncertain",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Risk:Drogon-FaultCompartment:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "constrains"}
+        ]
+      }
+    ],
+
+    "ProjectSpecifications": [
+      {"ParameterTypeID": "dev:reference-data--ParameterType:NPV_10pct:", "DataQuantityParameter": 1800, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MUSD:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:IRR:", "DataQuantityParameter": 24, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:CAPEX:", "DataQuantityParameter": 3800, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:"}
+    ],
+
+    "Remarks": [
+      {
+        "RemarkSource": "DG1-Recommendation",
+        "Remark": "Upgrade FMU to Level 3 (include structural uncertainty) before DG2."
+      },
+      {
+        "RemarkSource": "DG1-Recommendation",
+        "Remark": "Acquire additional core data in floodplain facies — porosity model poorly constrained."
+      },
+      {
+        "RemarkSource": "DG1-Recommendation",
+        "Remark": "Reprocess 2019 4D seismic to confirm fault communication across NE boundary."
+      },
+      {
+        "RemarkSource": "DG1-Recommendation",
+        "Remark": "Review OWC in SouthWing segment — possible tilt from regional aquifer."
+      },
+      {
+        "RemarkSource": "DG1-Recommendation",
+        "Remark": "Run flow simulation (OPM) for 20-year production forecast with WAG sensitivity."
+      },
+      {
+        "RemarkSource": "DG1-Recommendation",
+        "Remark": "Evaluate infill well potential for future phases."
+      }
+    ],
+
+    "ActivityStates": [
+      {"MilestoneID": "DG1", "EffectiveDateTime": "2026-02-28T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "DG1 Identify & Assess — Approved"},
+      {"MilestoneID": "DG2", "EffectiveDateTime": "2026-05-15T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:", "Remark": "DG2 Concept Select"},
+      {"MilestoneID": "DG3", "EffectiveDateTime": "2027-01-01T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:", "Remark": "DG3 FEED"},
+      {"MilestoneID": "DG4", "EffectiveDateTime": "2027-07-01T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:", "Remark": "FID"}
+    ]
+  }
+}

@@ -1,0 +1,259 @@
+{
+  "_comment": "DG2 BusinessDecision — shows evolution from DG1: new risks, updated volumes, relationship keys tracking supersession and alternatives",
+  "id": "dev:master-data--BusinessDecision:Drogon-DG2-ConceptSelect:1",
+  "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+  "acl": {
+    "owners": ["data.default.owners@dev.dataservices.energy"],
+    "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+  },
+  "legal": {
+    "legaltags": ["dev-equinor-private-default"],
+    "otherRelevantDataCountries": ["NO"]
+  },
+  "data": {
+    "Name": "Drogon DG2 - Concept Select",
+    "Description": "DG2 concept selection. Full 7-segment vs reduced-scope evaluation. Volumes revised post porosity downgrade.",
+    "ProjectName": "Drogon Field Development",
+    "DecisionLevelID": "dev:reference-data--DecisionLevel:DG2:",
+    "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:",
+    "DecisionDueDate": "2026-05-15",
+    "DecisionDate": "2026-05-15",
+    "DecisionSummary": "Select development concept. Full 7-segment approved. Condition: acquire CentralFlanks core before DG3.",
+
+    "RiskIDs": [
+      "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+      "dev:master-data--Risk:Drogon-FaultCompartment:1",
+      "dev:master-data--Risk:Drogon-WaterBreakthrough:1",
+      "dev:master-data--Risk:Drogon-SubseaTiebackDistance:1"
+    ],
+
+    "PriorActivityIDs": [
+      "dev:work-product-component--Activity:Drogon-DG2-SimulationWorkflow:1",
+      "dev:work-product-component--Activity:Drogon-DG2-VolumeUpdate:1"
+    ],
+
+    "Parameters": [
+      {
+        "Title": "DG2 Evidence Package",
+        "Selection": "Full gate evidence (99 artifacts)",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:work-product-component--PersistedCollection:Drogon-DG2-EvidencePackage:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "PersistedCollection"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "DG1 decision (prior gate)",
+        "Selection": "Approved 2026-02-28. Superseded by this DG2 decision.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "supersedes"}
+        ]
+      },
+      {
+        "Title": "Revised volumes (post porosity downgrade)",
+        "Selection": "P50 STOIIP 312→287 MSm³ (-8%). Feb 2026 revision.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "REV-stats"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "DG1 volumes (superseded)",
+        "Selection": "Original P50 STOIIP = 312 MSm³. Now superseded by revised estimate.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "REV-stats"},
+          {"ParameterKey": "relationship", "StringParameterKey": "supersedes"}
+        ]
+      },
+      {
+        "Title": "Production forecast (20-year)",
+        "Selection": "OPM Flow: 7P/3I, WAG year 5. Peak 45 kbbl/d year 3.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ColumnBasedTable-production"},
+          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+        ]
+      },
+      {
+        "Title": "Development Concept — Full 7-segment (SELECTED)",
+        "Selection": "Subsea tieback to FPSO, 12 km, 2 manifolds. APPROVED.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-FullScope:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "DevelopmentConcept"},
+          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+        ]
+      },
+      {
+        "Title": "Development Concept — Reduced scope (REJECTED)",
+        "Selection": "2-segment only (CentralHorst + CentralSouth). Not selected.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-ReducedScope:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "DevelopmentConcept"},
+          {"ParameterKey": "relationship", "StringParameterKey": "alternativeTo"}
+        ]
+      },
+      {
+        "Title": "Updated geomodel (RDDMS)",
+        "Selection": "Post-DG1 recommendations: structural uncertainty added, porosity revised",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg2:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "DG1 geomodel (superseded)",
+        "Selection": "Original model without structural uncertainty",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"},
+          {"ParameterKey": "relationship", "StringParameterKey": "supersedes"}
+        ]
+      },
+      {
+        "Title": "Porosity risk (ESCALATED)",
+        "Selection": "Severity Medium→High. Porosity revised 0.18→0.14 from core data.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "constrains"}
+        ]
+      },
+      {
+        "Title": "Fault compartment risk (MITIGATED)",
+        "Selection": "4D seismic confirms communication. Severity High→Low.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Risk:Drogon-FaultCompartment:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "mitigates"}
+        ]
+      },
+      {
+        "Title": "Water breakthrough risk (NEW)",
+        "Selection": "High water cut risk in SouthWing — weak aquifer support",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Risk:Drogon-WaterBreakthrough:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "constrains"}
+        ]
+      },
+      {
+        "Title": "Subsea tieback distance risk (NEW)",
+        "Selection": "12 km tieback at 380m water depth — installation weather window risk",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Risk:Drogon-SubseaTiebackDistance:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "constrains"}
+        ]
+      }
+    ],
+
+    "ProjectSpecifications": [
+      {"ParameterTypeID": "dev:reference-data--ParameterType:NPV_10pct:", "DataQuantityParameter": 2100, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MUSD:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:IRR:", "DataQuantityParameter": 28, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:CAPEX:", "DataQuantityParameter": 4200, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:OPEX_pa:", "DataQuantityParameter": 320, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:BreakevenOil:", "DataQuantityParameter": 38, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:USD/bbl:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:Payback:", "DataQuantityParameter": 4.5, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:a:"}
+    ],
+
+    "Remarks": [
+      {
+        "RemarkSource": "DG1-Recommendation",
+        "Remark": "Upgrade FMU to Level 3 (structural uncertainty). STATUS: Done — included in DG2 volumes."
+      },
+      {
+        "RemarkSource": "DG1-Recommendation",
+        "Remark": "Acquire core data in floodplain facies. STATUS: Done — porosity revised 0.18→0.14."
+      },
+      {
+        "RemarkSource": "DG1-Recommendation",
+        "Remark": "Reprocess 4D seismic for fault communication. STATUS: Done — fault risk mitigated."
+      },
+      {
+        "RemarkSource": "DG1-Recommendation",
+        "Remark": "Review OWC in SouthWing. STATUS: Partial — tilt confirmed, OWC adjusted -5m."
+      },
+      {
+        "RemarkSource": "DG1-Recommendation",
+        "Remark": "Run OPM production forecast. STATUS: Done — 20-year profile delivered."
+      },
+      {
+        "RemarkSource": "DG1-Recommendation",
+        "Remark": "Evaluate infill potential. STATUS: Deferred to DG3 (NorthHorst upside)."
+      },
+      {
+        "RemarkSource": "DG2-Review-Comment",
+        "Remark": "Porosity downgrade adequately reflected in revised volumes. No further action."
+      },
+      {
+        "RemarkSource": "DG2-Review-Comment",
+        "Remark": "WAG from year 5 adds complexity. Fallback: continuous water injection if underperforming."
+      },
+      {
+        "RemarkSource": "DG2-Condition",
+        "Remark": "Acquire CentralFlanks core (min 3 wells) before DG3 to reduce porosity uncertainty."
+      },
+      {
+        "RemarkSource": "DG2-Condition",
+        "Remark": "Confirm FPSO water injection capacity (35,000 bbl/d) with facilities before FEED."
+      },
+      {
+        "RemarkSource": "DG2-Dissent",
+        "Remark": "Reservoir engineering lead recommends 2-segment phased approach due to porosity risk in peripherals. Overruled by economics."
+      },
+      {
+        "RemarkSource": "DG3-Recommendation",
+        "Remark": "Include dynamic uncertainty (history match) in DG3 forecast."
+      },
+      {
+        "RemarkSource": "DG3-Recommendation",
+        "Remark": "Evaluate NorthHorst infill well potential — upside not in base case."
+      },
+      {
+        "RemarkSource": "Audit-Note",
+        "Remark": "Volumes revised 2026-02-12 (Activity:Drogon-DG2-VolumeUpdate). P50 STOIIP 312→287 MSm³."
+      },
+      {
+        "RemarkSource": "Audit-Note",
+        "Remark": "Risk Drogon-FaultCompartment mitigated 2026-04-15 (4D seismic). High→Low."
+      },
+      {
+        "RemarkSource": "Audit-Note",
+        "Remark": "Risks Drogon-WaterBreakthrough and Drogon-SubseaTiebackDistance added 2026-03-20."
+      }
+    ],
+
+    "ActivityStates": [
+      {"MilestoneID": "DG1", "EffectiveDateTime": "2026-02-28T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "DG1 Approved"},
+      {"MilestoneID": "DG2", "EffectiveDateTime": "2026-05-15T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "DG2 Approved — full 7-segment"},
+      {"MilestoneID": "DG3", "EffectiveDateTime": "2027-01-01T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:", "Remark": "DG3 FEED"},
+      {"MilestoneID": "DG4", "EffectiveDateTime": "2027-07-01T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:", "Remark": "FID"}
+    ]
+  }
+}

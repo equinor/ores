@@ -1,0 +1,132 @@
+{
+  "_comment": "CollaborationProject tracking DG1→DG2 lifecycle. Combines: LifecycleEvents (audit), ActivityStates (gate checklist), Parameters (linked artifacts). Full cross-gate example.",
+  "id": "dev:master-data--CollaborationProject:Drogon-DG2-Geomodelling:1",
+  "kind": "osdu:wks:master-data--CollaborationProject:1.0.0",
+  "acl": {
+    "owners": ["data.default.owners@dev.dataservices.energy"],
+    "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+  },
+  "legal": {
+    "legaltags": ["dev-equinor-private-default"],
+    "otherRelevantDataCountries": ["NO"]
+  },
+  "data": {
+    "ProjectName": "Drogon Geomodelling",
+    "Description": "Cross-gate namespace: DG1→FID. Tracks all collaboration events, gate deliverables, and artifact links.",
+    "Purpose": "Steward Drogon geomodel lifecycle. Demonstrate ontology patterns: audit trail, gate checklist, relationship semantics.",
+    "Namespace": "project-drogon-geomodelling",
+    "LifecycleStatusID": "dev:reference-data--CollaborationProjectLifecycleStatus:Open:",
+    "ProjectBeginDate": "2025-12-15T00:00:00Z",
+    "ParentProjectID": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
+    "TrustedCollectionID": "dev:work-product-component--CollaborationProjectCollection:Drogon-DG2-TrustedData:1",
+
+    "Parameters": [
+      {
+        "Title": "GeoModel Dataspace (current)",
+        "Selection": "DG2 updated model with structural uncertainty + revised porosity",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg2:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "GeoModel Dataspace (DG1 baseline)",
+        "Selection": "Original model — superseded by DG2 revision",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"},
+          {"ParameterKey": "relationship", "StringParameterKey": "supersedes"}
+        ]
+      },
+      {
+        "Title": "Current volumes (P10/P50/P90)",
+        "Selection": "Post-porosity-revision. P50 STOIIP = 287 MSm³",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "REV-stats"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "DG1 volumes (baseline)",
+        "Selection": "Original P50 STOIIP = 312 MSm³ — superseded",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "REV-stats"},
+          {"ParameterKey": "relationship", "StringParameterKey": "supersedes"}
+        ]
+      },
+      {
+        "Title": "Production forecast",
+        "Selection": "20-year OPM Flow (new at DG2)",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ColumnBasedTable-production"},
+          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+        ]
+      },
+      {
+        "Title": "Development Concept (selected)",
+        "Selection": "Full 7-segment subsea tieback to FPSO",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-FullScope:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "DevelopmentConcept"},
+          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+        ]
+      }
+    ],
+
+    "Personnel": [
+      {"PersonName": "Abraham G. Werner", "ProjectRoleID": "dev:reference-data--ProjectRole:FMULead:", "CompanyOrganisationID": "dev:master-data--Organisation:Equinor:"},
+      {"PersonName": "Friedrich Mohs", "ProjectRoleID": "dev:reference-data--ProjectRole:Petrophysicist:", "CompanyOrganisationID": "dev:master-data--Organisation:Equinor:"},
+      {"PersonName": "Vladimir Vernadsky", "ProjectRoleID": "dev:reference-data--ProjectRole:ReservoirEngineer:", "CompanyOrganisationID": "dev:master-data--Organisation:Equinor:"},
+      {"PersonName": "Inge Lehmann", "ProjectRoleID": "dev:reference-data--ProjectRole:GeoscienceLead:", "CompanyOrganisationID": "dev:master-data--Organisation:Equinor:"}
+    ],
+
+    "ActivityStates": [
+      {"MilestoneID": "DG2-Volumes", "EffectiveDateTime": "2026-02-12T16:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "P50 STOIIP = 287 MSm³ (revised from 312)"},
+      {"MilestoneID": "DG2-DevConcept", "EffectiveDateTime": "2026-04-20T10:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "7-segment subsea tieback to FPSO"},
+      {"MilestoneID": "DG2-ProductionForecast", "EffectiveDateTime": "2026-03-01T11:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "20yr OPM Flow, peak 45 kbbl/d year 3"},
+      {"MilestoneID": "DG2-Economics", "EffectiveDateTime": "2026-04-25T09:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "NPV 2.1B, IRR 28%, breakeven $38/bbl"},
+      {"MilestoneID": "DG2-RiskAssessment", "EffectiveDateTime": "2026-04-15T13:20:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "4 risks: 1 escalated, 1 mitigated, 2 new"},
+      {"MilestoneID": "DG2-GeoModel", "EffectiveDateTime": "2026-03-15T08:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "11 grid + 56 map WPCs in RDDMS"},
+      {"MilestoneID": "DG2-WellPlan", "EffectiveDateTime": "2026-04-10T14:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "7P + 3I, frac-pack, 850 MNOK"},
+      {"MilestoneID": "DG2-FacilityDesign", "EffectiveDateTime": "2026-04-18T10:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "Subsea 12km, 2 manifolds, dual flowlines"},
+      {"MilestoneID": "DG2-Approval", "EffectiveDateTime": "2026-05-15T15:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "Approved with conditions"}
+    ],
+
+    "LastActivityState": {
+      "EffectiveDateTime": "2026-05-15T15:00:00Z",
+      "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+      "Remark": "DG2 approved — 9/9 checklist items satisfied"
+    },
+
+    "LifecycleEvents": [
+      {"EventID": "CreationEvent", "Name": "Project created", "DateTime": "2025-12-15T09:00:00Z", "Remark": "Post-DG1 approval. Namespace for DG2 geomodelling.", "ResourceCollectionID": "dev:work-product-component--CollaborationProjectCollection:Drogon-DG2-TrustedData:1"},
+      {"EventID": "EvidenceAdded", "Name": "DG1 volumes ingested", "DateTime": "2026-01-20T14:30:00Z", "Remark": "REV raw + stats from FMU run #47. P50 STOIIP = 312 MSm³.", "ResourceCollectionID": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1"},
+      {"EventID": "EvidenceAdded", "Name": "GeoLabelSet published", "DateTime": "2026-01-22T10:15:00Z", "Remark": "Headline volumes per segment.", "ResourceCollectionID": "dev:work-product-component--GeoLabelSet:Drogon-DG1-GeoLabelSet:1"},
+      {"EventID": "EvidenceAdded", "Name": "Geomodel updated in RDDMS", "DateTime": "2026-02-01T09:00:00Z", "Remark": "Structural uncertainty added per DG1 recommendation. Dataspace: maap/drogon_dg2.", "ResourceCollectionID": "dev:dataset--ETPDataspace:maap-drogon_dg2:1"},
+      {"EventID": "RiskEscalation", "Name": "Porosity risk escalated", "DateTime": "2026-02-05T08:45:00Z", "Remark": "Core data: porosity 0.18→0.14 in floodplain. Medium→High.", "ResourceCollectionID": "dev:master-data--Risk:Drogon-PorosityAndCementation:1"},
+      {"EventID": "VolumeUpdate", "Name": "Volumes revised", "DateTime": "2026-02-12T16:00:00Z", "Remark": "P50 STOIIP 312→287 MSm³ (-8%). New FMU run #52.", "ResourceCollectionID": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1"},
+      {"EventID": "EvidenceAdded", "Name": "Production forecast", "DateTime": "2026-03-01T11:00:00Z", "Remark": "20yr OPM Flow. 7P/3I, WAG year 5. Peak 45 kbbl/d.", "ResourceCollectionID": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1"},
+      {"EventID": "EvidenceAdded", "Name": "New risks registered", "DateTime": "2026-03-20T14:00:00Z", "Remark": "Water breakthrough (SouthWing) + subsea tieback distance (12km, weather window)."},
+      {"EventID": "AlternativeAdded", "Name": "Reduced-scope alternative", "DateTime": "2026-03-10T09:30:00Z", "Remark": "Alt B: 2-segment (CentralHorst + CentralSouth). Lower CAPEX, faster payback."},
+      {"EventID": "RiskMitigation", "Name": "Fault risk mitigated", "DateTime": "2026-04-15T13:20:00Z", "Remark": "4D seismic confirms pressure communication. High→Low.", "ResourceCollectionID": "dev:master-data--Risk:Drogon-FaultCompartment:1"},
+      {"EventID": "StateTransition", "Name": "Evidence package frozen", "DateTime": "2026-05-01T08:00:00Z", "Remark": "99 artifacts locked for review.", "ResourceCollectionID": "dev:work-product-component--PersistedCollection:Drogon-DG2-EvidencePackage:1"},
+      {"EventID": "ApprovalGranted", "Name": "DG2 approved", "DateTime": "2026-05-15T15:00:00Z", "Remark": "Full 7-segment. Condition: CentralFlanks core before DG3. NPV 2.1B."}
+    ]
+  }
+}
