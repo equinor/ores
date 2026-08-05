@@ -790,3 +790,111 @@ async def _enrich_bd_developmentconcept(
     ext_eq["DevelopmentConcept"] = dcon
     log.info("[BD-DC] Injected DevelopmentConcept from WPC %s (%d fields)",
              target_id, len(dcon))
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# BD enrichment: CollaborationProject → lifecycle events + gate checklist
+# ──────────────────────────────────────────────────────────────────────────────
+
+async def _enrich_bd_collaboration(
+    data_block: Dict[str, Any],
+    client: httpx.AsyncClient,
+    search_url: str,
+    storage_url: str,
+    hdr: dict,
+) -> Dict[str, Any]:
+    """Find the CollaborationProject linked to this BD and extract:
+    - LifecycleEvents[] for activity feed/timeline
+    - ActivityStates[] (gate-prefixed milestones) for checklist progress
+    - Parameters[].Keys[] with relationship semantics for graph rendering
+
+    Search strategy: reverse-lookup CPs whose ParentProjectID = this BD's id,
+    or whose Parameters[].DataObjectParameter references this BD.
+    """
+    bd_id = data_block.get("_record_id") or ""
+    if not bd_id:
+        return {}
+
+    # Strategy 1: search for CP with ParentProjectID pointing to this BD
+    try:
+        payload = {
+            "kind": "*:*:master-data--CollaborationProject:*",
+            "query": f'"{bd_id}"',
+            "limit": 5,
+            "returnedFields": ["id"],
+        }
+        r = await client.post(f"{search_url}/query", json=payload, headers=hdr)
+        cp_ids = []
+        if r.status_code == 200:
+            for hit in (r.json().get("results") or []):
+                cp_ids.append(hit.get("id"))
+    except Exception:
+        cp_ids = []
+
+    if not cp_ids:
+        return {}
+
+    # Fetch first CP record
+    try:
+        r = await client.get(f"{storage_url}/{cp_ids[0]}", headers=hdr)
+        if r.status_code != 200:
+            return {}
+        cp_data = r.json().get("data") or {}
+    except Exception:
+        return {}
+
+    # Extract lifecycle events
+    events = cp_data.get("LifecycleEvents") or []
+
+    # Extract gate checklist from ActivityStates (items with hyphenated MilestoneID)
+    all_states = cp_data.get("ActivityStates") or []
+    checklist = []
+    schedule = []
+    for st in all_states:
+        if not isinstance(st, dict):
+            continue
+        mid = st.get("MilestoneID") or ""
+        if "-" in mid and not mid.startswith("DG"):
+            # e.g. "DG2-Volumes" — this is a checklist item
+            checklist.append(st)
+        elif "-" in mid:
+            # e.g. "DG2-Volumes" with "DG" prefix — also checklist
+            checklist.append(st)
+        else:
+            schedule.append(st)
+
+    # Count completed checklist items
+    completed = sum(
+        1 for s in checklist
+        if "completed" in (s.get("ActivityStatusID") or "").lower()
+    )
+
+    # Extract relationship graph from Parameters[]
+    cp_params = cp_data.get("Parameters") or []
+    relationships = []
+    for p in cp_params:
+        if not isinstance(p, dict):
+            continue
+        keys = p.get("Keys") or []
+        rel = None
+        for k in keys:
+            if isinstance(k, dict) and k.get("ParameterKey") == "relationship":
+                rel = k.get("StringParameterKey")
+                break
+        if rel:
+            relationships.append({
+                "title": p.get("Title") or "",
+                "target": p.get("DataObjectParameter") or "",
+                "relationship": rel,
+                "selection": p.get("Selection") or "",
+            })
+
+    return {
+        "cp_id": cp_ids[0],
+        "cp_name": cp_data.get("ProjectName") or "",
+        "events": events,
+        "checklist": checklist,
+        "checklist_completed": completed,
+        "checklist_total": len(checklist),
+        "relationships": relationships,
+    }

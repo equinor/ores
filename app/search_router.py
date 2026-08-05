@@ -577,6 +577,7 @@ async def _enrich_record(
         _enrich_bd_developmentconcept,
         _enrich_bd_activity,
         _enrich_bd_maps,
+        _enrich_bd_collaboration,
     )
 
     rid = full.get("id", "")
@@ -589,7 +590,9 @@ async def _enrich_record(
     bd_production: Dict[str, Any] = {}
     bd_activity: Dict[str, Any] = {}
     bd_maps: Dict[str, Any] = {"maps": [], "all": []}
+    bd_collab: Dict[str, Any] = {}
     if "businessdecision" in (full.get("kind") or "").lower():
+        data_block["_record_id"] = rid  # needed by _enrich_bd_collaboration
         vol_task = _enrich_bd_volumes(data_block, client, storage_url, hdr) \
             if not (volumes or {}).get("ColumnValues") else asyncio.sleep(0)
         gl_task = _enrich_bd_geolabel(data_block, client, storage_url, hdr)
@@ -597,8 +600,9 @@ async def _enrich_record(
         dc_task = _enrich_bd_developmentconcept(data_block, client, storage_url, hdr)
         act_task = _enrich_bd_activity(data_block, client, storage_url, hdr)
         map_task = _enrich_bd_maps(data_block, client, storage_url, hdr)
-        vol_r, gl_r, prod_r, _, act_r, map_r = await asyncio.gather(
-            vol_task, gl_task, prod_task, dc_task, act_task, map_task,
+        collab_task = _enrich_bd_collaboration(data_block, client, search_url, storage_url, hdr)
+        vol_r, gl_r, prod_r, _, act_r, map_r, collab_r = await asyncio.gather(
+            vol_task, gl_task, prod_task, dc_task, act_task, map_task, collab_task,
             return_exceptions=True,
         )
         if isinstance(vol_r, dict) and vol_r.get("ColumnValues"):
@@ -611,6 +615,8 @@ async def _enrich_record(
             bd_activity = act_r
         if isinstance(map_r, dict):
             bd_maps = map_r
+        if isinstance(collab_r, dict):
+            bd_collab = collab_r
 
     # Generic WPC/master-data links (exclude reference-data)
     links = extract_osdu_links(data_block) or []
@@ -709,6 +715,7 @@ async def _enrich_record(
         "bd_production": bd_production,
         "bd_activity": bd_activity,
         "bd_maps": bd_maps,
+        "bd_collab": bd_collab,
         "ddms_refs": ddms_refs,
     }
 

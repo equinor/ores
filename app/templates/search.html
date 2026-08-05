@@ -107,6 +107,42 @@
   pre.mermaid .edgeLabel { font-size: .75rem !important; }
   pre.mermaid .label { font-size: .82rem !important; }
 
+  /* ── Ontology panels: checklist, timeline, relationship graph ── */
+  .bd-checklist-bar { display: flex; align-items: center; gap: .6rem; margin-bottom: .5rem; }
+  .bd-cl-label { font-size: .85rem; font-weight: 600; color: #2d3748; white-space: nowrap; }
+  .bd-cl-track { flex: 1; height: 8px; background: #edf2f7; border-radius: 4px; overflow: hidden; }
+  .bd-cl-fill { height: 100%; background: linear-gradient(90deg, #48bb78, #38a169); border-radius: 4px; transition: width .3s; }
+  .bd-checklist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .3rem; margin-bottom: .5rem; }
+  .bd-cl-item { display: flex; align-items: center; gap: .35rem; font-size: .82rem; padding: .25rem .4rem; border-radius: 4px; }
+  .bd-cl-item.done { color: #276749; }
+  .bd-cl-item.pending { color: #975a16; }
+  .bd-cl-icon { font-size: .9rem; }
+  .bd-cl-name { font-weight: 500; }
+  .bd-cl-date { font-size: .75rem; color: #a0aec0; margin-left: auto; }
+  .bd-rel-graph { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: .75rem; margin-top: .3rem; overflow-x: auto; }
+  .bd-timeline { position: relative; padding-left: 1.5rem; margin-top: .4rem; }
+  .bd-timeline::before { content: ''; position: absolute; left: .55rem; top: 0; bottom: 0; width: 2px; background: #e2e8f0; }
+  .tl-entry { position: relative; margin-bottom: .6rem; }
+  .tl-dot { position: absolute; left: -1.15rem; top: .35rem; width: 10px; height: 10px; border-radius: 50%; background: #a0aec0; border: 2px solid #fff; }
+  .tl-dot.tl-creationevent { background: #48bb78; }
+  .tl-dot.tl-evidenceadded { background: #4299e1; }
+  .tl-dot.tl-riskescalation { background: #e53e3e; }
+  .tl-dot.tl-riskmitigation { background: #38a169; }
+  .tl-dot.tl-volumeupdate { background: #d69e2e; }
+  .tl-dot.tl-statetransition { background: #805ad5; }
+  .tl-dot.tl-approvalgranted { background: #276749; }
+  .tl-dot.tl-alternativeadded { background: #ed8936; }
+  .tl-content { padding-left: .2rem; }
+  .tl-header { display: flex; align-items: center; gap: .4rem; }
+  .tl-date { font-size: .75rem; color: #718096; }
+  .tl-badge { font-size: .7rem; background: #edf2f7; border-radius: 999px; padding: .08rem .4rem; color: #4a5568; }
+  .tl-badge.tl-riskescalation { background: #fff5f5; color: #c53030; }
+  .tl-badge.tl-riskmitigation { background: #f0fff4; color: #276749; }
+  .tl-badge.tl-approvalgranted { background: #f0fff4; color: #276749; }
+  .tl-badge.tl-volumeupdate { background: #fffff0; color: #975a16; }
+  .tl-name { font-weight: 500; font-size: .88rem; color: #2d3748; }
+  .tl-remark { font-size: .82rem; color: #718096; line-height: 1.4; }
+
   /* ── Production profile chart ── */
   .prod-chart-wrap { max-width: 56rem; height: 320px; position: relative; margin-bottom: .75rem; }
 
@@ -1556,6 +1592,9 @@
               </ul>
               {% endif %}
 
+              {# ── Ontology Panels: Gate Checklist, Relationships, Timeline ── #}
+              {% include "bd_ontology_panels.html" ignore missing %}
+
               {# ── Risks ── #}
               {% if (rec.data or {}).get('RiskIDs') %}
               <div class="bd-section-title">Risks</div>
@@ -1753,10 +1792,27 @@
               </details>
               {% endif %}
 
-              {# ── Recommendations ── #}
+              {# ── Recommendations / Remarks (grouped by source) ── #}
               {% set remarks = (rec.data or {}).get('Remarks') or [] %}
               {% set recos = ext_eq.get('Recommendations') or ext_eq.get('DG2Recommendations') or ext_eq.get('DG3Recommendations') or [] %}
               {% if remarks or recos %}
+              {% set has_sources = remarks and remarks[0] is mapping and remarks[0].get('RemarkSource') %}
+              {% if has_sources %}
+              <details class="bd-collapse" open>
+              <summary class="bd-section-title" style="cursor:pointer;">Remarks & Recommendations ({{ remarks | length }}) ▸</summary>
+              <div style="margin-top:.3rem;">
+                {% set sources_seen = [] %}
+                {% for rm in remarks if rm is mapping %}
+                  {% set src = rm.get('RemarkSource', 'General') %}
+                  {% if src not in sources_seen %}
+                    {% set _ = sources_seen.append(src) %}
+                    <div style="font-size:.78rem;font-weight:600;color:#4a5568;margin-top:.5rem;margin-bottom:.2rem;">{{ src }}</div>
+                  {% endif %}
+                  <div style="font-size:.84rem;color:#4a5568;padding:.2rem 0 .2rem .6rem;border-left:2px solid {% if 'Condition' in src %}#f6ad55{% elif 'Dissent' in src %}#fc8181{% elif 'Audit' in src %}#90cdf4{% elif 'Recommendation' in src %}#9ae6b4{% else %}#e2e8f0{% endif %};">{{ rm.get('Remark', '') }}</div>
+                {% endfor %}
+              </div>
+              </details>
+              {% else %}
               <div class="bd-section-title">Recommendations for Next Gate</div>
               <ol style="margin:0 0 0 1.2rem;padding:0;color:#4a5568;font-size:.88rem;line-height:1.5;">
                 {% if remarks %}
@@ -1769,6 +1825,7 @@
                 {% endfor %}
                 {% endif %}
               </ol>
+              {% endif %}
               {% endif %}
 
               {# ── FMU Activity (linked from PriorActivityIDs) ── #}
