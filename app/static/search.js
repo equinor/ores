@@ -149,9 +149,10 @@
 
       // ── Render Markdown from section (full-page view) ─────────────────
       window.openMarkdownFromSection = function(btn) {
-        var section = btn.closest('.section-card');
-        if (!section) return;
-        var dataEl = section.querySelector('.rec-json-data');
+        var block = btn.closest('.rec-block') || btn.closest('.section-card');
+        if (!block) block = btn.closest('.record-sections');
+        if (!block) return;
+        var dataEl = block.querySelector('.rec-json-data');
         if (!dataEl) return;
         try {
           var data = JSON.parse(dataEl.textContent);

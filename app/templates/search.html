@@ -1048,6 +1048,11 @@
               <div class="k">Version</div><div>{{ rec.version if rec.version is not none else '-' }}</div>
               <div class="k">ParentObjectID</div><div>{{ (rec.data or {}).get('ParentObjectID') or '-' }}</div>
             </div>
+            {% if ((rec.data or {}).get('ExtensionProperties') or {}).get('Markdown') %}
+            <div style="margin-top:.6rem;">
+              <button type="button" onclick="openMarkdownFromSection(this)" title="Render embedded Markdown documentation" style="padding:.35rem .8rem;border:1px solid #007079;border-radius:4px;background:#007079;color:#fff;cursor:pointer;font-size:.85rem;">📄 View Documentation</button>
+            </div>
+            {% endif %}
           </section>
 
           {# ══════════ ETPDataspace record card ══════════ #}
