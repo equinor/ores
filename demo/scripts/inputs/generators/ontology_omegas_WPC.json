@@ -14,6 +14,17 @@
     "decision_due_date": "2026-09-30",
     "decision_summary": "Approve Phase 1 wells. Critical dependency: pilot well for barium content + OWC confirmation.",
 
+    "uncertainty_summary": {
+      "Basis": "Simulation model 10th June 2026. 250 realisations (SRIR methodology). Structural + property uncertainty sampled.",
+      "MethodologyReference": "SRIR / FMU Level 2",
+      "TotalRealisations": 250,
+      "SelectedRealisations": {"P90": 25, "P50": 125, "P10": 225},
+      "StaticInPlace_Oil_MSm3": {"P90": 15.8, "P50": 19.3, "P10": 22.9},
+      "Recoverable_Oil_MSm3": {"P90": 3.3, "P50": 5.4, "P10": 8.0},
+      "RecoveryFactor_pct": {"P90": 16, "P50": 28, "P10": 43},
+      "Note": "RF range driven by permeability uncertainty + OWC position. Pilot well results expected to narrow."
+    },
+
     "risk_ids": [
       "dev:master-data--Risk:OmegaSor-BariumScale-00061:1",
       "dev:master-data--Risk:OmegaSor-Injectivity:1",
@@ -30,6 +41,17 @@
     ],
 
     "Parameters": [
+      {
+        "Title": "Segment volumes (GeoLabelSet)",
+        "Selection": "STOIIP per segment: Alfa P90/P50/P10 = 15.8/19.3/22.9 MSm³. Derived from simulation model 10th June.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:work-product-component--GeoLabelSet:OmegaSor-SSVP-Volumes:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "GeoLabelSet"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
       {
         "Title": "WPC Evidence Package",
         "Selection": "Frozen evidence for WPC review: reservoir, wells, volumes, risks, geomodel, drilling",
