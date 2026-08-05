@@ -448,27 +448,21 @@ async def analyse_compare(
                     if (data_block.get("Name") or "") in (".", ""):
                         return None
 
-                    # Post-filter: does this BD reference the reservoir?
-                    # 1. Direct: full reservoir ID anywhere in the record
-                    record_str = str(full)
-                    refs_direct = reservoir_id in record_str
+                    # Post-filter: does this BD explicitly reference
+                    # the reservoir?  Two OSDU-standard mechanisms:
+                    #   1. data.ReservoirIDs[]
+                    #   2. data.Parameters[].DataObjectParameter
+                    reservoir_ids_field = data_block.get("ReservoirIDs") or []
+                    refs_via_ids = reservoir_id in reservoir_ids_field
 
-                    # 2. Implicit: BD and reservoir share a project prefix
-                    #    (e.g. OmegaSor-WPC ↔ OmegaSorAlfa share "OmegaSor")
-                    refs_implicit = False
-                    if not refs_direct:
-                        _res_slug = reservoir_id.split(":")[-2] if reservoir_id.count(":") >= 3 else ""
-                        _bd_slug = bid.split(":")[-2] if bid.count(":") >= 3 else ""
-                        if _res_slug and _bd_slug:
-                            _common = 0
-                            for a, b in zip(_res_slug.lower(), _bd_slug.lower()):
-                                if a == b:
-                                    _common += 1
-                                else:
-                                    break
-                            refs_implicit = _common >= 5
+                    params = data_block.get("Parameters") or []
+                    refs_via_params = any(
+                        isinstance(p, dict)
+                        and reservoir_id in (p.get("DataObjectParameter") or "")
+                        for p in params
+                    )
 
-                    if not (refs_direct or refs_implicit):
+                    if not (refs_via_ids or refs_via_params):
                         log.info(
                             "[ANALYSE] BD %s (%s) not related to reservoir %s - skipping",
                             bid, data_block.get("Name", "?"), reservoir_id,
@@ -476,9 +470,9 @@ async def analyse_compare(
                         return None
 
                     log.info(
-                        "[ANALYSE] BD %s (%s) matched reservoir %s (direct=%s implicit=%s)",
+                        "[ANALYSE] BD %s (%s) matched reservoir %s (ReservoirIDs=%s Params=%s)",
                         bid, data_block.get("Name", "?"), reservoir_id,
-                        refs_direct, refs_implicit,
+                        refs_via_ids, refs_via_params,
                     )
 
                     gls = await _enrich_geolabel(
