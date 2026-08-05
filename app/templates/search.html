@@ -272,7 +272,7 @@
 <form method="post" action="/search/run" class="search-form" id="form-records" {% if search_mode and search_mode != 'records' %}style="display:none"{% endif %}>
 
   <label>Kind (primary)</label>
-  <div class="kind-row" style="grid-template-columns: 220px 1fr;">
+  <div class="kind-row">
     <select id="kindPreset" style="min-width: 0;">
       <option value="">Select kind…</option>
       {% set current_group = namespace(value='') %}
