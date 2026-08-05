@@ -1862,7 +1862,7 @@
                     {% set _ = sources_seen.append(src) %}
                     <div style="font-size:.78rem;font-weight:600;color:#4a5568;margin-top:.5rem;margin-bottom:.2rem;">{{ src }}</div>
                   {% endif %}
-                  <div style="font-size:.84rem;color:#4a5568;padding:.2rem 0 .2rem .6rem;border-left:2px solid {% if 'Condition' in src %}#f6ad55{% elif 'Dissent' in src %}#fc8181{% elif 'Audit' in src %}#90cdf4{% elif 'Recommendation' in src %}#9ae6b4{% else %}#e2e8f0{% endif %};">{{ rm.get('Remark', '') }}</div>
+                  <div style="font-size:.84rem;color:#4a5568;padding:.2rem 0 .2rem .6rem;border-left:2px solid {% if 'Condition' in src %}#f6ad55{% elif 'Dissent' in src %}#fc8181{% elif 'Audit' in src %}#90cdf4{% elif 'Recommendation' in src %}#9ae6b4{% elif 'Provenance' in src %}#b794f4{% else %}#e2e8f0{% endif %};">{{ rm.get('Remark', '') | linkify }}</div>
                 {% endfor %}
               </div>
               </details>

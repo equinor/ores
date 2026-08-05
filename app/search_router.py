@@ -44,7 +44,33 @@ templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "t
 
 templates.env.filters["pretty_val"] = _jinja_pretty_val
 
-# NOTE: auth_mode is set in templates.env.globals by main.py after instance
+
+def _jinja_linkify(text: str) -> str:
+    """Auto-link URLs and OSDU record IDs in text.
+
+    - https://... → clickable <a> link
+    - OSDU IDs (partition:namespace--Type:id:version) → /search/view/ link
+    """
+    import markupsafe
+    if not text:
+        return ""
+    t = markupsafe.escape(text)
+    # Linkify URLs (http/https)
+    t = re.sub(
+        r'(https?://[^\s&lt;&amp;]+)',
+        r'<a href="\1" target="_blank" rel="noopener" style="color:#2b6cb0;">\1</a>',
+        str(t),
+    )
+    # Linkify OSDU record IDs (e.g. dev:master-data--Well:abc123:1)
+    t = re.sub(
+        r'(?<!["\'/])(\w+:(?:master-data|work-product-component|dataset|reference-data)--[\w]+:[\w\-]+:\d+)',
+        r'<a href="/search/view/\1" style="color:#2b6cb0;">\1</a>',
+        t,
+    )
+    return markupsafe.Markup(t)
+
+
+templates.env.filters["linkify"] = _jinja_linkify
 # init.  We no longer duplicate it here to avoid capturing a stale value
 # (the import would snapshot AUTH_MODE before instances are loaded).
 
