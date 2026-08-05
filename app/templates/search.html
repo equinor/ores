@@ -2096,9 +2096,19 @@
           </div>{# /rev-card #}
           {% endif %}
 
-          <section class="section-card" style="border-top:3px solid #007079;margin-top:1.5rem;">
+          <hr style="border:none;border-top:2px solid #e2e8f0;margin:1.5rem 0 0;">
+          <section class="section-card" style="border-top:3px solid #007079;margin-top:1rem;">
             <h5 style="color:#007079;">Relationships</h5>
             {# ── Build grouped Mermaid graph with type-based coloring ── #}
+            {# Merge BD Parameters relationship titles into linked_labels for richer names #}
+            {% set bd_params = (rec.data or {}).get('Parameters') or [] %}
+            {% set param_titles = {} %}
+            {% for p in bd_params if p is mapping %}
+              {% set dp = p.get('DataObjectParameter', '') %}
+              {% if dp and p.get('Title') %}
+                {% set _ = param_titles.update({dp: p.get('Title')}) %}
+              {% endif %}
+            {% endfor %}
             {# Group links by entity type extracted from the OSDU ID #}
             {% set ns_grp = namespace(
                 fwd_groups={}, rev_groups={},
@@ -2151,6 +2161,7 @@
               'parent-work-product': 'parent',
               'parent-object': 'parent',
               'referenced-by': 'refs',
+              'informs': 'informs',
             } %}
             <pre class="mermaid">
 graph LR
@@ -2160,7 +2171,7 @@ click REC{{ rec_index }} href "/search/view/{{ rec.id }}" "Open record"
 {% set pinfo = (rec.linked_labels or {}).get(p, {}) %}
 {% set _ptype = p.split('--')[1].split(':')[0] if '--' in p else '' %}
 {% set _pid = p.split(':')[-2] if p.count(':') >= 3 else (p.split(':')[-1] if ':' in p else p) %}
-{% set pname = pinfo.name if pinfo.name else (_ptype ~ ': ' ~ _pid if _ptype else p) %}
+{% set pname = pinfo.name if pinfo.name else (param_titles.get(p) or (_ptype ~ ': ' ~ _pid if _ptype else p)) %}
 P{{ rec_index }}a{{ loop.index0 }}["{{ esc_label(pname) }}"]:::cls_ancestry
 P{{ rec_index }}a{{ loop.index0 }} -->|parent| REC{{ rec_index }}
 click P{{ rec_index }}a{{ loop.index0 }} href "/search/view/{{ p }}" "Open parent"
@@ -2169,44 +2180,60 @@ click P{{ rec_index }}a{{ loop.index0 }} href "/search/view/{{ p }}" "Open paren
 {% set cinfo = (rec.linked_labels or {}).get(ch, {}) %}
 {% set _ctype = ch.split('--')[1].split(':')[0] if '--' in ch else '' %}
 {% set _cid = ch.split(':')[-2] if ch.count(':') >= 3 else (ch.split(':')[-1] if ':' in ch else ch) %}
-{% set cname = cinfo.name if cinfo.name else (_ctype ~ ': ' ~ _cid if _ctype else ch) %}
+{% set cname = cinfo.name if cinfo.name else (param_titles.get(ch) or (_ctype ~ ': ' ~ _cid if _ctype else ch)) %}
 C{{ rec_index }}c{{ loop.index0 }}["{{ esc_label(cname) }}"]:::cls_ancestry
 REC{{ rec_index }} -->|child| C{{ rec_index }}c{{ loop.index0 }}
 click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open child"
 {% endfor %}
-{# ── Forward links: show ALL items, grouped by type with subgraph ── #}
+{# ── Forward links: group >3 items into a collapsed node, else show individually ── #}
 {% for etype in ns_grp.fwd_groups.keys()|sort %}
 {% set items = ns_grp.fwd_groups[etype] %}
 {% set cls = type_class_map.get(etype, 'cls_default') %}
-subgraph sg_{{ rec_index }}_{{ etype }}[" "]
-direction TB
+{% set edge_lbl = role_label_map.get(items[0].role|default(''), etype|lower) %}
+{% if items|length > 3 %}
+GRP{{ rec_index }}_{{ etype }}["{{ etype }} ({{ items|length }})"]:::{{ cls }}
+{% if edge_lbl %}
+REC{{ rec_index }} -->|{{ edge_lbl }}| GRP{{ rec_index }}_{{ etype }}
+{% else %}
+REC{{ rec_index }} --> GRP{{ rec_index }}_{{ etype }}
+{% endif %}
+click GRP{{ rec_index }}_{{ etype }} href "/search/run?kind=*--{{ etype }}:*&query={{ rec.id }}" "Show all {{ etype }}"
+{% else %}
 {% for l in items %}
 {% set info = (rec.linked_labels or {}).get(l.id, {}) %}
 {% set _fid = l.id.split(':')[-2] if l.id.count(':') >= 3 else (l.id.split(':')[-1] if ':' in l.id else l.id) %}
-{% set lname = info.name if info.name else (_fid) %}
+{% set lname = info.name if info.name else (param_titles.get(l.id) or _fid) %}
 F{{ rec_index }}_{{ etype }}_{{ loop.index0 }}["{{ esc_label(lname) }}"]:::{{ cls }}
 click F{{ rec_index }}_{{ etype }}_{{ loop.index0 }} href "/search/view/{{ l.id }}" "Open"
 {% endfor %}
-end
-{% set edge_lbl = role_label_map.get(items[0].role|default(''), etype|lower) %}
 {% if edge_lbl %}
-REC{{ rec_index }} -->|{{ edge_lbl }}| sg_{{ rec_index }}_{{ etype }}
+REC{{ rec_index }} -->|{{ edge_lbl }}| F{{ rec_index }}_{{ etype }}_0
 {% else %}
-REC{{ rec_index }} --> sg_{{ rec_index }}_{{ etype }}
+REC{{ rec_index }} --> F{{ rec_index }}_{{ etype }}_0
+{% endif %}
+{% for l in items[1:] %}
+REC{{ rec_index }} --> F{{ rec_index }}_{{ etype }}_{{ loop.index0 + 1 }}
+{% endfor %}
 {% endif %}
 {% endfor %}
-{# ── Reverse links ── #}
+{# ── Reverse links: group >3 items into a collapsed node ── #}
 {% for etype in ns_grp.rev_groups.keys()|sort %}
 {% set items = ns_grp.rev_groups[etype] %}
 {% set cls = type_class_map.get(etype, 'cls_default') %}
+{% if items|length > 3 %}
+RGRP{{ rec_index }}_{{ etype }}["{{ etype }} ({{ items|length }})"]:::{{ cls }}
+RGRP{{ rec_index }}_{{ etype }} -->|references| REC{{ rec_index }}
+click RGRP{{ rec_index }}_{{ etype }} href "/search/run?kind=*--{{ etype }}:*&query={{ rec.id }}" "Show all {{ etype }}"
+{% else %}
 {% for l in items %}
 {% set info = (rec.linked_labels or {}).get(l.id, {}) %}
 {% set _rid = l.id.split(':')[-2] if l.id.count(':') >= 3 else (l.id.split(':')[-1] if ':' in l.id else l.id) %}
-{% set lname = info.name if info.name else (etype ~ ': ' ~ _rid) %}
+{% set lname = info.name if info.name else (param_titles.get(l.id) or (etype ~ ': ' ~ _rid)) %}
 RV{{ rec_index }}_{{ etype }}_{{ loop.index0 }}["{{ esc_label(lname) }}"]:::{{ cls }}
 RV{{ rec_index }}_{{ etype }}_{{ loop.index0 }} -->|references| REC{{ rec_index }}
 click RV{{ rec_index }}_{{ etype }}_{{ loop.index0 }} href "/search/view/{{ l.id }}" "Open"
 {% endfor %}
+{% endif %}
 {% endfor %}
 classDef rec_self fill:#4299e1,stroke:#2b6cb0,color:#fff,font-weight:bold;
 classDef cls_risk fill:#fed7d7,stroke:#c53030,color:#222;
@@ -2221,10 +2248,6 @@ classDef cls_document fill:#fefcbf,stroke:#975a16,color:#222;
 classDef cls_geo fill:#c6f6d5,stroke:#22543d,color:#222;
 classDef cls_ancestry fill:#e2e8f0,stroke:#4a5568,color:#222;
 classDef cls_default fill:#edf2f7,stroke:#718096,color:#222;
-style sg_{{ rec_index }}_Risk fill:none,stroke:#c53030,stroke-dasharray:3 3
-style sg_{{ rec_index }}_Activity fill:none,stroke:#d69e2e,stroke-dasharray:3 3
-style sg_{{ rec_index }}_Wellbore fill:none,stroke:#2b6cb0,stroke-dasharray:3 3
-style sg_{{ rec_index }}_Well fill:none,stroke:#2b6cb0,stroke-dasharray:3 3
             </pre>
 
               {% if not (rec.links or []) %}<div class="muted" style="margin-top:.3rem;">No linked objects.</div>{% endif %}
