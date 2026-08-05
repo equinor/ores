@@ -1,0 +1,99 @@
+{
+  "_comment": "CollaborationProject with rich LifecycleEvents[] — demonstrates audit trail using existing M27 schema field",
+  "id": "dev:master-data--CollaborationProject:Drogon-DG2-Geomodelling:1",
+  "kind": "osdu:wks:master-data--CollaborationProject:1.0.0",
+  "acl": {
+    "owners": ["data.default.owners@dev.dataservices.energy"],
+    "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+  },
+  "legal": {
+    "legaltags": ["dev-equinor-private-default"],
+    "otherRelevantDataCountries": ["NO"]
+  },
+  "data": {
+    "ProjectName": "Drogon Geomodelling",
+    "Description": "Geomodelling namespace for Drogon - bridges collaboration (SoE) with trusted data (SoR).",
+    "Namespace": "project-drogon-geomodelling",
+    "LifecycleStatusID": "dev:reference-data--CollaborationProjectLifecycleStatus:Open:",
+    "ProjectBeginDate": "2025-12-15T00:00:00Z",
+    "ParentProjectID": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
+    "TrustedCollectionID": "dev:work-product-component--CollaborationProjectCollection:Drogon-DG2-TrustedData:1",
+
+    "LifecycleEvents": [
+      {
+        "EventID": "CreationEvent",
+        "Name": "Project created",
+        "DateTime": "2025-12-15T09:00:00Z",
+        "Remark": "Post-DG1 approval. Collaboration namespace established for DG2 geomodelling.",
+        "ResourceCollectionID": "dev:work-product-component--CollaborationProjectCollection:Drogon-DG2-TrustedData:1"
+      },
+      {
+        "EventID": "EvidenceAdded",
+        "Name": "FMU volumes ingested",
+        "DateTime": "2026-01-20T14:30:00Z",
+        "Remark": "REV raw + statistics (3 realisations, 7 segments) added to trusted collection. Source: fmu-ensemble-framework run #47.",
+        "ResourceCollectionID": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1"
+      },
+      {
+        "EventID": "EvidenceAdded",
+        "Name": "GeoLabelSet published",
+        "DateTime": "2026-01-22T10:15:00Z",
+        "Remark": "Headline volumes per segment promoted to GeoLabelSet. P50 STOIIP = 312 MSm³.",
+        "ResourceCollectionID": "dev:work-product-component--GeoLabelSet:Drogon-DG1-GeoLabelSet:1"
+      },
+      {
+        "EventID": "RiskEscalation",
+        "Name": "Porosity risk escalated",
+        "DateTime": "2026-02-05T08:45:00Z",
+        "Remark": "Floodplain facies porosity revised downward (0.18→0.14) after core data review. Risk severity: Medium→High. Affected segments: CentralFlanks, SouthWing.",
+        "ResourceCollectionID": "dev:master-data--Risk:Drogon-PorosityAndCementation:1"
+      },
+      {
+        "EventID": "VolumeUpdate",
+        "Name": "Volumes re-estimated post porosity revision",
+        "DateTime": "2026-02-12T16:00:00Z",
+        "Remark": "P50 STOIIP revised 312→287 MSm³ (-8%). CentralFlanks and SouthWing most affected. New FMU run #52 with updated porosity model.",
+        "ResourceCollectionID": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1"
+      },
+      {
+        "EventID": "EvidenceAdded",
+        "Name": "Production forecast added",
+        "DateTime": "2026-03-01T11:00:00Z",
+        "Remark": "20-year production profile (OPM Flow). 7 producers, 3 injectors, WAG from year 5.",
+        "ResourceCollectionID": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1"
+      },
+      {
+        "EventID": "AlternativeAdded",
+        "Name": "Reduced-scope alternative registered",
+        "DateTime": "2026-03-10T09:30:00Z",
+        "Remark": "Alternative B: 2-segment development (CentralHorst + CentralSouth only). Lower CAPEX, faster payback, leaves 40% upside for later phases."
+      },
+      {
+        "EventID": "RiskMitigation",
+        "Name": "Fault compartment risk reduced",
+        "DateTime": "2026-04-15T13:20:00Z",
+        "Remark": "4D seismic reprocessing confirms pressure communication across NE fault. Severity: High→Low.",
+        "ResourceCollectionID": "dev:master-data--Risk:Drogon-FaultCompartment:1"
+      },
+      {
+        "EventID": "StateTransition",
+        "Name": "DG2 evidence package frozen",
+        "DateTime": "2026-05-01T08:00:00Z",
+        "Remark": "Evidence collection locked for DG2 gate review. 99 artifacts in package. Gate meeting scheduled 2026-05-15.",
+        "ResourceCollectionID": "dev:work-product-component--PersistedCollection:Drogon-DG2-EvidencePackage:1"
+      },
+      {
+        "EventID": "ApprovalGranted",
+        "Name": "DG2 approved — proceed to FEED",
+        "DateTime": "2026-05-15T15:00:00Z",
+        "Remark": "Full 7-segment development approved. Condition: acquire additional core in CentralFlanks before DG3. NPV(10%) = 2.1 BUSD."
+      }
+    ],
+
+    "LastActivityState": {
+      "EffectiveDateTime": "2026-05-15T15:00:00Z",
+      "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
+      "Remark": "DG2 approved"
+    }
+  }
+}

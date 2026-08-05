@@ -43,7 +43,7 @@
 | `ActivityStates[]` | BD, CP | Gate progression (DG1→DG4) | **Any lifecycle checklist** — custom MilestoneID + ActivityStatusID per gate |
 | `LifecycleEvents[]` | CollaborationProject | Minimal (creation only) | **Full audit trail** — EventID for state transitions, revisions, approvals |
 | `Remarks[]` | BD | Recommendations text | **Typed annotations** — RemarkSource as category key |
-| `ext.equinor.Alternatives[]` | BD | DG scenario ranking | **Decision alternatives** — already structured (Name, Rank, Rationale, Action) |
+| `ext.equinor.Alternatives[]` | BD | DG scenario ranking | **Decision alternatives** — already structured (Name, Rank, Rationale, Action). ⚠️ Custom extension (`data.ext.equinor`), not OSDU standard — portable via `ext` mechanism but needs agreement for cross-operator use |
 | `Activity` records | Standalone | Workflow provenance | **Actions as first-class verbs** — each user action = Activity with template |
 | `Parameters[].Selection` | BD, Activity | Sparse | **Context/explanation** per linked object |
 

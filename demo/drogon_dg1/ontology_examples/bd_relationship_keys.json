@@ -1,0 +1,134 @@
+{
+  "_comment": "BusinessDecision with named relationship types via Parameters[].Keys[] — no new schema, just conventions",
+  "id": "dev:master-data--BusinessDecision:Drogon-DG2-ConceptSelect:1",
+  "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+  "acl": {
+    "owners": ["data.default.owners@dev.dataservices.energy"],
+    "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+  },
+  "legal": {
+    "legaltags": ["dev-equinor-private-default"],
+    "otherRelevantDataCountries": ["NO"]
+  },
+  "data": {
+    "Name": "Drogon DG2 - Concept Select",
+    "Description": "DG2 concept selection for Drogon field. Full 7-segment vs reduced-scope evaluation.",
+    "ProjectName": "Drogon Field Development",
+    "DecisionLevelID": "dev:reference-data--DecisionLevel:DG2:",
+    "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:",
+    "DecisionDueDate": "2026-05-15",
+    "DecisionDate": "2026-05-15",
+    "DecisionSummary": "Select development concept: full 7-segment vs 2-segment phased approach.",
+
+    "RiskIDs": [
+      "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+      "dev:master-data--Risk:Drogon-FaultCompartment:1",
+      "dev:master-data--Risk:Drogon-WaterBreakthrough:1",
+      "dev:master-data--Risk:Drogon-SubseaTiebackDistance:1"
+    ],
+
+    "PriorActivityIDs": [
+      "dev:work-product-component--Activity:Drogon-DG2-SimulationWorkflow:1",
+      "dev:work-product-component--Activity:Drogon-DG2-VolumeUpdate:1"
+    ],
+
+    "Parameters": [
+      {
+        "Title": "DG2 Evidence Package",
+        "Selection": "Full gate evidence collection (99 artifacts)",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:work-product-component--PersistedCollection:Drogon-DG2-EvidencePackage:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "PersistedCollection"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "DG1 decision (prior gate)",
+        "Selection": "DG1 Identify & Assess — approved 2026-02-28",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "supersedes"}
+        ]
+      },
+      {
+        "Title": "P50 volumes (post porosity revision)",
+        "Selection": "Revised P10/P50/P90 after porosity downgrade (Feb 2026)",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "REV-stats"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "Production forecast (20-year)",
+        "Selection": "OPM Flow simulation — 7 producers, 3 injectors, WAG from year 5",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ColumnBasedTable-production"},
+          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+        ]
+      },
+      {
+        "Title": "Development Concept (selected)",
+        "Selection": "Full 7-segment subsea tieback to FPSO",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-FullScope:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "DevelopmentConcept"},
+          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+        ]
+      },
+      {
+        "Title": "DG2 geomodel (RDDMS dataspace)",
+        "Selection": "Updated structural + property model post DG1 recommendations",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg2:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "Porosity risk assessment",
+        "Selection": "Floodplain facies porosity — severity escalated to High",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "constrains"}
+        ]
+      },
+      {
+        "Title": "Fault compartment risk (mitigated)",
+        "Selection": "4D seismic confirms communication — severity reduced to Low",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Risk:Drogon-FaultCompartment:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "mitigates"}
+        ]
+      },
+      {
+        "Title": "Alternative B — reduced scope (rejected)",
+        "Selection": "2-segment only (CentralHorst + CentralSouth). Not selected: lower upside.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-ReducedScope:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "DevelopmentConcept"},
+          {"ParameterKey": "relationship", "StringParameterKey": "alternativeTo"}
+        ]
+      }
+    ]
+  }
+}

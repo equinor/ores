@@ -1,0 +1,135 @@
+{
+  "_comment": "Activity record representing a collaboration action (volume update). Uses ActivityTemplate to define the verb. Standard M27 schema — each user action = one Activity record.",
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [],
+  "Data": {
+    "WorkProductComponents": [
+      {
+        "_comment": "ActivityTemplate defines the ACTION TYPE (verb)",
+        "id": "dev:work-product-component--ActivityTemplate:CollaborationAction-VolumeUpdate:1",
+        "kind": "osdu:wks:work-product-component--ActivityTemplate:1.0.0",
+        "acl": {
+          "owners": ["data.default.owners@dev.dataservices.energy"],
+          "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+        },
+        "legal": {
+          "legaltags": ["dev-equinor-private-default"],
+          "otherRelevantDataCountries": ["NO"]
+        },
+        "data": {
+          "Name": "Volume Update Action",
+          "Description": "Collaboration action: update volume estimates linked to a decision gate. Creates audit trail and updates CollaborationProject LifecycleEvents.",
+          "ActivityTemplateParameters": [
+            {
+              "Title": "Target BusinessDecision",
+              "Description": "The BD record whose volumes are being updated",
+              "AllowedParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+              "IsRequired": true,
+              "MaximumOccurrences": 1
+            },
+            {
+              "Title": "Previous Volume Record",
+              "Description": "The REV record being superseded",
+              "AllowedParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+              "IsRequired": true,
+              "MaximumOccurrences": 1
+            },
+            {
+              "Title": "New Volume Record",
+              "Description": "The updated REV record",
+              "AllowedParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+              "IsRequired": true,
+              "MaximumOccurrences": 1
+            },
+            {
+              "Title": "Reason",
+              "Description": "Why volumes changed",
+              "AllowedParameterKindID": "dev:reference-data--ParameterKind:String:",
+              "IsRequired": true,
+              "MaximumOccurrences": 1
+            },
+            {
+              "Title": "Actor",
+              "Description": "Who performed the action",
+              "AllowedParameterKindID": "dev:reference-data--ParameterKind:String:",
+              "IsRequired": true,
+              "MaximumOccurrences": 1
+            }
+          ]
+        }
+      },
+      {
+        "_comment": "Activity record = one EXECUTION of the action (the audit entry)",
+        "id": "dev:work-product-component--Activity:Drogon-DG2-VolumeUpdate:1",
+        "kind": "osdu:wks:work-product-component--Activity:1.0.0",
+        "acl": {
+          "owners": ["data.default.owners@dev.dataservices.energy"],
+          "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+        },
+        "legal": {
+          "legaltags": ["dev-equinor-private-default"],
+          "otherRelevantDataCountries": ["NO"]
+        },
+        "data": {
+          "Name": "Volume update — porosity revision (Feb 2026)",
+          "Description": "P50 STOIIP revised 312→287 MSm³ (-8%) following core-based porosity downgrade in CentralFlanks and SouthWing.",
+          "ActivityTemplateID": "dev:work-product-component--ActivityTemplate:CollaborationAction-VolumeUpdate:1",
+          "WorkflowStatus": "Completed",
+          "StartDateTime": "2026-02-12T14:00:00Z",
+          "EndDateTime": "2026-02-12T16:00:00Z",
+
+          "Parameters": [
+            {
+              "Title": "Target BusinessDecision",
+              "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+              "DataObjectParameter": "dev:master-data--BusinessDecision:Drogon-DG2-ConceptSelect:1",
+              "Keys": [
+                {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+              ]
+            },
+            {
+              "Title": "Previous Volume Record (superseded)",
+              "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+              "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1",
+              "Keys": [
+                {"ParameterKey": "artifact", "StringParameterKey": "REV-stats"},
+                {"ParameterKey": "relationship", "StringParameterKey": "supersedes"}
+              ]
+            },
+            {
+              "Title": "New Volume Record",
+              "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+              "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1",
+              "Keys": [
+                {"ParameterKey": "artifact", "StringParameterKey": "REV-stats"},
+                {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+              ]
+            },
+            {
+              "Title": "Reason",
+              "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+              "StringParameter": "Floodplain facies porosity revised 0.18→0.14 based on core data (wells 15/9-F-11, 15/9-F-14). Affects CentralFlanks and SouthWing segments."
+            },
+            {
+              "Title": "Actor",
+              "ParameterKindID": "dev:reference-data--ParameterKind:String:",
+              "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+              "StringParameter": "Friedrich Mohs (Petrophysicist)"
+            }
+          ],
+
+          "ancestry": {
+            "parents": [
+              "dev:work-product-component--Activity:Drogon-DG1-VolumetricsWorkflow:1"
+            ]
+          }
+        }
+      }
+    ]
+  }
+}
