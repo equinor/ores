@@ -2221,10 +2221,13 @@ click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open chil
 {% set items = ns_grp.fwd_groups[etype] %}
 {% set cls = type_class_map.get(etype, 'cls_default') %}
 {% set grp_lbl = role_label_map.get(items[0].role|default(''), etype|lower) or param_rels.get(items[0].id, '') or etype|lower %}
+{% set _ns = items[0].id.split(':')[1].split('--')[0] if items[0].id.count(':') >= 3 and '--' in items[0].id else 'master-data' %}
+{% set _kind = 'osdu:wks:' ~ _ns ~ '--' ~ etype ~ ':*' %}
+{% set _slug = rec.id.split(':')[-2] if rec.id.count(':') >= 3 else '' %}
 {% if items|length > 3 %}
 GRP{{ rec_index }}_{{ etype }}["{{ etype }} ({{ items|length }})"]:::{{ cls }}
 REC{{ rec_index }} -->|{{ grp_lbl }}| GRP{{ rec_index }}_{{ etype }}
-click GRP{{ rec_index }}_{{ etype }} href "/search/run?kind=*--{{ etype }}:*&query={{ rec.id }}" "Show all {{ etype }}"
+click GRP{{ rec_index }}_{{ etype }} href "/search/run?kind={{ _kind }}&query={{ _slug }}" "Show all {{ etype }}"
 {% else %}
 {% for l in items %}
 {% set info = (rec.linked_labels or {}).get(l.id, {}) %}
@@ -2241,10 +2244,13 @@ click F{{ rec_index }}_{{ etype }}_{{ loop.index0 }} href "/search/view/{{ l.id 
 {% for etype in ns_grp.rev_groups.keys()|sort %}
 {% set items = ns_grp.rev_groups[etype] %}
 {% set cls = type_class_map.get(etype, 'cls_default') %}
+{% set _rns = items[0].id.split(':')[1].split('--')[0] if items[0].id.count(':') >= 3 and '--' in items[0].id else 'master-data' %}
+{% set _rkind = 'osdu:wks:' ~ _rns ~ '--' ~ etype ~ ':*' %}
+{% set _rslug = rec.id.split(':')[-2] if rec.id.count(':') >= 3 else '' %}
 {% if items|length > 3 %}
 RGRP{{ rec_index }}_{{ etype }}["{{ etype }} ({{ items|length }})"]:::{{ cls }}
 RGRP{{ rec_index }}_{{ etype }} -->|references| REC{{ rec_index }}
-click RGRP{{ rec_index }}_{{ etype }} href "/search/run?kind=*--{{ etype }}:*&query={{ rec.id }}" "Show all {{ etype }}"
+click RGRP{{ rec_index }}_{{ etype }} href "/search/run?kind={{ _rkind }}&query={{ _rslug }}" "Show all {{ etype }}"
 {% else %}
 {% for l in items %}
 {% set info = (rec.linked_labels or {}).get(l.id, {}) %}
