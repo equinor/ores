@@ -147,6 +147,25 @@
         activeModal = overlay;
       };
 
+      // ── Render Markdown from section (full-page view) ─────────────────
+      window.openMarkdownFromSection = function(btn) {
+        var section = btn.closest('.section-card');
+        if (!section) return;
+        var dataEl = section.querySelector('.rec-json-data');
+        if (!dataEl) return;
+        try {
+          var data = JSON.parse(dataEl.textContent);
+          var md = (data.ExtensionProperties || {}).Markdown;
+          if (!md) { alert('No Markdown content found.'); return; }
+          if (!window._mdDocs) window._mdDocs = [];
+          var idx = window._mdDocs.length;
+          window._mdDocs.push(md);
+          window.openMarkdownModal(idx);
+        } catch (e) {
+          alert('Failed to parse record data.');
+        }
+      };
+
       // ── Markdown documentation modal ──────────────────────────────────
       window.openMarkdownModal = function(idx) {
         var md = (window._mdDocs || [])[idx];

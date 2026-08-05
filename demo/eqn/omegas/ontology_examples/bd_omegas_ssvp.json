@@ -19,6 +19,10 @@
     "DecisionDueDate": "2026-09-30",
     "DecisionSummary": "Approve Phase 1 wells. Critical dependency: pilot well for barium content + OWC confirmation.",
 
+    "ReservoirIDs": [
+      "dev:master-data--Reservoir:OmegaSorAlfa:1"
+    ],
+
     "RiskIDs": [
       "dev:master-data--Risk:OmegaSor-BariumScale-00061:1",
       "dev:master-data--Risk:OmegaSor-Injectivity:1",

@@ -2254,6 +2254,9 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
                 <input type="text" class="meta-filter" placeholder="Filter metadata names…" style="flex:1;max-width:20rem;">
                 <button type="button" class="meta-copy" title="Copy table as CSV">Copy (CSV)</button>
                 <button type="button" class="btn-json-modal" onclick="openJsonModal(this)" title="View full record as JSON" style="font-size:.82rem;padding:.2rem .6rem;border:1px solid #004578;border-radius:4px;background:#fff;color:#004578;cursor:pointer;">{ } Full Record</button>
+                {% if ((rec.data or {}).get('ExtensionProperties') or {}).get('Markdown') %}
+                <button type="button" class="btn-md-render" onclick="openMarkdownFromSection(this)" title="Render embedded Markdown documentation" style="font-size:.82rem;padding:.2rem .6rem;border:1px solid #007079;border-radius:4px;background:#fff;color:#007079;cursor:pointer;">📄 Render Markdown</button>
+                {% endif %}
               </div>
               <table class="meta-table" style="width:100%;border-collapse:collapse">
                 <thead>
