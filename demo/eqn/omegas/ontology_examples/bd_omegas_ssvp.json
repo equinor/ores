@@ -1,0 +1,193 @@
+{
+  "_comment": "Omega Sør BusinessDecision (WPC/SSVP) with relationship Keys[] and typed Remarks[]. Real data from 20260615_OmegaSør_SSVP.pptx.",
+  "id": "dev:master-data--BusinessDecision:OmegaSor-WPC:1",
+  "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+  "acl": {
+    "owners": ["data.default.owners@dev.dataservices.energy"],
+    "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
+  },
+  "legal": {
+    "legaltags": ["dev-equinor-private-default"],
+    "otherRelevantDataCountries": ["NO"]
+  },
+  "data": {
+    "Name": "Omega Sør – WPC Well Planning Committee Decision",
+    "Description": "WPC decision for Omega Sør Alfa. Approve drilling 1 producer (CAP-X ST from 34/4-19 S) + 1 injector (4-slot template). Subsea tieback to Snorre N. First oil Jan 2029.",
+    "ProjectName": "Omega Sør Alfa Field Development",
+    "DecisionLevelID": "dev:reference-data--DecisionLevel:WPC:",
+    "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Pending:",
+    "DecisionDueDate": "2026-09-30",
+    "DecisionSummary": "Approve Phase 1 wells. Critical dependency: pilot well for barium content + OWC confirmation.",
+
+    "RiskIDs": [
+      "dev:master-data--Risk:OmegaSor-BariumScale-00061:1",
+      "dev:master-data--Risk:OmegaSor-Injectivity:1",
+      "dev:master-data--Risk:OmegaSor-VolumeUncertainty:1",
+      "dev:master-data--Risk:OmegaSor-DrillingCompletion:1",
+      "dev:master-data--Risk:OmegaSor-ScheduleCost:1",
+      "dev:master-data--Risk:OmegaSor-ShallowGas:1",
+      "dev:master-data--Risk:OmegaSor-BOPReliability:1",
+      "dev:master-data--Risk:OmegaSor-H2S:1"
+    ],
+
+    "PriorActivityIDs": [
+      "dev:work-product-component--Activity:OmegaSor-WellCostEstimate:1"
+    ],
+
+    "Parameters": [
+      {
+        "Title": "WPC Evidence Package",
+        "Selection": "Frozen evidence for WPC review: reservoir, wells, volumes, risks, geomodel, drilling",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:work-product-component--PersistedCollection:OmegaSor-WPC-Evidence:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "PersistedCollection"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "Statistical volumes (P90/Mean/P10)",
+        "Selection": "Simulation model 10th June. STOIIP 15.8/19.3/22.9 MSm³, Recoverable 3.3/5.4/8.0 MSm³, RF 16/28.5/43%.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:OmegaSor-SSVP-Statistics:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "REV-stats"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "Production profile (15-year)",
+        "Selection": "SSVP profiles received 10th June. Phase 1 start Jan 2029, Phase 2 Jan 2030. Scaling effects not included.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:OmegaSor-SSVP-ProductionForecast:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ProductionForecast"},
+          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+        ]
+      },
+      {
+        "Title": "Development Concept (4-slot template layout)",
+        "Selection": "CAP-X + 4-slot template. 8\" prod, 6\" WI flowline. WAG-ready, no gas line Phase 1.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:OmegaSor-SSVP-Concept:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "DevelopmentConcept"},
+          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+        ]
+      },
+      {
+        "Title": "Geomodel dataspace (RDDMS)",
+        "Selection": "RMS model: Top Tarbert, velocity model, fracture zones, framework. Exported from /project/snorre/reservoirmodels/omegasor/2026.2.0/rms.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-omegas:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "Exploration well 34/4-19 S",
+        "Selection": "Discovery well. Confirmed Brent Gp pay. Unable to take water sample (barium unknown).",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Wellbore:34-4-19S:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
+      },
+      {
+        "Title": "Barium scale risk (#00061)",
+        "Selection": "Critical. Ba content unknown. Decision tree: <50 proceed, 50–100 evaluate, >100 concept change.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Risk:OmegaSor-BariumScale-00061:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "constrains"}
+        ]
+      },
+      {
+        "Title": "Injectivity risk",
+        "Selection": "Low permeability in Tarbert. Impact on development strategy (HIPS).",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Risk:OmegaSor-Injectivity:1",
+        "Keys": [
+          {"ParameterKey": "relationship", "StringParameterKey": "constrains"}
+        ]
+      },
+      {
+        "Title": "Planned producer well",
+        "Selection": "Keeper from CAP-X. Deep sidetrack from 34/4-19 S. Perforated Tarbert + Rannoch.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--WellPlan:OmegaSor-Producer1:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "Producer"},
+          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+        ]
+      },
+      {
+        "Title": "Planned injector well",
+        "Selection": "From 4-slot template. Perforated Tarbert only (base case). WI placement 5–20 m above OWC.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--WellPlan:OmegaSor-Injector1:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "Injector"},
+          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+        ]
+      },
+      {
+        "Title": "Pilot well scope",
+        "Selection": "From template to deeper structure. Objectives: OWC, Ba content, Tarbert presence, deformation bands.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
+        "DataObjectParameter": "dev:work-product-component--WellPlan:OmegaSor-Pilot:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "Pilot"},
+          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+        ]
+      }
+    ],
+
+    "ProjectSpecifications": [
+      {"ParameterTypeID": "dev:reference-data--ParameterType:NPV_at_MUSD:", "DataQuantityParameter": 116, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MUSD:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:IRR:", "DataQuantityParameter": 62, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:CAPEX:", "DataQuantityParameter": 213, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MUSD:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:BreakevenOil:", "DataQuantityParameter": 25, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:USD/bbl:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:Production:", "DataQuantityParameter": 16.5, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Mboe:"}
+    ],
+
+    "Remarks": [
+      {"RemarkSource": "SSVP-Recommendation", "Remark": "Approve Phase 1 wells (1 producer + 1 injector) for Omega Sør Alfa."},
+      {"RemarkSource": "SSVP-Recommendation", "Remark": "Critical: pilot well required to determine Ba content and confirm OWC."},
+      {"RemarkSource": "SSVP-Recommendation", "Remark": "Base case: inject in Tarbert only; Rannoch injection is upside to mature at DG3."},
+      {"RemarkSource": "SSVP-Recommendation", "Remark": "Drainage strategy depends on barium level – decision tree in place."},
+      {"RemarkSource": "SSVP-Recommendation", "Remark": "Template prepared for WAG – evaluate gas injection in next phase."},
+      {"RemarkSource": "SSVP-Condition", "Remark": "Pilot well must acquire formation water sample for Ba analysis before WPC."},
+      {"RemarkSource": "SSVP-Condition", "Remark": "Core required from pilot to assess deformation bands near ISF."},
+      {"RemarkSource": "SSVP-SubsurfaceRisk", "Remark": "Remaining uncertainty on RF, permeability and structural understanding at VPBO maturity level."},
+      {"RemarkSource": "SSVP-SubsurfaceRisk", "Remark": "Gas cap probability negligible (PVT samples confirm). HIPS not required."},
+      {"RemarkSource": "SSVP-SubsurfaceRisk", "Remark": "Low reservoir permeability in Tarbert – injectivity risk. Mini DST planned."},
+      {"RemarkSource": "DG0-Recommendation", "Remark": "Customize subsurface deliveries per adapted CVP for subsea tieback (WR3274)."},
+      {"RemarkSource": "DG0-Recommendation", "Remark": "Include production deferral effect from scaling in next economic update."},
+      {"RemarkSource": "Audit-Note", "Remark": "SSVP presentation 2026-06-15. Concept screening validated post-exploration."},
+      {"RemarkSource": "Audit-Note", "Remark": "Layout changed from injection CAP-X to 4-slot template at VPbO (2026-03-15). Provides +1 producer slot."}
+    ],
+
+    "ActivityStates": [
+      {"MilestoneID": "SSVP", "EffectiveDateTime": "2026-06-15T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "SSVP completed"},
+      {"MilestoneID": "DG0", "EffectiveDateTime": "2026-09-30T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:", "Remark": "WPC / DG0 (pending pilot)"},
+      {"MilestoneID": "DG3", "EffectiveDateTime": "2027-03-01T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:", "Remark": "DG3 FEED"},
+      {"MilestoneID": "DG4", "EffectiveDateTime": "2027-09-01T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:", "Remark": "DG4 / FID"},
+      {"MilestoneID": "INSTALL", "EffectiveDateTime": "2028-06-01T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:", "Remark": "Installation"},
+      {"MilestoneID": "FIRST_OIL", "EffectiveDateTime": "2029-01-01T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:", "Remark": "First oil"},
+      {"MilestoneID": "PLATEAU", "EffectiveDateTime": "2030-01-01T00:00:00Z", "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:", "Remark": "Phase 2 production start"}
+    ]
+  }
+}
