@@ -2103,10 +2103,17 @@
             {# Merge BD Parameters relationship titles into linked_labels for richer names #}
             {% set bd_params = (rec.data or {}).get('Parameters') or [] %}
             {% set param_titles = {} %}
+            {% set param_rels = {} %}
             {% for p in bd_params if p is mapping %}
               {% set dp = p.get('DataObjectParameter', '') %}
               {% if dp and p.get('Title') %}
                 {% set _ = param_titles.update({dp: p.get('Title')}) %}
+              {% endif %}
+              {% if dp %}
+                {% set pkeys = p.get('Keys') or [] %}
+                {% for k in pkeys if k is mapping and k.get('ParameterKey') == 'relationship' %}
+                  {% set _ = param_rels.update({dp: k.get('StringParameterKey', '')}) %}
+                {% endfor %}
               {% endif %}
             {% endfor %}
             {# Group links by entity type extracted from the OSDU ID #}
@@ -2189,30 +2196,20 @@ click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open chil
 {% for etype in ns_grp.fwd_groups.keys()|sort %}
 {% set items = ns_grp.fwd_groups[etype] %}
 {% set cls = type_class_map.get(etype, 'cls_default') %}
-{% set edge_lbl = role_label_map.get(items[0].role|default(''), etype|lower) %}
+{% set grp_lbl = role_label_map.get(items[0].role|default(''), etype|lower) or param_rels.get(items[0].id, '') or etype|lower %}
 {% if items|length > 3 %}
 GRP{{ rec_index }}_{{ etype }}["{{ etype }} ({{ items|length }})"]:::{{ cls }}
-{% if edge_lbl %}
-REC{{ rec_index }} -->|{{ edge_lbl }}| GRP{{ rec_index }}_{{ etype }}
-{% else %}
-REC{{ rec_index }} --> GRP{{ rec_index }}_{{ etype }}
-{% endif %}
+REC{{ rec_index }} -->|{{ grp_lbl }}| GRP{{ rec_index }}_{{ etype }}
 click GRP{{ rec_index }}_{{ etype }} href "/search/run?kind=*--{{ etype }}:*&query={{ rec.id }}" "Show all {{ etype }}"
 {% else %}
 {% for l in items %}
 {% set info = (rec.linked_labels or {}).get(l.id, {}) %}
 {% set _fid = l.id.split(':')[-2] if l.id.count(':') >= 3 else (l.id.split(':')[-1] if ':' in l.id else l.id) %}
 {% set lname = info.name if info.name else (param_titles.get(l.id) or _fid) %}
+{% set edge_lbl = role_label_map.get(l.role|default(''), '') or param_rels.get(l.id, '') or etype|lower %}
 F{{ rec_index }}_{{ etype }}_{{ loop.index0 }}["{{ esc_label(lname) }}"]:::{{ cls }}
+REC{{ rec_index }} -->|{{ edge_lbl }}| F{{ rec_index }}_{{ etype }}_{{ loop.index0 }}
 click F{{ rec_index }}_{{ etype }}_{{ loop.index0 }} href "/search/view/{{ l.id }}" "Open"
-{% endfor %}
-{% if edge_lbl %}
-REC{{ rec_index }} -->|{{ edge_lbl }}| F{{ rec_index }}_{{ etype }}_0
-{% else %}
-REC{{ rec_index }} --> F{{ rec_index }}_{{ etype }}_0
-{% endif %}
-{% for l in items[1:] %}
-REC{{ rec_index }} --> F{{ rec_index }}_{{ etype }}_{{ loop.index0 + 1 }}
 {% endfor %}
 {% endif %}
 {% endfor %}
