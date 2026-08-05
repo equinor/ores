@@ -30,7 +30,7 @@ DG1_RECORDS = [
     "dg1_business_decision.json",
 ]
 
-# ── DG1 + DG2 records (eqndev only) ──
+# ── DG1 + DG2 records (eqndev + interop) ──
 DG12_RECORDS = [
     "dg1_business_decision.json",
     "dg2_business_decision.json",
@@ -257,21 +257,21 @@ def main():
     ap.add_argument("--verify-only", action="store_true")
     args = ap.parse_args()
 
-    # ═══ INTEROP: Drogon DG1 only ═══
+    # ═══ INTEROP: Drogon DG1+DG2 ═══
     if args.target in ("interop", "both"):
         print("\n══════════════════════════════════════════════")
-        print("  TARGET: interop (Drogon DG1 only)")
+        print("  TARGET: interop (Drogon DG1+DG2)")
         print("══════════════════════════════════════════════")
         inst = load_instance("interop")
         token = get_token("interop")
         records = []
-        for fname in DG1_RECORDS:
+        for fname in DG12_RECORDS:
             rec = load_record(DROGON_DIR / fname, inst["partition"])
             records.append(rec)
         print(f"  Loaded {len(records)} records")
 
         if not args.dry_run and not args.verify_only:
-            ingest_records(records, inst["host"], inst["partition"], token, "interop-dg1")
+            ingest_records(records, inst["host"], inst["partition"], token, "interop-dg12")
 
         print("\n  Verifying relationships …")
         flat = [r for rec in records for r in (rec if isinstance(rec, list) else [rec])]
