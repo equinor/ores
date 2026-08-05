@@ -83,7 +83,7 @@
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
         "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1",
         "Keys": [
-          {"ParameterKey": "artifact", "StringParameterKey": "ColumnBasedTable-production"},
+          {"ParameterKey": "artifact", "StringParameterKey": "ProductionForecast"},
           {"ParameterKey": "relationship", "StringParameterKey": "informs"}
         ]
       },
@@ -170,17 +170,51 @@
         "Keys": [
           {"ParameterKey": "relationship", "StringParameterKey": "constrains"}
         ]
+      },
+      {
+        "Title": "Reservoir scope",
+        "Selection": "Valysar formation, Drogon field",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Reservoir:Drogon-Valysar:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "Reservoir"}
+        ]
       }
     ],
 
     "ProjectSpecifications": [
-      {"ParameterTypeID": "dev:reference-data--ParameterType:NPV_10pct:", "DataQuantityParameter": 2100, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MUSD:"},
-      {"ParameterTypeID": "dev:reference-data--ParameterType:IRR:", "DataQuantityParameter": 28, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%:"},
-      {"ParameterTypeID": "dev:reference-data--ParameterType:CAPEX:", "DataQuantityParameter": 4200, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:"},
-      {"ParameterTypeID": "dev:reference-data--ParameterType:OPEX_pa:", "DataQuantityParameter": 320, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:"},
-      {"ParameterTypeID": "dev:reference-data--ParameterType:BreakevenOil:", "DataQuantityParameter": 38, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:USD/bbl:"},
-      {"ParameterTypeID": "dev:reference-data--ParameterType:Payback:", "DataQuantityParameter": 4.5, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:a:"}
+      {"ParameterTypeID": "dev:reference-data--ParameterType:NPV_10pct:", "DataQuantityParameter": 520, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MUSD:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:IRR:", "DataQuantityParameter": 17, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:CAPEX:", "DataQuantityParameter": 8500, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:OPEX_pa:", "DataQuantityParameter": 420, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:BreakevenOil:", "DataQuantityParameter": 42, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:USD/bbl:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:Payback:", "DataQuantityParameter": 7.0, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:a:"}
     ],
+
+    "ext": {
+      "equinor": {
+        "ActivityStateTemplateID": "dev:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
+        "ProjectTypeID": "dev:reference-data--ProjectType:FieldDevelopment:",
+        "Alternatives": [
+          {"Name": "Full 7-segment subsea tieback", "Rank": 1, "Rationale": "Maximises value; all segments commercial post porosity revision. NPV 520 MUSD.", "RecommendedAction": "Approve"},
+          {"Name": "Reduced scope (CentralHorst + CentralSouth)", "Rank": 2, "Rationale": "Lowest risk. NPV 310 MUSD. Leaves NE segments for future.", "RecommendedAction": "Consider"},
+          {"Name": "Phased development (2+5 segments)", "Rank": 3, "Rationale": "Defer peripheral segments until CentralFlanks core confirms porosity.", "RecommendedAction": "Fallback"}
+        ],
+        "UncertaintySummary": {
+          "Basis": "FMU static + dynamic uncertainty from 250 realisations (one-by-one sensitivity design, drogon_design.ert) across Volantis Group (Valysar, Therys, Volon) and 7 fault-bounded regions.",
+          "Note": "Dynamic forecasts run with OPM Flow for all realisations. Key uncertainty drivers: FWL contacts, Kv/Kh per facies, fault seal scaling, relperm interpolation.",
+          "TotalRealisations": 250,
+          "DesignType": "one-by-one sensitivity",
+          "ErtConfig": "drogon_design.ert",
+          "Simulator": "OPM_FLOW",
+          "MethodologyReference": "FMU Level 3 static + dynamic uncertainty workflow (equinor/fmu-drogon 24.3.1)",
+          "StaticInPlace_Oil_MSm3": {"P90": 33.8, "P50": 45.4, "P10": 59.4},
+          "Recoverable_Oil_MSm3": {"P90": 9.2, "P50": 14.8, "P10": 20.6},
+          "RecoveryFactor_pct": {"P90": 27.0, "P50": 32.5, "P10": 36.0}
+        }
+      }
+    },
 
     "Remarks": [
       {

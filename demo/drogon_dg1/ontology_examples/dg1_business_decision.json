@@ -104,14 +104,48 @@
         "Keys": [
           {"ParameterKey": "relationship", "StringParameterKey": "constrains"}
         ]
+      },
+      {
+        "Title": "Reservoir scope",
+        "Selection": "Valysar formation, Drogon field",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Reservoir:Drogon-Valysar:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "Reservoir"}
+        ]
       }
     ],
 
     "ProjectSpecifications": [
-      {"ParameterTypeID": "dev:reference-data--ParameterType:NPV_10pct:", "DataQuantityParameter": 1800, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MUSD:"},
-      {"ParameterTypeID": "dev:reference-data--ParameterType:IRR:", "DataQuantityParameter": 24, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%:"},
-      {"ParameterTypeID": "dev:reference-data--ParameterType:CAPEX:", "DataQuantityParameter": 3800, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:"}
+      {"ParameterTypeID": "dev:reference-data--ParameterType:NPV_10pct:", "DataQuantityParameter": 280, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MUSD:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:IRR:", "DataQuantityParameter": 12, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:%:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:CAPEX:", "DataQuantityParameter": 6500, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:OPEX_pa:", "DataQuantityParameter": 350, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MNOK:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:BreakevenOil:", "DataQuantityParameter": 55, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:USD/bbl:"},
+      {"ParameterTypeID": "dev:reference-data--ParameterType:Payback:", "DataQuantityParameter": 9.0, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:a:"}
     ],
+
+    "ext": {
+      "equinor": {
+        "ActivityStateTemplateID": "dev:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
+        "ProjectTypeID": "dev:reference-data--ProjectType:FieldDevelopment:",
+        "Alternatives": [
+          {"Name": "Proceed to DG2 - full 7-segment development", "Rank": 1, "Rationale": "All 7 segments show commercial volumes; porosity risk manageable.", "RecommendedAction": "Approve"},
+          {"Name": "Reduced scope - CentralHorst + CentralSouth only", "Rank": 2, "Rationale": "Best economics, lowest uncertainty; leaves ~40% upside for later.", "RecommendedAction": "Consider"},
+          {"Name": "Defer - acquire more appraisal data", "Rank": 3, "Rationale": "Floodplain porosity poorly constrained; more core data recommended.", "RecommendedAction": "Fallback"}
+        ],
+        "UncertaintySummary": {
+          "Basis": "FMU static volumes, 3 realisations, 7 segments, 3 facies",
+          "Note": "See stat WPC for P10/P50/P90 per segment & facies (m³).",
+          "TotalRealisations": 3,
+          "MethodologyReference": "FMU Level 2 static uncertainty workflow (Valysar v1)",
+          "StaticInPlace_Oil_MSm3": {"P90": 28.5, "P50": 34.5, "P10": 42.0},
+          "Recoverable_Oil_MSm3": {"P90": 5.8, "P50": 8.2, "P10": 11.5},
+          "RecoveryFactor_pct": {"P90": 22.0, "P50": 27.5, "P10": 32.0}
+        }
+      }
+    },
 
     "Remarks": [
       {
