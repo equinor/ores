@@ -470,19 +470,31 @@ async def analyse_compare(
                     refs_via_ancestry = reservoir_id in ancestry_all
 
                     # Name-based: BD name contains the reservoir name
+                    # or reservoir name contains the BD's project prefix
                     bd_name = (data_block.get("Name") or "").lower()
                     res_name_lower = reservoir_name.lower() if reservoir_name else ""
                     refs_via_name = bool(
                         res_name_lower and len(res_name_lower) >= 3
-                        and res_name_lower in bd_name
+                        and (res_name_lower in bd_name or bd_name[:len(res_name_lower)] in res_name_lower)
                     )
 
-                    # Slug-based: reservoir ID slug anywhere in serialised data
+                    # Slug-based: reservoir ID slug anywhere in serialised data,
+                    # OR BD ID slug and reservoir slug share a common prefix (>=5 chars)
                     _res_slug = reservoir_id.split(":")[-2] if reservoir_id.count(":") >= 3 else ""
+                    _bd_slug = bid.split(":")[-2] if bid.count(":") >= 3 else ""
                     refs_via_slug = bool(
                         _res_slug and len(_res_slug) >= 4
                         and _res_slug in str(data_block)
                     )
+                    if not refs_via_slug and _res_slug and _bd_slug:
+                        # Check common prefix between slugs (e.g. OmegaSor in OmegaSorAlfa & OmegaSor-WPC)
+                        _common = 0
+                        for a, b in zip(_res_slug.lower(), _bd_slug.lower()):
+                            if a == b:
+                                _common += 1
+                            else:
+                                break
+                        refs_via_slug = _common >= 5
 
                     if not (refs_via_top_level or refs_via_params or refs_via_ancestry or refs_via_name or refs_via_slug):
                         log.info(
