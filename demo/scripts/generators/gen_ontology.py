@@ -189,41 +189,49 @@ def _build_bd(
     if bd.get("prior_activity_ids"):
         data["PriorActivityIDs"] = bd["prior_activity_ids"]
 
-    # ── Parameters[] with relationship Keys[] ──
-    params = []
-    for rel in bd.get("relationships") or []:
-        p = _build_parameter(rel, pfx)
-        params.append(p)
-    # Add reservoir scope parameter if provided
-    if bd.get("reservoir_id"):
-        params.append({
-            "Title": "Reservoir scope",
-            "Selection": bd.get("reservoir_description", f"{project} reservoir"),
-            "ParameterKindID": ref_id(pfx, "ParameterKind", "DataObject"),
-            "ParameterRoleID": ref_id(pfx, "ParameterRole", "InputReference"),
-            "DataObjectParameter": bd["reservoir_id"],
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "Reservoir"}],
-        })
-    if params:
-        data["Parameters"] = params
+    # ── Parameters[] — passthrough (capital-P) or build from relationships ──
+    if bd.get("Parameters"):
+        data["Parameters"] = bd["Parameters"]
+    else:
+        params = []
+        for rel in bd.get("relationships") or []:
+            p = _build_parameter(rel, pfx)
+            params.append(p)
+        if bd.get("reservoir_id"):
+            params.append({
+                "Title": "Reservoir scope",
+                "Selection": bd.get("reservoir_description", f"{project} reservoir"),
+                "ParameterKindID": ref_id(pfx, "ParameterKind", "DataObject"),
+                "ParameterRoleID": ref_id(pfx, "ParameterRole", "InputReference"),
+                "DataObjectParameter": bd["reservoir_id"],
+                "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "Reservoir"}],
+            })
+        if params:
+            data["Parameters"] = params
 
-    # ── ProjectSpecifications[] (economics) ──
-    econ = bd.get("economics")
-    if econ:
-        data["ProjectSpecifications"] = _build_economics(econ, pfx)
+    # ── ProjectSpecifications[] — passthrough or build from economics ──
+    if bd.get("ProjectSpecifications"):
+        data["ProjectSpecifications"] = bd["ProjectSpecifications"]
+    elif bd.get("economics"):
+        data["ProjectSpecifications"] = _build_economics(bd["economics"], pfx)
 
-    # ── Remarks[] (typed annotations) ──
-    remarks = []
-    for r in bd.get("remarks") or []:
-        remarks.append({
-            "RemarkSource": r["source"],
-            "Remark": r["text"],
-        })
-    if remarks:
-        data["Remarks"] = remarks
+    # ── Remarks[] — passthrough or build from remarks ──
+    if bd.get("Remarks"):
+        data["Remarks"] = bd["Remarks"]
+    else:
+        remarks = []
+        for r in bd.get("remarks") or []:
+            remarks.append({
+                "RemarkSource": r["source"],
+                "Remark": r["text"],
+            })
+        if remarks:
+            data["Remarks"] = remarks
 
-    # ── ActivityStates[] (gate schedule) ──
-    if bd.get("activity_states"):
+    # ── ActivityStates[] — passthrough or build from activity_states ──
+    if bd.get("ActivityStates"):
+        data["ActivityStates"] = bd["ActivityStates"]
+    elif bd.get("activity_states"):
         data["ActivityStates"] = [
             {
                 "MilestoneID": st["milestone_id"],
@@ -304,40 +312,61 @@ def _build_cp(
     if cp.get("trusted_collection_id"):
         data["TrustedCollectionID"] = cp["trusted_collection_id"]
 
-    # ── LifecycleEvents[] (audit trail) ──
-    events = []
-    for ev in cp.get("lifecycle_events") or []:
-        event = {
-            "EventID": ev.get("event_id", ""),
-            "Name": ev.get("name", ""),
-            "DateTime": ev.get("datetime", ""),
-        }
-        if ev.get("remark"):
-            event["Remark"] = ev["remark"]
-        if ev.get("resource_collection_id"):
-            event["ResourceCollectionID"] = ev["resource_collection_id"]
-        events.append(event)
-    if events:
-        data["LifecycleEvents"] = events
+    # ── Personnel[] (passthrough) ──
+    if cp.get("Personnel"):
+        data["Personnel"] = cp["Personnel"]
 
-    # ── ActivityStates[] (gate checklist) ──
-    checklist = []
-    for st in cp.get("gate_checklist") or []:
-        checklist.append({
-            "MilestoneID": st["milestone_id"],
-            "EffectiveDateTime": st.get("date", ""),
-            "ActivityStatusID": ref_id(pfx, "ActivityStatus", st.get("status", "Planned")),
-            "Remark": st.get("remark", ""),
-        })
-    if checklist:
-        data["ActivityStates"] = checklist
+    # ── ProjectSpecifications[] (passthrough) ──
+    if cp.get("ProjectSpecifications"):
+        data["ProjectSpecifications"] = cp["ProjectSpecifications"]
 
-    # ── Parameters[] with relationship Keys[] ──
-    params = []
-    for rel in cp.get("relationships") or []:
-        params.append(_build_parameter(rel, pfx))
-    if params:
-        data["Parameters"] = params
+    # ── LifecycleEvents[] — passthrough or build from lifecycle_events ──
+    if cp.get("LifecycleEvents"):
+        data["LifecycleEvents"] = cp["LifecycleEvents"]
+    else:
+        events = []
+        for ev in cp.get("lifecycle_events") or []:
+            event = {
+                "EventID": ev.get("event_id", ""),
+                "Name": ev.get("name", ""),
+                "DateTime": ev.get("datetime", ""),
+            }
+            if ev.get("remark"):
+                event["Remark"] = ev["remark"]
+            if ev.get("resource_collection_id"):
+                event["ResourceCollectionID"] = ev["resource_collection_id"]
+            events.append(event)
+        if events:
+            data["LifecycleEvents"] = events
+
+    # ── ActivityStates[] — passthrough or build from gate_checklist ──
+    if cp.get("ActivityStates"):
+        data["ActivityStates"] = cp["ActivityStates"]
+    else:
+        checklist = []
+        for st in cp.get("gate_checklist") or []:
+            checklist.append({
+                "MilestoneID": st["milestone_id"],
+                "EffectiveDateTime": st.get("date", ""),
+                "ActivityStatusID": ref_id(pfx, "ActivityStatus", st.get("status", "Planned")),
+                "Remark": st.get("remark", ""),
+            })
+        if checklist:
+            data["ActivityStates"] = checklist
+
+    # ── LastActivityState (passthrough) ──
+    if cp.get("LastActivityState"):
+        data["LastActivityState"] = cp["LastActivityState"]
+
+    # ── Parameters[] — passthrough or build from relationships ──
+    if cp.get("Parameters"):
+        data["Parameters"] = cp["Parameters"]
+    else:
+        params = []
+        for rel in cp.get("relationships") or []:
+            params.append(_build_parameter(rel, pfx))
+        if params:
+            data["Parameters"] = params
 
     return {
         "id": record_id,
