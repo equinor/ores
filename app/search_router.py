@@ -22,7 +22,7 @@ from typing import Any, Dict, List, Set
 import httpx
 from httpx import HTTPStatusError
 from fastapi import APIRouter, Request, Form
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from . import osdu
@@ -766,27 +766,27 @@ async def search_page(request: Request):
     )
 
 
-@router.get("/search/run", response_class=HTMLResponse)
-async def search_run_get(
-    request: Request,
-    kind: str = "",
-    query: str = "*",
-    limit: int = 50,
-):
-    """GET variant of search (used by Mermaid graph click links)."""
-    # Delegate to the POST handler logic by injecting params
-    from starlette.datastructures import FormData
-    request._form = FormData({"kind": kind, "kinds_extra": "", "query": query, "limit": str(limit)})
-    return await search_run(request, kind=kind, kinds_extra="", query=query, limit=limit)
-
-
-@router.post("/search/run", response_class=HTMLResponse)
-async def search_run(
+@router.post("/search/run")
+async def search_run_post(
     request: Request,
     kind: str = Form(""),
     kinds_extra: str = Form(""),
     query: str = Form("*"),
     limit: int = Form(50),
+):
+    """POST variant – redirect to GET to implement Post/Redirect/Get pattern."""
+    from urllib.parse import urlencode
+    params = urlencode({"kind": kind, "kinds_extra": kinds_extra, "query": query, "limit": limit})
+    return RedirectResponse(url=f"/search/run?{params}", status_code=303)
+
+
+@router.get("/search/run", response_class=HTMLResponse)
+async def search_run(
+    request: Request,
+    kind: str = "",
+    kinds_extra: str = "",
+    query: str = "*",
+    limit: int = 50,
 ):
     """Run an OSDU Search v2 query, then enrich each hit."""
     at = _access_token(request)
@@ -986,11 +986,23 @@ async def search_run(
 # Schema search (OSDU Schema Service)
 # ──────────────────────────────────────────────────────────────────────────────
 
-@router.post("/search/schemas", response_class=HTMLResponse)
-async def search_schemas(
+@router.post("/search/schemas")
+async def search_schemas_post(
     request: Request,
     query: str = Form("*"),
     limit: int = Form(50),
+):
+    """POST variant – redirect to GET (PRG pattern)."""
+    from urllib.parse import urlencode
+    params = urlencode({"query": query, "limit": limit})
+    return RedirectResponse(url=f"/search/schemas?{params}", status_code=303)
+
+
+@router.get("/search/schemas", response_class=HTMLResponse)
+async def search_schemas(
+    request: Request,
+    query: str = "*",
+    limit: int = 50,
 ):
     """Search the OSDU Schema Service for registered schemas."""
     at = _access_token(request)
@@ -1148,12 +1160,25 @@ async def search_schemas(
 # Reference Data search
 # ──────────────────────────────────────────────────────────────────────────────
 
-@router.post("/search/refdata", response_class=HTMLResponse)
-async def search_refdata(
+@router.post("/search/refdata")
+async def search_refdata_post(
     request: Request,
     kind: str = Form("osdu:wks:reference-data--*:*"),
     query: str = Form(""),
     limit: int = Form(50),
+):
+    """POST variant – redirect to GET (PRG pattern)."""
+    from urllib.parse import urlencode
+    params = urlencode({"kind": kind, "query": query, "limit": limit})
+    return RedirectResponse(url=f"/search/refdata?{params}", status_code=303)
+
+
+@router.get("/search/refdata", response_class=HTMLResponse)
+async def search_refdata(
+    request: Request,
+    kind: str = "osdu:wks:reference-data--*:*",
+    query: str = "",
+    limit: int = 50,
 ):
     """Search for reference-data records in OSDU."""
     at = _access_token(request)

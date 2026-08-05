@@ -269,7 +269,7 @@
 </style>
 
 <!-- ── Records Search Form (existing) ── -->
-<form method="post" action="/search/run" class="search-form" id="form-records" {% if search_mode and search_mode != 'records' %}style="display:none"{% endif %}>
+<form method="get" action="/search/run" class="search-form" id="form-records" {% if search_mode and search_mode != 'records' %}style="display:none"{% endif %}>
 
   <label>Kind (primary)</label>
   <div class="kind-row">
@@ -395,7 +395,7 @@
 </form>
 
 <!-- ── Schema Search Form ── -->
-<form method="post" action="/search/schemas" class="search-form" id="form-schemas" {% if search_mode != 'schemas' %}style="display:none"{% endif %}>
+<form method="get" action="/search/schemas" class="search-form" id="form-schemas" {% if search_mode != 'schemas' %}style="display:none"{% endif %}>
   <label>Filter</label>
   <div style="display:flex;gap:.4rem;align-items:center;width:100%;">
     <input type="text" name="query" id="schemaQuery" value="{{ schema_q or '' }}" placeholder="WellLog or authority:osdu source:wks" style="flex:1;">
@@ -439,7 +439,7 @@
 </form>
 
 <!-- ── Reference Data Search Form ── -->
-<form method="post" action="/search/refdata" class="search-form" id="form-refdata" {% if search_mode != 'refdata' %}style="display:none"{% endif %}>
+<form method="get" action="/search/refdata" class="search-form" id="form-refdata" {% if search_mode != 'refdata' %}style="display:none"{% endif %}>
   <label>Reference Data Kind <small>(required - pick from the list below)</small></label>
   <input type="text" id="refdataKindFilter" placeholder="Type to filter kinds… e.g. Risk, Chrono, Unit"
     style="width:100%;max-width:600px;margin-bottom:.3rem;" autocomplete="off">
