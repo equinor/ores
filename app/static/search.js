@@ -147,6 +147,57 @@
         activeModal = overlay;
       };
 
+      // ── Markdown documentation modal ──────────────────────────────────
+      window.openMarkdownModal = function(idx) {
+        var md = (window._mdDocs || [])[idx];
+        if (!md) return;
+        if (activeModal) { activeModal.remove(); activeModal = null; }
+        var overlay = document.createElement('div');
+        overlay.className = 'vol-modal-overlay';
+        var modal = document.createElement('div');
+        modal.className = 'vol-modal';
+        modal.style.maxWidth = '64rem';
+        modal.style.maxHeight = '90vh';
+        modal.style.overflow = 'auto';
+        modal.innerHTML = '<button class="vol-modal-close" title="Close">&times;</button>' +
+          '<div class="md-modal-content" style="font-size:.88rem;line-height:1.55;"></div>';
+        var content = modal.querySelector('.md-modal-content');
+        // Use marked.js if available, else render as <pre>
+        if (window.marked) {
+          content.innerHTML = window.marked.parse(md);
+          // Style tables inside the modal
+          content.querySelectorAll('table').forEach(function(t) {
+            t.style.borderCollapse = 'collapse';
+            t.style.width = '100%';
+            t.style.fontSize = '.82rem';
+            t.style.marginBottom = '.8rem';
+          });
+          content.querySelectorAll('th, td').forEach(function(c) {
+            c.style.padding = '.25rem .4rem';
+            c.style.border = '1px solid #e1dfdd';
+            c.style.textAlign = 'left';
+          });
+          content.querySelectorAll('th').forEach(function(c) {
+            c.style.background = '#f0f0f0';
+            c.style.fontWeight = '600';
+          });
+          content.querySelectorAll('code').forEach(function(c) {
+            if (!c.closest('pre')) { c.style.background = '#f5f5f5'; c.style.padding = '.1rem .3rem'; c.style.borderRadius = '3px'; c.style.fontSize = '.82rem'; }
+          });
+          content.querySelectorAll('pre').forEach(function(p) {
+            p.style.background = '#f8f8f8'; p.style.padding = '.6rem'; p.style.borderRadius = '4px';
+            p.style.overflow = 'auto'; p.style.fontSize = '.8rem'; p.style.lineHeight = '1.4';
+          });
+        } else {
+          content.innerHTML = '<pre style="white-space:pre-wrap;font-size:.82rem;">' + md.replace(/</g, '&lt;') + '</pre>';
+        }
+        modal.querySelector('.vol-modal-close').onclick = function() { overlay.remove(); activeModal = null; };
+        overlay.addEventListener('click', function(e) { if (e.target === overlay) { overlay.remove(); activeModal = null; } });
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        activeModal = overlay;
+      };
+
       window.openVolHistogram = function(btn) {
         const section = btn.closest('.section-card');
         if (!section) return;
@@ -564,6 +615,12 @@
     if (d.Name) html += '<div class="k">Name</div><div class="v">' + escHtml(d.Name) + '</div>';
     if (d.Code) html += '<div class="k">Code</div><div class="v">' + escHtml(d.Code) + '</div>';
     if (d.Description) html += '<div class="k">Description</div><div class="v">' + escHtml(d.Description) + '</div>';
+    if (d.ExtensionProperties && d.ExtensionProperties.Markdown) {
+      if (!window._mdDocs) window._mdDocs = [];
+      var mdIdx = window._mdDocs.length;
+      window._mdDocs.push(d.ExtensionProperties.Markdown);
+      html += '<div class="k">Documentation</div><div class="v"><button onclick="openMarkdownModal(' + mdIdx + ')" style="padding:.25rem .6rem;border:1px solid #007079;border-radius:4px;background:#fff;color:#007079;cursor:pointer;font-size:.82rem;">📄 View Documentation</button></div>';
+    }
     if (d.Source) html += '<div class="k">Source</div><div class="v">' + escHtml(d.Source) + '</div>';;
     html += '</div>';
     html += '<p style="margin-top:.5rem;"><a href="/search/view/' + encodeURIComponent(rec.id) + '">Open full page view →</a></p>';

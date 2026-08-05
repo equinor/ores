@@ -1,6 +1,6 @@
 # Omega Sør – WPC Ontology & Dataset
 
-**Internal reference — ORES Team**
+**Internal reference — SWIP Team**
 
 ---
 

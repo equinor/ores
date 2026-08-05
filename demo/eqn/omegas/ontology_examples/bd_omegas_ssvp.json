@@ -152,6 +152,17 @@
           {"ParameterKey": "artifact", "StringParameterKey": "Pilot"},
           {"ParameterKey": "relationship", "StringParameterKey": "informs"}
         ]
+      },
+      {
+        "Title": "Dataset documentation (WPC ontology & provenance)",
+        "Selection": "Full dataset documentation: authoritative sources, record graph, interpretation chain, ingestion pipeline, known issues.",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:work-product-component--Document:OmegaSor-WPC-DatasetDoc:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "Documentation"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+        ]
       }
     ],
 
@@ -177,7 +188,14 @@
       {"RemarkSource": "DG0-Recommendation", "Remark": "Customize subsurface deliveries per adapted CVP for subsea tieback (WR3274)."},
       {"RemarkSource": "DG0-Recommendation", "Remark": "Include production deferral effect from scaling in next economic update."},
       {"RemarkSource": "Audit-Note", "Remark": "SSVP presentation 2026-06-15. Concept screening validated post-exploration."},
-      {"RemarkSource": "Audit-Note", "Remark": "Layout changed from injection CAP-X to 4-slot template at VPbO (2026-03-15). Provides +1 producer slot."}
+      {"RemarkSource": "Audit-Note", "Remark": "Layout changed from injection CAP-X to 4-slot template at VPbO (2026-03-15). Provides +1 producer slot."},
+      {"RemarkSource": "DataProvenance", "Remark": "Geomodel: RMS 15 — \\\\statoil.net\\unix_st\\project\\snorre\\reservoirmodels\\omegasor\\2026.2.0\\rms\\model\\os_cond.rms15.0.1.0"},
+      {"RemarkSource": "DataProvenance", "Remark": "Seismic: DSG project sipi_OmegaS_Postwell_2026, survey CGG23M01_NVG21PH2-DAZ_final_Ki-PreSDM_t_fullstk (clip IL 6250–6450, XL 31200–31400)"},
+      {"RemarkSource": "DataProvenance", "Remark": "Volumes: RMS volumetrics export (os.vol.xls), STOIIP per zone from simulation model 2026-06-10"},
+      {"RemarkSource": "DataProvenance", "Remark": "Well design basis: Well information and design basis - Omega S.xlsx (casing, PPFG, formation prognosis, contingency liner)"},
+      {"RemarkSource": "DataProvenance", "Remark": "SharePoint: https://statoilsrm.sharepoint.com/sites/IDM-PM954-Petec/Snorre%20IOROS/DG1/OS"},
+      {"RemarkSource": "DataProvenance", "Remark": "Well project: https://statoilsrm.sharepoint.com/sites/WCPNO344-19S"},
+      {"RemarkSource": "DataProvenance", "Remark": "Exploration well 34/4-19 S: SMDA data:master-data--Well:78aa3a39a9fe444eb50e3d843a25d796: (cross-partition)"}
     ],
 
     "ActivityStates": [
