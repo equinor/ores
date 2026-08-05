@@ -102,10 +102,12 @@
   .kpi-grid { max-width: 56rem; }
 
   /* ── Mermaid relationship graph sizing ── */
-  pre.mermaid svg { max-width: 72rem; }
+  pre.mermaid svg { max-width: 80rem; }
   pre.mermaid .nodeLabel { font-size: .82rem !important; }
-  pre.mermaid .edgeLabel { font-size: .75rem !important; }
+  pre.mermaid .edgeLabel { font-size: .72rem !important; color: #4a5568 !important; }
   pre.mermaid .label { font-size: .82rem !important; }
+  pre.mermaid .cluster rect { fill: transparent !important; stroke: none !important; }
+  pre.mermaid .cluster .nodeLabel { display: none; }
 
   /* ── Ontology panels: checklist, timeline, relationship graph ── */
   .bd-checklist-bar { display: flex; align-items: center; gap: .6rem; margin-bottom: .5rem; }
@@ -1035,13 +1037,12 @@
       {% set has_table_vol = (volns.has_o10 or volns.has_o50 or volns.has_o90 or volns.has_g10 or volns.has_g50 or volns.has_g90) %}
 
       <div class="rec-block" id="rec-{{ rec_index }}" {% if loop.first %}style=""{% else %}style="display:none"{% endif %}>
-        <h4>{{ label }}</h4>
 
         <div class="record-sections">
           <section class="section-card">
             <h5>Overview</h5>
             <div class="mini-grid">
-              <div class="k">Name</div><div>{{ name or '-' }}</div>
+              <div class="k">Name</div><div style="font-weight:700;">{{ name or '-' }}</div>
               <div class="k">Description</div><div>{{ (rec.data or {}).get('Description') or '-' }}</div>
               <div class="k">Kind</div><div>{{ rec.kind or '-' }}</div>
               <div class="k">ID</div><div>{{ rec.id or '-' }}</div>
@@ -1053,6 +1054,54 @@
               <button type="button" onclick="openMarkdownFromSection(this)" title="Render embedded Markdown documentation" style="padding:.35rem .8rem;border:1px solid #007079;border-radius:4px;background:#007079;color:#fff;cursor:pointer;font-size:.85rem;">📄 View Documentation</button>
             </div>
             {% endif %}
+            {# ── Metadata sub-section (collapsible) ── #}
+            <details style="margin-top:.8rem;">
+            <summary style="cursor:pointer;font-weight:600;font-size:.9rem;">Metadata</summary>
+            <div class="meta-container">
+              <div class="meta-toolbar" style="display:flex;gap:.5rem;align-items:center;margin:.25rem 0;">
+                <input type="text" class="meta-filter" placeholder="Filter metadata names…" style="flex:1;max-width:20rem;">
+                <button type="button" class="meta-copy" title="Copy table as CSV">Copy (CSV)</button>
+                <button type="button" class="btn-json-modal" onclick="openJsonModal(this)" title="View full record as JSON" style="font-size:.82rem;padding:.2rem .6rem;border:1px solid #004578;border-radius:4px;background:#fff;color:#004578;cursor:pointer;">{ } Full Record</button>
+                {% if ((rec.data or {}).get('ExtensionProperties') or {}).get('Markdown') %}
+                <button type="button" class="btn-md-render" onclick="openMarkdownFromSection(this)" title="Render embedded Markdown documentation" style="font-size:.82rem;padding:.2rem .6rem;border:1px solid #007079;border-radius:4px;background:#fff;color:#007079;cursor:pointer;">📄 Render Markdown</button>
+                {% endif %}
+              </div>
+              <table class="meta-table" style="width:100%;border-collapse:collapse">
+                <thead>
+                  <tr><th class="meta-name">Name</th><th>Value</th></tr>
+                </thead>
+                <tbody>
+                  {% set rendered_count = namespace(v=0) %}
+                  {% for p in rec.metadata_pairs or [] %}
+                    {% set n = (p.name or '') %}
+                    {% set nl = n|lower %}
+                    {% if ('volumes' in nl)
+                          or ('columnvalues' in nl)
+                          or ('columnbasedtable' in nl)
+                          or ('reservoirestimatedvolumes' in nl)
+                          or ('[0]' in n) or ('[1]' in n) or ('[2]' in n) or ('[3]' in n) or ('[4]' in n)
+                          or ('.0.' in n) or ('.1.' in n) or ('.2.' in n) or ('.3.' in n) or ('.4.' in n)
+                    %}
+                    {% else %}
+                      {% set rendered_count.v = rendered_count.v + 1 %}
+                      <tr>
+                        <td class="meta-name">{{ n }}</td>
+                        <td>{{ p.value|pretty_val|safe }}</td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                  {% if rendered_count.v == 0 %}
+                    <tr><td colspan="2" class="muted">No non-tabular metadata to display.</td></tr>
+                  {% endif %}
+                </tbody>
+              </table>
+              {% if has_volumes %}
+              <div class="muted" style="font-size:.85rem;margin-top:.25rem;">Tabular volume arrays are intentionally hidden here and shown only in the reconstructed table below.</div>
+              {% endif %}
+            </div>
+            {# Hidden JSON payload for the modal #}
+            <script type="application/json" class="rec-json-data">{{ rec.data | tojson }}</script>
+            </details>
           </section>
 
           {# ══════════ ETPDataspace record card ══════════ #}
@@ -2047,9 +2096,9 @@
           </div>{# /rev-card #}
           {% endif %}
 
-          <section class="section-card">
-            <h5>Relationships</h5>
-            {# ── Build grouped Mermaid graph ── #}
+          <section class="section-card" style="border-top:3px solid #007079;margin-top:1.5rem;">
+            <h5 style="color:#007079;">Relationships</h5>
+            {# ── Build grouped Mermaid graph with type-based coloring ── #}
             {# Group links by entity type extracted from the OSDU ID #}
             {% set ns_grp = namespace(
                 fwd_groups={}, rev_groups={},
@@ -2073,6 +2122,36 @@
                 {% endif %}
               {% endif %}
             {% endfor %}
+            {# Define a type→class mapping for coloring #}
+            {% set type_class_map = {
+              'Risk': 'cls_risk',
+              'Activity': 'cls_activity',
+              'Reservoir': 'cls_reservoir',
+              'Wellbore': 'cls_wellbore',
+              'Well': 'cls_wellbore',
+              'WellboreTrajectory': 'cls_wellbore',
+              'DevelopmentConcept': 'cls_concept',
+              'CollaborationProject': 'cls_concept',
+              'PersistedCollection': 'cls_collection',
+              'ETPDataspace': 'cls_dataspace',
+              'ReservoirEstimatedVolumes': 'cls_volumes',
+              'ColumnBasedTable': 'cls_volumes',
+              'Document': 'cls_document',
+              'GeoLabelSet': 'cls_geo',
+              'ReservoirSegment': 'cls_geo',
+              'Field': 'cls_geo',
+            } %}
+            {# Define a role→edge-label mapping #}
+            {% set role_label_map = {
+              'parameter-object': '',
+              'prior-activity': 'activity',
+              'risk': 'constrains',
+              'evidence': 'evidences',
+              'project': 'project',
+              'parent-work-product': 'parent',
+              'parent-object': 'parent',
+              'referenced-by': 'refs',
+            } %}
             <pre class="mermaid">
 graph LR
 REC{{ rec_index }}["{{ esc_label(label) }}"]:::rec_self
@@ -2082,8 +2161,8 @@ click REC{{ rec_index }} href "/search/view/{{ rec.id }}" "Open record"
 {% set _ptype = p.split('--')[1].split(':')[0] if '--' in p else '' %}
 {% set _pid = p.split(':')[-2] if p.count(':') >= 3 else (p.split(':')[-1] if ':' in p else p) %}
 {% set pname = pinfo.name if pinfo.name else (_ptype ~ ': ' ~ _pid if _ptype else p) %}
-P{{ rec_index }}a{{ loop.index0 }}["{{ esc_label(pname) }}"]
-P{{ rec_index }}a{{ loop.index0 }} --> REC{{ rec_index }}:::ancestry_parent
+P{{ rec_index }}a{{ loop.index0 }}["{{ esc_label(pname) }}"]:::cls_ancestry
+P{{ rec_index }}a{{ loop.index0 }} -->|parent| REC{{ rec_index }}
 click P{{ rec_index }}a{{ loop.index0 }} href "/search/view/{{ p }}" "Open parent"
 {% endfor %}
 {% for ch in ns_grp.ancestry_c %}
@@ -2091,214 +2170,64 @@ click P{{ rec_index }}a{{ loop.index0 }} href "/search/view/{{ p }}" "Open paren
 {% set _ctype = ch.split('--')[1].split(':')[0] if '--' in ch else '' %}
 {% set _cid = ch.split(':')[-2] if ch.count(':') >= 3 else (ch.split(':')[-1] if ':' in ch else ch) %}
 {% set cname = cinfo.name if cinfo.name else (_ctype ~ ': ' ~ _cid if _ctype else ch) %}
-C{{ rec_index }}c{{ loop.index0 }}["{{ esc_label(cname) }}"]
-REC{{ rec_index }} --> C{{ rec_index }}c{{ loop.index0 }}:::ancestry_child
+C{{ rec_index }}c{{ loop.index0 }}["{{ esc_label(cname) }}"]:::cls_ancestry
+REC{{ rec_index }} -->|child| C{{ rec_index }}c{{ loop.index0 }}
 click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open child"
 {% endfor %}
-{% for etype, items in ns_grp.fwd_groups.items() %}
-{% if items|length <= 3 %}
+{# ── Forward links: show ALL items, grouped by type with subgraph ── #}
+{% for etype in ns_grp.fwd_groups.keys()|sort %}
+{% set items = ns_grp.fwd_groups[etype] %}
+{% set cls = type_class_map.get(etype, 'cls_default') %}
+subgraph sg_{{ rec_index }}_{{ etype }}[" "]
+direction TB
 {% for l in items %}
 {% set info = (rec.linked_labels or {}).get(l.id, {}) %}
-{% set _ftype = l.id.split('--')[1].split(':')[0] if '--' in l.id else '' %}
 {% set _fid = l.id.split(':')[-2] if l.id.count(':') >= 3 else (l.id.split(':')[-1] if ':' in l.id else l.id) %}
-{% set lname = info.name if info.name else (_ftype ~ ': ' ~ _fid if _ftype else l.id) %}
-F{{ rec_index }}_{{ etype }}_{{ loop.index0 }}["{{ esc_label(lname) }}"]
-REC{{ rec_index }} --> F{{ rec_index }}_{{ etype }}_{{ loop.index0 }}:::{{ (l.role or 'ref') | replace('-','_') }}
+{% set lname = info.name if info.name else (_fid) %}
+F{{ rec_index }}_{{ etype }}_{{ loop.index0 }}["{{ esc_label(lname) }}"]:::{{ cls }}
 click F{{ rec_index }}_{{ etype }}_{{ loop.index0 }} href "/search/view/{{ l.id }}" "Open"
 {% endfor %}
+end
+{% set edge_lbl = role_label_map.get(items[0].role|default(''), etype|lower) %}
+{% if edge_lbl %}
+REC{{ rec_index }} -->|{{ edge_lbl }}| sg_{{ rec_index }}_{{ etype }}
 {% else %}
-G{{ rec_index }}_{{ etype }}["{{ etype }} ({{ items|length }})"]:::group_node
-REC{{ rec_index }} --> G{{ rec_index }}_{{ etype }}
+REC{{ rec_index }} --> sg_{{ rec_index }}_{{ etype }}
 {% endif %}
 {% endfor %}
-{% for etype, items in ns_grp.rev_groups.items() %}
-{% if items|length <= 3 %}
+{# ── Reverse links ── #}
+{% for etype in ns_grp.rev_groups.keys()|sort %}
+{% set items = ns_grp.rev_groups[etype] %}
+{% set cls = type_class_map.get(etype, 'cls_default') %}
 {% for l in items %}
 {% set info = (rec.linked_labels or {}).get(l.id, {}) %}
-{% set _rtype = l.id.split('--')[1].split(':')[0] if '--' in l.id else '' %}
 {% set _rid = l.id.split(':')[-2] if l.id.count(':') >= 3 else (l.id.split(':')[-1] if ':' in l.id else l.id) %}
-{% set lname = info.name if info.name else (_rtype ~ ': ' ~ _rid if _rtype else l.id) %}
-R{{ rec_index }}_{{ etype }}_{{ loop.index0 }}["{{ esc_label(lname) }}"]
-R{{ rec_index }}_{{ etype }}_{{ loop.index0 }} --> REC{{ rec_index }}:::referenced_by
-click R{{ rec_index }}_{{ etype }}_{{ loop.index0 }} href "/search/view/{{ l.id }}" "Open"
+{% set lname = info.name if info.name else (etype ~ ': ' ~ _rid) %}
+RV{{ rec_index }}_{{ etype }}_{{ loop.index0 }}["{{ esc_label(lname) }}"]:::{{ cls }}
+RV{{ rec_index }}_{{ etype }}_{{ loop.index0 }} -->|references| REC{{ rec_index }}
+click RV{{ rec_index }}_{{ etype }}_{{ loop.index0 }} href "/search/view/{{ l.id }}" "Open"
 {% endfor %}
-{% else %}
-RG{{ rec_index }}_{{ etype }}["{{ etype }} ({{ items|length }})"]:::group_node
-RG{{ rec_index }}_{{ etype }} --> REC{{ rec_index }}:::referenced_by
-{% endif %}
 {% endfor %}
 classDef rec_self fill:#4299e1,stroke:#2b6cb0,color:#fff,font-weight:bold;
-classDef prior_activity fill:#fff3cd,stroke:#d39e00,color:#222;
-classDef parameter_object fill:#d1ecf1,stroke:#0c5460,color:#222;
-classDef parent_object fill:#f8d7da,stroke:#721c24,color:#222;
-classDef parent_work_product fill:#f8d7da,stroke:#721c24,color:#222;
-classDef risk fill:#f5c6cb,stroke:#721c24,color:#222;
-classDef referenced_by fill:#d4edda,stroke:#155724,color:#222;
-classDef ancestry_parent fill:#cfe2ff,stroke:#084298,color:#222;
-classDef ancestry_child fill:#e2e3e5,stroke:#6c757d,color:#222;
-classDef ref fill:#e9ecef,stroke:#6c757d,color:#222;
-classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
+classDef cls_risk fill:#fed7d7,stroke:#c53030,color:#222;
+classDef cls_activity fill:#fefcbf,stroke:#d69e2e,color:#222;
+classDef cls_reservoir fill:#c6f6d5,stroke:#276749,color:#222;
+classDef cls_wellbore fill:#bee3f8,stroke:#2b6cb0,color:#222;
+classDef cls_concept fill:#e9d8fd,stroke:#6b46c1,color:#222;
+classDef cls_collection fill:#feebc8,stroke:#c05621,color:#222;
+classDef cls_dataspace fill:#b2f5ea,stroke:#234e52,color:#222;
+classDef cls_volumes fill:#c4f1f9,stroke:#086f83,color:#222;
+classDef cls_document fill:#fefcbf,stroke:#975a16,color:#222;
+classDef cls_geo fill:#c6f6d5,stroke:#22543d,color:#222;
+classDef cls_ancestry fill:#e2e8f0,stroke:#4a5568,color:#222;
+classDef cls_default fill:#edf2f7,stroke:#718096,color:#222;
+style sg_{{ rec_index }}_Risk fill:none,stroke:#c53030,stroke-dasharray:3 3
+style sg_{{ rec_index }}_Activity fill:none,stroke:#d69e2e,stroke-dasharray:3 3
+style sg_{{ rec_index }}_Wellbore fill:none,stroke:#2b6cb0,stroke-dasharray:3 3
+style sg_{{ rec_index }}_Well fill:none,stroke:#2b6cb0,stroke-dasharray:3 3
             </pre>
 
-            <div class="rel-links">
-              <b>Linked objects</b>
-              {# ── Group links by role category ── #}
-              {% set ns_links = namespace(
-                  activities=[], risks=[], params=[], parents=[], refs=[], rev=[],
-                  evidence=[], projects=[]
-              ) %}
-              {% for l in rec.links or [] %}
-                {% if l.id not in (rec.ancestry_parents or []) and l.id not in (rec.ancestry_children or []) %}
-                  {% if l.role == 'prior-activity' %}
-                    {% set ns_links.activities = ns_links.activities + [l] %}
-                  {% elif l.role == 'risk' %}
-                    {% set ns_links.risks = ns_links.risks + [l] %}
-                  {% elif l.role == 'evidence' %}
-                    {% set ns_links.evidence = ns_links.evidence + [l] %}
-                  {% elif l.role == 'project' %}
-                    {% set ns_links.projects = ns_links.projects + [l] %}
-                  {% elif l.role == 'parameter-object' %}
-                    {% set ns_links.params = ns_links.params + [l] %}
-                  {% elif l.role in ('parent-work-product', 'parent-object') %}
-                    {% set ns_links.parents = ns_links.parents + [l] %}
-                  {% elif l.role == 'referenced-by' %}
-                    {% set ns_links.rev = ns_links.rev + [l] %}
-                  {% else %}
-                    {% set ns_links.refs = ns_links.refs + [l] %}
-                  {% endif %}
-                {% endif %}
-              {% endfor %}
-
-              {% macro link_group(label, items, icon) %}
-              {% if items %}
-              <div style="margin-top:.5rem;">
-                <div style="font-size:.78rem;font-weight:600;color:#4a5568;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.2rem;">{{ icon }} {{ label }}</div>
-                <ul style="margin:0;padding-left:1.2rem;">
-                  {% for l in items %}
-                    {% set info = (rec.linked_labels or {}).get(l.id, {}) %}
-                    {% set etype = l.id.split('--')[1].split(':')[0] if '--' in l.id else '' %}
-                    {% set short_id = l.id.split(':')[-2] if l.id.count(':') >= 3 else (l.id.split(':')[-1] if ':' in l.id else l.id) %}
-                    {% set link_label = info.name if info.name else (etype ~ ': ' ~ short_id if etype and short_id else l.id) %}
-                    <li>
-                      <a href="/search/view/{{ l.id }}" title="{{ l.role or 'ref' }}{% if info.kind %} · {{ info.kind }}{% endif %}">{{ link_label }}</a>
-                      {% if info.kind and info.name %}<span class="muted" style="font-size:.75rem;">{{ info.kind.split('--')[-1].split(':')[0] }}</span>{% endif %}
-                    </li>
-                  {% endfor %}
-                </ul>
-              </div>
-              {% endif %}
-              {% endmacro %}
-
-              {{ link_group('Activities', ns_links.activities, '⚙') }}
-              {{ link_group('Evidence & Collections', ns_links.evidence, '📎') }}
-              {{ link_group('Collaboration Projects', ns_links.projects, '🏗') }}
-              {{ link_group('Parameters & Inputs', ns_links.params, '📋') }}
-              {{ link_group('Risks', ns_links.risks, '⚠') }}
-              {{ link_group('Parent Objects', ns_links.parents, '📦') }}
-              {{ link_group('Referenced By', ns_links.rev, '↩') }}
-
-              {# Group "Other References" by entity type, sorted alphabetically #}
-              {% if ns_links.refs %}
-              {% set ns_typed = namespace(groups={}) %}
-              {% for l in ns_links.refs %}
-                {% set etype = l.id.split('--')[1].split(':')[0] if '--' in l.id else 'Other' %}
-                {% if etype not in ns_typed.groups %}
-                  {% set _ = ns_typed.groups.update({etype: []}) %}
-                {% endif %}
-                {% set _ = ns_typed.groups[etype].append(l) %}
-              {% endfor %}
-              {% for etype in ns_typed.groups.keys()|sort %}
-                {% set items = ns_typed.groups[etype] %}
-                <div style="margin-top:.5rem;">
-                  <div style="font-size:.78rem;font-weight:600;color:#4a5568;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.2rem;">🔗 {{ etype }} <span class="muted" style="font-weight:400;">({{ items|length }})</span></div>
-                  <ul style="margin:0;padding-left:1.2rem;">
-                    {% set ns_sorted = namespace(decorated=[]) %}
-                    {% for l in items %}
-                      {% set info = (rec.linked_labels or {}).get(l.id, {}) %}
-                      {% set short_id = l.id.split(':')[-2] if l.id.count(':') >= 3 else (l.id.split(':')[-1] if ':' in l.id else l.id) %}
-                      {% set link_label = info.name if info.name else (etype ~ ': ' ~ short_id) %}
-                      {% set _ = ns_sorted.decorated.append({'label': link_label, 'id': l.id, 'role': l.role|default('ref'), 'info': info}) %}
-                    {% endfor %}
-                    {% set sorted_items = ns_sorted.decorated|sort(attribute='label') %}
-                    {% set collapse_threshold = 6 %}
-                    {% for item in sorted_items[:collapse_threshold] %}
-                      <li>
-                        <a href="/search/view/{{ item.id }}" title="{{ item.role }}{% if item.info.kind %} · {{ item.info.kind }}{% endif %}">{{ item.label }}</a>
-                        {% if item.info.kind and item.info.name %}<span class="muted" style="font-size:.75rem;">{{ item.info.kind.split('--')[-1].split(':')[0] }}</span>{% endif %}
-                      </li>
-                    {% endfor %}
-                    {% if sorted_items|length > collapse_threshold %}
-                    <li style="list-style:none;margin-left:-1.2rem;">
-                      <details style="margin-top:.2rem;">
-                        <summary style="cursor:pointer;font-size:.78rem;color:#3182ce;">Show {{ sorted_items|length - collapse_threshold }} more…</summary>
-                        <ul style="margin:.2rem 0 0 1.2rem;padding:0;">
-                          {% for item in sorted_items[collapse_threshold:] %}
-                            <li>
-                              <a href="/search/view/{{ item.id }}" title="{{ item.role }}{% if item.info.kind %} · {{ item.info.kind }}{% endif %}">{{ item.label }}</a>
-                              {% if item.info.kind and item.info.name %}<span class="muted" style="font-size:.75rem;">{{ item.info.kind.split('--')[-1].split(':')[0] }}</span>{% endif %}
-                            </li>
-                          {% endfor %}
-                        </ul>
-                      </details>
-                    </li>
-                    {% endif %}
-                  </ul>
-                </div>
-              {% endfor %}
-              {% endif %}
-
               {% if not (rec.links or []) %}<div class="muted" style="margin-top:.3rem;">No linked objects.</div>{% endif %}
-            </div>
-          </section>
-
-          <section class="section-card">
-            <details>
-            <summary style="cursor:pointer;font-weight:600;">Metadata</summary>
-            <div class="meta-container">
-              <div class="meta-toolbar" style="display:flex;gap:.5rem;align-items:center;margin:.25rem 0;">
-                <input type="text" class="meta-filter" placeholder="Filter metadata names…" style="flex:1;max-width:20rem;">
-                <button type="button" class="meta-copy" title="Copy table as CSV">Copy (CSV)</button>
-                <button type="button" class="btn-json-modal" onclick="openJsonModal(this)" title="View full record as JSON" style="font-size:.82rem;padding:.2rem .6rem;border:1px solid #004578;border-radius:4px;background:#fff;color:#004578;cursor:pointer;">{ } Full Record</button>
-                {% if ((rec.data or {}).get('ExtensionProperties') or {}).get('Markdown') %}
-                <button type="button" class="btn-md-render" onclick="openMarkdownFromSection(this)" title="Render embedded Markdown documentation" style="font-size:.82rem;padding:.2rem .6rem;border:1px solid #007079;border-radius:4px;background:#fff;color:#007079;cursor:pointer;">📄 Render Markdown</button>
-                {% endif %}
-              </div>
-              <table class="meta-table" style="width:100%;border-collapse:collapse">
-                <thead>
-                  <tr><th class="meta-name">Name</th><th>Value</th></tr>
-                </thead>
-                <tbody>
-                  {% set rendered_count = namespace(v=0) %}
-                  {% for p in rec.metadata_pairs or [] %}
-                    {% set n = (p.name or '') %}
-                    {% set nl = n|lower %}
-                    {% if ('volumes' in nl)
-                          or ('columnvalues' in nl)
-                          or ('columnbasedtable' in nl)
-                          or ('reservoirestimatedvolumes' in nl)
-                          or ('[0]' in n) or ('[1]' in n) or ('[2]' in n) or ('[3]' in n) or ('[4]' in n)
-                          or ('.0.' in n) or ('.1.' in n) or ('.2.' in n) or ('.3.' in n) or ('.4.' in n)
-                    %}
-                    {% else %}
-                      {% set rendered_count.v = rendered_count.v + 1 %}
-                      <tr>
-                        <td class="meta-name">{{ n }}</td>
-                        <td>{{ p.value|pretty_val|safe }}</td>
-                      </tr>
-                    {% endif %}
-                  {% endfor %}
-                  {% if rendered_count.v == 0 %}
-                    <tr><td colspan="2" class="muted">No non-tabular metadata to display.</td></tr>
-                  {% endif %}
-                </tbody>
-              </table>
-              {% if has_volumes %}
-              <div class="muted" style="font-size:.85rem;margin-top:.25rem;">Tabular volume arrays are intentionally hidden here and shown only in the reconstructed table below.</div>
-              {% endif %}
-            </div>
-            {# Hidden JSON payload for the modal #}
-            <script type="application/json" class="rec-json-data">{{ rec.data | tojson }}</script>
-            </details>
           </section>
 
           {% if has_volumes %}
