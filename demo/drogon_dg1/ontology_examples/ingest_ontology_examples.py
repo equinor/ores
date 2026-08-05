@@ -42,6 +42,7 @@ DG12_RECORDS = [
 OMEGAS_RECORDS = [
     "bd_omegas_ssvp.json",
     "cp_omegas_ssvp.json",
+    "gls_omegas_ssvp.json",
 ]
 
 
