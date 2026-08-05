@@ -766,6 +766,20 @@ async def search_page(request: Request):
     )
 
 
+@router.get("/search/run", response_class=HTMLResponse)
+async def search_run_get(
+    request: Request,
+    kind: str = "",
+    query: str = "*",
+    limit: int = 50,
+):
+    """GET variant of search (used by Mermaid graph click links)."""
+    # Delegate to the POST handler logic by injecting params
+    from starlette.datastructures import FormData
+    request._form = FormData({"kind": kind, "kinds_extra": "", "query": query, "limit": str(limit)})
+    return await search_run(request, kind=kind, kinds_extra="", query=query, limit=limit)
+
+
 @router.post("/search/run", response_class=HTMLResponse)
 async def search_run(
     request: Request,
