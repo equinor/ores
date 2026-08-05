@@ -20,14 +20,39 @@
 | **Array/grid data access** | RDDMS: HDF5 arrays, statistics, sampling; Grid2d/IjkGrid property visualization | ✅ Full |
 | **Workflow templates** | ActivityTemplate (7 presets: Simulation, FMU, Drilling, ProdTest, Interpretation, QC, Custom) | ✅ Full |
 | **Branching / versioning** | RDDMS dataspace clone + ETP transactions (start/commit/rollback) | ✅ Infrastructure exists, not yet surfaced as "alternatives" |
-| **Actions (verbs on objects)** | Implicit in code (enrich, freeze, compare) — not yet exposed as typed ontology actions | ⚠️ Gap |
-| **Named relationship types** | Parameters[] roles exist but links are unnamed edges; no `informsDecision` / `supersedes` vocabulary | ⚠️ Gap |
-| **Object change history / audit** | OSDU legal tags + version increment; no fine-grained event log per collaboration | ⚠️ Gap |
-| **Live collaboration (real-time)** | No push notifications; polling only; no SSE/websocket feeds | ⚠️ Gap |
-| **User-configurable dashboards** | Fixed templates per view; users cannot compose custom KPI layouts | ⚠️ Gap |
+| **Actions (verbs on objects)** | Activity + ActivityTemplate already model actions; each action run = Activity record with typed Parameters[] | ✅ Schema exists — surface in UI as named verbs |
+| **Named relationship types** | `Parameters[].Keys[ParameterKey]` already supports arbitrary tags — use as relationship-type label (e.g. `relationship-kind`=`evidences`) | ✅ Schema exists — define conventions + ref-data values |
+| **Object change history / audit** | `CollaborationProject.LifecycleEvents[]` has EventID, DateTime, Remark, ResourceCollectionID — **heavily underutilized** | ✅ Schema exists — populate on each state change |
+| **Decision alternatives** | `ext.equinor.Alternatives[]` on BD already holds Name, Rank, Rationale, RecommendedAction | ✅ Schema exists — already in Drogon demo |
+| **Gate checklist / required items** | `ActivityStates[]` with custom MilestoneID + ActivityStatusID ref-data; or derive from ActivityStateTemplate | ✅ Schema exists — define ref-data items per gate |
+| **Structured annotations** | `Remarks[]` with RemarkSource categorization — use as typed notes/comments | ✅ Schema exists — convention only |
+| **Live collaboration (real-time)** | No push notifications; polling only; no SSE/websocket feeds | ⚠️ Gap (infrastructure) |
+| **User-configurable dashboards** | Fixed templates per view; users cannot compose custom KPI layouts | ⚠️ Gap (UI framework) |
 | **Ontology-level access control** | OSDU ACL per record; no object-type or relationship-scoped permissions | ⚠️ Gap (OSDU platform limitation) |
 
-**Summary**: ~15/21 core ontology concepts are already operational. The gaps cluster around explicit relationship naming, first-class actions, change audit, and real-time collaboration — which map to Tiers B and C below.
+**Summary**: ~18/21 core ontology concepts are covered by existing M27 schema fields. Many "gaps" are actually underutilized fields that just need conventions and reference-data values. Only 3 true gaps remain: real-time push, configurable dashboards, and ontology-level ACL.
+
+---
+
+## Existing M27 Fields to Exploit (no schema changes needed)
+
+| Field | Location | Current Use | Ontology Reuse |
+|---|---|---|---|
+| `Parameters[].Keys[ParameterKey]` | BD, Activity | artifact typing (`REV-raw`, `GeoLabelSet`) | **Relationship types**: set ParameterKey=`relationship-kind`, value=`evidences`/`supersedes`/`constrains` |
+| `ProjectSpecifications[]` | BD | Economics (NPV, IRR, CAPEX) | **Any quantified metric** — define new ParameterTypeID ref-data |
+| `ActivityStates[]` | BD, CP | Gate progression (DG1→DG4) | **Any lifecycle checklist** — custom MilestoneID + ActivityStatusID per gate |
+| `LifecycleEvents[]` | CollaborationProject | Minimal (creation only) | **Full audit trail** — EventID for state transitions, revisions, approvals |
+| `Remarks[]` | BD | Recommendations text | **Typed annotations** — RemarkSource as category key |
+| `ext.equinor.Alternatives[]` | BD | DG scenario ranking | **Decision alternatives** — already structured (Name, Rank, Rationale, Action) |
+| `Activity` records | Standalone | Workflow provenance | **Actions as first-class verbs** — each user action = Activity with template |
+| `Parameters[].Selection` | BD, Activity | Sparse | **Context/explanation** per linked object |
+
+**Reference-data items to define** (zero schema changes, just new ref-data records):
+- `ParameterKey` conventions: `relationship-kind`, `gate-requirement`, `completeness-role`
+- `ParameterTypeID` additions: custom KPIs beyond economics
+- `MilestoneID` additions: per-gate required items (e.g. `DG2-Volumes`, `DG2-DevConcept`)
+- `ActivityStatusID` additions: `Satisfied`, `Outstanding`, `Waived`
+- `EventID` conventions: `StateTransition`, `EvidenceAdded`, `RiskEscalation`, `ApprovalGranted`
 
 ---
 
@@ -116,12 +141,14 @@ No new schemas or APIs. Uses existing BD, Parameters[], Activity, PersistedColle
 - **Deps**: RDDMS clone endpoint exists. Needs ORES orchestration
 - **Effort**: ~2-3 days. Orchestration + UI
 
-### B5. Atomic Collaboration Actions
+### B5. Atomic Collaboration Actions (using existing audit fields)
 - [ ] ORES endpoints: POST `/bd/{id}/add-alternative`, `/bd/{id}/update-volume`, `/bd/{id}/flag-risk`
-- [ ] Each action: updates BD Parameters[] or linked records + creates an Activity record as audit trail
-- [ ] Feed into A6 (activity feed) automatically
+- [ ] Each action: updates BD Parameters[] or linked records + appends `LifecycleEvents[]` entry on CP
+- [ ] Also creates Activity record (with ActivityTemplate="CollaborationAction") for full provenance
+- [ ] Use `ext.equinor.Alternatives[]` for alternative management (already structured)
+- [ ] Feed into A6 (activity feed) automatically via LifecycleEvents[] + Activity queries
 - **Deps**: A6 design. Existing addgate logic for record creation
-- **Effort**: ~4-5 days. Multiple endpoints + Activity auto-creation
+- **Effort**: ~4-5 days. Multiple endpoints + dual audit (LifecycleEvents + Activity)
 
 ### B6. RDDMS Change Notification (Polling)
 - [ ] RDDMS periodic check: compare dataspace object list/timestamps vs last known state
@@ -132,44 +159,32 @@ No new schemas or APIs. Uses existing BD, Parameters[], Activity, PersistedColle
 
 ---
 
-## Tier C — Requires new OSDU schema extensions or significant new infrastructure
+## Tier C — True infrastructure gaps (cannot solve with existing schemas)
 
-### C1. `DecisionAlternative` WPC Schema
-- [ ] New kind: `work-product-component--DecisionAlternative:1.0.0`
-- [ ] Fields: AlternativeName, AlternativeDescription, RankedPosition, SelectionRationale, LinkedDataspaceID
-- [ ] BD links to alternatives via Parameters[role=Output, kind=DecisionAlternative]
-- [ ] Enables native comparison queries without convention-dependent parsing
-- **Deps**: OSDU schema registration. A3/B4 work without this but benefit from it
-- **Effort**: ~1 week (schema design + registration + migration of existing demo data)
-
-### C2. `RelationshipType` Reference-Data Kind
-- [ ] New kind: `reference-data--RelationshipType:1.0.0`
-- [ ] Values: `informsDecision`, `evidences`, `supersedes`, `alternativeTo`, `constrains`, `mitigates`
-- [ ] Used in Parameters[].Keys[] or a new `RelationshipTypeID` field on links
-- [ ] Makes the implicit link semantics explicit and queryable
-- **Deps**: Schema registration. Changes how Parameters[] conventions work
-- **Effort**: ~1 week (schema + convention documentation + demo data update)
-
-### C3. `GateChecklist` Extension to DecisionLevel
-- [ ] Extend `DecisionLevel` ref-data with `RequiredItems[]`: array of {Kind, Role, MinCount, Description}
-- [ ] Or: new WPC `GateChecklist` linked from DecisionLevel
-- [ ] Enables A1 to be schema-driven rather than app-config-driven
-- **Deps**: A1 works without this (uses app config). This makes it portable/standard
-- **Effort**: ~3-4 days (schema extension + ref-data update)
-
-### C4. `ChangeEvent` Audit Records
-- [ ] New kind: `work-product-component--ChangeEvent:1.0.0` or use Activity with a new template
-- [ ] Fields: EventType, Actor, Timestamp, AffectedRecordIDs[], Description, PriorValue, NewValue
-- [ ] Linked from CollaborationProject → provides true object history
-- **Deps**: B5 can simulate this with Activity records. This formalizes it
-- **Effort**: ~1 week (schema + ingestion pipeline + UI)
-
-### C5. Real-Time Collaboration (Webhooks/SSE)
+### C1. Real-Time Collaboration (Webhooks/SSE)
 - [ ] RDDMS webhook: push notification when ETP dataspace objects change
 - [ ] ORES Server-Sent Events: live updates to open BD detail views
 - [ ] Requires infrastructure: message bus or polling service + SSE endpoint
 - **Deps**: B6 is the lightweight precursor
 - **Effort**: ~2 weeks (infrastructure + RDDMS webhook + ORES SSE + reconnection logic)
+
+### C2. User-Configurable Dashboard Builder
+- [ ] Domain users compose custom BD views: pick which Parameters[] to surface, KPI cards, graph layouts
+- [ ] Requires a layout persistence model + dynamic rendering engine
+- [ ] Consider: saved views as JSON in user preferences or as OSDU Document WPC
+- **Deps**: A1-A6 provide the building blocks; this makes them composable
+- **Effort**: ~2 weeks (layout engine + persistence + UI)
+
+### ~~C3-C5. Previously proposed new schemas — NOW UNNECESSARY~~
+
+**Eliminated by reusing existing M27 fields:**
+
+| Was | Replaced By |
+|---|---|
+| ~~`DecisionAlternative` WPC~~ | `ext.equinor.Alternatives[]` already on BD + B4 dataspace branching |
+| ~~`RelationshipType` ref-data kind~~ | `Parameters[].Keys[ParameterKey="relationship-kind"]` + conventions |
+| ~~`GateChecklist` schema extension~~ | `ActivityStates[]` with custom MilestoneID/ActivityStatusID ref-data |
+| ~~`ChangeEvent` WPC~~ | `CollaborationProject.LifecycleEvents[]` + Activity records as audit trail |
 
 ---
 
@@ -186,11 +201,13 @@ A6 (activity feed)           ─┘
 
 B4 (decision branches)       ─┐
 B3 (relationship search)     ─┤── Sprint 3: backend enrichment
-B5 (atomic actions)          ─┘
+B5 (atomic actions + audit)  ─┘   (uses LifecycleEvents[] + Activity)
 
 B1 (RDDMS graph traversal)  ─┐
 B2 (dataspace diff)          ─┤── Sprint 4: cross-boundary integration
 B6 (change notification)     ─┘
 
-C1–C5                        ─── Sprint 5+: schema proposals (submit to OSDU forum)
+C1-C2 (SSE + dashboards)    ─── Sprint 5+: infrastructure (no new OSDU schemas needed)
+
+Ref-data setup (run once):   ─── Sprint 0: define conventions for Keys[], MilestoneID, EventID
 ```
