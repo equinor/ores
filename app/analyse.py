@@ -448,65 +448,37 @@ async def analyse_compare(
                     if (data_block.get("Name") or "") in (".", ""):
                         return None
 
-                    # Post-filter: verify this BD actually references the
-                    # selected reservoir.  Check multiple locations:
-                    #   1. data.ReservoirIDs[] (OSDU canonical top-level field)
-                    #   2. data.Parameters[].DataObjectParameter (typed ref)
-                    #   3. data.ancestry (parent/child links)
-                    #   4. BD name contains reservoir name (implicit association)
-                    #   5. Reservoir ID slug appears anywhere in the data JSON
-                    reservoir_ids_field = data_block.get("ReservoirIDs") or []
-                    refs_via_top_level = reservoir_id in reservoir_ids_field
+                    # Post-filter: does this BD reference the reservoir?
+                    # 1. Direct: full reservoir ID anywhere in the record
+                    record_str = str(full)
+                    refs_direct = reservoir_id in record_str
 
-                    params = data_block.get("Parameters") or []
-                    refs_via_params = any(
-                        isinstance(p, dict)
-                        and reservoir_id in (p.get("DataObjectParameter") or "")
-                        for p in params
-                    )
+                    # 2. Implicit: BD and reservoir share a project prefix
+                    #    (e.g. OmegaSor-WPC ↔ OmegaSorAlfa share "OmegaSor")
+                    refs_implicit = False
+                    if not refs_direct:
+                        _res_slug = reservoir_id.split(":")[-2] if reservoir_id.count(":") >= 3 else ""
+                        _bd_slug = bid.split(":")[-2] if bid.count(":") >= 3 else ""
+                        if _res_slug and _bd_slug:
+                            _common = 0
+                            for a, b in zip(_res_slug.lower(), _bd_slug.lower()):
+                                if a == b:
+                                    _common += 1
+                                else:
+                                    break
+                            refs_implicit = _common >= 5
 
-                    ancestry = data_block.get("ancestry") or {}
-                    ancestry_all = (ancestry.get("parents") or []) + (ancestry.get("children") or [])
-                    refs_via_ancestry = reservoir_id in ancestry_all
-
-                    # Name-based: BD name contains the reservoir name
-                    # or reservoir name contains the BD's project prefix
-                    bd_name = (data_block.get("Name") or "").lower()
-                    res_name_lower = reservoir_name.lower() if reservoir_name else ""
-                    refs_via_name = bool(
-                        res_name_lower and len(res_name_lower) >= 3
-                        and (res_name_lower in bd_name or bd_name[:len(res_name_lower)] in res_name_lower)
-                    )
-
-                    # Slug-based: reservoir ID slug anywhere in serialised data,
-                    # OR BD ID slug and reservoir slug share a common prefix (>=5 chars)
-                    _res_slug = reservoir_id.split(":")[-2] if reservoir_id.count(":") >= 3 else ""
-                    _bd_slug = bid.split(":")[-2] if bid.count(":") >= 3 else ""
-                    refs_via_slug = bool(
-                        _res_slug and len(_res_slug) >= 4
-                        and _res_slug in str(data_block)
-                    )
-                    if not refs_via_slug and _res_slug and _bd_slug:
-                        # Check common prefix between slugs (e.g. OmegaSor in OmegaSorAlfa & OmegaSor-WPC)
-                        _common = 0
-                        for a, b in zip(_res_slug.lower(), _bd_slug.lower()):
-                            if a == b:
-                                _common += 1
-                            else:
-                                break
-                        refs_via_slug = _common >= 5
-
-                    if not (refs_via_top_level or refs_via_params or refs_via_ancestry or refs_via_name or refs_via_slug):
+                    if not (refs_direct or refs_implicit):
                         log.info(
-                            "[ANALYSE] BD %s (%s) does not reference reservoir %s - skipping",
+                            "[ANALYSE] BD %s (%s) not related to reservoir %s - skipping",
                             bid, data_block.get("Name", "?"), reservoir_id,
                         )
                         return None
 
                     log.info(
-                        "[ANALYSE] BD %s (%s) matched reservoir %s via: IDs=%s Params=%s Ancestry=%s Name=%s Slug=%s",
+                        "[ANALYSE] BD %s (%s) matched reservoir %s (direct=%s implicit=%s)",
                         bid, data_block.get("Name", "?"), reservoir_id,
-                        refs_via_top_level, refs_via_params, refs_via_ancestry, refs_via_name, refs_via_slug,
+                        refs_direct, refs_implicit,
                     )
 
                     gls = await _enrich_geolabel(
