@@ -448,6 +448,12 @@ async def login_page(request: Request):
         "active_instance": get_active_name(),
     })
 
+
+@app.post("/login-page", response_class=RedirectResponse)
+async def login_page_post():
+    """Handle accidental POST to login-page (browser form re-submit after restart)."""
+    return RedirectResponse("/login-page", status_code=303)
+
 # Pages & actions
 # ──────────────────────────────────────────────────────────────────────────────
 
