@@ -2283,7 +2283,7 @@ classDef group_node fill:#fefcbf,stroke:#d69e2e,color:#222,font-style:italic;
                       {% set rendered_count.v = rendered_count.v + 1 %}
                       <tr>
                         <td class="meta-name">{{ n }}</td>
-                        <td>{{ p.value|pretty_val }}</td>
+                        <td>{{ p.value|pretty_val|safe }}</td>
                       </tr>
                     {% endif %}
                   {% endfor %}

@@ -81,17 +81,39 @@ def friendly_list(lst: list, max_str: int = 400) -> str:
 
 
 def pretty_val(val: Any) -> str:
-    """Jinja filter: prettify metadata values that may contain JSON."""
+    """Jinja filter: prettify metadata values that may contain JSON.
+    Returns safe HTML (URLs linkified, rest escaped)."""
     if val is None:
         return "-"
     s = str(val)
     if s.startswith(("[", "{")):
         try:
             obj = json.loads(s)
-            return friendly_value(obj, 600)
+            return _linkify_urls(friendly_value(obj, 600))
         except (json.JSONDecodeError, ValueError):
             pass
-    return s
+    return _linkify_urls(s)
+
+
+import re as _re
+from html import escape as _html_esc
+
+_URL_RE = _re.compile(r'(https?://[^\s<>\'")\]]+)')
+
+
+def _linkify_urls(text: str) -> str:
+    """Escape HTML, then convert bare URLs to clickable links."""
+    parts = _URL_RE.split(text)
+    out = []
+    for i, part in enumerate(parts):
+        if i % 2 == 0:
+            # Normal text – escape HTML
+            out.append(_html_esc(part))
+        else:
+            # URL match – render as link (URL itself is safe from XSS)
+            escaped_url = _html_esc(part, quote=True)
+            out.append(f'<a href="{escaped_url}" target="_blank" rel="noopener">{_html_esc(part)}</a>')
+    return "".join(out)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
