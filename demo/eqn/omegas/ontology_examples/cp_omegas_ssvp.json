@@ -18,7 +18,7 @@
     "LifecycleStatusID": "dev:reference-data--CollaborationProjectLifecycleStatus:Open:",
     "ProjectBeginDate": "2026-06-15T00:00:00Z",
     "ParentProjectID": "dev:master-data--BusinessDecision:OmegaSor-WPC:1",
-    "TrustedCollectionID": "dev:work-product-component--CollaborationProjectCollection:OmegaSor-TrustedData:1",
+    "TrustedCollectionID": "dev:work-product-component--CollaborationProjectCollection:OmegaSor-FieldDev-Collection:1",
 
     "Personnel": [
       {"PersonName": "Arfinn Josavik", "ProjectRoleID": "dev:reference-data--ProjectRole:ReservoirEngineer:", "CompanyOrganisationID": "dev:master-data--Organisation:Equinor:"},

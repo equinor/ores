@@ -62,7 +62,7 @@
         "Selection": "SSVP profiles received 10th June. Phase 1 start Jan 2029, Phase 2 Jan 2030. Scaling effects not included.",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:OmegaSor-SSVP-ProductionForecast:1",
+        "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:OmegaSor-ProdProfile:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "ProductionForecast"},
           {"ParameterKey": "relationship", "StringParameterKey": "informs"}
@@ -73,7 +73,7 @@
         "Selection": "CAP-X + 4-slot template. 8\" prod, 6\" WI flowline. WAG-ready, no gas line Phase 1.",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:OmegaSor-SSVP-Concept:1",
+        "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:OmegaSor-WPC:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "DevelopmentConcept"},
           {"ParameterKey": "relationship", "StringParameterKey": "informs"}
@@ -84,7 +84,7 @@
         "Selection": "RMS model: Top Tarbert, velocity model, fracture zones, framework. Exported from /project/snorre/reservoirmodels/omegasor/2026.2.0/rms.",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
-        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-omegas:1",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-omegas",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"},
           {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
@@ -125,7 +125,7 @@
         "Selection": "Keeper from CAP-X. Deep sidetrack from 34/4-19 S. Perforated Tarbert + Rannoch.",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--WellPlan:OmegaSor-Producer1:1",
+        "DataObjectParameter": "dev:master-data--Wellbore:OmegaSor-Producer1:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "Producer"},
           {"ParameterKey": "relationship", "StringParameterKey": "informs"}
@@ -136,7 +136,7 @@
         "Selection": "From 4-slot template. Perforated Tarbert only (base case). WI placement 5–20 m above OWC.",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--WellPlan:OmegaSor-Injector1:1",
+        "DataObjectParameter": "dev:master-data--Wellbore:OmegaSor-Injector1:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "Injector"},
           {"ParameterKey": "relationship", "StringParameterKey": "informs"}
@@ -147,7 +147,7 @@
         "Selection": "From template to deeper structure. Objectives: OWC, Ba content, Tarbert presence, deformation bands.",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Output:",
-        "DataObjectParameter": "dev:work-product-component--WellPlan:OmegaSor-Pilot:1",
+        "DataObjectParameter": "dev:master-data--Wellbore:34-4-19S:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "Pilot"},
           {"ParameterKey": "relationship", "StringParameterKey": "informs"}
