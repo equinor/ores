@@ -453,7 +453,8 @@ async def analyse_compare(
                     #   1. data.ReservoirIDs[] (OSDU canonical top-level field)
                     #   2. data.Parameters[].DataObjectParameter (typed ref)
                     #   3. data.ancestry (parent/child links)
-                    # The full-text search may return false positives.
+                    #   4. BD name contains reservoir name (implicit association)
+                    #   5. Reservoir ID slug appears anywhere in the data JSON
                     reservoir_ids_field = data_block.get("ReservoirIDs") or []
                     refs_via_top_level = reservoir_id in reservoir_ids_field
 
@@ -468,7 +469,22 @@ async def analyse_compare(
                     ancestry_all = (ancestry.get("parents") or []) + (ancestry.get("children") or [])
                     refs_via_ancestry = reservoir_id in ancestry_all
 
-                    if not (refs_via_top_level or refs_via_params or refs_via_ancestry):
+                    # Name-based: BD name contains the reservoir name
+                    bd_name = (data_block.get("Name") or "").lower()
+                    res_name_lower = reservoir_name.lower() if reservoir_name else ""
+                    refs_via_name = bool(
+                        res_name_lower and len(res_name_lower) >= 3
+                        and res_name_lower in bd_name
+                    )
+
+                    # Slug-based: reservoir ID slug anywhere in serialised data
+                    _res_slug = reservoir_id.split(":")[-2] if reservoir_id.count(":") >= 3 else ""
+                    refs_via_slug = bool(
+                        _res_slug and len(_res_slug) >= 4
+                        and _res_slug in str(data_block)
+                    )
+
+                    if not (refs_via_top_level or refs_via_params or refs_via_ancestry or refs_via_name or refs_via_slug):
                         log.info(
                             "[ANALYSE] BD %s (%s) does not reference reservoir %s - skipping",
                             bid, data_block.get("Name", "?"), reservoir_id,
@@ -476,9 +492,9 @@ async def analyse_compare(
                         return None
 
                     log.info(
-                        "[ANALYSE] BD %s (%s) matched reservoir %s via: ReservoirIDs=%s Params=%s Ancestry=%s",
+                        "[ANALYSE] BD %s (%s) matched reservoir %s via: IDs=%s Params=%s Ancestry=%s Name=%s Slug=%s",
                         bid, data_block.get("Name", "?"), reservoir_id,
-                        refs_via_top_level, refs_via_params, refs_via_ancestry,
+                        refs_via_top_level, refs_via_params, refs_via_ancestry, refs_via_name, refs_via_slug,
                     )
 
                     gls = await _enrich_geolabel(

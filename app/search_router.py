@@ -507,7 +507,11 @@ async def _enrich_record_light(
     volumes = _normalize_volumes(data_block)
 
     # Extract links from within the record (no external fetches)
-    links = extract_osdu_links(data_block) or []
+    try:
+        links = extract_osdu_links(data_block) or []
+    except Exception as e:
+        log.warning("[ENRICH-LIGHT] extract_osdu_links failed for %s: %s", rid, e)
+        links = []
 
     # Compact metadata pairs from data{}
     metadata_pairs: list = []
@@ -645,7 +649,11 @@ async def _enrich_record(
             bd_collab = collab_r
 
     # Generic WPC/master-data links (exclude reference-data)
-    links = extract_osdu_links(data_block) or []
+    try:
+        links = extract_osdu_links(data_block) or []
+    except Exception as e:
+        log.warning("[ENRICH] extract_osdu_links failed for %s: %s", rid, e)
+        links = []
 
     # Reverse-lookup: find records that reference this one
     rev_links = await _reverse_lookup(rid, client, search_url, hdr)
@@ -923,7 +931,28 @@ async def search_run(
             # This avoids 6+ extra API calls per record during search.
             enriched_results = []
             for full in valid_records:
-                enriched_results.append(await _enrich_record_light(full, client, storage_url, search_url, hdr))
+                try:
+                    enriched_results.append(await _enrich_record_light(full, client, storage_url, search_url, hdr))
+                except Exception as e:
+                    log.warning("[SEARCH] enrich_record_light failed for %s: %s", full.get("id", "?"), e)
+                    # Fall back to a minimal result so the record still appears
+                    enriched_results.append({
+                        "id": full.get("id"),
+                        "kind": full.get("kind"),
+                        "version": full.get("version"),
+                        "display_name": (full.get("data") or {}).get("Name") or full.get("id", ""),
+                        "display_description": "",
+                        "data": full.get("data", {}),
+                        "volumes": {},
+                        "links": [],
+                        "linked_labels": {},
+                        "metadata_pairs": [],
+                        "bd_geolabel": {},
+                        "bd_production": {},
+                        "bd_activity": {},
+                        "bd_maps": {"maps": [], "all": []},
+                        "ddms_refs": [],
+                    })
 
             enriched_results.sort(
                 key=lambda r: (r.get("display_name") or r.get("id") or "").lower()
