@@ -39,7 +39,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 
 SCRIPT_DIR = Path(__file__).resolve().parent       # demo/drogon_dg2
-DG1_DIR    = SCRIPT_DIR.parent / "drogon"           # demo/drogon
+DG1_DIR    = SCRIPT_DIR.parent / "drogon_dg1"           # demo/drogon_dg1
 
 import sys
 if str(DG1_DIR) not in sys.path:
@@ -133,6 +133,7 @@ def main():
                 doc_ids["ptr"] = rid
 
     reservoir_id  = _find_id(masterwp, "master-data--Reservoir:")
+    segment_ids   = _find_all_ids(masterwp, "master-data--ReservoirSegment:")
     raw_wpc_id    = _find_id(rawvol,   "ReservoirEstimatedVolumes")
     stat_wpc_id   = _find_id(statvol,  "ReservoirEstimatedVolumes")
     params_wpc_id = _find_id(params,   "ColumnBasedTable")
@@ -229,6 +230,8 @@ def main():
                 "First oil target 2028-H1. Proceed to DG3 FEED."
             ),
             "RiskAssessmentDocument": doc_ids.get("sra", ""),
+            "ReservoirIDs": [reservoir_id] if reservoir_id else [],
+            "ReservoirSegmentIDs": segment_ids,
             "RiskIDs": risk_ids,
             "PriorActivityIDs": (
                 [activity_id] if activity_id

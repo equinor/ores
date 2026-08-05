@@ -91,6 +91,7 @@ def main():
     keyuncert = {}
 
     reservoir_id = _find_id(masterwp, "master-data--Reservoir:")
+    segment_ids  = _find_all_ids(masterwp, "master-data--ReservoirSegment:")
     raw_wpc_id   = _find_id(rawvol, "ReservoirEstimatedVolumes")
     stat_wpc_id  = _find_id(statvol, "ReservoirEstimatedVolumes")
     params_wpc_id = _find_id(params, "ColumnBasedTable")
@@ -136,6 +137,8 @@ def main():
             "DecisionDueDate": "2026-03-15",
             "DecisionDate": "2026-02-28",
             "DecisionSummary": "Assess Valysar in-place volumes and recommend proceed/no-go for DG2.",
+            "ReservoirIDs": [reservoir_id] if reservoir_id else [],
+            "ReservoirSegmentIDs": segment_ids,
             "RiskIDs": risk_ids,
             "PriorActivityIDs": prior_activity_ids,
             "Parameters": [

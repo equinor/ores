@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 # Make the DG1 drogon folder importable so we can reuse its _shared module.
-_DG1_DIR = Path(__file__).resolve().parent.parent / "drogon"
+_DG1_DIR = Path(__file__).resolve().parent.parent / "drogon_dg1"
 if str(_DG1_DIR) not in sys.path:
     sys.path.insert(0, str(_DG1_DIR))
 

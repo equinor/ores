@@ -26,6 +26,18 @@
     "DecisionDueDate": "2026-03-15",
     "DecisionDate": "2026-02-28",
     "DecisionSummary": "Assess Valysar in-place volumes and recommend proceed/no-go for DG2.",
+    "ReservoirIDs": [
+      "dev:master-data--Reservoir:Drogon-Valysar:1"
+    ],
+    "ReservoirSegmentIDs": [
+      "dev:master-data--ReservoirSegment:21cd47f4-15c9-4ab1-a347-6d28a18655b1:1",
+      "dev:master-data--ReservoirSegment:1a055370-f84f-430c-954b-d712d13781f0:1",
+      "dev:master-data--ReservoirSegment:01505396-8e72-42a7-9d80-059cf9e17c95:1",
+      "dev:master-data--ReservoirSegment:92dace46-399d-445c-bcc9-36448872ecfc:1",
+      "dev:master-data--ReservoirSegment:4dd0036d-eaea-4e54-8692-9d9aca547585:1",
+      "dev:master-data--ReservoirSegment:98b0c0d4-2c5d-4c94-b8c3-d7e41bf933f9:1",
+      "dev:master-data--ReservoirSegment:b47e81f4-c545-4f8d-ab45-4b9585cfeebb:1"
+    ],
     "RiskIDs": [
       "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
       "dev:master-data--Risk:Drogon-FaultCompartment:1"
@@ -35,34 +47,8 @@
     ],
     "Parameters": [
       {
-        "Title": "DG1 Evidence Package",
-        "Selection": "Top-level evidence collection bundling all DG1 volumetrics artifacts, reservoir context, risks, and workflow provenance",
-        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
-        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
-        "DataObjectParameter": "dev:work-product-component--PersistedCollection:Drogon-DG1-EvidencePackage:1",
-        "Keys": [
-          {
-            "ParameterKey": "artifact",
-            "StringParameterKey": "PersistedCollection"
-          }
-        ]
-      },
-      {
-        "Title": "Headline volumes & reservoir properties (GeoLabelSet)",
-        "Selection": "P10/P50/P90 headline volumes per segment, derived from stat REV",
-        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
-        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:work-product-component--GeoLabelSet:Drogon-DG1-GeoLabelSet:1",
-        "Keys": [
-          {
-            "ParameterKey": "artifact",
-            "StringParameterKey": "GeoLabelSet"
-          }
-        ]
-      },
-      {
         "Title": "Raw volumes (per realisation)",
-        "Selection": "Per-realisation FMU output (3 realisations × 7 segments × 4 facies)",
+        "Selection": "Per-realisation FMU output",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
         "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Raw:1",
@@ -75,7 +61,7 @@
       },
       {
         "Title": "Statistical volumes (P10/P50/P90)",
-        "Selection": "P10/P50/P90 aggregates across realisations",
+        "Selection": "P10/P50/P90 aggregates",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
         "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1",
@@ -87,8 +73,8 @@
         ]
       },
       {
-        "Title": "Input parameters (OWC depths, porosity per segment/facies)",
-        "Selection": "Per-segment/facies uncertainty inputs for 7 fault blocks",
+        "Title": "Valysar parameters (OWC, porosity)",
+        "Selection": "Per-segment/facies inputs",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
         "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:Drogon-DG1-InputParameters:1",
@@ -101,14 +87,14 @@
       },
       {
         "Title": "Reservoir scope",
-        "Selection": "Valysar reservoir (7 segments: WestLowland, CentralSouth, CentralNorth, NorthHorst, CentralRamp, CentralHorst, EastLowland)",
+        "Selection": "Valysar reservoir",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
         "DataObjectParameter": "dev:master-data--Reservoir:Drogon-Valysar:1"
       },
       {
-        "Title": "GeoModel Dataspace (RDDMS)",
-        "Selection": "RDDMS ETP dataspace hosting the Drogon geomodel EPC files",
+        "Title": "GeoModelDataspace",
+        "Selection": "RDDMS geomodel EPC store",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
         "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
