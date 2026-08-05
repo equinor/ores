@@ -1,0 +1,123 @@
+{
+  "generator": "ontology",
+  "project": "Drogon",
+  "gate": "DG1",
+  "description": "Drogon DG1 Identify & Assess — baseline BD with relationship keys, typed remarks, and economics",
+
+  "business_decision": {
+    "id": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
+    "name": "Drogon DG1 - Identify & Assess",
+    "description": "DG1 volume assessment of the Valysar formation, Drogon field. P10/P50/P90 oil & gas estimates across 7 segments.",
+    "project_name": "Drogon Field Development",
+    "decision_level": "DG1",
+    "approval_status": "Approved",
+    "decision_due_date": "2026-03-15",
+    "decision_date": "2026-02-28",
+    "decision_summary": "Assess Valysar in-place volumes and recommend proceed/no-go for DG2.",
+    "activity_state_template_id": "dev:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
+    "project_type_id": "dev:reference-data--ProjectType:FieldDevelopment:",
+
+    "risk_ids": [
+      "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+      "dev:master-data--Risk:Drogon-FaultCompartment:1"
+    ],
+
+    "prior_activity_ids": [
+      "dev:work-product-component--Activity:Drogon-DG1-VolumetricsWorkflow:1"
+    ],
+
+    "relationships": [
+      {
+        "title": "DG1 Evidence Package",
+        "target_id": "dev:work-product-component--PersistedCollection:Drogon-DG1-EvidencePackage:1",
+        "type": "evidences",
+        "artifact": "PersistedCollection",
+        "selection": "All DG1 volumetrics artifacts, reservoir context, risks"
+      },
+      {
+        "title": "Headline volumes (GeoLabelSet)",
+        "target_id": "dev:work-product-component--GeoLabelSet:Drogon-DG1-GeoLabelSet:1",
+        "type": "evidences",
+        "artifact": "GeoLabelSet",
+        "role": "Input",
+        "selection": "P10/P50/P90 per segment, derived from stat REV"
+      },
+      {
+        "title": "In-place volumes (P10/P50/P90)",
+        "target_id": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1",
+        "type": "evidences",
+        "artifact": "REV-stats",
+        "role": "Output",
+        "selection": "Statistical aggregates from FMU run #47"
+      },
+      {
+        "title": "Input parameters table",
+        "target_id": "dev:work-product-component--ColumnBasedTable:Drogon-DG1-InputParameters:1",
+        "type": "informs",
+        "artifact": "ColumnBasedTable-params",
+        "role": "Input",
+        "selection": "OWC, porosity, NTG per segment/facies"
+      },
+      {
+        "title": "Geomodel dataspace (RDDMS)",
+        "target_id": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+        "type": "evidences",
+        "artifact": "ETPDataspace",
+        "selection": "Structural + property model"
+      },
+      {
+        "title": "Porosity risk",
+        "target_id": "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+        "type": "constrains",
+        "selection": "Floodplain facies porosity poorly constrained"
+      },
+      {
+        "title": "Fault compartment risk",
+        "target_id": "dev:master-data--Risk:Drogon-FaultCompartment:1",
+        "type": "constrains",
+        "selection": "NE fault communication uncertain"
+      }
+    ],
+
+    "economics": {
+      "NPV_10pct": {"value": 280, "unit": "MUSD"},
+      "IRR": {"value": 12, "unit": "%"},
+      "CAPEX": {"value": 6500, "unit": "MNOK"},
+      "OPEX_pa": {"value": 350, "unit": "MNOK"},
+      "BreakevenOil": {"value": 55, "unit": "USD/bbl"},
+      "Payback": {"value": 9.0, "unit": "a"}
+    },
+
+    "uncertainty_summary": {
+      "Basis": "FMU static volumes, 3 realisations, 7 segments, 3 facies",
+      "Note": "See stat WPC for P10/P50/P90 per segment & facies (m³).",
+      "TotalRealisations": 3,
+      "MethodologyReference": "FMU Level 2 static uncertainty workflow (Valysar v1)",
+      "StaticInPlace_Oil_MSm3": {"P90": 28.5, "P50": 34.5, "P10": 42.0},
+      "Recoverable_Oil_MSm3": {"P90": 5.8, "P50": 8.2, "P10": 11.5},
+      "RecoveryFactor_pct": {"P90": 22.0, "P50": 27.5, "P10": 32.0}
+    },
+
+    "alternatives": [
+      {"name": "Proceed to DG2 - full 7-segment development", "rank": 1, "rationale": "All 7 segments show commercial volumes; porosity risk manageable.", "action": "Approve"},
+      {"name": "Reduced scope - CentralHorst + CentralSouth only", "rank": 2, "rationale": "Best economics, lowest uncertainty; leaves ~40% upside for later.", "action": "Consider"},
+      {"name": "Defer - acquire more appraisal data", "rank": 3, "rationale": "Floodplain porosity poorly constrained; more core data recommended.", "action": "Fallback"}
+    ],
+
+    "remarks": [
+      {"source": "DG1-Recommendation", "text": "Upgrade FMU to Level 3 (include structural uncertainty) before DG2."},
+      {"source": "DG1-Recommendation", "text": "Acquire additional core data in floodplain facies — porosity model poorly constrained."},
+      {"source": "DG1-Recommendation", "text": "Reprocess 2019 4D seismic to confirm fault communication across NE boundary."},
+      {"source": "DG1-Recommendation", "text": "Review OWC in SouthWing segment — possible tilt from regional aquifer."},
+      {"source": "DG1-Recommendation", "text": "Run flow simulation (OPM) for 20-year production forecast with WAG sensitivity."},
+      {"source": "DG1-Recommendation", "text": "Evaluate infill well potential for future phases."}
+    ],
+
+    "activity_states": [
+      {"milestone_id": "DG1", "date": "2026-02-28T00:00:00Z", "status": "Completed", "remark": "DG1 Identify & Assess — Approved"},
+      {"milestone_id": "DG2", "date": "2026-05-15T00:00:00Z", "status": "Planned", "remark": "DG2 Concept Select"},
+      {"milestone_id": "DG3", "date": "2027-01-01T00:00:00Z", "status": "Planned", "remark": "DG3 FEED"},
+      {"milestone_id": "DG4", "date": "2027-07-01T00:00:00Z", "status": "Planned", "remark": "FID"}
+    ]
+  }
+}

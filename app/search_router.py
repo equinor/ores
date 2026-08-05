@@ -57,7 +57,7 @@ def _jinja_linkify(text: str) -> str:
     t = markupsafe.escape(text)
     # Linkify URLs (http/https)
     t = re.sub(
-        r'(https?://[^\s&lt;&amp;]+)',
+        r'(https?://[^\s"\'>< ]+)',
         r'<a href="\1" target="_blank" rel="noopener" style="color:#2b6cb0;">\1</a>',
         str(t),
     )

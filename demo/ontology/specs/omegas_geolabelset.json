@@ -1,0 +1,18 @@
+{
+  "generator": "geolabelset",
+  "id": "dev:work-product-component--GeoLabelSet:OmegaSor-SSVP-Volumes:1",
+  "project": "OmegaSor",
+  "reservoir_id": "dev:master-data--Reservoir:OmegaSorAlfa:1",
+  "label_property": "Oil",
+  "label_uom": "MSm3",
+  "labels": [
+    {
+      "segment": "Alfa",
+      "P90": 15.8,
+      "P50": 19.3,
+      "P10": 22.9,
+      "property": "Oil",
+      "uom": "MSm3"
+    }
+  ]
+}

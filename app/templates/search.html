@@ -1768,6 +1768,20 @@
               {% endfor %}
               {% endif %}
 
+              {# ── Data Provenance (from Remarks with source=DataProvenance) ── #}
+              {% set prov_remarks = [] %}
+              {% for rm in ((rec.data or {}).get('Remarks') or []) if rm is mapping and 'Provenance' in (rm.get('RemarkSource') or '') %}
+                {% set _ = prov_remarks.append(rm) %}
+              {% endfor %}
+              {% if prov_remarks %}
+              <div class="bd-section-title" style="margin-top:1rem;">Data Provenance</div>
+              <div style="margin-top:.3rem;">
+                {% for rm in prov_remarks %}
+                <div style="font-size:.84rem;color:#4a5568;padding:.2rem 0 .2rem .6rem;border-left:2px solid #b794f4;">{{ rm.get('Remark', '') | linkify }}</div>
+                {% endfor %}
+              </div>
+              {% endif %}
+
               {# ── Authors & Review Team ── #}
               {% set personnel = (rec.data or {}).get('Personnel') or [] %}
               {% set authors = ext_eq.get('Authors') or [] %}
@@ -1846,8 +1860,12 @@
               </details>
               {% endif %}
 
-              {# ── Recommendations / Remarks (grouped by source) ── #}
-              {% set remarks = (rec.data or {}).get('Remarks') or [] %}
+              {# ── Recommendations / Remarks (grouped by source, excl. DataProvenance) ── #}
+              {% set remarks_all = (rec.data or {}).get('Remarks') or [] %}
+              {% set remarks = [] %}
+              {% for rm in remarks_all if rm is mapping and 'Provenance' not in (rm.get('RemarkSource') or '') %}
+                {% set _ = remarks.append(rm) %}
+              {% endfor %}
               {% set recos = ext_eq.get('Recommendations') or ext_eq.get('DG2Recommendations') or ext_eq.get('DG3Recommendations') or [] %}
               {% if remarks or recos %}
               {% set has_sources = remarks and remarks[0] is mapping and remarks[0].get('RemarkSource') %}
@@ -1862,7 +1880,7 @@
                     {% set _ = sources_seen.append(src) %}
                     <div style="font-size:.78rem;font-weight:600;color:#4a5568;margin-top:.5rem;margin-bottom:.2rem;">{{ src }}</div>
                   {% endif %}
-                  <div style="font-size:.84rem;color:#4a5568;padding:.2rem 0 .2rem .6rem;border-left:2px solid {% if 'Condition' in src %}#f6ad55{% elif 'Dissent' in src %}#fc8181{% elif 'Audit' in src %}#90cdf4{% elif 'Recommendation' in src %}#9ae6b4{% elif 'Provenance' in src %}#b794f4{% else %}#e2e8f0{% endif %};">{{ rm.get('Remark', '') | linkify }}</div>
+                  <div style="font-size:.84rem;color:#4a5568;padding:.2rem 0 .2rem .6rem;border-left:2px solid {% if 'Condition' in src %}#f6ad55{% elif 'Dissent' in src %}#fc8181{% elif 'Audit' in src %}#90cdf4{% elif 'Recommendation' in src %}#9ae6b4{% else %}#e2e8f0{% endif %};">{{ rm.get('Remark', '') | linkify }}</div>
                 {% endfor %}
               </div>
               </details>
@@ -2096,9 +2114,8 @@
           </div>{# /rev-card #}
           {% endif %}
 
-          <hr style="border:none;border-top:2px solid #e2e8f0;margin:1.5rem 0 0;">
-          <section class="section-card" style="border-top:3px solid #007079;margin-top:1rem;">
-            <h5 style="color:#007079;">Relationships</h5>
+          <section class="section-card" style="margin-top:1.5rem;">
+            <h5>Relationships</h5>
             {# ── Build grouped Mermaid graph with type-based coloring ── #}
             {# Merge BD Parameters relationship titles into linked_labels for richer names #}
             {% set bd_params = (rec.data or {}).get('Parameters') or [] %}
