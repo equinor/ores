@@ -199,8 +199,67 @@ def _collect_refs(rec: Dict[str, Any], refs: set, ids: set):
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Main
+# Stub (placeholder) records for missing references
 # ═══════════════════════════════════════════════════════════════════════════════
+
+
+def _id_to_kind(record_id: str) -> str:
+    """Derive OSDU kind from a record ID.
+
+    e.g. dev:master-data--Risk:X:1 → osdu:wks:master-data--Risk:1.0.0
+         dev:work-product-component--WellPlan:X:1 → osdu:wks:work-product-component--WellPlan:1.0.0
+         dev:dataset--ETPDataspace:X:1 → osdu:wks:dataset--ETPDataspace:1.0.0
+    """
+    # Split: partition:namespace--Entity:uid:version
+    parts = record_id.split(":")
+    if len(parts) < 3:
+        return ""
+    ns_entity = parts[1]  # e.g. "master-data--Risk" or "work-product-component--WellPlan"
+    return f"osdu:wks:{ns_entity}:1.0.0"
+
+
+def _id_to_name(record_id: str) -> str:
+    """Generate a placeholder name from the ID slug.
+
+    e.g. dev:master-data--Risk:OmegaSor-BariumScale-00061:1 → OmegaSor-BariumScale-00061
+    """
+    parts = record_id.split(":")
+    if len(parts) >= 4:
+        return parts[-2]  # the uid segment
+    return record_id.split(":")[-1]
+
+
+def build_stubs(
+    missing_ids: List[str],
+    partition: str,
+) -> List[Dict[str, Any]]:
+    """Build minimal placeholder records for missing referenced IDs."""
+    acl = {
+        "owners": [f"data.default.owners@{partition}.dataservices.energy"],
+        "viewers": [f"data.office.global.viewers@{partition}.dataservices.energy"],
+    }
+    legal = {
+        "legaltags": [f"{partition}-equinor-private-default"],
+        "otherRelevantDataCountries": ["NO"],
+    }
+    stubs = []
+    for rid in sorted(missing_ids):
+        kind = _id_to_kind(rid)
+        if not kind:
+            continue
+        name = _id_to_name(rid)
+        entity = rid.split("--")[1].split(":")[0] if "--" in rid else "Record"
+        stubs.append({
+            "id": rid,
+            "kind": kind,
+            "acl": acl,
+            "legal": legal,
+            "data": {
+                "Name": name.replace("-", " ").replace("_", " "),
+                "Description": f"Placeholder {entity} record. Referenced by ontology but not yet fully populated.",
+            },
+        })
+    return stubs
 
 
 def main():
@@ -209,6 +268,7 @@ def main():
     ap.add_argument("--target", choices=["interop", "eqndev"], required=True)
     ap.add_argument("--dry-run", action="store_true", help="Generate but don't push")
     ap.add_argument("--verify-only", action="store_true", help="Only check references")
+    ap.add_argument("--stubs", action="store_true", help="Create placeholder records for missing refs")
     args = ap.parse_args()
 
     inst = load_instance(args.target)
@@ -236,9 +296,15 @@ def main():
                        dry_run=args.dry_run)
         print()
 
-    # 3. Verify
+    # 3. Verify + stubs
     print("── Verify references ──")
-    verify_relationships(records, inst["host"], partition, token)
+    missing = verify_relationships(records, inst["host"], partition, token)
+
+    if missing and args.stubs and not args.dry_run:
+        print(f"\n── Creating {len(missing)} stub records ──")
+        stubs = build_stubs(missing, partition)
+        ingest_records(stubs, inst["host"], partition, token, f"{label}-stubs",
+                       dry_run=False)
 
     print("\n✓ Done.")
 
