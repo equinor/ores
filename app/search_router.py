@@ -1415,6 +1415,99 @@ async def api_refdata_kinds(request: Request):
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Provenance DAG — walk PriorDecisionID chains
+# ──────────────────────────────────────────────────────────────────────────────
+
+@router.get("/search/api/provenance-dag/{record_id:path}")
+async def provenance_dag(request: Request, record_id: str):
+    """
+    Walk PriorDecisionID chain from a BD record and return the full DAG.
+
+    Returns JSON: {nodes: [{id, name, decision_level, date, status}], edges: [{from, to, label}]}
+    Walks both backwards (PriorDecisionID) and forwards (search for BDs that reference this one).
+    Max depth: 10.
+    """
+    at = _access_token(request)
+    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
+    search_url = f"https://{osdu.OSDU_BASE_URL}/api/search/v2/query"
+    hdr = osdu.headers(at)
+
+    nodes: dict[str, dict] = {}
+    edges: list[dict] = []
+    visited: set[str] = set()
+
+    def _node_from_record(rec: dict) -> dict:
+        data = rec.get("data", {})
+        return {
+            "id": rec.get("id", ""),
+            "name": data.get("Name", ""),
+            "decision_level": data.get("DecisionLevel", ""),
+            "date": data.get("DecisionDate", ""),
+            "status": data.get("ApprovalStatus", ""),
+        }
+
+    async def _fetch(client, rid: str) -> dict | None:
+        try:
+            r = await client.get(f"{storage_url}/{rid}", headers=hdr)
+            return r.json() if r.is_success else None
+        except Exception:
+            return None
+
+    async def _walk_back(client, rid: str, depth: int = 0):
+        """Walk backwards via PriorDecisionID."""
+        if depth > 10 or rid in visited:
+            return
+        visited.add(rid)
+        rec = await _fetch(client, rid)
+        if not rec:
+            return
+        nodes[rid] = _node_from_record(rec)
+        prior = rec.get("data", {}).get("PriorDecisionID", "")
+        if prior:
+            edges.append({"from": rid, "to": prior, "label": "supersedes"})
+            await _walk_back(client, prior, depth + 1)
+
+    async def _find_forward(client, rid: str):
+        """Find BDs that have PriorDecisionID pointing to this record."""
+        payload = {
+            "kind": "osdu:wks:master-data--BusinessDecision:*",
+            "query": f"data.PriorDecisionID:\"{rid}\"",
+            "limit": 20,
+            "returnedFields": ["id", "data.Name", "data.DecisionLevel",
+                               "data.DecisionDate", "data.ApprovalStatus",
+                               "data.PriorDecisionID"],
+        }
+        try:
+            r = await client.post(search_url, json=payload, headers=hdr)
+            if not r.is_success:
+                return
+            for rec in r.json().get("results", []):
+                child_id = rec.get("id", "")
+                if child_id and child_id not in nodes:
+                    nodes[child_id] = _node_from_record(rec)
+                    prior = rec.get("data", {}).get("PriorDecisionID", "")
+                    if prior:
+                        edges.append({"from": child_id, "to": prior, "label": "supersedes"})
+        except Exception:
+            pass
+
+    try:
+        async with osdu.http_client(timeout=30) as client:
+            await _walk_back(client, record_id)
+            # Also find forward successors for all nodes in the chain
+            for nid in list(nodes.keys()):
+                await _find_forward(client, nid)
+    except Exception as exc:
+        log.warning("Provenance DAG error: %s", exc)
+
+    return JSONResponse({
+        "nodes": list(nodes.values()),
+        "edges": edges,
+        "root": record_id,
+    })
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # View single record
 # ──────────────────────────────────────────────────────────────────────────────
 

@@ -296,6 +296,9 @@
     // ── DEVELOPMENT CONCEPT ──
     html += buildDevConceptSection(gates);
 
+    // ── ALTERNATIVES ──
+    html += buildAlternativesSection(gates);
+
     // ── RESERVOIR PROPERTIES ──
     html += buildPropertiesSection(gates, propDiffs);
 
@@ -423,6 +426,45 @@
       h += '</tr>';
     });
     h += '</tbody></table></div></div>';
+    return h;
+  }
+
+  function buildAlternativesSection(gates) {
+    const hasAny = gates.some(g => (g.alternatives || []).length > 0);
+    if (!hasAny) return '';
+
+    let h = '<div class="cmp-section"><div class="cmp-title">Alternatives Comparison</div>';
+
+    // For each gate that has alternatives, render a sub-table
+    gates.forEach(g => {
+      const alts = g.alternatives || [];
+      if (!alts.length) return;
+
+      h += `<div style="margin-bottom:.75rem;">`;
+      h += `<div style="font-weight:600;font-size:.85rem;margin-bottom:.3rem;color:#4a5568;">${esc(g.gate_label)}</div>`;
+      h += '<div style="overflow-x:auto;"><table class="cmp-table"><thead><tr>';
+      h += '<th>Rank</th><th>Alternative</th><th>Action</th><th>NPV (MUSD)</th><th>CAPEX (MNOK)</th><th>IRR (%)</th><th>Rationale</th>';
+      h += '</tr></thead><tbody>';
+
+      alts.sort((a, b) => (a.Rank || 99) - (b.Rank || 99));
+      alts.forEach(alt => {
+        const isRec = (alt.RecommendedAction || '').toLowerCase().includes('select') ||
+                      (alt.RecommendedAction || '').toLowerCase().includes('recommend');
+        h += `<tr${isRec ? ' style="background:#f0fff4;"' : ''}>`;
+        h += `<td style="text-align:center;font-weight:700;">${alt.Rank != null ? alt.Rank : '-'}</td>`;
+        h += `<td class="cmp-val">${esc(alt.Name || '-')}</td>`;
+        h += `<td>${alt.RecommendedAction ? '<span class="risk-chip kept">' + esc(alt.RecommendedAction) + '</span>' : '-'}</td>`;
+        h += `<td class="${alt.NPV_10pct_MUSD != null ? 'cmp-val' : 'cmp-empty'}">${alt.NPV_10pct_MUSD != null ? fmtNum(alt.NPV_10pct_MUSD) : '-'}</td>`;
+        h += `<td class="${alt.CAPEX_MNOK != null ? 'cmp-val' : 'cmp-empty'}">${alt.CAPEX_MNOK != null ? fmtNum(alt.CAPEX_MNOK) : '-'}</td>`;
+        h += `<td class="${alt.IRR_pct != null ? 'cmp-val' : 'cmp-empty'}">${alt.IRR_pct != null ? fmtNum(alt.IRR_pct) : '-'}</td>`;
+        h += `<td style="font-size:.8rem;max-width:20rem;">${esc(alt.Rationale || '-')}</td>`;
+        h += '</tr>';
+      });
+
+      h += '</tbody></table></div></div>';
+    });
+
+    h += '</div>';
     return h;
   }
 

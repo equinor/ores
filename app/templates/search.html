@@ -2117,7 +2117,17 @@
           {% endif %}
 
           <section class="section-card" style="margin-top:1.5rem;">
-            <h5>Relationships</h5>
+            <h5 style="display:flex;align-items:center;gap:.75rem;">
+              Relationships
+              {% if is_business_decision %}
+              <button onclick="showProvenanceDag('{{ rec.id }}')"
+                      class="btn-sm"
+                      style="font-size:.75rem;padding:.2rem .6rem;background:#fbd38d;color:#222;border:1px solid #b7791f;border-radius:4px;cursor:pointer;"
+                      title="Show decision gate provenance chain">
+                ⛓ Provenance DAG
+              </button>
+              {% endif %}
+            </h5>
             {# ── Build grouped Mermaid graph with type-based coloring ── #}
             {# Merge BD Parameters relationship titles into linked_labels for richer names #}
             {% set bd_params = (rec.data or {}).get('Parameters') or [] %}
@@ -2176,6 +2186,7 @@
               'GeoLabelSet': 'cls_geo',
               'ReservoirSegment': 'cls_geo',
               'Field': 'cls_geo',
+              'BusinessDecision': 'cls_decision',
             } %}
             {# Define a role→edge-label mapping #}
             {% set role_label_map = {
@@ -2188,6 +2199,7 @@
               'parent-object': 'parent',
               'referenced-by': 'refs',
               'informs': 'informs',
+              'supersedes': 'supersedes',
             } %}
             <pre class="mermaid">
 graph LR
@@ -2277,6 +2289,7 @@ classDef cls_volumes fill:#c4f1f9,stroke:#086f83,color:#222;
 classDef cls_document fill:#fefcbf,stroke:#975a16,color:#222;
 classDef cls_geo fill:#c6f6d5,stroke:#22543d,color:#222;
 classDef cls_ancestry fill:#e2e8f0,stroke:#4a5568,color:#222;
+classDef cls_decision fill:#fbd38d,stroke:#b7791f,color:#222,font-weight:bold;
 classDef cls_default fill:#edf2f7,stroke:#718096,color:#222;
             </pre>
 
@@ -2525,6 +2538,18 @@ classDef cls_default fill:#edf2f7,stroke:#718096,color:#222;
       </div>
     {% endfor %}
 
+    {# ── Provenance DAG modal ── #}
+    <div id="provenance-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.45);align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:12px;padding:1.5rem;max-width:90vw;max-height:85vh;overflow:auto;position:relative;min-width:400px;">
+        <button onclick="document.getElementById('provenance-modal').style.display='none'"
+                style="position:absolute;top:.5rem;right:.75rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#666;">✕</button>
+        <h4 style="margin:0 0 .75rem;">Decision Gate Provenance</h4>
+        <div id="provenance-dag-content" style="min-height:120px;text-align:center;">
+          <span class="muted">Loading…</span>
+        </div>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
     <script src="/static/search.js"></script>
@@ -2532,6 +2557,63 @@ classDef cls_default fill:#edf2f7,stroke:#718096,color:#222;
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose',
         flowchart: { htmlLabels: true, nodeSpacing: 20, rankSpacing: 30, padding: 8 }
+      });
+
+      /* ── Provenance DAG popup ── */
+      window.showProvenanceDag = async function(recordId) {
+        const modal = document.getElementById('provenance-modal');
+        const content = document.getElementById('provenance-dag-content');
+        modal.style.display = 'flex';
+        content.innerHTML = '<span class="muted">Loading provenance chain…</span>';
+
+        try {
+          const resp = await fetch(`/search/api/provenance-dag/${encodeURIComponent(recordId)}`);
+          const dag = await resp.json();
+
+          if (!dag.nodes || dag.nodes.length === 0) {
+            content.innerHTML = '<span class="muted">No provenance chain found.</span>';
+            return;
+          }
+
+          // Build Mermaid graph TD (top-down)
+          let md = 'graph TD\n';
+          const statusIcon = s => s === 'Approved' ? '✓ ' : s === 'Pending' ? '⏳ ' : '';
+          dag.nodes.forEach((n, i) => {
+            const label = `${n.decision_level || '?'}: ${n.name || n.id.split(':').slice(-2, -1)[0]}`;
+            const esc = label.replace(/"/g, '#quot;');
+            const cls = n.id === recordId ? 'rec_self' : 'cls_decision';
+            md += `N${i}["${statusIcon(n.status)}${esc}"]:::${cls}\n`;
+            md += `click N${i} href "/search/view/${encodeURIComponent(n.id)}" "Open ${n.decision_level}"\n`;
+          });
+
+          // Build index for edges
+          const idxMap = {};
+          dag.nodes.forEach((n, i) => { idxMap[n.id] = i; });
+          dag.edges.forEach(e => {
+            const fi = idxMap[e.from], ti = idxMap[e.to];
+            if (fi !== undefined && ti !== undefined) {
+              md += `N${ti} -->|${e.label}| N${fi}\n`;
+            }
+          });
+
+          // classDef
+          md += 'classDef rec_self fill:#4299e1,stroke:#2b6cb0,color:#fff,font-weight:bold;\n';
+          md += 'classDef cls_decision fill:#fbd38d,stroke:#b7791f,color:#222,font-weight:bold;\n';
+
+          // Render
+          const el = document.createElement('pre');
+          el.className = 'mermaid';
+          el.textContent = md;
+          content.innerHTML = '';
+          content.appendChild(el);
+          await mermaid.run({ nodes: [el] });
+        } catch (err) {
+          content.innerHTML = `<span class="muted">Error: ${err.message}</span>`;
+        }
+      };
+      // Close modal on backdrop click
+      document.getElementById('provenance-modal')?.addEventListener('click', function(e) {
+        if (e.target === this) this.style.display = 'none';
       });
 
       const blocks = Array.from(document.querySelectorAll('.rec-block'));

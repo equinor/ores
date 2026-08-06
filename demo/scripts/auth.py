@@ -3,10 +3,9 @@ auth.py - Self-contained authentication for OSDU instances.
 
 Supports multiple instances with full secret resolution chain:
   1. Explicit token (--token or OSDU_TOKEN env var)
-  2. ~/.osdu/config.json (multi-instance config file)
-  3. k8s/secret.yaml + k8s/configmap.yaml (ores repo)
-  4. Environment variables (INSTANCE_<NAME>_* or OSDU_*)
-  5. Legacy .env file
+  2. k8s/secret.yaml + k8s/configmap.yaml (ores repo)
+  3. Environment variables (INSTANCE_<NAME>_*)
+  4. ~/.osdu/config.json (multi-instance config file)
 
 Grant types (auto-detected):
   - refresh_token  (when refresh_token is available)
@@ -194,7 +193,7 @@ def _resolve_instance_config(name: str) -> Dict[str, Any]:
     """
     Resolve instance config from all available sources.
 
-    Chain: k8s YAML → env vars (INSTANCE_<NAME>_*) → config file → OSDU_* env → .env
+    Chain: k8s YAML → env vars (INSTANCE_<NAME>_*) → config file
     """
     # 1. k8s YAML (ores repo)
     fields = _resolve_from_k8s(name)
@@ -211,24 +210,12 @@ def _resolve_instance_config(name: str) -> Dict[str, Any]:
     if fields:
         return _normalize_fields(fields, source="config-file", name=name)
 
-    # 4. Generic OSDU_* env vars (single instance)
-    fields = _resolve_from_osdu_env()
-    if fields:
-        return _normalize_fields(fields, source="osdu-env", name=name)
-
-    # 5. Legacy .env file
-    fields = _resolve_from_dotenv()
-    if fields:
-        return _normalize_fields(fields, source="dotenv", name=name)
-
     raise RuntimeError(
         f"No config found for instance '{name}'.\n"
         f"Configure via:\n"
-        f"  • ~/.osdu/config.json (recommended)\n"
-        f"  • INSTANCE_{name.upper()}_* env vars\n"
         f"  • k8s/secret.yaml + k8s/configmap.yaml\n"
-        f"  • OSDU_* env vars\n"
-        f"  • .env file in repo root\n"
+        f"  • INSTANCE_{name.upper()}_* env vars\n"
+        f"  • ~/.osdu/config.json\n"
         f"\nOr pass --token directly."
     )
 
@@ -278,68 +265,6 @@ def _resolve_from_config_file(name: str) -> Optional[Dict[str, Any]]:
     if name == "default" and "host" in data:
         return {k: v for k, v in data.items() if k != "instances"}
     return None
-
-
-def _resolve_from_osdu_env() -> Optional[Dict[str, str]]:
-    """Try generic OSDU_* environment variables."""
-    fields: Dict[str, str] = {}
-    mapping = {
-        "OSDU_HOST": "hostname",
-        "OSDU_PARTITION": "data_partition_id",
-        "OSDU_LEGAL_TAG": "default_legal_tag",
-        "OSDU_OWNERS": "default_owners",
-        "OSDU_VIEWERS": "default_viewers",
-        "OSDU_COUNTRIES": "default_countries",
-        "OSDU_TENANT_ID": "tenant_id",
-        "OSDU_CLIENT_ID": "client_id",
-        "OSDU_SCOPE": "scope",
-        "OSDU_REFRESH_TOKEN": "refresh_token",
-        "OSDU_CLIENT_SECRET": "client_secret",
-    }
-    for env_key, field_key in mapping.items():
-        val = os.environ.get(env_key, "").strip()
-        if val:
-            fields[field_key] = val
-    if not fields.get("tenant_id") and not fields.get("client_id"):
-        return None
-    return fields
-
-
-def _resolve_from_dotenv() -> Optional[Dict[str, str]]:
-    """Try .env file in repo root."""
-    dotenv_path = REPO_ROOT / ".env"
-    if not dotenv_path.exists():
-        return None
-    fields: Dict[str, str] = {}
-    for line in dotenv_path.read_text("utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, v = line.split("=", 1)
-        k, v = k.strip(), v.strip().strip('"').strip("'")
-        fields[k] = v
-
-    # Normalize key names
-    result: Dict[str, str] = {}
-    key_map = {
-        "OSDU_TENANT_ID": "tenant_id", "AZURE_TENANT_ID": "tenant_id",
-        "OSDU_CLIENT_ID": "client_id", "AZURE_CLIENT_ID": "client_id",
-        "OSDU_SCOPE": "scope", "AZURE_SCOPE": "scope",
-        "refresh_token": "refresh_token", "REFRESH_TOKEN": "refresh_token",
-        "CLIENT_SECRET": "client_secret",
-        "OSDU_HOST": "hostname", "OSDU_BASE_URL": "hostname",
-        "OSDU_PARTITION": "data_partition_id", "DATA_PARTITION_ID": "data_partition_id",
-        "LEGAL_TAG": "default_legal_tag", "DEFAULT_LEGAL_TAG": "default_legal_tag",
-        "OWNERS": "default_owners", "DEFAULT_OWNERS": "default_owners",
-        "VIEWERS": "default_viewers", "DEFAULT_VIEWERS": "default_viewers",
-        "COUNTRIES": "default_countries", "DEFAULT_COUNTRIES": "default_countries",
-    }
-    for raw_key, norm_key in key_map.items():
-        if raw_key in fields and fields[raw_key]:
-            result[norm_key] = fields[raw_key]
-    if not result.get("tenant_id") and not result.get("client_id"):
-        return None
-    return result
 
 
 def _normalize_fields(fields: Dict[str, Any], source: str, name: str) -> Dict[str, Any]:

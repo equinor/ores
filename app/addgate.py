@@ -210,6 +210,57 @@ async def wpc_search(
     return JSONResponse(out)
 
 
+async def _append_lifecycle_event(
+    access_token: str,
+    cp_id: str,
+    *,
+    event_id: str = "GateDecisionCreated",
+    description: str = "",
+) -> bool:
+    """
+    Append a LifecycleEvent to an existing CollaborationProject record.
+
+    Best-effort: logs a warning on failure but never raises.
+    """
+    from datetime import datetime, timezone
+
+    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
+    hdr = osdu.headers(access_token)
+
+    try:
+        async with osdu.http_client(timeout=20) as client:
+            # GET current CP record
+            r = await client.get(f"{storage_url}/{cp_id}", headers=hdr)
+            if not r.is_success:
+                log.warning("LifecycleEvent: could not fetch CP %s (%d)", cp_id, r.status_code)
+                return False
+
+            cp = r.json()
+            data = cp.get("data", {})
+
+            # Append event
+            events = data.get("LifecycleEvents", [])
+            events.append({
+                "EventID": event_id,
+                "EventDate": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "Description": description,
+            })
+            data["LifecycleEvents"] = events
+
+            # PUT updated CP back
+            r2 = await client.put(storage_url, json=[cp], headers=hdr)
+            if r2.is_success:
+                log.info("LifecycleEvent appended to CP %s: %s", cp_id, event_id)
+                return True
+            else:
+                log.warning("LifecycleEvent: CP update failed (%d): %s", r2.status_code, r2.text[:200])
+                return False
+
+    except Exception as exc:
+        log.warning("LifecycleEvent: failed for CP %s: %s", cp_id, exc)
+        return False
+
+
 @router.post("/add-dg/create", summary="Create and ingest a new BusinessDecision")
 async def create_bd(request: Request):
     """
@@ -578,6 +629,15 @@ async def create_bd(request: Request):
 
     if status in (200, 201):
         log.info("BD created: %s (status=%d)", bd_id, status)
+
+        # Auto-populate LifecycleEvent on linked CollaborationProject
+        if collab_project_id:
+            await _append_lifecycle_event(
+                at, collab_project_id,
+                event_id="GateDecisionCreated",
+                description=f"{decision_level} '{name}' created (BD {bd_id})",
+            )
+
         return JSONResponse({
             "ok": True,
             "bd_id": bd_id,

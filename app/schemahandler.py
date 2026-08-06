@@ -46,6 +46,8 @@ def _role_from_path(path: str) -> str:
     p = (path or "").lower()
     if "riskids" in p:
         return "risk"
+    if "priordecisionid" in p:
+        return "supersedes"
     if "prioractivityids" in p:
         return "prior-activity"
     if "parentworkproductid" in p:
