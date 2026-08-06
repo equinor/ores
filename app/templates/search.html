@@ -2225,7 +2225,9 @@ click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open chil
 {% set _ = _fwd_ids.append('"' ~ _short ~ '"') %}
 {% endfor %}
 {% set _slug = _fwd_ids | join(' OR ') %}
-{% if items|length > 3 %}
+{# Never collapse types where each item has distinct semantics #}
+{% set _never_collapse = ['PersistedCollection', 'Document', 'FileCollection.Bluware.OpenVDS'] %}
+{% if items|length > 3 and etype not in _never_collapse %}
 GRP{{ rec_index }}_{{ etype }}["{{ etype }} ({{ items|length }})"]:::{{ cls }}
 REC{{ rec_index }} -->|{{ grp_lbl }}| GRP{{ rec_index }}_{{ etype }}
 click GRP{{ rec_index }}_{{ etype }} href "/search/run?kind={{ _kind }}&query={{ _slug | urlencode }}" "Show all {{ etype }}"
@@ -2234,7 +2236,7 @@ click GRP{{ rec_index }}_{{ etype }} href "/search/run?kind={{ _kind }}&query={{
 {% set info = (rec.linked_labels or {}).get(l.id, {}) %}
 {% set _fid = l.id.split(':')[-2] if l.id.count(':') >= 3 else (l.id.split(':')[-1] if ':' in l.id else l.id) %}
 {% set lname = info.name if info.name else (param_titles.get(l.id) or _fid) %}
-{% set edge_lbl = role_label_map.get(l.role|default(''), '') or param_rels.get(l.id, '') or etype|lower %}
+{% set edge_lbl = role_label_map.get(l.role|default(''), '') or param_rels.get(l.id, '') or param_titles.get(l.id, '').split('(')[0]|trim|lower|truncate(25, killwords=False, end='') or etype|lower %}
 F{{ rec_index }}_{{ etype }}_{{ loop.index0 }}["{{ esc_label(lname) }}"]:::{{ cls }}
 REC{{ rec_index }} -->|{{ edge_lbl }}| F{{ rec_index }}_{{ etype }}_{{ loop.index0 }}
 click F{{ rec_index }}_{{ etype }}_{{ loop.index0 }} href "/search/view/{{ l.id }}" "Open"
