@@ -285,180 +285,156 @@ async def create_bd(request: Request):
     # Build Parameters[] array
     parameters: List[Dict[str, Any]] = []
 
-    if rev_raw_id:
-        parameters.append({
-            "Title": "In-place volumes raw (per realisation)",
-            "Selection": "Raw per-realisation volumes",
+    def _make_param(
+        title: str, selection: str, record_id: str,
+        artifact: str, relationship: str = "",
+        role: str = "Input",
+    ) -> Dict[str, Any]:
+        """Helper: build a Parameters[] entry with optional relationship edge."""
+        keys = [{"ParameterKey": "artifact", "StringParameterKey": artifact}]
+        if relationship:
+            keys.append({"ParameterKey": "relationship", "StringParameterKey": relationship})
+        return {
+            "Title": title,
+            "Selection": selection,
             "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": rev_raw_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "InPlaceVol-raw"}],
-        })
+            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:{role}:1",
+            "DataObjectParameter": record_id,
+            "Keys": keys,
+        }
+
+    if rev_raw_id:
+        parameters.append(_make_param(
+            "In-place volumes raw (per realisation)",
+            "Raw per-realisation volumes",
+            rev_raw_id, "InPlaceVol-raw", "evidences",
+        ))
 
     if rev_stats_id:
-        parameters.append({
-            "Title": "In-place volume statistics (P10/P50/P90)",
-            "Selection": "Aggregated statistics for the assessment",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": rev_stats_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "InPlaceVol-stats"}],
-        })
+        parameters.append(_make_param(
+            "In-place volume statistics (P10/P50/P90)",
+            "Aggregated statistics for the assessment",
+            rev_stats_id, "InPlaceVol-stats", "evidences",
+        ))
 
     if production_profile_id:
-        parameters.append({
-            "Title": "Production profile",
-            "Selection": "Production forecast / profile linked to the decision",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": production_profile_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "ProductionProfile"}],
-        })
+        parameters.append(_make_param(
+            "Production profile",
+            "Production forecast / profile linked to the decision",
+            production_profile_id, "ProductionProfile", "informs",
+        ))
 
     if geolabelset_id:
-        parameters.append({
-            "Title": "GeoLabelSet",
-            "Selection": "Headline KPI values per segment",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": geolabelset_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "GeoLabelSet"}],
-        })
+        parameters.append(_make_param(
+            "GeoLabelSet",
+            "Headline KPI values per segment",
+            geolabelset_id, "GeoLabelSet", "evidences",
+        ))
 
     if params_id:
-        parameters.append({
-            "Title": "Input parameters",
-            "Selection": "Per-segment input parameters",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": params_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "ColumnBasedTable-params"}],
-        })
+        parameters.append(_make_param(
+            "Input parameters",
+            "Per-segment input parameters",
+            params_id, "ColumnBasedTable-params", "evidences",
+        ))
 
     if dataspace_id:
-        parameters.append({
-            "Title": "GeoModelDataspace",
-            "Selection": "RDDMS ETP dataspace with geomodel EPC files",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:InputReference:1",
-            "DataObjectParameter": dataspace_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"}],
-        })
+        parameters.append(_make_param(
+            "GeoModelDataspace",
+            "RDDMS ETP dataspace with geomodel EPC files",
+            dataspace_id, "ETPDataspace", "evidences", role="InputReference",
+        ))
 
     if collection_id:
-        parameters.append({
-            "Title": "PersistedCollection",
-            "Selection": "Persisted collection of related records",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:InputReference:1",
-            "DataObjectParameter": collection_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "PersistedCollection"}],
-        })
+        parameters.append(_make_param(
+            "PersistedCollection",
+            "Persisted collection of related records",
+            collection_id, "PersistedCollection", "evidences", role="InputReference",
+        ))
 
     # ── Well-specific parameters (WPC / Dev Well / Exploration) ──
     if well_prod_id:
-        parameters.append({
-            "Title": "Planned producer well",
-            "Selection": "Development/production well subject of this decision",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Output:1",
-            "DataObjectParameter": well_prod_id,
-            "Keys": [{"ParameterKey": "wellType", "StringParameterKey": "Producer"}],
-        })
+        parameters.append(_make_param(
+            "Planned producer well",
+            "Development/production well subject of this decision",
+            well_prod_id, "Producer", "informs", role="Output",
+        ))
 
     if well_inj_id:
-        parameters.append({
-            "Title": "Planned injector well",
-            "Selection": "Injection well subject of this decision",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Output:1",
-            "DataObjectParameter": well_inj_id,
-            "Keys": [{"ParameterKey": "wellType", "StringParameterKey": "Injector"}],
-        })
+        parameters.append(_make_param(
+            "Planned injector well",
+            "Injection well subject of this decision",
+            well_inj_id, "Injector", "informs", role="Output",
+        ))
 
     if wellbore_id:
-        parameters.append({
-            "Title": "Target wellbore",
-            "Selection": "Wellbore reference for well decision",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Output:1",
-            "DataObjectParameter": wellbore_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "Wellbore"}],
-        })
+        parameters.append(_make_param(
+            "Target wellbore",
+            "Wellbore reference for well decision",
+            wellbore_id, "Wellbore", "informs", role="Output",
+        ))
 
     if trajectory_id:
-        parameters.append({
-            "Title": "Wellbore trajectory",
-            "Selection": "Planned or as-drilled wellbore trajectory",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": trajectory_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "WellboreTrajectory"}],
-        })
+        parameters.append(_make_param(
+            "Wellbore trajectory",
+            "Planned or as-drilled wellbore trajectory",
+            trajectory_id, "WellboreTrajectory", "evidences",
+        ))
 
     if devconcept_id:
-        parameters.append({
-            "Title": "Development Concept",
-            "Selection": "Well plan, facilities, drainage strategy for this decision",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": devconcept_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "DevelopmentConcept"}],
-        })
+        parameters.append(_make_param(
+            "Development Concept",
+            "Well plan, facilities, drainage strategy for this decision",
+            devconcept_id, "DevelopmentConcept", "informs",
+        ))
 
     if wellcost_id:
-        parameters.append({
-            "Title": "Well Cost AFE",
-            "Selection": "Cost breakdown per phase (AFE estimate)",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": wellcost_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "WellCostAFE"}],
-        })
+        parameters.append(_make_param(
+            "Well Cost AFE",
+            "Cost breakdown per phase (AFE estimate)",
+            wellcost_id, "WellCostAFE", "evidences",
+        ))
 
     if tubular_id:
-        parameters.append({
-            "Title": "Completion design (TubularAssembly)",
-            "Selection": "Casing, completion, tubing design for well",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
-            "DataObjectParameter": tubular_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "TubularAssembly"}],
-        })
+        parameters.append(_make_param(
+            "Completion design (TubularAssembly)",
+            "Casing, completion, tubing design for well",
+            tubular_id, "TubularAssembly", "evidences",
+        ))
 
     if drilling_collection_id:
-        parameters.append({
-            "Title": "Drilling evidence package",
-            "Selection": "Trajectories, drilling programs, wellbore reports",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:InputReference:1",
-            "DataObjectParameter": drilling_collection_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "DrillingCollection"}],
-        })
+        parameters.append(_make_param(
+            "Drilling evidence package",
+            "Trajectories, drilling programs, wellbore reports",
+            drilling_collection_id, "DrillingCollection", "evidences", role="InputReference",
+        ))
 
     if collab_project_id:
-        parameters.append({
-            "Title": "Collaboration project",
-            "Selection": "Long-lived project namespace for this field development",
-            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:InputReference:1",
-            "DataObjectParameter": collab_project_id,
-            "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "CollaborationProject"}],
-        })
+        parameters.append(_make_param(
+            "Collaboration project",
+            "Long-lived project namespace for this field development",
+            collab_project_id, "CollaborationProject", "", role="InputReference",
+        ))
 
-    # User-defined arbitrary records
+    # User-defined arbitrary records (with optional relationship edge)
     for crec in custom_records:
         clabel = crec.get("label", "").strip()
         cid = crec.get("id", "").strip()
+        crel = crec.get("relationship", "").strip()
         if clabel and cid:
-            parameters.append({
-                "Title": clabel,
-                "Selection": f"User-defined record: {clabel}",
-                "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
-                "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
-                "DataObjectParameter": cid,
-                "Keys": [{"ParameterKey": "artifact", "StringParameterKey": clabel.replace(' ', '-')}],
-            })
+            parameters.append(_make_param(
+                clabel,
+                f"User-defined record: {clabel}",
+                cid, clabel.replace(' ', '-'), crel,
+            ))
+
+    # ── Prior BD as supersedes edge ──
+    if prior_bd_id:
+        parameters.append(_make_param(
+            "Prior decision gate",
+            "Decision superseded by this gate",
+            prior_bd_id, "BusinessDecision", "supersedes", role="InputReference",
+        ))
 
     # Reservoir is always added as a parameter
     parameters.append({
@@ -475,6 +451,18 @@ async def create_bd(request: Request):
         prior_activity_ids.append(activity_id)
     elif rev_raw_id or rev_stats_id or params_id:
         prior_activity_ids = [x for x in [rev_raw_id, rev_stats_id, params_id] if x]
+
+    # ── Risk edges (constrains / mitigates) ──
+    risk_edges: List[Dict[str, str]] = body.get("risk_edges", [])
+    for re in risk_edges:
+        rid = re.get("id", "").strip()
+        rel = re.get("relationship", "constrains")
+        if rid:
+            parameters.append(_make_param(
+                f"Risk: {rid.split(':')[-1].split(':')[0] if ':' in rid else rid}",
+                f"Risk linked via {rel} relationship",
+                rid, "Risk", rel, role="InputReference",
+            ))
 
     # Build the record
     bd_data: Dict[str, Any] = {
@@ -552,6 +540,14 @@ async def create_bd(request: Request):
                 "UnitOfMeasureID": f"{id_prefix}:reference-data--UnitOfMeasure:{e.get('unit', '')}:",
             }
             for e in economics if e.get("type") and e.get("value")
+        ]
+
+    # ── Typed Remarks (Remarks[]) ──
+    remarks: List[Dict[str, str]] = body.get("remarks", [])
+    if remarks:
+        bd_data["Remarks"] = [
+            {"Remark": r.get("text", ""), "RemarkSource": r.get("source", "Audit")}
+            for r in remarks if r.get("text", "").strip()
         ]
 
     bd_record = {
@@ -751,6 +747,17 @@ async def create_cp(request: Request):
     # TrustedCollectionID: link to collection if provided
     if collection_id:
         cp_data["TrustedCollectionID"] = collection_id
+
+    # ── LifecycleEvents (audit trail) ──
+    lifecycle_events: List[Dict[str, str]] = body.get("lifecycle_events", [])
+    if lifecycle_events:
+        cp_data["LifecycleEvents"] = [
+            {
+                "EventDate": ev.get("date", ""),
+                "Description": ev.get("description", ""),
+            }
+            for ev in lifecycle_events if ev.get("date") and ev.get("description")
+        ]
 
     cp_record = {
         "id": cp_id,

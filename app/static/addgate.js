@@ -68,33 +68,72 @@
   }
   renderCustomRecords();
 
-  // ── Risk management ──
+  // ── Risk management (with edge types) ──
   var riskIds = [];
+  var riskEdges = [];
 
   window.addRisk = function() {
     var inp = document.getElementById('risk-input');
     var val = inp.value.trim();
     if (!val) return;
-    if (riskIds.indexOf(val) < 0) riskIds.push(val);
+    var edgeType = document.getElementById('risk-edge-type').value;
+    if (riskEdges.some(function(r) { return r.id === val; })) return;
+    riskEdges.push({id: val, relationship: edgeType});
+    riskIds.push(val);
     inp.value = '';
     renderRisks();
   };
 
   function removeRisk(idx) {
     riskIds.splice(idx, 1);
+    riskEdges.splice(idx, 1);
     renderRisks();
   }
   window.removeRisk = removeRisk;
 
   function renderRisks() {
     var el = document.getElementById('risk-list');
-    if (!riskIds.length) { el.innerHTML = '<span class="muted" style="font-size:13px;">No risks linked yet.</span>'; return; }
-    el.innerHTML = riskIds.map(function(id, i) {
-      return '<div class="risk-item"><span class="risk-id">' + escHtml(id) + '</span>' +
+    if (!riskEdges.length) { el.innerHTML = '<span class="muted" style="font-size:13px;">No risks linked yet.</span>'; return; }
+    el.innerHTML = riskEdges.map(function(r, i) {
+      var badge = r.relationship === 'mitigates'
+        ? '<span style="color:#107c41;font-size:11px;font-weight:600;">mitigates</span>'
+        : '<span style="color:#c4314b;font-size:11px;font-weight:600;">constrains</span>';
+      return '<div class="risk-item">' + badge + ' <span class="risk-id">' + escHtml(r.id) + '</span>' +
              '<button class="remove-btn" onclick="removeRisk(' + i + ')" title="Remove">&times;</button></div>';
     }).join('');
   }
   renderRisks();
+
+  // ── Typed Remarks ──
+  var bdRemarks = [];
+
+  window.addRemark = function() {
+    var src = document.getElementById('remark-source').value;
+    var txt = document.getElementById('remark-text').value.trim();
+    if (!txt) return;
+    bdRemarks.push({source: src, text: txt});
+    document.getElementById('remark-text').value = '';
+    renderRemarks();
+  };
+
+  function removeRemark(idx) {
+    bdRemarks.splice(idx, 1);
+    renderRemarks();
+  }
+  window.removeRemark = removeRemark;
+
+  function renderRemarks() {
+    var el = document.getElementById('remarks-list');
+    if (!bdRemarks.length) { el.innerHTML = '<span class="muted" style="font-size:13px;">No remarks added.</span>'; return; }
+    var colors = {Recommendation:'#0078d4', Condition:'#e67e22', SubsurfaceRisk:'#c4314b', Audit:'#6c757d', Dissent:'#8b5cf6'};
+    el.innerHTML = bdRemarks.map(function(r, i) {
+      var c = colors[r.source] || '#6c757d';
+      return '<div class="risk-item"><span style="color:' + c + ';font-size:11px;font-weight:600;">' + escHtml(r.source) + '</span> ' +
+             '<span class="risk-id" style="font-family:inherit;">' + escHtml(r.text) + '</span>' +
+             '<button class="remove-btn" onclick="removeRemark(' + i + ')" title="Remove">&times;</button></div>';
+    }).join('');
+  }
+  renderRemarks();
 
   // ── Browse modal ──
   var browseTarget = null;
@@ -668,6 +707,14 @@
     if (econs.length) {
       payload.economics = econs;
     }
+    // Attach typed remarks
+    if (bdRemarks.length) {
+      payload.remarks = bdRemarks.slice();
+    }
+    // Attach risk edges (override flat risk_ids with typed edges)
+    if (riskEdges.length) {
+      payload.risk_edges = riskEdges.slice();
+    }
     return payload;
   }
 
@@ -863,6 +910,38 @@
   }
   renderCpCustomRecords();
 
+  // ── CP Lifecycle Events ──
+  var cpLifecycleEvents = [];
+
+  window.addCpLifecycleEvent = function() {
+    var dateEl = document.getElementById('cp-event-date');
+    var descEl = document.getElementById('cp-event-desc');
+    var d = dateEl.value;
+    var desc = descEl.value.trim();
+    if (!d || !desc) return;
+    cpLifecycleEvents.push({date: d + 'T00:00:00Z', description: desc});
+    dateEl.value = '';
+    descEl.value = '';
+    renderCpLifecycleEvents();
+  };
+
+  function removeCpLifecycleEvent(idx) {
+    cpLifecycleEvents.splice(idx, 1);
+    renderCpLifecycleEvents();
+  }
+  window.removeCpLifecycleEvent = removeCpLifecycleEvent;
+
+  function renderCpLifecycleEvents() {
+    var el = document.getElementById('cp-lifecycle-events-list');
+    if (!cpLifecycleEvents.length) { el.innerHTML = '<span class="muted" style="font-size:13px;">No events added.</span>'; return; }
+    el.innerHTML = cpLifecycleEvents.map(function(ev, i) {
+      return '<div class="risk-item"><span style="font-size:11px;color:var(--eq-grey);min-width:90px;">' + ev.date.slice(0,10) + '</span> ' +
+             '<span class="risk-id" style="font-family:inherit;">' + escHtml(ev.description) + '</span>' +
+             '<button class="remove-btn" onclick="removeCpLifecycleEvent(' + i + ')" title="Remove">&times;</button></div>';
+    }).join('');
+  }
+  renderCpLifecycleEvents();
+
   function buildCpPayload() {
     return {
       name:                 document.getElementById('cp-name').value.trim(),
@@ -880,6 +959,7 @@
       contributor_owners:   document.getElementById('cp-contributor-owners').value.trim(),
       contributor_viewers:  document.getElementById('cp-contributor-viewers').value.trim(),
       custom_records:       cpCustomRecords.slice(),
+      lifecycle_events:     cpLifecycleEvents.slice(),
     };
   }
 

@@ -522,10 +522,14 @@
   <div class="addgate-panel">
     <h3>5. Risk Records</h3>
     <p class="muted" style="margin-top:-.4rem; font-size:.82rem;">
-      Link <code>master-data--Risk</code> records to this decision.
+      Link <code>master-data--Risk</code> records with typed relationship edges (<code>constrains</code> or <code>mitigates</code>).
     </p>
-    <div style="display:flex;gap:.5rem;margin-bottom:.5rem;">
-      <input type="text" id="risk-input" placeholder="dev:master-data--Risk:…" style="flex:1;" />
+    <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap;">
+      <input type="text" id="risk-input" placeholder="dev:master-data--Risk:…" style="flex:1;min-width:200px;" />
+      <select id="risk-edge-type" style="width:130px;font-size:12px;" title="Relationship edge type">
+        <option value="constrains" selected>constrains</option>
+        <option value="mitigates">mitigates</option>
+      </select>
       <button class="btn" type="button" onclick="openBrowse('risk-input','osdu:wks:master-data--Risk:*')">Browse</button>
       <button class="btn" type="button" onclick="addRisk()">+ Add</button>
     </div>
@@ -540,6 +544,26 @@
     </p>
     <div id="bd-alternatives-list"></div>
     <button class="btn" type="button" onclick="addBdAlternative()" style="font-size:12px;margin-top:6px;">+ Add Alternative</button>
+  </div>
+
+  <!-- ═══ 6b. Typed Remarks ═══ -->
+  <div class="addgate-panel">
+    <h3>6b. Typed Remarks <span class="muted" style="font-size:.75rem;font-weight:400;">(Remarks[])</span></h3>
+    <p class="muted" style="margin-top:-.4rem; font-size:.82rem;">
+      Categorised annotations stored in <code>data.Remarks[]</code>. Each remark has a typed source for downstream filtering.
+    </p>
+    <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:flex-start;">
+      <select id="remark-source" style="width:160px;font-size:12px;">
+        <option value="Recommendation">Recommendation</option>
+        <option value="Condition">Condition</option>
+        <option value="SubsurfaceRisk">Subsurface Risk</option>
+        <option value="Audit">Audit Note</option>
+        <option value="Dissent">Dissent</option>
+      </select>
+      <input type="text" id="remark-text" placeholder="Remark text…" style="flex:1;min-width:200px;" />
+      <button class="btn" type="button" onclick="addRemark()">+ Add</button>
+    </div>
+    <div class="risk-list" id="remarks-list"></div>
   </div>
 
   <!-- ═══ 7. Economics (ProjectSpecifications) ═══ -->
@@ -691,6 +715,20 @@
       <label for="cp-contributor-viewers">Contributor ACL viewers</label>
       <input type="text" id="cp-contributor-viewers" placeholder="e.g. data.viewers@dev.dataservices.energy" />
     </div>
+  </div>
+
+  <!-- ═══ CP 4b. Lifecycle Events ═══ -->
+  <div class="addgate-panel">
+    <h3>4b. Lifecycle Events <span class="link-badge optional">optional</span></h3>
+    <p class="muted" style="margin-top:-.4rem; font-size:.82rem;">
+      Audit trail of project events. Stored in <code>data.LifecycleEvents[]</code>. Append-only — each event records when something happened.
+    </p>
+    <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap;align-items:center;">
+      <input type="date" id="cp-event-date" style="width:140px;" />
+      <input type="text" id="cp-event-desc" placeholder="Event description (e.g. Porosity downgrade applied)" style="flex:1;min-width:200px;" />
+      <button class="btn" type="button" onclick="addCpLifecycleEvent()">+ Add</button>
+    </div>
+    <div class="risk-list" id="cp-lifecycle-events-list"></div>
   </div>
 
   <!-- ═══ CP 5. Preview & submit ═══ -->

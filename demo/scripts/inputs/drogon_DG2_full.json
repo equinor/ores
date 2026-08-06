@@ -18,8 +18,7 @@
     "demo/drogon_dg2/manifest_documents_dg2.json",
     "demo/drogon_dg2/manifest_devconcept_dg2.json",
     "demo/drogon_dg2/manifest_collection_dg2.json",
-    "demo/drogon_dg2/manifest_bd_dg2.json",
-    "demo/drogon_dg2/manifest_decommission_old.json"
+    "demo/drogon_dg2/manifest_bd_dg2.json"
   ],
   "records": []
 }
