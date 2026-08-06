@@ -192,7 +192,7 @@ def build_geolabelset(
         "acl":  acl,
         "legal": legal,
         "data": {
-            "Name": f"Drogon Valysar - GeoLabelSet ({gate_name})",
+            "Name": f"Drogon - GeoLabelSet ({gate_name})",
             "Description": (
                 f"GeoLabelSet for {gate_name}, derived from stat REV. "
                 "All volumes in m³. Includes per-segment Oil P10/P50/P90, "

@@ -33,7 +33,7 @@
           "KDirection": "down",
           "Handedness": "right",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/resqml22.IjkGridRepresentation('45e80eba-2376-5d64-8989-66d7c8e94426')"
           ],
@@ -93,7 +93,7 @@
           "IsDiscrete": false,
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/resqml22.ContinuousProperty('ff1347d1-1024-5ae4-af63-91698685be83')"
           ],
@@ -136,7 +136,7 @@
           "IsDiscrete": false,
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:mD:",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/resqml22.ContinuousProperty('107139d7-6724-5261-b548-9d00acf33fc5')"
           ],
@@ -179,7 +179,7 @@
           "IsDiscrete": false,
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:mD:",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/resqml22.ContinuousProperty('00b85345-ad12-5be3-9dbf-a54d2a174ad1')"
           ],
@@ -222,7 +222,7 @@
           "IsDiscrete": false,
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/resqml22.ContinuousProperty('fb9e7e8d-478f-55b3-b42d-c753dec9bcaa')"
           ],
@@ -265,7 +265,7 @@
           "IsDiscrete": false,
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/resqml22.ContinuousProperty('5b3adc9e-18b4-59a2-8e47-83c9746f23c8')"
           ],
@@ -308,7 +308,7 @@
           "IsDiscrete": false,
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/resqml22.ContinuousProperty('c44eeb4e-d63d-5910-93f9-a684b0576e5b')"
           ],
@@ -351,7 +351,7 @@
           "IsDiscrete": false,
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/resqml22.ContinuousProperty('0befcea0-9b28-5f32-ab10-683d629a3c43')"
           ],
@@ -394,7 +394,7 @@
           "IsDiscrete": true,
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/resqml22.DiscreteProperty('3b27a6de-fb31-5227-898e-3970e2477800')"
           ],
@@ -437,7 +437,7 @@
           "IsDiscrete": true,
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/resqml22.DiscreteProperty('e5035b09-9b6a-5c8d-b373-0092ae990e35')"
           ],
@@ -480,7 +480,7 @@
           "IsDiscrete": true,
           "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:Euc:",
           "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-          "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
           "DDMSDatasets": [
             "eml:///dataspace('maap/drogon_dg')/resqml22.DiscreteProperty('944aeb74-0930-5e7d-9b58-b33f1c8172f8')"
           ],

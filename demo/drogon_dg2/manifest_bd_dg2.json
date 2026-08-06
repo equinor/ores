@@ -31,7 +31,7 @@
         "DecisionSummary": "Approve subsea tie-back development concept. Two 4-slot templates (8 slots + 2 contingent), 4 producers (A1\u2013A4) + 2 injectors (A5\u2013A6) targeting full Volantis Group (Valysar, Therys, Volon) across 7 regions. STOIIP P50 45.4 MSm\u00b3 (P90 33.8, P10 59.4). EUR P50 10.4 MSm\u00b3 (RF 33.5%). 250 FMU realisations with one-by-one sensitivity (drogon_design.ert). First oil target 2028-H1. Proceed to DG3 FEED.",
         "RiskAssessmentDocument": "dev:work-product-component--Document:Drogon-SRA-DG2-Report:1",
         "ReservoirIDs": [
-          "dev:master-data--Reservoir:Drogon-Valysar:1"
+          "dev:master-data--Reservoir:Drogon:1"
         ],
         "ReservoirSegmentIDs": [
           "dev:master-data--ReservoirSegment:21cd47f4-15c9-4ab1-a347-6d28a18655b1:1",
@@ -98,7 +98,7 @@
             "Selection": "Master-data context for the decision",
             "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
             "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
-            "DataObjectParameter": "dev:master-data--Reservoir:Drogon-Valysar:1"
+            "DataObjectParameter": "dev:master-data--Reservoir:Drogon:1"
           },
           {
             "Title": "GeoModelDataspace",

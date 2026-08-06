@@ -169,7 +169,7 @@ def main():
         "acl":   acl,
         "legal": legal,
         "data": {
-            "Name": "Drogon Valysar - Input Parameters (per realisation)",
+            "Name": "Drogon - Input Parameters (per realisation)",
             "Description": (
                 "Per-realisation input parameters for the Valysar zone of the Drogon field. "
                 "OWC depths (7 segments) and porosity (3 facies), "

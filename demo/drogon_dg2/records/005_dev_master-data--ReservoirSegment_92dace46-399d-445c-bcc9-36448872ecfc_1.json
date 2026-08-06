@@ -19,10 +19,10 @@
   },
   "data": {
     "Name": "North Horst",
-    "Description": "Northern horst block of the Valysar formation, Drogon field - contains gas cap",
+    "Description": "Northern horst block of the Volantis Group, Drogon field - contains gas cap",
     "ancestry": {
       "parents": [
-        "dev:master-data--Reservoir:Drogon-Valysar:1"
+        "dev:master-data--Reservoir:Drogon:1"
       ],
       "children": []
     }

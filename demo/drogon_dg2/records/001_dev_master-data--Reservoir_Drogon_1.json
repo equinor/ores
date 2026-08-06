@@ -1,5 +1,5 @@
 {
-  "id": "dev:master-data--Reservoir:Drogon-Valysar:1",
+  "id": "dev:master-data--Reservoir:Drogon:1",
   "kind": "osdu:wks:master-data--Reservoir:2.0.0",
   "acl": {
     "owners": [
@@ -19,7 +19,7 @@
   },
   "data": {
     "Name": "Drogon",
-    "Description": "Drogon field - Valysar formation",
+    "Description": "Drogon field - Volantis Group (Valysar, Therys, Volon)",
     "ancestry": {
       "parents": [],
       "children": [

@@ -24,7 +24,7 @@
     "CreationDateTime": "2026-03-21T10:00:00.000Z",
     "ActivityTemplateID": "dev:work-product-component--ActivityTemplate:Drogon-DG2-FMU-Template:1",
     "WorkflowStatus": "Completed",
-    "ParentObjectID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+    "ParentObjectID": "dev:master-data--Reservoir:Drogon:1",
     "ParentWorkProductID": "dev:work-product:862b5d29-3d8b-4e9f-9d38-7b78185079f7:1",
     "Parameters": [
       {
@@ -297,7 +297,7 @@
         "Description": "OSDU Reservoir master-data record for Drogon. Links to 7 ReservoirSegment records (WestLowland, CentralSouth, etc.).",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:master-data--Reservoir:Drogon-Valysar:1",
+        "DataObjectParameter": "dev:master-data--Reservoir:Drogon:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -321,7 +321,7 @@
     ],
     "ancestry": {
       "parents": [
-        "dev:master-data--Reservoir:Drogon-Valysar:1"
+        "dev:master-data--Reservoir:Drogon:1"
       ],
       "children": [
         "dev:work-product-component--ColumnBasedTable:Drogon-DG2-DesignMatrix:1",

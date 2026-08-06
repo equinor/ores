@@ -23,7 +23,7 @@
       },
       "data": {
         "Name": "Drogon DG1 - Identify & Assess",
-        "Description": "DG1 volume assessment of the Valysar formation, Drogon field. P10/P50/P90 oil & gas estimates across 7 segments.",
+        "Description": "DG1 volume assessment of the Volantis Group, Drogon field. P10/P50/P90 oil & gas estimates across 7 segments.",
         "ProjectName": "Drogon Field Development",
         "DecisionLevelID": "dev:reference-data--DecisionLevel:DG1:",
         "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:",
@@ -31,7 +31,7 @@
         "DecisionDate": "2026-02-28",
         "DecisionSummary": "Assess Valysar in-place volumes and recommend proceed/no-go for DG2.",
         "ReservoirIDs": [
-          "dev:master-data--Reservoir:Drogon-Valysar:1"
+          "dev:master-data--Reservoir:Drogon:1"
         ],
         "ReservoirSegmentIDs": [
           "dev:master-data--ReservoirSegment:21cd47f4-15c9-4ab1-a347-6d28a18655b1:1",
@@ -94,7 +94,7 @@
             "Selection": "Valysar reservoir",
             "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
             "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
-            "DataObjectParameter": "dev:master-data--Reservoir:Drogon-Valysar:1"
+            "DataObjectParameter": "dev:master-data--Reservoir:Drogon:1"
           },
           {
             "Title": "GeoModelDataspace",

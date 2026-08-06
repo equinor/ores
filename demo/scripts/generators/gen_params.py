@@ -6,7 +6,7 @@ Spec format:
   "generator": "params",
   "data_file": "valysar_parameters.csv",
   "file_type": "csv",
-  "name": "Drogon Valysar - Design Matrix Parameters",
+  "name": "Drogon - Design Matrix Parameters",
   "description": "...",
   "columns": [
     {"ColumnName": "Realisation", "ColumnRole": "Key", "ValueType": "integer"},

@@ -19,10 +19,10 @@
   },
   "data": {
     "Name": "East Lowland",
-    "Description": "Eastern lowland fault block of the Valysar formation, Drogon field",
+    "Description": "Eastern lowland fault block of the Volantis Group, Drogon field",
     "ancestry": {
       "parents": [
-        "dev:master-data--Reservoir:Drogon-Valysar:1"
+        "dev:master-data--Reservoir:Drogon:1"
       ],
       "children": []
     }

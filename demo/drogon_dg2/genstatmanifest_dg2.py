@@ -193,7 +193,7 @@ def build_statistics(raw_manifest: Dict, facet_roles: Dict, id_prefix: str) -> D
                 "acl":   acl,
                 "legal": legal,
                 "data": {
-                    "Name": "Drogon Valysar - DG2 Reservoir Estimated Volumes (statistics, ×0.8)",
+                    "Name": "Drogon - DG2 Reservoir Estimated Volumes (statistics, ×0.8)",
                     "Description": (
                         "DG2 statistics aggregated from DG2 RAW realisations (volumes ×0.8). "
                         "Grouped by SegmentID, Zone, Facies. "

@@ -278,10 +278,10 @@
             "WellAutomation": "Subsea choke control with remote optimisation from onshore.",
             "WaterManagement": "Produced water treatment to <30 mg/L oil-in-water. Enhanced treatment module on FPSO for environmental compliance. Re-injection considered for Phase 2."
           },
-          "ParentObjectID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ParentObjectID": "dev:master-data--Reservoir:Drogon:1",
           "ancestry": {
             "parents": [
-              "dev:master-data--Reservoir:Drogon-Valysar:1"
+              "dev:master-data--Reservoir:Drogon:1"
             ],
             "children": []
           }

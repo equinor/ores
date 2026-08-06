@@ -654,18 +654,18 @@ def build_activity_epc(params_uuid, raw_vol_uuid, stat_vol_uuid) -> pathlib.Path
     # UUID matches the OSDU Activity record (gen_activity_drogon.py).
     _add_activity(
         model, tmpl,
-        title="Drogon Valysar - DG1 Volumetrics Workflow Run",
+        title="Drogon - DG1 Volumetrics Workflow Run",
         act_uuid=ACT_UUID,
         input_ref={
             "key": "InputParameters",
-            "title": "Drogon Valysar - Input Parameters (per realisation)",
+            "title": "Drogon - Input Parameters (per realisation)",
             "uuid": params_uuid,
             "content_type": "obj_Grid2dRepresentation",
         },
-        process_title="RMS DecisionExample - Drogon Valysar (3 realisations: Base / Low / High)",
+        process_title="RMS DecisionExample - Drogon (3 realisations: Base / Low / High)",
         output_ref={
             "key": "OutputVolumes",
-            "title": "Drogon Valysar - Reservoir Estimated Volumes (RAW, per realisation)",
+            "title": "Drogon - Reservoir Estimated Volumes (RAW, per realisation)",
             "uuid": raw_vol_uuid,
             "content_type": "obj_Grid2dRepresentation",
         },
@@ -685,7 +685,7 @@ def build_activity_epc(params_uuid, raw_vol_uuid, stat_vol_uuid) -> pathlib.Path
     _add_activity_param_ref(
         act_node,
         "OutputParameters",
-        ref_title="Drogon Valysar - Input Parameters (per realisation)",
+        ref_title="Drogon - Input Parameters (per realisation)",
         ref_uuid=params_uuid,
         ref_content_type="obj_Grid2dRepresentation",
     )
@@ -693,7 +693,7 @@ def build_activity_epc(params_uuid, raw_vol_uuid, stat_vol_uuid) -> pathlib.Path
     _add_activity_param_ref(
         act_node,
         "ReportTable",
-        ref_title="Drogon Valysar - Reservoir Estimated Volumes (statistics)",
+        ref_title="Drogon - Reservoir Estimated Volumes (statistics)",
         ref_uuid=stat_vol_uuid,
         ref_content_type="obj_Grid2dRepresentation",
     )

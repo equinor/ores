@@ -23,7 +23,7 @@
     "WorkflowStatus": "Active",
     "ancestry": {
       "parents": [
-        "dev:master-data--Reservoir:Drogon-Valysar:1"
+        "dev:master-data--Reservoir:Drogon:1"
       ],
       "children": []
     }

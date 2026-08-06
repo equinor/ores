@@ -18,14 +18,14 @@
     ]
   },
   "data": {
-    "Name": "Drogon Valysar - GeoLabelSet (DG2)",
+    "Name": "Drogon - GeoLabelSet (DG2)",
     "Description": "GeoLabelSet for DG2, derived from stat REV. All volumes in m³. Includes per-segment Oil P10/P50/P90, field-level recoverable volumes, and petro-physical properties.",
-    "ParentObjectID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+    "ParentObjectID": "dev:master-data--Reservoir:Drogon:1",
     "ParentWorkProductID": "dev:work-product:Drogon-DG2-ConceptSelect:1",
-    "LabelledEntityID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+    "LabelledEntityID": "dev:master-data--Reservoir:Drogon:1",
     "ancestry": {
       "parents": [
-        "dev:master-data--Reservoir:Drogon-Valysar:1"
+        "dev:master-data--Reservoir:Drogon:1"
       ]
     },
     "GeoLabels": {

@@ -28,7 +28,7 @@
       "dev:work-product-component--ActivityTemplate:Drogon-DG1-VolumetricsTemplate:1",
       "dev:work-product-component--Activity:Drogon-DG1-VolumetricsWorkflow:1",
       "dev:dataset--ETPDataspace:maap-drogon_dg:1",
-      "dev:master-data--Reservoir:Drogon-Valysar:1",
+      "dev:master-data--Reservoir:Drogon:1",
       "dev:master-data--ReservoirSegment:21cd47f4-15c9-4ab1-a347-6d28a18655b1:1",
       "dev:master-data--ReservoirSegment:1a055370-f84f-430c-954b-d712d13781f0:1",
       "dev:master-data--ReservoirSegment:01505396-8e72-42a7-9d80-059cf9e17c95:1",

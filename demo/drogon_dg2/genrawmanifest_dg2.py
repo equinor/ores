@@ -176,7 +176,7 @@ def main():
         "acl":   acl,
         "legal": legal,
         "data": {
-            "Name": "Drogon Valysar - DG2 Reservoir Estimated Volumes (RAW, per realisation, ×0.8)",
+            "Name": "Drogon - DG2 Reservoir Estimated Volumes (RAW, per realisation, ×0.8)",
             "Description": (
                 "DG2 uncertainty realisation table for the Valysar zone. "
                 "Pore-dependent volume columns (PoreOil, Oil, Gas, etc.) scaled by 0.8 "

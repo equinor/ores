@@ -19,10 +19,10 @@
   },
   "data": {
     "Name": "Central Horst",
-    "Description": "Central horst block of the Valysar formation, Drogon field - largest oil accumulation",
+    "Description": "Central horst block of the Volantis Group, Drogon field - largest oil accumulation",
     "ancestry": {
       "parents": [
-        "dev:master-data--Reservoir:Drogon-Valysar:1"
+        "dev:master-data--Reservoir:Drogon:1"
       ],
       "children": []
     }

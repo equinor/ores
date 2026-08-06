@@ -13,8 +13,8 @@
     "approval_status": "Approved",
     "decision_date": "2026-05-15",
     "decision_summary": "Select development concept. Full 7-segment approved. Condition: acquire CentralFlanks core before DG3.",
-    "reservoir_id": "dev:master-data--Reservoir:Drogon-Valysar:1",
-    "reservoir_description": "Valysar formation, Drogon field",
+    "reservoir_id": "dev:master-data--Reservoir:Drogon:1",
+    "reservoir_description": "Volantis Group (Valysar, Therys, Volon), Drogon field",
     "activity_state_template_id": "dev:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
     "project_type_id": "dev:reference-data--ProjectType:FieldDevelopment:",
 

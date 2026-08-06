@@ -186,7 +186,7 @@ def main():
         "acl":   acl,
         "legal": legal,
         "data": {
-            "Name": "Drogon Valysar - Reservoir Estimated Volumes (RAW, per realisation)",
+            "Name": "Drogon - Reservoir Estimated Volumes (RAW, per realisation)",
             "Description": (
                 "Uncertainty realisation table for the Valysar zone of the Drogon field. "
                 "12 phase-qualified volume columns, 3 realisations × 7 segments × 4 facies."

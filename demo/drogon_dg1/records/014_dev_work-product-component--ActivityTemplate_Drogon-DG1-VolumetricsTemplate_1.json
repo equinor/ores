@@ -18,7 +18,7 @@
     ]
   },
   "data": {
-    "Name": "Drogon Valysar - Volumetrics Workflow Template",
+    "Name": "Drogon - Volumetrics Workflow Template",
     "Description": "ActivityTemplate for the Drogon / Valysar DG1 volumetrics ensemble workflow. Covers three sequential steps: (1) generate per-realisation input parameters (OWC depths + PHIT), (2) run the RMS DecisionExample reservoir model workflow producing per-realisation volumes, (3) aggregate realisations into P10/P50/P90 statistics. All steps are captured as a single merged activity linked from the parent BusinessDecision record.",
     "Originator": "markuslund.vevle@emerson.com",
     "ParameterTemplates": [

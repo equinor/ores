@@ -2,14 +2,14 @@
   "generator": "master",
   "uuid_prefix": "dg2-master",
   "reservoir_name": "Drogon",
-  "reservoir_description": "Drogon field - Valysar formation",
+  "reservoir_description": "Drogon field - Volantis Group (Valysar, Therys, Volon)",
   "segments": [
-    {"key": "WestLowland",  "name": "West Lowland",  "description": "Western lowland fault block of the Valysar formation, Drogon field"},
-    {"key": "CentralSouth", "name": "Central South",  "description": "Central-south structural compartment of the Valysar formation, Drogon field"},
-    {"key": "CentralNorth", "name": "Central North",  "description": "Central-north structural compartment of the Valysar formation, Drogon field"},
-    {"key": "NorthHorst",   "name": "North Horst",    "description": "Northern horst block of the Valysar formation, Drogon field - contains gas cap"},
-    {"key": "CentralRamp",  "name": "Central Ramp",   "description": "Central ramp structure of the Valysar formation, Drogon field"},
-    {"key": "CentralHorst", "name": "Central Horst",  "description": "Central horst block of the Valysar formation, Drogon field - largest oil accumulation"},
-    {"key": "EastLowland",  "name": "East Lowland",   "description": "Eastern lowland fault block of the Valysar formation, Drogon field"}
+    {"key": "WestLowland",  "name": "West Lowland",  "description": "Western lowland fault block of the Volantis Group, Drogon field"},
+    {"key": "CentralSouth", "name": "Central South",  "description": "Central-south structural compartment of the Volantis Group, Drogon field"},
+    {"key": "CentralNorth", "name": "Central North",  "description": "Central-north structural compartment of the Volantis Group, Drogon field"},
+    {"key": "NorthHorst",   "name": "North Horst",    "description": "Northern horst block of the Volantis Group, Drogon field - contains gas cap"},
+    {"key": "CentralRamp",  "name": "Central Ramp",   "description": "Central ramp structure of the Volantis Group, Drogon field"},
+    {"key": "CentralHorst", "name": "Central Horst",  "description": "Central horst block of the Volantis Group, Drogon field - largest oil accumulation"},
+    {"key": "EastLowland",  "name": "East Lowland",   "description": "Eastern lowland fault block of the Volantis Group, Drogon field"}
   ]
 }

@@ -3,7 +3,7 @@
   "ReferenceData": [],
   "MasterData": [
     {
-      "id": "dev:master-data--Reservoir:Drogon-Valysar:1",
+      "id": "dev:master-data--Reservoir:Drogon:1",
       "kind": "osdu:wks:master-data--Reservoir:2.0.0",
       "acl": {
         "owners": [
@@ -23,7 +23,7 @@
       },
       "data": {
         "Name": "Drogon",
-        "Description": "Drogon field - Valysar formation",
+        "Description": "Drogon field - Volantis Group (Valysar, Therys, Volon)",
         "ancestry": {
           "parents": [],
           "children": [
@@ -59,10 +59,10 @@
       },
       "data": {
         "Name": "West Lowland",
-        "Description": "Western lowland fault block of the Valysar formation, Drogon field",
+        "Description": "Western lowland fault block of the Volantis Group, Drogon field",
         "ancestry": {
           "parents": [
-            "dev:master-data--Reservoir:Drogon-Valysar:1"
+            "dev:master-data--Reservoir:Drogon:1"
           ],
           "children": []
         }
@@ -89,10 +89,10 @@
       },
       "data": {
         "Name": "Central South",
-        "Description": "Central-south structural compartment of the Valysar formation, Drogon field",
+        "Description": "Central-south structural compartment of the Volantis Group, Drogon field",
         "ancestry": {
           "parents": [
-            "dev:master-data--Reservoir:Drogon-Valysar:1"
+            "dev:master-data--Reservoir:Drogon:1"
           ],
           "children": []
         }
@@ -119,10 +119,10 @@
       },
       "data": {
         "Name": "Central North",
-        "Description": "Central-north structural compartment of the Valysar formation, Drogon field",
+        "Description": "Central-north structural compartment of the Volantis Group, Drogon field",
         "ancestry": {
           "parents": [
-            "dev:master-data--Reservoir:Drogon-Valysar:1"
+            "dev:master-data--Reservoir:Drogon:1"
           ],
           "children": []
         }
@@ -149,10 +149,10 @@
       },
       "data": {
         "Name": "North Horst",
-        "Description": "Northern horst block of the Valysar formation, Drogon field - contains gas cap",
+        "Description": "Northern horst block of the Volantis Group, Drogon field - contains gas cap",
         "ancestry": {
           "parents": [
-            "dev:master-data--Reservoir:Drogon-Valysar:1"
+            "dev:master-data--Reservoir:Drogon:1"
           ],
           "children": []
         }
@@ -179,10 +179,10 @@
       },
       "data": {
         "Name": "Central Ramp",
-        "Description": "Central ramp structure of the Valysar formation, Drogon field",
+        "Description": "Central ramp structure of the Volantis Group, Drogon field",
         "ancestry": {
           "parents": [
-            "dev:master-data--Reservoir:Drogon-Valysar:1"
+            "dev:master-data--Reservoir:Drogon:1"
           ],
           "children": []
         }
@@ -209,10 +209,10 @@
       },
       "data": {
         "Name": "Central Horst",
-        "Description": "Central horst block of the Valysar formation, Drogon field - largest oil accumulation",
+        "Description": "Central horst block of the Volantis Group, Drogon field - largest oil accumulation",
         "ancestry": {
           "parents": [
-            "dev:master-data--Reservoir:Drogon-Valysar:1"
+            "dev:master-data--Reservoir:Drogon:1"
           ],
           "children": []
         }
@@ -239,10 +239,10 @@
       },
       "data": {
         "Name": "East Lowland",
-        "Description": "Eastern lowland fault block of the Valysar formation, Drogon field",
+        "Description": "Eastern lowland fault block of the Volantis Group, Drogon field",
         "ancestry": {
           "parents": [
-            "dev:master-data--Reservoir:Drogon-Valysar:1"
+            "dev:master-data--Reservoir:Drogon:1"
           ],
           "children": []
         }
@@ -278,7 +278,7 @@
           "WorkflowStatus": "Active",
           "ancestry": {
             "parents": [
-              "dev:master-data--Reservoir:Drogon-Valysar:1"
+              "dev:master-data--Reservoir:Drogon:1"
             ],
             "children": []
           }

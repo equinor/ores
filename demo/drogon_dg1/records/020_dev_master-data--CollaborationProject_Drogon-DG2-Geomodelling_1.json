@@ -61,7 +61,7 @@
         "Selection": "Valysar reservoir",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
-        "DataObjectParameter": "dev:master-data--Reservoir:Drogon-Valysar:1"
+        "DataObjectParameter": "dev:master-data--Reservoir:Drogon:1"
       },
       {
         "Title": "In-place volumes raw (per realisation)",

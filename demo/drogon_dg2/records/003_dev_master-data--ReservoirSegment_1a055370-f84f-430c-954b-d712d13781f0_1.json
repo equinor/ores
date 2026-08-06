@@ -19,10 +19,10 @@
   },
   "data": {
     "Name": "Central South",
-    "Description": "Central-south structural compartment of the Valysar formation, Drogon field",
+    "Description": "Central-south structural compartment of the Volantis Group, Drogon field",
     "ancestry": {
       "parents": [
-        "dev:master-data--Reservoir:Drogon-Valysar:1"
+        "dev:master-data--Reservoir:Drogon:1"
       ],
       "children": []
     }

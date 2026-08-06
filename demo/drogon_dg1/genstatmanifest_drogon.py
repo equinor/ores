@@ -217,7 +217,7 @@ def build_statistics(raw_manifest: Dict, facet_roles: Dict, id_prefix: str) -> D
                 "acl":   acl,
                 "legal": legal,
                 "data": {
-                    "Name": "Drogon Valysar - Reservoir Estimated Volumes (statistics)",
+                    "Name": "Drogon - Reservoir Estimated Volumes (statistics)",
                     "Description": (
                         "Statistics aggregated across Realisations by SegmentID, Zone, Facies. "
                         "Includes per-segment totals, per-facies totals, and grand total."

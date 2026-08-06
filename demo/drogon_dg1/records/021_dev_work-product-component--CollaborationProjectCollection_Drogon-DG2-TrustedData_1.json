@@ -22,7 +22,7 @@
     "Description": "Curated SoR references accumulated across decision gates.",
     "CreationDateTime": "2025-12-15T09:00:00Z",
     "ResourceIDs": [
-      "dev:master-data--Reservoir:Drogon-Valysar:1",
+      "dev:master-data--Reservoir:Drogon:1",
       "dev:dataset--ETPDataspace:maap-drogon_dg:1",
       "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Raw:1",
       "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1",

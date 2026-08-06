@@ -21,7 +21,7 @@
     "Name": "Drogon DG2 - Fault Lines at TopTherys",
     "Description": "Fault line polygons at TopTherys horizon. Standard result: structure_depth_fault_lines.",
     "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-    "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+    "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
     "DDMSDatasets": [
       "eml:///dataspace('maap/drogon_dg')/polygons/toptherys--faultlines.csv"
     ],

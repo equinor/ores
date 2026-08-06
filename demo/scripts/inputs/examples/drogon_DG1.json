@@ -18,7 +18,7 @@
       "type": "activity_template",
       "slug": "drogon-valysar-volumetrics-template",
       "data": {
-        "Name": "Drogon Valysar - Volumetrics Workflow Template",
+        "Name": "Drogon - Volumetrics Workflow Template",
         "Description": "3-step FMU workflow: parameter generation → RMS geomodel (facies + petrophysics) → volume aggregation to P10/P50/P90. DecisionExample workflow, 3 realisations.",
         "ParameterTemplates": [
           {"Title": "OWC_Skirt", "IsInput": true, "IsOutput": false, "DefaultParameterKind": "Double", "Description": "Oil-water contact skirt segments (1,4,7) in m MSL"},
@@ -37,7 +37,7 @@
       "type": "activity",
       "slug": "drogon-dg1-volumetrics-run",
       "data": {
-        "Name": "Drogon Valysar - DG1 Volumetrics Workflow Run",
+        "Name": "Drogon - DG1 Volumetrics Workflow Run",
         "Description": "3-realisation FMU run (Low/Base/High): DESIGN2PARAMS → RMS (facies + petrophysics) → volume extraction per segment. OWC range 1650–1687 m MSL.",
         "Parameters": [
           {"Title": "OWC_Skirt", "Selection": "1650/1660/1670 m MSL (Low/Base/High)"},
@@ -194,7 +194,7 @@
       "slug": "drogon-dg1-identify-assess",
       "data": {
         "Name": "Drogon DG1 - Identify & Assess",
-        "Description": "DG1 volume assessment of the Valysar formation, Drogon field. P10/P50/P90 oil & gas estimates across 7 segments.",
+        "Description": "DG1 volume assessment of the Volantis Group, Drogon field. P10/P50/P90 oil & gas estimates across 7 segments.",
         "ProjectName": "Drogon Field Development",
         "DecisionLevelID": "DG1",
         "ApprovalStatusID": "Approved",

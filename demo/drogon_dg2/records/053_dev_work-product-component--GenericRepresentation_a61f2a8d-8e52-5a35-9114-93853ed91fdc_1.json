@@ -21,7 +21,7 @@
     "Name": "Drogon DG2 - therys--facies_fraction_offshore",
     "Description": "Facies fraction map: offshore in Therys zone",
     "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
-    "ReservoirID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+    "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
     "NodeCountOnIAxis": 280,
     "NodeCountOnJAxis": 440,
     "BinWidthOnIaxis": 25.0,

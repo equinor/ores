@@ -23,7 +23,7 @@ Spec format:
     "approval_status": "Approved",
     "decision_date": "2026-05-15",
     "decision_summary": "...",
-    "reservoir_id": "dev:master-data--Reservoir:Drogon-Valysar:1",
+    "reservoir_id": "dev:master-data--Reservoir:Drogon:1",
     "economics": {
       "NPV_10pct": {"value": 520, "unit": "MUSD"},
       "IRR": {"value": 17, "unit": "%"},

@@ -179,7 +179,7 @@ The Drogon DG1 volumetrics workflow has three steps, captured as a single merged
 {
   "kind": "osdu:wks:work-product-component--ActivityTemplate:1.0.0",
   "data": {
-    "Name": "Drogon Valysar - Volumetrics Workflow Template",
+    "Name": "Drogon - Volumetrics Workflow Template",
     "Description": "Covers three sequential steps: (1) generate per-realisation input parameters, (2) run RMS reservoir model, (3) aggregate into P10/P50/P90 statistics.",
     "ParameterTemplates": [
       {
@@ -256,7 +256,7 @@ The Drogon DG1 volumetrics workflow has three steps, captured as a single merged
 {
   "kind": "osdu:wks:work-product-component--Activity:1.0.0",
   "data": {
-    "Name": "Drogon Valysar - DG1 Volumetrics Workflow Run",
+    "Name": "Drogon - DG1 Volumetrics Workflow Run",
     "Description": "Full three-step DG1 volumetrics workflow for Valysar formation...",
     "ActivityTemplateID": "dev:work-product-component--ActivityTemplate:aa2791c8-...:1",
     "WorkflowStatus": "Completed",
@@ -274,7 +274,7 @@ The Drogon DG1 volumetrics workflow has three steps, captured as a single merged
         "Title": "Process",
         "ParameterKindID": "dev:reference-data--ParameterKind:String:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "StringParameter": "RMS DecisionExample - Drogon Valysar"
+        "StringParameter": "RMS DecisionExample - Drogon"
       },
       {
         "Title": "NumberOfRealizations",

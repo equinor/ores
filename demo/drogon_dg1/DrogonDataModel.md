@@ -110,7 +110,7 @@ graph TD
 | # | Kind | Name | OSDU ID suffix |
 |---|------|------|----------------|
 | 0 | `reference-data--ReservoirEstimatedVolumePropertyType` | AssociatedLiquid | `AssociatedLiquid_` |
-| 1 | `master-data--Reservoir` | Drogon | `5b8dc759…` |
+| 1 | `master-data--Reservoir` | Drogon | `Drogon` |
 | 2–8 | `master-data--ReservoirSegment` | West Lowland, Central South, Central North, North Horst, Central Ramp, Central Horst, East Lowland | 7 UUIDs |
 | 9 | `work-product` | Drogon Reservoir Study | `37dcb76b…` |
 | 10 | `work-product-component--ReservoirEstimatedVolumes` | RAW (per realisation) | `68f57fdc…` |
@@ -167,7 +167,7 @@ The `ActivityTemplate` declares all parameter slots for the workflow. The
 | Parameter | Role | Value |
 |-----------|------|-------|
 | `InputParameters` | Input (DataObject) | ColumnBasedTable WPC (`d8e4e9ba…`) |
-| `Process` | Input (String) | `"RMS DecisionExample - Drogon Valysar"` |
+| `Process` | Input (String) | `"RMS DecisionExample - Drogon"` |
 | `NumberOfRealizations` | Input (Integer) | `3` |
 | `Workflow` | Input (String) | `"DecisionExample"` |
 | `Method` | Input (String) | `"User_Defined"` |
@@ -317,7 +317,7 @@ references pointing to the `Grid2dRepresentation` UUIDs in `drogon_tables.epc`:
 | Parameter | RESQML type | Value / UUID |
 |-----------|-------------|--------------|
 | `InputParameters` | `DataObjectParameter` | params `Grid2dRepresentation` (`38458cd4…`) |
-| `Process` | `StringParameter` | `"RMS DecisionExample - Drogon Valysar"` |
+| `Process` | `StringParameter` | `"RMS DecisionExample - Drogon"` |
 | `NumberOfRealizations` | `IntegerQuantityParameter` | `3` |
 | `Workflow` | `StringParameter` | `"DecisionExample"` |
 | `ReportTableName` | `StringParameter` | `"DecisionExample_report"` |

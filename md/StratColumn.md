@@ -87,6 +87,8 @@ Units and Horizons are **complementary** - they represent the same stratigraphy 
 
 > **Key insight**: the Rank schema has **no** `HorizonInterpretationSet`. Horizons are optional denormalized boundary references attached to individual Units.
 
+> **Design rationale**: The Rank XOR constraint (`ChronoStratigraphySet` xor `StratigraphicUnitInterpretationSet`) leaves no slot for a third collection. More fundamentally, horizons are *redundant with unit adjacency* — the boundary between two stacked units is already implied by their ordering in the Rank. `HorizonTopID` / `HorizonBaseID` on units exist only to attach extra properties (conformability, sequence-strat surface type) to those implied contacts, not to define the stratigraphic order.
+
 ---
 
 ## 3) Chronostratigraphy vs Lithostratigraphy

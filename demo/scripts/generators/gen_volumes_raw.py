@@ -8,7 +8,7 @@ Spec format:
 {
   "generator": "volumes_raw",
   "csv_file": "valysar_volumes.csv",
-  "name": "Drogon Valysar - Reservoir Estimated Volumes (RAW)",
+  "name": "Drogon - Reservoir Estimated Volumes (RAW)",
   "description": "...",
   "key_columns": [
     {"ColumnName": "Realisation", "ColumnRole": "Key", "ValueType": "integer"},

@@ -23,7 +23,7 @@
         "DecisionDate": "2025-05-15",
         "DecisionSummary": "Screen Drogon prospect for field development potential. Analogue-based STOIIP estimate 25–45 MSm³ oil in Valysar formation. 7 fault-bounded segments identified from seismic interpretation. Strategic fit confirmed (Snorre area infrastructure). Approve proceed to DG1 with initial FMU volumetric assessment.",
         "ReservoirIDs": [
-          "dev:master-data--Reservoir:Drogon-Valysar:1"
+          "dev:master-data--Reservoir:Drogon:1"
         ],
         "RiskIDs": [
           "dev:master-data--Risk:Drogon-DG0-ProspectRisk:1",
@@ -39,7 +39,7 @@
             "Selection": "Valysar reservoir – 7 fault-bounded segments in Volantis Group",
             "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
             "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
-            "DataObjectParameter": "dev:master-data--Reservoir:Drogon-Valysar:1"
+            "DataObjectParameter": "dev:master-data--Reservoir:Drogon:1"
           },
           {
             "Title": "GeoModel Dataspace (RDDMS)",

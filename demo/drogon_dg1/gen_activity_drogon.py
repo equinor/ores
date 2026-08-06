@@ -143,7 +143,7 @@ def build_template(prefix: str, acl: dict, legal: dict) -> Dict[str, Any]:
         "acl": acl,
         "legal": legal,
         "data": {
-            "Name": "Drogon Valysar - Volumetrics Workflow Template",
+            "Name": "Drogon - Volumetrics Workflow Template",
             "Description": (
                 "ActivityTemplate for the Drogon / Valysar DG1 volumetrics ensemble workflow. "
                 "Covers three sequential steps: (1) generate per-realisation input parameters "
@@ -273,7 +273,7 @@ def build_activity(
             "Description": "RMS reservoir model workflow that executes the realisations",
             "ParameterKindID": f"{prefix}:reference-data--ParameterKind:String:",
             "ParameterRoleID": f"{prefix}:reference-data--ParameterRole:Input:",
-            "StringParameter": "RMS DecisionExample - Drogon Valysar",
+            "StringParameter": "RMS DecisionExample - Drogon",
         },
         {
             "Title": "NumberOfRealizations",
@@ -369,7 +369,7 @@ def build_activity(
         "acl": acl,
         "legal": legal,
         "data": {
-            "Name": "Drogon Valysar - DG1 Volumetrics Workflow Run",
+            "Name": "Drogon - DG1 Volumetrics Workflow Run",
             "Description": (
                 "Single merged activity capturing the full three-step DG1 volumetrics "
                 "workflow for the Valysar formation of the Drogon field. "

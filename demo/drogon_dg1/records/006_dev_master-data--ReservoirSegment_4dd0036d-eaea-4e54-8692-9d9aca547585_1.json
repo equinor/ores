@@ -19,10 +19,10 @@
   },
   "data": {
     "Name": "Central Ramp",
-    "Description": "Central ramp structure of the Valysar formation, Drogon field",
+    "Description": "Central ramp structure of the Volantis Group, Drogon field",
     "ancestry": {
       "parents": [
-        "dev:master-data--Reservoir:Drogon-Valysar:1"
+        "dev:master-data--Reservoir:Drogon:1"
       ],
       "children": []
     }

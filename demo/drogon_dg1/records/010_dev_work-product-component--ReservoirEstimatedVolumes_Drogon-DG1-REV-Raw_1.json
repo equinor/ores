@@ -18,14 +18,14 @@
     ]
   },
   "data": {
-    "Name": "Drogon Valysar - Reservoir Estimated Volumes (RAW, per realisation)",
+    "Name": "Drogon - Reservoir Estimated Volumes (RAW, per realisation)",
     "Description": "Uncertainty realisation table for the Valysar zone of the Drogon field. 12 phase-qualified volume columns, 3 realisations × 7 segments × 4 facies.",
     "EstimatedVolumeTypeID": "dev:reference-data--ReservoirEstimatedVolumeType:EstimatedInPlaceVolumes:",
-    "ParentObjectID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+    "ParentObjectID": "dev:master-data--Reservoir:Drogon:1",
     "ParentWorkProductID": "dev:work-product:862b5d29-3d8b-4e9f-9d38-7b78185079f7:1",
     "ancestry": {
       "parents": [
-        "dev:master-data--Reservoir:Drogon-Valysar:1"
+        "dev:master-data--Reservoir:Drogon:1"
       ],
       "children": [
         "dev:master-data--ReservoirSegment:21cd47f4-15c9-4ab1-a347-6d28a18655b1:1",

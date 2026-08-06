@@ -103,7 +103,7 @@ def _fake_geolabelset_record() -> dict:
         "kind": "osdu:wks:work-product-component--GeoLabelSet:1.0.0",
         "version": 1,
         "data": {
-            "Name": "Drogon Valysar - GeoLabelSet (DG2)",
+            "Name": "Drogon - GeoLabelSet (DG2)",
             "GeoLabels": {
                 "KeyColumns": [
                     {"ColumnName": "SegmentID", "ColumnRole": "Key", "ValueType": "string"},

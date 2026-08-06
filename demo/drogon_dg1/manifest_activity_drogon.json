@@ -54,7 +54,7 @@
           ]
         },
         "data": {
-          "Name": "Drogon Valysar - Volumetrics Workflow Template",
+          "Name": "Drogon - Volumetrics Workflow Template",
           "Description": "ActivityTemplate for the Drogon / Valysar DG1 volumetrics ensemble workflow. Covers three sequential steps: (1) generate per-realisation input parameters (OWC depths + PHIT), (2) run the RMS DecisionExample reservoir model workflow producing per-realisation volumes, (3) aggregate realisations into P10/P50/P90 statistics. All steps are captured as a single merged activity linked from the parent BusinessDecision record.",
           "Originator": "markuslund.vevle@emerson.com",
           "ParameterTemplates": [
@@ -180,13 +180,13 @@
           ]
         },
         "data": {
-          "Name": "Drogon Valysar - DG1 Volumetrics Workflow Run",
+          "Name": "Drogon - DG1 Volumetrics Workflow Run",
           "Description": "Single merged activity capturing the full three-step DG1 volumetrics workflow for the Valysar formation of the Drogon field. Step 1: generate per-realisation input parameters (OWC depths for 7 fault blocks, PHIT for Floodplain/Channel/Crevasse). Step 2: run the RMS DecisionExample workflow producing 3 realisations of reservoir estimated volumes. Step 3: aggregate realisations into P10/P50/P90 statistical volumes. Scenario configuration (design matrix + variables) is taken verbatim from the RESQML obj_Activity document (obj_Activity_MISSING.xml → drogon_activity.epc).",
           "Originator": "markuslund.vevle@emerson.com",
           "CreationDateTime": "2026-02-13T10:21:57.365Z",
           "ActivityTemplateID": "dev:work-product-component--ActivityTemplate:Drogon-DG1-VolumetricsTemplate:1",
           "WorkflowStatus": "Completed",
-          "ParentObjectID": "dev:master-data--Reservoir:Drogon-Valysar:1",
+          "ParentObjectID": "dev:master-data--Reservoir:Drogon:1",
           "ParentWorkProductID": "dev:work-product:862b5d29-3d8b-4e9f-9d38-7b78185079f7:1",
           "Parameters": [
             {
@@ -207,7 +207,7 @@
               "Description": "RMS reservoir model workflow that executes the realisations",
               "ParameterKindID": "dev:reference-data--ParameterKind:String:",
               "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-              "StringParameter": "RMS DecisionExample - Drogon Valysar"
+              "StringParameter": "RMS DecisionExample - Drogon"
             },
             {
               "Title": "NumberOfRealizations",
@@ -306,7 +306,7 @@
           ],
           "ancestry": {
             "parents": [
-              "dev:master-data--Reservoir:Drogon-Valysar:1"
+              "dev:master-data--Reservoir:Drogon:1"
             ],
             "children": [
               "dev:work-product-component--ColumnBasedTable:Drogon-DG1-InputParameters:1",
