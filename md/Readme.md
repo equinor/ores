@@ -9,7 +9,9 @@ ORES is a web application for exploring, analysing, and managing subsurface data
 ## Use cases at a glance
 
 | I want to… | Page | What it does |
-|------------|------|--------------|| **Deep-search across OSDU + RDDMS** | GraphQL | Federated query across OSDU catalog, local PG, and remote RDDMS — merged by UUID with property filtering and relationship traversal || **Find any OSDU record** | GlobalSearch | Query by kind, keyword, or ID — renders rich cards for BD, REV, Risk, GeoLabelSet, Seismic, and more |
+|------------|------|--------------|
+| **Deep-search across OSDU + RDDMS** | GraphQL | Federated query across OSDU catalog, local PG, and remote RDDMS — merged by UUID with property filtering and relationship traversal |
+| **Find any OSDU record** | GlobalSearch | Query by kind, keyword, or ID — renders rich cards for BD, REV, Risk, GeoLabelSet, Seismic, and more |
 | **Compare decision gates** | AnalyseDG | Side-by-side DG1→DG4 comparison: volumes, economics, risks, properties, alternatives, charts |
 | **Create a decision record** | CreateRecord | Wizard for BusinessDecision + Activity + CollaborationProject with auto-enrichment |
 | **Browse RDDMS data** | ResDDMSquery | Navigate dataspaces → record types → individual objects with tables and geometry |
