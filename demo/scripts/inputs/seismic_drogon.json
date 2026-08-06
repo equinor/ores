@@ -1,0 +1,82 @@
+{
+  "volumes": [
+    {
+      "segy_file": "seismic--amplitude_far_time--20180101.sgy",
+      "vds_file": "amplitude_far_time_20180101",
+      "wpc_id": "drogon-amp-far-time-20180101",
+      "segy_dataset_id": "drogon-amplitude-far-time-20180101",
+      "vds_dataset_id": "drogon-amplitude-far-time-20180101",
+      "display_name": "Drogon Amplitude Far Offset (Time) 2018-01-01",
+      "offset_class": "FAR",
+      "description": "Drogon synthetic seismic – far offset amplitude in time domain. Vintage 2018-01-01."
+    },
+    {
+      "segy_file": "seismic--amplitude_near_time--20180101.sgy",
+      "vds_file": "amplitude_near_time_20180101",
+      "wpc_id": "drogon-amp-near-time-20180101",
+      "segy_dataset_id": "drogon-amplitude-near-time-20180101",
+      "vds_dataset_id": "drogon-amplitude-near-time-20180101",
+      "display_name": "Drogon Amplitude Near Offset (Time) 2018-01-01",
+      "offset_class": "NEAR",
+      "description": "Drogon synthetic seismic – near offset amplitude in time domain. Vintage 2018-01-01."
+    }
+  ],
+  "seismic": {
+    "domain": "Time",
+    "dimensionality": "3D",
+    "attribute": "Amplitude",
+    "sample_interval": 1.0,
+    "sample_count": 2000,
+    "start_value": 0.0,
+    "end_value": 1999.0,
+    "trace_uom": "ms",
+    "inline_min": 0,
+    "inline_max": 435,
+    "crossline_min": 0,
+    "crossline_max": 275,
+    "inline_increment": 1,
+    "crossline_increment": 1,
+    "trace_count": 120336
+  },
+  "bingrid": {
+    "id": "drogon-seismic-bingrid",
+    "name": "Drogon Seismic Bin Grid",
+    "description": "Shared seismic bin grid geometry for Drogon 3D survey (436×276 bins).",
+    "inline_min": 0,
+    "inline_max": 435,
+    "crossline_min": 0,
+    "crossline_max": 275,
+    "inline_bin_count": 436,
+    "crossline_bin_count": 276,
+    "inline_bin_width": 25.0,
+    "crossline_bin_width": 25.0,
+    "origin_easting": 455700.0,
+    "origin_northing": 6780000.0,
+    "origin_i": 0,
+    "origin_j": 0,
+    "node_increment_i": {"X": 25.0, "Y": 0.0},
+    "node_increment_j": {"X": 0.0, "Y": 25.0},
+    "transformation_method": "9666"
+  },
+  "spatial_area": {
+    "Wgs84Coordinates": {
+      "type": "FeatureCollection",
+      "features": [{
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[2.173688, 61.150078], [2.377312, 61.150078],
+                           [2.377312, 61.212876], [2.173688, 61.212876],
+                           [2.173688, 61.150078]]]
+        }
+      }]
+    }
+  },
+  "crs_uuid": "96fb7643-0012-4033-8e55-7b1b4652ed33",
+  "existence_kind": "Prototype",
+  "extension_properties": {
+    "DrogonProject": "maap/drogon"
+  },
+  "src_dir": "demo/drogonresqml/src",
+  "vds_dir": "demo/drogonresqml/src/vds"
+}
