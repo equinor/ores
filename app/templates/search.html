@@ -2567,7 +2567,11 @@ classDef cls_default fill:#edf2f7,stroke:#718096,color:#222;
         content.innerHTML = '<span class="muted">Loading provenance chain…</span>';
 
         try {
-          const resp = await fetch(`/search/api/provenance-dag/${encodeURIComponent(recordId)}`);
+          const resp = await fetch('/search/api/provenance-dag/' + recordId);
+          if (!resp.ok) {
+            content.innerHTML = `<span class="muted">Error ${resp.status}: ${resp.statusText}</span>`;
+            return;
+          }
           const dag = await resp.json();
 
           if (!dag.nodes || dag.nodes.length === 0) {
