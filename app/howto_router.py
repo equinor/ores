@@ -37,7 +37,7 @@ _HOWTO_SECTIONS: list[dict] = [
                 "slug": "ores-overview",
                 "file": "Readme.md",
                 "title": "ORES Overview",
-                "desc": "Web client capabilities, project layout & pipeline guide",
+                "desc": "Capabilities, use cases, pages & technical detail",
             },
             {
                 "slug": "query-guide",

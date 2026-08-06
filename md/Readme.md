@@ -1,39 +1,89 @@
-# ORES - User & Admin Guide
+# ORES — OSDU Reservoir & Geoscience Explorer
 
-> What the web client does, how to use each page, authentication for users and admins,
-> and the RESQML 3D data viewer.
->
-> For development setup, demo pipelines, deployment, and internals see [Dev.md](Dev.md).
-> For quick-start instructions see the [root readme](../readme.md).
+> Data exploration · Deep search · Decision tracking
+
+ORES is a web application for exploring, analysing, and managing subsurface data stored in the [OSDU](https://osduforum.org/) Energy Platform. It connects to one or more OSDU instances and gives geoscientists, reservoir engineers, and decision-makers a single place to search records, compare decision gates, visualise 3D RESQML models, and ingest new data — all without writing API calls.
 
 ---
 
-## What the client can do
+## Use cases at a glance
 
-| Page | Purpose |
-|------|---------|
-| **ResDdmsAdmin** (`/`) | List and manage OSDU Dataspaces - create, lock, unlock, delete, build manifests |
-| **ResDdmsQuery** (`/keys`) | Browse dataspaces, record types, individual objects; inspect table & graph data |
-| **Resqml3D** (`/viz`) | Multi-object 3D viewer – render entire dataspaces or selected RESQML objects in Three.js |
-| **GlobalSearch** (`/search`) | Query OSDU Search API with kind-specific cards (BusinessDecision, REV, Risk, GeoLabelSet) |
-| **AnalyseDG** (`/analyse`) | Compare Business Decisions across decision gates (DG1-DG4) with volume/risk/economics deltas and charts |
-| **Add DG** (`/add-dg`) | Create and ingest BusinessDecision, Activity, ActivityTemplate, CollaborationProject, PersistedCollection and generic records. See [Activity guide](/howto/activity) |
-| **Stratigraphy** (`/strat`) | Preview and ingest stratigraphic column records |
-| **GraphQL** (`/graphql`) | GraphiQL IDE for RESQML deep-search queries |
-| **HowTo** (`/howto`) | Browse grouped markdown documentation articles |
-
-### Key rendering features
-
-- **BD cards** - gradient header, headline volume KPIs (three-tier fallback: stat WPC - GeoLabelSet - ext.equinor), development concept, reservoir properties, economics, schedule, production forecast chart, alternatives, risk chips, uncertainties, authors & governance.
-- **REV cards** - teal-themed with P10/P50/P90 headlines, metadata highlights, full volume table.
-- **Analyse comparison** - gate timeline, side-by-side metric deltas (STOIIP, NPV, CAPEX, etc.), risk diff chips, property diffs, Chart.js overlay charts.
-- **Mermaid relationship graphs** - interactive record-relationship diagrams with ancestry, data references, type-based styling.
+| I want to… | Page | What it does |
+|------------|------|--------------|
+| **Find any OSDU record** | GlobalSearch | Query by kind, keyword, or ID — renders rich cards for BD, REV, Risk, GeoLabelSet, Seismic, and more |
+| **Compare decision gates** | AnalyseDG | Side-by-side DG1→DG4 comparison: volumes, economics, risks, properties, alternatives, charts |
+| **Create a decision record** | CreateRecord | Wizard for BusinessDecision + Activity + CollaborationProject with auto-enrichment |
+| **View 3D reservoir models** | Resqml3D | Interactive Three.js viewer — surfaces, grids, wells, faults, point clouds |
+| **Browse RDDMS data** | ResDDMSquery | Navigate dataspaces → record types → individual objects with tables and geometry |
+| **Manage dataspaces** | ResDDMSadmin | Create, lock, unlock, delete RDDMS dataspaces; build manifests |
+| **Explore stratigraphy** | Stratigraphy | Preview and ingest stratigraphic column records |
+| **Correlate wells** | WellCorrelation | Well-to-well marker and log correlation views |
 
 ---
 
-## Authentication & sessions
+## Key capabilities
 
-The auth middleware resolves an access token for every request using a **fallback chain**. Each step is tried in order; the first to succeed wins:
+### 🔍 Deep search & rich rendering
+
+- **Kind-aware cards** — BusinessDecision records render with gradient headers, headline volumes (three-tier fallback: stat WPC → GeoLabelSet → ext.equinor), development concept, economics, schedule, production forecast chart, alternatives, risk chips, and author governance.
+- **Mermaid relationship graphs** — every record shows interactive diagrams with ancestry, data references, and type-based styling. Click any node to navigate.
+- **Provenance DAG** — for Business Decisions, a popup traces the full decision-gate lineage (DG1→DG2→DG3→…) as a Mermaid flowchart with status icons.
+
+### 📊 Decision-gate analysis
+
+- **Gate timeline** with volume/risk/economics deltas across DG1–DG4.
+- **STOIIP-by-segment** breakdown from GeoLabelSet data per gate.
+- **Reservoir properties** comparison (porosity, NTG, OWC, etc.).
+- **Alternatives table** — ranked alternatives with NPV, CAPEX, IRR, and recommended action.
+- **Risk diff** — chips showing risks added/removed/kept between gates.
+- **Chart.js overlays** — P10/P50/P90 volume bars, economics waterfall, property radar.
+
+### 🏗️ Record creation & ingestion
+
+- **Add DG wizard** — creates BusinessDecision + Activity + ActivityTemplate + CollaborationProject + PersistedCollection in one flow.
+- **Lifecycle events** — automatically appends a LifecycleEvent to the CollaborationProject when a gate decision is created.
+- **Bulk ingest** — upload manifests or individual records via Storage API.
+- **Stratigraphic columns** — preview + push stratigraphic data.
+
+### 🌐 3D RESQML viewer
+
+- Renders entire dataspaces or selected objects in a shared Three.js scene.
+- Supported types: Grid2d, TriangulatedSet, PointSet, PolylineSet, WellboreTrajectory, DeviationSurvey, WellboreMarkerFrame.
+- Three backend tiers: local PostgreSQL (fastest, <50 ms), remote PG, or REST API fallback.
+- Batch-loads up to 50 objects in parallel with depth-coloured surfaces and palette-coloured lines.
+
+### 🔌 Multi-instance & zero-click auth
+
+- Switch between OSDU instances (eqndev, interop, preship, …) with one click.
+- **Zero-click access** via shared service-principal or refresh token.
+- **Per-user PKCE** — "Sign in with Microsoft" for individual Equinor accounts.
+- Session persists across pod restarts (SQLite-backed token store, 30-day cookies).
+
+---
+
+## Pages reference
+
+| Page | URL | Purpose |
+|------|-----|---------|
+| GlobalSearch | `/search` | OSDU Search API with kind-specific cards |
+| AnalyseDG | `/analyse` | Compare BDs across decision gates with deltas and charts |
+| CreateRecord | `/add-dg` | Create BD, Activity, CollaborationProject and generic records |
+| ResDDMSadmin | `/` | Manage OSDU Dataspaces — create, lock, unlock, delete, build manifests |
+| ResDDMSquery | `/keys` | Browse dataspaces → record types → objects; inspect tables & geometry |
+| Resqml3D | `/viz` | Multi-object 3D viewer |
+| Stratigraphy | `/strat` | Preview and ingest stratigraphic columns |
+| WellCorrelation | `/wellcorr` | Well-to-well correlation |
+| GraphQL | `/graphql` | GraphiQL IDE for RESQML deep-search queries |
+| HowTo | `/howto` | Grouped markdown documentation articles |
+
+---
+---
+
+## Technical detail
+
+### Authentication & sessions
+
+The auth middleware resolves an access token for every request using a **fallback chain**:
 
 | Priority | Strategy | Source | When it kicks in |
 |----------|----------|--------|------------------|
