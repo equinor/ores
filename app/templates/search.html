@@ -2218,7 +2218,13 @@ click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open chil
 {% set grp_lbl = role_label_map.get(items[0].role|default(''), etype|lower) or param_rels.get(items[0].id, '') or etype|lower %}
 {% set _ns = items[0].id.split(':')[1].split('--')[0] if items[0].id.count(':') >= 3 and '--' in items[0].id else 'master-data' %}
 {% set _kind = 'osdu:wks:' ~ _ns ~ '--' ~ etype ~ ':*' %}
-{% set _slug = '"' ~ rec.id ~ '"' %}
+{# Forward links: search for the linked IDs themselves (OR query of their short IDs) #}
+{% set _fwd_ids = [] %}
+{% for it in items %}
+{% set _short = it.id.split(':')[-2] if it.id.count(':') >= 3 else (it.id.split(':')[-1] if ':' in it.id else it.id) %}
+{% set _ = _fwd_ids.append('"' ~ _short ~ '"') %}
+{% endfor %}
+{% set _slug = _fwd_ids | join(' OR ') %}
 {% if items|length > 3 %}
 GRP{{ rec_index }}_{{ etype }}["{{ etype }} ({{ items|length }})"]:::{{ cls }}
 REC{{ rec_index }} -->|{{ grp_lbl }}| GRP{{ rec_index }}_{{ etype }}
