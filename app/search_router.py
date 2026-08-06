@@ -1438,13 +1438,40 @@ async def provenance_dag(request: Request, record_id: str):
 
     def _node_from_record(rec: dict) -> dict:
         data = rec.get("data", {})
+        # DecisionLevel: prefer plain field, else extract from DecisionLevelID ref-data ID
+        dl = data.get("DecisionLevel", "")
+        if not dl:
+            dl_id = data.get("DecisionLevelID", "")
+            if dl_id:
+                # e.g. "dev:reference-data--DecisionLevel:DG2:" → "DG2"
+                parts = dl_id.split(":")
+                dl = parts[-2] if len(parts) >= 2 and parts[-2] else parts[-1]
         return {
             "id": rec.get("id", ""),
             "name": data.get("Name", ""),
-            "decision_level": data.get("DecisionLevel", ""),
-            "date": data.get("DecisionDate", ""),
+            "decision_level": dl,
+            "date": data.get("DecisionDate", data.get("DecisionDueDate", "")),
             "status": data.get("ApprovalStatus", ""),
         }
+
+    def _extract_prior_bd(data: dict) -> str | None:
+        """Extract prior BD ID from either top-level PriorDecisionID or Parameters[]."""
+        # 1. Explicit field
+        prior = data.get("PriorDecisionID", "")
+        if prior:
+            return prior
+        # 2. Parameters[] with DataObjectParameter pointing to a BD record
+        for param in data.get("Parameters") or []:
+            obj = param.get("DataObjectParameter", "")
+            if "master-data--BusinessDecision:" in obj:
+                # Confirm it's a prior-gate reference (key or title hint)
+                keys = param.get("Keys") or []
+                title = (param.get("Title") or "").lower()
+                if "prior" in title or "gate" in title or any(
+                    (k.get("ParameterKey") or "").lower() == "gate" for k in keys
+                ):
+                    return obj
+        return None
 
     async def _fetch(client, rid: str) -> dict | None:
         try:
@@ -1454,7 +1481,7 @@ async def provenance_dag(request: Request, record_id: str):
             return None
 
     async def _walk_back(client, rid: str, depth: int = 0):
-        """Walk backwards via PriorDecisionID."""
+        """Walk backwards via PriorDecisionID or Parameters[] BD reference."""
         if depth > 10 or rid in visited:
             return
         visited.add(rid)
@@ -1462,32 +1489,55 @@ async def provenance_dag(request: Request, record_id: str):
         if not rec:
             return
         nodes[rid] = _node_from_record(rec)
-        prior = rec.get("data", {}).get("PriorDecisionID", "")
+        prior = _extract_prior_bd(rec.get("data", {}))
         if prior:
             edges.append({"from": rid, "to": prior, "label": "supersedes"})
             await _walk_back(client, prior, depth + 1)
 
     async def _find_forward(client, rid: str):
-        """Find BDs that have PriorDecisionID pointing to this record."""
+        """Find BDs that reference this record as prior gate (PriorDecisionID or Parameters)."""
+        # Search for explicit PriorDecisionID
         payload = {
             "kind": "osdu:wks:master-data--BusinessDecision:*",
             "query": f"data.PriorDecisionID:\"{rid}\"",
             "limit": 20,
             "returnedFields": ["id", "data.Name", "data.DecisionLevel",
-                               "data.DecisionDate", "data.ApprovalStatus",
-                               "data.PriorDecisionID"],
+                               "data.DecisionLevelID", "data.DecisionDate",
+                               "data.DecisionDueDate", "data.ApprovalStatus",
+                               "data.PriorDecisionID", "data.Parameters"],
         }
         try:
             r = await client.post(search_url, json=payload, headers=hdr)
-            if not r.is_success:
-                return
-            for rec in r.json().get("results", []):
-                child_id = rec.get("id", "")
-                if child_id and child_id not in nodes:
-                    nodes[child_id] = _node_from_record(rec)
-                    prior = rec.get("data", {}).get("PriorDecisionID", "")
-                    if prior:
-                        edges.append({"from": child_id, "to": prior, "label": "supersedes"})
+            if r.is_success:
+                for rec in r.json().get("results", []):
+                    child_id = rec.get("id", "")
+                    if child_id and child_id not in nodes:
+                        nodes[child_id] = _node_from_record(rec)
+                        prior = _extract_prior_bd(rec.get("data", {}))
+                        if prior:
+                            edges.append({"from": child_id, "to": prior, "label": "supersedes"})
+        except Exception:
+            pass
+        # Search for Parameters[].DataObjectParameter reference
+        payload2 = {
+            "kind": "osdu:wks:master-data--BusinessDecision:*",
+            "query": f"data.Parameters.DataObjectParameter:\"{rid}\"",
+            "limit": 20,
+            "returnedFields": ["id", "data.Name", "data.DecisionLevel",
+                               "data.DecisionLevelID", "data.DecisionDate",
+                               "data.DecisionDueDate", "data.ApprovalStatus",
+                               "data.PriorDecisionID", "data.Parameters"],
+        }
+        try:
+            r = await client.post(search_url, json=payload2, headers=hdr)
+            if r.is_success:
+                for rec in r.json().get("results", []):
+                    child_id = rec.get("id", "")
+                    if child_id and child_id not in nodes:
+                        nodes[child_id] = _node_from_record(rec)
+                        prior = _extract_prior_bd(rec.get("data", {}))
+                        if prior:
+                            edges.append({"from": child_id, "to": prior, "label": "supersedes"})
         except Exception:
             pass
 
