@@ -2,32 +2,46 @@
 
 > Data exploration · Deep search · Decision tracking
 
-ORES is a web application for exploring, analysing, and managing subsurface data stored in the [OSDU](https://osduforum.org/) Energy Platform. It connects to one or more OSDU instances and gives geoscientists, reservoir engineers, and decision-makers a single place to search records, compare decision gates, visualise 3D RESQML models, and ingest new data — all without writing API calls.
+ORES is a web application for exploring, analysing, and managing subsurface data stored in the [OSDU](https://osduforum.org/) Energy Platform. It connects to one or more OSDU instances and gives geoscientists, reservoir engineers, and decision-makers a single place to search records, render and compare decision gates, deep search and inspect RESQML data, and ingest new data.
 
 ---
 
 ## Use cases at a glance
 
 | I want to… | Page | What it does |
-|------------|------|--------------|
-| **Find any OSDU record** | GlobalSearch | Query by kind, keyword, or ID — renders rich cards for BD, REV, Risk, GeoLabelSet, Seismic, and more |
+|------------|------|--------------|| **Deep-search across OSDU + RDDMS** | GraphQL | Federated query across OSDU catalog, local PG, and remote RDDMS — merged by UUID with property filtering and relationship traversal || **Find any OSDU record** | GlobalSearch | Query by kind, keyword, or ID — renders rich cards for BD, REV, Risk, GeoLabelSet, Seismic, and more |
 | **Compare decision gates** | AnalyseDG | Side-by-side DG1→DG4 comparison: volumes, economics, risks, properties, alternatives, charts |
 | **Create a decision record** | CreateRecord | Wizard for BusinessDecision + Activity + CollaborationProject with auto-enrichment |
-| **View 3D reservoir models** | Resqml3D | Interactive Three.js viewer — surfaces, grids, wells, faults, point clouds |
 | **Browse RDDMS data** | ResDDMSquery | Navigate dataspaces → record types → individual objects with tables and geometry |
 | **Manage dataspaces** | ResDDMSadmin | Create, lock, unlock, delete RDDMS dataspaces; build manifests |
 | **Explore stratigraphy** | Stratigraphy | Preview and ingest stratigraphic column records |
-| **Correlate wells** | WellCorrelation | Well-to-well marker and log correlation views |
+| **Correlate wells** | WellCorrelation | Automated well-to-well marker and log correlation prototype |
 
 ---
 
 ## Key capabilities
 
-### 🔍 Deep search & rich rendering
+### 🔍 Federated deep search (GraphQL)
+
+The standout feature: a **unified GraphQL layer** that searches across three sources in parallel and merges results by UUID:
+
+| Source | What it searches | Speed |
+|--------|-----------------|-------|
+| **OSDU Catalog** | Storage/Search API — all kinds, full text | Cloud-dependent |
+| **Local RDDMS (PostgreSQL)** | RESQML objects, arrays, properties, relations via direct SQL | <50 ms |
+| **Remote RDDMS (REST)** | OSDU Reservoir DDMS endpoints | Cloud-dependent |
+
+- **Single query, three backends** — results are deduplicated and merged: a grid that exists in both the OSDU catalog *and* RDDMS shows once, with metadata from both.
+- **Property-level filtering** — filter by property kind (porosity, permeability…), value ranges, array statistics.
+- **Relationship traversal** — follow RESQML relationships (StratigraphicColumn → Horizons → Grids → Properties) in one request.
+- **Cross-reference enrichment** — each hit reports whether it's in the catalog, local RDDMS, remote RDDMS, or all three.
+- **GraphiQL IDE** (`/graphql`) — full introspection, autocomplete, and query history in the browser.
+
+### 🔍 OSDU record search & rich rendering
 
 - **Kind-aware cards** — BusinessDecision records render with gradient headers, headline volumes (three-tier fallback: stat WPC → GeoLabelSet → ext.equinor), development concept, economics, schedule, production forecast chart, alternatives, risk chips, and author governance.
 - **Mermaid relationship graphs** — every record shows interactive diagrams with ancestry, data references, and type-based styling. Click any node to navigate.
-- **Provenance DAG** — for Business Decisions, a popup traces the full decision-gate lineage (DG1→DG2→DG3→…) as a Mermaid flowchart with status icons.
+- **Provenance DAG** — for Business Decisions, a popup traces the full decision-gate lineage (DG1→DG2→DG3→…) as a Mermaid flowchart with status icons and click-to-navigate.
 
 ### 📊 Decision-gate analysis
 
@@ -45,13 +59,6 @@ ORES is a web application for exploring, analysing, and managing subsurface data
 - **Bulk ingest** — upload manifests or individual records via Storage API.
 - **Stratigraphic columns** — preview + push stratigraphic data.
 
-### 🌐 3D RESQML viewer
-
-- Renders entire dataspaces or selected objects in a shared Three.js scene.
-- Supported types: Grid2d, TriangulatedSet, PointSet, PolylineSet, WellboreTrajectory, DeviationSurvey, WellboreMarkerFrame.
-- Three backend tiers: local PostgreSQL (fastest, <50 ms), remote PG, or REST API fallback.
-- Batch-loads up to 50 objects in parallel with depth-coloured surfaces and palette-coloured lines.
-
 ### 🔌 Multi-instance & zero-click auth
 
 - Switch between OSDU instances (eqndev, interop, preship, …) with one click.
@@ -59,21 +66,26 @@ ORES is a web application for exploring, analysing, and managing subsurface data
 - **Per-user PKCE** — "Sign in with Microsoft" for individual Equinor accounts.
 - Session persists across pod restarts (SQLite-backed token store, 30-day cookies).
 
+### 🗂️ RDDMS dataspace management
+
+- **Browse** dataspaces → record types → individual objects with tabular data and inline geometry preview.
+- **Create, lock, unlock, delete** dataspaces from the UI.
+- **3D viewer** — optional Three.js rendering of RESQML surfaces, grids, wells, faults (Grid2d, TriangulatedSet, PointSet, PolylineSet, WellboreTrajectory).
+
 ---
 
 ## Pages reference
 
 | Page | URL | Purpose |
 |------|-----|---------|
+| GraphQL | `/graphql` | Federated deep-search IDE (OSDU + RDDMS + PG in one query) |
 | GlobalSearch | `/search` | OSDU Search API with kind-specific cards |
 | AnalyseDG | `/analyse` | Compare BDs across decision gates with deltas and charts |
 | CreateRecord | `/add-dg` | Create BD, Activity, CollaborationProject and generic records |
 | ResDDMSadmin | `/` | Manage OSDU Dataspaces — create, lock, unlock, delete, build manifests |
 | ResDDMSquery | `/keys` | Browse dataspaces → record types → objects; inspect tables & geometry |
-| Resqml3D | `/viz` | Multi-object 3D viewer |
 | Stratigraphy | `/strat` | Preview and ingest stratigraphic columns |
 | WellCorrelation | `/wellcorr` | Well-to-well correlation |
-| GraphQL | `/graphql` | GraphiQL IDE for RESQML deep-search queries |
 | HowTo | `/howto` | Grouped markdown documentation articles |
 
 ---
