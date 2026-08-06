@@ -177,7 +177,7 @@
         "Selection": "P10/P50/P90 headline volumes per segment, derived from stat REV",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
         "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
-        "DataObjectParameter": "dev:work-product-component--GeoLabelSet:e4b7a1c3-5f28-4d9e-8a61-7c3d9e0f2b85:1",
+        "DataObjectParameter": "dev:work-product-component--GeoLabelSet:Drogon-DG2-GeoLabelSet:1",
         "Keys": [
           {
             "ParameterKey": "artifact",
@@ -535,7 +535,7 @@
         "dev:work-product-component--Activity:Drogon-DG2-FMU-Workflow:1"
       ],
       "children": [
-        "dev:work-product-component--GeoLabelSet:e4b7a1c3-5f28-4d9e-8a61-7c3d9e0f2b85:1"
+        "dev:work-product-component--GeoLabelSet:Drogon-DG2-GeoLabelSet:1"
       ]
     },
     "ext": {
