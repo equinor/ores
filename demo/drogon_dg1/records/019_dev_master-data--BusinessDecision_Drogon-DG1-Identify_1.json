@@ -104,6 +104,19 @@
             "StringParameterKey": "ETPDataspace"
           }
         ]
+      },
+      {
+        "Title": "GeoLabelSet (segment volumes + properties)",
+        "Selection": "Segment volume labels",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": "dev:work-product-component--GeoLabelSet:f5c8b2d4-6a39-4eaf-9b72-8d4eaf1a3c96:1",
+        "Keys": [
+          {
+            "ParameterKey": "artifact",
+            "StringParameterKey": "GeoLabelSet"
+          }
+        ]
       }
     ],
     "Personnel": [
@@ -266,7 +279,7 @@
         ],
         "UncertaintySummary": {
           "Basis": "FMU static volumes, 3 realisations, 7 segments, 3 facies",
-          "Note": "See stat WPC for P10/P50/P90 per segment & facies (m³).",
+          "Note": "See stat WPC for P10/P50/P90 per segment & facies (m\u00b3).",
           "TotalRealisations": 3,
           "MethodologyReference": "FMU Level 2 static uncertainty workflow (Valysar v1)",
           "StaticInPlace_Oil_MSm3": {

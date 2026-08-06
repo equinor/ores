@@ -23,7 +23,7 @@
       },
       "data": {
         "Name": "Drogon DG1 - Identify & Assess",
-        "Description": "DG1 volume assessment of the Volantis Group, Drogon field. P10/P50/P90 oil & gas estimates across 7 segments.",
+        "Description": "DG1 volume assessment of the Valysar formation, Drogon field. P10/P50/P90 oil & gas estimates across 7 segments.",
         "ProjectName": "Drogon Field Development",
         "DecisionLevelID": "dev:reference-data--DecisionLevel:DG1:",
         "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:",
@@ -106,6 +106,19 @@
               {
                 "ParameterKey": "artifact",
                 "StringParameterKey": "ETPDataspace"
+              }
+            ]
+          },
+          {
+            "Title": "GeoLabelSet (segment volumes + properties)",
+            "Selection": "Segment volume labels",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:Input:",
+            "DataObjectParameter": "dev:work-product-component--GeoLabelSet:f5c8b2d4-6a39-4eaf-9b72-8d4eaf1a3c96:1",
+            "Keys": [
+              {
+                "ParameterKey": "artifact",
+                "StringParameterKey": "GeoLabelSet"
               }
             ]
           }
