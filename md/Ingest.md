@@ -8,8 +8,8 @@
 
 The ingest pipeline has two main steps:
 
-1. **Manifest generation** — Convert RESQML objects in an RDDMS dataspace into an OSDU manifest (WPCs, reference data, master data)
-2. **Catalog ingest** — PUT the manifest records into OSDU Storage API with correct partition, ACL, and legal tags
+1. **Manifest generation** - Convert RESQML objects in an RDDMS dataspace into an OSDU manifest (WPCs, reference data, master data)
+2. **Catalog ingest** - PUT the manifest records into OSDU Storage API with correct partition, ACL, and legal tags
 
 ---
 
@@ -79,10 +79,10 @@ curl -s -m 120 -X POST \
 ```
 
 **TypePatterns** controls which RESQML types become WPCs. Omit for all types. Common patterns:
-- `*Representation` — Grid2d, PointSet, IjkGrid, WellboreFrame, PolylineSet
-- `*Interpretation*` — Horizon, Fault, Wellbore, StratigraphicUnit, StratigraphicColumnRank
-- `*Feature` — BoundaryFeature, RockVolumeFeature, ModelFeature, WellboreFeature
-- `*StratigraphicColumn` — StratigraphicColumn objects
+- `*Representation` - Grid2d, PointSet, IjkGrid, WellboreFrame, PolylineSet
+- `*Interpretation*` - Horizon, Fault, Wellbore, StratigraphicUnit, StratigraphicColumnRank
+- `*Feature` - BoundaryFeature, RockVolumeFeature, ModelFeature, WellboreFeature
+- `*StratigraphicColumn` - StratigraphicColumn objects
 
 **`createMissingReferences: true`** auto-generates ReferenceData (CRS, ExistenceKind) and MasterData (Wellbores) needed for OSDU search/validation.
 
@@ -162,7 +162,7 @@ for i in range(0, len(records), BATCH):
         print(f"Batch {i//BATCH+1}: FAILED {resp.status_code} - {resp.text[:200]}")
 ```
 
-> **Note:** System reference data (ExistenceKind, CRS) may return 403 if already owned by another service principal. This is expected — those records already exist.
+> **Note:** System reference data (ExistenceKind, CRS) may return 403 if already owned by another service principal. This is expected - those records already exist.
 
 ---
 
@@ -244,9 +244,9 @@ python3 ingest_records_batch.py --instance interop
 
 The local `~/rddms/open-etp-client` contains fixes not yet in the deployed service:
 
-1. **Circular reference handling** (`ResqmlClient.ts`) — `inProgress` Set prevents stack overflow on Interpretation↔Feature cycles
-2. **Name enrichment** (`StructureMap.ts`, `GenericRepresentation.ts`) — Prefixes InterpretationName to Citation.Title when different
-3. **Spatial + BinWidth** — Already computed from Grid2d lattice geometry
+1. **Circular reference handling** (`ResqmlClient.ts`) - `inProgress` Set prevents stack overflow on Interpretation↔Feature cycles
+2. **Name enrichment** (`StructureMap.ts`, `GenericRepresentation.ts`) - Prefixes InterpretationName to Citation.Title when different
+3. **Spatial + BinWidth** - Already computed from Grid2d lattice geometry
 
 ### Rebuild after changes
 
@@ -275,6 +275,6 @@ npx tsc --project open-etp-client/tsconfig.json
 ## Known Issues
 
 - **3 Grid2d volume tables** fail conversion (RESQML 2.0.1 uses Grid2d for tables; no lattice → converter skips them). In RESQML 2.2 these would be ColumnBasedTable.
-- **PolylineSetRepresentation** converter assumes SeismicCoordinates exist — fails on fault sticks without seismic context.
+- **PolylineSetRepresentation** converter assumes SeismicCoordinates exist - fails on fault sticks without seismic context.
 - **System reference data** (ExistenceKind, CRS) may return 403 on ingest if already owned by another SP. Safe to ignore.
-- **Search indexing** is async — records may take 30-60s to appear in search after Storage API PUT.
+- **Search indexing** is async - records may take 30-60s to appear in search after Storage API PUT.

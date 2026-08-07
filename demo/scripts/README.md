@@ -49,9 +49,9 @@ Each project/gate is defined in a single JSON file:
 ```
 
 See `inputs/examples/` for complete examples:
-- `drogon_DG2.json` — Field development, Concept Select
-- `omegas_WPC.json` — Exploration prospect, Work Program Committee
-- `northern_lights_DG3.json` — CCS storage, FEED approval
+- `drogon_DG2.json` - Field development, Concept Select
+- `omegas_WPC.json` - Exploration prospect, Work Program Committee
+- `northern_lights_DG3.json` - CCS storage, FEED approval
 
 ## Supported Record Types
 

@@ -1,6 +1,6 @@
 # Reservoir DDMS Project Collaboration and Governance
 
-> **Scope**: End-to-end governance for subsurface projects spanning wellbore master data, OpenWorks/DecisionSpace interpretation sets, SDMA reference data, FMU ensembles, and RDDMS content storage - with versioning, SoR/SoE separation, and cross-discipline collaboration.
+> **Scope**: End-to-end governance for subsurface projects spanning wellbore master data, seismic interpretation sets, SDMA reference data, seismic-to-simulation ensembles, and RDDMS content storage - with versioning, SoR/SoE separation, and cross-discipline collaboration.
 >
 > **Related**: [PWS](PWS.md) · [Activity](Activity.md) · [FmuOsdu](FmuOsdu.md) · [Uncertainty](Uncertainty.md) · [SeisInt](SeisInt.md)
 
@@ -25,9 +25,9 @@
 ```mermaid
 flowchart TD
   %% ── SoE Tools ──
-  OW["OpenWorks / DecisionSpace<br/>Interpretation projects"]
-  RMS["RMS / Petrel<br/>Geomodelling"]
-  FMU["FMU - ERT + fmu-dataio<br/>Ensembles"]
+  OW["Seismic interpretation app<br/>Interpretation projects"]
+  RMS["Geomodelling app<br/>Reservoir models"]
+  FMU["Ensemble workflow, fmu-dataio<br/>Ensembles"]
 
   %% ── RDDMS Layer ──
   WIP["RDDMS WIP Dataspaces<br/>(unlocked · draft objects)"]
@@ -66,7 +66,7 @@ flowchart TD
 
 | From | To | Mechanism |
 |---|---|---|
-| OpenWorks / RMS / ERT | RDDMS WIP | Export RESQML objects (ETP / EPC) |
+| Data source | RDDMS WIP | Export RESQML objects (ETP / EPC) |
 | RDDMS WIP | RDDMS SoR | `CopyToDataspace` + lock |
 | RDDMS SoR | OSDU Catalog | Manifest build → `DDMSDatasets[]` on WPCs |
 | SDMA | OSDU Catalog | Pipeline sync (wells, strat, ref-data) |
@@ -85,7 +85,7 @@ flowchart TD
 |---|---|---|---|
 | SDMA / EDM | Well, Wellbore, WellboreTrajectory | SDMA→OSDU ingestion pipeline | Near-real-time (event-driven) |
 | OSDU catalog | WellboreTrajectory WPC ID | Referenced by RDDMS WellLog/markers via `osduAlias` | At manifest build |
-| OpenWorks | Well picks, checkshots | Export → RDDMS WIP → manifest → OSDU WPC | Per interpretation iteration |
+| Data source | Well picks, checkshots | Export → RDDMS WIP → manifest → OSDU WPC | Per interpretation iteration |
 
 **Rule**: Projects never create wells. They **reference** SDMA-owned well master data via `osduAlias` in RDDMS or direct `WellboreID` in OSDU WPCs.
 
@@ -98,12 +98,12 @@ flowchart TD
 | CRS definitions | `CoordinateReferenceSystem` | Never project-local; always enterprise catalog |
 | Units of measure | `UnitOfMeasure` | Enterprise catalog |
 
-### 3.3 Interpretation Sets (WPC - OpenWorks/DecisionSpace)
+### 3.3 Interpretation Sets (seismic WPC)
 
 Interpretation sets (horizon picks, fault sticks, velocity models) live in the application project but must be **cataloged** in OSDU and **stored** in RDDMS for persistence:
 
 ```
-OpenWorks Project
+Source Project
   → Export RESQML (EPC/H5 or ETP stream)
     → RDDMS WIP dataspace
       → Manifest build → OSDU WPCs (HorizonControlPoints, GenericRepresentation, StructureMap)
@@ -242,7 +242,7 @@ When starting a new project or study iteration:
 
 ## 6. Metadata Mapping Across Systems
 
-### 6.1 OpenWorks/DecisionSpace → RDDMS → OSDU
+### 6.1 Vendor applications → RDDMS → OSDU
 
 | OW/DP concept | RDDMS object | OSDU WPC | Key metadata |
 |---|---|---|---|
@@ -452,7 +452,7 @@ flowchart TD
 | P&WS not yet on Azure ADME | Use Storage API patterns (§8 of PWS.md) - forward-compatible |
 | Large ensemble outputs overwhelm RDDMS, OSDU catalog | Store raw realizations in Sumo; promote only P10/P50/P90 statistics to RDDMS/OSDU |
 | ACL sprawl across many projects | Standardize group naming; automate creation/cleanup via project lifecycle |
-| Cross-platform interpretation tools (OW vs Petrel) create duplicate objects | Use `osduAlias` and `InterpretationID` to de-duplicate at catalog level |
+| Cross-platform interpretation tools create duplicate objects | Use `osduAlias` and `InterpretationID` to de-duplicate at catalog level |
 | Locked `/v<n>` snapshots accumulate without bound | Apply retention policy (§8.4); archive gate snapshots, purge orphaned/interim dataspaces |
 | Inconsistent legal tags between WIP and published SoR | Validate legal tag + `otherRelevantDataCountries` at publish (§7.4); block more-permissive promotion |
 

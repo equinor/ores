@@ -339,7 +339,7 @@ wf.export_rms("output/")
 - `transport_direction=135` - NW→SE progradation
 - `no_crossing=Biozone` - age constraints
 
-**Output:** Reservoir zonation + horizon picks for Petrel/RMS import.
+**Output:** Reservoir zonation + horizon picks for Geomodelling app.
 
 ### Intelligent Workflow - Zero-Config Correlation
 

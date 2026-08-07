@@ -843,7 +843,7 @@ The ORES [/add-dg](/add-dg) page supports full self-service creation of demo rec
 | **Activity** | Template presets | 7 presets: Custom, Reservoir Sim, FMU Ensemble, Drilling, Production Test, Interpretation, QC |
 | **Activity** | Schedule Template | Create new `ActivityStateTemplate` WPC records with custom milestone sequences |
 
-This enables **complete demo record creation entirely from the browser** — no `demo/` scripts needed.
+This enables **complete demo record creation entirely from the browser** - no `demo/` scripts needed.
 
 ### 15.7 Files
 

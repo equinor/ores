@@ -146,14 +146,14 @@ LocalBoundaryFeature → HorizonInterpretation → HorizonControlPoints (picks)
 | Field | Value |
 |---|---|
 | `InterpretationID` | → HorizonInterpretation |
-| `BinGridID` | → GenericBinGrid (shared lattice) — *mutually exclusive with inline grid props* |
+| `BinGridID` | → GenericBinGrid (shared lattice) - *mutually exclusive with inline grid props* |
 | `SeismicHorizonID` | → SeismicHorizon (TWT source) |
 | `DomainTypeID` | `Depth` |
 | Inline grid props | `OriginEasting`/`OriginNorthing`, `MapGridBearingOfBinGridJaxis`, `BinWidthOnIaxis`/`BinWidthOnJaxis`, `NodeCountOnIAxis`/`NodeCountOnJAxis` |
 | `DDMSDatasets[]` | EML URI to Z-values |
 
 > Per the schema (`AbstractGenericBinGrid`): “Only one approach should be populated.” `BinGridID`
-> and the inline grid props are **mutually exclusive** — see §7.
+> and the inline grid props are **mutually exclusive** - see §7.
 
 ---
 
@@ -186,8 +186,8 @@ Workflow suffixes: `_interp` (initial), `_filter` (QC'd), `_filter_from_time` (d
 |---|---|---|
 | `Title` | `data.Name` | ✓ |
 | `Originator` | `data.Source` | ✓ |
-| `Originator` | `data.Interpreter` | ✓ (SeismicHorizon, SeismicFault — native schema field) |
-| `Originator` | `data.ExtensionProperties.Interpreter` | ✓ (StructureMap — no native field) |
+| `Originator` | `data.Interpreter` | ✓ (SeismicHorizon, SeismicFault - native schema field) |
+| `Originator` | `data.ExtensionProperties.Interpreter` | ✓ (StructureMap - no native field) |
 | `Creation` | `ResourceCreationDateTime` | Available |
 | `Format` | `data.ExtensionProperties.AuthoringSoftware` | ✓ |
 
@@ -250,7 +250,7 @@ Each RDDMS object should have **both** a universal and a specialised catalog ent
 | Counts | Inline/Crossline | NodeCountOnI/JAxis |
 | Use case | Seismic survey geometry | Non-seismic grids |
 | Referenced by | `SeismicTraceData.BinGridID` (required) | `StructureMap.BinGridID
-**Rule**: `SeismicTraceData` schema validates `BinGridID` against the regex `SeismicBinGrid` — using `GenericBinGrid` will fail schema validation. Non-seismic WPCs (StructureMap, etc.) use `GenericBinGrid`.
+**Rule**: `SeismicTraceData` schema validates `BinGridID` against the regex `SeismicBinGrid` - using `GenericBinGrid` will fail schema validation. Non-seismic WPCs (StructureMap, etc.) use `GenericBinGrid`.
 
 Conversion: `BinWidth = √(X²+Y²)`, `Bearing = atan2(X,Y)`.
 

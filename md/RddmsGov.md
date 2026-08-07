@@ -297,7 +297,7 @@ RDDMS should reference, snapshot, derive, or copy these objects according to exp
 | Reference-data services | Authoritative reference data | CRS, units, reference values | RDDMS references |
 | RDDMS | Authoritative reservoir model state | RESQML graph, grids, properties, frameworks, derived objects | RDDMS owns model content |
 | OSDU catalog | Discovery and governance metadata | WPC summaries, DDMSDatasets, Activity, BusinessDecision, CollaborationProject | Catalog points to authority |
-| SoE tools | Work-in-progress authoring | OpenWorks, DecisionSpace, Petrel, RMS, FMU/ERT | Write to WIP and promote |
+| SoE tools | Work-in-progress authoring | Vendor apps | Write to WIP and promote |
 
 ---
 
@@ -423,7 +423,7 @@ flowchart LR
         C4[Lineage / Activity / Provenance]
     end
 
-    subgraph RDDMS[Reservoir DDMS — authoritative RESQML domain service]
+    subgraph RDDMS[Reservoir DDMS - authoritative RESQML domain service]
         R0[Dataspaces<br/>Project / Study / Model / Scenario]
         R1[RESQML object graph<br/>features, interpretations, representations]
         R2[Domain relationships<br/>feature ↔ interpretation ↔ representation ↔ property]
@@ -488,10 +488,10 @@ flowchart LR
 | Wellbore DDMS | RDDMS | Reference or snapshot | Wellbore DDMS remains SoR |
 | Enterprise reference data | RDDMS | Reference only | Enterprise catalog remains SoR |
 | Seismic DDMS | RDDMS | Reference seismic context | Seismic DDMS remains SoR |
-| OpenWorks / DecisionSpace | RDDMS WIP | Export model-specific interpretation content | RDDMS owns model copy or derived state |
-| Petrel / RMS | RDDMS WIP | Write grids, properties, frameworks | RDDMS owns model state |
-| FMU / ERT | Sumo/results store | Raw ensemble output | Results store owns raw ensemble set |
-| FMU / ERT | RDDMS | Selected static model or realization content | RDDMS owns promoted model content |
+| Seismic interpretation application | RDDMS WIP | Export model-specific interpretation content | RDDMS owns model copy or derived state |
+| Geomodelling application | RDDMS WIP | Write grids, properties, frameworks | RDDMS owns model state |
+| Ensemble workflow | Results store | Raw ensemble output | Results store owns raw ensemble set |
+| Enseble workflows | RDDMS | Selected static model or realization content | RDDMS owns promoted model content |
 | RDDMS WIP | RDDMS snapshot | Clone and lock | Snapshot is immutable model version |
 | RDDMS snapshot | OSDU catalog | WPC summaries and `DDMSDatasets[]` | Catalog discovers; RDDMS remains authority |
 | RDDMS / OSDU | BusinessDecision | Gate evidence | Decision references frozen evidence |

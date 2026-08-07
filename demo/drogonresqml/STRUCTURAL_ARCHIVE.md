@@ -55,7 +55,7 @@ Each RESQML boundary feature maps to an abstract **`master-data--BoundaryFeature
 | `LocalRockVolumeFeature:1.2.0` | 5 | Stratigraphic unit features | |
 | `StratigraphicUnitInterpretation:1.3.0` | 5 | Formation interpretations | → LocalRockVolumeFeature (InterpretedFeatureID) |
 | `SeismicHorizon:2.1.0` | 2 | TWT surfaces (Grid2d on LocalTime3dCrs) | → HorizonInterpretation, → BinGrid, → CRS |
-| `GenericBinGrid:1.0.0` | (0) | Optional shared lattice — *not emitted*; surfaces carry inline geometry (mutually exclusive with `BinGridID`) | → CRS |
+| `GenericBinGrid:1.0.0` | (0) | Optional shared lattice - *not emitted*; surfaces carry inline geometry (mutually exclusive with `BinGridID`) | → CRS |
 | `LocalModelCompoundCrs:1.2.0` | 2 | Depth CRS + Time CRS | |
 | `StructuralOrganizationInterpretation:1.2.0` | 1 | Structural framework (6 faults + 6 horizons) | → all FaultInterpretation + HorizonInterpretation |
 | `IjkGridRepresentation:1.1.0` | 1 | Geogrid 92×146×69 (925,668 cells) | → CRS |
@@ -151,7 +151,7 @@ IjkGridRepresentation (92×146×69) ◄── GenericProperty (×32)
 ## 3. StructureMap & BinGrid Patterns
 
 Depth surfaces use `StructureMap:1.0.0`. The schema offers two **mutually exclusive**
-grid-definition strategies — per `AbstractGenericBinGrid.1.0.0`: *"Only one approach should be
+grid-definition strategies - per `AbstractGenericBinGrid.1.0.0`: *"Only one approach should be
 populated"* (inline geometry **or** a `BinGridID` reference, not both).
 
 ### Pattern A – Inline Bin Grid (used in this demo)
@@ -310,7 +310,7 @@ Each `WellLog:1.3.0` record groups ~24 curves from a `WellboreFrameRepresentatio
 
 `StructuralOrganizationInterpretation:1.2.0` ("Drogon Structural Framework") groups all 6 horizons
 and 6 faults into a single structural organization, ordered by geologic age.
-(There is no `StructuralModel` kind in OSDU — the RESQML `StructuralOrganizationInterpretation`
+(There is no `StructuralModel` kind in OSDU - the RESQML `StructuralOrganizationInterpretation`
 maps 1:1 to this WPC.)
 
 ---

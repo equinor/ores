@@ -551,7 +551,7 @@ After running scenarios, work through:
 ### From raw data to WeCo in 5 steps
 
 ```
-1. Export wells from RMS/Petrel (RMS well format or LAS)
+1. Export wells from application (RMS well format or LAS)
 2. Identify common channels + regional picks
 3. Resample to target resolution (1–2m for sequence-scale)
 4. Consolidate facies/biozones to 3–5 groups

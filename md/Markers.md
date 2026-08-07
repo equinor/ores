@@ -281,7 +281,7 @@ Real assets have several picks of the same boundary (different interpreters / vi
 - **Soft-delete / "Missing".** The `Missing` flag (already in the array) marks a formation
   that is *absent* in this well (eroded/faulted out) without deleting the row - important
   for completeness analytics.
-- **Provenance.** Keep `MarkerInterpreter` + lineage to the source (SMDA/OpenWorks) and the
+- **Provenance.** Keep `MarkerInterpreter` + lineage to the source database and the
   RDDMS object UUID so the catalog record and the RESQML representation stay reconcilable.
 
 ### 5.6 Summary heuristic

@@ -1,6 +1,6 @@
 # Ontology Patterns in OSDU M27
 
-**ECIM 2026 — Conference Presentation**
+**ECIM 2026 - Conference Presentation**
 
 ---
 
@@ -13,12 +13,12 @@
 
 ---
 
-## Slide 2: Motivation — Why Ontology?
+## Slide 2: Motivation - Why Ontology?
 
 Subsurface decisions are complex webs of evidence, alternatives, risks, and stakeholders:
 
 - A DG2 concept-select links to **volumes, risks, geomodels, forecasts, prior gates, and alternative concepts**
-- Teams need to trace **why** a decision was made — not just what was decided
+- Teams need to trace **why** a decision was made - not just what was decided
 - Cross-gate tracking (DG1→DG2→DG3→FID) requires **relationship continuity** across years
 - Regulatory and partner reviews demand **auditable evidence chains**
 
@@ -44,7 +44,7 @@ Traditional solutions (Palantir Foundry, Neo4j) require separate graph infrastru
 
 ---
 
-## Slide 4: Strategy — Reusing M27 Fields as Ontology Primitives
+## Slide 4: Strategy - Reusing M27 Fields as Ontology Primitives
 
 **M27 already contains underutilised fields that implement ontology patterns.**
 
@@ -59,22 +59,22 @@ No new `kind` definitions needed. Conventions on existing fields.
 | **Typed annotations** | `Remarks[]` with `RemarkSource` | Categorised notes: Recommendation, Condition, Risk, Audit |
 | **Evidence packages** | `PersistedCollection` → `Parameters[]` | Frozen artifact sets linked to decisions |
 
-The key insight: `Keys[ParameterKey="relationship"]` turns every `Parameters[]` entry into a **typed, directed edge** — giving OSDU the expressiveness of a graph database.
+The key insight: `Keys[ParameterKey="relationship"]` turns every `Parameters[]` entry into a **typed, directed edge** - giving OSDU the expressiveness of a graph database.
 
 ---
 
-## Slide 5: Drogon Example — DG1 → DG2 Decision Lifecycle
+## Slide 5: Drogon Example - DG1 → DG2 Decision Lifecycle
 
 ### The Story
 
 Drogon field, Valysar formation. DG1 (Identify & Assess) approved Feb 2026.
 Between gates: porosity downgrade (0.18→0.14), new risks added, 4D seismic confirms fault communication.
-DG2 (Concept Select) approved May 2026 — full 7-segment subsea tieback.
+DG2 (Concept Select) approved May 2026 - full 7-segment subsea tieback.
 
 ### Ontology Structure
 
 ```
-BusinessDecision: Drogon DG2 — Concept Select
+BusinessDecision: Drogon DG2 - Concept Select
 │
 ├── supersedes → BD: Drogon DG1 (prior gate)
 │
@@ -100,7 +100,7 @@ CollaborationProject: Drogon Geomodelling
 ├── ActivityStates[]:  9 gate items (8 completed, 1 outstanding: core data)
 └── Parameters[]:      6 linked artifacts (dataspaces, volumes, evidence, forecast)
 
-Activity: Volume Update — Porosity Revision
+Activity: Volume Update - Porosity Revision
 ├── informs    → BusinessDecision DG2
 ├── supersedes → REV DG1 (old volumes)
 ├── evidences  → REV DG2 (new volumes)
@@ -112,19 +112,19 @@ Activity: Volume Update — Porosity Revision
 | Metric | DG1 | DG2 | Delta |
 |---|---|---|---|
 | P50 STOIIP (MSm³) | 312 | 287 | −8% |
-| Recoverable Oil P50 (MSm³) | 14.8 | 14.8 | — |
-| Recovery Factor | 32.5% | 32.5% | — |
+| Recoverable Oil P50 (MSm³) | 14.8 | 14.8 | - |
+| Recovery Factor | 32.5% | 32.5% | - |
 | Risks | 2 | 4 | +2 new |
-| NPV (MUSD) | — | 520 | — |
-| Alternatives evaluated | — | 3 | — |
+| NPV (MUSD) | - | 520 | - |
+| Alternatives evaluated | - | 3 | - |
 | Relationship edges | 5 | 13 | +8 |
 | Lifecycle events (CP) | 3 | 12 | +9 |
-| Gate checklist items | — | 9 (8✓ + 1 outstanding) | — |
+| Gate checklist items | - | 9 (8✓ + 1 outstanding) | - |
 | Typed remarks (BD) | 3 | 16 | +13 |
 
 ---
 
-## Slide 6: Live Demo — ORES Rendering of Drogon DG2
+## Slide 6: Live Demo - ORES Rendering of Drogon DG2
 
 ### What ORES Shows (deployed at ores.radix.equinor.com)
 
@@ -179,7 +179,7 @@ Activity: Volume Update — Porosity Revision
 - **Alternative analysis**: Compare development concepts with traceability
 
 ### For Data Management
-- **No new schemas** — uses existing M27 fields with consistent conventions
+- **No new schemas** - uses existing M27 fields with consistent conventions
 - **Portable**: Works on any M27-compliant OSDU instance (verified on interop + eqndev)
 - **Discoverable**: Relationships queryable via standard OSDU search API
 - **Versionable**: Parameters[] versioned with the record; LifecycleEvents[] append-only
@@ -194,10 +194,10 @@ Activity: Volume Update — Porosity Revision
 ## Slide 8: Requirements & Challenges
 
 ### What's Needed
-1. **Conventions** — Agreement on `ParameterKey` values (6 edge types)
-2. **Reference data** — MilestoneID entries per gate type (trivial to create)
-3. **Application logic** — Enrichment code to follow links and render graphs
-4. **Culture** — Teams populate Parameters[] and LifecycleEvents[] consistently
+1. **Conventions** - Agreement on `ParameterKey` values (6 edge types)
+2. **Reference data** - MilestoneID entries per gate type (trivial to create)
+3. **Application logic** - Enrichment code to follow links and render graphs
+4. **Culture** - Teams populate Parameters[] and LifecycleEvents[] consistently
 
 ### Current Challenges
 
@@ -221,7 +221,7 @@ Activity: Volume Update — Porosity Revision
 | **License round portfolio** | Multi-gate governance | One CP per license; gate checklists per regulatory milestone |
 | **Asset handover** | Provenance + completeness | PersistedCollection completeness vs. ActivityStates[] checklist |
 
-All implementable with the same M27 field patterns — only reference-data definitions vary.
+All implementable with the same M27 field patterns - only reference-data definitions vary.
 
 ---
 
@@ -258,7 +258,7 @@ All implementable with the same M27 field patterns — only reference-data defin
 ## Slide 11: Key Takeaway
 
 > **OSDU M27 is already an ontology platform.**
-> The schemas have the fields. What was missing was the conventions —
+> The schemas have the fields. What was missing was the conventions -
 > and now we have them.
 
 Six relationship types. One key convention (`ParameterKey="relationship"`).
@@ -295,7 +295,7 @@ Full decision lifecycle coverage from DG1 through FID.
 }
 ```
 
-The `Keys[]` array adds metadata to any parameter link — transforming a simple reference into a typed, semantically rich edge.
+The `Keys[]` array adds metadata to any parameter link - transforming a simple reference into a typed, semantically rich edge.
 
 ## Appendix C: File References
 

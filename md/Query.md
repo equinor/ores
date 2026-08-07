@@ -618,7 +618,7 @@ _Measured on `maap/drogon` data (swedev). ETP values are reasoned estimates._
 ### Performance Tips
 
 1. **Always prefer GraphQL + PG** when `GRAPHQL_PG_CONN_STRING` is set - the resolver auto-selects the fastest backend.
-2. **Discovery is auto-detected** — on M27+ RDDMS servers (≥ 1.3.0), ORES automatically uses batch `graph_search` instead of N+1 REST calls. No env var needed.
+2. **Discovery is auto-detected** - on M27+ RDDMS servers (≥ 1.3.0), ORES automatically uses batch `graph_search` instead of N+1 REST calls. No env var needed.
 3. **Force-override** with `RDDMS_DISCOVERY=1` (always use) or `RDDMS_DISCOVERY=0` (never use) if auto-detection gets it wrong.
 4. **Use `category` for broad searches** - `category: "well"` searches all 10 well-related types in one query.
 4. **Avoid REST for deep queries** - 10 grids × 3 properties = ~80 serial HTTP calls (~5 s). Discovery: ~0.5 s. PG: ~0.2 s.
@@ -733,13 +733,13 @@ await osdu.rddms_supports_discovery(access_token)  # True if version >= 1.3.0
 ```
 
 The result is cached for the process lifetime. Override with env:
-- `RDDMS_DISCOVERY=1` — force enable (skip probe)
-- `RDDMS_DISCOVERY=0` — force disable (never use graph/search)
-- unset — auto-detect at runtime
+- `RDDMS_DISCOVERY=1` - force enable (skip probe)
+- `RDDMS_DISCOVERY=0` - force disable (never use graph/search)
+- unset - auto-detect at runtime
 
 ---
 
-## J. Keys Routes — Backend Selection Design
+## J. Keys Routes - Backend Selection Design
 
 The `/keys` endpoints serve the keys.html explorer page. Each endpoint follows the same three-tier fallback:
 
@@ -747,21 +747,21 @@ The `/keys` endpoints serve the keys.html explorer page. Each endpoint follows t
 
 | Route | Purpose | PG query | Discovery (M27+) | REST fallback |
 |-------|---------|----------|-------------------|---------------|
-| `GET /keys/dataspaces.json` | List dataspaces | `pg_list_dataspaces` | — | `GET /dataspaces` |
-| `GET /keys/types.json` | Types in dataspace | `pg_list_types` | — | `GET /dataspaces/{ds}/resources` |
+| `GET /keys/dataspaces.json` | List dataspaces | `pg_list_dataspaces` | - | `GET /dataspaces` |
+| `GET /keys/types.json` | Types in dataspace | `pg_list_types` | - | `GET /dataspaces/{ds}/resources` |
 | `GET /keys/objects.json` | List objects + labels | `pg_list_resources` + `pg_batch_relations` | `POST /query/graph/search` (label enrichment) | N × `GET .../targets` |
-| `GET /keys/object.json` | Single object detail | `pg_get_object_and_arrays` | — | `GET .../resources/{type}/{uuid}` |
+| `GET /keys/object.json` | Single object detail | `pg_get_object_and_arrays` | - | `GET .../resources/{type}/{uuid}` |
 | `GET /keys/object/graph.json` | Object graph (sources+targets) | `pg_list_relations` | `POST /query/graph/search` (×2: targets+sources) | `GET .../sources` + `GET .../targets` |
-| `GET /keys/object/array.json` | Array values + stats | `pg_read_array` | — | `GET .../arrays/{path}` |
-| `POST /dataspaces/manifest/build-uris` | Manifest ref expansion | — | `POST /query/graph/search` (depth=2, both scopes) | `GET .../sources` + `GET .../targets` |
-| `POST /dataspaces/manifest/build-from-selection` | Multi-object manifest | — | `POST /query/graph/search` (batch) | N × `GET .../sources/targets` |
+| `GET /keys/object/array.json` | Array values + stats | `pg_read_array` | - | `GET .../arrays/{path}` |
+| `POST /dataspaces/manifest/build-uris` | Manifest ref expansion | - | `POST /query/graph/search` (depth=2, both scopes) | `GET .../sources` + `GET .../targets` |
+| `POST /dataspaces/manifest/build-from-selection` | Multi-object manifest | - | `POST /query/graph/search` (batch) | N × `GET .../sources/targets` |
 
 ### Fallback Logic
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  keys/objects.json  (relation enrichment for representation     │
-│  labels — e.g. disambiguate "TopVolantis Depth" vs "Time")      │
+│  labels - e.g. disambiguate "TopVolantis Depth" vs "Time")      │
 ├─────────────────────────────────────────────────────────────────┤
 │  1. PG available + rows have obj_id?                            │
 │     → pg_batch_relations(pool, ds, obj_ids)   [1 SQL, ~5ms]    │

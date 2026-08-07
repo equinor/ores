@@ -353,7 +353,7 @@ The ORES [/add-dg](/add-dg) page now supports **full self-service creation** of 
 | **5. Risks** | RiskIDs array | `data.RiskIDs[]` |
 | **6. Alternatives** | Ranked development alternatives with rationale | `ext.equinor.Alternatives[]` |
 | **7. Economics** | KPI name/value/unit (NPV, IRR, CAPEX, OPEX, etc.) | `data.ProjectSpecifications[]` |
-| **8. Preview** | Full JSON payload review before submission | — |
+| **8. Preview** | Full JSON payload review before submission | - |
 
 ### 9.2 Preset-Based Workflow
 
@@ -386,10 +386,10 @@ New templates can be created interactively from the **Activity tab → Schedule 
 
 | Use case | Recommended approach |
 |----------|---------------------|
-| One-off demo BD (workshop, talk, test) | **Web UI** — fast, visual, no code needed |
+| One-off demo BD (workshop, talk, test) | **Web UI** - fast, visual, no code needed |
 | Bulk ingestion (100+ records, seismic, RDDMS manifests) | **Scripts** (`demo/ingest_*.py`) |
 | Reproducible CI/CD pipeline | **Scripts** (git-tracked, deterministic) |
-| Exploring schema structure | **Web UI** — see payload preview before committing |
+| Exploring schema structure | **Web UI** - see payload preview before committing |
 | Updating existing demo data | **Scripts** (versioned manifests) |
 
 ### 9.5 Activity Tab - Workflow Provenance Records

@@ -1,6 +1,6 @@
 # Omega Sør – WPC Ontology & Dataset
 
-**Internal reference — SWIP Team**
+**Internal reference - SWIP Team**
 
 ---
 
@@ -17,13 +17,13 @@ Omega Sør Alfa is a satellite reservoir (Brent Group, Tarbert + Rannoch Fm) und
 
 All data originates from the following systems. Local files in `demo/eqn/omegas/` are transfer artefacts only.
 
-### 2.1 SharePoint — Decision Documents
+### 2.1 SharePoint - Decision Documents
 
 Project area: [Petec – Marginal Subsea Tieback Portfolio – OS](https://statoilsrm.sharepoint.com/sites/IDM-PM954-Petec/Snorre%20IOROS/DG1/OS)
 
 | Document | Content | Used by |
 |----------|---------|---------|
-| [20260615_OmegaSør_SSVP.pptx](https://statoilsrm.sharepoint.com/:p:/r/sites/IDM-PM954-Petec/Snorre%20IOROS/DG1/OS/SSVP/20260615_OmegaS%C3%B8r_SSVP.pptx?d=w93c48c340f23443e909fcf1e17be45a4&csf=1&web=1&e=wurdeE) | SSVP presentation — volumes, risks, economics, wells, maps | BD, CP, REV, Risks, DevelopmentConcept |
+| [20260615_OmegaSør_SSVP.pptx](https://statoilsrm.sharepoint.com/:p:/r/sites/IDM-PM954-Petec/Snorre%20IOROS/DG1/OS/SSVP/20260615_OmegaS%C3%B8r_SSVP.pptx?d=w93c48c340f23443e909fcf1e17be45a4&csf=1&web=1&e=wurdeE) | SSVP presentation - volumes, risks, economics, wells, maps | BD, CP, REV, Risks, DevelopmentConcept |
 | `Well information and design basis - Omega S.xlsx` | Casing design, PPFG, formation prognosis, contingency liner | TubularAssembly, PPFGDataset, PlannedLithology, GeoLabelSet |
 | `RCmeeting_OmegaSor.pptx` | Resource Committee meeting | BD economics |
 | `DW112 - Activity Program Signature Presentation NO 34_4-19 S Omega S.pptx` | Drilling activity program (BHA, casing, risk) | Activities, Drilling, Risks |
@@ -41,11 +41,11 @@ Well project site: [WCPNO344-19S](https://statoilsrm.sharepoint.com/sites/WCPNO3
 \\statoil.net\unix_st\project\snorre\reservoirmodels\omegasor\2026.2.0\rms\model\os_cond.rms15.0.1.0
 ```
 
-RMS 15 model — authoritative source for horizons, faults, grid, trajectories, properties, and **volumetrics**. Ingested to RDDMS via EPC export → ETP import (or direct RMS→ETP in production).
+RMS 15 model - authoritative source for horizons, faults, grid, trajectories, properties, and **volumetrics**. Ingested to RDDMS via EPC export → ETP import (or direct RMS→ETP in production).
 
 Volume tables exported from RMS (`os.vol.xls_oil_1.xls`, `os.vol.xls_total_1.xls`) → used for ReservoirEstimatedVolumes and GeoLabelSet Table data.
 
-### 2.3 DecisionSpace Geoscience (DSG) — Seismic
+### 2.3 DecisionSpace Geoscience (DSG) - Seismic
 
 | Property | Value |
 |----------|-------|
@@ -56,7 +56,7 @@ Volume tables exported from RMS (`os.vol.xls_oil_1.xls`, `os.vol.xls_total_1.xls
 | Clip | IL 6250–6450, XL 31200–31400 (±100 around 34/4-19 S) |
 | Output | `CGG23M01_...Snorre_OmegaSorAlpha.sgy` (164 MB) → converted to OpenVDS → uploaded to Seismic DDMS |
 
-### 2.4 SMDA — Exploration Well (cross-partition)
+### 2.4 SMDA - Exploration Well (cross-partition)
 
 | Property | Value |
 |----------|-------|
@@ -67,11 +67,11 @@ Volume tables exported from RMS (`os.vol.xls_oil_1.xls`, `os.vol.xls_total_1.xls
 | TD (driller) | 4120 m MD / 3902.81 m TVD |
 | RT elevation | 30 m MSL (EPSG:5715) |
 
-> The exploration well exists in the `data` partition (SMDA official). All references use cross-partition IDs — no duplicates in `dev`.
+> The exploration well exists in the `data` partition (SMDA official). All references use cross-partition IDs - no duplicates in `dev`.
 
 ---
 
-## 3. Ontology — Record Graph
+## 3. Ontology - Record Graph
 
 ### 3.1 Business Decision Structure
 
@@ -83,14 +83,14 @@ BusinessDecision: Omega Sør – WPC Decision
 ├── evidences  → ETPDataspace (RDDMS geomodel: maap/omegas)
 ├── evidences  → Wellbore:34-4-19S (exploration well)
 │
-├── informs    → ColumnBasedTable (Production Profile — 15-year P50)
+├── informs    → ColumnBasedTable (Production Profile - 15-year P50)
 ├── informs    → DevelopmentConcept (4-slot template, CAP-X sidetrack)
 ├── informs    → Wellbore:Producer1 (planned producer)
 ├── informs    → Wellbore:Injector1 (planned injector)
 ├── informs    → Wellbore:34-4-19S (pilot scope)
 │
-├── constrains → Risk: Barium Scale (#00061) — CRITICAL
-├── constrains → Risk: Injectivity — LOW PERM
+├── constrains → Risk: Barium Scale (#00061) - CRITICAL
+├── constrains → Risk: Injectivity - LOW PERM
 │
 ├── PriorActivityIDs → Activity: WellCostEstimate
 ├── RiskIDs[] → 8 risks
@@ -112,16 +112,16 @@ CollaborationProject: Omega Sør Field Development
 | `evidences` | PersistedCollection | WPC Evidence Package |
 | `evidences` | REV-stats | Statistical volumes (P90/Mean/P10) |
 | `evidences` | ETPDataspace | Geomodel dataspace (RDDMS) |
-| `evidences` | — | Exploration well 34/4-19 S |
+| `evidences` | - | Exploration well 34/4-19 S |
 | `informs` | ProductionForecast | Production profile (15-year) |
 | `informs` | DevelopmentConcept | Development Concept (4-slot template layout) |
 | `informs` | Producer | Planned producer well |
 | `informs` | Injector | Planned injector well |
 | `informs` | Pilot | Pilot well scope |
-| `constrains` | — | Barium scale risk (#00061) |
-| `constrains` | — | Injectivity risk |
+| `constrains` | - | Barium scale risk (#00061) |
+| `constrains` | - | Injectivity risk |
 
-All implemented via `Keys[ParameterKey="relationship"]` — same pattern as Drogon DG1/DG2.
+All implemented via `Keys[ParameterKey="relationship"]` - same pattern as Drogon DG1/DG2.
 
 ### 3.3 Interpretation Chain (RDDMS → Catalog)
 
@@ -164,13 +164,13 @@ Source: `Well information and design basis - Omega S.xlsx` + SSVP pptx
 
 Linked to `Reservoir:OmegaSorAlfa:1` (parent: `Field:Snorre:`) via `LabelledEntityID`.
 
-### ColumnBasedTable — Production Profile (`OmegaSor-ProdProfile:1`)
+### ColumnBasedTable - Production Profile (`OmegaSor-ProdProfile:1`)
 
 Source: SSVP pptx slide (simulation output)
 
 15-year P50 forecast. Phase 1 (Jan 2029), Phase 2 (Jan 2030). Oil + water rates, cumulative oil.
 
-### ColumnBasedTable — Well Cost AFE (`OmegaSor-WellCostAFE:1`)
+### ColumnBasedTable - Well Cost AFE (`OmegaSor-WellCostAFE:1`)
 
 Source: `Well information and design basis - Omega S.xlsx`
 
@@ -221,14 +221,14 @@ Source: `Risk analysis concept phase.pptx` + SSVP pptx
 |------|-------|
 | 2026-01-15 | Project created post exploration |
 | 2026-02-01 | Exploration well results ingested |
-| 2026-03-15 | Layout alternative — 4-slot template replaces injection CAP-X |
+| 2026-03-15 | Layout alternative - 4-slot template replaces injection CAP-X |
 | 2026-06-10 | Simulation model delivered |
 | 2026-06-10 | Economics delivered |
 | 2026-06-12 | Barium scale risk raised to critical |
 | 2026-06-15 | SSVP presentation delivered |
 | 2026-06-15 | Preliminary well plans finalized |
 
-### ActivityStates — Gate Checklist (9 items)
+### ActivityStates - Gate Checklist (9 items)
 
 | Milestone | Status | Date |
 |-----------|--------|------|
@@ -263,14 +263,14 @@ Gate readiness: **7/9 = 78%** (pilot well scope pending, approval target Sep 202
 | `manifest_rddms_omegas.json` | 136 | RMS → EPC → RDDMS | Horizons, Faults, Grid, Trajectories, Properties |
 | `manifest_master_omegas.json` | 8 | SSVP pptx | Reservoir, Segments, Wells, Wellbores |
 | `manifest_bd_omegas.json` | 1 | SSVP pptx | BusinessDecision (WPC) |
-| `manifest_collection_omegas.json` | 3 | — | CollaborationProject, ProjectCollection, PersistedCollection |
+| `manifest_collection_omegas.json` | 3 | - | CollaborationProject, ProjectCollection, PersistedCollection |
 | `manifest_risk_omegas.json` | 5+3 | Risk analysis pptx + SSVP | 8 Risk records |
 | `manifest_volumes_omegas.json` | 2 | RMS volumetrics | REV + InPlace ColumnBasedTable |
 | `manifest_drilling_omegas.json` | 10 | DW112 + EOWR | Trajectories, Activities, Documents |
 | `manifest_welltechnical_omegas.json` | 10 | Design basis xlsx | DevelopmentConcept, TubularAssembly, GeoLabelSet, ProdProfile, WellCost |
 | Seismic (direct push) | 4 | DSG → SEGY → VDS → Seismic DDMS | SeismicBinGrid, TraceData, FileCollections |
 | Exploration BD | 5 | DW112 + EOWR + handovers | BD, PersistedCollections, Documents |
-| Field | 1 | — | Field:Snorre |
+| Field | 1 | - | Field:Snorre |
 
 ### By Kind (grouped)
 
@@ -338,7 +338,7 @@ cd exploration && python ingest_exploration.py
 | DevelopmentConcept | v4 with alternatives | v4 with inline WellPlan + FacilityConcept |
 | Economics | NPV $520M, IRR 17% | NPV $116M, IRR 62% |
 | Geomodel source | RMS (Drogon synthetic) | RMS (real Snorre-area geology) |
-| Seismic source | — | DSG (CGG23M01 clip) → VDS → Seismic DDMS |
+| Seismic source | - | DSG (CGG23M01 clip) → VDS → Seismic DDMS |
 
 ---
 

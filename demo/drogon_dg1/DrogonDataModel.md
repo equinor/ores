@@ -372,7 +372,7 @@ The Record Explorer (`/strat`) provides:
 
 ## Web UI Alternative (Script-Free)
 
-For workshops, talks, or quick testing, the ORES [/add-dg](/add-dg) web UI can create a complete BusinessDecision record interactively — equivalent to what `gen_businessdecision_drogon.py` produces:
+For workshops, talks, or quick testing, the ORES [/add-dg](/add-dg) web UI can create a complete BusinessDecision record interactively - equivalent to what `gen_businessdecision_drogon.py` produces:
 
 | Step | UI Panel | Script equivalent |
 |------|----------|-------------------|
