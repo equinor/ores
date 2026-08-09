@@ -9,6 +9,21 @@
 | **OSDU Catalog** | Metadata: name, interpretation link, grid geometry, CRS, domain | Search + Storage API |
 | **RDDMS** | Actual data: Z-arrays, XY coords, full geometry, CRS objects | RDDMS REST / ETP |
 
+> **Terminology:**
+>
+> | Informal term | Precise term | What it is |
+> |---|---|---|
+> | "map" / "surface" | **`Grid2dRepresentation`** or **`PointSetRepresentation`** | The RESQML geometry in RDDMS that holds the actual 2D grid or scattered points. |
+> | "structure map" | **`StructureMap`** (WPC) | An OSDU catalog record (Work Product Component) that references a RDDMS representation via `DDMSDatasets`. Not the grid itself. |
+> | "seismic horizon" | **`SeismicHorizon`** (WPC) | Catalog record pointing to a TWT grid representation. |
+> | "property" / "attribute map" | **`GenericProperty`** (WPC) | Catalog record for non-structural grid-linked values (amplitude, thickness, coherence, etc.). In OSDU, "attribute" refers to graphical display (color, line style) — use **property** for data values. |
+> | "bin grid" | **`GenericBinGrid`** or **`SeismicBinGrid`** (WPC) | Reusable lattice definition. |
+>
+> This document uses:
+> - **WPC** for OSDU catalog records (`StructureMap`, `SeismicHorizon`, `GenericProperty`, etc.).
+> - **Representation** for RDDMS/RESQML geometry (`Grid2dRepresentation`, `PointSetRepresentation`).
+> - Informal terms ("map", "surface") only when referring to source concepts.
+
 The OSDU record **never** contains Z-value arrays. `DDMSDatasets[]` is the only link to actual data:
 
 ```mermaid
@@ -24,11 +39,12 @@ flowchart LR
 
 | Schema | Purpose |
 |---|---|
-| `StructureMap:1.0.0` | Depth/time gridded surfaces |
-| `GenericBinGrid:1.0.0` | Reusable lattice grid definition |
-| `HorizonControlPoints:1.0.0` | Interpreter seed picks |
-| `GenericRepresentation:1.2.0` | Universal RDDMS catalog entry |
-| `SeismicHorizon:2.1.0` | TWT horizon on seismic surveys |
+| `StructureMap:1.0.0` | Structural depth/time gridded surfaces (WPC) |
+| `GenericBinGrid:1.0.0` | Reusable lattice grid definition (WPC) |
+| `GenericProperty:1.0.0` | Non-structural grid-linked property values (WPC) |
+| `HorizonControlPoints:1.0.0` | Interpreter seed picks (WPC) |
+| `GenericRepresentation:1.2.0` | Universal RDDMS catalog entry (WPC) |
+| `SeismicHorizon:2.1.0` | TWT horizon on seismic surveys (WPC) |
 | `HorizonInterpretation:1.2.0` | Geologic meaning of a horizon |
 
 ---
@@ -117,7 +133,7 @@ LocalBoundaryFeature → HorizonInterpretation → HorizonControlPoints (picks)
 
 ## 4. Record Types
 
-### 4.1 Fault Polylines - `GenericRepresentation:1.2.0`
+### 4.1 Fault Polylines — `GenericRepresentation:1.2.0` (WPC)
 
 | Field | Value |
 |---|---|
@@ -129,7 +145,7 @@ LocalBoundaryFeature → HorizonInterpretation → HorizonControlPoints (picks)
 
 **Classification**: Only objects with `FaultInterpretation` content type and manual-pick naming (e.g. `DL_*`, `TL_*`). Excludes algorithmic extractions.
 
-### 4.2 Horizon Control Points - `HorizonControlPoints:1.0.0`
+### 4.2 Horizon Control Points — `HorizonControlPoints:1.0.0` (WPC)
 
 | Field | Value |
 |---|---|
@@ -141,7 +157,9 @@ LocalBoundaryFeature → HorizonInterpretation → HorizonControlPoints (picks)
 
 **Classification**: Only objects linked to `HorizonInterpretation`. Excludes model-extracted points (`*_extracted`).
 
-### 4.3 Structure Maps - `StructureMap:1.0.0`
+### 4.3 Structure Maps — `StructureMap:1.0.0` (WPC)
+
+Use only for genuine structural Z values (depth or time surfaces representing geological horizons). Non-structural grids (amplitude, thickness, probability, coherence) belong in `GenericBinGrid` + `GenericProperty` WPCs — not `StructureMap`.
 
 | Field | Value |
 |---|---|
@@ -153,7 +171,28 @@ LocalBoundaryFeature → HorizonInterpretation → HorizonControlPoints (picks)
 | `DDMSDatasets[]` | EML URI to Z-values |
 
 > Per the schema (`AbstractGenericBinGrid`): “Only one approach should be populated.” `BinGridID`
-> and the inline grid props are **mutually exclusive** - see §7.
+> and the inline grid props are **mutually exclusive** - see §7.### 4.4 Non-Structural Properties — `GenericBinGrid` + `GenericProperty` (WPCs)
+
+Seismic-derived grids that are **not** structural Z values (amplitude, coherence, timeshift, thickness, probability, etc.) must not use `StructureMap`. Instead:
+
+```text
+GenericBinGrid (WPC)
+  DDMSDatasets[] → Grid2dRepresentation (RDDMS geometry)
+
+GenericProperty (WPC, one per property on the grid)
+  PropertyKind → amplitude_difference / coherence / thickness / …
+  Unit → source unit
+  DDMSDatasets[] → ContinuousProperty or DiscreteProperty (RDDMS array)
+```
+
+| Criterion | → `StructureMap` WPC | → `GenericProperty` WPC |
+|---|---|---|
+| Values represent structural Z (depth/time) | ✓ | — |
+| Linked to `HorizonInterpretation` | ✓ (or flag for QC) | Optional provenance link |
+| Values are amplitude, probability, thickness, etc. | — | ✓ |
+| No geological parent in source | — | ✓ |
+
+Multiple properties can share a single `Grid2dRepresentation` — store the grid once, link each property to it.
 
 ---
 

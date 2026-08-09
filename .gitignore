@@ -44,7 +44,7 @@ demo/drogonresqml/manifest_*linked*
 demo/drogonresqml/manifest_full_*
 demo/drogonresqml/manifest_seismic_*
 demo/drogonresqml22/manifest_drogon22_*.json
-!demo/drogonresqml22/manifest_drogon221_eqndev.json
+demo/drogonresqml22/manifest_drogon221_eqndev.json
 demo/scripts/inputs/*omegas*
 demo/scripts/inputs/examples/*omegas*
 demo/scripts/inputs/records/
