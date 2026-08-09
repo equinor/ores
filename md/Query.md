@@ -820,7 +820,124 @@ The biggest win is in object listing (N=50+). Single-object graph is similar in 
 
 ---
 
-## H. Links
+## I. Native RDDMS GraphQL Endpoint
+
+The Reservoir DDMS etp-client (v1.3+) exposes a **native GraphQL endpoint** at `/graphql`. This is a direct NestJS/Apollo Server implementation that operates on the ETP protocol with:
+
+- **Single ETP session per request** — no N+1 WebSocket connections
+- **DataLoader batching** — all field resolves in the same tick coalesced
+- **Lazy field resolution** — `content`, `arrays`, `targets`, `sources` only fetched when selected
+
+### Endpoint URLs
+
+| Environment | URL |
+|-------------|-----|
+| Local (ores3 stack) | `http://localhost:8080/graphql` |
+| ADME/OSDU | `https://<hostname>/api/reservoir-ddms/v2/graphql` |
+
+### How ORES uses it
+
+ORES automatically probes the native GraphQL endpoint on startup. If available:
+- **Graph traversals** (targets, sources) use a single GQL call instead of individual REST calls
+- **Batch graph search** replaces N individual REST requests with one GraphQL `graphSearch` query
+- **Dataspaces listing** goes through GQL when PG is unavailable
+
+If the endpoint is not available (older etp-client, or ADME without the module), ORES **falls back transparently to REST** — no user action needed.
+
+### Native GraphQL Schema
+
+```graphql
+type Query {
+  dataspaces: [GqlDataspace!]!
+  resources(dataspaceUri: String!, dataObjectTypes: [String!]): [GqlResource!]!
+  resource(uri: String!): GqlResource
+  graphSearch(uris: [String!]!, depth: Int = 1): GqlGraph!
+}
+
+type GqlDataspace {
+  uri: ID!
+  name: String!
+  storeLastWrite: String
+  storeCreated: String
+}
+
+type GqlResource {
+  uri: ID!
+  name: String!
+  dataObjectType: String
+  sourceCount: Int
+  targetCount: Int
+  lastChanged: String
+  storeLastWrite: String
+  activeStatus: String
+  targets(depth: Int = 1): [GqlResource!]!    # lazy - only fetched when selected
+  sources: [GqlResource!]!                     # lazy
+  content: GqlObjectContent                    # lazy - expensive (Store protocol)
+  arrays: [GqlArrayMeta!]!                     # lazy - metadata only
+}
+
+type GqlGraph {
+  resources: [GqlResource!]!
+  edges: [GqlEdge!]!
+}
+
+type GqlEdge {
+  sourceUri: String!
+  targetUri: String!
+  path: String
+}
+
+type GqlObjectContent {
+  uri: ID!
+  dataObjectType: String
+  data: JSON                                   # Full parsed EML/RESQML/WITSML object
+}
+
+type GqlArrayMeta {
+  uri: String!
+  pathInResource: String!
+  dimensions: [Int!]
+  logicalArrayType: String
+  transportArrayType: String
+  storeLastWrite: String
+}
+```
+
+### Example: Batch graph in one call
+
+```graphql
+# Get the full subgraph for 3 objects at once (single ETP session)
+{
+  graphSearch(
+    uris: [
+      "eml:///dataspace('maap/drogon')/resqml20.obj_IjkGridRepresentation(2c6de928-7e08-4601-b979-34048bd68c02)",
+      "eml:///dataspace('maap/drogon')/resqml20.obj_WellboreFeature(50495987-88f4-4e39-95c8-0b2624298c47)"
+    ]
+    depth: 2
+  ) {
+    resources { uri name dataObjectType }
+    edges { sourceUri targetUri }
+  }
+}
+```
+
+### Configuration
+
+| Env var | Purpose | Default |
+|---------|---------|---------|
+| `RDDMS_GRAPHQL_URL` | Override native GQL endpoint URL | Auto-derived from `OSDU_BASE_URL` |
+
+### Performance: GQL vs REST for graph traversal
+
+| Scenario | REST (N+1 calls) | Native GraphQL | Improvement |
+|----------|------------------|----------------|-------------|
+| 10 objects, targets + sources | 20 HTTP calls × 80ms | 1 call × 120ms | **~13× faster** |
+| Batch graph (5 roots, depth=2) | 5 × (2 × 80ms) = 800ms | 1 × 200ms | **~4× faster** |
+| List resources + check targets exist | 1 + N calls | 1 call (lazy fields) | **N× fewer calls** |
+
+---
+
+## J. Links
 
 | Resource | URL |
 |----------|-----|

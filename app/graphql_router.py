@@ -43,11 +43,13 @@ from .graphql_search import (
     ArrayFilter, PropertyFilter,
     # Type registry
     RESQML_TYPE_CATEGORIES, ALL_COMMON_RESQML_TYPES, resolve_type_names,
-    # REST wrappers (used by basic resolvers here)
-    _parse_eml_entry,
-    _rest_list_dataspaces, _rest_list_types, _rest_list_resources,
-    _rest_get_resource, _rest_list_targets, _rest_list_sources,
-    _rest_list_arrays, _rest_read_array,
+    # REST wrappers (only those still used directly in this file)
+    _parse_eml_entry, _rest_list_types, _rest_list_resources,
+    _rest_read_array,
+    # GQL-first wrappers (try native /graphql → REST fallback)
+    _gql_or_rest_list_dataspaces, _gql_or_rest_list_targets,
+    _gql_or_rest_list_sources, _gql_or_rest_list_arrays,
+    _gql_or_rest_graph_search, _build_etp_uri,
     # Analysis helpers (used by object_arrays)
     _compute_statistics,
     # Search implementations (called from Query stubs)
@@ -64,7 +66,8 @@ def _get_token_from_info(info: Info) -> str:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Query root - all resolvers use REST API fallback when PG unavailable
+# Query root - resolvers follow: PG → native GQL → REST fallback
+# (except type listing and array values which have no GQL equivalent)
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -81,13 +84,13 @@ class Query:
                     return f"PostgreSQL direct: {row['v']}"
             except Exception as e:
                 return f"PostgreSQL error: {e}"
-        # REST mode
+        # GQL/REST mode
         try:
             token = _get_token_from_info(info)
-            ds = await _rest_list_dataspaces(token)
-            return f"REST API (via RDDMS v2) – {len(ds)} dataspaces available"
+            ds = await _gql_or_rest_list_dataspaces(token)
+            return f"RDDMS API – {len(ds)} dataspaces available"
         except Exception as e:
-            return f"REST API error: {e}"
+            return f"RDDMS API error: {e}"
 
     @strawberry.field(description="List dataspaces")
     async def dataspaces(self, info: Info) -> List[DataspaceInfo]:
@@ -96,7 +99,7 @@ class Query:
             items = await _pg_list_dataspaces(pool)
             return [DataspaceInfo(path=i["path"], uri=i.get("uri", "")) for i in items]
         token = _get_token_from_info(info)
-        items = await _rest_list_dataspaces(token)
+        items = await _gql_or_rest_list_dataspaces(token)
         return [DataspaceInfo(path=i["path"], uri=i.get("uri", "")) for i in items]
 
     @strawberry.field(
@@ -191,18 +194,18 @@ class Query:
                 ]
             # PG returned nothing → fall through to REST
 
-        # REST fallback
+        # GQL-first fallback (tries native /graphql, then REST)
         token = _get_token_from_info(info)
         results = []
 
         if direction in ("both", "targets"):
             try:
-                targets = await _rest_list_targets(token, dataspace, type_name, uuid)
+                targets = await _gql_or_rest_list_targets(token, dataspace, type_name, uuid)
                 for t in targets:
                     parsed = _parse_eml_entry(t)
-                    ct = parsed["contentType"]
-                    uid = parsed["uuid"]
-                    name = parsed["name"]
+                    ct = parsed.get("contentType") or parsed.get("dataObjectType") or t.get("dataObjectType", "")
+                    uid = parsed.get("uuid") or ""
+                    name = parsed.get("name") or t.get("name", "")
                     if not uid:
                         continue
                     results.append(RelationInfo(
@@ -214,12 +217,12 @@ class Query:
 
         if direction in ("both", "sources"):
             try:
-                sources = await _rest_list_sources(token, dataspace, type_name, uuid)
+                sources = await _gql_or_rest_list_sources(token, dataspace, type_name, uuid)
                 for s in sources:
                     parsed = _parse_eml_entry(s)
-                    ct = parsed["contentType"]
-                    uid = parsed["uuid"]
-                    name = parsed["name"]
+                    ct = parsed.get("contentType") or parsed.get("dataObjectType") or s.get("dataObjectType", "")
+                    uid = parsed.get("uuid") or ""
+                    name = parsed.get("name") or s.get("name", "")
                     if not uid:
                         continue
                     results.append(RelationInfo(
@@ -271,10 +274,10 @@ class Query:
                 return results
             # PG returned nothing → fall through to REST
 
-        # REST fallback
+        # GQL/REST fallback
         token = _get_token_from_info(info)
         try:
-            arrays = await _rest_list_arrays(token, dataspace, type_name, uuid)
+            arrays = await _gql_or_rest_list_arrays(token, dataspace, type_name, uuid)
         except Exception as e:
             log.debug("list_arrays failed: %s", e)
             return []

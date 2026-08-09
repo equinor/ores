@@ -329,6 +329,10 @@ def _apply_instance(inst: OsduInstance):
     from .pg_backend import notify_instance_changed
     notify_instance_changed(inst.graphql_pg_conn_string)
 
+    # ── rddms_gql: re-probe native GraphQL endpoint for new instance ──
+    from .rddms_gql import reset_availability_cache
+    reset_availability_cache()
+
     # ── auth.py ──
     import app.auth as auth_mod
     # Clear stale cached env token from previous instance so it isn't

@@ -276,6 +276,104 @@ async def _rest_read_array(token: str, ds: str, typ: str, uuid: str, path: str) 
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Native GraphQL wrappers (GQL-first with REST fallback)
+# These try the etp-client /graphql endpoint first. If unavailable or failing,
+# they transparently fall back to the REST wrappers above.
+# ──────────────────────────────────────────────────────────────────────────────
+
+from .rddms_gql import gql_available, gql_query, Q_DATASPACES, Q_RESOURCES, Q_GRAPH_SEARCH, Q_TARGETS, Q_SOURCES, Q_ARRAYS
+
+
+async def _gql_or_rest_list_dataspaces(token: str) -> List[Dict[str, Any]]:
+    """List dataspaces: native GQL → REST fallback."""
+    if await gql_available(token):
+        try:
+            result = await gql_query(token, Q_DATASPACES)
+            data = result.get("data", {}).get("dataspaces") or []
+            return [{"path": d.get("name", ""), "uri": d.get("uri", "")} for d in data]
+        except Exception as e:
+            log.debug("gql dataspaces failed, falling back to REST: %s", e)
+    return await _rest_list_dataspaces(token)
+
+
+async def _gql_or_rest_list_targets(token: str, ds: str, typ: str, uuid: str) -> List[Dict[str, Any]]:
+    """List targets via native GQL graph → REST fallback."""
+    if await gql_available(token):
+        uri = _build_etp_uri(ds, typ, uuid)
+        try:
+            result = await gql_query(token, Q_TARGETS, {"uri": uri})
+            resource = (result.get("data") or {}).get("resource")
+            if resource:
+                targets = resource.get("targets") or []
+                return [
+                    {"uri": t["uri"], "name": t.get("name", ""), "dataObjectType": t.get("dataObjectType", "")}
+                    for t in targets
+                ]
+        except Exception as e:
+            log.debug("gql targets failed, falling back to REST: %s", e)
+    return await _rest_list_targets(token, ds, typ, uuid)
+
+
+async def _gql_or_rest_list_sources(token: str, ds: str, typ: str, uuid: str) -> List[Dict[str, Any]]:
+    """List sources via native GQL graph → REST fallback."""
+    if await gql_available(token):
+        uri = _build_etp_uri(ds, typ, uuid)
+        try:
+            result = await gql_query(token, Q_SOURCES, {"uri": uri})
+            resource = (result.get("data") or {}).get("resource")
+            if resource:
+                sources = resource.get("sources") or []
+                return [
+                    {"uri": s["uri"], "name": s.get("name", ""), "dataObjectType": s.get("dataObjectType", "")}
+                    for s in sources
+                ]
+        except Exception as e:
+            log.debug("gql sources failed, falling back to REST: %s", e)
+    return await _rest_list_sources(token, ds, typ, uuid)
+
+
+async def _gql_or_rest_graph_search(token: str, uris: List[str], depth: int = 1) -> Dict[str, Any]:
+    """Batch graph search: single GQL call for multiple URIs → individual REST calls fallback."""
+    if await gql_available(token):
+        try:
+            result = await gql_query(token, Q_GRAPH_SEARCH, {"uris": uris, "depth": depth})
+            return (result.get("data") or {}).get("graphSearch") or {"resources": [], "edges": []}
+        except Exception as e:
+            log.debug("gql graphSearch failed, falling back to REST: %s", e)
+    # REST fallback: no batch endpoint, return empty (caller handles individually)
+    return {"resources": [], "edges": []}
+
+
+def _build_etp_uri(ds: str, typ: str, uuid: str) -> str:
+    """Construct an ETP URI from dataspace/type/uuid components."""
+    # Escape single quotes in dataspace per ETP spec
+    ds_escaped = ds.replace("'", "''")
+    return f"eml:///dataspace('{ds_escaped}')/{typ}({uuid})"
+
+
+async def _gql_or_rest_list_arrays(token: str, ds: str, typ: str, uuid: str) -> List[Dict[str, Any]]:
+    """List array metadata: native GQL → REST fallback."""
+    if await gql_available(token):
+        uri = _build_etp_uri(ds, typ, uuid)
+        try:
+            result = await gql_query(token, Q_ARRAYS, {"uri": uri})
+            resource = (result.get("data") or {}).get("resource")
+            if resource:
+                arrays = resource.get("arrays") or []
+                return [
+                    {
+                        "uid": {"pathInResource": a.get("pathInResource", "")},
+                        "dimensions": a.get("dimensions") or [],
+                        "totalCount": 0,
+                    }
+                    for a in arrays
+                ]
+        except Exception as e:
+            log.debug("gql arrays failed, falling back to REST: %s", e)
+    return await _rest_list_arrays(token, ds, typ, uuid)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # Strawberry GraphQL Types
 # ──────────────────────────────────────────────────────────────────────────────
 
