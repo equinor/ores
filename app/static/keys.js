@@ -3863,8 +3863,8 @@ const GQL_PRESETS = {
 # Follow-up: use objectRelations on a specific wellbore UUID to get
 # its full data graph (log, trajectory, mudlog, cement job, etc.)`,
 
-      // ─── Native RDDMS GraphQL (direct etp-client /graphql queries) ────
-      native_dataspaces: `# Native RDDMS GraphQL: list dataspaces
+  // ─── Native RDDMS GraphQL (direct etp-client /graphql queries) ────
+  native_dataspaces: `# Native RDDMS GraphQL: list dataspaces
 # This queries the etp-client /graphql endpoint directly (not ores)
 # Requires the etp-client with GraphQL module (v1.3+)
 {
@@ -3875,7 +3875,7 @@ const GQL_PRESETS = {
     storeCreated
   }
 }`,
-      native_resources: `# Native RDDMS GraphQL: browse resources in a dataspace
+  native_resources: `# Native RDDMS GraphQL: browse resources in a dataspace
 # Shows all objects with metadata (no content fetch — fast)
 {
   resources(
@@ -3891,7 +3891,7 @@ const GQL_PRESETS = {
     activeStatus
   }
 }`,
-      native_graph: `# Native RDDMS GraphQL: batch graph search
+  native_graph: `# Native RDDMS GraphQL: batch graph search
 # Traverse the object graph for multiple URIs in a SINGLE call
 # Much faster than individual REST calls for targets/sources
 #
@@ -3916,7 +3916,7 @@ const GQL_PRESETS = {
     }
   }
 }`,
-      native_targets: `# Native RDDMS GraphQL: lazy field resolution
+  native_targets: `# Native RDDMS GraphQL: lazy field resolution
 # Only fetches targets when you SELECT the field — no waste
 # Also shows: sources, content (full JSON), arrays (metadata)
 {
@@ -3936,7 +3936,7 @@ const GQL_PRESETS = {
     }
   }
 }`,
-      native_content: `# Native RDDMS GraphQL: object content (JSON body)
+  native_content: `# Native RDDMS GraphQL: object content (JSON body)
 # WARNING: fetches full parsed XML→JSON — only select when needed
 {
   resource(uri: "eml:///dataspace('$DS')/resqml20.obj_IjkGridRepresentation(2c6de928-7e08-4601-b979-34048bd68c02)") {
@@ -3953,459 +3953,459 @@ const GQL_PRESETS = {
     }
   }
 }`
-    };
+};
 
-    function gqlSelectedDataspaces() {
-      return Array.from(dsSel.selectedOptions).map(o => o.value);
-    }
+function gqlSelectedDataspaces() {
+  return Array.from(dsSel.selectedOptions).map(o => o.value);
+}
 
-    function gqlCurrentDs() {
-      // Returns first selected for single-dataspace presets
-      const sel = gqlSelectedDataspaces();
-      return sel.length > 0 ? sel[0] : 'default';
-    }
+function gqlCurrentDs() {
+  // Returns first selected for single-dataspace presets
+  const sel = gqlSelectedDataspaces();
+  return sel.length > 0 ? sel[0] : 'default';
+}
 
-    function gqlDataspacesArg() {
-      // Returns the GraphQL argument string for dataspaces
-      const sel = gqlSelectedDataspaces();
-      if (sel.length <= 1) {
-        return `dataspace: "${sel[0] || gqlCurrentDs()}"`;
-      }
-      const items = sel.map(d => `"${d}"`).join(', ');
-      return `dataspaces: [${ items }]`;
-    }
+function gqlDataspacesArg() {
+  // Returns the GraphQL argument string for dataspaces
+  const sel = gqlSelectedDataspaces();
+  if (sel.length <= 1) {
+    return `dataspace: "${sel[0] || gqlCurrentDs()}"`;
+  }
+  const items = sel.map(d => `"${d}"`).join(', ');
+  return `dataspaces: [${items}]`;
+}
 
-    function gqlDataspacesList() {
-      // Returns the JSON list string for dataspaces (federated search)
-      const sel = gqlSelectedDataspaces();
-      const ds = sel.length > 0 ? sel : [gqlCurrentDs()];
-      return `[${ ds.map(d => `"${d}"`).join(', ')}]`;
-    }
+function gqlDataspacesList() {
+  // Returns the JSON list string for dataspaces (federated search)
+  const sel = gqlSelectedDataspaces();
+  const ds = sel.length > 0 ? sel : [gqlCurrentDs()];
+  return `[${ds.map(d => `"${d}"`).join(', ')}]`;
+}
 
-    function gqlLoadPreset() {
-      const key = gqlPreset.value;
-      const tpl = GQL_PRESETS[key] || '';
-      // For deep search presets, use dataspaces (multi) arg; for others, use single dataspace
-      const isDeep = key.startsWith('deep_');
-      // $DS_NAME = project name extracted from the dataspace path
-      // e.g. "maap/drogon" → "Drogon", "user/johan-sverdrup" → "Johan-sverdrup"
-      const dsName = (gqlCurrentDs().split('/').pop() || 'Drogon').replace(/^\w/, c => c.toUpperCase());
-      let query = tpl.replace(/\$DS_ARG/g, gqlDataspacesArg());
-      query = query.replace(/\$DS_LIST/g, gqlDataspacesList());
-      query = query.replace(/\$DS_NAME/g, dsName);
-      query = query.replace(/\$DS/g, gqlCurrentDs());
-      gqlEditor.value = query;
-    }
+function gqlLoadPreset() {
+  const key = gqlPreset.value;
+  const tpl = GQL_PRESETS[key] || '';
+  // For deep search presets, use dataspaces (multi) arg; for others, use single dataspace
+  const isDeep = key.startsWith('deep_');
+  // $DS_NAME = project name extracted from the dataspace path
+  // e.g. "maap/drogon" → "Drogon", "user/johan-sverdrup" → "Johan-sverdrup"
+  const dsName = (gqlCurrentDs().split('/').pop() || 'Drogon').replace(/^\w/, c => c.toUpperCase());
+  let query = tpl.replace(/\$DS_ARG/g, gqlDataspacesArg());
+  query = query.replace(/\$DS_LIST/g, gqlDataspacesList());
+  query = query.replace(/\$DS_NAME/g, dsName);
+  query = query.replace(/\$DS/g, gqlCurrentDs());
+  gqlEditor.value = query;
+}
 
-    gqlPreset.addEventListener('change', gqlLoadPreset);
-    // Re-inject dataspaces into preset when selection changes
-    dsSel.addEventListener('change', gqlLoadPreset);
-    // Initialize with first preset
-    gqlLoadPreset();
+gqlPreset.addEventListener('change', gqlLoadPreset);
+// Re-inject dataspaces into preset when selection changes
+dsSel.addEventListener('change', gqlLoadPreset);
+// Initialize with first preset
+gqlLoadPreset();
 
-    // Auto-check backend status and update badge
-    (async function checkGqlBackend() {
-      const badge = document.getElementById('gql-backend-badge');
-      try {
-        const resp = await fetch('/api/graphql/query', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: '{ status }' }),
-        });
-        const data = await resp.json();
-        const st = (data.data && data.data.status) || '';
-        if (st.startsWith('PostgreSQL direct')) {
-          badge.textContent = 'PostgreSQL';
-          badge.style.background = '#dff6dd';
-          badge.style.color = '#107c10';
-          // Pre-fill dataspaces from local PG – merge with existing remote items
-          try {
-            const dsResp = await fetch('/api/graphql/query', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ query: '{ dataspaces { path } }' }),
-            });
-            const dsData = await dsResp.json();
-            const pgDs = (dsData.data && dsData.data.dataspaces) || [];
-            if (pgDs.length) {
-              // Tag PG dataspaces as local; keep existing remote items
-              const localPaths = new Set(pgDs.map(d => d.path));
-              const localItems = pgDs.map(d => ({ path: d.path, uri: d.uri || '', source: 'local' }));
-              // Keep remote items that aren't duplicates of local
-              const remoteItems = _allDsItems.filter(x => !localPaths.has(x.path) && x.source !== 'local');
-              // Re-tag remote items that lack a source
-              remoteItems.forEach(x => { if (!x.source) x.source = 'remote'; });
-              _allDsItems = [...localItems, ...remoteItems];
-              _applyDsFilter();
-              // Select all local PG dataspaces by default
-              Array.from(dsSel.options).forEach(o => {
-                o.selected = localPaths.has(o.value);
-              });
-              gqlLoadPreset();
-              // Trigger loadTypes with first dataspace
-              loadTypes();
-            }
-          } catch (_) { /* ignore – dataspaces already populated from REST */ }
-        } else if (st.includes('REST')) {
-          badge.textContent = 'REST API';
-          badge.style.background = '#deecf9';
-          badge.style.color = '#004578';
-        } else {
-          badge.textContent = 'connected';
-          badge.style.background = '#dff6dd';
-          badge.style.color = '#107c10';
-        }
-      } catch (e) {
-        badge.textContent = 'offline';
-        badge.style.background = '#fde7e9';
-        badge.style.color = '#a80000';
-      }
-    })();
-
-    // Update $DS placeholder when dataspace changes
-    dsSel.addEventListener('change', () => {
-      const current = gqlEditor.value;
-      if (current.includes('dataspace:')) {
-        // smart-replace the dataspace argument
-        gqlEditor.value = current.replace(
-          /dataspace:\s*"[^"]*"/g,
-          `dataspace: "${gqlCurrentDs()}"`
-        );
-      }
+// Auto-check backend status and update badge
+(async function checkGqlBackend() {
+  const badge = document.getElementById('gql-backend-badge');
+  try {
+    const resp = await fetch('/api/graphql/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: '{ status }' }),
     });
-
-    async function runGraphQLQuery() {
-      const query = gqlEditor.value.trim();
-      if (!query) { gqlStatus.textContent = 'Empty query'; return; }
-
-      let variables = {};
+    const data = await resp.json();
+    const st = (data.data && data.data.status) || '';
+    if (st.startsWith('PostgreSQL direct')) {
+      badge.textContent = 'PostgreSQL';
+      badge.style.background = '#dff6dd';
+      badge.style.color = '#107c10';
+      // Pre-fill dataspaces from local PG – merge with existing remote items
       try {
-        const vt = gqlVars.value.trim();
-        if (vt && vt !== '{}') variables = JSON.parse(vt);
-      } catch (e) {
-        gqlStatus.textContent = 'Invalid variables JSON';
-        return;
-      }
-
-      gqlStatus.textContent = 'Running…';
-      gqlOutput.textContent = '';
-
-      try {
-        const resp = await fetch('/api/graphql/query', {
+        const dsResp = await fetch('/api/graphql/query', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query, variables }),
+          body: JSON.stringify({ query: '{ dataspaces { path } }' }),
         });
-        const data = await resp.json();
-        gqlOutput.textContent = JSON.stringify(data, null, 2);
-        autoSizeOutput();
-        if (data.errors && data.errors.length) {
-          gqlStatus.textContent = `Done(${ data.errors.length } error(s))`;
-        } else {
-          const count = data.data ? Object.keys(data.data).length : 0;
-          gqlStatus.textContent = `Done – ${ count } field(s) returned`;
+        const dsData = await dsResp.json();
+        const pgDs = (dsData.data && dsData.data.dataspaces) || [];
+        if (pgDs.length) {
+          // Tag PG dataspaces as local; keep existing remote items
+          const localPaths = new Set(pgDs.map(d => d.path));
+          const localItems = pgDs.map(d => ({ path: d.path, uri: d.uri || '', source: 'local' }));
+          // Keep remote items that aren't duplicates of local
+          const remoteItems = _allDsItems.filter(x => !localPaths.has(x.path) && x.source !== 'local');
+          // Re-tag remote items that lack a source
+          remoteItems.forEach(x => { if (!x.source) x.source = 'remote'; });
+          _allDsItems = [...localItems, ...remoteItems];
+          _applyDsFilter();
+          // Select all local PG dataspaces by default
+          Array.from(dsSel.options).forEach(o => {
+            o.selected = localPaths.has(o.value);
+          });
+          gqlLoadPreset();
+          // Trigger loadTypes with first dataspace
+          loadTypes();
         }
-        // Try to render graph visualisation
-        renderMermaidFromResponse(data);
+      } catch (_) { /* ignore – dataspaces already populated from REST */ }
+    } else if (st.includes('REST')) {
+      badge.textContent = 'REST API';
+      badge.style.background = '#deecf9';
+      badge.style.color = '#004578';
+    } else {
+      badge.textContent = 'connected';
+      badge.style.background = '#dff6dd';
+      badge.style.color = '#107c10';
+    }
+  } catch (e) {
+    badge.textContent = 'offline';
+    badge.style.background = '#fde7e9';
+    badge.style.color = '#a80000';
+  }
+})();
 
-        // Check for 3D-renderable objects and show button in result area
-        const renderableObjs = extractRenderableObjects(data);
-        const existing3dBtn = document.getElementById('gql3d-advanced-trigger-wrap');
-        if (existing3dBtn) existing3dBtn.remove();
-        if (renderableObjs.length > 0) {
-          const wrap = document.createElement('div');
-          wrap.id = 'gql3d-advanced-trigger-wrap';
-          wrap.style.cssText = 'margin:8px 0;display:flex;align-items:center;gap:10px;';
-          wrap.innerHTML = `< button class="btn-show3d-results" id = "gql3d-adv-trigger" >
+// Update $DS placeholder when dataspace changes
+dsSel.addEventListener('change', () => {
+  const current = gqlEditor.value;
+  if (current.includes('dataspace:')) {
+    // smart-replace the dataspace argument
+    gqlEditor.value = current.replace(
+      /dataspace:\s*"[^"]*"/g,
+      `dataspace: "${gqlCurrentDs()}"`
+    );
+  }
+});
+
+async function runGraphQLQuery() {
+  const query = gqlEditor.value.trim();
+  if (!query) { gqlStatus.textContent = 'Empty query'; return; }
+
+  let variables = {};
+  try {
+    const vt = gqlVars.value.trim();
+    if (vt && vt !== '{}') variables = JSON.parse(vt);
+  } catch (e) {
+    gqlStatus.textContent = 'Invalid variables JSON';
+    return;
+  }
+
+  gqlStatus.textContent = 'Running…';
+  gqlOutput.textContent = '';
+
+  try {
+    const resp = await fetch('/api/graphql/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, variables }),
+    });
+    const data = await resp.json();
+    gqlOutput.textContent = JSON.stringify(data, null, 2);
+    autoSizeOutput();
+    if (data.errors && data.errors.length) {
+      gqlStatus.textContent = `Done(${data.errors.length} error(s))`;
+    } else {
+      const count = data.data ? Object.keys(data.data).length : 0;
+      gqlStatus.textContent = `Done – ${count} field(s) returned`;
+    }
+    // Try to render graph visualisation
+    renderMermaidFromResponse(data);
+
+    // Check for 3D-renderable objects and show button in result area
+    const renderableObjs = extractRenderableObjects(data);
+    const existing3dBtn = document.getElementById('gql3d-advanced-trigger-wrap');
+    if (existing3dBtn) existing3dBtn.remove();
+    if (renderableObjs.length > 0) {
+      const wrap = document.createElement('div');
+      wrap.id = 'gql3d-advanced-trigger-wrap';
+      wrap.style.cssText = 'margin:8px 0;display:flex;align-items:center;gap:10px;';
+      wrap.innerHTML = `< button class="btn-show3d-results" id = "gql3d-adv-trigger" >
   <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
-            Show 3D Results(${ renderableObjs.length })
+            Show 3D Results(${renderableObjs.length})
           </button >
   <span style="font-size:12px;color:#605e5c;">${renderableObjs.length} renderable object${renderableObjs.length > 1 ? 's' : ''}</span>`;
-          $('gql-result').parentNode.insertBefore(wrap, $('gql-result'));
-          wrap.querySelector('#gql3d-adv-trigger').addEventListener('click', () => openGql3DPopup(renderableObjs));
-        }
-      } catch (e) {
-        gqlStatus.textContent = 'Request failed';
-        gqlOutput.textContent = e.message;
-        autoSizeOutput();
-      }
+      $('gql-result').parentNode.insertBefore(wrap, $('gql-result'));
+      wrap.querySelector('#gql3d-adv-trigger').addEventListener('click', () => openGql3DPopup(renderableObjs));
     }
+  } catch (e) {
+    gqlStatus.textContent = 'Request failed';
+    gqlOutput.textContent = e.message;
+    autoSizeOutput();
+  }
+}
 
-    // Auto-resize editor textarea to fit content (min 4, max 24 rows)
-    function autoSizeEditor() {
-      const lines = gqlEditor.value.split('\n').length;
-      gqlEditor.rows = Math.max(4, Math.min(lines + 1, 24));
+// Auto-resize editor textarea to fit content (min 4, max 24 rows)
+function autoSizeEditor() {
+  const lines = gqlEditor.value.split('\n').length;
+  gqlEditor.rows = Math.max(4, Math.min(lines + 1, 24));
+}
+gqlEditor.addEventListener('input', autoSizeEditor);
+// Also size on preset load
+const _origPreset = gqlPreset.onchange;
+gqlPreset.addEventListener('change', () => setTimeout(autoSizeEditor, 0));
+autoSizeEditor();
+
+// Shrink/grow output container based on content
+function autoSizeOutput() {
+  const el = document.getElementById('gql-result');
+  const pre = document.getElementById('gql-output');
+  // reset to auto to measure
+  el.style.maxHeight = 'none';
+  const h = pre.scrollHeight + 20;
+  // cap at 70vh
+  const cap = window.innerHeight * 0.7;
+  el.style.maxHeight = (h > cap ? cap : h) + 'px';
+}
+
+gqlRun.addEventListener('click', runGraphQLQuery);
+// Ctrl+Enter to run
+gqlEditor.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    runGraphQLQuery();
+  }
+});
+
+// ── Saved GraphQL queries ─────────────────────────────────────────────────
+(function () {
+  const savedSel = $('gql-saved-select');
+  const saveBtn = $('gql-save-query');
+  const delBtn = $('gql-delete-query');
+  if (!savedSel) return;
+
+  // Load saved queries on page load
+  fetch('/api/queries?source=graphql')
+    .then(r => r.json())
+    .then(function (list) {
+      (list || []).forEach(function (sq) {
+        const opt = document.createElement('option');
+        opt.value = sq.id;
+        opt.dataset.query = sq.query;
+        opt.textContent = sq.name;
+        savedSel.appendChild(opt);
+      });
+    })
+    .catch(function () { });
+
+  // Apply saved query on select
+  savedSel.addEventListener('change', function () {
+    const opt = savedSel.options[savedSel.selectedIndex];
+    if (!opt || !opt.value) { delBtn.style.display = 'none'; return; }
+    const raw = opt.dataset.query || '';
+    // query may contain vars separated by \n---VARS---\n
+    const sep = '\n---VARS---\n';
+    const idx = raw.indexOf(sep);
+    if (idx >= 0) {
+      gqlEditor.value = raw.substring(0, idx);
+      gqlVars.value = raw.substring(idx + sep.length);
+    } else {
+      gqlEditor.value = raw;
     }
-    gqlEditor.addEventListener('input', autoSizeEditor);
-    // Also size on preset load
-    const _origPreset = gqlPreset.onchange;
-    gqlPreset.addEventListener('change', () => setTimeout(autoSizeEditor, 0));
-    autoSizeEditor();
+    delBtn.style.display = 'inline-block';
+  });
 
-    // Shrink/grow output container based on content
-    function autoSizeOutput() {
-      const el = document.getElementById('gql-result');
-      const pre = document.getElementById('gql-output');
-      // reset to auto to measure
-      el.style.maxHeight = 'none';
-      const h = pre.scrollHeight + 20;
-      // cap at 70vh
-      const cap = window.innerHeight * 0.7;
-      el.style.maxHeight = (h > cap ? cap : h) + 'px';
-    }
-
-    gqlRun.addEventListener('click', runGraphQLQuery);
-    // Ctrl+Enter to run
-    gqlEditor.addEventListener('keydown', (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        e.preventDefault();
-        runGraphQLQuery();
-      }
-    });
-
-    // ── Saved GraphQL queries ─────────────────────────────────────────────────
-    (function() {
-      const savedSel = $('gql-saved-select');
-      const saveBtn = $('gql-save-query');
-      const delBtn = $('gql-delete-query');
-      if (!savedSel) return;
-
-      // Load saved queries on page load
-      fetch('/api/queries?source=graphql')
+  // Delete
+  if (delBtn) {
+    delBtn.addEventListener('click', function () {
+      const qid = savedSel.value;
+      if (!qid) return;
+      if (!confirm('Delete this saved query?')) return;
+      fetch('/api/queries/' + qid, { method: 'DELETE' })
         .then(r => r.json())
-        .then(function(list) {
-          (list || []).forEach(function(sq) {
+        .then(function () {
+          for (let i = savedSel.options.length - 1; i >= 0; i--) {
+            if (savedSel.options[i].value === qid) savedSel.remove(i);
+          }
+          savedSel.value = '';
+          delBtn.style.display = 'none';
+        });
+    });
+  }
+
+  // Save
+  if (saveBtn) {
+    saveBtn.addEventListener('click', function () {
+      const queryText = (gqlEditor.value || '').trim();
+      if (!queryText) return;
+      const varsText = (gqlVars.value || '{ }').trim();
+      // Build a default name from the first comment or first line
+      const firstLine = queryText.split('\n').find(l => l.trim()) || 'query';
+      const defaultName = firstLine.replace(/^[#{}\s]+/, '').substring(0, 50).trim() || 'query';
+      const name = prompt('Name for this query:', defaultName);
+      if (!name) return;
+      // Pack query + vars together
+      const packed = varsText && varsText !== '{ }' && varsText !== '{}'
+        ? queryText + '\n---VARS---\n' + varsText
+        : queryText;
+      fetch('/api/queries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name, kind: '__graphql__', query: packed })
+      })
+        .then(r => r.json())
+        .then(function (data) {
+          if (data.id) {
             const opt = document.createElement('option');
-            opt.value = sq.id;
-            opt.dataset.query = sq.query;
-            opt.textContent = sq.name;
-            savedSel.appendChild(opt);
-          });
-        })
-        .catch(function() {});
-
-      // Apply saved query on select
-      savedSel.addEventListener('change', function() {
-        const opt = savedSel.options[savedSel.selectedIndex];
-        if (!opt || !opt.value) { delBtn.style.display = 'none'; return; }
-        const raw = opt.dataset.query || '';
-        // query may contain vars separated by \n---VARS---\n
-        const sep = '\n---VARS---\n';
-        const idx = raw.indexOf(sep);
-        if (idx >= 0) {
-          gqlEditor.value = raw.substring(0, idx);
-          gqlVars.value = raw.substring(idx + sep.length);
-        } else {
-          gqlEditor.value = raw;
-        }
-        delBtn.style.display = 'inline-block';
-      });
-
-      // Delete
-      if (delBtn) {
-        delBtn.addEventListener('click', function() {
-          const qid = savedSel.value;
-          if (!qid) return;
-          if (!confirm('Delete this saved query?')) return;
-          fetch('/api/queries/' + qid, { method: 'DELETE' })
-            .then(r => r.json())
-            .then(function() {
-              for (let i = savedSel.options.length - 1; i >= 0; i--) {
-                if (savedSel.options[i].value === qid) savedSel.remove(i);
-              }
-              savedSel.value = '';
-              delBtn.style.display = 'none';
-            });
-        });
-      }
-
-      // Save
-      if (saveBtn) {
-        saveBtn.addEventListener('click', function() {
-          const queryText = (gqlEditor.value || '').trim();
-          if (!queryText) return;
-          const varsText = (gqlVars.value || '{ }').trim();
-          // Build a default name from the first comment or first line
-          const firstLine = queryText.split('\n').find(l => l.trim()) || 'query';
-          const defaultName = firstLine.replace(/^[#{}\s]+/, '').substring(0, 50).trim() || 'query';
-          const name = prompt('Name for this query:', defaultName);
-          if (!name) return;
-          // Pack query + vars together
-          const packed = varsText && varsText !== '{ }' && varsText !== '{}'
-            ? queryText + '\n---VARS---\n' + varsText
-            : queryText;
-          fetch('/api/queries', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: name, kind: '__graphql__', query: packed })
-          })
-            .then(r => r.json())
-            .then(function(data) {
-              if (data.id) {
-                const opt = document.createElement('option');
-                opt.value = data.id;
-                opt.dataset.query = data.query;
-                opt.textContent = data.name;
-                if (savedSel.options.length > 1) {
-                  savedSel.insertBefore(opt, savedSel.options[1]);
-                } else {
-                  savedSel.appendChild(opt);
-                }
-                savedSel.value = data.id;
-                delBtn.style.display = 'inline-block';
-              }
-            });
-        });
-      }
-    })();
-
-    // ── Graph visualisation (Mermaid) ─────────────────────────────────────────
-    const gqlTabJson = $('gql-tab-json');
-    const gqlTabGraph = $('gql-tab-graph');
-    const gqlGraphDiv = $('gql-graph');
-    const gqlResultDiv = $('gql-result');
-    const gqlMermaid = $('gql-mermaid');
-    const gqlGraphHint = $('gql-graph-hint');
-    let _lastMermaidCode = '';
-    let _mermaidRenderCount = 0;
-
-    gqlTabJson.addEventListener('click', () => {
-      gqlResultDiv.style.display = '';
-      gqlGraphDiv.style.display = 'none';
-      gqlTabJson.style.background = 'transparent'; gqlTabJson.style.color = 'var(--eq-red, #FF1243)'; gqlTabJson.style.fontWeight = '600'; gqlTabJson.style.borderBottom = '2px solid var(--eq-red, #FF1243)';
-      gqlTabGraph.style.background = 'transparent'; gqlTabGraph.style.color = '#605e5c'; gqlTabGraph.style.fontWeight = '500'; gqlTabGraph.style.borderBottom = '2px solid transparent';
-      gqlGraphHint.style.display = 'none';
-    });
-    gqlTabGraph.addEventListener('click', () => {
-      if (!_lastMermaidCode) { gqlGraphHint.textContent = 'No graph data in last response'; gqlGraphHint.style.display = ''; return; }
-      gqlResultDiv.style.display = 'none';
-      gqlGraphDiv.style.display = '';
-      gqlTabGraph.style.background = 'transparent'; gqlTabGraph.style.color = 'var(--eq-red, #FF1243)'; gqlTabGraph.style.fontWeight = '600'; gqlTabGraph.style.borderBottom = '2px solid var(--eq-red, #FF1243)';
-      gqlTabJson.style.background = 'transparent'; gqlTabJson.style.color = '#605e5c'; gqlTabJson.style.fontWeight = '500'; gqlTabJson.style.borderBottom = '2px solid transparent';
-      gqlGraphHint.style.display = '';
-    });
-
-    function _sanitize(s) { return (s || '').replace(/["<>]/g, '').replace(/[\[\](){}#&;]/g, ' ').substring(0, 60); }
-    function _shortType(t) { return (t || '').replace(/^resqml\d+\.obj_/, '').replace(/application.*\./g, ''); }
-    function _nodeId(uuid) { return 'n' + (uuid || 'x').replace(/[^a-zA-Z0-9]/g, '').substring(0, 12); }
-
-    function buildMermaidFromRelations(data) {
-      // object_relations response
-      const rels = data.data && data.data.objectRelations;
-      if (!rels || !rels.length) return '';
-      const lines = ['graph LR'];
-      const centerId = 'center';
-      lines.push(`  ${ centerId } ["Query Object"]`);
-      rels.forEach((r, i) => {
-        const nid = _nodeId(r.uuid) + i;
-        const label = _sanitize(r.name) || _shortType(r.typeName || r.type_name);
-        const stype = _shortType(r.typeName || r.type_name);
-        lines.push(`  ${ nid } ["${label}<br/><small>${stype}</small>"]`);
-        if (r.direction === 'target') {
-          lines.push(`  ${ centerId } -->| target | ${ nid } `);
-        } else {
-          lines.push(`  ${ nid } -->| source | ${ centerId } `);
-        }
-      });
-      return lines.join('\n');
-    }
-
-    function buildMermaidFromDeepSearch(data) {
-      // deep_search response
-      const ds = data.data && data.data.deepSearch;
-      if (!ds || !ds.objects || !ds.objects.length) return '';
-      const lines = ['graph TD'];
-      ds.objects.forEach((obj, oi) => {
-        const oid = _nodeId(obj.uuid) + oi;
-        const oLabel = _sanitize(obj.title) || obj.uuid.substring(0, 8);
-        const oType = _shortType(obj.typeName || obj.type_name);
-        lines.push(`  ${ oid } ["${oLabel}<br/><small>${oType}</small>"]`);
-        if (obj.properties && obj.properties.length) {
-          obj.properties.forEach((p, pi) => {
-            const pid = oid + 'p' + pi;
-            const pLabel = _sanitize(p.title) || p.uuid.substring(0, 8);
-            const kind = p.kind || '';
-            const stats = p.statistics ? `min = ${ p.statistics.minValue?.toFixed(2) ?? '?' } max = ${ p.statistics.maxValue?.toFixed(2) ?? '?' } ` : '';
-            lines.push(`  ${ pid } (["${pLabel}<br/><small>${kind} ${stats}</small>"])`);
-            lines.push(`  ${ pid } -.->| property | ${ oid } `);
-          });
-        }
-      });
-      return lines.join('\n');
-    }
-
-    function buildMermaidFromResqmlObjects(data) {
-      // resqml_objects or dataspaces list
-      const objs = data.data && (data.data.resqmlObjects || data.data.resourceTypes);
-      if (!objs || !objs.length || objs.length > 30) return '';
-      if (data.data.resourceTypes) {
-        // Type summary as a simple graph
-        const lines = ['graph LR'];
-        lines.push('  DS["Dataspace"]');
-        objs.forEach((t, i) => {
-          const nid = 'type' + i;
-          lines.push(`  ${ nid } ["${_shortType(t.name)}<br/><small>${t.count} objects</small>"]`);
-          lines.push(`  DS-- - ${ nid } `);
-        });
-        return lines.join('\n');
-      }
-      return '';
-    }
-
-    async function renderMermaidFromResponse(data) {
-      if (!data || !data.data) { _lastMermaidCode = ''; return; }
-      let code = buildMermaidFromRelations(data)
-               || buildMermaidFromDeepSearch(data)
-               || buildMermaidFromResqmlObjects(data);
-      _lastMermaidCode = code;
-      if (!code) return;
-      // Render into the hidden div (pre-render so switching is instant)
-      try {
-        _mermaidRenderCount++;
-        const id = 'gql-mmd-' + _mermaidRenderCount;
-        const { svg } = await mermaid.render(id, code);
-        gqlMermaid.innerHTML = svg;
-      } catch (e) {
-        gqlMermaid.innerHTML = `< pre style = "color:#a80000;font-size:12px;" > Diagram error: ${ e.message } \n\n${ code }</pre > `;
-      }
-    }
-
-    // Delegate navigation for span[data-href]
-    document.addEventListener('click', (ev) => {
-      const el = ev.target.closest && ev.target.closest('[data-href]');
-      if (el) {
-        const url = el.getAttribute('data-href');
-        if (url) window.location.assign(url);
-      }
-    });
-
-    // --- Init with optional ?ds=... pre-selection
-    (async function init() {
-      const params = new URLSearchParams(window.location.search);
-      const dsParam = params.get('ds');
-
-      const hasPrefill = Array.isArray(window.PREFILL_DS) && window.PREFILL_DS.length > 0;
-      if (hasPrefill) {
-        populateDataspaces(window.PREFILL_DS);
-        if (dsParam) {
-          [...dsSel.options].forEach(opt => { if (opt.value === dsParam) dsSel.value = dsParam; });
-        }
-        setMsg('');
-        await loadTypes();
-        await loadObjects();
-
-        loadDataspaces().then(() => {
-          if (dsParam) {
-            [...dsSel.options].forEach(opt => { if (opt.value === dsParam) dsSel.value = dsParam; });
-            loadTypes().then(loadObjects);
+            opt.value = data.id;
+            opt.dataset.query = data.query;
+            opt.textContent = data.name;
+            if (savedSel.options.length > 1) {
+              savedSel.insertBefore(opt, savedSel.options[1]);
+            } else {
+              savedSel.appendChild(opt);
+            }
+            savedSel.value = data.id;
+            delBtn.style.display = 'inline-block';
           }
         });
-      } else {
-        const ok = await loadDataspaces();
-        if (ok && dsParam) {
-          [...dsSel.options].forEach(opt => { if (opt.value === dsParam) dsSel.value = dsParam; });
-        }
-        await loadTypes();
-        await loadObjects();
+    });
+  }
+})();
+
+// ── Graph visualisation (Mermaid) ─────────────────────────────────────────
+const gqlTabJson = $('gql-tab-json');
+const gqlTabGraph = $('gql-tab-graph');
+const gqlGraphDiv = $('gql-graph');
+const gqlResultDiv = $('gql-result');
+const gqlMermaid = $('gql-mermaid');
+const gqlGraphHint = $('gql-graph-hint');
+let _lastMermaidCode = '';
+let _mermaidRenderCount = 0;
+
+gqlTabJson.addEventListener('click', () => {
+  gqlResultDiv.style.display = '';
+  gqlGraphDiv.style.display = 'none';
+  gqlTabJson.style.background = 'transparent'; gqlTabJson.style.color = 'var(--eq-red, #FF1243)'; gqlTabJson.style.fontWeight = '600'; gqlTabJson.style.borderBottom = '2px solid var(--eq-red, #FF1243)';
+  gqlTabGraph.style.background = 'transparent'; gqlTabGraph.style.color = '#605e5c'; gqlTabGraph.style.fontWeight = '500'; gqlTabGraph.style.borderBottom = '2px solid transparent';
+  gqlGraphHint.style.display = 'none';
+});
+gqlTabGraph.addEventListener('click', () => {
+  if (!_lastMermaidCode) { gqlGraphHint.textContent = 'No graph data in last response'; gqlGraphHint.style.display = ''; return; }
+  gqlResultDiv.style.display = 'none';
+  gqlGraphDiv.style.display = '';
+  gqlTabGraph.style.background = 'transparent'; gqlTabGraph.style.color = 'var(--eq-red, #FF1243)'; gqlTabGraph.style.fontWeight = '600'; gqlTabGraph.style.borderBottom = '2px solid var(--eq-red, #FF1243)';
+  gqlTabJson.style.background = 'transparent'; gqlTabJson.style.color = '#605e5c'; gqlTabJson.style.fontWeight = '500'; gqlTabJson.style.borderBottom = '2px solid transparent';
+  gqlGraphHint.style.display = '';
+});
+
+function _sanitize(s) { return (s || '').replace(/["<>]/g, '').replace(/[\[\](){}#&;]/g, ' ').substring(0, 60); }
+function _shortType(t) { return (t || '').replace(/^resqml\d+\.obj_/, '').replace(/application.*\./g, ''); }
+function _nodeId(uuid) { return 'n' + (uuid || 'x').replace(/[^a-zA-Z0-9]/g, '').substring(0, 12); }
+
+function buildMermaidFromRelations(data) {
+  // object_relations response
+  const rels = data.data && data.data.objectRelations;
+  if (!rels || !rels.length) return '';
+  const lines = ['graph LR'];
+  const centerId = 'center';
+  lines.push(`  ${centerId} ["Query Object"]`);
+  rels.forEach((r, i) => {
+    const nid = _nodeId(r.uuid) + i;
+    const label = _sanitize(r.name) || _shortType(r.typeName || r.type_name);
+    const stype = _shortType(r.typeName || r.type_name);
+    lines.push(`  ${nid} ["${label}<br/><small>${stype}</small>"]`);
+    if (r.direction === 'target') {
+      lines.push(`  ${centerId} -->| target | ${nid} `);
+    } else {
+      lines.push(`  ${nid} -->| source | ${centerId} `);
+    }
+  });
+  return lines.join('\n');
+}
+
+function buildMermaidFromDeepSearch(data) {
+  // deep_search response
+  const ds = data.data && data.data.deepSearch;
+  if (!ds || !ds.objects || !ds.objects.length) return '';
+  const lines = ['graph TD'];
+  ds.objects.forEach((obj, oi) => {
+    const oid = _nodeId(obj.uuid) + oi;
+    const oLabel = _sanitize(obj.title) || obj.uuid.substring(0, 8);
+    const oType = _shortType(obj.typeName || obj.type_name);
+    lines.push(`  ${oid} ["${oLabel}<br/><small>${oType}</small>"]`);
+    if (obj.properties && obj.properties.length) {
+      obj.properties.forEach((p, pi) => {
+        const pid = oid + 'p' + pi;
+        const pLabel = _sanitize(p.title) || p.uuid.substring(0, 8);
+        const kind = p.kind || '';
+        const stats = p.statistics ? `min = ${p.statistics.minValue?.toFixed(2) ?? '?'} max = ${p.statistics.maxValue?.toFixed(2) ?? '?'} ` : '';
+        lines.push(`  ${pid} (["${pLabel}<br/><small>${kind} ${stats}</small>"])`);
+        lines.push(`  ${pid} -.->| property | ${oid} `);
+      });
+    }
+  });
+  return lines.join('\n');
+}
+
+function buildMermaidFromResqmlObjects(data) {
+  // resqml_objects or dataspaces list
+  const objs = data.data && (data.data.resqmlObjects || data.data.resourceTypes);
+  if (!objs || !objs.length || objs.length > 30) return '';
+  if (data.data.resourceTypes) {
+    // Type summary as a simple graph
+    const lines = ['graph LR'];
+    lines.push('  DS["Dataspace"]');
+    objs.forEach((t, i) => {
+      const nid = 'type' + i;
+      lines.push(`  ${nid} ["${_shortType(t.name)}<br/><small>${t.count} objects</small>"]`);
+      lines.push(`  DS --- ${nid}`);
+    });
+    return lines.join('\n');
+  }
+  return '';
+}
+
+async function renderMermaidFromResponse(data) {
+  if (!data || !data.data) { _lastMermaidCode = ''; return; }
+  let code = buildMermaidFromRelations(data)
+    || buildMermaidFromDeepSearch(data)
+    || buildMermaidFromResqmlObjects(data);
+  _lastMermaidCode = code;
+  if (!code) return;
+  // Render into the hidden div (pre-render so switching is instant)
+  try {
+    _mermaidRenderCount++;
+    const id = 'gql-mmd-' + _mermaidRenderCount;
+    const { svg } = await mermaid.render(id, code);
+    gqlMermaid.innerHTML = svg;
+  } catch (e) {
+    gqlMermaid.innerHTML = `< pre style = "color:#a80000;font-size:12px;" > Diagram error: ${e.message} \n\n${code}</pre > `;
+  }
+}
+
+// Delegate navigation for span[data-href]
+document.addEventListener('click', (ev) => {
+  const el = ev.target.closest && ev.target.closest('[data-href]');
+  if (el) {
+    const url = el.getAttribute('data-href');
+    if (url) window.location.assign(url);
+  }
+});
+
+// --- Init with optional ?ds=... pre-selection
+(async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const dsParam = params.get('ds');
+
+  const hasPrefill = Array.isArray(window.PREFILL_DS) && window.PREFILL_DS.length > 0;
+  if (hasPrefill) {
+    populateDataspaces(window.PREFILL_DS);
+    if (dsParam) {
+      [...dsSel.options].forEach(opt => { if (opt.value === dsParam) dsSel.value = dsParam; });
+    }
+    setMsg('');
+    await loadTypes();
+    await loadObjects();
+
+    loadDataspaces().then(() => {
+      if (dsParam) {
+        [...dsSel.options].forEach(opt => { if (opt.value === dsParam) dsSel.value = dsParam; });
+        loadTypes().then(loadObjects);
       }
-    })();
+    });
+  } else {
+    const ok = await loadDataspaces();
+    if (ok && dsParam) {
+      [...dsSel.options].forEach(opt => { if (opt.value === dsParam) dsSel.value = dsParam; });
+    }
+    await loadTypes();
+    await loadObjects();
+  }
+})();

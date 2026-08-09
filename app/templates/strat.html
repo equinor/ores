@@ -3,67 +3,294 @@
 {% block content %}
 <h2>Stratigraphy</h2>
 <style>
-/* ---- Hierarchy-based stratigraphic column ---- */
-.sc-wrap { max-width: 96rem; }
-.sc-panel { border:1px solid #e1dfdd; border-radius:8px; background:#fff; padding:.75rem; }
-.muted { color:#605e5c; }
-.btn { display:inline-block; padding:.35rem .6rem; border:1px solid #0d6efd; border-radius:3px; background:#0d6efd; color:#fff; cursor:pointer; }
-.btn:hover { background:#0b5ed7; border-color:#0b5ed7; }
-#matrix-root { overflow:auto; max-height: 78vh; border:1px solid #ccc; border-radius:6px; }
-.sc-table { border-collapse: collapse; width: 100%; }
-.sc-table th, .sc-table td { padding: 4px 7px; text-align: left; vertical-align: middle; }
-.sc-table thead th { position: sticky; top: 0; z-index: 2; font-size: .9rem;
-  border-bottom: 2px solid rgba(0,0,0,.25); letter-spacing: .02em; }
-.sc-cell { border: 1px solid rgba(0,0,0,.12); }
-.sc-cell strong { display: block; font-size: .88rem; line-height: 1.25; }
-.sc-age { font-size: .78rem; opacity: .75; margin-top: 1px; }
-.sc-horizon { font-size: .72rem; color: #7b1fa2; font-style: italic; margin-top: 1px; opacity: .85; }
-.sc-horizon-top { border-top: 2px solid #7b1fa2 !important; }
-.sc-horizon-base { border-bottom: 2px solid #7b1fa2 !important; }
-.sc-empty { background: #f8f8f8; border: 1px solid rgba(0,0,0,.06); }
-.sc-synthetic { background: repeating-linear-gradient(
-    -45deg, #f8f8f8, #f8f8f8 4px, #eee 4px, #eee 8px) !important;
-  border: 1px dashed rgba(0,0,0,.18); }
-.sc-synthetic strong { color: #888; font-style: italic; font-weight: 400; }
-.sc-synthetic .sc-age { color: #aaa; }
-.sc-footnote { font-size: .85rem; color: #605e5c; margin-top:.35rem; }
-.legend { display:flex; gap:.5rem; flex-wrap:wrap; margin:.35rem 0 .6rem; }
-.legend-item { display:inline-flex; align-items:center; gap:.3rem; margin-right:.75rem; cursor:pointer; user-select:none; }
-.legend-item.off { opacity:.4; }
-.legend-item.off .legend-sw { background:repeating-linear-gradient(45deg,transparent,transparent 2px,rgba(0,0,0,.12) 2px,rgba(0,0,0,.12) 4px) !important; }
-.rank-col { min-width: 8rem; }
+  /* ---- Hierarchy-based stratigraphic column ---- */
+  .sc-wrap {
+    max-width: 96rem;
+  }
 
-/* ---- Import panel ---- */
-.imp-panel { background: #f9f9ff; border: 1px solid #d0d0e8; }
-.imp-tabs { display:flex; gap:0; border-bottom:2px solid #e1dfdd; margin-bottom:.75rem; }
-.imp-tab { padding:.45rem .9rem; cursor:pointer; font-weight:500; font-size:13.5px;
-  border:none; border-bottom:2px solid transparent;
-  color:#605e5c; background:transparent; transition:background .15s; margin-bottom:-2px; }
-.imp-tab:hover { background:#f3f2f1; }
-.imp-tab.active { color:var(--eq-red, #FF1243); font-weight:600; border-bottom-color:var(--eq-red, #FF1243); background:transparent; }
-.imp-body { display:none; }
-.imp-body.active { display:block; }
-.imp-status { font-size:13px; margin-top:.5rem; padding:6px 10px; border-radius:4px; }
-.imp-status.ok { background:#e6f9e6; color:#2e7d32; }
-.imp-status.err { background:#ffeaea; color:#c62828; }
-.imp-status.info { background:#e3f2fd; color:#1565c0; }
-.imp-preview { max-height:280px; overflow:auto; margin-top:.5rem; font-size:12.5px; }
-.btn-ingest { background:#0d6efd; color:#fff; border-color:#0d6efd; }
-.btn-ingest:hover { background:#0b5ed7; border-color:#0b5ed7; }
+  .sc-panel {
+    border: 1px solid #e1dfdd;
+    border-radius: 8px;
+    background: #fff;
+    padding: .75rem;
+  }
 
-/* ---- Examples popup ---- */
-.examples-wrap { position:relative; display:inline-block; }
-.examples-popup { display:none; position:absolute; top:100%; right:0; z-index:100;
-  min-width:26rem; max-width:36rem; background:#fff; border:1px solid #d0d0e8;
-  border-radius:6px; box-shadow:0 4px 16px rgba(0,0,0,.14); padding:.5rem 0;
-  margin-top:4px; font-size:13px; }
-.examples-popup.open { display:block; }
-.examples-popup .ex-item { padding:.35rem .75rem; cursor:pointer; display:flex; flex-direction:column; }
-.examples-popup .ex-item:hover { background:#f3f2f1; }
-.examples-popup .ex-item code { font-size:12.5px; color:#007079; word-break:break-all; }
-.examples-popup .ex-item .ex-desc { font-size:11.5px; color:#605e5c; margin-top:1px; }
-.examples-popup .ex-hdr { padding:.25rem .75rem; font-weight:600; font-size:12px; color:#605e5c;
-  border-bottom:1px solid #eee; margin-bottom:.2rem; }
+  .muted {
+    color: #605e5c;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: .35rem .6rem;
+    border: 1px solid #0d6efd;
+    border-radius: 3px;
+    background: #0d6efd;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    background: #0b5ed7;
+    border-color: #0b5ed7;
+  }
+
+  #matrix-root {
+    overflow: auto;
+    max-height: 78vh;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+
+  .sc-table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  .sc-table th,
+  .sc-table td {
+    padding: 4px 7px;
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  .sc-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    font-size: .9rem;
+    border-bottom: 2px solid rgba(0, 0, 0, .25);
+    letter-spacing: .02em;
+  }
+
+  .sc-cell {
+    border: 1px solid rgba(0, 0, 0, .12);
+  }
+
+  .sc-cell strong {
+    display: block;
+    font-size: .88rem;
+    line-height: 1.25;
+  }
+
+  .sc-age {
+    font-size: .78rem;
+    opacity: .75;
+    margin-top: 1px;
+  }
+
+  .sc-horizon {
+    font-size: .72rem;
+    color: #7b1fa2;
+    font-style: italic;
+    margin-top: 1px;
+    opacity: .85;
+  }
+
+  .sc-horizon-top {
+    border-top: 2px solid #7b1fa2 !important;
+  }
+
+  .sc-horizon-base {
+    border-bottom: 2px solid #7b1fa2 !important;
+  }
+
+  .sc-empty {
+    background: #f8f8f8;
+    border: 1px solid rgba(0, 0, 0, .06);
+  }
+
+  .sc-synthetic {
+    background: repeating-linear-gradient(-45deg, #f8f8f8, #f8f8f8 4px, #eee 4px, #eee 8px) !important;
+    border: 1px dashed rgba(0, 0, 0, .18);
+  }
+
+  .sc-synthetic strong {
+    color: #888;
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .sc-synthetic .sc-age {
+    color: #aaa;
+  }
+
+  .sc-footnote {
+    font-size: .85rem;
+    color: #605e5c;
+    margin-top: .35rem;
+  }
+
+  .legend {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin: .35rem 0 .6rem;
+  }
+
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    margin-right: .75rem;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .legend-item.off {
+    opacity: .4;
+  }
+
+  .legend-item.off .legend-sw {
+    background: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(0, 0, 0, .12) 2px, rgba(0, 0, 0, .12) 4px) !important;
+  }
+
+  .rank-col {
+    min-width: 8rem;
+  }
+
+  /* ---- Import panel ---- */
+  .imp-panel {
+    background: #f9f9ff;
+    border: 1px solid #d0d0e8;
+  }
+
+  .imp-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid #e1dfdd;
+    margin-bottom: .75rem;
+  }
+
+  .imp-tab {
+    padding: .45rem .9rem;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 13.5px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #605e5c;
+    background: transparent;
+    transition: background .15s;
+    margin-bottom: -2px;
+  }
+
+  .imp-tab:hover {
+    background: #f3f2f1;
+  }
+
+  .imp-tab.active {
+    color: var(--eq-red, #FF1243);
+    font-weight: 600;
+    border-bottom-color: var(--eq-red, #FF1243);
+    background: transparent;
+  }
+
+  .imp-body {
+    display: none;
+  }
+
+  .imp-body.active {
+    display: block;
+  }
+
+  .imp-status {
+    font-size: 13px;
+    margin-top: .5rem;
+    padding: 6px 10px;
+    border-radius: 4px;
+  }
+
+  .imp-status.ok {
+    background: #e6f9e6;
+    color: #2e7d32;
+  }
+
+  .imp-status.err {
+    background: #ffeaea;
+    color: #c62828;
+  }
+
+  .imp-status.info {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+
+  .imp-preview {
+    max-height: 280px;
+    overflow: auto;
+    margin-top: .5rem;
+    font-size: 12.5px;
+  }
+
+  .btn-ingest {
+    background: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+  }
+
+  .btn-ingest:hover {
+    background: #0b5ed7;
+    border-color: #0b5ed7;
+  }
+
+  /* ---- Examples popup ---- */
+  .examples-wrap {
+    position: relative;
+    display: inline-block;
+  }
+
+  .examples-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 100;
+    min-width: 26rem;
+    max-width: 36rem;
+    background: #fff;
+    border: 1px solid #d0d0e8;
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .14);
+    padding: .5rem 0;
+    margin-top: 4px;
+    font-size: 13px;
+  }
+
+  .examples-popup.open {
+    display: block;
+  }
+
+  .examples-popup .ex-item {
+    padding: .35rem .75rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .examples-popup .ex-item:hover {
+    background: #f3f2f1;
+  }
+
+  .examples-popup .ex-item code {
+    font-size: 12.5px;
+    color: #007079;
+    word-break: break-all;
+  }
+
+  .examples-popup .ex-item .ex-desc {
+    font-size: 11.5px;
+    color: #605e5c;
+    margin-top: 1px;
+  }
+
+  .examples-popup .ex-hdr {
+    padding: .25rem .75rem;
+    font-weight: 600;
+    font-size: 12px;
+    color: #605e5c;
+    border-bottom: 1px solid #eee;
+    margin-bottom: .2rem;
+  }
 </style>
 
 <!-- Search -->
@@ -123,7 +350,8 @@
     <span id="search-status" class="muted"></span>
   </div>
   <div style="margin-top:.5rem;">
-    <label for="strat-results">Results <span class="muted" style="font-weight:normal;font-size:.82rem;">(Columns, Ranks &amp; Units)</span></label>
+    <label for="strat-results">Results <span class="muted" style="font-weight:normal;font-size:.82rem;">(Columns, Ranks
+        &amp; Units)</span></label>
     <select id="strat-results" size="7" style="width:100%;">
       <option value="">- no results -</option>
     </select>
@@ -134,10 +362,13 @@
   <div style="margin-top:.6rem; padding-top:.5rem; border-top:1px solid #e1dfdd;">
     <label for="direct-id" style="font-size:13px; font-weight:600;">Load by Record ID</label>
     <div style="display:flex;gap:.4rem;align-items:center;margin-top:.2rem;">
-      <input id="direct-id" type="text" placeholder="dev:work-product-component--StratigraphicColumn:… or …RankInterpretation:… or …UnitInterpretation:…" style="flex:1;font-size:13px;" />
+      <input id="direct-id" type="text"
+        placeholder="dev:work-product-component--StratigraphicColumn:… or …RankInterpretation:… or …UnitInterpretation:…"
+        style="flex:1;font-size:13px;" />
       <button class="btn" id="btn-direct-load" type="button" style="white-space:nowrap;">Load</button>
     </div>
-    <div class="muted" style="font-size:.8rem;margin-top:.15rem;">Paste a Column, RankInterpretation or UnitInterpretation record ID to load it directly.</div>
+    <div class="muted" style="font-size:.8rem;margin-top:.15rem;">Paste a Column, RankInterpretation or
+      UnitInterpretation record ID to load it directly.</div>
   </div>
 </section>
 
@@ -152,40 +383,50 @@
     Ages displayed as supplementary information within each cell.
   </div>
 
-    <!-- Horizon Generation Panel (shown after column is loaded) -->
-  <div id="horizon-panel" style="display:none; margin-top:1rem; padding:.75rem; border:1px solid #c8e6c9; border-radius:6px; background:#f1f8f2;">
+  <!-- Horizon Generation Panel (shown after column is loaded) -->
+  <div id="horizon-panel"
+    style="display:none; margin-top:1rem; padding:.75rem; border:1px solid #c8e6c9; border-radius:6px; background:#f1f8f2;">
     <div style="font-weight:600; font-size:14px; margin-bottom:.2rem; color:#2e7d32;">
       Generate Horizons from Unit Boundaries
     </div>
     <p class="muted" style="font-size:.82rem; margin:0 0 .5rem;">
       Derive <code>HorizonInterpretation</code> records from the age boundaries of units in this column.
-      Each unique boundary age produces one horizon. <strong>Existing</strong> horizons are kept - only missing boundaries are generated.
+      Each unique boundary age produces one horizon. <strong>Existing</strong> horizons are kept - only missing
+      boundaries are generated.
     </p>
     <div id="horizon-info" class="muted" style="font-size:13px; margin-bottom:.4rem;"></div>
     <div style="display:flex; gap:.5rem; align-items:center;">
-      <button class="btn" id="btn-horizon-preview" type="button" title="Preview generated horizons without ingesting">Preview</button>
-      <button class="btn btn-ingest" id="btn-horizon-ingest" type="button" title="Generate and ingest horizons to OSDU Storage">Generate &amp; Ingest to OSDU</button>
+      <button class="btn" id="btn-horizon-preview" type="button"
+        title="Preview generated horizons without ingesting">Preview</button>
+      <button class="btn btn-ingest" id="btn-horizon-ingest" type="button"
+        title="Generate and ingest horizons to OSDU Storage">Generate &amp; Ingest to OSDU</button>
       <span id="horizon-status" class="muted" style="font-size:13px;"></span>
     </div>
-    <div id="horizon-result" style="display:none; margin-top:.5rem; font-size:13px; padding:.5rem; border-radius:4px;"></div>
+    <div id="horizon-result" style="display:none; margin-top:.5rem; font-size:13px; padding:.5rem; border-radius:4px;">
+    </div>
   </div>
 
   <!-- Unit Generation Panel (inverse: horizons → units) -->
-  <div id="unitgen-panel" style="display:none; margin-top:1rem; padding:.75rem; border:1px solid #bbdefb; border-radius:6px; background:#e3f2fd;">
+  <div id="unitgen-panel"
+    style="display:none; margin-top:1rem; padding:.75rem; border:1px solid #bbdefb; border-radius:6px; background:#e3f2fd;">
     <div style="font-weight:600; font-size:14px; margin-bottom:.2rem; color:#1565c0;">
       Generate Units from Horizon Boundaries
     </div>
     <p class="muted" style="font-size:.82rem; margin:0 0 .5rem;">
       Derive <code>StratigraphicUnitInterpretation</code> records from consecutive horizon boundaries.
-      Each pair of adjacent horizons (sorted by age) produces one unit interval. <strong>Existing</strong> units are kept - only missing intervals are generated.
+      Each pair of adjacent horizons (sorted by age) produces one unit interval. <strong>Existing</strong> units are
+      kept - only missing intervals are generated.
     </p>
     <div id="unitgen-info" class="muted" style="font-size:13px; margin-bottom:.4rem;"></div>
     <div style="display:flex; gap:.5rem; align-items:center;">
-      <button class="btn" id="btn-unitgen-preview" type="button" title="Preview generated units without ingesting">Preview</button>
-      <button class="btn btn-ingest" id="btn-unitgen-ingest" type="button" title="Generate and ingest units to OSDU Storage">Generate &amp; Ingest to OSDU</button>
+      <button class="btn" id="btn-unitgen-preview" type="button"
+        title="Preview generated units without ingesting">Preview</button>
+      <button class="btn btn-ingest" id="btn-unitgen-ingest" type="button"
+        title="Generate and ingest units to OSDU Storage">Generate &amp; Ingest to OSDU</button>
       <span id="unitgen-status" class="muted" style="font-size:13px;"></span>
     </div>
-    <div id="unitgen-result" style="display:none; margin-top:.5rem; font-size:13px; padding:.5rem; border-radius:4px;"></div>
+    <div id="unitgen-result" style="display:none; margin-top:.5rem; font-size:13px; padding:.5rem; border-radius:4px;">
+    </div>
   </div>
 
   <details style="margin-top:.75rem;">
@@ -198,167 +439,198 @@
 
 <!-- Import / Ingest (always visible, lowermost section) -->
 <section class="sc-wrap sc-panel imp-panel" style="margin-top:.75rem;">
-    <h3 style="margin:0 0 .5rem 0;">Import &amp; Ingest Stratigraphic Columns</h3>
-    <div class="imp-tabs">
-      <span class="imp-tab active" data-tab="ow">OpenWorks JSON</span>
-      <span class="imp-tab" data-tab="smda">SMDA API</span>
-      <span class="imp-tab" data-tab="file">OSDU Bundle File</span>
-      <span class="imp-tab" data-tab="rddms">Push to RDDMS</span>
-    </div>
+  <h3 style="margin:0 0 .5rem 0;">Import &amp; Ingest Stratigraphic Columns</h3>
+  <div class="imp-tabs">
+    <span class="imp-tab active" data-tab="ow">OpenWorks JSON</span>
+    <span class="imp-tab" data-tab="smda">SMDA API</span>
+    <span class="imp-tab" data-tab="file">OSDU Bundle File</span>
+    <span class="imp-tab" data-tab="rddms">Push to RDDMS</span>
+  </div>
 
-    <!-- Tab: OpenWorks JSON upload -->
-    <div class="imp-body active" id="imp-ow">
-      <p class="muted" style="margin:0 0 .5rem;">Upload an OpenWorks JSON export with <code>{"StratColumn":{"Name":"..."}, "Units":[...]}</code> structure.</p>
-      <div class="row" style="grid-template-columns:160px 1fr;">
-        <label for="ow-file">OW JSON File</label>
-        <input id="ow-file" type="file" accept=".json" />
-        <label for="ow-partition">OSDU Partition</label>
-        <input id="ow-partition" type="text" value="{{ partition }}" />
-      </div>
-      <div style="display:flex;gap:.5rem;align-items:center;margin-top:.4rem;">
-        <button class="btn" id="btn-ow-convert" type="button" title="Parse OpenWorks JSON and convert to OSDU WPC records (preview only, nothing sent yet)">Convert to OSDU</button>
-        <button class="btn btn-ingest" id="btn-ow-storage" type="button" disabled title="Send each record to the OSDU Storage API">Send to OSDU</button>
-        <button class="btn" id="btn-ow-download" type="button" disabled title="Save the OSDU WPC bundle as a local JSON file">Download Bundle</button>
-      </div>
-      <details class="muted" style="font-size:.8rem;margin-top:.4rem;">
-        <summary style="cursor:pointer;">What do these buttons do?</summary>
-        <ul style="margin:.3rem 0 0 1rem;line-height:1.6;">
-          <li><strong>Convert to OSDU</strong> - Parses the uploaded OpenWorks JSON and converts it into OSDU WPC records (StratigraphicColumn + ColumnRankInterpretation + UnitInterpretation). Nothing is sent yet - preview the result first.</li>
-          <li><strong>Send to OSDU</strong> - Writes each record to the <em>OSDU Storage API</em> in batches. Creates the stratigraphic column and all its components in the OSDU records catalog.</li>
-          <li><strong>Download Bundle</strong> - Saves the OSDU WPC bundle as a <code>.json</code> file for inspection, version control, or later upload.</li>
-        </ul>
-      </details>
-      <div id="ow-status" class="imp-status info" style="display:none;"></div>
-      <div id="ow-preview" class="imp-preview"></div>
+  <!-- Tab: OpenWorks JSON upload -->
+  <div class="imp-body active" id="imp-ow">
+    <p class="muted" style="margin:0 0 .5rem;">Upload an OpenWorks JSON export with
+      <code>{"StratColumn":{"Name":"..."}, "Units":[...]}</code> structure.</p>
+    <div class="row" style="grid-template-columns:160px 1fr;">
+      <label for="ow-file">OW JSON File</label>
+      <input id="ow-file" type="file" accept=".json" />
+      <label for="ow-partition">OSDU Partition</label>
+      <input id="ow-partition" type="text" value="{{ partition }}" />
     </div>
+    <div style="display:flex;gap:.5rem;align-items:center;margin-top:.4rem;">
+      <button class="btn" id="btn-ow-convert" type="button"
+        title="Parse OpenWorks JSON and convert to OSDU WPC records (preview only, nothing sent yet)">Convert to
+        OSDU</button>
+      <button class="btn btn-ingest" id="btn-ow-storage" type="button" disabled
+        title="Send each record to the OSDU Storage API">Send to OSDU</button>
+      <button class="btn" id="btn-ow-download" type="button" disabled
+        title="Save the OSDU WPC bundle as a local JSON file">Download Bundle</button>
+    </div>
+    <details class="muted" style="font-size:.8rem;margin-top:.4rem;">
+      <summary style="cursor:pointer;">What do these buttons do?</summary>
+      <ul style="margin:.3rem 0 0 1rem;line-height:1.6;">
+        <li><strong>Convert to OSDU</strong> - Parses the uploaded OpenWorks JSON and converts it into OSDU WPC records
+          (StratigraphicColumn + ColumnRankInterpretation + UnitInterpretation). Nothing is sent yet - preview the
+          result first.</li>
+        <li><strong>Send to OSDU</strong> - Writes each record to the <em>OSDU Storage API</em> in batches. Creates the
+          stratigraphic column and all its components in the OSDU records catalog.</li>
+        <li><strong>Download Bundle</strong> - Saves the OSDU WPC bundle as a <code>.json</code> file for inspection,
+          version control, or later upload.</li>
+      </ul>
+    </details>
+    <div id="ow-status" class="imp-status info" style="display:none;"></div>
+    <div id="ow-preview" class="imp-preview"></div>
+  </div>
 
-    <!-- Tab: SMDA API fetch -->
-    <div class="imp-body" id="imp-smda">
-      <p class="muted" style="margin:0 0 .5rem;">
-        Fetch a stratigraphic column from the SMDA API Gateway and convert to OSDU format.
-        <span id="smda-auth-hint" style="margin-left:.5rem;"></span>
+  <!-- Tab: SMDA API fetch -->
+  <div class="imp-body" id="imp-smda">
+    <p class="muted" style="margin:0 0 .5rem;">
+      Fetch a stratigraphic column from the SMDA API Gateway and convert to OSDU format.
+      <span id="smda-auth-hint" style="margin-left:.5rem;"></span>
+    </p>
+    <div class="row" style="grid-template-columns:160px 1fr;">
+      <label for="smda-url">SMDA Base URL</label>
+      <input id="smda-url" type="text" value="https://api.gateway.equinor.com" />
+      <label for="smda-col">Column Identifier</label>
+      <div style="display:flex;gap:.4rem;">
+        <input id="smda-col" type="text" placeholder="e.g. NCS Lithostratigraphy" style="flex:1;" />
+        <button class="btn" id="btn-smda-list" type="button"
+          title="List available columns from the SMDA API">List</button>
+      </div>
+      <label for="smda-partition">OSDU Partition</label>
+      <input id="smda-partition" type="text" value="{{ partition }}" />
+    </div>
+    <div id="smda-columns-list" style="display:none;margin-bottom:.5rem;">
+      <label>Available columns <small class="muted">(Ctrl/Shift-click to select multiple)</small>
+        <input id="smda-columns-filter" type="text" placeholder="Filter…"
+          style="width:160px;font-size:12px;padding:2px 6px;margin-left:.5rem;" />
+      </label>
+      <select id="smda-columns-sel" size="10" multiple style="width:100%;font-size:13px;"></select>
+      <span id="smda-columns-count" class="muted" style="font-size:12px;"></span>
+    </div>
+    <div style="display:flex;gap:.5rem;align-items:center;margin-top:.4rem;flex-wrap:wrap;">
+      <button class="btn" id="btn-smda-fetch" type="button"
+        title="Fetch strat units from the SMDA API and convert to OSDU WPC records (preview only)">Fetch &amp;
+        Convert</button>
+      <button class="btn btn-ingest" id="btn-smda-storage" type="button" disabled
+        title="Send each record to the OSDU Storage API">Send to OSDU</button>
+      <button class="btn" id="btn-smda-download" type="button" disabled
+        title="Save the OSDU WPC bundle as a local JSON file">Download Bundle</button>
+      <span style="border-left:1px solid #ccc;height:1.4em;"></span>
+      <button class="btn btn-ingest" id="btn-smda-batch" type="button"
+        title="Fetch &amp; ingest all selected columns in one go">Batch Fetch &amp; Ingest Selected</button>
+    </div>
+    <details class="muted" style="font-size:.8rem;margin-top:.4rem;">
+      <summary style="cursor:pointer;">What do these buttons do?</summary>
+      <ul style="margin:.3rem 0 0 1rem;line-height:1.6;">
+        <li><strong>Fetch &amp; Convert</strong> - Calls the SMDA REST API to retrieve all stratigraphic units for the
+          selected column, then converts them to OSDU WPC records. Preview the result below - nothing is written to OSDU
+          yet.</li>
+        <li><strong>Send to OSDU</strong> - Writes each record to the <em>OSDU Storage API</em> in batches. Creates the
+          column, ranks, and units in the OSDU records catalog.</li>
+        <li><strong>Download Bundle</strong> - Saves the OSDU WPC bundle as a <code>.json</code> file for inspection or
+          later upload.</li>
+        <li><strong>Batch Fetch &amp; Ingest Selected</strong> - Fetches <em>and</em> sends to OSDU each selected column
+          in sequence. Use Ctrl-click or Shift-click to select multiple columns in the list.</li>
+      </ul>
+    </details>
+    <div id="smda-status" class="imp-status info" style="display:none;"></div>
+    <div id="smda-preview" class="imp-preview"></div>
+
+    <!-- RDDMS push (appears after successful fetch) -->
+    <div id="smda-rddms-panel"
+      style="display:none; margin-top:.75rem; padding:.6rem; border:1px solid #cde; border-radius:6px; background:#f4f8fa;">
+      <div style="font-weight:600; font-size:13px; margin-bottom:.2rem; color:#007079;">
+        Push to Reservoir DDMS as RESQML
+      </div>
+      <p class="muted" style="font-size:.8rem; margin:0 0 .4rem;">
+        Converts the SMDA column to RESQML 2.0.1 objects (StratigraphicColumn, ColumnRankInterpretation,
+        UnitInterpretation)
+        and pushes them to the Reservoir DDMS dataspace. This is a separate path from OSDU ingestion - it stores the
+        stratigraphic model in the RESQML-native reservoir data store.
       </p>
-      <div class="row" style="grid-template-columns:160px 1fr;">
-        <label for="smda-url">SMDA Base URL</label>
-        <input id="smda-url" type="text" value="https://api.gateway.equinor.com" />
-        <label for="smda-col">Column Identifier</label>
-        <div style="display:flex;gap:.4rem;">
-          <input id="smda-col" type="text" placeholder="e.g. NCS Lithostratigraphy" style="flex:1;" />
-          <button class="btn" id="btn-smda-list" type="button" title="List available columns from the SMDA API">List</button>
-        </div>
-        <label for="smda-partition">OSDU Partition</label>
-        <input id="smda-partition" type="text" value="{{ partition }}" />
-      </div>
-      <div id="smda-columns-list" style="display:none;margin-bottom:.5rem;">
-        <label>Available columns <small class="muted">(Ctrl/Shift-click to select multiple)</small>
-          <input id="smda-columns-filter" type="text" placeholder="Filter…" style="width:160px;font-size:12px;padding:2px 6px;margin-left:.5rem;" />
-        </label>
-        <select id="smda-columns-sel" size="10" multiple style="width:100%;font-size:13px;"></select>
-        <span id="smda-columns-count" class="muted" style="font-size:12px;"></span>
-      </div>
-      <div style="display:flex;gap:.5rem;align-items:center;margin-top:.4rem;flex-wrap:wrap;">
-        <button class="btn" id="btn-smda-fetch" type="button" title="Fetch strat units from the SMDA API and convert to OSDU WPC records (preview only)">Fetch &amp; Convert</button>
-        <button class="btn btn-ingest" id="btn-smda-storage" type="button" disabled title="Send each record to the OSDU Storage API">Send to OSDU</button>
-        <button class="btn" id="btn-smda-download" type="button" disabled title="Save the OSDU WPC bundle as a local JSON file">Download Bundle</button>
-        <span style="border-left:1px solid #ccc;height:1.4em;"></span>
-        <button class="btn btn-ingest" id="btn-smda-batch" type="button" title="Fetch &amp; ingest all selected columns in one go">Batch Fetch &amp; Ingest Selected</button>
-      </div>
-      <details class="muted" style="font-size:.8rem;margin-top:.4rem;">
-        <summary style="cursor:pointer;">What do these buttons do?</summary>
-        <ul style="margin:.3rem 0 0 1rem;line-height:1.6;">
-          <li><strong>Fetch &amp; Convert</strong> - Calls the SMDA REST API to retrieve all stratigraphic units for the selected column, then converts them to OSDU WPC records. Preview the result below - nothing is written to OSDU yet.</li>
-          <li><strong>Send to OSDU</strong> - Writes each record to the <em>OSDU Storage API</em> in batches. Creates the column, ranks, and units in the OSDU records catalog.</li>
-          <li><strong>Download Bundle</strong> - Saves the OSDU WPC bundle as a <code>.json</code> file for inspection or later upload.</li>
-          <li><strong>Batch Fetch &amp; Ingest Selected</strong> - Fetches <em>and</em> sends to OSDU each selected column in sequence. Use Ctrl-click or Shift-click to select multiple columns in the list.</li>
-        </ul>
-      </details>
-      <div id="smda-status" class="imp-status info" style="display:none;"></div>
-      <div id="smda-preview" class="imp-preview"></div>
-
-      <!-- RDDMS push (appears after successful fetch) -->
-      <div id="smda-rddms-panel" style="display:none; margin-top:.75rem; padding:.6rem; border:1px solid #cde; border-radius:6px; background:#f4f8fa;">
-        <div style="font-weight:600; font-size:13px; margin-bottom:.2rem; color:#007079;">
-          Push to Reservoir DDMS as RESQML
-        </div>
-        <p class="muted" style="font-size:.8rem; margin:0 0 .4rem;">
-          Converts the SMDA column to RESQML 2.0.1 objects (StratigraphicColumn, ColumnRankInterpretation, UnitInterpretation)
-          and pushes them to the Reservoir DDMS dataspace. This is a separate path from OSDU ingestion - it stores the
-          stratigraphic model in the RESQML-native reservoir data store.
-        </p>
-        <div class="row" style="grid-template-columns:140px 1fr auto; gap:.3rem; align-items:center;">
-          <label for="smda-rddms-ds">Dataspace</label>
-          <div style="display:flex;gap:.3rem;align-items:center;">
-            <input id="smda-rddms-ds" type="text" value="" style="flex:1;" placeholder="e.g. project/strat" />
-            <button class="btn" id="btn-smda-rddms-list" type="button" title="List existing dataspaces" style="white-space:nowrap;">List</button>
-          </div>
-        </div>
-        <div id="smda-rddms-ds-picker" style="display:none; margin:.3rem 0;">
-          <select id="smda-rddms-ds-sel" size="4" style="width:100%; font-size:13px;"></select>
-        </div>
-        <div style="display:flex; gap:.5rem; align-items:center; margin-top:.4rem;">
-          <label style="font-size:13px; display:flex; align-items:center; gap:.3rem; margin:0;">
-            <input id="smda-rddms-create-ds" type="checkbox" checked /> Create dataspace if not exists
-          </label>
-        </div>
-        <div style="display:flex; gap:.5rem; align-items:center; margin-top:.4rem;">
-          <button class="btn btn-ingest" id="btn-smda-rddms-push" type="button">Push to RDDMS</button>
-          <span id="smda-rddms-status" class="muted" style="font-size:13px;"></span>
-        </div>
-        <div id="smda-rddms-result" style="display:none; margin-top:.4rem; font-size:13px; padding:.4rem; border-radius:4px;"></div>
-      </div>
-    </div>
-
-    <!-- Tab: OSDU Bundle file (direct upload) -->
-    <div class="imp-body" id="imp-file">
-      <p class="muted" style="margin:0 0 .5rem;">Upload a pre-built OSDU WPC bundle JSON (<code>{"records":[...]}</code>) for direct ingestion. This is typically a file previously exported via "Download Bundle" from the other tabs, or hand-crafted.</p>
-      <div class="row" style="grid-template-columns:160px 1fr;">
-        <label for="bundle-file">Bundle JSON</label>
-        <input id="bundle-file" type="file" accept=".json" />
-        <label for="bundle-partition">OSDU Partition</label>
-        <input id="bundle-partition" type="text" value="{{ partition }}" />
-      </div>
-      <div style="display:flex;gap:.5rem;align-items:center;margin-top:.4rem;">
-        <button class="btn btn-ingest" id="btn-bundle-storage" type="button" title="Send each record to the OSDU Storage API">Send to OSDU</button>
-      </div>
-      <details class="muted" style="font-size:.8rem;margin-top:.4rem;">
-        <summary style="cursor:pointer;">What does this do?</summary>
-        <ul style="margin:.3rem 0 0 1rem;line-height:1.6;">
-          <li><strong>Send to OSDU</strong> - Writes each record from the uploaded bundle to the <em>OSDU Storage API</em> in batches. Creates stratigraphic columns, ranks, and units in the OSDU records catalog.</li>
-        </ul>
-      </details>
-      <div id="bundle-status" class="imp-status info" style="display:none;"></div>
-      <div id="bundle-preview" class="imp-preview"></div>
-    </div>
-    <!-- Tab: Push to Reservoir DDMS (RESQML) -->
-    <div class="imp-body" id="imp-rddms">
-      <p class="muted" style="margin:0 0 .5rem;">
-        Push a loaded OSDU stratigraphic column to the Reservoir DDMS as RESQML 2.0.1 objects.
-        First load a column from the search panel, then use this tab to push it.
-      </p>
-      <div id="rddms-col-info" class="muted" style="font-size:13px; margin-bottom:.5rem; font-style:italic;">
-        No column loaded yet - load one from the search panel first.
-      </div>
-      <div class="row" style="grid-template-columns:140px 1fr auto; gap:.4rem; align-items:center;">
-        <label for="rddms-ds">Dataspace</label>
-        <div style="display:flex;gap:.4rem;align-items:center;">
-          <input id="rddms-ds" type="text" value="" style="flex:1;" placeholder="e.g. project/strat" />
-          <button class="btn" id="btn-rddms-list-ds" type="button" title="List existing dataspaces" style="white-space:nowrap;">List</button>
+      <div class="row" style="grid-template-columns:140px 1fr auto; gap:.3rem; align-items:center;">
+        <label for="smda-rddms-ds">Dataspace</label>
+        <div style="display:flex;gap:.3rem;align-items:center;">
+          <input id="smda-rddms-ds" type="text" value="" style="flex:1;" placeholder="e.g. project/strat" />
+          <button class="btn" id="btn-smda-rddms-list" type="button" title="List existing dataspaces"
+            style="white-space:nowrap;">List</button>
         </div>
       </div>
-      <div id="rddms-ds-picker" style="display:none; margin:.4rem 0;">
-        <select id="rddms-ds-sel" size="4" style="width:100%; font-size:13px;"></select>
+      <div id="smda-rddms-ds-picker" style="display:none; margin:.3rem 0;">
+        <select id="smda-rddms-ds-sel" size="4" style="width:100%; font-size:13px;"></select>
       </div>
-      <div style="display:flex; gap:.5rem; align-items:center; margin-top:.5rem;">
+      <div style="display:flex; gap:.5rem; align-items:center; margin-top:.4rem;">
         <label style="font-size:13px; display:flex; align-items:center; gap:.3rem; margin:0;">
-          <input id="rddms-create-ds" type="checkbox" checked /> Create dataspace if not exists
+          <input id="smda-rddms-create-ds" type="checkbox" checked /> Create dataspace if not exists
         </label>
       </div>
-      <div style="display:flex; gap:.5rem; align-items:center; margin-top:.5rem;">
-        <button class="btn btn-ingest" id="btn-rddms-push" type="button" disabled>Push to RDDMS</button>
-        <span id="rddms-status" class="muted" style="font-size:13px;"></span>
+      <div style="display:flex; gap:.5rem; align-items:center; margin-top:.4rem;">
+        <button class="btn btn-ingest" id="btn-smda-rddms-push" type="button">Push to RDDMS</button>
+        <span id="smda-rddms-status" class="muted" style="font-size:13px;"></span>
       </div>
-      <div id="rddms-result" style="display:none; margin-top:.5rem; font-size:13px; padding:.5rem; border-radius:4px;"></div>
+      <div id="smda-rddms-result"
+        style="display:none; margin-top:.4rem; font-size:13px; padding:.4rem; border-radius:4px;"></div>
     </div>
+  </div>
+
+  <!-- Tab: OSDU Bundle file (direct upload) -->
+  <div class="imp-body" id="imp-file">
+    <p class="muted" style="margin:0 0 .5rem;">Upload a pre-built OSDU WPC bundle JSON (<code>{"records":[...]}</code>)
+      for direct ingestion. This is typically a file previously exported via "Download Bundle" from the other tabs, or
+      hand-crafted.</p>
+    <div class="row" style="grid-template-columns:160px 1fr;">
+      <label for="bundle-file">Bundle JSON</label>
+      <input id="bundle-file" type="file" accept=".json" />
+      <label for="bundle-partition">OSDU Partition</label>
+      <input id="bundle-partition" type="text" value="{{ partition }}" />
+    </div>
+    <div style="display:flex;gap:.5rem;align-items:center;margin-top:.4rem;">
+      <button class="btn btn-ingest" id="btn-bundle-storage" type="button"
+        title="Send each record to the OSDU Storage API">Send to OSDU</button>
+    </div>
+    <details class="muted" style="font-size:.8rem;margin-top:.4rem;">
+      <summary style="cursor:pointer;">What does this do?</summary>
+      <ul style="margin:.3rem 0 0 1rem;line-height:1.6;">
+        <li><strong>Send to OSDU</strong> - Writes each record from the uploaded bundle to the <em>OSDU Storage API</em>
+          in batches. Creates stratigraphic columns, ranks, and units in the OSDU records catalog.</li>
+      </ul>
+    </details>
+    <div id="bundle-status" class="imp-status info" style="display:none;"></div>
+    <div id="bundle-preview" class="imp-preview"></div>
+  </div>
+  <!-- Tab: Push to Reservoir DDMS (RESQML) -->
+  <div class="imp-body" id="imp-rddms">
+    <p class="muted" style="margin:0 0 .5rem;">
+      Push a loaded OSDU stratigraphic column to the Reservoir DDMS as RESQML 2.0.1 objects.
+      First load a column from the search panel, then use this tab to push it.
+    </p>
+    <div id="rddms-col-info" class="muted" style="font-size:13px; margin-bottom:.5rem; font-style:italic;">
+      No column loaded yet - load one from the search panel first.
+    </div>
+    <div class="row" style="grid-template-columns:140px 1fr auto; gap:.4rem; align-items:center;">
+      <label for="rddms-ds">Dataspace</label>
+      <div style="display:flex;gap:.4rem;align-items:center;">
+        <input id="rddms-ds" type="text" value="" style="flex:1;" placeholder="e.g. project/strat" />
+        <button class="btn" id="btn-rddms-list-ds" type="button" title="List existing dataspaces"
+          style="white-space:nowrap;">List</button>
+      </div>
+    </div>
+    <div id="rddms-ds-picker" style="display:none; margin:.4rem 0;">
+      <select id="rddms-ds-sel" size="4" style="width:100%; font-size:13px;"></select>
+    </div>
+    <div style="display:flex; gap:.5rem; align-items:center; margin-top:.5rem;">
+      <label style="font-size:13px; display:flex; align-items:center; gap:.3rem; margin:0;">
+        <input id="rddms-create-ds" type="checkbox" checked /> Create dataspace if not exists
+      </label>
+    </div>
+    <div style="display:flex; gap:.5rem; align-items:center; margin-top:.5rem;">
+      <button class="btn btn-ingest" id="btn-rddms-push" type="button" disabled>Push to RDDMS</button>
+      <span id="rddms-status" class="muted" style="font-size:13px;"></span>
+    </div>
+    <div id="rddms-result" style="display:none; margin-top:.5rem; font-size:13px; padding:.5rem; border-radius:4px;">
+    </div>
+  </div>
 </section>
 
 <script>window.__STRAT_PARTITION = '{{ partition }}';</script>
