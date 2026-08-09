@@ -77,6 +77,14 @@
   /* ── Main content ── */
   main { padding: 1.25rem 1.5rem; max-width: 1440px; margin: 0 auto; }
 
+  /* ── Footer ── */
+  .site-footer {
+    margin-top: 3rem; padding: 1rem 1.5rem; text-align: center;
+    font-size: 12px; color: var(--eq-grey); border-top: 1px solid var(--eq-border);
+  }
+  .site-footer a { color: var(--eq-grey); text-decoration: underline; }
+  .site-footer a:hover { color: var(--eq-link); }
+
   /* ── Shared components ── */
   .muted { color: var(--eq-grey); }
   .banner { background: var(--eq-warn-bg); color: var(--eq-charcoal); border-left: 4px solid var(--eq-warn-border); padding: 10px 14px; margin: 0 0 1rem; border-radius: 0 var(--radius) var(--radius) 0; font-size: 13.5px; }
@@ -181,6 +189,9 @@
   <main>
     {% block content %}{% endblock %}
   </main>
+  <footer class="site-footer">
+    © Equinor ASA · Licensed under the <a href="https://github.com/equinor/ores/blob/main/LICENSE" target="_blank">Apache License 2.0</a>
+  </footer>
   <!-- INLINE: Build navigation immediately -->
 <script>
 (function () {

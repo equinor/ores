@@ -189,3 +189,10 @@ Detailed guides live in [`md/`](md/Readme.md):
 | [Volumes](md/Volumes.md) | ReservoirEstimatedVolumes schema |
 | [GeoLabelSet](md/GeoLabelSet.md) | GeoLabelSet headline KPIs |
 | [Query](md/Query.md) | Querying data: REST, ETP, GraphQL & OSDU Search |
+
+## License
+
+Copyright 2024 Equinor ASA
+
+Licensed under the [Apache License, Version 2.0](LICENSE).
+You may obtain a copy of the License at <http://www.apache.org/licenses/LICENSE-2.0>.
