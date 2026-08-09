@@ -1,13 +1,23 @@
 
 # OSDU Decision Gates with `BusinessDecision` - Implementation Guide
 
-> **Scope:** Model DG1…DG4 decisions as `osdu:wks:master-data--BusinessDecision:1.0.0` records, linking inputs and outputs using **activity parameters** and/or **persisted collections**. Use `CollaborationProject` as the cross-gate master-data namespace bridging System of Engagement (SoE) and System of Record (SoR). This guide summarizes options, pros/cons, and provides example payloads and diagrams.
+> **Scope:** Model any staged business decision - field development (DG1-DG4), well drilling, exploration, CCS, decommissioning - as `osdu:wks:master-data--BusinessDecision:1.0.0` records, linking inputs and outputs using **activity parameters** and/or **persisted collections**. Use `CollaborationProject` as the cross-gate master-data namespace bridging System of Engagement (SoE) and System of Record (SoR).
 
 ---
 
 ## 1. What `BusinessDecision` is designed for
 
 `BusinessDecision` records a technical/business decision and **inherits** `AbstractProjectActivity`, which provides the `Parameters[]` mechanism to express **inputs/outputs/context** relationships. It also defines typed properties for **DecisionLevel**, **ApprovalStatus**, **Risks**, and **Risk documents**.
+
+The schema is **domain-agnostic** - the same record structure models any staged decision process:
+
+| Decision type | Typical gates | Key evidence |
+|---------------|---------------|--------------|
+| Field development | DG1 → DG2 → DG3 → DG4 → FID | Volumes, geomodel, production forecast, risks |
+| Well drilling | Concept → DG2 → DG3 → Spud → TD → Handover | Well design, trajectory, cost estimate, hazards |
+| Exploration | Prospect ID → Drill Decision → Evaluate → Report | Play assessment, seismic, prospect risk |
+| CCS | Site Screen → Permit → FID → Inject → Monitor | Storage capacity, containment, MMV plan |
+| Decommissioning | COP → P&A Plan → Execute → Verify | Cost estimate, environmental assessment |
 
 - Schema: [BusinessDecision.1.0.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/Authoring/master-data/BusinessDecision.1.0.0.json)
 - Activity semantics: [AbstractProjectActivity](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/abstract/AbstractProjectActivity.1.2.0.md)
@@ -64,28 +74,34 @@ Many WPCs natively reference reservoir entities (e.g., `ReservoirEstimatedVolume
 
 ---
 
-## 3. Recommended pattern for DG1…DG4
+## 3. Recommended pattern
+
+Applies regardless of decision type (field dev, wells, exploration, CCS, etc.):
 
 1. **One `BusinessDecision` per gate**: set `DecisionLevelID`, `ApprovalStatusID`, dates, owners, summary.
 2. **One `CollaborationProject` per modelling discipline**: persists across gates as the SoE↔SoR namespace. Its `TrustedCollectionID` points to a `CollaborationProjectCollection` WPC that accumulates curated references.
 3. **Anchor the primary artifact** via `PriorActivityIDs`.
 4. **List inputs and outputs** in `Parameters[]` with `ParameterRole` = `input`/`output`/`context`.
-5. **Package gate evidence** into a `PersistedCollection` (DG2+).
+5. **Package gate evidence** into a `PersistedCollection` (later gates).
 6. **Risks & docs**: link via `RiskIDs` and `RiskAssessmentDocument`.
 
-**Cross-DG lifecycle:**
+**Cross-gate lifecycle:**
 ```mermaid
 graph LR
-  DG1["DG1 BD"] --> CP["CP<br/><i>master-data</i>"]
-  DG2["DG2 BD"] --> CP
-  DG3["DG3 BD"] --> CP
-  FID["FID BD"] --> CP
+  G1["Gate 1 BD"] --> CP["CP<br/><i>master-data</i>"]
+  G2["Gate 2 BD"] --> CP
+  G3["Gate 3 BD"] --> CP
+  GN["Gate N BD"] --> CP
   CP --> TC["TrustedCollection · WPC<br/><i>accumulates SoR refs per gate</i>"]
 ```
 
-**Typical kinds at decision gates:**
+**Typical evidence kinds (field development):**
 - Inputs: `Well`, `GenericRepresentation`, `VelocityModeling`, `ColumnBasedTable`, `ProductionValues`
 - Outputs: `GenericRepresentation`, `ReservoirEstimatedVolumes`, `ColumnBasedTable`
+
+**Typical evidence kinds (well drilling):**
+- Inputs: `Well`, `Wellbore`, `WellboreTrajectory`, `RiskAssessment`, cost estimate tables
+- Outputs: `WellActivityProgram`, completion records, test results
 
 ---
 
@@ -187,7 +203,7 @@ graph LR
 |-------|-------------|
 | `Name` | Human-readable gate title |
 | `ProjectName` | Project context |
-| `DecisionLevelID` | Reference to `DecisionLevel` (DG1-DG4) |
+| `DecisionLevelID` | Reference to `DecisionLevel` (any gate in the decision sequence) |
 | `ApprovalStatusID` | Reference to `DecisionApprovalStatus` |
 | `DecisionDueDate` | Target date |
 | `DecisionSummary` | Executive summary |
@@ -259,6 +275,6 @@ graph LR
 ## 10. Related guides
 
 - [Volumes](/howto/volumes) - ReservoirEstimatedVolumes WPC, raw vs aggregated
-- [Uncertainty](/howto/uncertainty) - FMU ensemble inputs & outputs in OSDU, Activity provenance
+- [Uncertainty](/howto/uncertainty) - Ensemble simulation inputs & outputs in OSDU, Activity provenance
 - [Risk](/howto/risk) - Risk master-data, mitigation documents, risk catalogs
 - [Drogon Demo](/howto/bd-demo) - DG package data model guide with full entity-relationship view
