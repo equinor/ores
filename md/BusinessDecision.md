@@ -179,7 +179,56 @@ graph LR
 
 ---
 
-## 6. Choosing between patterns
+## 6. Key fields reference
+
+### Identity & decision
+
+| Field | Description |
+|-------|-------------|
+| `Name` | Human-readable gate title |
+| `ProjectName` | Project context |
+| `DecisionLevelID` | Reference to `DecisionLevel` (DG1-DG4) |
+| `ApprovalStatusID` | Reference to `DecisionApprovalStatus` |
+| `DecisionDueDate` | Target date |
+| `DecisionSummary` | Executive summary |
+| `RiskAssessmentDocument` | Link to SRA document WPC |
+| `RiskIDs` | Array of `master-data--Risk` references |
+| `PriorActivityIDs` | Link to Activity that produced the evidence |
+
+### Personnel & governance
+
+| Field | Content |
+|-------|---------|
+| `Personnel[]` | Team members with `ProjectRoleID` |
+| `DecisionOwners[]` | Decision owner(s) |
+| `DecisionMakers[]` | Decision maker(s) |
+| `Remarks[]` | Structured recommendations |
+
+### Parameters[] roles
+
+| Role | Purpose | Typical records |
+|------|---------|-----------------|
+| Input | Primary evidence artifacts | REV, ColumnBasedTable, DevelopmentConcept, GeoLabelSet, grid/map WPCs |
+| InputReference | Context/scope anchors | Reservoir, ETPDataspace, prior-gate BD, PersistedCollection |
+| Output | Produced artifacts | GenericRepresentation, ColumnBasedTable |
+
+---
+
+## 7. Query patterns
+
+**Find all decisions for a reservoir:**
+```json
+{
+  "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+  "query": "\"<reservoir-uuid>\""
+}
+```
+
+**Compare volumes across gates:** For each BD, locate the REV stats WPC in `Parameters[]` → extract P10/P50/P90 totals → compute deltas.
+
+---
+
+## 8. Choosing between patterns
 
 | Pattern | Best for | Identity | Lifecycle |
 |---|---|---|---|
@@ -196,7 +245,7 @@ graph LR
 
 ---
 
-## 7. References
+## 9. References
 
 - `BusinessDecision` schema: [Community examples](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/Examples/master-data/BusinessDecision.1.0.0.json)
 - `CollaborationProject` schema: [ER doc](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/master-data/CollaborationProject.1.0.0.md)
@@ -207,7 +256,7 @@ graph LR
 
 ---
 
-## 8. Related guides
+## 10. Related guides
 
 - [Volumes](/howto/volumes) - ReservoirEstimatedVolumes WPC, raw vs aggregated
 - [Uncertainty](/howto/uncertainty) - FMU ensemble inputs & outputs in OSDU, Activity provenance
