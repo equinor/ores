@@ -4344,7 +4344,7 @@ function buildMermaidFromResqmlObjects(data) {
     lines.push('  DS["Dataspace"]');
     objs.forEach((t, i) => {
       const nid = 'type' + i;
-      lines.push(`  ${nid} ["${_shortType(t.name)}<br/><small>${t.count} objects</small>"]`);
+      lines.push(`  ${nid} ["${_sanitize(_shortType(t.name))}<br/><small>${t.count} objects</small>"]`);
       lines.push(`  DS --- ${nid}`);
     });
     return lines.join('\n');
