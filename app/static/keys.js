@@ -4285,7 +4285,7 @@ gqlTabGraph.addEventListener('click', () => {
   gqlGraphHint.style.display = '';
 });
 
-function _sanitize(s) { return (s || '').replace(/["<>]/g, '').replace(/[\[\](){}#&;]/g, ' ').substring(0, 60); }
+function _sanitize(s) { return (s || '').replace(/["<>]/g, '').replace(/[\[\](){}#&;|]/g, ' ').trim().substring(0, 60); }
 function _shortType(t) { return (t || '').replace(/^resqml\d+\.obj_/, '').replace(/application.*\./g, ''); }
 function _nodeId(uuid) { return 'n' + (uuid || 'x').replace(/[^a-zA-Z0-9]/g, '').substring(0, 12); }
 
@@ -4298,9 +4298,9 @@ function buildMermaidFromRelations(data) {
   lines.push(`  ${centerId} ["Query Object"]`);
   rels.forEach((r, i) => {
     const nid = _nodeId(r.uuid) + i;
-    const label = _sanitize(r.name) || _shortType(r.typeName || r.type_name);
-    const stype = _shortType(r.typeName || r.type_name);
-    lines.push(`  ${nid} ["${label}<br/><small>${stype}</small>"]`);
+    const label = _sanitize(r.name) || _sanitize(_shortType(r.typeName || r.type_name));
+    const stype = _sanitize(_shortType(r.typeName || r.type_name));
+    lines.push(`  ${nid} ["${label} : ${stype}"]`);
     if (r.direction === 'target') {
       lines.push(`  ${centerId} -->| target | ${nid} `);
     } else {
@@ -4318,15 +4318,16 @@ function buildMermaidFromDeepSearch(data) {
   ds.objects.forEach((obj, oi) => {
     const oid = _nodeId(obj.uuid) + oi;
     const oLabel = _sanitize(obj.title) || obj.uuid.substring(0, 8);
-    const oType = _shortType(obj.typeName || obj.type_name);
-    lines.push(`  ${oid} ["${oLabel}<br/><small>${oType}</small>"]`);
+    const oType = _sanitize(_shortType(obj.typeName || obj.type_name));
+    lines.push(`  ${oid} ["${oLabel} : ${oType}"]`);
     if (obj.properties && obj.properties.length) {
       obj.properties.forEach((p, pi) => {
         const pid = oid + 'p' + pi;
         const pLabel = _sanitize(p.title) || p.uuid.substring(0, 8);
-        const kind = p.kind || '';
-        const stats = p.statistics ? `min = ${p.statistics.minValue?.toFixed(2) ?? '?'} max = ${p.statistics.maxValue?.toFixed(2) ?? '?'} ` : '';
-        lines.push(`  ${pid} (["${pLabel}<br/><small>${kind} ${stats}</small>"])`);
+        const kind = _sanitize(p.kind || '');
+        const stats = p.statistics ? `min=${p.statistics.minValue?.toFixed(2) ?? '?'} max=${p.statistics.maxValue?.toFixed(2) ?? '?'}` : '';
+        const detail = [kind, stats].filter(Boolean).join(' ');
+        lines.push(`  ${pid} (["${pLabel} ${detail}"])`);
         lines.push(`  ${pid} -.->| property | ${oid} `);
       });
     }
@@ -4344,7 +4345,7 @@ function buildMermaidFromResqmlObjects(data) {
     lines.push('  DS["Dataspace"]');
     objs.forEach((t, i) => {
       const nid = 'type' + i;
-      lines.push(`  ${nid} ["${_sanitize(_shortType(t.name))}<br/><small>${t.count} objects</small>"]`);
+      lines.push(`  ${nid} ["${_sanitize(_shortType(t.name))} : ${t.count} objects"]`);
       lines.push(`  DS --- ${nid}`);
     });
     return lines.join('\n');
@@ -4366,7 +4367,8 @@ async function renderMermaidFromResponse(data) {
     const { svg } = await mermaid.render(id, code);
     gqlMermaid.innerHTML = svg;
   } catch (e) {
-    gqlMermaid.innerHTML = `< pre style = "color:#a80000;font-size:12px;" > Diagram error: ${e.message} \n\n${code}</pre > `;
+    const escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    gqlMermaid.innerHTML = `<pre style="color:#a80000;font-size:12px;">Diagram error: ${e.message.replace(/</g,'&lt;').replace(/>/g,'&gt;')}\n\n${escaped}</pre>`;
   }
 }
 
