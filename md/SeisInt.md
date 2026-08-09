@@ -1,4 +1,4 @@
-# Seismic Interpretation — Data Model & Workflow Guide
+# Seismic Interpretation - Data Model & Workflow Guide
 
 This guide explains how seismic interpretation results are stored in OSDU + RDDMS: from picking horizons on a seismic cube, through time-domain surfaces, to depth-converted maps and derived properties.
 
@@ -10,11 +10,11 @@ An interpreter starts with a **seismic cube** and produces **surfaces, picks, an
 
 ```mermaid
 flowchart TD
-    CUBE["SeismicTraceData\n(3D seismic cube in SDMS)"] --> PICK["Horizon picks\n(scattered XYZ points)"]
-    CUBE --> FSTICK["Fault sticks\n(polylines on sections)"]
-    PICK --> SH["SeismicHorizon\n(gridded TWT surface)"]
-    SH --> SM["StructureMap\n(depth-converted surface)"]
-    CUBE --> PROP["Seismic properties\n(amplitude, coherence, etc.)"]
+    CUBE["SeismicTraceData<br/>(3D seismic cube in SDMS)"] --> PICK["Horizon picks<br/>(scattered XYZ points)"]
+    CUBE --> FSTICK["Fault sticks<br/>(polylines on sections)"]
+    PICK --> SH["SeismicHorizon<br/>(gridded TWT surface)"]
+    SH --> SM["StructureMap<br/>(depth-converted surface)"]
+    CUBE --> PROP["Seismic properties<br/>(amplitude, coherence, etc.)"]
     SH --> PROP
 
     style CUBE fill:#e1f5fe
@@ -35,18 +35,18 @@ Each of these artefacts lives in a specific data store and is cataloged with a s
 
 ---
 
-## 2. Where Data Lives — Three Stores
+## 2. Where Data Lives - Three Stores
 
 Data is split across **three** systems based on type and volume:
 
 ```mermaid
 flowchart LR
     subgraph "OSDU Platform"
-        CAT["OSDU Catalog\n(WPC records)\nMetadata only"]
+        CAT["OSDU Catalog<br/>(WPC records)<br/>Metadata only"]
     end
     subgraph "Data Stores"
-        SDMS["Seismic DDMS (SDMS)\nSeismic cubes\n(TB-scale trace data)"]
-        RDDMS["RDDMS\nInterpretation results\n(surfaces, picks, properties)"]
+        SDMS["Seismic DDMS (SDMS)<br/>Seismic cubes<br/>(TB-scale trace data)"]
+        RDDMS["RDDMS<br/>Interpretation results<br/>(surfaces, picks, properties)"]
     end
 
     CAT -- "DDMSDatasets[] URI" --> RDDMS
@@ -55,7 +55,7 @@ flowchart LR
 
 | Store | What it holds | Scale | Access |
 |---|---|---|---|
-| **OSDU Catalog** | WPC metadata records (name, links, grid params, domain) — **no data values** | KB per record | Search + Storage API |
+| **OSDU Catalog** | WPC metadata records (name, links, grid params, domain) - **no data values** | KB per record | Search + Storage API |
 | **Seismic DDMS (SDMS)** | 3D/2D seismic trace data (amplitudes, gathers) via OpenVDS | TB per cube | SDMS REST API |
 | **RDDMS** | Interpretation results: surfaces, picks, fault sticks, properties (RESQML objects) | MB per surface | RDDMS REST / ETP |
 
@@ -72,19 +72,19 @@ The **OSDU catalog record never contains data values** (no Z-arrays, no amplitud
 | Horizon picks (scattered points) | **RDDMS** | RESQML `PointSetRepresentation` |
 | Fault sticks (polylines) | **RDDMS** | RESQML `PolylineSetRepresentation` |
 | Property grids (amplitude, thickness) | **RDDMS** | RESQML `ContinuousProperty` on `Grid2dRepresentation` |
-| Bin grid definitions | **OSDU Catalog** | Lightweight metadata — no bulk arrays |
+| Bin grid definitions | **OSDU Catalog** | Lightweight metadata - no bulk arrays |
 
 ---
 
-## 3. What Is What — The Three Horizon Records
+## 3. What Is What - The Three Horizon Records
 
 Users often confuse `SeismicHorizon`, `HorizonInterpretation`, and `StructureMap`. They serve different purposes:
 
 ```mermaid
 flowchart TD
-    HI["HorizonInterpretation\n━━━━━━━━━━━━━━━━━━\n• The geological MEANING\n• 'This is Top Draupne'\n• Age, domain, conformability\n• No geometry"]
-    SH["SeismicHorizon (WPC)\n━━━━━━━━━━━━━━━━━━\n• TWT grid surface\n• Tied to seismic survey\n• DDMSDatasets → RDDMS\n• Time domain"]
-    SM["StructureMap (WPC)\n━━━━━━━━━━━━━━━━━━\n• Depth grid surface\n• Depth-converted result\n• DDMSDatasets → RDDMS\n• Depth domain"]
+    HI["HorizonInterpretation<br/>━━━━━━━━━━━━━━━━━━<br/>• The geological MEANING<br/>• 'This is Top Draupne'<br/>• Age, domain, conformability<br/>• No geometry"]
+    SH["SeismicHorizon (WPC)<br/>━━━━━━━━━━━━━━━━━━<br/>• TWT grid surface<br/>• Tied to seismic survey<br/>• DDMSDatasets → RDDMS<br/>• Time domain"]
+    SM["StructureMap (WPC)<br/>━━━━━━━━━━━━━━━━━━<br/>• Depth grid surface<br/>• Depth-converted result<br/>• DDMSDatasets → RDDMS<br/>• Depth domain"]
 
     HI --- SH
     HI --- SM
@@ -96,14 +96,14 @@ flowchart TD
 
 | Record | Answers the question | Domain | Has geometry? | Has data? |
 |---|---|---|---|---|
-| **`HorizonInterpretation`** | *"What geological surface is this?"* | — | No | No |
+| **`HorizonInterpretation`** | *"What geological surface is this?"* | - | No | No |
 | **`SeismicHorizon`** (WPC) | *"Where is it in TWT on this survey?"* | Time | Grid metadata | Z-arrays in RDDMS |
 | **`StructureMap`** (WPC) | *"Where is it in depth?"* | Depth | Grid metadata | Z-arrays in RDDMS |
 
 ### Why they're separate
 
 - **One horizon** (e.g. "Top Draupne") can have **multiple representations**: a TWT surface on survey A, another on survey B, a depth-converted map, control points.
-- The `HorizonInterpretation` is the **shared identity** — change its name/age once, all linked representations inherit it.
+- The `HorizonInterpretation` is the **shared identity** - change its name/age once, all linked representations inherit it.
 - `SeismicHorizon` and `StructureMap` are **geometry containers** that point back to the interpretation via `InterpretationID`.
 
 ### The full chain
@@ -120,7 +120,7 @@ LocalBoundaryFeature          ← "There exists a geological boundary here"
 
 ## 4. Non-Structural Properties
 
-Not everything derived from seismic is a structural surface. Amplitude maps, coherence extractions, thickness maps, etc. are **properties** — not structure.
+Not everything derived from seismic is a structural surface. Amplitude maps, coherence extractions, thickness maps, etc. are **properties** - not structure.
 
 | If the grid values are… | Use this WPC | Rationale |
 |---|---|---|
@@ -136,7 +136,7 @@ GenericProperty (WPC)                   ← one per property
   DDMSDatasets[] → ContinuousProperty   ← value array in RDDMS
 ```
 
-Multiple properties can share one `Grid2dRepresentation` — store the grid once, link each property to it.
+Multiple properties can share one `Grid2dRepresentation` - store the grid once, link each property to it.
 
 > **Terminology reminder:** In OSDU, "attribute" means graphical display properties (color, line style). For data values, always use **property**.
 
@@ -160,7 +160,7 @@ Multiple properties can share one `Grid2dRepresentation` — store the grid once
 
 ---
 
-## 6. Ingestion — How It Gets Into the System
+## 6. Ingestion - How It Gets Into the System
 
 When interpretation results are ingested from tools (Petrel, OpenWorks, DecisionSpace) into OSDU + RDDMS:
 
@@ -182,18 +182,18 @@ sequenceDiagram
 
 **What happens at each step:**
 
-1. **RESQML export** — the interpretation tool exports surfaces as `Grid2dRepresentation` objects with Z-arrays, picks as `PointSetRepresentation`, faults as `PolylineSetRepresentation`.
+1. **RESQML export** - the interpretation tool exports surfaces as `Grid2dRepresentation` objects with Z-arrays, picks as `PointSetRepresentation`, faults as `PolylineSetRepresentation`.
 
-2. **RDDMS storage** — geometries and arrays are stored in RDDMS. Each object gets a UUID and an EML URI.
+2. **RDDMS storage** - geometries and arrays are stored in RDDMS. Each object gets a UUID and an EML URI.
 
-3. **WPC creation** — for each RDDMS object, the pipeline creates an OSDU catalog record:
+3. **WPC creation** - for each RDDMS object, the pipeline creates an OSDU catalog record:
    - Determine type: structural Z → `StructureMap`/`SeismicHorizon`? Or a property → `GenericProperty`?
    - Extract grid metadata (origin, spacing, node count) from the RDDMS object
    - Set `DDMSDatasets[]` to point at the RDDMS URI
    - Set `InterpretationID` to link to the geological meaning
    - Set `DomainTypeID` from CRS (time → Time, depth → Depth)
 
-4. **Linking** — connect WPCs into the interpretation chain:
+4. **Linking** - connect WPCs into the interpretation chain:
    - `StructureMap.InterpretationID` → `HorizonInterpretation`
    - `StructureMap.SeismicHorizonID` → `SeismicHorizon` (its TWT source)
    - `StructureMap.BinGridID` → `GenericBinGrid` (shared lattice, if applicable)
@@ -205,11 +205,11 @@ sequenceDiagram
 | `LocalTime3d` | TWT surface (ms) | `SeismicHorizon` |
 | `LocalDepth3d` | Depth surface (m/ft) | `StructureMap` |
 | Any | Amplitude, coherence, probability | `GenericProperty` |
-| — | Scattered XYZ picks | `HorizonControlPoints` |
+| - | Scattered XYZ picks | `HorizonControlPoints` |
 
 ---
 
-## 7. Retrieving Data — End to End
+## 7. Retrieving Data - End to End
 
 How an application fetches a depth surface for display:
 
@@ -242,16 +242,16 @@ Two ways to define the 2D lattice for a `StructureMap`:
 | | Inline grid | External `GenericBinGrid` reference |
 |---|---|---|
 | How | Grid params stored directly on the StructureMap WPC | `BinGridID` → shared `GenericBinGrid` WPC |
-| Reuse | No — each surface carries its own definition | Yes — many surfaces share one grid |
+| Reuse | No - each surface carries its own definition | Yes - many surfaces share one grid |
 | Best for | One-off exports, unique grids | Multi-horizon interpretation sets on the same lattice |
 
-These are **mutually exclusive** — populate one or the other, never both.
+These are **mutually exclusive** - populate one or the other, never both.
 
 > **`SeismicBinGrid` vs `GenericBinGrid`**: Seismic cubes (`SeismicTraceData`) require `SeismicBinGrid` (schema validation enforces this). Interpretation results (`StructureMap`, etc.) use `GenericBinGrid`. They describe the same lattice differently: SeismicBinGrid uses P6 bin vectors; GenericBinGrid uses bearing + bin width.
 
 ---
 
-## 9. Collaboration — Dataspaces
+## 9. Collaboration - Dataspaces
 
 Interpreters work in isolated RDDMS dataspaces, then publish:
 
@@ -337,10 +337,10 @@ classDiagram
 ```
 
 **Key patterns:**
-- **AbstractInterpretation** = geologic meaning (the "what") — no geometry
-- **AbstractRepresentation** = geometry metadata (the "how") — linked via `InterpretationID`
+- **AbstractInterpretation** = geologic meaning (the "what") - no geometry
+- **AbstractRepresentation** = geometry metadata (the "how") - linked via `InterpretationID`
 - **StructureMap** has **dual inheritance**: Representation + GenericBinGrid
-- `DDMSDatasets[]` links to RDDMS — no OSDU schema carries actual values
+- `DDMSDatasets[]` links to RDDMS - no OSDU schema carries actual values
 
 ---
 
@@ -351,7 +351,7 @@ classDiagram
 | Field | Value / Link |
 |---|---|
 | `InterpretationID` | → HorizonInterpretation |
-| `BinGridID` | → GenericBinGrid (shared lattice) — *mutually exclusive with inline props* |
+| `BinGridID` | → GenericBinGrid (shared lattice) - *mutually exclusive with inline props* |
 | `SeismicHorizonID` | → SeismicHorizon (TWT source) |
 | `DomainTypeID` | `Depth` |
 | `OriginEasting` / `OriginNorthing` | Grid origin (inline only) |
@@ -407,11 +407,11 @@ classDiagram
 
 | RESQML | OSDU field | Notes |
 |---|---|---|
-| `Title` | `data.Name` | — |
+| `Title` | `data.Name` | - |
 | `Originator` | `data.Interpreter` | SeismicHorizon, SeismicFault (native field) |
 | `Originator` | `data.ExtensionProperties.Interpreter` | StructureMap (no native field) |
-| `Creation` | `ResourceCreationDateTime` | — |
-| `Format` | `data.ExtensionProperties.AuthoringSoftware` | — |
+| `Creation` | `ResourceCreationDateTime` | - |
+| `Format` | `data.ExtensionProperties.AuthoringSoftware` | - |
 
 ### Interpretation link
 
@@ -439,10 +439,10 @@ Each RDDMS object should have **both** a universal and a specialised catalog ent
 
 | Layer | Schema | Purpose |
 |---|---|---|
-| Universal | `GenericRepresentation:1.2.0` | "This RDDMS object exists" — always discoverable |
-| Specialised | `StructureMap:1.0.0` | Depth surface — searchable by grid, horizon, domain |
-| Specialised | `HorizonControlPoints:1.0.0` | Picks — searchable by interpretation |
-| Specialised | `SeismicHorizon:2.1.0` | TWT surface — searchable by survey |
+| Universal | `GenericRepresentation:1.2.0` | "This RDDMS object exists" - always discoverable |
+| Specialised | `StructureMap:1.0.0` | Depth surface - searchable by grid, horizon, domain |
+| Specialised | `HorizonControlPoints:1.0.0` | Picks - searchable by interpretation |
+| Specialised | `SeismicHorizon:2.1.0` | TWT surface - searchable by survey |
 
 ---
 
