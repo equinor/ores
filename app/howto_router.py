@@ -40,6 +40,12 @@ _HOWTO_SECTIONS: list[dict] = [
                 "desc": "Capabilities, use cases, pages & technical detail",
             },
             {
+                "slug": "dev-guide",
+                "file": "Dev.md",
+                "title": "Developer Guide",
+                "desc": "Environment setup, ingestion, demo pipelines, deployment & testing",
+            },
+            {
                 "slug": "query-guide",
                 "file": "Query.md",
                 "title": "Querying Data",
@@ -61,7 +67,7 @@ _HOWTO_SECTIONS: list[dict] = [
                     {"slug": "volumes",      "file": "Volumes.md",      "title": "Volumes",        "desc": "ReservoirEstimatedVolumes WPC & fmu-dataio mapping"},
                     {"slug": "geolabelset",  "file": "GeoLabelSet.md",  "title": "GeoLabelSet",   "desc": "Reservoir volumes & statistics manifests"},
                     {"slug": "risk",         "file": "Risk.md",         "title": "Risk",           "desc": "Subsurface risk data management"},
-                    {"slug": "uncertainty",  "file": "Uncertainty.md",  "title": "Uncertainty",    "desc": "FMU ensemble / Monte Carlo in OSDU"},
+                    {"slug": "uncertainty",  "file": "Uncertainty.md",  "title": "Uncertainty",    "desc": "Ensemble simulation & Monte Carlo in OSDU"},
                 ],
             },
             {

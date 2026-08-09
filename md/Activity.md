@@ -443,7 +443,7 @@ Quality check workflows verify data integrity before it enters a decision gate.
 
 ## 8. Worked Example: FMU / ERT Ensemble Workflow
 
-> For the complete FMU → OSDU Activity mapping, template definition, and data flow, see [FMU → OSDU § Activity](/howto/fmu-osdu) and [Uncertainty § Run Bookkeeping](/howto/uncertainty).
+> For the complete ensemble simulation Activity mapping, template definition, and data flow, see [Uncertainty § Run Bookkeeping](/howto/uncertainty) and [Uncertainty § Decision-Gate Alignment](/howto/uncertainty).
 
 The key FMU Activity pattern:
 - **Inputs**: Design matrix (`ColumnBasedTable`), forward model chain (string), ensemble name, number of realisations, case collection

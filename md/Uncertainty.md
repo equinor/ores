@@ -1,8 +1,8 @@
-# Uncertainty (FMU) in OSDU
+# Uncertainty & Ensemble Simulation in OSDU
 
-> **Purpose**: Persist FMU ensemble / Monte Carlo **inputs**, **scenarios**, and **outputs** in OSDU; link **input design and static bundles** to **output volumes** by **Realisation**; use **Activity semantics** and **persisted collections** for robust provenance across DG1…DG4.
->
-> **Prerequisites**: [FMU → OSDU strategy](/howto/fmu-osdu) (ERT/fmu-dataio/Sumo context and data model mapping) · [Volumes](/howto/volumes) (REV schema, column mapping, JSON examples)
+> How to persist ensemble simulation inputs, scenarios, and outputs in OSDU - from design matrix through hundreds of realizations to decision-gate evidence at DG1-DG4.
+
+**Related**: [Volumes](/howto/volumes) (REV schema, column mapping, JSON examples) · [BusinessDecision](/howto/business-decision) · [Risk](/howto/risk) · [SeisInt](/howto/seismic-interp) · [StratColumn](/howto/strat-column)
 
 ---
 
@@ -144,7 +144,7 @@ Properties are often correlated (high PORO → high PERMX; low NTG → different
 {
   "kind": "osdu:wks:work-product-component--ColumnBasedTable:1.3.0",
   "data": {
-    "Name": "FMU Design Matrix - Case A",
+    "Name": "Design Matrix - Case A",
     "KeyColumns": [
       {"ColumnName": "CaseID", "ColumnRole": "Key", "ValueType": "string"},
       {"ColumnName": "Realisation", "ColumnRole": "Key", "ValueType": "integer"},
@@ -163,7 +163,7 @@ Properties are often correlated (high PORO → high PERMX; low NTG → different
 {
   "kind": "osdu:wks:work-product-component--ColumnBasedTable:1.3.0",
   "data": {
-    "Name": "FMU Design Matrix - Drogon DG2",
+    "Name": "Design Matrix - Drogon DG2",
     "KeyColumns": [
       {"ColumnName": "Realisation", "ColumnRole": "Key", "ValueType": "integer"}
     ],
@@ -328,15 +328,15 @@ For each run/iteration, create an Activity (or reuse `BusinessDecision` paramete
 flowchart TD
   BASE[Base-case property model<br/>PORO, NTG, PERMX, SW cubes]
   DM[Design Matrix<br/>Multipliers and distribution samples]
-  ERT[ERT Orchestrator]
+  ORCH[Workflow Orchestrator]
   REAL[Per-realisation property set<br/>PORO_r, NTG_r, PERMX_r]
-  SIM[Simulator - Eclipse / OPM / Flow]
+  SIM[Simulator]
   REV[Raw volumes per realisation]
   STATS[Aggregated P10/P50/P90]
 
-  BASE --> ERT
-  DM --> ERT
-  ERT -->|"apply multiplier per row"| REAL
+  BASE --> ORCH
+  DM --> ORCH
+  ORCH -->|"apply multiplier per row"| REAL
   REAL --> SIM
   SIM --> REV
   REV --> STATS
@@ -344,7 +344,7 @@ flowchart TD
 
 **Key points**:
 - The base-case property model is a **single WPC** (or set of WPCs for grid + properties)
-- Multipliers/shifts from the design matrix are applied **at runtime** by ERT/RMS
+- Multipliers/shifts from the design matrix are applied **at runtime** by the orchestrator
 - Each realisation produces a modified property field - typically NOT stored individually (too large); only the multipliers and resulting volumes are persisted
 - Statistics (P10/P50/P90 of volumes) capture the aggregate effect of property uncertainty
 
@@ -359,28 +359,41 @@ flowchart TD
 | 5 | Aggregate statistics per scenario | REV with scenario facet |
 | 6 | Compare at gate | BusinessDecision referencing all scenario WorkProducts |
 
+### 13. Decision-Gate Alignment
+
+Each gate demands progressively more evidence:
+
+| Gate | Scope | Key OSDU artifacts |
+|---|---|---|
+| **DG1** | Screening: few realizations, simple design | Reservoir, Segments, REV, input params CBT, Risks, Activity, BD |
+| **DG2** | Full ensemble (50-250 realizations) | + IjkGrid, StructureMaps, GeoLabelSet, production forecast |
+| **DG3** | Dynamic simulation, history matching | + WellboreTrajectory, ProductionValues, match metrics |
+| **DG4** | Full-field optimization (100-1000+ realizations) | + updated forecasts, revised uncertainties |
+
+Cross-gate evolution: BD at DG(n+1) references BD at DG(n) as context parameter.
+
 ---
 
 ## Part V - Outputs
 
-### 13. Volumes
+### 14. Volumes
 
-#### 13.1 Raw per‑realisation (REV)
+#### 14.1 Raw per-realisation (REV)
 Keys: `Realisation`, `Zone`, `SegmentID` (with `KindID = master-data--ReservoirSegment:2.0.0`).
 Columns: `Bulk`, `Net`, `Pore`, `HydrocarbonPore`, `Oil`, `AssociatedGas` - each with `PropertyTypeID` and `UnitOfMeasureID: m3`.
 
-#### 13.2 Aggregated statistics (REV)
+#### 14.2 Aggregated statistics (REV)
 Keys: `Zone`, `SegmentID` (no Realisation - aggregated across runs).
 Columns: dot notation `<Property>.<Statistic>` - e.g. `Bulk.P10`, `Oil.ArithmeticMean`.
 Each column carries `FacetIDs` with `FacetType:statistics` + `FacetRole:<P10|P50|P90|ArithmeticMean|...>`.
 
-> See [Volumes](/howto/volumes) for full JSON examples of both raw and aggregated REV records, column mapping from fmu-dataio, and naming conventions.
+> See [Volumes](/howto/volumes) for full JSON examples of both raw and aggregated REV records, column mapping, and naming conventions.
 
 ---
 
 ## Part VI - Diagrams
 
-### 14.1 Data flow
+### 15.1 Data flow
 ```mermaid
 flowchart LR
   DM[Design Matrix - CBT]
@@ -400,7 +413,7 @@ flowchart LR
   DM --- REV_RAW
 ```
 
-### 14.2 Scenario packaging
+### 15.2 Scenario packaging
 ```mermaid
 flowchart LR
   CP[CollaborationProject]
@@ -417,10 +430,10 @@ flowchart LR
   BD --- WP_HIGH
 ```
 
-### 14.3 Case packaging and DG alignment
+### 15.3 Case packaging and DG alignment
 ```mermaid
 flowchart LR
-  CASE_WP[WorkProduct - FMU Case Package]
+  CASE_WP[WorkProduct - Case Package]
   DM[Design Matrix]
   STATIC_SET[Static Bundle]
   REV_RAW[Vol raw]
@@ -435,24 +448,30 @@ flowchart LR
   BD --- REV_AGG
 ```
 
-### 14.4 Entities and relations
+### 15.4 Entities and relations
 ```mermaid
 erDiagram
+  WorkProduct ||--o{ ReservoirEstimatedVolumes : "raw and stats"
+  WorkProduct ||--o{ ColumnBasedTable : "design matrix and forecast"
+  WorkProduct ||--o{ StructureMap : "per-horizon surfaces"
+  WorkProduct ||--o{ IjkGridRepresentation : "per-realization grids"
+  Activity ||--|{ WorkProduct : "context"
+  Activity }|--|| ActivityTemplate : "follows template"
+  Activity ||--o{ ColumnBasedTable : "input design params"
+  Activity ||--o{ ReservoirEstimatedVolumes : "output volumes"
+  ColumnBasedTable }o--|| ReservoirEstimatedVolumes : "join on Realisation"
+  BusinessDecision ||--o{ Activity : "PriorActivityIDs"
+  BusinessDecision ||--o{ Risk : "RiskIDs"
+  BusinessDecision }o--|| BusinessDecision : "prior gate via Parameters"
+  ReservoirEstimatedVolumes }o--|| Reservoir : "ParentObjectID"
   Reservoir ||--o{ ReservoirSegment : segments
-  WorkProduct ||--o{ GenericRepresentation : includes
-  WorkProduct ||--o{ VelocityModeling : includes
-  WorkProduct ||--o{ ColumnBasedTable : includes
-  Activity ||--o{ WorkProduct : context
-  Activity ||--o{ ColumnBasedTable : input
-  Activity ||--o{ ReservoirEstimatedVolumes : output
-  ColumnBasedTable }o--|| ReservoirEstimatedVolumes : realisation-join
 ```
 
 ---
 
 ## Part VII - Reference
 
-### 15. Conventions and Tips
+### 16. Conventions and Tips
 - **Column names**: use dot notation for statistics; avoid spaces and parentheses in labels.
 - **Keys**: always include `Realisation` in raw outputs; keep `SegmentID` aligned to `ReservoirSegment` ids.
 - **Units**: prefer `m3` unless business rules require `Mm3`; carry units in `UnitOfMeasureID`.
@@ -460,17 +479,58 @@ erDiagram
 - **Scenario facets**: use `FacetType=scenario` with meaningful roles; avoid generic LOW/HIGH if project names are clearer.
 - **Legal/ACL**: apply appropriate partition tags on all records; group artefacts under a WorkProduct per DG when promoting.
 
-### 16. Where to Read More
+### 17. Where to Read More
 
 | Topic | Link |
 |---|---|
-| FMU results data model | [fmu-dataio data model](https://fmu-dataio.readthedocs.io/en/latest/datamodel/index.html) |
-| fmu-dataio documentation | [fmu-dataio.readthedocs.io](https://fmu-dataio.readthedocs.io/en/latest/) |
-| Standard results (volumes) | [Simple exports](https://fmu-dataio.readthedocs.io/en/latest/simple_exports/index.html) |
-| ERT (orchestrator) | [github.com/equinor/ert](https://github.com/equinor/ert) |
-| Sumo (current SoR) | [github.com/equinor/fmu-sumo](https://github.com/equinor/fmu-sumo) |
-| Drogon reference case | [github.com/equinor/fmu-drogon](https://github.com/equinor/fmu-drogon) |
-| REV schema (OSDU) | [OSDU Data Definitions - ReservoirEstimatedVolumes](https://community.opengroup.org/osdu/data/data-definitions) |
-| ColumnBasedTable (OSDU) | [OSDU Data Definitions - ColumnBasedTable](https://community.opengroup.org/osdu/data/data-definitions) |
-| Activity semantics (OSDU) | [OSDU Data Definitions - AbstractProjectActivity](https://community.opengroup.org/osdu/data/data-definitions) |
-| Volume schemas (this repo) | [Volumes](/howto/volumes) |
+| REV schema (OSDU) | [OSDU Data Definitions](https://community.opengroup.org/osdu/data/data-definitions) |
+| ColumnBasedTable (OSDU) | [OSDU Data Definitions](https://community.opengroup.org/osdu/data/data-definitions) |
+| Activity semantics (OSDU) | [OSDU Data Definitions](https://community.opengroup.org/osdu/data/data-definitions) |
+| Volume guide | [Volumes](/howto/volumes) |
+| BusinessDecision | [BusinessDecision](/howto/business-decision) |
+| Risk | [Risk](/howto/risk) |
+
+---
+
+## Appendix A: Standard Results Mapping
+
+Typical ensemble workflow outputs and their OSDU representations:
+
+| Standard result | Export format | OSDU record type |
+|---|---|---|
+| In-place volumes | Parquet / CSV | `ReservoirEstimatedVolumes` |
+| Structure depth surfaces | Grid format (.gri, .irap) | `StructureMap` WPC |
+| Structure time surfaces | Grid format | `StructureMap` / `GenericRepresentation` |
+| Static grid model | ROFF / RESQML | `IjkGridRepresentation` + property WPCs |
+| Simulator tables (relperm, PVT) | CSV / Arrow | `ColumnBasedTable` WPC |
+| Polygons (faults, outlines) | XYZ / GeoJSON | `GenericRepresentation` WPC |
+| Production forecasts | CSV / Arrow | `ColumnBasedTable` WPC |
+
+---
+
+## Appendix B: Simulator Deck Round-Trip
+
+A sidecar manifest accompanies every simulator deck export:
+
+- **Identity**: deck_id, case, realization
+- **Grid**: grid_uuid, osdu_srn, dims, crs
+- **Properties[]**: property_uuid, title, simulator_keyword, uom, discrete
+- **Ancestry Inputs**: list of input WPC IDs
+
+Round-trip rules:
+1. **Grid Lock** - grid_uuid persists unless topology changes
+2. **Property Lock** - each property retains uuid and simulator keyword
+3. **CRS/UOM Lock** - manifest includes CRS type, origin, axis order, UOM
+4. **Ancestry Chain** - outputs set `data.ancestry.inputs` to exact input WPC IDs
+
+---
+
+## Appendix C: Vendor Toolchain Examples
+
+For teams using specific orchestration tools, these are common integration patterns:
+
+| Tool | Role | Link |
+|---|---|---|
+| ERT | Ensemble-based Reservoir Tool (orchestrator) | [github.com/equinor/ert](https://github.com/equinor/ert) |
+| fmu-dataio | Metadata export library (standard results) | [fmu-dataio.readthedocs.io](https://fmu-dataio.readthedocs.io/en/latest/) |
+| fmu-sumo | Cloud SoR for ensemble results | [github.com/equinor/fmu-sumo](https://github.com/equinor/fmu-sumo) |

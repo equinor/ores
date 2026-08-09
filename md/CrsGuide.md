@@ -63,7 +63,9 @@ Because EPSG:23037 is ED50, geometry points get a **BoundProjected** frame-of-re
 
 ---
 
-## Part 2 - Technical
+## Appendix: Technical - RESQML CRS Internals
+
+> This section covers RESQML CRS object model internals relevant to converter developers. Most users only need Part 1 above.
 
 ### RESQML 2.0.1 CRS model
 

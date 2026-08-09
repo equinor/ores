@@ -344,125 +344,6 @@ RDDMS manifest export includes `*Property` objects by default (`DEFAULT_DATASPAC
 
 ---
 
-## 10. Vendor Clarifications Needed
-
-| # | Question |
-|---|---|
-| 1 | Which DSIS/OW fields determine structural vs property map? |
-| 2 | Which field determines RESQML domain (`time`/`depth`/`mixed`)? |
-| 3 | Is `mixed` assigned due to conflicting metadata, non-depth values, or missing interpretation? |
-| 4 | Are name/remark, units, and value ranges used in classification? |
-| 5 | Are parent horizon links inspected? |
-| 6 | Can the mapper emit QC warnings for conflicting metadata? |
-| 7 | Can the mapper produce `GenericProperty` rather than `StructureMap` for property maps? |
-| 8 | Can multiple properties share one grid representation in RDDMS? |
-
----
-
-## 11. Name-to-Metadata Decoding
-
-Property maps often carry structured metadata encoded in their names via naming conventions. Rather than storing names as opaque strings, we define **decoding profiles** that extract structured metadata from names at ingestion time.
-
-### 11.1 The Generic Pattern
-
-```mermaid
-flowchart LR
-    A[Source name string] --> B[Identify applicable<br/>Decoding Profile]
-    B --> C[Tokenize by<br/>delimiter/pattern]
-    C --> D[Map tokens to<br/>structured metadata]
-    D --> E[Validate & resolve<br/>cross-references]
-    E --> F[Populate WPC<br/>fields]
-```
-
-A **Decoding Profile** defines:
-
-| Component | Purpose |
-|---|---|
-| **ProfileType** | Which category (seismic property, thickness, velocity, probability, …) |
-| **MetadataVersion** | Version of the naming standard (conventions evolve) |
-| **TokenPattern** | How to split the name (delimiter, positional, regex) |
-| **TokenMapping** | Per-token: target field + abbreviation lookup table |
-| **ValidationRules** | Cross-field consistency checks |
-| **OriginalSource** | Authoring system that produced the name |
-
-### 11.2 Decoding Precedence
-
-Name-decoded metadata is **secondary** to explicit source-system metadata:
-
-| Priority | Source |
-|---|---|
-| 1 (highest) | Explicit source-system fields (DSIS property type, OW metadata) |
-| 2 | Decoded from naming standard |
-| 3 | User override at ingestion time |
-| 4 (lowest) | Inferred from values/context |
-
-If decoded metadata conflicts with explicit source → flag QC warning, prefer explicit.
-
-> This aligns with Section 6 precedence: name-decoding sits at level 4 ("Name and remark") in the classification hierarchy.
-
-### 11.3 Common Decoded Fields
-
-Every property, regardless of type, shares these fields:
-
-| Field | Description | Example |
-|---|---|---|
-| `MapType` | Dimensionality or workflow category | 3D, 4D, Isopach, Probability |
-| `FieldAbbreviation` | Short code for field/area → resolved to `Field_id` | JS → Johan Sverdrup |
-| `ExtractionMethod` | Statistical/extraction method | Max, RMS, P50, Value |
-| `WindowMode` | Vertical extraction window | BetweenHorizons, AroundHorizon, Fixed |
-| `HorizonNames` | Reference horizons used | → resolved to `HorizonInterpretation` IDs |
-| `OriginalSource` | Authoring application | Auto4D, Petrel, OpenWorks |
-
-### 11.4 Profile Examples
-
-Each profile type has its own token pattern. Brief examples:
-
-| Profile | Example name | Key decoded fields |
-|---|---|---|
-| **Seismic property** | `4D_JS_FulRes_21sp-20au_DiffTS_0535_maxp` | MapType=4D, Field=JS, Coverage=Full, Difference=Timeshifted, Extraction=MaxPositive |
-| **Thickness** | `Iso_JS_TopDraupne_BaseDraupne_TVT` | MapType=Isopach, Horizons=[TopDraupne, BaseDraupne], ThicknessType=TVT |
-| **Velocity** | `Vint_JS_TopAasgard_Z22_kr2024` | VelocityType=Interval, Horizons=[TopAasgard, Z22], ModelVersion=kr2024 |
-| **Probability** | `Prob_JS_HC_P50_TopTarbert` | MapType=Probability, PropertyKind=HC, Extraction=P50 |
-| **Depth conversion residual** | `DcRes_JS_TopVolve_v3` | MapType=DepthConversionResidual, Horizon=TopVolve, ModelVersion=v3 |
-
-Full token-by-token breakdowns for each profile are in the appendices.
-
-### 11.5 Mapping Decoded Metadata to OSDU WPCs
-
-| Decoded field | OSDU target | Notes |
-|---|---|---|
-| `FieldAbbreviation` | `Field_id` | Resolved via reference data lookup — not stored as abbreviation |
-| `HorizonNames` | Horizon IDs or `ExtensionProperties` | Lookup against OSDU catalog; store raw names if unresolved |
-| `MapType` | `ExtensionProperties.MapType` | — |
-| `ExtractionMethod` | `ExtensionProperties.ExtractionMethod` | Informs `PropertyKind` |
-| `WindowMode` | `ExtensionProperties.WindowMode` | — |
-| `OriginalSource` | `ExtensionProperties.AuthoringSoftware` | — |
-| Seismic volume refs | `SeismicTraceData` WPC IDs | Resolved during ingestion (catalog lookup) |
-| Bin grid ref | `SeismicBinGrid` WPC ID | Resolved during ingestion |
-
-### 11.6 Integration with Classification (Section 3)
-
-Name decoding feeds into the decision tree:
-
-- Decoded `MapType` = velocity/thickness/probability/residual → **property** path (`GenericProperty` WPC, no FIRP)
-- Decoded fields indicate structural Z → **structural** path (`StructureMap` WPC)
-- Decoded `HorizonNames` that resolve to existing records → link (don't fabricate)
-- Decoded `ExtractionMethod` → determines `PropertyKind`
-
-### 11.7 Registering New Profiles
-
-When a new naming convention is encountered:
-
-1. Collect ≥5 representative names
-2. Identify token pattern (delimiter, positions, optional segments)
-3. Build abbreviation → value lookup tables
-4. Define validation rules and conditional fields
-5. Map decoded fields to OSDU WPC target fields
-6. Assign a `MetadataVersion` (start at 0.1.0)
-7. Add full profile to the appendices
-
----
-
 ## Quick Reference
 
 | Source data has… | Create FIRP? | Target WPCs |
@@ -571,3 +452,92 @@ SeismicHorizons_ids:
   - "npequinor-dev:work-product-component--SeismicHorizon:a7a81843-..."
   - "npequinor-dev:work-product-component--SeismicHorizon:63ab10a4..."
 ```
+
+---
+
+## Appendix B: Name-to-Metadata Decoding
+
+Property maps often carry structured metadata encoded in their names via naming conventions. Rather than storing names as opaque strings, we define **decoding profiles** that extract structured metadata from names at ingestion time.
+
+### B.1 The Generic Pattern
+
+```mermaid
+flowchart LR
+    A[Source name string] --> B[Identify applicable<br/>Decoding Profile]
+    B --> C[Tokenize by<br/>delimiter/pattern]
+    C --> D[Map tokens to<br/>structured metadata]
+    D --> E[Validate & resolve<br/>cross-references]
+    E --> F[Populate WPC<br/>fields]
+```
+
+A **Decoding Profile** defines:
+
+| Component | Purpose |
+|---|---|
+| **ProfileType** | Which category (seismic property, thickness, velocity, probability, ...) |
+| **MetadataVersion** | Version of the naming standard (conventions evolve) |
+| **TokenPattern** | How to split the name (delimiter, positional, regex) |
+| **TokenMapping** | Per-token: target field + abbreviation lookup table |
+| **ValidationRules** | Cross-field consistency checks |
+| **OriginalSource** | Authoring system that produced the name |
+
+### B.2 Decoding Precedence
+
+Name-decoded metadata is **secondary** to explicit source-system metadata:
+
+| Priority | Source |
+|---|---|
+| 1 (highest) | Explicit source-system fields (DSIS property type, OW metadata) |
+| 2 | Decoded from naming standard |
+| 3 | User override at ingestion time |
+| 4 (lowest) | Inferred from values/context |
+
+If decoded metadata conflicts with explicit source - flag QC warning, prefer explicit.
+
+### B.3 Common Decoded Fields
+
+| Field | Description | Example |
+|---|---|---|
+| `MapType` | Dimensionality or workflow category | 3D, 4D, Isopach, Probability |
+| `FieldAbbreviation` | Short code for field/area - resolved to `Field_id` | JS = Johan Sverdrup |
+| `ExtractionMethod` | Statistical/extraction method | Max, RMS, P50, Value |
+| `WindowMode` | Vertical extraction window | BetweenHorizons, AroundHorizon, Fixed |
+| `HorizonNames` | Reference horizons used | resolved to HorizonInterpretation IDs |
+| `OriginalSource` | Authoring application | Auto4D, Petrel, OpenWorks |
+
+### B.4 Profile Examples
+
+| Profile | Example name | Key decoded fields |
+|---|---|---|
+| **Seismic property** | `4D_JS_FulRes_21sp-20au_DiffTS_0535_maxp` | MapType=4D, Field=JS, Difference=Timeshifted, Extraction=MaxPositive |
+| **Thickness** | `Iso_JS_TopDraupne_BaseDraupne_TVT` | MapType=Isopach, Horizons=[TopDraupne, BaseDraupne], ThicknessType=TVT |
+| **Velocity** | `Vint_JS_TopAasgard_Z22_kr2024` | VelocityType=Interval, Horizons=[TopAasgard, Z22] |
+| **Probability** | `Prob_JS_HC_P50_TopTarbert` | MapType=Probability, Extraction=P50 |
+
+### B.5 Mapping Decoded Metadata to OSDU WPCs
+
+| Decoded field | OSDU target | Notes |
+|---|---|---|
+| `FieldAbbreviation` | `Field_id` | Resolved via reference data lookup |
+| `HorizonNames` | Horizon IDs or `ExtensionProperties` | Lookup against catalog; store raw if unresolved |
+| `MapType` | `ExtensionProperties.MapType` | - |
+| `ExtractionMethod` | `ExtensionProperties.ExtractionMethod` | Informs PropertyKind |
+| `WindowMode` | `ExtensionProperties.WindowMode` | - |
+| Seismic volume refs | `SeismicTraceData` WPC IDs | Resolved during ingestion |
+
+### B.6 Integration with Classification
+
+Name decoding feeds into the decision tree (Section 3):
+
+- Decoded `MapType` = velocity/thickness/probability/residual - **property** path (`GenericProperty` WPC)
+- Decoded fields indicate structural Z - **structural** path (`StructureMap` WPC)
+- Decoded `HorizonNames` that resolve to existing records - link (don't fabricate)
+
+### B.7 Registering New Profiles
+
+1. Collect 5+ representative names
+2. Identify token pattern (delimiter, positions, optional segments)
+3. Build abbreviation lookup tables
+4. Define validation rules
+5. Map decoded fields to OSDU WPC target fields
+6. Assign a `MetadataVersion` (start at 0.1.0)

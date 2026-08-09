@@ -355,7 +355,7 @@ These articles are also available in the app at `/howto`:
 | [SeisInt](SeisInt.md) | Seismic interpretation OSDU/RESQML model |
 | [StratColumn](StratColumn.md) | Stratigraphic column data model |
 | [CrsGuide](CrsGuide.md) | CRS mapping RESQML ↔ OSDU |
-| [FmuOsdu](FmuOsdu.md) | FMU-to-OSDU workflow |
+| [Uncertainty](Uncertainty.md) | Uncertainty & ensemble simulation workflow |
 | [Risk](Risk.md) | Risk register modelling |
 | [Uncertainty](Uncertainty.md) | Uncertainty & volumes workflow |
 | [Volumes](Volumes.md) | ReservoirEstimatedVolumes schema |

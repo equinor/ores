@@ -152,13 +152,6 @@ StratigraphicColumn          ->  resqml20.obj_StratigraphicColumn
   +- ...
 ```
 
-### Design decisions
-
-- **Deterministic UUIDs** - UUID5 from OSDU record ID ensures idempotent re-push
-- **Ages in ExtraMetadata** - RESQML has no native age fields on UnitInterpretation
-- **PUT order** - features first, then interpretations, then column (referential dependency)
-- **Synthetic units skipped** - gap-fill placeholders are not pushed to RDDMS
-
 ### API endpoints
 
 | Method | Path | Purpose |
@@ -306,3 +299,12 @@ Example field mapping (vendor-specific):
 | `top_age` (Ma) | `data.TimeRange.TopAgeMa` | Older boundary |
 | `base_age` (Ma) | `data.TimeRange.BaseAgeMa` | Younger boundary |
 | `color_html` | `data.Rendering.ColorHtml` | Display colour |
+
+---
+
+## Appendix F: Converter Design Decisions
+
+- **Deterministic UUIDs** - UUID5 from OSDU record ID ensures idempotent re-push
+- **Ages in ExtraMetadata** - RESQML has no native age fields on UnitInterpretation
+- **PUT order** - features first, then interpretations, then column (referential dependency)
+- **Synthetic units skipped** - gap-fill placeholders are not pushed to RDDMS

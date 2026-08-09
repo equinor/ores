@@ -2,7 +2,7 @@
 
 > **Scope**: End-to-end governance for subsurface projects spanning wellbore master data, seismic interpretation sets, SDMA reference data, seismic-to-simulation ensembles, and RDDMS content storage - with versioning, SoR/SoE separation, and cross-discipline collaboration.
 >
-> **Related**: [PWS](PWS.md) · [Activity](Activity.md) · [FmuOsdu](FmuOsdu.md) · [Uncertainty](Uncertainty.md) · [SeisInt](SeisInt.md)
+> **Related**: [PWS](PWS.md) · [Activity](Activity.md) · [Uncertainty](Uncertainty.md) · [SeisInt](SeisInt.md)
 
 ---
 

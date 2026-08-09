@@ -228,6 +228,116 @@ python demo/gettoken.py --list                  # list instances
 
 ---
 
+## Ingestion
+
+The ingest pipeline converts RESQML objects from RDDMS into OSDU catalog records.
+
+### Two-step workflow
+
+```mermaid
+flowchart LR
+  RDDMS["RDDMS Dataspace<br/>(RESQML objects)"] --> MANIFEST["Manifest Build<br/>(WPCs + ref-data + master-data)"]
+  MANIFEST --> CATALOG["OSDU Storage API<br/>(PUT records)"]
+```
+
+### Step 1: Generate manifest
+
+Build an OSDU manifest from a dataspace using the RDDMS manifest endpoint:
+
+```bash
+# Get a token (uses demo/_auth.py from https://github.com/equinor/ores)
+TOKEN=$(python3 -c "import sys; sys.path.insert(0,'demo'); from _auth import get_token; print(get_token('interop', verbose=False))")
+
+# Build manifest
+curl -s -m 120 -X POST \
+  https://<rddms-host>/api/reservoir-ddms/v2/manifests/build \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "data-partition-id: <partition>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "uris": ["eml:///dataspace('\''my/dataspace'\'')"],
+    "createMissingReferences": true
+  }' \
+  -o /tmp/manifest.json
+```
+
+**Options:**
+- `createMissingReferences: true` - auto-generates CRS, ExistenceKind, and Wellbore reference records
+- `typePatterns` - filter which RESQML types become WPCs (e.g. `["*Representation", "*Interpretation*", "*Feature"]`)
+
+### Step 2: Ingest to catalog
+
+```python
+import json, requests, sys
+sys.path.insert(0, 'demo')
+from _auth import get_token
+
+token = get_token('interop')
+headers = {
+    "Authorization": f"Bearer {token}",
+    "data-partition-id": "opendes",
+    "Content-Type": "application/json"
+}
+
+m = json.load(open('/tmp/manifest.json'))
+
+# Collect all records from manifest sections
+records = []
+for section in ['ReferenceData', 'MasterData']:
+    records.extend(m.get(section, []))
+records.extend(m.get('Data', {}).get('WorkProductComponents', []))
+records.extend(m.get('Data', {}).get('Datasets', []))
+
+# Set legal/ACL for target instance
+for r in records:
+    r['legal'] = {'legaltags': ['opendes-ReservoirDDMS-Legal-Tag'],
+                  'otherRelevantDataCountries': ['US'], 'status': 'compliant'}
+    r['acl'] = {'owners': ['data.default.owners@opendes.dataservices.energy'],
+                'viewers': ['data.default.viewers@opendes.dataservices.energy']}
+
+# Ingest in batches
+BATCH = 100
+for i in range(0, len(records), BATCH):
+    batch = records[i:i+BATCH]
+    resp = requests.put(f"https://<osdu-host>/api/storage/v2/records",
+                        headers=headers, json=batch, timeout=60)
+    print(f"Batch {i//BATCH+1}: {resp.status_code} ({len(batch)} records)")
+```
+
+> System reference data (ExistenceKind, CRS) may return 403 if already owned by another service principal. Safe to ignore.
+
+### Alternative: ORES ingest API
+
+The ORES app exposes `/api/ingest` which handles ACL/legal rewriting server-side:
+
+```python
+resp = requests.post("https://<ores-host>/manifest/ingest",
+    headers={"Authorization": f"Bearer {token}"},
+    json={"manifest": manifest, "method": "storage",
+          "legalTag": "opendes-ReservoirDDMS-Legal-Tag",
+          "owners": ["data.default.owners@opendes.dataservices.energy"],
+          "viewers": ["data.default.viewers@opendes.dataservices.energy"]})
+```
+
+### Demo ingest scripts
+
+All demo scripts live in the [equinor/ores](https://github.com/equinor/ores) repository under `demo/`:
+
+| Script | Purpose |
+|--------|---------|
+| `demo/ingest_demo.py` | Full demo ingest (DG1+DG2+Strat) to any instance |
+| `demo/ingest_preship.py` | Ingest to external instances |
+| `demo/ingest_weco_demos.py` | Ingest WeCo demo data to RDDMS |
+| `demo/drogon_dg2/ingest_records_batch.py` | Batch PUT to Storage API |
+| `demo/drogonresqml/ingest.sh` | Import EPC files to local RDDMS |
+
+### Known issues
+
+- Search indexing is async - records may take 30-60s to appear after PUT
+- Grid2d volume tables fail conversion (RESQML 2.0.1 limitation)
+
+---
+
 ## Deployment
 
 ### Radix (primary)

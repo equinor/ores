@@ -298,12 +298,12 @@ Real assets have several picks of the same boundary (different interpreters / vi
 
 ---
 
-## 6) Where this lives in ORES
+## Appendix A: ORES Implementation
 
 | Concern | Code |
 |---|---|
-| 3D rendering (MD → XYZ, dip disks) | [app/resqml_viz.py](../app/resqml_viz.py) - `_interp_along_traj`, `_dip_to_normal` |
-| Marker frame export from correlation | [app/weco_router.py](../app/weco_router.py) - `WellboreMarkerFrame` builder |
+| 3D rendering (MD to XYZ, dip disks) | [app/resqml_viz.py](../app/resqml_viz.py) |
+| Marker frame export from correlation | [app/weco_router.py](../app/weco_router.py) |
 | OSDU `WellboreMarkerSet` generation | [demo/drogon_dg1/gen_markers_strat_drogon.py](../demo/drogon_dg1/gen_markers_strat_drogon.py) |
 | Sample manifest | [demo/drogon_dg1/manifest_markers_drogon.json](../demo/drogon_dg1/manifest_markers_drogon.json) |
 | Stratigraphic-column context | [md/StratColumn.md](StratColumn.md) |
