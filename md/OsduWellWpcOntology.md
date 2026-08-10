@@ -75,6 +75,34 @@ Volume tables exported from RMS (`os.vol.xls_oil_1.xls`, `os.vol.xls_total_1.xls
 
 ### 3.1 Business Decision Structure
 
+```mermaid
+graph TD
+    BD["<b>BusinessDecision</b><br/>Omega Sør – WPC Decision"]
+
+    BD -->|evidences| EPKG["PersistedCollection<br/>WPC Evidence Package<br/>(164 refs)"]
+    BD -->|evidences| VOL["ReservoirEstimatedVolumes<br/>STOIIP P90/P50/P10<br/>15.8 / 19.3 / 23.0 MSm³"]
+    BD -->|evidences| GEOMODEL["ETPDataspace<br/>RDDMS geomodel<br/>maap/omegas"]
+    BD -->|evidences| WELL_EXP["Wellbore: 34/4-19 S<br/>Exploration well"]
+
+    BD -->|informs| PROD_PROF["ColumnBasedTable<br/>Production Profile – 15-yr P50"]
+    BD -->|informs| DC["DevelopmentConcept<br/>4-slot template, CAP-X sidetrack"]
+    BD -->|informs| W_PROD["Wellbore: Producer1"]
+    BD -->|informs| W_INJ["Wellbore: Injector1"]
+    BD -->|informs| PILOT["Wellbore: 34/4-19 S<br/>Pilot scope"]
+
+    BD -->|constrains| R1["Risk: Barium Scale #00061<br/>CRITICAL"]
+    BD -->|constrains| R2["Risk: Injectivity<br/>LOW PERM"]
+
+    BD -.-|"inline ext.equinor.Alternatives[]"| ALT
+
+    subgraph ALT["Decision Alternatives (on BD record)"]
+        A1["Alt-A: Base case<br/>1 WI + 2 Prod, NPV $116M"]
+        A2["Alt-B: Depletion<br/>if Ba >100 mg/L"]
+        A3["Alt-C: WAG injection<br/>gas from Snorre"]
+        A4["Alt-D: Defer<br/>acquire pilot data"]
+    end
+```
+
 ```
 BusinessDecision: Omega Sør – WPC Decision
 │
