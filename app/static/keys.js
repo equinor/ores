@@ -199,7 +199,7 @@ function buildEasyQuery() {
         title kind uom
         ${stats ? 'statistics { count minValue maxValue mean stdDev }' : ''}
         ${(op && threshold) ? 'matchingCells { count total fraction }' : ''}
-        ${sample ? 'sampleValues' : ''}
+        ${sample ? 'arrays { path totalElements statistics { count minValue maxValue mean stdDev } sampleValues }' : ''}
       }
     }
   }
@@ -2785,7 +2785,7 @@ const GQL_PRESETS = {
       properties {
         title kind uom
         statistics { count minValue maxValue mean stdDev }
-        sampleValues
+        arrays { path totalElements statistics { count minValue maxValue mean stdDev } sampleValues }
       }
     }
   }
