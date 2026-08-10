@@ -2,6 +2,8 @@
 
 This guide explains how seismic interpretation results are stored in OSDU + RDDMS: from picking horizons on a seismic cube, through time-domain surfaces, to depth-converted maps and derived properties.
 
+**Document structure:** Sections 1–2 set the stage (workflow, data stores). Sections 3–4 cover the two main structural interpretation objects — horizons and faults — in parallel. Sections 5+ cover properties, ingestion, retrieval, and operational topics.
+
 ---
 
 ## 1. The Interpretation Workflow
@@ -76,7 +78,7 @@ The **OSDU catalog record never contains data values** (no Z-arrays, no amplitud
 
 ---
 
-## 3. What Is What - The Three Horizon Records
+## 3. Horizons
 
 Users often confuse `SeismicHorizon`, `HorizonInterpretation`, and `StructureMap`. They serve different purposes:
 
@@ -118,7 +120,7 @@ LocalBoundaryFeature          ← "There exists a geological boundary here"
 
 ---
 
-## 3b. Fault Records - The Parallel to Horizons
+## 4. Faults
 
 Faults follow the **same Interpretation → Representation split** as horizons, but with their own schema chain:
 
@@ -138,7 +140,7 @@ flowchart TD
     linkStyle 2 stroke:#333,stroke-width:2
 ```
 
-### The fault chain (analogous to horizons)
+### The full fault chain
 
 ```
 LocalBoundaryFeature          ← "There exists a geological boundary here"
@@ -153,7 +155,7 @@ LocalBoundaryFeature → HorizonInterpretation → SeismicHorizon / StructureMap
 LocalBoundaryFeature → FaultInterpretation   → SeismicFault   / GenericRepresentation
 ```
 
-### SeismicFault:2.0.0 vs GenericRepresentation:1.2.0
+### SeismicFault vs GenericRepresentation
 
 Both are **representation-level** records pointing to the same `FaultInterpretation`. They coexist:
 
@@ -215,7 +217,7 @@ flowchart LR
 
 ---
 
-## 4. Non-Structural Properties
+## 5. Non-Structural Properties
 
 Not everything derived from seismic is a structural surface. Amplitude maps, coherence extractions, thickness maps, etc. are **properties** - not structure.
 
@@ -239,13 +241,14 @@ Multiple properties can share one `Grid2dRepresentation` - store the grid once, 
 
 ---
 
-## 5. Terminology
+## 6. Terminology
 
 > | Informal term | Precise OSDU/RESQML term | What it is |
 > |---|---|---|
 > | "map" / "surface" | `Grid2dRepresentation` or `PointSetRepresentation` | RESQML geometry in RDDMS holding the actual grid or points |
 > | "structure map" | `StructureMap` (WPC) | OSDU catalog record referencing a depth `Grid2dRepresentation` via `DDMSDatasets` |
 > | "seismic horizon" | `SeismicHorizon` (WPC) | Catalog record pointing to a TWT `Grid2dRepresentation` |
+> | "seismic fault" | `SeismicFault` (WPC) | Catalog record for seismic-picked fault sticks with survey context |
 > | "property" / "attribute map" | `GenericProperty` (WPC) | Catalog record for non-structural values on a grid |
 > | "bin grid" | `GenericBinGrid` or `SeismicBinGrid` (WPC) | Reusable lattice definition |
 > | "seismic cube" | `SeismicTraceData` (WPC) + data in SDMS | The 3D volume interpreters work on |
@@ -257,7 +260,7 @@ Multiple properties can share one `Grid2dRepresentation` - store the grid once, 
 
 ---
 
-## 6. Ingestion - How It Gets Into the System
+## 7. Ingestion - How It Gets Into the System
 
 When interpretation results are ingested from tools (Petrel, OpenWorks, DecisionSpace) into OSDU + RDDMS:
 
@@ -312,7 +315,7 @@ sequenceDiagram
 
 ---
 
-## 7. Retrieving Data - End to End
+## 8. Retrieving Data - End to End
 
 How an application fetches a depth surface for display:
 
@@ -338,7 +341,7 @@ The key insight: **search OSDU for metadata, fetch data from RDDMS**. The WPC is
 
 ---
 
-## 8. Grid Strategy
+## 9. Grid Strategy
 
 Two ways to define the 2D lattice for a `StructureMap`:
 
@@ -354,7 +357,7 @@ These are **mutually exclusive** - populate one or the other, never both.
 
 ---
 
-## 9. Collaboration - Dataspaces
+## 10. Collaboration - Dataspaces
 
 Interpreters work in isolated RDDMS dataspaces, then publish:
 
@@ -373,7 +376,7 @@ enterprise/sor      ← approved results published here (locked)
 
 ---
 
-## 10. Object Classification (FMU Convention)
+## 11. Object Classification (FMU Convention)
 
 | Prefix | Meaning | → WPC schema |
 |---|---|---|
@@ -392,7 +395,7 @@ Suffixes: `_interp` (initial), `_filter` (QC'd), `_filter_from_time` (depth-conv
 
 ---
 
-## 11. References
+## 12. References
 
 - [StructureMap:1.0.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/StructureMap.1.0.0.md)
 - [GenericBinGrid:1.0.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/GenericBinGrid.1.0.0.md)
@@ -578,6 +581,7 @@ Each RDDMS object should have **both** a universal and a specialised catalog ent
 | Specialised | `StructureMap:1.0.0` | Depth surface - searchable by grid, horizon, domain |
 | Specialised | `HorizonControlPoints:1.0.0` | Picks - searchable by interpretation |
 | Specialised | `SeismicHorizon:2.1.0` | TWT surface - searchable by survey |
+| Specialised | `SeismicFault:2.0.0` | Fault sticks - searchable by survey, interpreter, picking method |
 
 ---
 
