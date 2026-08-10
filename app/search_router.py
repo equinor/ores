@@ -340,6 +340,7 @@ def _collect_manifest_kinds() -> List[Dict[str, Any]]:
         ("WPC – Wells", "osdu:wks:work-product-component--WellboreMarkerSet:*"),
         ("WPC – Wells", "osdu:wks:work-product-component--WellboreTrajectory:*"),
         ("WPC – Seismic", "osdu:wks:work-product-component--SeismicBinGrid:*"),
+        ("WPC – Seismic", "osdu:wks:work-product-component--SeismicFault:*"),
         ("WPC – Seismic", "osdu:wks:work-product-component--SeismicHorizon:*"),
         ("WPC – Seismic", "osdu:wks:work-product-component--SeismicTraceData:*"),
         ("WPC – Collections", "osdu:wks:work-product-component--CollaborationProjectCollection:*"),

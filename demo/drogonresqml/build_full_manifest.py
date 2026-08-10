@@ -369,9 +369,8 @@ def build_manifest(objects: dict) -> dict:
             kind = "osdu:wks:work-product-component--StructureMap:1.0.0"
             kind_short = "StructureMap:1.0.0"
 
-        # Build descriptive name: "Depth Surface - Interpreted (TopVolantis)"
-        horizon_name = obj.get("interp_title") or ""
-        name = f"{obj['title']} ({horizon_name})" if horizon_name else obj["title"]
+        # Use the interpreted horizon name if available, else the RESQML title
+        name = obj.get("interp_title") or obj["title"]
 
         rec = _base_record(obj["uuid"], kind, name, obj["description"])
         rec["data"]["DDMSDatasets"] = [_ddms_uri(obj["type"], obj["uuid"])]
@@ -471,7 +470,7 @@ def build_manifest(objects: dict) -> dict:
         traj_name = f"{obj['title']} ({well_name})" if well_name else obj["title"]
         rec = _base_record(obj["uuid"],
                            "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
-                           traj_name, f"Trajectory for {well_name or obj['title']}")
+                           traj_name, f"Trajectory for {well_name or obj['title']} - Drogon field")
         rec["data"]["DDMSDatasets"] = [_ddms_uri(obj["type"], obj["uuid"])]
         rec["data"]["DatasetIDs"] = [ds_id]
         rec["data"]["CoordinateReferenceSystemID"] = depth_crs_id
@@ -495,7 +494,7 @@ def build_manifest(objects: dict) -> dict:
         log_name = f"Well Log ({well_name})" if well_name else f"Well Log - {obj['title']}"
         rec = _base_record(obj["uuid"],
                            "osdu:wks:work-product-component--WellLog:1.2.0",
-                           log_name, f"Log curves on {well_name or obj['title']}")
+                           log_name, f"Log curves on {well_name or obj['title']} - Drogon field")
         rec["data"]["DDMSDatasets"] = [_ddms_uri(obj["type"], obj["uuid"])]
         rec["data"]["DatasetIDs"] = [ds_id]
         # Link to trajectory/wellbore
@@ -534,7 +533,7 @@ def build_manifest(objects: dict) -> dict:
         marker_name = f"Markers ({well_name})" if well_name else f"Markers - {obj['title']}"
         rec = _base_record(obj["uuid"],
                            "osdu:wks:work-product-component--WellboreMarkerSet:1.2.0",
-                           marker_name, f"Stratigraphic markers on {well_name or obj['title']}")
+                           marker_name, f"Stratigraphic markers on {well_name or obj['title']} - Drogon field")
         rec["data"]["DDMSDatasets"] = [_ddms_uri(obj["type"], obj["uuid"])]
         rec["data"]["DatasetIDs"] = [ds_id]
         if obj["interp_uuid"]:
