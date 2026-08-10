@@ -333,67 +333,47 @@
               <option value="status">Backend status</option>
               <option value="dataspaces">List dataspaces</option>
               <option value="types">Resource types &amp; counts</option>
-              <option value="objects_grid">Browse PointSets (horizon picks)</option>
+              <option value="objects_grid">Browse PointSets</option>
               <option value="objects_wells">Browse wellbores</option>
             </optgroup>
             <optgroup label="Relations (graph traversal)">
-              <option value="rel_grid_targets">Fault → targets (boundary feature)</option>
-              <option value="rel_grid_sources">Geogrid ← sources (properties)</option>
-              <option value="rel_well_chain">Well chain: Feature → Interp → Trajectory</option>
+              <option value="rel_grid_targets">Fault relations (both directions)</option>
+              <option value="rel_well_chain">Well chain: Feature → Interp → Traj</option>
             </optgroup>
-            <optgroup label="Stratigraphy (column + horizons)">
-              <option value="strat_column">Strat column → ranks → units</option>
-              <option value="strat_horizons">Horizons → features → surfaces</option>
-              <option value="strat_boundaries">All boundary features (strat + technical)</option>
-              <option value="xref_strat_horizons">Federated: catalog horizons ↔ RDDMS</option>
+            <optgroup label="Deep Search (RESQML)">
+              <option value="deep_poro">Faults + relation graph</option>
+              <option value="deep_perm">Horizons + relations</option>
+              <option value="deep_sw">Stratigraphic units</option>
+              <option value="deep_all_props">Boundary features (horizons + faults)</option>
+              <option value="deep_grid2d_horizons">PolylineSet (fault sticks)</option>
+              <option value="deep_grid2d_arrays">Grid2D array statistics</option>
+              <option value="deep_well_gr_filter">Well log filter: GR &gt; 50 API</option>
+              <option value="array_stats">Array statistics + sample values</option>
             </optgroup>
-            <optgroup label="Deep Search (relations + structure)">
-              <option value="deep_poro">Faults: interpretations + relations</option>
-              <option value="deep_perm">PointSets: horizon picks + relations</option>
-              <option value="deep_sw">Stratigraphic units + boundaries</option>
-              <option value="deep_all_props">All boundary features (browse)</option>
-              <option value="deep_grid2d_horizons">Fault sticks (PolylineSet) → interp</option>
-              <option value="deep_grid2d_arrays">Grid2D: array statistics</option>
-              <option value="deep_horizon_grid2d">Horizon → PointSets &amp; representations</option>
-              <option value="deep_well_phit">WITSML Logs + RESQML array stats</option>
-              <option value="deep_well_perm">WITSML search by name (titleContains)</option>
-              <option value="deep_well_all">All WITSML types + sample values</option>
-              <option value="deep_well_gr_filter">WITSML Logs: GR &gt; 50 API (shale filter)</option>
-              <option value="array_stats">Array statistics (PointSet XYZ)</option>
-              <option value="array_sample">Array sample values (coordinates)</option>
+            <optgroup label="Stratigraphy">
+              <option value="strat_column">Strat column → units</option>
+              <option value="strat_horizons">Horizons → surfaces</option>
+              <option value="xref_strat_horizons">Federated: catalog ↔ RDDMS horizons</option>
             </optgroup>
-            <optgroup label="Federated (Catalog + RDDMS)">
-              <option value="fed_local">Local RDDMS only (un-indexed PG)</option>
-              <option value="fed_catalog">OSDU catalog only (metadata)</option>
-              <option value="fed_both">All sources merged by UUID</option>
-              <option value="fed_enrich">All + relations (horizons)</option>
-              <option value="xref_grid_props">Faults in catalog → RDDMS graph</option>
-              <option value="xref_horizon_reps">Horizon in catalog → RDDMS representations</option>
-              <option value="xref_orphan_rddms">RDDMS orphans (not in catalog)</option>
-              <option value="xref_catalog_only">Catalog ghosts (not in RDDMS)</option>
-              <option value="xref_well_chain">Well chain: catalog → RDDMS graph</option>
-              <option value="xref_grid_full">Full horizon lineage (catalog+RDDMS)</option>
+            <optgroup label="FIRP Hierarchy (Feature→Interp→Rep→Prop)">
+              <option value="struct_features_to_reps">Features → Interps → Representations</option>
+              <option value="struct_faults_graph">Fault FIRP chain</option>
+              <option value="struct_org_model">Organization → structural framework</option>
+              <option value="markers_by_horizon">Wellbore markers by horizon (3D)</option>
             </optgroup>
-            <optgroup label="Structural Model (FIRP)">
-              <option value="struct_features_to_reps">Features → Interpretations → Reps</option>
-              <option value="struct_interp_to_surfaces">HorizonInterp → surfaces (reverse)</option>
-              <option value="struct_faults_graph">Faults: Feature → Interp → PolylineSet</option>
-              <option value="struct_org_model">OrganizationFeature → structural model</option>
-              <option value="struct_grid2d_all">Fault sticks (PolylineSet) + parents</option>
-              <option value="struct_catalog_vs_rddms">Catalog StructureMap ↔ RDDMS Grid2D</option>
-              <option value="struct_strat_column">Strat column → units → boundaries</option>
-              <option value="struct_grid_to_props">Horizons → all representations</option>
+            <optgroup label="Federated (Catalog + RDDMS — impossible with REST)">
+              <option value="fed_local">Local RDDMS only</option>
+              <option value="fed_both">All sources merged</option>
+              <option value="fed_enrich">Horizons + relations (federated)</option>
+              <option value="xref_grid_props">Catalog faults → RDDMS representations</option>
+              <option value="xref_horizon_reps">Catalog horizons → RDDMS surfaces</option>
+              <option value="xref_orphan_rddms">RDDMS orphans / catalog ghosts</option>
             </optgroup>
-            <optgroup label="Markers (formation tops)">
-              <option value="markers_by_horizon">Markers by horizon/feature (3D)</option>
-            </optgroup>
-            <optgroup label="WITSML (Well / Log / Channel)">
-              <option value="witsml_browse_wells">Browse wells &amp; wellbores</option>
-              <option value="witsml_well_to_logs">Well → Wellbore → Log hierarchy</option>
-              <option value="witsml_log_deep">Title search + category query</option>
-              <option value="witsml_mudlog_drilling">Mud logging by hole section (KKS-1)</option>
-              <option value="witsml_field_comparison">Field wells: logs + trajectories</option>
-              <option value="witsml_realtime_channels">Federated well search + stats</option>
+            <optgroup label="Well Data (WITSML)">
+              <option value="deep_well_phit">WITSML logs + relations</option>
+              <option value="deep_well_perm">Search by name (titleContains)</option>
+              <option value="deep_well_all">All WITSML types + statistics</option>
+              <option value="witsml_browse_wells">Browse wells (hierarchy)</option>
             </optgroup>
           </select>
           <span class="btn btn-action" id="gql-run">▶ Run</span>

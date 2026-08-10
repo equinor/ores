@@ -586,8 +586,8 @@ function countResults(data) {
 // Show/hide filter row and prop row based on action
 $('ez-action').addEventListener('change', () => {
   const action = $('ez-action').value;
-  $('ez-prop-row').style.display = (action === 'browse') ? 'none' : '';
-  $('ez-filter-row').style.display = (action === 'deep_search') ? '' : 'none';
+  $('ez-prop-row').style.display = (action === 'browse') ? 'none' : 'flex';
+  $('ez-filter-row').style.display = (action === 'deep_search' || action === 'cross_system') ? 'flex' : 'none';
 });
 
 // Easy-mode quick example: wellbore markers grouped by horizon/feature,
@@ -2425,33 +2425,29 @@ const gqlPreset = $('gql-preset');
 const gqlRun = $('gql-run');
 
 const GQL_PRESETS = {
-  // ─── Explore ───────────────────────────────────────────────────────
-  status: `# Check backend: PostgreSQL version if connected, else REST API info
-{
+  // ─── Browse & Explore ─────────────────────────────────────────────
+  status: `{
   status
 }`,
-  dataspaces: `# List all dataspaces (projects) in the store
-{
+  dataspaces: `{
   dataspaces {
     path
     uri
   }
 }`,
-  types: `# Count of each RESQML type stored in this dataspace
-# Drogon has 29 types: IjkGrids, wells, horizons, faults, properties…
+  types: `# Count of each type in the selected dataspace
 {
   resourceTypes(dataspace: "$DS") {
     name
     count
   }
 }`,
-  objects_grid: `# Browse PointSet representations (well picks, fault points)
-# Drogon has 23 PointSets: depth picks from interpreted horizons + extracted faults
+  objects_grid: `# Browse objects by type (change typeName as needed)
 {
   resqmlObjects(
     dataspace: "$DS"
     typeName: "resqml20.obj_PointSetRepresentation"
-    limit: 15
+    limit: 20
   ) {
     uuid
     title
@@ -2459,7 +2455,6 @@ const GQL_PRESETS = {
   }
 }`,
   objects_wells: `# Browse wellbore features
-# Drogon has 18 wells: exploration (55/33-*) and production (OP*)
 {
   resqmlObjects(
     dataspace: "$DS"
@@ -2473,33 +2468,14 @@ const GQL_PRESETS = {
 }`,
 
   // ─── Relationships ────────────────────────────────────────────────
-  rel_grid_targets: `# TARGETS: what does a fault interpretation reference?
-# Shows the TectonicBoundaryFeature (geological concept) it represents
-# Using fault F1 (UUID from the Drogon structural model)
+  rel_grid_targets: `# Object relations: what does a fault interpretation reference?
+# Paste any UUID from browse results
 {
   objectRelations(
     dataspace: "$DS"
     typeName: "resqml20.obj_FaultInterpretation"
     uuid: "67eb8600-bc7b-4f34-87ce-ed4c2cb287e8"
-    direction: "targets"
-  ) {
-    uuid
-    name
-    typeName
-    direction
-    contentType
-  }
-}
-# Tip: run "Faults graph" to see all 6 fault UUIDs,
-# then paste any UUID above to explore its references.`,
-  rel_grid_sources: `# SOURCES: what references the Geogrid? (CRS, stratigraphy)
-# The IjkGrid references CRS and StratigraphicColumnRank as targets
-{
-  objectRelations(
-    dataspace: "$DS"
-    typeName: "resqml20.obj_IjkGridRepresentation"
-    uuid: "2c6de928-7e08-4601-b979-34048bd68c02"
-    direction: "sources"
+    direction: "both"
   ) {
     uuid
     name
@@ -2508,11 +2484,7 @@ const GQL_PRESETS = {
     contentType
   }
 }`,
-  rel_well_chain: `# WELL CHAIN: follow WellboreFeature → Interpretation → Trajectory
-# Step 1: Get sources of well "55_33-A-1" (finds Interpretation)
-# Step 2: Copy the Interp UUID and query its sources (finds Trajectory)
-#
-# Start here:
+  rel_well_chain: `# Well chain: Feature → Interpretation → Trajectory
 {
   objectRelations(
     dataspace: "$DS"
@@ -2523,27 +2495,13 @@ const GQL_PRESETS = {
     uuid
     name
     typeName
+    direction
     contentType
   }
-}
+}`,
 
-# Then query the Interpretation's sources to find Trajectory:
-# {
-#   objectRelations(
-#     dataspace: "$DS"
-#     typeName: "resqml20.obj_WellboreInterpretation"
-#     uuid: "INTERPRETATION-UUID"
-#     direction: "sources"
-#   ) { uuid name typeName contentType }
-# }`,
-
-  // ─── Deep Search (IjkGrid) ───────────────────────────────────────
-  deep_poro: `# Deep search: Fault interpretations with full relationship graph
-# Finds all faults and shows their representations (PolylineSet = fault sticks)
-# Direction "source" = objects that point TO this fault (representations)
-# Direction "target" = objects this fault points TO (TectonicBoundaryFeature)
-#
-# Drogon has 6 faults: F1–F6 (normal faults bounding horst/graben)
+  // ─── Deep Search ───────────────────────────────────────────────────
+  deep_poro: `# Faults with relation graph
 {
   deepSearch(
     $DS_ARG
@@ -2551,46 +2509,29 @@ const GQL_PRESETS = {
     includeRelations: true
     limit: 10
   ) {
-    backend
-    totalScanned
-    totalMatched
-    queryDescription
+    backend totalScanned totalMatched queryDescription
     objects {
-      uuid
-      title
-      relations {
-        uuid name typeName direction
-      }
+      uuid title
+      relations { uuid name typeName direction }
     }
   }
 }`,
-  deep_perm: `# Deep search: PointSet representations (horizon picks, fault extractions)
-# 23 PointSets in Drogon: depth/time picks for each horizon and fault
-# Includes relations showing which HorizonInterpretation each set belongs to
-#
-# titleContains filters by name substring (case-insensitive)
+  deep_perm: `# Horizons with relations (surfaces, features)
 {
   deepSearch(
     $DS_ARG
-    typeName: "resqml20.obj_PointSetRepresentation"
+    typeName: "resqml20.obj_HorizonInterpretation"
     includeRelations: true
     limit: 10
   ) {
     backend totalScanned totalMatched queryDescription
     objects {
       uuid title
-      relations {
-        uuid name typeName direction
-      }
+      relations { uuid name typeName direction }
     }
   }
 }`,
-  deep_sw: `# Deep search: Stratigraphic units and their boundary horizons
-# Shows the 5 Drogon stratigraphic units with relations to:
-#   - StratigraphicUnitFeature (target: the geological unit concept)
-#   - StratigraphicColumnRankInterpretation (target: parent rank)
-#
-# Units define the layering: Nordland, Shetland, Draupne, etc.
+  deep_sw: `# Stratigraphic units + boundary relations
 {
   deepSearch(
     $DS_ARG
@@ -2601,15 +2542,11 @@ const GQL_PRESETS = {
     backend totalScanned totalMatched queryDescription
     objects {
       uuid title
-      relations {
-        uuid name typeName direction
-      }
+      relations { uuid name typeName direction }
     }
   }
 }`,
-  deep_all_props: `# Browse ALL structural boundary features (horizons + faults)
-# Shows every geological boundary with its interpretation relations
-# GeneticBoundaryFeature = horizons; TectonicBoundaryFeature = faults
+  deep_all_props: `# All boundary features (horizons + faults)
 {
   horizons: deepSearch(
     $DS_ARG
@@ -2617,21 +2554,28 @@ const GQL_PRESETS = {
     includeRelations: true
     limit: 10
   ) {
-    backend totalScanned totalMatched
+    totalScanned totalMatched
     objects {
       uuid title
-      relations {
-        uuid name typeName direction
-      }
+      relations { uuid name typeName direction }
+    }
+  }
+  faults: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_TectonicBoundaryFeature"
+    includeRelations: true
+    limit: 10
+  ) {
+    totalMatched
+    objects {
+      uuid title
+      relations { uuid name typeName direction }
     }
   }
 }`,
 
-  // ─── Deep Search (Surfaces / Grid2D) ──────────────────────────────
-  deep_grid2d_horizons: `# Fault sticks (PolylineSet) → which fault interpretation?
-# Uses includeRelations to traverse the RESQML object graph:
-#   PolylineSetRepresentation → target FaultInterpretation → target TectonicBoundaryFeature
-# Each polyline set is a seismic interpretation of a fault plane.
+  // ─── Surfaces & Arrays ─────────────────────────────────────────────
+  deep_grid2d_horizons: `# PolylineSet (fault sticks) → parent interpretations
 {
   deepSearch(
     $DS_ARG
@@ -2642,15 +2586,11 @@ const GQL_PRESETS = {
     backend totalScanned totalMatched queryDescription
     objects {
       uuid title
-      relations {
-        uuid name typeName direction
-      }
+      relations { uuid name typeName direction }
     }
   }
 }`,
-  deep_grid2d_arrays: `# Grid2D surface array statistics
-# Grid2D nodes store the Z-values (depth or time) directly as arrays
-# This shows the DS_interp surface for BaseVolantis
+  deep_grid2d_arrays: `# Array statistics for a Grid2D surface
 {
   objectArrays(
     dataspace: "$DS"
@@ -2660,64 +2600,18 @@ const GQL_PRESETS = {
     includeSampleValues: true
     sampleSize: 10
   ) {
-    path
-    dataType
-    dimensions
-    totalElements
+    path dataType dimensions totalElements
     statistics { count minValue maxValue mean stdDev }
     sampleValues
   }
 }`,
 
-  // ─── Deep Search (Horizons) ───────────────────────────────────────
-  deep_horizon_grid2d: `# Horizon → which Grid2D surfaces and representations?
-# The reverse of deep_grid2d_horizons: start from horizons,
-# find all Grid2Ds, PointSets, WellMarkers that reference them.
-# Filter sources by typeName in results to distinguish surface types.
-{
-  deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_HorizonInterpretation"
-    includeRelations: true
-    includeStatistics: false
-    limit: 10
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title
-      relations {
-        uuid name typeName direction
-      }
-    }
-  }
-}
-# Drogon horizons:
-#   TopVolantis, BaseVolantis, TopTherys, TopVolon, MSL, BaseVelmodel`,
-
-  // ─── Stratigraphy (column hierarchy + horizon chain) ──────────────
-  strat_column: `# Stratigraphic column hierarchy with relations
-# Drogon has one strat column: "Stratigraphic Column (Geogrid)"
-# Traverses: StratColumn → ColumnRankInterpretation → UnitInterpretations
-#            + HorizonInterpretations linking units to surfaces
-#
-# The RDDMS column matches the catalog "Drogon-Volve Lithostratigraphy"
-# via ResourceURI/UUID cross-references on StratigraphicUnitInterpretation.
+  // ─── Stratigraphy ──────────────────────────────────────────────────
+  strat_column: `# Strat column → ranks → units hierarchy
 {
   col: deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_StratigraphicColumn"
-    includeRelations: true
-    limit: 5
-  ) {
-    backend totalScanned totalMatched
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
-    }
-  }
-  rank: deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_StratigraphicColumnRankInterpretation"
     includeRelations: true
     limit: 5
   ) {
@@ -2740,72 +2634,11 @@ const GQL_PRESETS = {
     }
   }
 }`,
-  strat_horizons: `# Horizon → feature → surface chain (Representation → Interpretation → Feature)
-# Shows the RESQML hierarchy for each horizon:
-#   direction=target → GeneticBoundaryFeature (the geological concept)
-#   direction=source → Grid2D / PointSet / WellboreMarkerFrame (representations)
-#
-# 4 horizons are stratigraphic (TopVolantis, TopTherys, TopVolon, BaseVolantis)
-# 2 are technical boundaries (MSL, BaseVelmodel)
+  strat_horizons: `# Horizons → features → surface representations
 {
   horizons: deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_HorizonInterpretation"
-    includeRelations: true
-    limit: 10
-  ) {
-    backend totalMatched
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
-    }
-  }
-  features: deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_GeneticBoundaryFeature"
-    includeRelations: true
-    limit: 10
-  ) {
-    totalMatched
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
-    }
-  }
-}`,
-  strat_boundaries: `# All boundary features - stratigraphic + tectonic (faults)
-# GeneticBoundaryFeature = horizons (strat or technical datum)
-# TectonicBoundaryFeature = faults (F1–F6 in Drogon)
-# Stratigraphic boundaries have StratigraphicUnitFeature relations;
-# technical ones (MSL, BaseVelmodel) and faults do not.
-{
-  genetic: deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_GeneticBoundaryFeature"
-    includeRelations: true
-    limit: 10
-  ) {
-    totalMatched
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
-    }
-  }
-  tectonic: deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_TectonicBoundaryFeature"
-    includeRelations: true
-    limit: 10
-  ) {
-    totalMatched
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
-    }
-  }
-  faults: deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_FaultInterpretation"
     includeRelations: true
     limit: 10
   ) {
@@ -2850,22 +2683,14 @@ const GQL_PRESETS = {
   }
 }`,
 
-  // ─── Deep Search (Well Logs) ──────────────────────────────────────
-  deep_well_phit: `# WELL DATA + NUMERICAL STATS: WITSML logs + RESQML array statistics
-# Demonstrates combining WITSML metadata with RESQML numerical data
-# in a single GraphQL request:
-#   1. WITSML Logs: metadata objects (XML) — no arrays, but relations show hierarchy
-#   2. RESQML PointSet: has 124k XYZ coordinates with full statistics
-#
-# Use case: "Show me wells with logs AND compute depth statistics
-# from the seismic horizon picks to compare coverage"
+  // ─── Well Data ─────────────────────────────────────────────────────
+  deep_well_phit: `# WITSML logs + RESQML array statistics
 {
-  drogonLogs: deepSearch(
+  logs: deepSearch(
     dataspace: "$DS"
     typeName: "witsml21.Log"
-    titleContains: "Composite"
     includeRelations: true
-    limit: 8
+    limit: 10
   ) {
     backend totalScanned totalMatched queryDescription
     objects {
@@ -2873,35 +2698,15 @@ const GQL_PRESETS = {
       relations { uuid name typeName direction }
     }
   }
-  # RESQML PointSet has actual numerical arrays with statistics
-  horizonPoints: objectArrays(
-    dataspace: "$DS"
-    typeName: "resqml20.obj_PointSetRepresentation"
-    uuid: "0633e96a-4928-4f6e-b115-89c75e39b4df"
-    includeStatistics: true
-  ) {
-    path
-    dataType
-    dimensions
-    totalElements
-    statistics { count minValue maxValue mean stdDev nanCount }
-  }
-}
-# Note: WITSML objects store metadata as XML (well names, curve mnemonics,
-# depths). They don't have HDF5 arrays. RESQML objects (grids, surfaces,
-# point sets) store numerical data in HDF5 → those have array statistics.`,
-  deep_well_perm: `# SEARCH BY NAME: Find all WITSML objects for well "A-1"
-# Demonstrates titleContains filter — searches across a type
-# Use this to find everything related to a specific well by name
-#
-# Try changing "A-1" to "B-1" or "C-2" to explore other wells
+}`,
+  deep_well_perm: `# Search WITSML by name (titleContains)
 {
-  wellbores: deepSearch(
+  deepSearch(
     dataspace: "$DS"
-    typeName: "witsml21.Wellbore"
+    category: "witsml"
     titleContains: "A-1"
     includeRelations: true
-    limit: 5
+    limit: 10
   ) {
     backend totalScanned totalMatched queryDescription
     objects {
@@ -2909,45 +2714,10 @@ const GQL_PRESETS = {
       relations { uuid name typeName direction }
     }
   }
-  logs: deepSearch(
-    dataspace: "$DS"
-    typeName: "witsml21.Log"
-    titleContains: "A-1"
-    includeRelations: true
-    limit: 5
-  ) {
-    totalMatched
-    objects {
-      uuid title typeName
-      relations { uuid name typeName direction }
-    }
-  }
-  trajectories: deepSearch(
-    dataspace: "$DS"
-    typeName: "witsml21.Trajectory"
-    titleContains: "A-1"
-    includeRelations: true
-    limit: 5
-  ) {
-    totalMatched
-    objects {
-      uuid title typeName
-      relations { uuid name typeName direction }
-    }
-  }
-}
-# Expected: 1 wellbore, 1 log, 1 trajectory — all for DROGON A-1
-# Each shows relation to parent (Well or Wellbore)`,
-  deep_well_all: `# CATEGORY SEARCH + WELL LOG SAMPLE VALUES
-# Two examples in one query:
-#   1. category:"witsml" → searches ALL WITSML types at once
-#      (Well, Wellbore, Log, Trajectory, ChannelSet, MudLog)
-#      With statistics on any objects that have numerical arrays
-#   2. Log objectArrays → actual curve values (GR, DT, NPHI, RHOB)
-#
-# The category search replaces running 6 separate type queries
+}`,
+  deep_well_all: `# All WITSML types + statistics
 {
-  allWitsml: deepSearch(
+  deepSearch(
     dataspace: "$DS"
     category: "witsml"
     includeRelations: true
@@ -2964,39 +2734,12 @@ const GQL_PRESETS = {
       }
     }
   }
-  # Sample actual log curve values from a Composite Log
-  logCurves: objectArrays(
-    dataspace: "$DS"
-    typeName: "witsml21.Log"
-    uuid: "e6ce89d2-569e-5902-bea0-5f9451f7ad08"
-    includeStatistics: true
-    includeSampleValues: true
-    sampleSize: 5
-  ) {
-    path dimensions totalElements
-    statistics { count minValue maxValue mean stdDev }
-    sampleValues
-  }
-}
-# Expected: ~25 WITSML objects (Wells + Wellbores + Logs + Trajectories + MudLogs)
-# Plus 5 channels (DEPTH, GR, DT, NPHI, RHOB) with realistic petrophysical values:
-#   DEPTH: 1000–1002 m, GR: 45–56 API, DT: 95–105 µs/ft, NPHI: 0.18–0.24, RHOB: 2.35–2.45 g/cc`,
-
-  // ─── WITSML Log Filter by Curve Value ─────────────────────────────
-  deep_well_gr_filter: `# WELL LOG FILTER: Find logs where GR exceeds a threshold
-# Uses propertyFilter with arrayFilter to select only logs that have
-# Gamma Ray (GR) values above 50 API — a realistic shale/sand cutoff.
-#
-# GR > 50 API typically indicates shale-rich intervals.
-# Adjust the threshold to narrow or broaden results:
-#   > 30  → most intervals (permissive)
-#   > 50  → shale-dominated (realistic median)
-#   > 80  → high-GR shales only (restrictive)
+}`,
+  deep_well_gr_filter: `# Well log filter: GR > 50 API (shale cutoff)
 {
-  highGrLogs: deepSearch(
+  deepSearch(
     dataspace: "$DS"
     typeName: "witsml21.Log"
-    includeRelations: true
     includeStatistics: true
     propertyFilter: {
       kind: "GR"
@@ -3007,7 +2750,6 @@ const GQL_PRESETS = {
     backend totalScanned totalMatched queryDescription
     objects {
       uuid title typeName
-      relations { uuid name typeName direction }
       properties {
         title kind uom
         statistics { count minValue maxValue mean stdDev }
@@ -3015,49 +2757,10 @@ const GQL_PRESETS = {
       }
     }
   }
-  # Also show full stats for comparison (all logs, no filter)
-  allLogStats: deepSearch(
-    dataspace: "$DS"
-    typeName: "witsml21.Log"
-    includeStatistics: true
-    limit: 10
-  ) {
-    totalMatched
-    objects {
-      uuid title
-      properties {
-        title kind
-        statistics { count minValue maxValue mean stdDev }
-      }
-    }
-  }
-}
-# Expected: Logs where GR channel has values > 50 API
-# matchingCells shows how many data points exceed the threshold
-# Use this to identify shale-prone intervals across all wells`,
-
-  // ─── Numerical Data ───────────────────────────────────────────────
-  array_stats: `# Get array metadata and statistics for a PointSet
-# Shows coordinate arrays (XYZ points) for horizon depth picks
-# 124,922 points × 3 coordinates = 374,766 values
-{
-  objectArrays(
-    dataspace: "$DS"
-    typeName: "resqml20.obj_PointSetRepresentation"
-    uuid: "0633e96a-4928-4f6e-b115-89c75e39b4df"
-    includeStatistics: true
-  ) {
-    path
-    dataType
-    dimensions
-    totalElements
-    statistics {
-      count minValue maxValue mean stdDev nanCount
-    }
-  }
 }`,
-  array_sample: `# Read sample values from PointSet arrays (first 20 XYZ coordinates)
-# Each row is [X, Y, Z] in the local CRS (UTM easting, northing, depth)
+
+  // ─── Arrays ────────────────────────────────────────────────────────
+  array_stats: `# Array statistics (PointSet XYZ coordinates)
 {
   objectArrays(
     dataspace: "$DS"
@@ -3065,18 +2768,15 @@ const GQL_PRESETS = {
     uuid: "0633e96a-4928-4f6e-b115-89c75e39b4df"
     includeStatistics: true
     includeSampleValues: true
-    sampleSize: 20
+    sampleSize: 10
   ) {
-    path
-    dimensions
-    totalElements
-    statistics { minValue maxValue mean stdDev }
+    path dataType dimensions totalElements
+    statistics { count minValue maxValue mean stdDev }
     sampleValues
   }
 }`,
-  // ─── Federated (Catalog + Local RDDMS + Remote RDDMS) ─────────────────
-  fed_local: `# Search local RDDMS only (un-indexed PG data)
-# Skips OSDU catalog and remote RDDMS
+  // ─── Federated (Catalog + RDDMS) ────────────────────────────────────────
+  fed_local: `# Local RDDMS only (skip catalog)
 {
   federatedSearch(
     text: "*"
@@ -3086,38 +2786,14 @@ const GQL_PRESETS = {
     dataspaces: $DS_LIST
     limit: 20
   ) {
-    totalLocalRddms totalMerged sources queryDescription
+    totalLocalRddms totalMerged sources
     hits {
       uuid title typeName dataspace
       foundInLocalRddms
     }
   }
 }`,
-  fed_catalog: `# Search OSDU catalog only (metadata level)
-# Uses project name from the selected dataspace to scope results.
-# With text: "*" + wildcard kind the entire OSDU instance is searched
-# (>1M records) – change "$DS_NAME" to "*" only if you want that.
-{
-  federatedSearch(
-    text: "$DS_NAME"
-    kind: "osdu:wks:work-product-component--*:*"
-    dataspaces: $DS_LIST
-    searchCatalog: true
-    searchRddms: false
-    searchRemoteRddms: false
-    limit: 20
-  ) {
-    totalCatalog totalMerged sources queryDescription
-    hits {
-      uuid title typeName dataspace
-      foundInCatalog
-      osduId osduKind
-    }
-  }
-}`,
-  fed_both: `# Search ALL THREE: catalog + local PG + remote RDDMS
-# Results merged by UUID – flags show where each was found
-# Uses project name to scope catalog (wildcard kind + text:"*" = >1M hits)
+  fed_both: `# All sources merged (catalog + local + remote)
 {
   federatedSearch(
     text: "$DS_NAME"
@@ -3128,8 +2804,7 @@ const GQL_PRESETS = {
     searchRemoteRddms: true
     limit: 20
   ) {
-    totalCatalog totalLocalRddms totalRemoteRddms totalRddms totalMerged
-    sources queryDescription
+    totalCatalog totalLocalRddms totalRemoteRddms totalMerged sources
     hits {
       uuid title typeName dataspace
       foundInCatalog foundInLocalRddms foundInRemoteRddms
@@ -3137,7 +2812,7 @@ const GQL_PRESETS = {
     }
   }
 }`,
-  fed_enrich: `# Full pipeline: all sources + relations for horizon interpretations
+  fed_enrich: `# Federated + relations (horizons)
 {
   federatedSearch(
     text: "*"
@@ -3145,29 +2820,21 @@ const GQL_PRESETS = {
     typeName: "resqml20.obj_HorizonInterpretation"
     searchCatalog: true
     searchRddms: true
-    searchRemoteRddms: true
     includeRelations: true
-    limit: 5
+    limit: 10
   ) {
-    totalCatalog totalLocalRddms totalRemoteRddms totalMerged sources
+    totalCatalog totalLocalRddms totalMerged sources
     hits {
       uuid title typeName dataspace
-      foundInCatalog foundInLocalRddms foundInRemoteRddms
+      foundInCatalog foundInLocalRddms
       relations { uuid name typeName direction }
     }
   }
 }`,
-  // ─── Cross-System Queries (only answerable via GraphQL) ────────────────
-  // These demonstrate the unique value of federated GraphQL:
-  // correlating OSDU catalog metadata with RDDMS object-graph data
-  // using shared UUIDs across systems.
-  xref_grid_props: `# CROSS-SYSTEM: Find faults indexed in OSDU catalog,
-# then discover their RDDMS representations.
-#
-# Why only GraphQL can do this:
-#   OSDU Search knows the fault exists (WPC record) but has NO representation data.
-#   RDDMS has the representations (PolylineSets) but isn't searchable by OSDU kind.
-#   GraphQL bridges the gap: catalog hit → UUID → RDDMS graph → representations.
+  // ─── Cross-System (impossible with just OSDU catalog search) ────────────
+  xref_grid_props: `# Catalog faults → RDDMS representations (graph traversal)
+# OSDU Search finds the fault WPC record but has NO representation data.
+# GraphQL bridges: catalog hit → UUID → RDDMS graph → PolylineSets
 {
   federatedSearch(
     text: "*"
@@ -3184,32 +2851,13 @@ const GQL_PRESETS = {
       uuid title typeName dataspace
       foundInCatalog foundInLocalRddms
       osduId osduKind
-      # Relations from RDDMS graph (PolylineSet, TectonicBoundaryFeature)
       relations { uuid name typeName direction }
     }
   }
 }`,
-  xref_horizon_reps: `# CROSS-SYSTEM: Horizons known in catalog → their RDDMS representations
-#
-# Requires harmonized catalog data: run gen_markers_strat_drogon.py then
-# ingest manifest_litho_strat_drogon.json to create HorizonInterpretation WPCs.
-#
-# Why only GraphQL can do this:
-#   Catalog knows HorizonInterpretation records exist (OSDU kind + metadata).
-#   But which Grid2D surfaces or triangulated meshes REFERENCE that horizon?
-#   Only RDDMS object graph (sources = reverse edges) knows this.
-#
-# relationFilter: ["Grid2d", "PointSet", "TriangulatedSet"] keeps only
-# surface representations.  Remove it to also see WellboreMarkerFrame (9 per
-# horizon) and Activity.  Activity is always stripped by default.
-#
-# Expected results (4 strat + 2 technical):
-#   TopVolantis  → 4 Grid2D, 6 PointSet   [strat]
-#   BaseVolantis → 4 Grid2D, 6 PointSet   [strat]
-#   TopTherys    → 1 Grid2D, 2 PointSet   [strat]
-#   TopVolon     → 1 Grid2D, 2 PointSet   [strat]
-#   MSL          → 3 Grid2D               [technical]
-#   BaseVelmodel → 2 Grid2D               [technical]
+  xref_horizon_reps: `# Catalog horizons → RDDMS surfaces (reverse graph edges)
+# Catalog knows HorizonInterpretation records exist, but WHICH Grid2D
+# surfaces reference that horizon? Only RDDMS graph knows.
 {
   federatedSearch(
     text: "*"
@@ -3227,24 +2875,12 @@ const GQL_PRESETS = {
       uuid title dataspace
       foundInCatalog foundInLocalRddms
       osduId osduKind
-      # Which representations point TO this horizon? (Grid2D, TriangulatedSet, etc.)
-      relations {
-        uuid name typeName direction
-      }
+      relations { uuid name typeName direction }
     }
   }
 }`,
-  xref_orphan_rddms: `# CROSS-SYSTEM: Find RDDMS objects NOT indexed in OSDU catalog
-#
-# Why only GraphQL can do this:
-#   Catalog Search only returns what's been ingested to OSDU.
-#   RDDMS may contain objects that were loaded via ETP/EPC import
-#   but never registered as OSDU WPC records.
-#   This query finds them: foundInLocalRddms=true AND foundInCatalog=false.
-#   Useful for: data governance, re-ingestion planning, gap analysis.
-#
-# text: "$DS_NAME" scopes catalog to this project.
-# Change to "*" to compare against the entire OSDU instance (slow, >1M hits).
+  xref_orphan_rddms: `# RDDMS orphans (not in catalog) vs catalog ghosts (not in RDDMS)
+# Impossible with single-system search — requires comparing both
 {
   federatedSearch(
     text: "$DS_NAME"
@@ -3252,231 +2888,66 @@ const GQL_PRESETS = {
     dataspaces: $DS_LIST
     searchCatalog: true
     searchRddms: true
-    searchRemoteRddms: false
-    limit: 100
+    limit: 50
   ) {
     totalCatalog totalLocalRddms totalMerged sources
-    queryDescription
     hits {
       uuid title typeName dataspace
       foundInCatalog foundInLocalRddms
       osduId
     }
   }
-}
-# ↑ After running: filter results where foundInCatalog=false
-#   (those are RDDMS-only orphans not visible to catalog search)`,
-  xref_catalog_only: `# CROSS-SYSTEM: Catalog records that DON'T exist in RDDMS
-#
-# Why only GraphQL can do this:
-#   If catalog ingestion created WPC records from a manifest
-#   but the actual RESQML data was never loaded into RDDMS,
-#   those records are "metadata ghosts" - searchable but not queryable.
-#   This finds them: foundInCatalog=true AND foundInLocalRddms=false.
-#   Useful for: verifying ingestion completeness, finding broken links.
-#
-# text: "$DS_NAME" scopes catalog to this project.
-# Change to "*" to scan the entire OSDU instance (slow, >1M hits).
-{
-  federatedSearch(
-    text: "$DS_NAME"
-    kind: "osdu:wks:work-product-component--*:*"
-    dataspaces: $DS_LIST
-    searchCatalog: true
-    searchRddms: true
-    searchRemoteRddms: false
-    limit: 100
-  ) {
-    totalCatalog totalLocalRddms totalMerged sources
-    queryDescription
-    hits {
-      uuid title typeName dataspace
-      foundInCatalog foundInLocalRddms
-      osduId osduKind
-    }
-  }
-}
-# ↑ After running: filter results where foundInLocalRddms=false
-#   (those are catalog-only records with no RDDMS backing)`,
-  xref_well_chain: `# CROSS-SYSTEM: Trace a WITSML well from OSDU catalog to RDDMS data
-#
-# Why only GraphQL can do this:
-#   OSDU catalog stores flat Well records (master-data--Well).
-#   RDDMS stores the Well → Wellbore → Log → ChannelSet graph.
-#   GraphQL finds the well in catalog, then traverses RDDMS to reveal
-#   the full drilling data hierarchy (mud logs, trajectories, logs).
-#
-# Uses maap/witsml where we ingested both WITSML data and OSDU manifest.
-{
-  federatedSearch(
-    text: "*"
-    dataspaces: ["$DS"]
-    typeName: "witsml21.Wellbore"
-    searchCatalog: true
-    searchRddms: true
-    includeRelations: true
-    limit: 10
-  ) {
-    totalCatalog totalLocalRddms totalMerged sources
-    hits {
-      uuid title typeName dataspace
-      foundInCatalog foundInLocalRddms
-      osduId osduKind
-      # Graph edges: Wellbore → Well (target), Log/MudLog/Trajectory (sources)
-      relations {
-        uuid name typeName direction
-      }
-    }
-  }
 }`,
-  xref_grid_full: `# CROSS-SYSTEM: Full horizon lineage - catalog metadata + RDDMS graph
-#
-# The ultimate cross-system query that no single API can answer:
-#   1. OSDU catalog → finds the horizon (WPC record with OSDU id, kind)
-#   2. UUID match → confirms it exists in RDDMS (data integrity check)
-#   3. Graph traversal → finds PointSets, features, stratigraphy links
-#
-# This single query replaces: 1 catalog search + N RDDMS REST calls +
-# N relation lookups.
+
+  // ─── FIRP Hierarchy (Feature→Interp→Rep→Property) ─────────────────────
+  struct_features_to_reps: `# FIRP: BoundaryFeature → Interpretation → Representations
+# Traverses the full RESQML hierarchy from geological concepts down
+# to spatial data objects (Grid2D, PolylineSet, PointSet)
 {
-  federatedSearch(
-    text: "*"
-    kind: "osdu:wks:work-product-component--HorizonInterpretation:*"
-    dataspaces: $DS_LIST
-    typeName: "resqml20.obj_HorizonInterpretation"
-    searchCatalog: true
-    searchRddms: true
-    searchRemoteRddms: true
+  features: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_GeneticBoundaryFeature"
     includeRelations: true
-    relationFilter: ["PointSet", "Boundary", "Stratigraphic"]
     limit: 10
   ) {
-    totalCatalog totalLocalRddms totalRemoteRddms totalMerged
-    sources queryDescription
-    hits {
-      uuid title typeName dataspace
-      foundInCatalog foundInLocalRddms foundInRemoteRddms
-      osduId osduKind
+    totalMatched
+    objects {
+      uuid title typeName
+      relations { uuid name typeName direction }
+    }
+  }
+  faultFeatures: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_TectonicBoundaryFeature"
+    includeRelations: true
+    limit: 10
+  ) {
+    totalMatched
+    objects {
+      uuid title typeName
       relations { uuid name typeName direction }
     }
   }
 }`,
-  // ─── Structural Model Relationships (FIRP hierarchy) ─────────────────
-  // Queries that navigate the Feature→Interpretation→Representation→Property
-  // graph for structural models across RDDMS and catalog.
-  struct_features_to_reps: `# STRUCTURAL: Feature → Interpretation → all Representations
-#
-# Traverses the RESQML FIRP hierarchy from boundary features downward:
-#   LocalBoundaryFeature (horizon/fault)
-#     → HorizonInterpretation / FaultInterpretation
-#       → Grid2dRepresentation (depth surface, time surface)
-#       → PolylineSetRepresentation (fault sticks)
-#       → PointSetRepresentation (well markers)
-#
-# Uses deepSearch on features, then relations reveal the full tree.
-{
-  deepSearch(
-    dataspace: "$DS"
-    typeName: "resqml20.obj_GeneticBoundaryFeature"
-    includeRelations: true
-    limit: 12
-  ) {
-    totalMatched
-    objects {
-      uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
-    }
-  }
-}`,
-  struct_interp_to_surfaces: `# STRUCTURAL: HorizonInterpretation → which surfaces reference it?
-#
-# Direction "sources" = reverse traversal: find all objects that point TO
-# each HorizonInterpretation. Expected for Drogon:
-#   - Grid2dRepresentation (depth maps, time maps)
-#   - PointSetRepresentation (well picks projected onto horizon)
-#   - WellboreMarkerFrameRepresentation (markers that reference this horizon)
-#
-# This is the RDDMS-only equivalent of the catalog's InterpretedHorizonID
-# cross-reference, but richer: it includes representations the catalog
-# may not know about.
-{
-  deepSearch(
-    dataspace: "$DS"
-    typeName: "resqml20.obj_HorizonInterpretation"
-    includeRelations: true
-    limit: 10
-  ) {
-    totalMatched
-    objects {
-      uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
-    }
-  }
-}`,
-  markers_by_horizon: `# MARKERS: wellbore markers grouped by the horizon / feature they pick
-#
-# Returns WellboreMarkerFrameRepresentation objects (one per wellbore) with
-# their relations, so you can see — per well — which HorizonInterpretation /
-# GeneticBoundaryFeature each marker references. Click "Show 3D Results" to
-# render the bedding-disk markers across all wells (depth increases downward).
-#
-# To focus on ONE horizon or feature:
-#   • read each frame's relations and keep the frames whose relations include
-#     your horizon/feature uuid, OR
-#   • use the reverse view (preset "HorizonInterp → surfaces"): start from a
-#     single HorizonInterpretation and its "sources" relations list every
-#     marker frame that points to it.
+  struct_faults_graph: `# Fault FIRP chain: Feature → Interpretation → PolylineSet
 {
   deepSearch(
     $DS_ARG
-    typeName: "resqml20.obj_WellboreMarkerFrameRepresentation"
-    includeRelations: true
-    limit: 25
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title typeName
-      relations {
-        uuid name typeName direction contentType
-      }
-    }
-  }
-}`,
-  struct_faults_graph: `# STRUCTURAL: Fault hierarchy - Feature → Interpretation → PolylineSet
-#
-# The fault representation chain in RESQML:
-#   TectonicBoundaryFeature → FaultInterpretation → PolylineSetRepresentation
-# Plus the StructuralOrganizationInterpretation that aggregates all faults.
-#
-# Expected for Drogon: 6 faults × (1 Feature + 1 Interpretation + 1 PolylineSet)
-{
-  deepSearch(
-    dataspace: "$DS"
     typeName: "resqml20.obj_FaultInterpretation"
     includeRelations: true
     limit: 10
   ) {
-    totalMatched
+    backend totalScanned totalMatched queryDescription
     objects {
       uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
+      relations { uuid name typeName direction }
     }
   }
 }`,
-  struct_org_model: `# STRUCTURAL: OrganizationFeature → the top-level structural framework
-#
-# Drogon has one OrganizationFeature that represents the structural model.
-# Its relations point to the interpretations (faults, horizons) that
-# comprise the structural framework.
+  struct_org_model: `# Structural framework: OrganizationFeature → all members
 {
   deepSearch(
-    dataspace: "$DS"
+    $DS_ARG
     typeName: "resqml20.obj_OrganizationFeature"
     includeRelations: true
     limit: 5
@@ -3484,472 +2955,53 @@ const GQL_PRESETS = {
     totalMatched
     objects {
       uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
-    }
-  }
-}`,
-  struct_grid2d_all: `# STRUCTURAL: All fault stick polylines with their parent faults
-#
-# Lists every PolylineSetRepresentation (fault sticks from seismic)
-# and shows which FaultInterpretation each references.
-# Expected for Drogon: 6 PolylineSets (one per fault: F1–F6)
-{
-  deepSearch(
-    dataspace: "$DS"
-    typeName: "resqml20.obj_PolylineSetRepresentation"
-    includeRelations: true
-    limit: 10
-  ) {
-    totalMatched
-    objects {
-      uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
-    }
-  }
-}`,
-  struct_catalog_vs_rddms: `# STRUCTURAL: Compare catalog HorizonInterp records with RDDMS objects
-#
-# Federated query that finds HorizonInterpretation WPCs in the OSDU catalog
-# and cross-references them with HorizonInterpretation in RDDMS.
-# Hits with both foundInCatalog=true and foundInLocalRddms=true are
-# fully synchronized. Missing on either side indicates a gap.
-{
-  federatedSearch(
-    text: "Drogon"
-    kind: "osdu:wks:work-product-component--HorizonInterpretation:*"
-    dataspaces: $DS_LIST
-    typeName: "resqml20.obj_HorizonInterpretation"
-    searchCatalog: true
-    searchRddms: true
-    includeRelations: true
-    limit: 20
-  ) {
-    totalCatalog totalLocalRddms totalMerged sources
-    hits {
-      uuid title typeName dataspace
-      foundInCatalog foundInLocalRddms
-      osduId osduKind
       relations { uuid name typeName direction }
     }
   }
 }`,
-  struct_strat_column: `# STRUCTURAL: Stratigraphic column → units → boundary features
-#
-# Traverses the stratigraphic framework:
-#   StratigraphicColumn → StratigraphicColumnRankInterpretation
-#     → StratigraphicUnitInterpretation (5 units in Drogon)
-#       → GeneticBoundaryFeature (horizons bounding each unit)
+
+  // ─── Numerical Properties (3D grid cell values) ───────────────────────
+  markers_by_horizon: `# Wellbore markers by horizon (renderable in 3D)
 {
   deepSearch(
-    dataspace: "$DS"
-    typeName: "resqml20.obj_StratigraphicColumn"
+    $DS_ARG
+    typeName: "resqml20.obj_WellboreMarkerFrameRepresentation"
     includeRelations: true
-    limit: 5
+    limit: 20
   ) {
-    totalMatched
+    backend totalScanned totalMatched queryDescription
     objects {
       uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
+      relations { uuid name typeName direction contentType }
     }
   }
 }`,
-  struct_grid_to_props: `# STRUCTURAL: HorizonInterpretation → all representations + features
-#
-# Direction "sources" on the horizon finds everything that references it:
-#   - PointSetRepresentation (depth picks)
-#   - PolylineSetRepresentation (contour lines)
-#   - WellboreMarkerFrameRepresentation (well markers)
-#
-# Direction "targets" shows the GeneticBoundaryFeature (geological concept).
-# Expected for Drogon: 6 horizons × (3–6 PointSets + 1 Feature)
+
+  // ─── WITSML (1 preset: browse + graph) ────────────────────────────────
+  witsml_browse_wells: `# WITSML well hierarchy + relations
 {
-  deepSearch(
-    dataspace: "$DS"
-    typeName: "resqml20.obj_HorizonInterpretation"
-    includeRelations: true
-    limit: 10
-  ) {
-    totalMatched
-    objects {
-      uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
-    }
-  }
-}`,
-  // ─── WITSML (Well / Log / Channel) ────────────────────────────────────
-  // Queries for WITSML 2.1 objects ingested via ETP PutDataObjects.
-  // Type naming: witsml21.Well, witsml21.Wellbore, witsml21.Log, etc.
-  witsml_browse_wells: `# Browse all WITSML wells and wellbores in the dataspace
-# Shows the full well inventory with wellbore children
-# Typical WITSML hierarchy: Well → Wellbore → Log → ChannelSet
-{
-  wells: resqmlObjects(
-    dataspace: "$DS"
-    typeName: "witsml21.Well"
-    limit: 30
-  ) {
-    uuid
-    title
-    typeName
-  }
-  wellbores: resqmlObjects(
-    dataspace: "$DS"
-    typeName: "witsml21.Wellbore"
-    limit: 30
-  ) {
-    uuid
-    title
-    typeName
-  }
-}`,
-  witsml_well_to_logs: `# RELATIONSHIP: Well → Wellbore → Log → ChannelSet hierarchy
-# Traverses the WITSML object graph via ETP relationship edges.
-# Direction "sources" = objects that reference this well (wellbores, logs)
-#
-# Step 1: Pick a well UUID from the browse query above
-# Step 2: Query its sources to find wellbores
-# Step 3: Query a wellbore's sources to find logs and trajectories
-#
-# Example: find everything that references a well
-{
-  wellChildren: deepSearch(
+  wells: deepSearch(
     $DS_ARG
     typeName: "witsml21.Well"
     includeRelations: true
-    limit: 10
+    limit: 15
   ) {
     backend totalScanned totalMatched
     objects {
       uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
+      relations { uuid name typeName direction }
     }
   }
-  wellboreChildren: deepSearch(
+  wellbores: deepSearch(
     $DS_ARG
     typeName: "witsml21.Wellbore"
     includeRelations: true
-    limit: 10
+    limit: 15
   ) {
     totalMatched
     objects {
       uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
-    }
-  }
-}
-# Expected: Well → Wellbore (source), Wellbore → Log + Trajectory (sources)
-# Use objectRelations for a specific UUID to drill deeper:
-# {
-#   objectRelations(
-#     dataspace: "$DS"
-#     typeName: "witsml21.Wellbore"
-#     uuid: "WELLBORE-UUID-HERE"
-#     direction: "sources"
-#   ) { uuid name typeName direction }
-# }`,
-  witsml_log_deep: `# TITLE SEARCH: Find wells/logs by name substring
-# Uses titleContains to filter across types — the WITSML equivalent
-# of a property-value search.
-#
-# Try: "A-1", "B-2", "KKS", "Composite", "Drilled"
-# This searches the Citation.Title field from the XML metadata.
-#
-# Combined with category search to find all A-1 related objects:
-{
-  # Search by name in witsml (DROGON A-1 logs)
-  a1Results: deepSearch(
-    dataspace: "$DS"
-    typeName: "witsml21.Log"
-    titleContains: "A-1"
-    includeRelations: true
-    limit: 10
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title typeName
       relations { uuid name typeName direction }
-    }
-  }
-  # Search by name in witsml (Chevron KKS-1)
-  kksResults: deepSearch(
-    dataspace: "$DS"
-    typeName: "witsml21.Well"
-    titleContains: "KKS"
-    includeRelations: true
-    limit: 10
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title typeName
-      relations { uuid name typeName direction }
-    }
-  }
-  # Category search: ALL WITSML types matching "A-1"
-  allWitsmlA1: deepSearch(
-    dataspace: "$DS"
-    category: "witsml"
-    titleContains: "A-1"
-    includeRelations: true
-    limit: 20
-  ) {
-    totalScanned totalMatched queryDescription
-    objects {
-      uuid title typeName
-      relations { uuid name typeName direction }
-    }
-  }
-}
-# Expected:
-#   a1Results → 2 logs: "DROGON A-1 Composite Log", "DROGON A-1 GR+DT Log"
-#   kksResults → 1 well: "Chevron KKS-1" with wellbore + log sources
-#   allWitsmlA1 → Well + Wellbore + Log + Trajectory for DROGON A-1
-#
-# For curve statistics, use objectArrays on a specific Log UUID
-# (see "CATEGORY SEARCH + WELL LOG SAMPLE VALUES" preset)`,
-  witsml_realtime_channels: `# FEDERATED WELL SEARCH: OSDU Catalog + Local RDDMS
-# Demonstrates the full federation stack for well objects:
-#   1. Searches OSDU catalog for Well records (osdu:wks:master-data--Well)
-#   2. Searches local PG for WITSML Well objects
-#   3. Merges by UUID / name — shows which wells exist in both systems
-#
-# Plus: array statistics from a RESQML point set (numerical data demo)
-{
-  # Federated: finds wells in OSDU catalog AND/OR local RDDMS
-  wellSearch: federatedSearch(
-    text: "DROGON"
-    kind: "osdu:wks:master-data--Well:*"
-    typeName: "witsml21.Well"
-    dataspaces: ["$DS"]
-    searchCatalog: true
-    searchRddms: true
-    includeRelations: true
-    limit: 10
-  ) {
-    totalCatalog totalLocalRddms totalMerged sources
-    hits {
-      uuid title typeName dataspace
-      foundInCatalog foundInLocalRddms
-      osduId osduKind
-      relations { uuid name typeName direction }
-    }
-  }
-  # Numerical stats from RESQML (horizon picks: 124k XYZ points)
-  depthStats: objectArrays(
-    dataspace: "$DS"
-    typeName: "resqml20.obj_PointSetRepresentation"
-    uuid: "0633e96a-4928-4f6e-b115-89c75e39b4df"
-    includeStatistics: true
-    includeSampleValues: true
-    sampleSize: 5
-  ) {
-    path dimensions totalElements
-    statistics { count minValue maxValue mean stdDev }
-    sampleValues
-  }
-}
-# Expected:
-#   wellSearch → 8 Drogon wells, foundInLocalRddms=true
-#   If ingested to OSDU: also foundInCatalog=true with osduId
-#   depthStats → [124922, 3] array with min/max/mean depth values
-#   sampleValues → 5 rows of [X, Y, Z] coordinate triplets`,
-  witsml_mudlog_drilling: `# DRILLING OPS: Mud logging by hole section
-# A realistic use case: during drilling, the geologist queries mud log data
-# to compare lithology and gas readings between hole sections.
-#
-# Chevron KKS-1 has two mud logs recorded during drilling:
-#   - Surface Hole MudLog  (0–500m, riser + conductor casing)
-#   - Production Hole MudLog (500–3200m, reservoir section)
-#
-# This query finds all MudLogs for a specific wellbore, showing:
-#   - Which wellbore they belong to (target relation)
-#   - Mud log properties (lithology intervals, gas readings)
-#
-# Use case: "Show me all mud log reports for KKS-1 — I need to check
-# the gas shows recorded while drilling through the Draupne shale"
-{
-  mudLogs: deepSearch(
-    $DS_ARG
-    typeName: "witsml21.MudLog"
-    includeRelations: true
-    limit: 10
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
-    }
-  }
-  # Cross-reference: which wellbore has both logs AND mud logs?
-  wellboreGraph: deepSearch(
-    $DS_ARG
-    typeName: "witsml21.Wellbore"
-    titleContains: "KKS"
-    includeRelations: true
-    limit: 5
-  ) {
-    totalMatched
-    objects {
-      uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
-    }
-  }
-}
-# Expected result:
-#   mudLogs → 2 objects: "KKS-1 Surface Hole MudLog", "KKS-1 Production Hole MudLog"
-#   Each has relation → KKS-1 WB1 (target Wellbore)
-#   wellboreGraph → KKS-1 WB1 with sources: Log, 2× MudLog; target: Well
-#
-# Real-world follow-up queries:
-#   - Filter by depth interval to find gas shows in reservoir section
-#   - Compare mud weights between hole sections (kick detection)
-#   - Correlate mud log lithology with wireline log (CMR) interpretation`,
-  witsml_field_comparison: `# FIELD DEVELOPMENT: Compare wells across a platform
-# The Drogon field has 8 wells on platforms A, B, C.
-# This query finds all wells in the field and their log/trajectory data,
-# enabling a drilling engineer to compare well designs.
-#
-# Use case: "Which Drogon wells have composite logs and trajectories?
-# I need to plan a sidetrack from B-2 and want to compare nearby paths."
-{
-  wells: deepSearch(
-    dataspace: "$DS"
-    typeName: "witsml21.Well"
-    includeRelations: true
-    limit: 20
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
-    }
-  }
-  trajectories: deepSearch(
-    dataspace: "$DS"
-    typeName: "witsml21.Trajectory"
-    includeRelations: true
-    limit: 20
-  ) {
-    totalMatched
-    objects {
-      uuid title typeName
-      relations {
-        uuid name typeName direction
-      }
-    }
-  }
-}
-# Expected: 8 wells (A-1..A-4, B-1..B-2, C-1..C-2)
-# Each well → 1 wellbore → 1 composite log + 1 drilled trajectory
-# Trajectories show inclination/azimuth statistics for well path comparison
-#
-# Follow-up: use objectRelations on a specific wellbore UUID to get
-# its full data graph (log, trajectory, mudlog, cement job, etc.)`,
-
-  // ─── Native RDDMS GraphQL (direct etp-client /graphql queries) ────
-  native_dataspaces: `# Native RDDMS GraphQL: list dataspaces
-# This queries the etp-client /graphql endpoint directly (not ores)
-# Requires the etp-client with GraphQL module (v1.3+)
-{
-  dataspaces {
-    uri
-    name
-    storeLastWrite
-    storeCreated
-  }
-}`,
-  native_resources: `# Native RDDMS GraphQL: browse resources in a dataspace
-# Shows all objects with metadata (no content fetch — fast)
-{
-  resources(
-    dataspaceUri: "eml:///dataspace('$DS')"
-    dataObjectTypes: ["resqml20.obj_IjkGridRepresentation"]
-  ) {
-    uri
-    name
-    dataObjectType
-    sourceCount
-    targetCount
-    storeLastWrite
-    activeStatus
-  }
-}`,
-  native_graph: `# Native RDDMS GraphQL: batch graph search
-# Traverse the object graph for multiple URIs in a SINGLE call
-# Much faster than individual REST calls for targets/sources
-#
-# Replace the URIs below with real ones from your dataspace
-{
-  graphSearch(
-    uris: [
-      "eml:///dataspace('$DS')/resqml20.obj_IjkGridRepresentation(2c6de928-7e08-4601-b979-34048bd68c02)"
-    ]
-    depth: 2
-  ) {
-    resources {
-      uri
-      name
-      dataObjectType
-      sourceCount
-      targetCount
-    }
-    edges {
-      sourceUri
-      targetUri
-    }
-  }
-}`,
-  native_targets: `# Native RDDMS GraphQL: lazy field resolution
-# Only fetches targets when you SELECT the field — no waste
-# Also shows: sources, content (full JSON), arrays (metadata)
-{
-  resource(uri: "eml:///dataspace('$DS')/resqml20.obj_IjkGridRepresentation(2c6de928-7e08-4601-b979-34048bd68c02)") {
-    uri
-    name
-    dataObjectType
-    targets {
-      uri
-      name
-      dataObjectType
-    }
-    sources {
-      uri
-      name
-      dataObjectType
-    }
-  }
-}`,
-  native_content: `# Native RDDMS GraphQL: object content (JSON body)
-# WARNING: fetches full parsed XML→JSON — only select when needed
-{
-  resource(uri: "eml:///dataspace('$DS')/resqml20.obj_IjkGridRepresentation(2c6de928-7e08-4601-b979-34048bd68c02)") {
-    uri
-    name
-    content {
-      dataObjectType
-      data
-    }
-    arrays {
-      pathInResource
-      dimensions
-      logicalArrayType
     }
   }
 }`
@@ -4285,50 +3337,93 @@ gqlTabGraph.addEventListener('click', () => {
   gqlGraphHint.style.display = '';
 });
 
-function _sanitize(s) { return (s || '').replace(/["<>]/g, '').replace(/[\[\](){}#&;|]/g, ' ').trim().substring(0, 60); }
-function _shortType(t) { return (t || '').replace(/^resqml\d+\.obj_/, '').replace(/application.*\./g, ''); }
+function _sanitize(s) { return (s || '').replace(/["<>`]/g, '').replace(/[\[\](){}#&;|]/g, ' ').replace(/\s+/g, ' ').trim().substring(0, 50); }
+function _shortType(t) { return (t || '').replace(/^(resqml|witsml|eml)\d+\.obj_/i, '').replace(/^(resqml|witsml|eml)\d+\./i, '').replace(/application.*\./g, ''); }
 function _nodeId(uuid) { return 'n' + (uuid || 'x').replace(/[^a-zA-Z0-9]/g, '').substring(0, 12); }
 
 function buildMermaidFromRelations(data) {
-  // object_relations response
-  const rels = data.data && data.data.objectRelations;
+  // object_relations response (top-level or aliased)
+  const rels = _findField(data.data, 'objectRelations');
   if (!rels || !rels.length) return '';
   const lines = ['graph LR'];
   const centerId = 'center';
-  lines.push(`  ${centerId} ["Query Object"]`);
+  lines.push(`  ${centerId}["Query Object"]`);
   rels.forEach((r, i) => {
     const nid = _nodeId(r.uuid) + i;
     const label = _sanitize(r.name) || _sanitize(_shortType(r.typeName || r.type_name));
     const stype = _sanitize(_shortType(r.typeName || r.type_name));
-    lines.push(`  ${nid} ["${label} : ${stype}"]`);
+    lines.push(`  ${nid}["${label} : ${stype}"]`);
     if (r.direction === 'target') {
-      lines.push(`  ${centerId} -->| target | ${nid} `);
+      lines.push(`  ${centerId} -->|target| ${nid}`);
     } else {
-      lines.push(`  ${nid} -->| source | ${centerId} `);
+      lines.push(`  ${nid} -->|source| ${centerId}`);
     }
   });
   return lines.join('\n');
 }
 
 function buildMermaidFromDeepSearch(data) {
-  // deep_search response
-  const ds = data.data && data.data.deepSearch;
-  if (!ds || !ds.objects || !ds.objects.length) return '';
+  // deep_search response (top-level or any aliased field with .objects[].relations)
+  const ds = _findDeepSearchResult(data.data);
+  if (!ds) return '';
   const lines = ['graph TD'];
-  ds.objects.forEach((obj, oi) => {
+  ds.forEach((obj, oi) => {
     const oid = _nodeId(obj.uuid) + oi;
-    const oLabel = _sanitize(obj.title) || obj.uuid.substring(0, 8);
-    const oType = _sanitize(_shortType(obj.typeName || obj.type_name));
-    lines.push(`  ${oid} ["${oLabel} : ${oType}"]`);
+    const oLabel = _sanitize(obj.title) || (obj.uuid || '').substring(0, 8);
+    const oType = _sanitize(_shortType(obj.typeName || obj.type_name || ''));
+    lines.push(`  ${oid}["${oLabel} : ${oType}"]`);
+    if (obj.relations && obj.relations.length) {
+      obj.relations.forEach((r, ri) => {
+        const rid = oid + 'r' + ri;
+        const rLabel = _sanitize(r.name) || (r.uuid || '').substring(0, 8);
+        const rType = _sanitize(_shortType(r.typeName || r.type_name || ''));
+        lines.push(`  ${rid}["${rLabel} : ${rType}"]`);
+        if (r.direction === 'target') {
+          lines.push(`  ${oid} -->|target| ${rid}`);
+        } else {
+          lines.push(`  ${rid} -->|source| ${oid}`);
+        }
+      });
+    }
     if (obj.properties && obj.properties.length) {
       obj.properties.forEach((p, pi) => {
         const pid = oid + 'p' + pi;
-        const pLabel = _sanitize(p.title) || p.uuid.substring(0, 8);
+        const pLabel = _sanitize(p.title || p.kind || 'prop');
         const kind = _sanitize(p.kind || '');
         const stats = p.statistics ? `min=${p.statistics.minValue?.toFixed(2) ?? '?'} max=${p.statistics.maxValue?.toFixed(2) ?? '?'}` : '';
         const detail = [kind, stats].filter(Boolean).join(' ');
-        lines.push(`  ${pid} (["${pLabel} ${detail}"])`);
-        lines.push(`  ${pid} -.->| property | ${oid} `);
+        lines.push(`  ${pid}(["${pLabel} ${detail}"])`);
+        lines.push(`  ${pid} -.->|property| ${oid}`);
+      });
+    }
+  });
+  return lines.join('\n');
+}
+
+function buildMermaidFromFederated(data) {
+  // federatedSearch response (top-level or aliased)
+  const fs = _findField(data.data, 'federatedSearch');
+  if (!fs || !fs.hits || !fs.hits.length) return '';
+  const lines = ['graph TD'];
+  fs.hits.forEach((hit, hi) => {
+    const hid = _nodeId(hit.uuid) + hi;
+    const hLabel = _sanitize(hit.title) || (hit.uuid || '').substring(0, 8);
+    const hType = _sanitize(_shortType(hit.typeName || ''));
+    let flags = '';
+    if (hit.foundInCatalog) flags += ' C';
+    if (hit.foundInLocalRddms) flags += ' R';
+    lines.push(`  ${hid}["${hLabel} : ${hType}${flags}"]`);
+    if (hit.relations && hit.relations.length) {
+      hit.relations.forEach((r, ri) => {
+        const rid = hid + 'r' + ri;
+        const rLabel = _sanitize(r.name) || (r.uuid || '').substring(0, 8);
+        const rType = _sanitize(_shortType(r.typeName || ''));
+        lines.push(`  ${rid}["${rLabel} : ${rType}"]`);
+        if (r.direction === 'target') {
+          lines.push(`  ${hid} -->|target| ${rid}`);
+        } else {
+          lines.push(`  ${rid} -->|source| ${hid}`);
+        }
       });
     }
   });
@@ -4336,16 +3431,14 @@ function buildMermaidFromDeepSearch(data) {
 }
 
 function buildMermaidFromResqmlObjects(data) {
-  // resqml_objects or dataspaces list
   const objs = data.data && (data.data.resqmlObjects || data.data.resourceTypes);
   if (!objs || !objs.length || objs.length > 30) return '';
   if (data.data.resourceTypes) {
-    // Type summary as a simple graph
     const lines = ['graph LR'];
     lines.push('  DS["Dataspace"]');
     objs.forEach((t, i) => {
       const nid = 'type' + i;
-      lines.push(`  ${nid} ["${_sanitize(_shortType(t.name))} : ${t.count} objects"]`);
+      lines.push(`  ${nid}["${_sanitize(_shortType(t.name))} : ${t.count} objects"]`);
       lines.push(`  DS --- ${nid}`);
     });
     return lines.join('\n');
@@ -4353,10 +3446,43 @@ function buildMermaidFromResqmlObjects(data) {
   return '';
 }
 
+// Helper: find a field in data by key name (handles aliased GraphQL fields)
+function _findField(d, fieldName) {
+  if (!d) return null;
+  if (d[fieldName]) return d[fieldName];
+  // Check all keys for aliased versions
+  for (const key of Object.keys(d)) {
+    const val = d[key];
+    if (val && typeof val === 'object') {
+      // federatedSearch has .hits, objectRelations is array
+      if (fieldName === 'federatedSearch' && val.hits) return val;
+      if (fieldName === 'objectRelations' && Array.isArray(val) && val.length > 0 && val[0].direction) return val;
+    }
+  }
+  return null;
+}
+
+// Helper: find deepSearch-style results (any field with .objects[] containing relations or properties)
+function _findDeepSearchResult(d) {
+  if (!d) return null;
+  // Direct deepSearch field
+  if (d.deepSearch && d.deepSearch.objects && d.deepSearch.objects.length) return d.deepSearch.objects;
+  // Search all fields for deepSearch-like structure
+  let allObjects = [];
+  for (const key of Object.keys(d)) {
+    const val = d[key];
+    if (val && val.objects && Array.isArray(val.objects) && val.objects.length > 0) {
+      allObjects = allObjects.concat(val.objects);
+    }
+  }
+  return allObjects.length > 0 ? allObjects : null;
+}
+
 async function renderMermaidFromResponse(data) {
   if (!data || !data.data) { _lastMermaidCode = ''; return; }
   let code = buildMermaidFromRelations(data)
     || buildMermaidFromDeepSearch(data)
+    || buildMermaidFromFederated(data)
     || buildMermaidFromResqmlObjects(data);
   _lastMermaidCode = code;
   if (!code) return;
@@ -4367,8 +3493,8 @@ async function renderMermaidFromResponse(data) {
     const { svg } = await mermaid.render(id, code);
     gqlMermaid.innerHTML = svg;
   } catch (e) {
-    const escaped = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    gqlMermaid.innerHTML = `<pre style="color:#a80000;font-size:12px;">Diagram error: ${e.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}\n\n${escaped}</pre>`;
+    console.warn('Mermaid render error:', e.message);
+    gqlMermaid.innerHTML = `<pre style="color:#a80000;font-size:12px;">Diagram error: ${e.message.substring(0, 200)}</pre>`;
   }
 }
 
