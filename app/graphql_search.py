@@ -1118,7 +1118,7 @@ async def _deep_search_rest(
     async def _fetch_sources(r: Dict[str, Any]) -> Tuple[Dict[str, Any], List[Dict[str, Any]]]:
         tn = r["_resolved_type"]
         try:
-            sources = await _rest_list_sources(token, dataspace, tn, r["uuid"])
+            sources = await _gql_or_rest_list_sources(token, dataspace, tn, r["uuid"])
             return (r, sources)
         except Exception as e:
             warnings.append(f"{r['title']}: sources failed: {e}")
@@ -1244,7 +1244,7 @@ async def _deep_search_rest(
         if include_relations:
             relation_results = []
             try:
-                targets = await _rest_list_targets(token, dataspace, type_name, uuid)
+                targets = await _gql_or_rest_list_targets(token, dataspace, type_name, uuid)
                 for t in targets:
                     parsed = _parse_eml_entry(t)
                     if parsed["uuid"]:
@@ -1256,7 +1256,7 @@ async def _deep_search_rest(
             except Exception as e:
                 warnings.append(f"{title}: targets failed: {e}")
             try:
-                src_all = await _rest_list_sources(token, dataspace, type_name, uuid)
+                src_all = await _gql_or_rest_list_sources(token, dataspace, type_name, uuid)
                 for s in src_all:
                     parsed = _parse_eml_entry(s)
                     if parsed["uuid"]:
@@ -2048,8 +2048,8 @@ async def federated_search_impl(
                     fh.relations = _filter_relations(raw_rels, relation_filter)
                 elif not pool and include_relations:
                     try:
-                        targets = await _rest_list_targets(token, fh.dataspace, fh.type_name, fh.uuid)
-                        sources_r = await _rest_list_sources(token, fh.dataspace, fh.type_name, fh.uuid)
+                        targets = await _gql_or_rest_list_targets(token, fh.dataspace, fh.type_name, fh.uuid)
+                        sources_r = await _gql_or_rest_list_sources(token, fh.dataspace, fh.type_name, fh.uuid)
                         rels_list: List[RelationInfo] = []
                         for t in targets:
                             ct = t.get("ContentType") or ""
