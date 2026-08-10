@@ -2468,13 +2468,14 @@ const GQL_PRESETS = {
 }`,
 
   // ─── Relationships ────────────────────────────────────────────────
-  rel_grid_targets: `# Object relations: what does a fault interpretation reference?
-# Paste any UUID from browse results
+  rel_grid_targets: `# Object relations for a specific fault (paste UUID from browse)
+# Step 1: Run "Faults + relation graph" to find UUIDs
+# Step 2: Paste a UUID below to explore its full graph
 {
   objectRelations(
     dataspace: "$DS"
     typeName: "resqml20.obj_FaultInterpretation"
-    uuid: "67eb8600-bc7b-4f34-87ce-ed4c2cb287e8"
+    uuid: "PASTE-UUID-HERE"
     direction: "both"
   ) {
     uuid
@@ -2484,12 +2485,14 @@ const GQL_PRESETS = {
     contentType
   }
 }`,
-  rel_well_chain: `# Well chain: Feature → Interpretation → Trajectory
+  rel_well_chain: `# Well chain: find all objects that reference a well feature
+# Step 1: Run "Browse wellbores" to find UUIDs
+# Step 2: Paste a UUID below
 {
   objectRelations(
     dataspace: "$DS"
     typeName: "resqml20.obj_WellboreFeature"
-    uuid: "50495987-88f4-4e39-95c8-0b2624298c47"
+    uuid: "PASTE-UUID-HERE"
     direction: "sources"
   ) {
     uuid
@@ -2590,19 +2593,24 @@ const GQL_PRESETS = {
     }
   }
 }`,
-  deep_grid2d_arrays: `# Array statistics for a Grid2D surface
+  deep_grid2d_arrays: `# Grid2D surfaces with numerical statistics (depth/time values)
 {
-  objectArrays(
-    dataspace: "$DS"
+  deepSearch(
+    $DS_ARG
     typeName: "resqml20.obj_Grid2dRepresentation"
-    uuid: "02a9d0b6-1f7c-4553-994b-5060cd725d6d"
+    includeRelations: true
     includeStatistics: true
-    includeSampleValues: true
-    sampleSize: 10
+    limit: 10
   ) {
-    path dataType dimensions totalElements
-    statistics { count minValue maxValue mean stdDev }
-    sampleValues
+    backend totalScanned totalMatched queryDescription
+    objects {
+      uuid title
+      relations { uuid name typeName direction }
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean stdDev }
+      }
+    }
   }
 }`,
 
@@ -2760,19 +2768,26 @@ const GQL_PRESETS = {
 }`,
 
   // ─── Arrays ────────────────────────────────────────────────────────
-  array_stats: `# Array statistics (PointSet XYZ coordinates)
+  array_stats: `# PointSet representations with numerical statistics (XYZ coordinates)
 {
-  objectArrays(
-    dataspace: "$DS"
+  deepSearch(
+    $DS_ARG
     typeName: "resqml20.obj_PointSetRepresentation"
-    uuid: "0633e96a-4928-4f6e-b115-89c75e39b4df"
+    includeRelations: true
     includeStatistics: true
     includeSampleValues: true
-    sampleSize: 10
+    limit: 10
   ) {
-    path dataType dimensions totalElements
-    statistics { count minValue maxValue mean stdDev }
-    sampleValues
+    backend totalScanned totalMatched queryDescription
+    objects {
+      uuid title
+      relations { uuid name typeName direction }
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean stdDev }
+        sampleValues
+      }
+    }
   }
 }`,
   // ─── Federated (Catalog + RDDMS) ────────────────────────────────────────
