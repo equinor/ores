@@ -1,0 +1,108 @@
+{
+  "schema": {
+    "kind": "osdu:wks:work-product-component--SeismicFault:2.0.0",
+    "version": "2.0.0"
+  },
+  "defaults": {
+    "existence_kind": "osdu:reference-data--ExistenceKind:Prototype:",
+    "domain_type": "osdu:reference-data--DomainType:Time:",
+    "representation_role": "osdu:reference-data--RepresentationRole:FaultSticks:",
+    "representation_type": "osdu:reference-data--RepresentationType:PolylineSet:",
+    "picking_type": "osdu:reference-data--SeismicPickingType:Manual:",
+    "interpreter": "Drogon Demo (Equinor)",
+    "dataspace": "maap/drogon",
+    "dataset_id_suffix": "maap-drogon",
+    "crs_uuid": "69aeefa6-c127-47b6-ac7f-2eaca4edc2fc"
+  },
+  "references": {
+    "seismic_bin_grid_id": "{partition}:work-product-component--SeismicBinGrid:drogon-seismic-bingrid",
+    "seismic_trace_data_ids": [
+      "{partition}:work-product-component--SeismicTraceData:drogon-amp-far-time-20180101",
+      "{partition}:work-product-component--SeismicTraceData:drogon-amp-near-time-20180101"
+    ],
+    "dataset_id": "{partition}:dataset--ETPDataspace:1.0.1:maap-drogon",
+    "local_crs_id": "{partition}:work-product-component--LocalModelCompoundCrs:1.2.0:69aeefa6-c127-47b6-ac7f-2eaca4edc2fc:"
+  },
+  "spatial_area": {
+    "Wgs84Coordinates": {
+      "type": "FeatureCollection",
+      "features": [{
+        "type": "Feature",
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [[[2.173688, 61.150078], [2.377312, 61.150078],
+                           [2.377312, 61.212876], [2.173688, 61.212876],
+                           [2.173688, 61.150078]]]
+        }
+      }]
+    }
+  },
+  "faults": [
+    {
+      "name": "F1",
+      "description": "Fault F1 – major NE-SW trending normal fault, Drogon field. Picked on 3D seismic (time domain).",
+      "fault_interpretation_uuid": "3c8ba7c6-6845-4709-93d7-67b9f8ba6143",
+      "polyline_set_uuids": [
+        "6fc4b445-b302-445f-b219-7dd1e8231ce2",
+        "d8383577-e47d-47a3-98d3-ab2ddd807428"
+      ],
+      "point_set_uuid": "24d97f3f-e132-4a19-a004-8b849ac4bea4",
+      "boundary_feature_uuid": "fadb02fb-d92a-4158-b146-b9786f45a656"
+    },
+    {
+      "name": "F2",
+      "description": "Fault F2 – bounding normal fault on the eastern flank, Drogon field. Picked on 3D seismic (time domain).",
+      "fault_interpretation_uuid": "13a0c904-30f0-4899-b1e3-098067662cc1",
+      "polyline_set_uuids": [
+        "28ad877f-70da-40ed-a554-35829bb686c9",
+        "4c6d0c73-058c-46eb-952f-ab4cc196ec2c"
+      ],
+      "point_set_uuid": "41a55dff-24d1-4d1b-8ef9-b51ef7edb97c",
+      "boundary_feature_uuid": "e9b1bd9b-81db-4f59-8b90-4dbfab8eb40f"
+    },
+    {
+      "name": "F3",
+      "description": "Fault F3 – internal compartmentalising fault, Drogon field. Picked on 3D seismic (time domain).",
+      "fault_interpretation_uuid": "cdd90f1a-0de3-4fef-b8f0-1f2f23930d0b",
+      "polyline_set_uuids": [
+        "4fd835c9-fe03-44e9-8bf3-9666f1beb155",
+        "b884d86a-3af9-4572-abcf-64b0d9439319"
+      ],
+      "point_set_uuid": "63f65d47-d50a-4c3c-91ff-c024a5f7620b",
+      "boundary_feature_uuid": "1917639c-d48b-4ed1-bf71-dacca78b227e"
+    },
+    {
+      "name": "F4",
+      "description": "Fault F4 – relay structure connecting F2 and F5, Drogon field. Picked on 3D seismic (time domain).",
+      "fault_interpretation_uuid": "2ec55c7d-a5dc-485d-8027-9e9fb941a855",
+      "polyline_set_uuids": [
+        "00c3f092-4ed0-4316-8c45-af49f472c99b",
+        "8f369286-7563-4fdc-a6a5-4a2b5d71bbe7"
+      ],
+      "point_set_uuid": "805c6c72-c890-4b8c-bd1c-90550ea1f2fb",
+      "boundary_feature_uuid": "aab2e1f8-3560-4b46-aee3-fff7abb70b4e"
+    },
+    {
+      "name": "F5",
+      "description": "Fault F5 – bounding normal fault on the western flank, Drogon field. Picked on 3D seismic (time domain).",
+      "fault_interpretation_uuid": "1321cb3d-1995-4976-9882-54c886065b4f",
+      "polyline_set_uuids": [
+        "1908db6f-42f2-4b39-837a-f0736ce0c0cf",
+        "2cd30d98-d0c4-4458-bb6d-12b0c9efee5a"
+      ],
+      "point_set_uuid": "8c117f4a-2b90-41ce-a1c5-640ff3332a89",
+      "boundary_feature_uuid": "ee02bd72-57e2-4a64-b1f4-c17aee39ba51"
+    },
+    {
+      "name": "F6",
+      "description": "Fault F6 – minor antithetic fault in the graben, Drogon field. Picked on 3D seismic (time domain).",
+      "fault_interpretation_uuid": "21251034-2dcf-495c-830e-2c8c6ed2ee8d",
+      "polyline_set_uuids": [
+        "50a22b63-a981-4e2f-8a85-3e55bbc76997",
+        "8b27a9dc-f639-4597-9b55-606eedf83660"
+      ],
+      "point_set_uuid": "02fb80cb-52bc-4785-bbf9-21f807dc37ff",
+      "boundary_feature_uuid": "4dc60b9c-f11b-486c-87d8-ebfc6323dfae"
+    }
+  ]
+}

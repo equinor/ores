@@ -29,7 +29,7 @@ flowchart TD
 | **2. Grid the picks** | Interpolate picks into a continuous surface | Gridded TWT horizon (SeismicHorizon) |
 | **3. Depth-convert** | Apply velocity model to convert TWT → depth | Gridded depth surface (StructureMap) |
 | **4. Extract properties** | Compute amplitude/coherence/etc. along the horizon | Property grids (GenericProperty) |
-| **5. Pick faults** | Trace fault intersections on sections | Fault stick polylines |
+| **5. Pick faults** | Trace fault intersections on sections | Fault stick polylines (`SeismicFault` + `GenericRepresentation`) |
 
 Each of these artefacts lives in a specific data store and is cataloged with a specific OSDU WPC schema.
 
@@ -118,6 +118,103 @@ LocalBoundaryFeature          ← "There exists a geological boundary here"
 
 ---
 
+## 3b. Fault Records - The Parallel to Horizons
+
+Faults follow the **same Interpretation → Representation split** as horizons, but with their own schema chain:
+
+```mermaid
+flowchart TD
+    LBF["LocalBoundaryFeature<br/>━━━━━━━━━━━━━━━━━━<br/>• 'A geological boundary exists'<br/>• Master data"]
+    FI["FaultInterpretation<br/>━━━━━━━━━━━━━━━━━━<br/>• Geological MEANING<br/>• Throw type, dip, seal<br/>• Links to feature<br/>• No geometry"]
+    SF["SeismicFault (WPC)<br/>━━━━━━━━━━━━━━━━━━<br/>• Seismic-picked sticks<br/>• Tied to seismic survey<br/>• BinGridID, SeismicTraceDataIDs<br/>• Time domain"]
+    GR["GenericRepresentation (WPC)<br/>━━━━━━━━━━━━━━━━━━<br/>• RESQML-native pointer<br/>• PolylineSet or PointSet<br/>• DDMSDatasets → RDDMS<br/>• Any domain"]
+
+    LBF --> FI
+    FI --> SF
+    FI --> GR
+
+    linkStyle 0 stroke:#333,stroke-width:2
+    linkStyle 1 stroke:#333,stroke-width:2
+    linkStyle 2 stroke:#333,stroke-width:2
+```
+
+### The fault chain (analogous to horizons)
+
+```
+LocalBoundaryFeature          ← "There exists a geological boundary here"
+  └─ FaultInterpretation      ← "We interpret it as fault F1, normal, NE-SW"
+       ├─ SeismicFault         ← "Here are the fault sticks on seismic survey X"
+       └─ GenericRepresentation← "Here is the raw RESQML PolylineSet in RDDMS"
+```
+
+Compare to the horizon chain:
+```
+LocalBoundaryFeature → HorizonInterpretation → SeismicHorizon / StructureMap
+LocalBoundaryFeature → FaultInterpretation   → SeismicFault   / GenericRepresentation
+```
+
+### SeismicFault:2.0.0 vs GenericRepresentation:1.2.0
+
+Both are **representation-level** records pointing to the same `FaultInterpretation`. They coexist:
+
+| Aspect | `GenericRepresentation` | `SeismicFault:2.0.0` |
+|---|---|---|
+| **Role** | RESQML-native geometry pointer | Seismic interpretation context record |
+| **Seismic context** | None (no bin grid, no survey ref) | Full: `BinGridID`, `SeismicTraceDataIDs`, `SeismicPickingTypeID` |
+| **Domain awareness** | Implicit (from CRS only) | Explicit: `DomainTypeID` = Time/Depth/Mixed |
+| **Interpreter** | Not recorded natively | `Interpreter` field |
+| **Schema** | Generic catch-all | Purpose-built for seismic fault picks |
+| **Discoverability** | Must filter by `Role=FaultStick` | Kind-level search: `*--SeismicFault:*` |
+| **Supported formats** | RESQML only | RESQML + CSV |
+| **When to use** | Always (RDDMS-native linkage) | When seismic survey context matters |
+
+### Why both exist
+
+- **`GenericRepresentation`** is what the RDDMS manifest builder produces automatically — it mirrors the RESQML object graph 1:1. It is the RDDMS data pointer.
+- **`SeismicFault`** adds the seismic interpretation metadata that does not exist in RESQML: which volume was the fault picked on, what bin grid, what picking method. It is the catalog discovery record.
+
+In a well-managed system both should exist per fault: `GenericRepresentation` for RDDMS data access, `SeismicFault` for search and interpretation provenance.
+
+### Relationships diagram
+
+```mermaid
+flowchart LR
+    SF["SeismicFault:2.0.0"]
+    FI["FaultInterpretation:1.3.0"]
+    GR["GenericRepresentation:1.2.0<br/>(PolylineSetRepresentation)"]
+    BG["SeismicBinGrid"]
+    STD["SeismicTraceData<br/>(3D cubes)"]
+    CRS["LocalModelCompoundCrs"]
+    LBF["LocalBoundaryFeature"]
+
+    SF -->|InterpretationID| FI
+    SF -->|BinGridID| BG
+    SF -->|SeismicTraceDataIDs| STD
+    SF -->|LocalModelCompoundCrsID| CRS
+    SF -.->|ancestry.parents| FI
+    SF -.->|ancestry.parents| LBF
+    GR -->|InterpretationID| FI
+    FI -->|InterpretedBoundaryFeatureID| LBF
+```
+
+### When to create a SeismicFault record
+
+| Scenario | Create `SeismicFault`? | Rationale |
+|---|---|---|
+| Fault picked interactively on 3D seismic | **Yes** | Full seismic context available |
+| Fault sticks exported from Petrel/OpendTect | **Yes** | Can resolve survey + bin grid |
+| Fault extracted from geomodel (algorithmic) | No | Not a seismic pick — use `GenericRepresentation` only |
+| Fault polygons from FMU (structure_depth_fault_lines) | No | Depth-domain model output, not a seismic interpretation |
+
+### Data management implications
+
+1. **Search**: Users can find all seismic-picked faults with a kind-level query (`work-product-component--SeismicFault`), without filtering generic representations.
+2. **Provenance**: The `SeismicTraceDataIDs` and `Interpreter` fields trace exactly which data and who produced the pick.
+3. **Re-interpretation**: When a new seismic volume arrives, create new `SeismicFault` records while keeping existing `FaultInterpretation` and `LocalBoundaryFeature` unchanged — the geologic identity persists across surveys.
+4. **Consistency with horizons**: The same pattern applies — `SeismicHorizon` is to `HorizonInterpretation` what `SeismicFault` is to `FaultInterpretation`.
+
+---
+
 ## 4. Non-Structural Properties
 
 Not everything derived from seismic is a structural surface. Amplitude maps, coherence extractions, thickness maps, etc. are **properties** - not structure.
@@ -174,10 +271,12 @@ sequenceDiagram
     Tool->>Ingest: Export RESQML (surfaces, picks, faults)
     Ingest->>RDDMS: Store Grid2dRepresentation + arrays
     Ingest->>RDDMS: Store PointSetRepresentation (picks)
-    Ingest->>OSDU: Create HorizonInterpretation (if new)
+    Ingest->>RDDMS: Store PolylineSetRepresentation (fault sticks)
+    Ingest->>OSDU: Create HorizonInterpretation / FaultInterpretation (if new)
     Ingest->>OSDU: Create SeismicHorizon WPC (TWT) → DDMSDatasets → RDDMS
     Ingest->>OSDU: Create StructureMap WPC (depth) → DDMSDatasets → RDDMS
-    Ingest->>OSDU: Link via InterpretationID
+    Ingest->>OSDU: Create SeismicFault WPC → DDMSDatasets → RDDMS
+    Ingest->>OSDU: Link via InterpretationID + BinGridID
 ```
 
 **What happens at each step:**
@@ -187,16 +286,20 @@ sequenceDiagram
 2. **RDDMS storage** - geometries and arrays are stored in RDDMS. Each object gets a UUID and an EML URI.
 
 3. **WPC creation** - for each RDDMS object, the pipeline creates an OSDU catalog record:
-   - Determine type: structural Z → `StructureMap`/`SeismicHorizon`? Or a property → `GenericProperty`?
+   - Determine type: structural Z → `StructureMap`/`SeismicHorizon`? Property → `GenericProperty`? Fault → `SeismicFault` + `GenericRepresentation`?
    - Extract grid metadata (origin, spacing, node count) from the RDDMS object
    - Set `DDMSDatasets[]` to point at the RDDMS URI
    - Set `InterpretationID` to link to the geological meaning
    - Set `DomainTypeID` from CRS (time → Time, depth → Depth)
+   - For faults: also set `BinGridID`, `SeismicTraceDataIDs`, `RepresentationRole`
 
 4. **Linking** - connect WPCs into the interpretation chain:
    - `StructureMap.InterpretationID` → `HorizonInterpretation`
    - `StructureMap.SeismicHorizonID` → `SeismicHorizon` (its TWT source)
    - `StructureMap.BinGridID` → `GenericBinGrid` (shared lattice, if applicable)
+   - `SeismicFault.InterpretationID` → `FaultInterpretation`
+   - `SeismicFault.BinGridID` → `SeismicBinGrid` (seismic survey grid)
+   - `SeismicFault.SeismicTraceDataIDs` → `SeismicTraceData` (source cubes)
 
 ### Classification during ingestion
 
@@ -278,8 +381,8 @@ enterprise/sor      ← approved results published here (locked)
 | `TS_` | Time Surface | `SeismicHorizon` |
 | `DP_` | Depth Points (picks) | `HorizonControlPoints` |
 | `TP_` | Time Points (picks) | `HorizonControlPoints` |
-| `DL_` | Depth Lines (faults) | `GenericRepresentation` |
-| `TL_` | Time Lines (faults) | `GenericRepresentation` |
+| `DL_` | Depth Lines (faults) | `GenericRepresentation` + `SeismicFault` (if seismic-picked) |
+| `TL_` | Time Lines (faults) | `GenericRepresentation` + `SeismicFault` (if seismic-picked) |
 | `GL_*` | Grid Lines (algorithmic) | **Not cataloged** |
 | `*_extracted` | Model outputs | **Not cataloged** |
 
@@ -295,6 +398,8 @@ Suffixes: `_interp` (initial), `_filter` (QC'd), `_filter_from_time` (depth-conv
 - [GenericBinGrid:1.0.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/GenericBinGrid.1.0.0.md)
 - [HorizonControlPoints:1.0.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/HorizonControlPoints.1.0.0.md)
 - [HorizonInterpretation:1.2.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/HorizonInterpretation.1.2.0.md)
+- [FaultInterpretation:1.3.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/FaultInterpretation.1.3.0.md)
+- [SeismicFault:2.0.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/SeismicFault.2.0.0.md)
 - [GenericRepresentation:1.2.0](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/work-product-component/GenericRepresentation.1.2.0.md)
 - [P&WS Guide](PWS.md) - Project lifecycle for interpretation workspaces
 
@@ -311,6 +416,7 @@ classDiagram
     AbstractInterpretation <|-- FaultInterpretation
     AbstractWorkProductComponent <|-- AbstractRepresentation
     AbstractRepresentation <|-- SeismicHorizon
+    AbstractRepresentation <|-- SeismicFault
     AbstractRepresentation <|-- GenericRepresentation
     AbstractRepresentation <|-- HorizonControlPoints
     AbstractRepresentation <|-- StructureMap
@@ -333,6 +439,15 @@ classDiagram
     class AbstractGenericBinGrid {
         Origin, Bearing
         BinWidth, NodeCount
+    }
+    class SeismicFault {
+        BinGridID
+        SeismicTraceDataIDs[]
+        RepresentationRole
+        RepresentationType
+        Interpreter
+        SeismicPickingTypeID
+        DomainTypeID
     }
 ```
 
@@ -398,6 +513,26 @@ classDiagram
 | `BinWidthOnIaxis` / `BinWidthOnJaxis` | Cell sizes |
 | `NodeCountOnIAxis` / `NodeCountOnJAxis` | Grid dimensions |
 | `LocalModelCompoundCrsID` | CRS reference |
+
+### B.6 SeismicFault:2.0.0
+
+| Field | Value / Link |
+|---|---|
+| `InterpretationID` | → FaultInterpretation (constrains AbstractRepresentation target) |
+| `InterpretationName` | Fault name (derived from FaultInterpretation.Name) |
+| `RepresentationRole` | `FaultSticks` / `Pick` / `FaultCenterLine` (ref-data) |
+| `RepresentationType` | `PolylineSet` / `TriangulatedSurface` (ref-data) |
+| `DomainTypeID` | `Time` / `Depth` / `Mixed` |
+| `Interpreter` | Person or team who picked the fault |
+| `SeismicPickingTypeID` | `Manual` / `Auto-tracked` / `AI-assisted` (ref-data) |
+| `BinGridID` | → SeismicBinGrid (survey geometry for inline/xline coords) |
+| `SeismicTraceDataIDs[]` | → SeismicTraceData (volumes the fault was picked on) |
+| `Seismic3DInterpretationSetID` | → Seismic3DInterpretationSet (optional, for grouped picks) |
+| `Seismic2DInterpretationSetID` | → Seismic2DInterpretationSet (optional, 2D lines) |
+| `LocalModelCompoundCrsID` | → LocalModelCompoundCrs |
+| `DDMSDatasets[]` | EML URI → `PolylineSetRepresentation` in RDDMS |
+| `Remarks[]` | Interpreter notes (AbstractRemark) |
+| `SpatialArea` | GeoJSON WGS84 bounding polygon |
 
 ---
 
