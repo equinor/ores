@@ -4367,8 +4367,8 @@ async function renderMermaidFromResponse(data) {
     const { svg } = await mermaid.render(id, code);
     gqlMermaid.innerHTML = svg;
   } catch (e) {
-    const escaped = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    gqlMermaid.innerHTML = `<pre style="color:#a80000;font-size:12px;">Diagram error: ${e.message.replace(/</g,'&lt;').replace(/>/g,'&gt;')}\n\n${escaped}</pre>`;
+    const escaped = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    gqlMermaid.innerHTML = `<pre style="color:#a80000;font-size:12px;">Diagram error: ${e.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}\n\n${escaped}</pre>`;
   }
 }
 
