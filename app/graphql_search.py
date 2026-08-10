@@ -296,6 +296,29 @@ async def _gql_or_rest_list_dataspaces(token: str) -> List[Dict[str, Any]]:
     return await _rest_list_dataspaces(token)
 
 
+async def _gql_or_rest_list_resources(token: str, ds: str, typ: str, limit: int = 50) -> List[Dict[str, Any]]:
+    """List resources by type: native GQL → REST fallback."""
+    if await gql_available(token):
+        ds_uri = f"eml:///dataspace('{ds}')"
+        try:
+            result = await gql_query(token, Q_RESOURCES, {"uri": ds_uri, "types": [typ]})
+            data = (result.get("data") or {}).get("resources") or []
+            resources = []
+            for r in data[:limit]:
+                uri = r.get("uri", "")
+                # Parse UUID and type from ETP URI
+                parsed = _parse_eml_entry(uri)
+                resources.append({
+                    "uuid": parsed.get("uuid", ""),
+                    "title": r.get("name", ""),
+                    "type_name": parsed.get("type_name", r.get("dataObjectType", "")),
+                })
+            return resources
+        except Exception as e:
+            log.debug("gql resources failed, falling back to REST: %s", e)
+    return await _rest_list_resources(token, ds, typ, limit)
+
+
 async def _gql_or_rest_list_targets(token: str, ds: str, typ: str, uuid: str) -> List[Dict[str, Any]]:
     """List targets via native GQL graph → REST fallback."""
     if await gql_available(token):

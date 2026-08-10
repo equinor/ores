@@ -49,7 +49,8 @@ from .graphql_search import (
     # GQL-first wrappers (try native /graphql → REST fallback)
     _gql_or_rest_list_dataspaces, _gql_or_rest_list_targets,
     _gql_or_rest_list_sources, _gql_or_rest_list_arrays,
-    _gql_or_rest_graph_search, _build_etp_uri,
+    _gql_or_rest_graph_search, _gql_or_rest_list_resources,
+    _build_etp_uri,
     # Analysis helpers (used by object_arrays)
     _compute_statistics,
     # Search implementations (called from Query stubs)
@@ -139,12 +140,10 @@ class Query:
         resources = []
         if pool:
             resources = await _pg_list_resources(pool, dataspace, type_name, limit)
-        if not resources and not dataspace.startswith("maap/"):
-            # PG returned nothing (or no pool) → try REST for remote dataspaces only.
-            # Local dataspaces (maap/*) are authoritative in PG; don't fall back
-            # to the remote OSDU RDDMS which won't have them.
+        if not resources:
+            # PG returned nothing (or no pool) → try native GQL (etp-client) → REST
             token = _get_token_from_info(info)
-            resources = await _rest_list_resources(token, dataspace, type_name, limit)
+            resources = await _gql_or_rest_list_resources(token, dataspace, type_name, limit)
         results = []
         for r in resources:
             title = r["title"]
