@@ -92,20 +92,56 @@ async def analyse_reservoir_search(
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Comparison helpers
-# ──────────────────────────────────────────────────────────────────────────────
+# ── Decision-level label / sort helpers ──────────────────────────────────────
+# Maps non-DG decision-level codes to (sort_order, display_label).
+# DG0-DG4 are extracted dynamically; these cover other common levels.
+_LEVEL_MAP = {
+    "explorationdrilling": (-2, "EXPL"),
+    "exploration":         (-2, "EXPL"),
+    "conceptselect":       (-1, "CS"),
+    "wpc":                 (0,  "WPC"),
+    "bod":                 (0,  "BOD"),
+    "dg0":                 (0,  "DG0"),
+    "feed":                (1,  "FEED"),
+    "sanction":            (2,  "DG2"),
+    "execute":             (3,  "DG3"),
+    "operate":             (4,  "DG4"),
+}
+
 
 def _extract_dg_sort_key(data: Dict[str, Any]) -> Tuple[int, str]:
     """Return (numeric_gate, date) for sorting BDs chronologically."""
     level = (data.get("DecisionLevelID") or "").lower()
+    tokens = level.replace(":", " ").replace("-", " ").split()
     dg_num = 99
-    for token in level.replace(":", " ").replace("-", " ").split():
+    for token in tokens:
         if token.startswith("dg") and len(token) > 2:
             try:
                 dg_num = int(token[2:])
+                break
             except ValueError:
                 pass
+        if token in _LEVEL_MAP:
+            dg_num = _LEVEL_MAP[token][0]
+            break
     date = data.get("DecisionDate") or data.get("DecisionDueDate") or "9999"
     return (dg_num, date)
+
+
+def _extract_gate_label(level_raw: str) -> str:
+    """Extract a short display label from a DecisionLevelID string."""
+    tokens = level_raw.replace(":", " ").replace("-", " ").split()
+    for token in tokens:
+        up = token.upper()
+        # DG0-DG9
+        if up.startswith("DG") and len(up) <= 4:
+            return up
+        low = token.lower()
+        if low in _LEVEL_MAP:
+            return _LEVEL_MAP[low][1]
+    # Fallback: last non-empty segment from the reference-data ID
+    parts = [p for p in level_raw.split(":") if p]
+    return parts[-1] if parts else level_raw
 
 
 def _extract_bd_metrics(
@@ -483,13 +519,7 @@ async def analyse_compare(
                         (data_block or {}).get("ext") or {}
                     ).get("equinor") or {}
                     level_raw = data_block.get("DecisionLevelID") or ""
-                    gate_label = level_raw
-                    for token in (
-                        level_raw.replace(":", " ").replace("-", " ").split()
-                    ):
-                        if token.upper().startswith("DG") and len(token) <= 4:
-                            gate_label = token.upper()
-                            break
+                    gate_label = _extract_gate_label(level_raw)
 
                     metrics = _extract_bd_metrics(data_block, gls)
 
