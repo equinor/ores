@@ -159,69 +159,64 @@
           {% endif %}
 
           {# ═══════════════════════════════════════════════════════════════════
-             3. RESERVOIR PROPERTIES (porosity, perm, NTG + uncertainty popup)
-             ═══════════════════════════════════════════════════════════════════ #}
-          {% include "search_reservoir_props.html" %}
-
-          {# ═══════════════════════════════════════════════════════════════════
-             4. FACILITY & WELL PLAN (KPI tiles + detail popup)
+             3. FACILITY & WELL PLAN (KPI tiles + detail popup)
              ═══════════════════════════════════════════════════════════════════ #}
           {% include "search_facility.html" %}
 
           {# ═══════════════════════════════════════════════════════════════════
-             5. REV card
+             4. REV card
              ═══════════════════════════════════════════════════════════════════ #}
           {% if is_rev %}
           {% include "search_rev.html" %}
           {% endif %}
 
           {# ═══════════════════════════════════════════════════════════════════
-             6. WELL SUMMARY (for well, wellbore, welllog, trajectory records)
+             5. WELL SUMMARY (for well, wellbore, welllog, trajectory records)
              ═══════════════════════════════════════════════════════════════════ #}
           {% include "search_well_summary.html" %}
 
           {# ═══════════════════════════════════════════════════════════════════
-             7. VOLUME TABLE
+             6. VOLUME TABLE
              ═══════════════════════════════════════════════════════════════════ #}
           {% if has_volumes %}
           {% include "search_volumes.html" %}
           {% endif %}
 
           {# ═══════════════════════════════════════════════════════════════════
-             8. PRODUCTION PROFILE (chart + table)
+             7. PRODUCTION PROFILE (chart + table)
              ═══════════════════════════════════════════════════════════════════ #}
           {% include "search_production.html" %}
 
           {# ═══════════════════════════════════════════════════════════════════
-             9. ACTIVITY WORKFLOW (with input/output detail popup)
+             8. ACTIVITY WORKFLOW (with input/output detail popup)
              ═══════════════════════════════════════════════════════════════════ #}
           {% include "search_activity.html" %}
 
           {# ═══════════════════════════════════════════════════════════════════
-             10. MAPS (BD maps + auto map preview for any ddms_refs)
+             9. MAPS (BD maps + auto map preview for any ddms_refs)
              ═══════════════════════════════════════════════════════════════════ #}
           {% include "search_maps.html" %}
           {% include "search_auto_maps.html" %}
 
           {# ═══════════════════════════════════════════════════════════════════
-             11. RELATIONSHIPS graph
+             10. RELATIONSHIPS graph
              ═══════════════════════════════════════════════════════════════════ #}
           {% include "search_relationships.html" %}
 
           {# ═══════════════════════════════════════════════════════════════════
-             12. ETPDataspace record card
+             11. ETPDataspace record card
              ═══════════════════════════════════════════════════════════════════ #}
           {% include "search_dataspace.html" %}
 
           {# ═══════════════════════════════════════════════════════════════════
-             13. DATA SOURCES / ANCESTRY
+             12. DATA SOURCES / ANCESTRY
              ═══════════════════════════════════════════════════════════════════ #}
           {% if ds_params and not is_dataspace and not is_business_decision %}
           {% include "search_datasources.html" %}
           {% endif %}
 
           {# ═══════════════════════════════════════════════════════════════════
-             14. METADATA (collapsible, at bottom — technical details)
+             13. METADATA (collapsible, at bottom — technical details)
              ═══════════════════════════════════════════════════════════════════ #}
           <section class="section-card">
             <details>

@@ -327,7 +327,14 @@
               {# ── Reservoir Properties (from GeoLabelSet canonical record) ── #}
               {% if has_gls_props %}
               <details class="bd-collapse">
-              <summary class="bd-section-title" style="cursor:pointer;">Reservoir Properties ▸</summary>
+              <summary class="bd-section-title" style="cursor:pointer;">Reservoir Properties ▸
+                {% if gls_unc %}
+                <button type="button" data-target="unc-modal-{{ rec_index }}"
+                        style="margin-left:.6rem;font-size:.72rem;padding:.15rem .5rem;border:1px solid #805ad5;border-radius:4px;background:#fff;color:#805ad5;cursor:pointer;" 
+                        onclick="event.stopPropagation();event.preventDefault();"
+                        title="View uncertainty ranges">📊 Uncertainty</button>
+                {% endif %}
+              </summary>
               <div class="bd-resprop-grid">
                 {% if gls_props.get('Pressure') is not none %}
                 <div class="bd-resprop-item"><div class="bd-label">Pressure</div><div class="bd-value">{{ gls_props.get('Pressure') }} bar</div></div>
@@ -364,6 +371,36 @@
                 {% endif %}
               </div>
               </details>
+              {# ── Uncertainty popup modal (from GeoLabelSet) ── #}
+              {% if gls_unc %}
+              <div id="unc-modal-{{ rec_index }}" class="popup-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.45);align-items:center;justify-content:center;">
+                <div style="background:#fff;border-radius:12px;padding:1.5rem;max-width:56rem;max-height:85vh;overflow:auto;position:relative;min-width:380px;">
+                  <button onclick="this.closest('.popup-modal').style.display='none'"
+                          style="position:absolute;top:.5rem;right:.75rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#666;">✕</button>
+                  <h4 style="margin:0 0 1rem;">Uncertainty Ranges</h4>
+                  <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+                    <thead>
+                      <tr><th style="text-align:left;border-bottom:2px solid #e2e8f0;padding:.4rem .6rem;">Parameter</th>
+                          <th style="text-align:right;border-bottom:2px solid #e2e8f0;padding:.4rem .6rem;">Value</th></tr>
+                    </thead>
+                    <tbody>
+                    {% for uname, uval in gls_unc.items()|sort %}
+                      <tr>
+                        <td style="padding:.3rem .6rem;border-bottom:1px solid #f3f2f1;">{{ uname }}</td>
+                        <td style="text-align:right;padding:.3rem .6rem;border-bottom:1px solid #f3f2f1;font-weight:600;">
+                          {% if uval is number %}{{ "%.2f"|format(uval) }}{% else %}{{ uval }}{% endif %}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+                  </table>
+                  <div style="margin-top:1rem;">
+                    <canvas id="uncChart-{{ rec_index }}" height="200"></canvas>
+                  </div>
+                  <script type="application/json" class="unc-chart-data">{{ gls_unc | tojson }}</script>
+                </div>
+              </div>
+              {% endif %}
               {% endif %}
 
               {# ── Key Economics ── #}
