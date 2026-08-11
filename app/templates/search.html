@@ -780,6 +780,64 @@
         if (e.target === this) this.style.display = 'none';
       });
 
+      /* ── Popup modals (Facility, Activity, Uncertainty, etc.) ── */
+      function initPopupButtons(scope) {
+        (scope || document).querySelectorAll('[data-target]').forEach(function(btn) {
+          if (btn._popupAttached) return;
+          btn._popupAttached = true;
+          btn.addEventListener('click', function() {
+            var modal = document.getElementById(btn.dataset.target);
+            if (modal) {
+              modal.style.display = 'flex';
+              // Render uncertainty chart if present and not yet rendered
+              var uncCanvas = modal.querySelector('canvas[id^="uncChart"]');
+              var uncData = modal.querySelector('.unc-chart-data');
+              if (uncCanvas && uncData && !uncCanvas._rendered && typeof Chart !== 'undefined') {
+                try {
+                  var raw = JSON.parse(uncData.textContent);
+                  // Group by base parameter (e.g. Recoverable → P10/P50/P90)
+                  var groups = {};
+                  Object.keys(raw).forEach(function(k) {
+                    var parts = k.split('.');
+                    var base = parts[0], stat = parts.slice(1).join('.');
+                    if (!groups[base]) groups[base] = {};
+                    groups[base][stat] = raw[k];
+                  });
+                  var labels = Object.keys(groups);
+                  var p10 = labels.map(function(l) { return groups[l]['P10'] || 0; });
+                  var p50 = labels.map(function(l) { return groups[l]['P50'] || 0; });
+                  var p90 = labels.map(function(l) { return groups[l]['P90'] || 0; });
+                  new Chart(uncCanvas.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                      labels: labels,
+                      datasets: [
+                        { label: 'P90 (low)', data: p90, backgroundColor: 'rgba(229,62,62,.6)' },
+                        { label: 'P50 (mid)', data: p50, backgroundColor: 'rgba(49,130,206,.7)' },
+                        { label: 'P10 (high)', data: p10, backgroundColor: 'rgba(56,161,105,.6)' }
+                      ]
+                    },
+                    options: {
+                      indexAxis: 'y', responsive: true,
+                      plugins: { legend: { position: 'bottom' } },
+                      scales: { x: { beginAtZero: true } }
+                    }
+                  });
+                  uncCanvas._rendered = true;
+                } catch(e) { console.warn('Uncertainty chart failed:', e); }
+              }
+            }
+          });
+        });
+        // Close popup on backdrop click
+        (scope || document).querySelectorAll('.popup-modal').forEach(function(m) {
+          if (m._closeAttached) return;
+          m._closeAttached = true;
+          m.addEventListener('click', function(e) { if (e.target === m) m.style.display = 'none'; });
+        });
+      }
+      initPopupButtons();
+
       const blocks = Array.from(document.querySelectorAll('.rec-block'));
 
       // Cache original diagram source for every <pre.mermaid> (for clean re-parsing)
@@ -929,6 +987,8 @@
               blocksContainer.querySelectorAll('pre.mermaid').forEach(el => {
                 if (!el.dataset.src) el.dataset.src = el.textContent;
               });
+              // Initialize popup buttons on new content
+              initPopupButtons(blocksContainer);
             }
 
             loadedCount += data.count || 0;

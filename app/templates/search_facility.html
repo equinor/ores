@@ -1,0 +1,120 @@
+{# ──────────────────────────────────────────────────────────────────────────────
+   Facility & Well Plan card — from DevelopmentConcept (injected into ext.equinor).
+   Generic: works for FPSO, subsea tieback, platform, etc.
+   Expects: rec, rec_index, ext_eq (dict with DevelopmentConcept key)
+   ────────────────────────────────────────────────────────────────────────────── #}
+          {% set dc = ext_eq.get('DevelopmentConcept') or {} %}
+          {% if dc %}
+          <section class="section-card">
+            <h5>Facility & Well Plan
+              <button type="button" class="btn-popup-facility" data-target="facility-modal-{{ rec_index }}"
+                      style="margin-left:.6rem;font-size:.75rem;padding:.2rem .6rem;border:1px solid #2b6cb0;border-radius:4px;background:#fff;color:#2b6cb0;cursor:pointer;"
+                      title="Full development concept details">🔍 Details</button>
+            </h5>
+
+            {# ── KPI tiles ── #}
+            {% set fc = dc.get('FacilityConcept') or {} %}
+            {% set wp = dc.get('WellPlan') or {} %}
+            {% set ds = dc.get('DrainageStrategy') or {} %}
+            <div style="display:flex;flex-wrap:wrap;gap:.8rem;margin-bottom:.5rem;">
+              {% if fc.get('FacilityType') %}
+              <div class="kpi-tile">
+                <div class="kpi-label">Facility</div>
+                <div class="kpi-value">{{ fc.FacilityType }}</div>
+                {% if fc.get('HostFacility') %}<div class="kpi-sub">{{ fc.HostFacility }}</div>{% endif %}
+              </div>
+              {% endif %}
+              {% if wp.get('TotalTargets') or wp.get('Producers') %}
+              <div class="kpi-tile">
+                <div class="kpi-label">Wells</div>
+                <div class="kpi-value">{{ wp.get('TotalTargets') or (wp.get('Producers',0) + wp.get('Injectors',0)) }}</div>
+                <div class="kpi-sub">{{ wp.get('Producers',0) }}P / {{ wp.get('Injectors',0) }}I{% if wp.get('ContingentWells') %} + {{ wp.ContingentWells }} contingent{% endif %}</div>
+              </div>
+              {% endif %}
+              {% if ds.get('PrimaryRecoveryMechanism') or ds.get('InjectionType') %}
+              <div class="kpi-tile">
+                <div class="kpi-label">Recovery</div>
+                <div class="kpi-value">{{ ds.get('PrimaryRecoveryMechanism') or ds.get('InjectionType') or '-' }}</div>
+                {% if ds.get('InjectionType') and ds.get('PrimaryRecoveryMechanism') != ds.get('InjectionType') %}
+                <div class="kpi-sub">{{ ds.InjectionType }} injection</div>
+                {% endif %}
+              </div>
+              {% endif %}
+              {% if fc.get('WaterDepth_m') %}
+              <div class="kpi-tile">
+                <div class="kpi-label">Water Depth</div>
+                <div class="kpi-value">{{ fc.WaterDepth_m }} m</div>
+              </div>
+              {% endif %}
+            </div>
+          </section>
+
+          {# ── Full Facility popup modal ── #}
+          <div id="facility-modal-{{ rec_index }}" class="popup-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.45);align-items:center;justify-content:center;">
+            <div style="background:#fff;border-radius:12px;padding:1.5rem;max-width:64rem;max-height:85vh;overflow:auto;position:relative;min-width:400px;">
+              <button onclick="this.closest('.popup-modal').style.display='none'"
+                      style="position:absolute;top:.5rem;right:.75rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#666;">✕</button>
+              <h4 style="margin:0 0 1rem;">{{ dc.get('Name') or 'Development Concept' }}</h4>
+
+              {# Facility details #}
+              {% if fc %}
+              <h5 style="color:#2b6cb0;margin:.8rem 0 .3rem;">Facility Concept</h5>
+              <div class="mini-grid" style="font-size:.85rem;">
+                {% for fk, fv in fc.items() if fk not in ('Flowlines',) and fv is not mapping and fv is not sequence %}
+                <div class="k">{{ fk }}</div><div>{{ fv }}</div>
+                {% endfor %}
+              </div>
+              {% if fc.get('HostDescription') %}
+              <div style="margin-top:.4rem;font-size:.82rem;color:#4a5568;line-height:1.4;">{{ fc.HostDescription }}</div>
+              {% endif %}
+              {% if fc.get('Flowlines') %}
+              <div style="margin-top:.4rem;">
+                <strong style="font-size:.82rem;">Flowlines:</strong>
+                {% for fl in fc.Flowlines %}
+                <span style="font-size:.82rem;background:#edf2f7;padding:.15rem .4rem;border-radius:3px;margin-right:.3rem;">{{ fl.get('Type','') }} {{ fl.get('Diameter_in','') }}″ × {{ fl.get('Length_km','') }}km</span>
+                {% endfor %}
+              </div>
+              {% endif %}
+              {% endif %}
+
+              {# Well Plan details #}
+              {% if wp %}
+              <h5 style="color:#2b6cb0;margin:.8rem 0 .3rem;">Well Plan</h5>
+              <div style="font-size:.85rem;">
+                {% for wt in wp.get('WellTypes') or [] %}
+                <div style="margin-bottom:.5rem;padding:.4rem .6rem;background:#f7fafc;border-radius:4px;">
+                  <strong>{{ wt.get('Type','') }} × {{ wt.get('Count',0) }}</strong>
+                  {% if wt.get('Names') %} — {{ wt.Names | join(', ') }}{% endif %}
+                  {% if wt.get('TargetZones') %}<br><span class="muted">Targets: {{ wt.TargetZones | join(', ') }}</span>{% endif %}
+                  {% if wt.get('CompletionDirection') %}<br><span class="muted">Completion: {{ wt.CompletionDirection }}</span>{% endif %}
+                </div>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              {# Drainage Strategy details #}
+              {% if ds %}
+              <h5 style="color:#2b6cb0;margin:.8rem 0 .3rem;">Drainage Strategy</h5>
+              <div style="font-size:.85rem;">
+                {% if ds.get('InjectionStrategy') %}
+                <div style="line-height:1.4;color:#4a5568;">{{ ds.InjectionStrategy }}</div>
+                {% endif %}
+                {% for dk, dv in ds.items() if dk not in ('InjectionStrategy',) and dv is string %}
+                <div><span class="k">{{ dk }}:</span> {{ dv }}</div>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              {# Production Technology #}
+              {% set pt = dc.get('ProductionTechnology') or {} %}
+              {% if pt %}
+              <h5 style="color:#2b6cb0;margin:.8rem 0 .3rem;">Production Technology</h5>
+              <div style="font-size:.85rem;">
+                {% for pk, pv in pt.items() if pv is string %}
+                <div style="margin-bottom:.3rem;"><span class="k">{{ pk }}:</span> {{ pv }}</div>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}

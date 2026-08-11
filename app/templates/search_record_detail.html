@@ -122,23 +122,123 @@
       <div class="rec-block" id="rec-{{ rec_index }}" {% if show_block %}style=""{% else %}style="display:none"{% endif %}>
 
         <div class="record-sections">
+
+          {# ═══════════════════════════════════════════════════════════════════
+             1. OVERVIEW — name, kind, ID with quick-copy + linked record badges
+             ═══════════════════════════════════════════════════════════════════ #}
           <section class="section-card">
             <h5>Overview</h5>
             <div class="mini-grid">
               <div class="k">Name</div><div style="font-weight:700;">{{ name or '-' }}</div>
               <div class="k">Description</div><div>{{ (rec.data or {}).get('Description') or '-' }}</div>
-              <div class="k">Kind</div><div>{{ rec.kind or '-' }}</div>
-              <div class="k">ID</div><div>{{ rec.id or '-' }}</div>
+              <div class="k">Kind</div>
+              <div>{{ rec.kind or '-' }}
+                <button type="button" class="btn-copy" onclick="navigator.clipboard.writeText('{{ rec.kind or '' }}');this.textContent='✓';setTimeout(()=>this.textContent='Copy',1200)" title="Copy kind">Copy</button>
+              </div>
+              <div class="k">ID</div>
+              <div>{{ rec.id or '-' }}
+                <button type="button" class="btn-copy" onclick="navigator.clipboard.writeText('{{ rec.id or '' }}');this.textContent='✓';setTimeout(()=>this.textContent='Copy',1200)" title="Copy record ID">Copy</button>
+              </div>
               <div class="k">Version</div><div>{{ rec.version if rec.version is not none else '-' }}</div>
-              <div class="k">ParentObjectID</div><div>{{ (rec.data or {}).get('ParentObjectID') or '-' }}</div>
+              {% if (rec.data or {}).get('ParentObjectID') %}
+              <div class="k">ParentObjectID</div><div>{{ (rec.data or {}).get('ParentObjectID') }}</div>
+              {% endif %}
             </div>
+            {# ── Linked record badges ── #}
+            {% set link_counts = {} %}
+            {% for l in (rec.links or []) %}
+              {% set lkind = l.get('kind') or l.get('id','') %}
+              {% set short = lkind.split('--')[-1].split(':')[0] if '--' in lkind else lkind.split(':')[-2] if ':' in lkind else lkind %}
+              {% if short %}{% set _ = link_counts.__setitem__(short, link_counts.get(short, 0) + 1) %}{% endif %}
+            {% endfor %}
+            {% if link_counts %}
+            <div class="badge-row">
+              {% for ltype, lcount in link_counts.items() %}
+              <span class="link-badge" title="{{ lcount }} linked {{ ltype }} record(s)">{{ ltype }} × {{ lcount }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
             {% if ((rec.data or {}).get('ExtensionProperties') or {}).get('Markdown') %}
             <div style="margin-top:.6rem;">
               <button type="button" onclick="openMarkdownFromSection(this)" title="Render embedded Markdown documentation" style="padding:.35rem .8rem;border:1px solid #007079;border-radius:4px;background:#007079;color:#fff;cursor:pointer;font-size:.85rem;">📄 View Documentation</button>
             </div>
             {% endif %}
-            {# ── Metadata sub-section (collapsible) ── #}
-            <details style="margin-top:.8rem;">
+          </section>
+
+          {# ═══════════════════════════════════════════════════════════════════
+             2. BUSINESS DECISION card (gate level, approval, headline KPIs)
+             ═══════════════════════════════════════════════════════════════════ #}
+          {% if is_business_decision %}
+          {% include "search_bd.html" %}
+          {% endif %}
+
+          {# ═══════════════════════════════════════════════════════════════════
+             3. RESERVOIR PROPERTIES (porosity, perm, NTG + uncertainty popup)
+             ═══════════════════════════════════════════════════════════════════ #}
+          {% include "search_reservoir_props.html" %}
+
+          {# ═══════════════════════════════════════════════════════════════════
+             4. FACILITY & WELL PLAN (KPI tiles + detail popup)
+             ═══════════════════════════════════════════════════════════════════ #}
+          {% include "search_facility.html" %}
+
+          {# ═══════════════════════════════════════════════════════════════════
+             5. REV card
+             ═══════════════════════════════════════════════════════════════════ #}
+          {% if is_rev %}
+          {% include "search_rev.html" %}
+          {% endif %}
+
+          {# ═══════════════════════════════════════════════════════════════════
+             6. WELL SUMMARY (for well, wellbore, welllog, trajectory records)
+             ═══════════════════════════════════════════════════════════════════ #}
+          {% include "search_well_summary.html" %}
+
+          {# ═══════════════════════════════════════════════════════════════════
+             7. VOLUME TABLE
+             ═══════════════════════════════════════════════════════════════════ #}
+          {% if has_volumes %}
+          {% include "search_volumes.html" %}
+          {% endif %}
+
+          {# ═══════════════════════════════════════════════════════════════════
+             8. PRODUCTION PROFILE (chart + table)
+             ═══════════════════════════════════════════════════════════════════ #}
+          {% include "search_production.html" %}
+
+          {# ═══════════════════════════════════════════════════════════════════
+             9. ACTIVITY WORKFLOW (with input/output detail popup)
+             ═══════════════════════════════════════════════════════════════════ #}
+          {% include "search_activity.html" %}
+
+          {# ═══════════════════════════════════════════════════════════════════
+             10. MAPS (BD maps + auto map preview for any ddms_refs)
+             ═══════════════════════════════════════════════════════════════════ #}
+          {% include "search_maps.html" %}
+          {% include "search_auto_maps.html" %}
+
+          {# ═══════════════════════════════════════════════════════════════════
+             11. RELATIONSHIPS graph
+             ═══════════════════════════════════════════════════════════════════ #}
+          {% include "search_relationships.html" %}
+
+          {# ═══════════════════════════════════════════════════════════════════
+             12. ETPDataspace record card
+             ═══════════════════════════════════════════════════════════════════ #}
+          {% include "search_dataspace.html" %}
+
+          {# ═══════════════════════════════════════════════════════════════════
+             13. DATA SOURCES / ANCESTRY
+             ═══════════════════════════════════════════════════════════════════ #}
+          {% if ds_params and not is_dataspace and not is_business_decision %}
+          {% include "search_datasources.html" %}
+          {% endif %}
+
+          {# ═══════════════════════════════════════════════════════════════════
+             14. METADATA (collapsible, at bottom — technical details)
+             ═══════════════════════════════════════════════════════════════════ #}
+          <section class="section-card">
+            <details>
             <summary style="cursor:pointer;font-weight:600;font-size:.9rem;">Metadata</summary>
             <div class="meta-container">
               <div class="meta-toolbar" style="display:flex;gap:.5rem;align-items:center;margin:.25rem 0;">
@@ -186,27 +286,3 @@
             <script type="application/json" class="rec-json-data">{{ rec.data | tojson }}</script>
             </details>
           </section>
-
-          {# ══════════ ETPDataspace record card ══════════ #}
-          {% include "search_dataspace.html" %}
-
-          {# ══════════ DATA SOURCES / ANCESTRY section ══════════ #}
-          {% if ds_params and not is_dataspace and not is_business_decision %}
-          {% include "search_datasources.html" %}
-          {% endif %}
-
-          {% if is_business_decision %}
-          {% include "search_bd.html" %}
-          {% endif %}
-
-          {% if is_rev %}
-          {% include "search_rev.html" %}
-          {% endif %}
-
-          {% include "search_relationships.html" %}
-          {% if has_volumes %}
-          {% include "search_volumes.html" %}
-          {% endif %}
-
-          {% include "search_production.html" %}
-          {% include "search_maps.html" %}

@@ -502,6 +502,8 @@ async def _enrich_record_light(
         _enrich_bd_volumes,
         _enrich_bd_geolabel,
         _enrich_bd_production,
+        _enrich_bd_activity,
+        _enrich_bd_developmentconcept,
     )
 
     rid = full.get("id", "")
@@ -558,8 +560,8 @@ async def _enrich_record_light(
                 "rtype": rtype,
             })
     result["ddms_refs"] = ddms_refs
-    # BD-specific enrichment: fetch GeoLabelSet + stat REV + production
-    # for headline volumes (2-3 targeted calls, fast enough for list view)
+    # BD-specific enrichment: fetch GeoLabelSet + stat REV + production +
+    # activity + DevelopmentConcept (5 parallel calls, all fast)
     bd_geolabel: Dict[str, Any] = {}
     bd_production: Dict[str, Any] = {}
     bd_activity: Dict[str, Any] = {}
@@ -569,8 +571,10 @@ async def _enrich_record_light(
                 if not (volumes or {}).get("ColumnValues") else asyncio.sleep(0)
             gl_task = _enrich_bd_geolabel(data_block, client, storage_url, hdr)
             prod_task = _enrich_bd_production(data_block, client, storage_url, hdr)
-            vol_r, gl_r, prod_r = await asyncio.gather(
-                vol_task, gl_task, prod_task,
+            act_task = _enrich_bd_activity(data_block, client, storage_url, hdr)
+            dc_task = _enrich_bd_developmentconcept(data_block, client, storage_url, hdr)
+            vol_r, gl_r, prod_r, act_r, _ = await asyncio.gather(
+                vol_task, gl_task, prod_task, act_task, dc_task,
                 return_exceptions=True,
             )
             if isinstance(vol_r, dict) and vol_r.get("ColumnValues"):
@@ -580,6 +584,8 @@ async def _enrich_record_light(
                 bd_geolabel = gl_r
             if isinstance(prod_r, dict):
                 bd_production = prod_r
+            if isinstance(act_r, dict):
+                bd_activity = act_r
         except Exception as e:
             log.warning("[ENRICH-LIGHT] BD enrichment failed for %s: %s", rid, e)
     result["bd_geolabel"] = bd_geolabel

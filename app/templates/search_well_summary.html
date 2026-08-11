@@ -1,0 +1,70 @@
+{# ──────────────────────────────────────────────────────────────────────────────
+   Well Summary card — for Well, Wellbore, WellLog, WellboreTrajectory records.
+   Renders trajectory info and key well data from the record's own data block.
+   No extra API calls needed.
+   Expects: rec, rec_index
+   ────────────────────────────────────────────────────────────────────────────── #}
+          {% set rkind = (rec.kind or '')|lower %}
+          {% set is_well_record = ('well' in rkind and 'welllog' not in rkind and 'trajectory' not in rkind and 'marker' not in rkind) %}
+          {% set is_wellbore = ('wellbore' in rkind and 'trajectory' not in rkind and 'marker' not in rkind) %}
+          {% set is_welllog = ('welllog' in rkind) %}
+          {% set is_trajectory = ('trajectory' in rkind) %}
+          {% set is_well_type = (is_well_record or is_wellbore or is_welllog or is_trajectory) %}
+          {% if is_well_type %}
+          {% set wd = rec.data or {} %}
+          <section class="section-card">
+            <h5>
+              {% if is_well_record %}Well Summary
+              {% elif is_wellbore %}Wellbore Summary
+              {% elif is_welllog %}Well Log Summary
+              {% elif is_trajectory %}Trajectory Summary
+              {% endif %}
+            </h5>
+            <div style="display:flex;flex-wrap:wrap;gap:.8rem;">
+              {# Well-specific fields #}
+              {% if wd.get('FacilityName') %}
+              <div class="kpi-tile"><div class="kpi-label">Facility</div><div class="kpi-value" style="font-size:.9rem;">{{ wd.FacilityName }}</div></div>
+              {% endif %}
+              {% if wd.get('WellStatus') or wd.get('CurrentOperationalStatus') %}
+              <div class="kpi-tile"><div class="kpi-label">Status</div><div class="kpi-value" style="font-size:.9rem;">{{ wd.get('WellStatus') or wd.get('CurrentOperationalStatus') }}</div></div>
+              {% endif %}
+              {% if wd.get('WellType') or wd.get('TrajectoryType') %}
+              <div class="kpi-tile"><div class="kpi-label">Type</div><div class="kpi-value" style="font-size:.9rem;">{{ wd.get('WellType') or wd.get('TrajectoryType') }}</div></div>
+              {% endif %}
+              {% if wd.get('TotalDepth') or wd.get('TotalMeasuredDepth') %}
+              <div class="kpi-tile"><div class="kpi-label">Total Depth</div><div class="kpi-value">{{ wd.get('TotalDepth') or wd.get('TotalMeasuredDepth') }}</div><div class="kpi-sub">{{ wd.get('TotalDepthUOM') or 'm' }}</div></div>
+              {% endif %}
+              {% if wd.get('WaterDepth') %}
+              <div class="kpi-tile"><div class="kpi-label">Water Depth</div><div class="kpi-value">{{ wd.WaterDepth }}</div><div class="kpi-sub">{{ wd.get('WaterDepthUOM') or 'm' }}</div></div>
+              {% endif %}
+              {% if wd.get('SpudDate') %}
+              <div class="kpi-tile"><div class="kpi-label">Spud Date</div><div class="kpi-value" style="font-size:.85rem;">{{ wd.SpudDate[:10] if wd.SpudDate|length > 10 else wd.SpudDate }}</div></div>
+              {% endif %}
+
+              {# WellLog-specific #}
+              {% if wd.get('TopMeasuredDepth') and wd.get('BottomMeasuredDepth') %}
+              <div class="kpi-tile"><div class="kpi-label">Depth Range</div><div class="kpi-value" style="font-size:.85rem;">{{ "%.0f"|format(wd.TopMeasuredDepth|float) }} – {{ "%.0f"|format(wd.BottomMeasuredDepth|float) }}</div><div class="kpi-sub">{{ wd.get('TopMeasuredDepthUOM') or 'm' }} MD</div></div>
+              {% endif %}
+              {% if wd.get('Curves') %}
+              <div class="kpi-tile"><div class="kpi-label">Curves</div><div class="kpi-value">{{ wd.Curves|length }}</div>
+                <div class="kpi-sub">{{ wd.Curves[:5]|map(attribute='Mnemonic')|select|join(', ') }}{% if wd.Curves|length > 5 %} …{% endif %}</div>
+              </div>
+              {% endif %}
+
+              {# Trajectory-specific #}
+              {% if wd.get('StationCount') %}
+              <div class="kpi-tile"><div class="kpi-label">Stations</div><div class="kpi-value">{{ wd.StationCount }}</div></div>
+              {% endif %}
+
+              {# Generic: GeoContexts (field, block, etc.) #}
+              {% for gc in (wd.get('GeoContexts') or [])[:3] if gc is mapping %}
+              {% if gc.get('GeoPoliticalEntityName') or gc.get('FieldName') %}
+              <div class="kpi-tile">
+                <div class="kpi-label">{{ gc.get('GeoTypeID','').split(':')[-2] if gc.get('GeoTypeID') else 'Location' }}</div>
+                <div class="kpi-value" style="font-size:.85rem;">{{ gc.get('GeoPoliticalEntityName') or gc.get('FieldName') or gc.get('BasinName') or '-' }}</div>
+              </div>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </section>
+          {% endif %}

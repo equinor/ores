@@ -1,0 +1,69 @@
+{# ──────────────────────────────────────────────────────────────────────────────
+   Reservoir Properties card — porosity, permeability, NTG from GeoLabelSet.
+   Shown for BD records where bd_geolabel.properties has data.
+   Expects: rec, rec_index, gls_props (dict), gls_unc (dict), has_gls_props (bool)
+   ────────────────────────────────────────────────────────────────────────────── #}
+          {% if has_gls_props %}
+          <section class="section-card">
+            <h5>Reservoir Properties
+              {% if gls_unc %}
+              <button type="button" class="btn-popup-unc" data-target="unc-modal-{{ rec_index }}"
+                      style="margin-left:.6rem;font-size:.75rem;padding:.2rem .6rem;border:1px solid #805ad5;border-radius:4px;background:#fff;color:#805ad5;cursor:pointer;"
+                      title="View uncertainty ranges">📊 Uncertainty</button>
+              {% endif %}
+            </h5>
+            <div style="display:flex;flex-wrap:wrap;gap:1.2rem;">
+            {% for prop_name, prop_val in gls_props.items() %}
+              <div style="min-width:8rem;">
+                <div style="font-size:.75rem;color:#718096;text-transform:uppercase;letter-spacing:.03em;">{{ prop_name }}</div>
+                {% if prop_val is mapping %}
+                  {# Per-facies values #}
+                  {% for facies, fval in prop_val.items() %}
+                  <div style="display:flex;justify-content:space-between;gap:.5rem;font-size:.85rem;">
+                    <span style="color:#4a5568;">{{ facies }}</span>
+                    <span style="font-weight:600;">
+                      {% if fval is number %}{{ "%.3f"|format(fval) if fval < 1 else "%.1f"|format(fval) }}{% else %}{{ fval }}{% endif %}
+                    </span>
+                  </div>
+                  {% endfor %}
+                {% else %}
+                  <div style="font-size:1.1rem;font-weight:700;color:#2d3748;">
+                    {% if prop_val is number %}{{ "%.3f"|format(prop_val) if prop_val < 1 else "%.1f"|format(prop_val) }}{% else %}{{ prop_val }}{% endif %}
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            </div>
+          </section>
+
+          {# ── Uncertainty modal ── #}
+          {% if gls_unc %}
+          <div id="unc-modal-{{ rec_index }}" class="popup-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.45);align-items:center;justify-content:center;">
+            <div style="background:#fff;border-radius:12px;padding:1.5rem;max-width:56rem;max-height:85vh;overflow:auto;position:relative;min-width:380px;">
+              <button onclick="this.closest('.popup-modal').style.display='none'"
+                      style="position:absolute;top:.5rem;right:.75rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#666;">✕</button>
+              <h4 style="margin:0 0 1rem;">Uncertainty Ranges</h4>
+              <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+                <thead>
+                  <tr><th style="text-align:left;border-bottom:2px solid #e2e8f0;padding:.4rem .6rem;">Parameter</th>
+                      <th style="text-align:right;border-bottom:2px solid #e2e8f0;padding:.4rem .6rem;">Value</th></tr>
+                </thead>
+                <tbody>
+                {% for uname, uval in gls_unc.items()|sort %}
+                  <tr>
+                    <td style="padding:.3rem .6rem;border-bottom:1px solid #f3f2f1;">{{ uname }}</td>
+                    <td style="text-align:right;padding:.3rem .6rem;border-bottom:1px solid #f3f2f1;font-weight:600;">
+                      {% if uval is number %}{{ "%.2f"|format(uval) }}{% else %}{{ uval }}{% endif %}
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              <div style="margin-top:1rem;">
+                <canvas id="uncChart-{{ rec_index }}" height="200"></canvas>
+              </div>
+              <script type="application/json" class="unc-chart-data">{{ gls_unc | tojson }}</script>
+            </div>
+          </div>
+          {% endif %}
+          {% endif %}
