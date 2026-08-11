@@ -55,6 +55,8 @@ from .graphql_search import (
     _compute_statistics,
     # Search implementations (called from Query stubs)
     deep_search_impl, federated_search_impl,
+    # Validation helpers
+    validate_object_relations_direction, _VALID_DIRECTIONS,
 )
 
 log = logging.getLogger("rddms-admin.graphql")
@@ -180,6 +182,11 @@ class Query:
 
         This is how you find ancestors, topology, interpretation hierarchies.
         """
+        # Validate direction
+        dir_err = validate_object_relations_direction(direction)
+        if dir_err:
+            raise ValueError(dir_err)
+
         pool = await _get_pool()
         if pool:
             rels = await _pg_list_relations(pool, dataspace, type_name, uuid, direction)

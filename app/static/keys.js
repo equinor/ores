@@ -191,7 +191,7 @@ function buildEasyQuery() {
     includeSampleValues: ${sample}
     limit: ${limit}
   ) {
-    backend totalScanned totalMatched queryDescription
+    backend totalScanned totalMatched queryDescription warnings
     objects {
       uuid title typeName
       ${relations ? 'relations { uuid name typeName direction contentType }' : ''}
@@ -240,7 +240,7 @@ function buildEasyQuery() {
     includeStatistics: ${stats}
     limit: ${limit}
   ) {
-    totalCatalog totalLocalRddms totalRemoteRddms totalMerged sources
+    totalCatalog totalLocalRddms totalRemoteRddms totalMerged sources warnings
     hits {
       uuid title typeName dataspace
       foundInCatalog foundInLocalRddms foundInRemoteRddms
@@ -280,7 +280,7 @@ function buildEasyQuery() {
     limit: ${limit}
   ) {
     totalCatalog totalLocalRddms totalRemoteRddms totalMerged
-    sources queryDescription
+    sources queryDescription warnings
     hits {
       uuid title typeName dataspace
       foundInCatalog foundInLocalRddms foundInRemoteRddms
@@ -318,6 +318,12 @@ function renderResultCards(data) {
           &nbsp;|&nbsp; <span style="color:#605e5c;">${esc(ds.queryDescription)}</span>
           &nbsp;|&nbsp; <span class="tag">${esc(ds.backend)}</span>
         </div>`;
+    if (ds.warnings && ds.warnings.length) {
+      html += `<div style="margin-bottom:8px;padding:8px 12px;background:#fff3cd;border:1px solid #ffc107;border-radius:4px;font-size:12px;">
+            <strong>Warnings:</strong>
+            <ul style="margin:.3em 0 0 1.2em;padding:0;">${ds.warnings.map(w => `<li>${esc(w)}</li>`).join('')}</ul>
+          </div>`;
+    }
     (ds.objects || []).forEach(obj => {
       html += renderObjectCard(obj);
     });
@@ -331,6 +337,12 @@ function renderResultCards(data) {
           &nbsp;|&nbsp; Catalog: ${fs.totalCatalog || 0} &nbsp; Local: ${fs.totalLocalRddms || 0} &nbsp; Remote: ${fs.totalRemoteRddms || 0}
           &nbsp;|&nbsp; Sources: ${(fs.sources || []).map(s => `<span class="tag">${esc(s)}</span>`).join(' ')}
         </div>`;
+    if (fs.warnings && fs.warnings.length) {
+      html += `<div style="margin-bottom:8px;padding:8px 12px;background:#fff3cd;border:1px solid #ffc107;border-radius:4px;font-size:12px;">
+            <strong>Warnings:</strong>
+            <ul style="margin:.3em 0 0 1.2em;padding:0;">${fs.warnings.map(w => `<li>${esc(w)}</li>`).join('')}</ul>
+          </div>`;
+    }
     (fs.hits || []).forEach(hit => {
       html += renderFederatedCard(hit);
     });
@@ -545,6 +557,62 @@ $('ez-show-gql').addEventListener('click', () => {
   autoSizeEditor();
 });
 
+/**
+ * Validate query builder inputs before running.
+ * Returns an array of error/warning strings. Empty = valid.
+ */
+function validateEasyQuery() {
+  const action = $('ez-action').value;
+  const errors = [];
+
+  // Dataspace required for non-status queries
+  const dsList = Array.from(dsSel.selectedOptions).map(o => o.value);
+  if (dsList.length === 0 && action !== 'status') {
+    errors.push('No dataspace selected. Select at least one dataspace from the list.');
+  }
+
+  // Limit bounds
+  const limit = parseInt($('ez-limit').value);
+  if (isNaN(limit) || limit < 1) {
+    errors.push('Limit must be a positive integer (1–200).');
+  } else if (limit > 200) {
+    errors.push('Limit exceeds maximum (200). It will be capped server-side.');
+  }
+
+  // Threshold validation for deep_search / cross_system
+  if (action === 'deep_search' || action === 'cross_system') {
+    const op = $('ez-op').value;
+    const thresholdStr = $('ez-threshold').value.trim();
+    const thresholdHighStr = $('ez-threshold-high').value.trim();
+
+    if (op && !thresholdStr) {
+      errors.push('Operator selected but no threshold value specified.');
+    }
+    if (thresholdStr && !op) {
+      errors.push('Threshold value specified but no operator selected.');
+    }
+    if (thresholdStr && isNaN(parseFloat(thresholdStr))) {
+      errors.push('Threshold must be a number (e.g. 0.1, 100, 0.05).');
+    }
+    if (op === 'BETWEEN') {
+      if (!thresholdHighStr) {
+        errors.push('BETWEEN operator requires both threshold (low) and threshold high (high) values.');
+      } else if (isNaN(parseFloat(thresholdHighStr))) {
+        errors.push('Threshold high must be a number.');
+      } else if (parseFloat(thresholdHighStr) < parseFloat(thresholdStr)) {
+        errors.push('Threshold high must be >= threshold (low value).');
+      }
+    }
+
+    // Warn: array filter without property kind
+    if (op && thresholdStr && !$('ez-prop').value.trim()) {
+      errors.push('Warning: array filter without a property kind will scan ALL properties on each object — this may be slow. Consider specifying a property (e.g. porosity, perm).');
+    }
+  }
+
+  return errors;
+}
+
 $('ez-run').addEventListener('click', async () => {
   const action = $('ez-action').value;
   // Check for missing UUID in relations mode
@@ -558,6 +626,23 @@ $('ez-run').addEventListener('click', async () => {
       return;
     }
   }
+
+  // Frontend validation
+  const validationErrors = validateEasyQuery();
+  const hardErrors = validationErrors.filter(e => !e.startsWith('Warning:'));
+  if (hardErrors.length > 0) {
+    $('ez-status').textContent = 'Validation failed';
+    $('ez-results').innerHTML = `<div style="padding:12px;background:#fff3cd;border:1px solid #ffc107;border-radius:4px;font-size:13px;">
+      <strong>Please fix the following:</strong>
+      <ul style="margin:.5em 0 0 1.2em;padding:0;">${validationErrors.map(e => `<li>${esc(e)}</li>`).join('')}</ul>
+    </div>`;
+    return;
+  }
+  // Show soft warnings but proceed
+  if (validationErrors.length > 0) {
+    $('ez-status').textContent = 'Running (with warnings)…';
+  }
+
   const query = buildEasyQuery();
   $('ez-status').textContent = 'Running…';
   $('ez-results').innerHTML = '';

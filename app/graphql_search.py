@@ -1580,6 +1580,168 @@ async def _deep_search_discovery(
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Input validation helpers
+# ──────────────────────────────────────────────────────────────────────────────
+
+# Hard limits to prevent runaway queries
+_MAX_LIMIT = 200
+_MAX_SAMPLE_SIZE = 10_000
+_VALID_DIRECTIONS = {"both", "targets", "sources"}
+
+
+def validate_deep_search_inputs(
+    type_name: str,
+    category: Optional[str],
+    property_filter: Optional[PropertyFilter],
+    limit: int,
+    sample_size: int,
+    include_sample_values: bool,
+    dataspace: Optional[str],
+    dataspaces: Optional[List[str]],
+) -> List[str]:
+    """Validate deep_search inputs. Returns a list of warning/error strings.
+
+    Warnings are informational hints; errors start with 'ERROR:'.
+    The caller should surface these in DeepSearchResult.warnings and, for
+    errors, return an empty result immediately.
+    """
+    warnings: List[str] = []
+
+    # ── limit bounds ──────────────────────────────────────────────────────
+    if limit < 1:
+        warnings.append("ERROR: limit must be >= 1")
+    elif limit > _MAX_LIMIT:
+        warnings.append(f"limit capped to {_MAX_LIMIT} (requested {limit})")
+
+    # ── sample_size bounds ────────────────────────────────────────────────
+    if include_sample_values and sample_size > _MAX_SAMPLE_SIZE:
+        warnings.append(f"sample_size capped to {_MAX_SAMPLE_SIZE} (requested {sample_size})")
+
+    # ── category validation ───────────────────────────────────────────────
+    if category and category.lower() not in RESQML_TYPE_CATEGORIES:
+        valid = ", ".join(sorted(RESQML_TYPE_CATEGORIES.keys()))
+        warnings.append(
+            f"ERROR: unknown category '{category}'. "
+            f"Valid categories: {valid}"
+        )
+
+    # ── type_name validation (when no category) ──────────────────────────
+    if not category and type_name:
+        resolved = resolve_type_names(type_name)
+        if not resolved:
+            warnings.append(
+                f"type_name '{type_name}' did not resolve to any known types. "
+                "Use resqml_categories query to list valid categories, "
+                "or use a full type like 'resqml20.obj_IjkGridRepresentation'."
+            )
+
+    # ── property_filter validation ────────────────────────────────────────
+    if property_filter:
+        af = property_filter.array_filter
+        if af:
+            # BETWEEN requires threshold_high
+            if af.operator == ComparisonOperator.BETWEEN:
+                if af.threshold_high is None:
+                    warnings.append(
+                        "ERROR: BETWEEN operator requires thresholdHigh. "
+                        "Provide arrayFilter: { threshold: <low>, operator: BETWEEN, thresholdHigh: <high> }"
+                    )
+                elif af.threshold_high < af.threshold:
+                    warnings.append(
+                        f"ERROR: thresholdHigh ({af.threshold_high}) must be >= threshold ({af.threshold}) "
+                        "for BETWEEN operator"
+                    )
+
+            # array_filter without kind or title → scans ALL properties (expensive)
+            if not property_filter.kind and not property_filter.title_contains:
+                warnings.append(
+                    "arrayFilter without propertyFilter.kind or titleContains will scan "
+                    "ALL properties on each object — this may be slow. "
+                    "Consider adding kind: \"porosity\" or titleContains: \"PORO\" to narrow the search."
+                )
+
+        # Empty property filter (no kind, no title, no array) is a no-op
+        if not property_filter.kind and not property_filter.title_contains and not af:
+            warnings.append(
+                "propertyFilter with no kind, titleContains, or arrayFilter has no effect — "
+                "all properties will be returned unfiltered."
+            )
+
+    # ── large grid + sample values warning ────────────────────────────────
+    if include_sample_values and type_name and "IjkGrid" in type_name:
+        warnings.append(
+            "includeSampleValues on IjkGrid may return large arrays. "
+            "Consider using includeStatistics instead, or set a small sampleSize."
+        )
+
+    return warnings
+
+
+def validate_object_relations_direction(direction: str) -> Optional[str]:
+    """Validate direction parameter. Returns error message or None."""
+    if direction not in _VALID_DIRECTIONS:
+        return (
+            f"Invalid direction '{direction}'. "
+            f"Must be one of: {', '.join(sorted(_VALID_DIRECTIONS))}"
+        )
+    return None
+
+
+def validate_federated_search_inputs(
+    text: str,
+    type_name: Optional[str],
+    dataspaces: Optional[List[str]],
+    search_catalog: bool,
+    search_rddms: bool,
+    search_remote_rddms: bool,
+    property_filter: Optional[PropertyFilter],
+    limit: int,
+) -> List[str]:
+    """Validate federated_search inputs. Returns a list of warning/error strings."""
+    warnings: List[str] = []
+
+    # ── limit bounds ──────────────────────────────────────────────────────
+    if limit < 1:
+        warnings.append("ERROR: limit must be >= 1")
+    elif limit > _MAX_LIMIT:
+        warnings.append(f"limit capped to {_MAX_LIMIT} (requested {limit})")
+
+    # ── at least one source must be enabled ───────────────────────────────
+    if not search_catalog and not search_rddms and not search_remote_rddms:
+        warnings.append(
+            "ERROR: all search sources disabled. Enable at least one of: "
+            "searchCatalog, searchRddms, searchRemoteRddms"
+        )
+
+    # ── type_name validation ──────────────────────────────────────────────
+    if type_name:
+        resolved = resolve_type_names(type_name)
+        if not resolved:
+            valid_cats = ", ".join(sorted(RESQML_TYPE_CATEGORIES.keys()))
+            warnings.append(
+                f"type_name '{type_name}' did not resolve to known types. "
+                f"Try a category ({valid_cats}) or a full type like "
+                "'resqml20.obj_IjkGridRepresentation'."
+            )
+
+    # ── property_filter.array_filter BETWEEN ──────────────────────────────
+    if property_filter and property_filter.array_filter:
+        af = property_filter.array_filter
+        if af.operator == ComparisonOperator.BETWEEN:
+            if af.threshold_high is None:
+                warnings.append(
+                    "ERROR: BETWEEN operator requires thresholdHigh"
+                )
+            elif af.threshold_high < af.threshold:
+                warnings.append(
+                    f"ERROR: thresholdHigh ({af.threshold_high}) must be >= "
+                    f"threshold ({af.threshold})"
+                )
+
+    return warnings
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # Deep search - resolver implementation (called from Query.deep_search)
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -1605,6 +1767,25 @@ async def deep_search_impl(
     types in that category (e.g. "grid", "well", "structural").
     type_name also supports category names and wildcards (e.g. "*Grid*").
     """
+    # ── Input validation ──────────────────────────────────────────────────
+    validation_warnings = validate_deep_search_inputs(
+        type_name, category, property_filter, limit, sample_size,
+        include_sample_values, dataspace, dataspaces,
+    )
+    # Clamp limit and sample_size
+    limit = max(1, min(limit, _MAX_LIMIT))
+    sample_size = max(1, min(sample_size, _MAX_SAMPLE_SIZE))
+
+    # Abort on hard errors
+    errors = [w for w in validation_warnings if w.startswith("ERROR:")]
+    if errors:
+        return DeepSearchResult(
+            objects=[], total_scanned=0, total_matched=0,
+            query_description="Validation failed",
+            backend="N/A",
+            warnings=validation_warnings,
+        )
+
     # Resolve effective type_name: category takes priority
     effective_type = type_name
     if category:
@@ -1629,7 +1810,15 @@ async def deep_search_impl(
             objects=[], total_scanned=0, total_matched=0,
             query_description="No dataspace specified and none found",
             backend="PostgreSQL" if await _get_pool() else "REST",
+            warnings=validation_warnings or None,
         )
+
+    # Helper: merge validation warnings into a search result
+    def _merge_warnings(result: DeepSearchResult) -> DeepSearchResult:
+        if validation_warnings:
+            existing = list(result.warnings or [])
+            result.warnings = validation_warnings + existing or None
+        return result
 
     # Single dataspace: use existing path
     if len(ds_list) == 1:
@@ -1642,7 +1831,7 @@ async def deep_search_impl(
             )
             # If discovery succeeded (not a fallback sentinel), use it
             if disc_result.backend != "Discovery-FALLBACK":
-                return disc_result
+                return _merge_warnings(disc_result)
             # Otherwise fall through to PG / REST
 
         # Route 2: PostgreSQL direct (local co-located with ETP server)
@@ -1657,19 +1846,19 @@ async def deep_search_impl(
             # but only for remote dataspaces — local ones (maap/*) are authoritative in PG
             if result.total_scanned == 0 and "not found in PG" in result.query_description \
                     and not ds_list[0].startswith("maap/"):
-                return await _deep_search_rest(
+                return _merge_warnings(await _deep_search_rest(
                     token, ds_list[0], effective_type, title_contains,
                     property_filter, include_relations, include_statistics,
                     include_sample_values, sample_size, limit, relation_filter,
-                )
-            return result
+                ))
+            return _merge_warnings(result)
 
         # Route 3: REST N+1 fallback (always available)
-        return await _deep_search_rest(
+        return _merge_warnings(await _deep_search_rest(
             token, ds_list[0], effective_type, title_contains,
             property_filter, include_relations, include_statistics,
             include_sample_values, sample_size, limit, relation_filter,
-        )
+        ))
 
     # Multiple dataspaces: try Discovery → PG → REST per-ds
     pool = await _get_pool()
@@ -1706,7 +1895,7 @@ async def deep_search_impl(
         )
 
     results = await asyncio.gather(*[_search_one_ds(ds) for ds in ds_list])
-    return _merge_deep_results(results, ds_list, limit)
+    return _merge_warnings(_merge_deep_results(results, ds_list, limit))
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -1829,6 +2018,24 @@ async def federated_search_impl(
 ) -> FederatedSearchResult:
     """Core federated_search implementation, independent of Strawberry context."""
     import httpx
+
+    # ── Input validation ──────────────────────────────────────────────────
+    validation_warnings = validate_federated_search_inputs(
+        text, type_name, dataspaces, search_catalog, search_rddms,
+        search_remote_rddms, property_filter, limit,
+    )
+    limit = max(1, min(limit, _MAX_LIMIT))
+
+    errors = [w for w in validation_warnings if w.startswith("ERROR:")]
+    if errors:
+        return FederatedSearchResult(
+            hits=[], total_catalog=0, total_rddms=0,
+            total_local_rddms=0, total_remote_rddms=0,
+            total_merged=0,
+            query_description="Validation failed",
+            sources=[],
+            warnings=validation_warnings,
+        )
 
     hits_by_uuid: Dict[str, FederatedHit] = {}
     total_catalog = 0
@@ -2164,4 +2371,5 @@ async def federated_search_impl(
         total_merged=len(merged),
         query_description=" | ".join(desc_parts),
         sources=sources,
+        warnings=(validation_warnings or None),
     )
