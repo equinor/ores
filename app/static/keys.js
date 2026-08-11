@@ -215,12 +215,12 @@ function buildEasyQuery() {
   }
 }`;
   } else if (action === 'relations') {
-    return `# Select an object UUID from the browse results above, then paste it below
-{
+    const uuid = ($('ez-uuid') ? $('ez-uuid').value.trim() : '') || 'PASTE-UUID-HERE';
+    return `{
   objectRelations(
     dataspace: "${singleDs}"
     typeName: "${typeName}"
-    uuid: "PASTE-UUID-HERE"
+    uuid: "${uuid}"
     direction: "both"
   ) {
     uuid name typeName direction contentType
@@ -546,6 +546,18 @@ $('ez-show-gql').addEventListener('click', () => {
 });
 
 $('ez-run').addEventListener('click', async () => {
+  const action = $('ez-action').value;
+  // Check for missing UUID in relations mode
+  if (action === 'relations') {
+    const uuid = $('ez-uuid') ? $('ez-uuid').value.trim() : '';
+    if (!uuid || uuid === 'PASTE-UUID-HERE') {
+      $('ez-status').textContent = 'Please enter a UUID. Run "Browse Objects" first to find one.';
+      $('ez-results').innerHTML = `<div style="padding:12px;background:#fff3cd;border:1px solid #ffc107;border-radius:4px;font-size:13px;">
+        <strong>UUID required</strong> — Switch to <em>Browse Objects</em> to list objects of this type, then copy a UUID and paste it into the UUID field above.
+      </div>`;
+      return;
+    }
+  }
   const query = buildEasyQuery();
   $('ez-status').textContent = 'Running…';
   $('ez-results').innerHTML = '';
@@ -591,6 +603,16 @@ $('ez-action').addEventListener('change', () => {
   $('ez-prop-row').style.display = showProp ? 'flex' : 'none';
   // Filter row (array thresholds): only for deep_search, cross_system
   $('ez-filter-row').style.display = (action === 'deep_search' || action === 'cross_system') ? 'flex' : 'none';
+  // UUID row: only for relations
+  $('ez-uuid-label').style.display = (action === 'relations') ? '' : 'none';
+  $('ez-uuid-row').style.display = (action === 'relations') ? 'flex' : 'none';
+  // Options: show/hide checkboxes based on query type relevance
+  const showStats = (action === 'deep_search' || action === 'federated');
+  const showRelations = (action === 'deep_search' || action === 'federated');
+  const showSample = (action === 'deep_search');
+  $('ez-stats-label').style.display = showStats ? '' : 'none';
+  $('ez-relations-label').style.display = showRelations ? '' : 'none';
+  $('ez-sample-label').style.display = showSample ? '' : 'none';
   // Clear property/filter values when hiding to avoid stale state in generated queries
   if (!showProp) {
     $('ez-prop').value = '';

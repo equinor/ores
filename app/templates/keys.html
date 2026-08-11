@@ -299,12 +299,19 @@
               <span id="ez-filter-hint" style="font-size:11px;color:#605e5c;">(e.g. 0.25, 500)</span>
             </div>
 
-            <label style="font-weight:600;color:#323130;">Options</label>
-            <div style="display:flex;gap:12px;align-items:center;font-size:12px;">
-              <label><input type="checkbox" id="ez-stats" checked> Statistics</label>
-              <label><input type="checkbox" id="ez-relations"> Relations</label>
-              <label><input type="checkbox" id="ez-sample"> Sample values</label>
+            <label id="ez-options-label" style="font-weight:600;color:#323130;">Options</label>
+            <div id="ez-options-row" style="display:flex;gap:12px;align-items:center;font-size:12px;">
+              <label id="ez-stats-label"><input type="checkbox" id="ez-stats" checked> Statistics</label>
+              <label id="ez-relations-label"><input type="checkbox" id="ez-relations"> Relations</label>
+              <label id="ez-sample-label"><input type="checkbox" id="ez-sample"> Sample values</label>
               <label>Limit: <input id="ez-limit" type="number" value="5" min="1" max="50" style="width:45px;font-size:12px;"></label>
+            </div>
+
+            <label id="ez-uuid-label" style="font-weight:600;color:#323130;display:none;">UUID</label>
+            <div id="ez-uuid-row" style="display:none;gap:6px;align-items:center;">
+              <input id="ez-uuid" type="text" placeholder="Browse first, then paste a UUID here"
+                     style="flex:1;padding:4px 8px;border-radius:4px;border:1px solid #ccc;font-size:13px;font-family:monospace;">
+              <span id="ez-uuid-hint" style="font-size:11px;color:#605e5c;">Tip: Run Browse first to find UUIDs</span>
             </div>
           </div>
 

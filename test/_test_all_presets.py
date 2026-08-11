@@ -20,9 +20,9 @@ gql_presets = {
     'objects_grid': f'{{ resqmlObjects(dataspace: "{DS}" typeName: "resqml20.obj_PointSetRepresentation" limit: 5) {{ uuid title typeName }} }}',
     'objects_wells': f'{{ resqmlObjects(dataspace: "{DS}" typeName: "resqml20.obj_WellboreFeature" limit: 5) {{ uuid title typeName }} }}',
 
-    # Relations (PASTE-UUID presets — test schema validity only)
-    'rel_grid_targets': f'{{ objectRelations(dataspace: "{DS}" typeName: "resqml20.obj_FaultInterpretation" uuid: "PASTE-UUID-HERE" direction: "both") {{ uuid name typeName direction contentType }} }}',
-    'rel_well_chain': f'{{ objectRelations(dataspace: "{DS}" typeName: "resqml20.obj_WellboreFeature" uuid: "PASTE-UUID-HERE" direction: "sources") {{ uuid name typeName direction contentType }} }}',
+    # Relations (requires real UUIDs — resolved dynamically below)
+    'rel_grid_targets': None,
+    'rel_well_chain': None,
 
     # Deep Search
     'deep_poro': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_FaultInterpretation" includeRelations: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} }} }} }}',
@@ -80,8 +80,8 @@ easy_presets = {
     'ez_deep_array_filter': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" propertyFilter: {{ titleContains: "PHIT" arrayFilter: {{ operator: GT, threshold: 0.2 }} }} includeRelations: false includeStatistics: true includeSampleValues: false limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title typeName properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
     # browse
     'ez_browse': f'{{ resqmlObjects(dataspace: "{DS}" typeName: "resqml20.obj_IjkGridRepresentation" limit: 10) {{ uuid title typeName }} }}',
-    # relations (PASTE-UUID)
-    'ez_relations': f'{{ objectRelations(dataspace: "{DS}" typeName: "resqml20.obj_IjkGridRepresentation" uuid: "PASTE-UUID-HERE" direction: "both") {{ uuid name typeName direction contentType }} }}',
+    # relations (requires a real UUID — resolved dynamically below)
+    'ez_relations': None,  # will be filled after browse
     # federated (no filter)
     'ez_federated': f'{{ federatedSearch(text: "*" dataspaces: {DS_LIST} typeName: "resqml20.obj_HorizonInterpretation" searchCatalog: true searchRddms: true searchRemoteRddms: true includeRelations: true includeProperties: false includeStatistics: false limit: 5) {{ totalCatalog totalLocalRddms totalRemoteRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms foundInRemoteRddms relations {{ uuid name typeName direction }} }} }} }}',
     # federated with stats
@@ -138,6 +138,33 @@ def run_tests(label, presets):
 
 
 print(f'Testing against {URL} (ds={DS})\n')
+
+# ── Resolve real UUIDs for relation presets ──────────────────────────────
+def fetch_uuid(type_name):
+    """Fetch one UUID from the RDDMS for the given type."""
+    q = f'{{ resqmlObjects(dataspace: "{DS}" typeName: "{type_name}" limit: 1) {{ uuid }} }}'
+    try:
+        r = requests.post(URL, headers=headers, json={'query': q}, timeout=10)
+        objs = r.json().get('data', {}).get('resqmlObjects', [])
+        return objs[0]['uuid'] if objs else None
+    except Exception:
+        return None
+
+fault_uuid = fetch_uuid('resqml20.obj_FaultInterpretation')
+well_uuid = fetch_uuid('resqml20.obj_WellboreFeature')
+grid_uuid = fetch_uuid('resqml20.obj_IjkGridRepresentation')
+
+if fault_uuid:
+    gql_presets['rel_grid_targets'] = f'{{ objectRelations(dataspace: "{DS}" typeName: "resqml20.obj_FaultInterpretation" uuid: "{fault_uuid}" direction: "both") {{ uuid name typeName direction contentType }} }}'
+if well_uuid:
+    gql_presets['rel_well_chain'] = f'{{ objectRelations(dataspace: "{DS}" typeName: "resqml20.obj_WellboreFeature" uuid: "{well_uuid}" direction: "sources") {{ uuid name typeName direction contentType }} }}'
+if grid_uuid:
+    easy_presets['ez_relations'] = f'{{ objectRelations(dataspace: "{DS}" typeName: "resqml20.obj_IjkGridRepresentation" uuid: "{grid_uuid}" direction: "both") {{ uuid name typeName direction contentType }} }}'
+
+# Remove presets that couldn't be resolved (no objects of that type in RDDMS)
+gql_presets = {k: v for k, v in gql_presets.items() if v is not None}
+easy_presets = {k: v for k, v in easy_presets.items() if v is not None}
+
 
 ok1, err1 = run_tests('GraphQL Mode (JSON tab) presets', gql_presets)
 ok2, err2 = run_tests('Easy Mode presets', easy_presets)
