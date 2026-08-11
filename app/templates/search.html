@@ -715,7 +715,7 @@
     <script src="/static/search.js"></script>
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose',
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose',
         flowchart: { htmlLabels: true, nodeSpacing: 20, rankSpacing: 30, padding: 8 }
       });
 
@@ -841,13 +841,15 @@
       const blocks = Array.from(document.querySelectorAll('.rec-block'));
 
       // Cache original diagram source for every <pre.mermaid> (for clean re-parsing)
+      // Do NOT auto-render — only render when a block becomes visible
       const allPres = Array.from(document.querySelectorAll('pre.mermaid'));
       allPres.forEach(el => { if (!el.dataset.src) el.dataset.src = el.textContent; });
 
       function renderMermaidIn(container) {
-        const nodes = container.querySelectorAll('pre.mermaid');
+        const nodes = Array.from(container.querySelectorAll('pre.mermaid')).filter(n => !n.dataset.processed);
+        if (!nodes.length) return;
         nodes.forEach(n => { if (n.dataset.src) n.textContent = n.dataset.src; n.removeAttribute('data-processed'); });
-        try { mermaid.init(undefined, nodes); } catch (e) { console.warn('Mermaid re-init failed:', e); }
+        try { mermaid.run({ nodes: nodes }); } catch (e) { console.warn('Mermaid render failed:', e); }
       }
 
       /* ── Production profile Chart.js rendering ── */
@@ -932,8 +934,8 @@
       // Attach to initial rows
       attachRowClickHandlers();
 
-      // Initial render of first visible block's charts
-      blocks.forEach(b => { if (b.style.display !== 'none') renderProdChart(b); });
+      // Initial render of first visible block's diagrams and charts
+      blocks.forEach(b => { if (b.style.display !== 'none') { renderMermaidIn(b); renderProdChart(b); } });
 
       /* ── Load More (incremental batch fetching) ── */
       (function() {
