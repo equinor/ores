@@ -165,9 +165,13 @@ def _normalize_geolabel(data_block: Dict[str, Any]) -> Dict[str, Any]:
     gl = (data_block or {}).get("GeoLabels") or {}
     cv = gl.get("ColumnValues") or {}
     if not cv:
+        # Fallback: some GeoLabelSet records use 'Table' instead of 'GeoLabels'
+        gl = (data_block or {}).get("Table") or {}
+        cv = gl.get("ColumnValues") or {}
+    if not cv:
         return {}
 
-    segments = cv.get("SegmentID") or []
+    segments = cv.get("SegmentID") or cv.get("Zone") or []
     facies = cv.get("Facies") or []
     n_rows = len(segments)
 
