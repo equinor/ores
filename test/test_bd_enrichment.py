@@ -12,7 +12,7 @@ Covers:
 from __future__ import annotations
 
 import json
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -333,3 +333,498 @@ class TestEnrichBdActivity:
         client = AsyncMock()
         result = await _enrich_bd_activity(data_block, client, "http://x/records", {})
         assert result == {}
+
+
+# ── _is_proper_grid2d_map ───────────────────────────────────────────────────
+
+class TestIsProperGrid2dMap:
+    """Test the heuristic that distinguishes real maps from table-as-Grid2d."""
+
+    def test_fmu_map_prefix(self):
+        from app.bd_enrichment import _is_proper_grid2d_map
+        assert _is_proper_grid2d_map("DS_extract_simgrid_20250101") is True
+        assert _is_proper_grid2d_map("TS_surface_depth") is True
+        assert _is_proper_grid2d_map("GS_velocity_model") is True
+
+    def test_table_marker_rejected(self):
+        from app.bd_enrichment import _is_proper_grid2d_map
+        assert _is_proper_grid2d_map("Estimated reserves parameters") is False
+        assert _is_proper_grid2d_map("Volumes per realisation table") is False
+        assert _is_proper_grid2d_map("statistics_raw, all") is False
+
+    def test_map_keywords_accepted(self):
+        from app.bd_enrichment import _is_proper_grid2d_map
+        assert _is_proper_grid2d_map("Top_Reservoir_Depth") is True
+        assert _is_proper_grid2d_map("Horizon_A_surface") is True
+        assert _is_proper_grid2d_map("velocity_model_v2") is True
+        assert _is_proper_grid2d_map("isochore_zone1") is True
+
+    def test_short_underscore_name_accepted(self):
+        from app.bd_enrichment import _is_proper_grid2d_map
+        assert _is_proper_grid2d_map("zone1_prop") is True
+
+    def test_default_is_inclusive(self):
+        from app.bd_enrichment import _is_proper_grid2d_map
+        assert _is_proper_grid2d_map("unknown_thing") is True
+
+
+# ── _enrich_bd_maps ─────────────────────────────────────────────────────────
+
+class TestEnrichBdMaps:
+    """Test async ETPDataspace → Grid2d discovery."""
+
+    @pytest.mark.asyncio
+    async def test_no_etpdataspace_returns_empty(self):
+        from app.bd_enrichment import _enrich_bd_maps
+        data_block = {"Parameters": [{"DataObjectParameter": "dev:wpc--GeoLabelSet:x:1"}]}
+        client = AsyncMock()
+        result = await _enrich_bd_maps(data_block, client, "http://x/records", {})
+        assert result == {"maps": [], "all": []}
+
+    @pytest.mark.asyncio
+    async def test_empty_parameters(self):
+        from app.bd_enrichment import _enrich_bd_maps
+        data_block = {"Parameters": []}
+        client = AsyncMock()
+        result = await _enrich_bd_maps(data_block, client, "http://x/records", {})
+        assert result == {"maps": [], "all": []}
+
+    @pytest.mark.asyncio
+    async def test_discovers_maps_in_dataspace(self):
+        """Should fetch ETPDataspace record, then list Grid2d objects."""
+        from app.bd_enrichment import _enrich_bd_maps
+        import app.osdu as osdu_mod
+
+        data_block = {
+            "Parameters": [{
+                "DataObjectParameter": "dev:wpc--ETPDataspace:ds1:1",
+                "Keys": [{"StringParameterKey": "ETPDataspace"}],
+            }],
+        }
+
+        ds_record = {
+            "id": "dev:wpc--ETPDataspace:ds1:1",
+            "data": {
+                "Name": "maap/drogon_dg",
+                "DatasetProperties": {"URI": "eml:///dataspace('maap/drogon_dg')"},
+            },
+        }
+
+        grid2d_objects = [
+            {"Uuid": "aaa-111", "name": "DS_extract_simgrid_top", "uri": "eml:///..."},
+            {"Uuid": "bbb-222", "name": "Estimated Volumes Table", "uri": "eml:///..."},
+            {"Uuid": "ccc-333", "name": "DS_extract_geogrid_base", "uri": "eml:///..."},
+        ]
+
+        client = AsyncMock()
+        client.get = AsyncMock(return_value=MagicMock(status_code=200, json=MagicMock(return_value=ds_record)))
+
+        with patch.object(osdu_mod, "list_resources", AsyncMock(return_value=grid2d_objects)), \
+             patch.object(osdu_mod, "get_resource", AsyncMock(return_value={})):
+
+            result = await _enrich_bd_maps(data_block, client, "http://x/records",
+                                           {"Authorization": "Bearer test"})
+
+        assert len(result["all"]) == 3
+        # "Estimated Volumes Table" is a table marker → excluded from proper maps
+        assert len(result["maps"]) == 2
+        # DS_extract_simgrid should sort first
+        assert result["maps"][0]["title"] == "DS_extract_simgrid_top"
+
+    @pytest.mark.asyncio
+    async def test_limits_to_3_dataspaces(self):
+        """Should only process at most 3 ETPDataspace refs."""
+        from app.bd_enrichment import _enrich_bd_maps
+        import app.osdu as osdu_mod
+
+        data_block = {
+            "Parameters": [
+                {"DataObjectParameter": f"dev:wpc--ETPDataspace:ds{i}:1",
+                 "Keys": [{"StringParameterKey": "ETPDataspace"}]}
+                for i in range(5)
+            ],
+        }
+
+        ds_record = {
+            "data": {"Name": "demo", "DatasetProperties": {"URI": "eml:///dataspace('demo')"}},
+        }
+        client = AsyncMock()
+        client.get = AsyncMock(return_value=MagicMock(status_code=200, json=MagicMock(return_value=ds_record)))
+
+        with patch.object(osdu_mod, "list_resources", AsyncMock(return_value=[])), \
+             patch.object(osdu_mod, "get_resource", AsyncMock(return_value={})):
+            result = await _enrich_bd_maps(data_block, client, "http://x/records",
+                                           {"Authorization": "Bearer test"})
+
+        # Should have fetched exactly 3 dataspace records
+        assert client.get.call_count == 3
+
+
+# ── _enrich_bd_production ────────────────────────────────────────────────────
+
+class TestEnrichBdProduction:
+    """Test async production forecast fetch + parse."""
+
+    @pytest.mark.asyncio
+    async def test_no_production_parameter(self):
+        from app.bd_enrichment import _enrich_bd_production
+        data_block = {"Parameters": [{"DataObjectParameter": "dev:wpc--GeoLabelSet:x:1"}]}
+        client = AsyncMock()
+        result = await _enrich_bd_production(data_block, client, "http://x/records", {})
+        assert result == {}
+
+    @pytest.mark.asyncio
+    async def test_production_forecast_parsed(self):
+        """Should fetch CBT record and parse production columns."""
+        from app.bd_enrichment import _enrich_bd_production
+
+        data_block = {
+            "Parameters": [{
+                "DataObjectParameter": "dev:wpc--ColumnBasedTable:prod1:1",
+                "Keys": [{"StringParameterKey": "ProductionForecast"}],
+            }],
+        }
+
+        cbt_record = {
+            "data": {
+                "Table": {
+                    "KeyColumns": [{"ColumnName": "Year"}],
+                    "Columns": [
+                        {"ColumnName": "FOPR"},
+                        {"ColumnName": "FWPR"},
+                    ],
+                    "ColumnValues": [
+                        {"IntegerColumn": [2026, 2027, 2028]},
+                        {"NumberColumn": [8500.0, 7200.0, 6100.0]},
+                        {"NumberColumn": [200.0, 450.0, 800.0]},
+                    ],
+                },
+            },
+        }
+
+        client = AsyncMock()
+        client.get = AsyncMock(return_value=MagicMock(
+            status_code=200, json=MagicMock(return_value=cbt_record),
+        ))
+
+        result = await _enrich_bd_production(data_block, client, "http://x/records", {})
+        assert result["Years"] == [2026, 2027, 2028]
+        assert result["OilRate_kSm3d"] == [8500.0, 7200.0, 6100.0]
+        assert result["WaterRate_kSm3d"] == [200.0, 450.0, 800.0]
+
+    @pytest.mark.asyncio
+    async def test_production_dict_format(self):
+        """ColumnValues as dict (legacy format)."""
+        from app.bd_enrichment import _enrich_bd_production
+
+        data_block = {
+            "Parameters": [{
+                "DataObjectParameter": "dev:wpc--ColumnBasedTable:prod2:1",
+                "Keys": [{"StringParameterKey": "ProductionProfile"}],
+            }],
+        }
+
+        cbt_record = {
+            "data": {
+                "Table": {
+                    "KeyColumns": [{"ColumnName": "Year"}],
+                    "Columns": [{"ColumnName": "OilRate"}],
+                    "ColumnValues": {
+                        "Year": [2025, 2026],
+                        "OilRate": [5000.0, 4500.0],
+                    },
+                },
+            },
+        }
+
+        client = AsyncMock()
+        client.get = AsyncMock(return_value=MagicMock(
+            status_code=200, json=MagicMock(return_value=cbt_record),
+        ))
+
+        result = await _enrich_bd_production(data_block, client, "http://x/records", {})
+        assert result["Years"] == [2025, 2026]
+        assert result["OilRate_kSm3d"] == [5000.0, 4500.0]
+
+    @pytest.mark.asyncio
+    async def test_production_fetch_failure(self):
+        from app.bd_enrichment import _enrich_bd_production
+
+        data_block = {
+            "Parameters": [{
+                "DataObjectParameter": "dev:wpc--ColumnBasedTable:bad:1",
+                "Keys": [{"StringParameterKey": "ProductionForecast"}],
+            }],
+        }
+
+        client = AsyncMock()
+        client.get = AsyncMock(return_value=MagicMock(status_code=500, json=MagicMock(return_value={})))
+
+        result = await _enrich_bd_production(data_block, client, "http://x/records", {})
+        assert result == {}
+
+
+# ── _enrich_bd_developmentconcept ────────────────────────────────────────────
+
+class TestEnrichBdDevelopmentConcept:
+    """Test async DevelopmentConcept WPC fetch + injection."""
+
+    @pytest.mark.asyncio
+    async def test_injects_into_ext_equinor(self):
+        """Should inject fetched DC fields into data.ext.equinor.DevelopmentConcept."""
+        from app.bd_enrichment import _enrich_bd_developmentconcept
+
+        data_block = {
+            "Parameters": [{
+                "DataObjectParameter": "dev:wpc--DevelopmentConcept:dc1:1",
+                "Keys": [{"StringParameterKey": "DevelopmentConcept"}],
+            }],
+        }
+
+        dc_record = {
+            "data": {
+                "Name": "Drogon DevConcept",
+                "Summary": "FPSO-based development",
+                "DecisionGate": "DG2",
+                "FacilityConcept": {"FacilityType": "FPSO"},
+                "WellPlan": {"Producers": 4, "Injectors": 2},
+                "DrainageStrategy": {"PrimaryRecoveryMechanism": "WaterInjection"},
+            },
+        }
+
+        client = AsyncMock()
+        client.get = AsyncMock(return_value=MagicMock(
+            status_code=200, json=MagicMock(return_value=dc_record),
+        ))
+
+        await _enrich_bd_developmentconcept(data_block, client, "http://x/records", {})
+
+        dc = data_block["ext"]["equinor"]["DevelopmentConcept"]
+        assert dc["Name"] == "Drogon DevConcept"
+        assert dc["FacilityConcept"]["FacilityType"] == "FPSO"
+        assert dc["WellPlan"]["Producers"] == 4
+        assert dc["DrainageStrategy"]["PrimaryRecoveryMechanism"] == "WaterInjection"
+
+    @pytest.mark.asyncio
+    async def test_no_devconcept_parameter(self):
+        from app.bd_enrichment import _enrich_bd_developmentconcept
+        data_block = {"Parameters": []}
+        client = AsyncMock()
+        await _enrich_bd_developmentconcept(data_block, client, "http://x/records", {})
+        assert "ext" not in data_block
+
+    @pytest.mark.asyncio
+    async def test_fetch_failure_no_injection(self):
+        from app.bd_enrichment import _enrich_bd_developmentconcept
+
+        data_block = {
+            "Parameters": [{
+                "DataObjectParameter": "dev:wpc--DevelopmentConcept:dc1:1",
+                "Keys": [{"StringParameterKey": "DevelopmentConcept"}],
+            }],
+        }
+
+        client = AsyncMock()
+        client.get = AsyncMock(return_value=MagicMock(status_code=404, json=MagicMock(return_value={})))
+
+        await _enrich_bd_developmentconcept(data_block, client, "http://x/records", {})
+        assert "ext" not in data_block
+
+    @pytest.mark.asyncio
+    async def test_preserves_existing_ext(self):
+        """Should not clobber existing ext.equinor fields."""
+        from app.bd_enrichment import _enrich_bd_developmentconcept
+
+        data_block = {
+            "ext": {"equinor": {"ExistingField": "keep"}},
+            "Parameters": [{
+                "DataObjectParameter": "dev:wpc--DevelopmentConcept:dc1:1",
+                "Keys": [{"StringParameterKey": "DevelopmentConcept"}],
+            }],
+        }
+
+        dc_record = {"data": {"Name": "Test DC"}}
+        client = AsyncMock()
+        client.get = AsyncMock(return_value=MagicMock(
+            status_code=200, json=MagicMock(return_value=dc_record),
+        ))
+
+        await _enrich_bd_developmentconcept(data_block, client, "http://x/records", {})
+        assert data_block["ext"]["equinor"]["ExistingField"] == "keep"
+        assert data_block["ext"]["equinor"]["DevelopmentConcept"]["Name"] == "Test DC"
+
+
+# ── _enrich_bd_collaboration ────────────────────────────────────────────────
+
+class TestEnrichBdCollaboration:
+    """Test async CollaborationProject reverse lookup + extraction."""
+
+    @pytest.mark.asyncio
+    async def test_no_record_id_returns_empty(self):
+        from app.bd_enrichment import _enrich_bd_collaboration
+        data_block = {}
+        client = AsyncMock()
+        result = await _enrich_bd_collaboration(data_block, client, "http://x/search", "http://x/records", {})
+        assert result == {}
+
+    @pytest.mark.asyncio
+    async def test_finds_cp_and_extracts_fields(self):
+        from app.bd_enrichment import _enrich_bd_collaboration
+
+        data_block = {"_record_id": "dev:wpc--BusinessDecision:dg2:1"}
+
+        search_response = MagicMock(
+            status_code=200,
+            json=MagicMock(return_value={"results": [{"id": "dev:md--CollaborationProject:cp1:1"}]}),
+        )
+
+        cp_record = {
+            "data": {
+                "ProjectName": "Drogon DG2 Project",
+                "LifecycleEvents": [
+                    {"EventType": "Created", "EventDate": "2025-01-01"},
+                    {"EventType": "Approved", "EventDate": "2026-03-15"},
+                ],
+                "ActivityStates": [
+                    {"MilestoneID": "DG2-Volumes", "ActivityStatusID": "completed"},
+                    {"MilestoneID": "DG2-GeoModel", "ActivityStatusID": "in-progress"},
+                    {"MilestoneID": "DG3", "ActivityStatusID": "planned"},
+                ],
+                "Parameters": [
+                    {
+                        "Title": "REV Link",
+                        "DataObjectParameter": "dev:wpc--REV:rev1:1",
+                        "Keys": [{"ParameterKey": "relationship", "StringParameterKey": "uses"}],
+                    },
+                ],
+            },
+        }
+
+        client = AsyncMock()
+        client.post = AsyncMock(return_value=search_response)
+        client.get = AsyncMock(return_value=MagicMock(
+            status_code=200, json=MagicMock(return_value=cp_record),
+        ))
+
+        result = await _enrich_bd_collaboration(
+            data_block, client, "http://x/search", "http://x/records", {},
+        )
+
+        assert result["cp_name"] == "Drogon DG2 Project"
+        assert len(result["events"]) == 2
+        assert result["checklist_total"] == 2  # DG2-Volumes + DG2-GeoModel
+        assert result["checklist_completed"] == 1  # DG2-Volumes
+        assert len(result["relationships"]) == 1
+        assert result["relationships"][0]["relationship"] == "uses"
+
+    @pytest.mark.asyncio
+    async def test_no_cp_found_returns_empty(self):
+        from app.bd_enrichment import _enrich_bd_collaboration
+
+        data_block = {"_record_id": "dev:wpc--BusinessDecision:dg2:1"}
+
+        client = AsyncMock()
+        client.post = AsyncMock(return_value=MagicMock(
+            status_code=200,
+            json=MagicMock(return_value={"results": []}),
+        ))
+
+        result = await _enrich_bd_collaboration(
+            data_block, client, "http://x/search", "http://x/records", {},
+        )
+        assert result == {}
+
+    @pytest.mark.asyncio
+    async def test_search_failure_returns_empty(self):
+        from app.bd_enrichment import _enrich_bd_collaboration
+
+        data_block = {"_record_id": "dev:wpc--BusinessDecision:dg2:1"}
+
+        client = AsyncMock()
+        client.post = AsyncMock(side_effect=Exception("network error"))
+
+        result = await _enrich_bd_collaboration(
+            data_block, client, "http://x/search", "http://x/records", {},
+        )
+        assert result == {}
+
+
+# ── _parse_cbt_production ────────────────────────────────────────────────────
+
+class TestParseCbtProduction:
+    """Test CBT production parsing (pure function, no async)."""
+
+    def test_positional_array_format(self):
+        from app.bd_enrichment import _parse_cbt_production
+        d = {
+            "Table": {
+                "KeyColumns": [{"ColumnName": "Year"}],
+                "Columns": [{"ColumnName": "FOPR"}, {"ColumnName": "FWCT"}],
+                "ColumnValues": [
+                    {"IntegerColumn": [2025, 2026, 2027]},
+                    {"NumberColumn": [9000.0, 7500.0, 6000.0]},
+                    {"NumberColumn": [0.05, 0.15, 0.30]},
+                ],
+            },
+        }
+        result = _parse_cbt_production(d)
+        assert result["Years"] == [2025, 2026, 2027]
+        assert result["OilRate_kSm3d"] == [9000.0, 7500.0, 6000.0]
+        assert result["WaterCut_pct"] == [0.05, 0.15, 0.30]
+
+    def test_dict_format(self):
+        from app.bd_enrichment import _parse_cbt_production
+        d = {
+            "Table": {
+                "KeyColumns": [{"ColumnName": "Year"}],
+                "Columns": [{"ColumnName": "OilRate"}],
+                "ColumnValues": {"Year": [2025], "OilRate": [5000.0]},
+            },
+        }
+        result = _parse_cbt_production(d)
+        assert result["Years"] == [2025]
+        assert result["OilRate_kSm3d"] == [5000.0]
+
+    def test_empty_column_values(self):
+        from app.bd_enrichment import _parse_cbt_production
+        d = {"Table": {"KeyColumns": [], "Columns": [], "ColumnValues": []}}
+        result = _parse_cbt_production(d)
+        assert result == {}
+
+    def test_with_ext_summary(self):
+        from app.bd_enrichment import _parse_cbt_production
+        d = {
+            "Table": {
+                "KeyColumns": [{"ColumnName": "Year"}],
+                "Columns": [{"ColumnName": "FOPR"}],
+                "ColumnValues": [
+                    {"IntegerColumn": [2025]},
+                    {"NumberColumn": [1000.0]},
+                ],
+            },
+            "ext": {"equinor": {"ForecastSummary": {"plateau_years": 5}, "Note": "Test note"}},
+        }
+        result = _parse_cbt_production(d)
+        assert result["summary"]["plateau_years"] == 5
+        assert result["Note"] == "Test note"
+
+    def test_omega_column_names(self):
+        """Omega-style explicit-unit column names should be mapped."""
+        from app.bd_enrichment import _parse_cbt_production
+        d = {
+            "Table": {
+                "KeyColumns": [{"ColumnName": "Year"}],
+                "Columns": [
+                    {"ColumnName": "OilRate_Sm3d"},
+                    {"ColumnName": "CumulativeOil_MSm3"},
+                ],
+                "ColumnValues": [
+                    {"IntegerColumn": [2025]},
+                    {"NumberColumn": [8000.0]},
+                    {"NumberColumn": [2.5]},
+                ],
+            },
+        }
+        result = _parse_cbt_production(d)
+        assert result["OilRate_kSm3d"] == [8000.0]
+        assert result["CumOil_MSm3"] == [2.5]
