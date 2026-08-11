@@ -334,7 +334,7 @@
               <option value="dataspaces">List dataspaces</option>
               <option value="types">Resource types &amp; counts</option>
               <option value="objects_grid">Browse PointSets</option>
-              <option value="objects_wells">Browse wellbores</option>
+              <option value="objects_wells">Browse wellbore features</option>
             </optgroup>
             <optgroup label="Relations (graph traversal)">
               <option value="rel_grid_targets">Fault relations (both directions)</option>
@@ -343,12 +343,12 @@
             <optgroup label="Deep Search (RESQML)">
               <option value="deep_poro">Faults + relation graph</option>
               <option value="deep_perm">Horizons + relations</option>
-              <option value="deep_sw">Stratigraphic units</option>
+              <option value="deep_sw">Stratigraphic units + boundaries</option>
               <option value="deep_all_props">Boundary features (horizons + faults)</option>
               <option value="deep_grid2d_horizons">PolylineSet (fault sticks)</option>
               <option value="deep_grid2d_arrays">Grid2D array statistics</option>
               <option value="deep_well_gr_filter">Well log filter: GR &gt; 50 API</option>
-              <option value="array_stats">Array statistics + sample values</option>
+              <option value="array_stats">PointSet array stats + sample values</option>
             </optgroup>
             <optgroup label="Stratigraphy">
               <option value="strat_column">Strat column → units</option>
@@ -361,7 +361,7 @@
               <option value="struct_org_model">Organization → structural framework</option>
               <option value="markers_by_horizon">Wellbore markers by horizon (3D)</option>
             </optgroup>
-            <optgroup label="Federated (Catalog + RDDMS — impossible with REST)">
+            <optgroup label="Federated (Catalog + RDDMS)">
               <option value="fed_local">Local RDDMS only</option>
               <option value="fed_both">All sources merged</option>
               <option value="fed_enrich">Horizons + relations (federated)</option>
@@ -371,7 +371,7 @@
             </optgroup>
             <optgroup label="Well Data (WITSML)">
               <option value="deep_well_phit">WITSML logs + relations</option>
-              <option value="deep_well_perm">Search by name (titleContains)</option>
+              <option value="deep_well_perm">Search WITSML by name</option>
               <option value="deep_well_all">All WITSML types + statistics</option>
               <option value="witsml_browse_wells">Browse wells (hierarchy)</option>
             </optgroup>

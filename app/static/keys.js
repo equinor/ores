@@ -586,8 +586,22 @@ function countResults(data) {
 // Show/hide filter row and prop row based on action
 $('ez-action').addEventListener('change', () => {
   const action = $('ez-action').value;
-  $('ez-prop-row').style.display = (action === 'browse') ? 'none' : 'flex';
+  // Property row: only for deep_search, federated, cross_system (query types that filter on properties)
+  const showProp = (action === 'deep_search' || action === 'federated' || action === 'cross_system');
+  $('ez-prop-row').style.display = showProp ? 'flex' : 'none';
+  // Filter row (array thresholds): only for deep_search, cross_system
   $('ez-filter-row').style.display = (action === 'deep_search' || action === 'cross_system') ? 'flex' : 'none';
+  // Clear property/filter values when hiding to avoid stale state in generated queries
+  if (!showProp) {
+    $('ez-prop').value = '';
+    $('ez-prop-resolved').textContent = '';
+    if ($('ez-prop-pick')) $('ez-prop-pick').selectedIndex = 0;
+  }
+  if (action !== 'deep_search' && action !== 'cross_system') {
+    $('ez-op').selectedIndex = 0;
+    $('ez-threshold').value = '';
+    $('ez-threshold-high').value = '';
+  }
 });
 
 // Easy-mode quick example: wellbore markers grouped by horizon/feature,
