@@ -1,0 +1,186 @@
+{# ──────────────────────────────────────────────────────────────────────────────
+   Relationships section with Mermaid graph.
+   Included from search.html for every record detail panel.
+   Expects: rec, rec_index, label, is_business_decision, esc_label (macro)
+   ────────────────────────────────────────────────────────────────────────────── #}
+
+          <section class="section-card" style="margin-top:1.5rem;">
+            <h5 style="display:flex;align-items:center;gap:.75rem;">
+              Relationships
+              {% if is_business_decision %}
+              <button onclick="showProvenanceDag('{{ rec.id }}')"
+                      class="btn-sm"
+                      style="font-size:.75rem;padding:.2rem .6rem;background:#fbd38d;color:#222;border:1px solid #b7791f;border-radius:4px;cursor:pointer;"
+                      title="Show decision gate provenance chain">
+                ⛓ Provenance DAG
+              </button>
+              {% endif %}
+            </h5>
+            {# ── Build grouped Mermaid graph with type-based coloring ── #}
+            {# Merge BD Parameters relationship titles into linked_labels for richer names #}
+            {% set bd_params = (rec.data or {}).get('Parameters') or [] %}
+            {% set param_titles = {} %}
+            {% set param_rels = {} %}
+            {% for p in bd_params if p is mapping %}
+              {% set dp = p.get('DataObjectParameter', '') %}
+              {% if dp and p.get('Title') %}
+                {% set _ = param_titles.update({dp: p.get('Title')}) %}
+              {% endif %}
+              {% if dp %}
+                {% set pkeys = p.get('Keys') or [] %}
+                {% for k in pkeys if k is mapping and k.get('ParameterKey') == 'relationship' %}
+                  {% set _ = param_rels.update({dp: k.get('StringParameterKey', '')}) %}
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+            {# Group links by entity type extracted from the OSDU ID #}
+            {% set ns_grp = namespace(
+                fwd_groups={}, rev_groups={},
+                ancestry_p=[], ancestry_c=[]
+            ) %}
+            {% for p in rec.ancestry_parents or [] %}
+              {% set ns_grp.ancestry_p = ns_grp.ancestry_p + [p] %}
+            {% endfor %}
+            {% for ch in rec.ancestry_children or [] %}
+              {% set ns_grp.ancestry_c = ns_grp.ancestry_c + [ch] %}
+            {% endfor %}
+            {% for l in rec.links or [] %}
+              {% set lid = l.id %}
+              {% if lid not in (rec.ancestry_parents or []) and lid not in (rec.ancestry_children or []) %}
+                {# Extract entity type from OSDU ID e.g. "Risk" from "dev:master-data--Risk:..." #}
+                {% set etype = lid.split('--')[1].split(':')[0] if '--' in lid else 'Other' %}
+                {% if l.role == 'referenced-by' %}
+                  {% set _ = ns_grp.rev_groups.update({etype: ns_grp.rev_groups.get(etype, []) + [l]}) %}
+                {% else %}
+                  {% set _ = ns_grp.fwd_groups.update({etype: ns_grp.fwd_groups.get(etype, []) + [l]}) %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+            {# Define a type→class mapping for coloring #}
+            {% set type_class_map = {
+              'Risk': 'cls_risk',
+              'Activity': 'cls_activity',
+              'Reservoir': 'cls_reservoir',
+              'Wellbore': 'cls_wellbore',
+              'Well': 'cls_wellbore',
+              'WellboreTrajectory': 'cls_wellbore',
+              'DevelopmentConcept': 'cls_concept',
+              'CollaborationProject': 'cls_concept',
+              'PersistedCollection': 'cls_collection',
+              'ETPDataspace': 'cls_dataspace',
+              'ReservoirEstimatedVolumes': 'cls_volumes',
+              'ColumnBasedTable': 'cls_volumes',
+              'Document': 'cls_document',
+              'GeoLabelSet': 'cls_geo',
+              'ReservoirSegment': 'cls_geo',
+              'Field': 'cls_geo',
+              'BusinessDecision': 'cls_decision',
+            } %}
+            {# Define a role→edge-label mapping #}
+            {% set role_label_map = {
+              'parameter-object': '',
+              'prior-activity': 'activity',
+              'risk': 'constrains',
+              'evidence': 'evidences',
+              'project': 'project',
+              'parent-work-product': 'parent',
+              'parent-object': 'parent',
+              'referenced-by': 'refs',
+              'informs': 'informs',
+              'supersedes': 'supersedes',
+            } %}
+            <pre class="mermaid">
+graph LR
+REC{{ rec_index }}["{{ esc_label(label) }}"]:::rec_self
+click REC{{ rec_index }} href "/search/view/{{ rec.id }}" "Open record"
+{% for p in ns_grp.ancestry_p %}
+{% set pinfo = (rec.linked_labels or {}).get(p, {}) %}
+{% set _ptype = p.split('--')[1].split(':')[0] if '--' in p else '' %}
+{% set _pid = p.split(':')[-2] if p.count(':') >= 3 else (p.split(':')[-1] if ':' in p else p) %}
+{% set pname = pinfo.name if pinfo.name else (param_titles.get(p) or (_ptype ~ ': ' ~ _pid if _ptype else p)) %}
+P{{ rec_index }}a{{ loop.index0 }}["{{ esc_label(pname) }}"]:::cls_ancestry
+P{{ rec_index }}a{{ loop.index0 }} -->|parent| REC{{ rec_index }}
+click P{{ rec_index }}a{{ loop.index0 }} href "/search/view/{{ p }}" "Open parent"
+{% endfor %}
+{% for ch in ns_grp.ancestry_c %}
+{% set cinfo = (rec.linked_labels or {}).get(ch, {}) %}
+{% set _ctype = ch.split('--')[1].split(':')[0] if '--' in ch else '' %}
+{% set _cid = ch.split(':')[-2] if ch.count(':') >= 3 else (ch.split(':')[-1] if ':' in ch else ch) %}
+{% set cname = cinfo.name if cinfo.name else (param_titles.get(ch) or (_ctype ~ ': ' ~ _cid if _ctype else ch)) %}
+C{{ rec_index }}c{{ loop.index0 }}["{{ esc_label(cname) }}"]:::cls_ancestry
+REC{{ rec_index }} -->|child| C{{ rec_index }}c{{ loop.index0 }}
+click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open child"
+{% endfor %}
+{# ── Forward links: group >3 items into a collapsed node, else show individually ── #}
+{% for etype in ns_grp.fwd_groups.keys()|sort %}
+{% set items = ns_grp.fwd_groups[etype] %}
+{% set cls = type_class_map.get(etype, 'cls_default') %}
+{% set grp_lbl = role_label_map.get(items[0].role|default(''), etype|lower) or param_rels.get(items[0].id, '') or etype|lower %}
+{% set _ns = items[0].id.split(':')[1].split('--')[0] if items[0].id.count(':') >= 3 and '--' in items[0].id else 'master-data' %}
+{% set _kind = 'osdu:wks:' ~ _ns ~ '--' ~ etype ~ ':*' %}
+{# Forward links: search for the linked IDs themselves (OR query of their short IDs) #}
+{% set _fwd_ids = [] %}
+{% for it in items %}
+{% set _short = it.id.split(':')[-2] if it.id.count(':') >= 3 else (it.id.split(':')[-1] if ':' in it.id else it.id) %}
+{% set _ = _fwd_ids.append('"' ~ _short ~ '"') %}
+{% endfor %}
+{% set _slug = _fwd_ids | join(' OR ') %}
+{# Never collapse types where each item has distinct semantics #}
+{% set _never_collapse = ['PersistedCollection', 'Document', 'FileCollection.Bluware.OpenVDS'] %}
+{% if items|length > 3 and etype not in _never_collapse %}
+GRP{{ rec_index }}_{{ etype }}["{{ etype }} ({{ items|length }})"]:::{{ cls }}
+REC{{ rec_index }} -->|{{ grp_lbl }}| GRP{{ rec_index }}_{{ etype }}
+click GRP{{ rec_index }}_{{ etype }} href "/search/run?kind={{ _kind }}&query={{ _slug | urlencode }}" "Show all {{ etype }}"
+{% else %}
+{% for l in items %}
+{% set info = (rec.linked_labels or {}).get(l.id, {}) %}
+{% set _fid = l.id.split(':')[-2] if l.id.count(':') >= 3 else (l.id.split(':')[-1] if ':' in l.id else l.id) %}
+{% set lname = info.name if info.name else (param_titles.get(l.id) or _fid) %}
+{% set edge_lbl = role_label_map.get(l.role|default(''), '') or param_rels.get(l.id, '') or param_titles.get(l.id, '').split('(')[0]|trim|lower|truncate(25, killwords=False, end='') or etype|lower %}
+F{{ rec_index }}_{{ etype }}_{{ loop.index0 }}["{{ esc_label(lname) }}"]:::{{ cls }}
+REC{{ rec_index }} -->|{{ edge_lbl }}| F{{ rec_index }}_{{ etype }}_{{ loop.index0 }}
+click F{{ rec_index }}_{{ etype }}_{{ loop.index0 }} href "/search/view/{{ l.id }}" "Open"
+{% endfor %}
+{% endif %}
+{% endfor %}
+{# ── Reverse links: group >3 items into a collapsed node ── #}
+{% for etype in ns_grp.rev_groups.keys()|sort %}
+{% set items = ns_grp.rev_groups[etype] %}
+{% set cls = type_class_map.get(etype, 'cls_default') %}
+{% set _rns = items[0].id.split(':')[1].split('--')[0] if items[0].id.count(':') >= 3 and '--' in items[0].id else 'master-data' %}
+{% set _rkind = 'osdu:wks:' ~ _rns ~ '--' ~ etype ~ ':*' %}
+{% set _rslug = '"' ~ rec.id ~ '"' %}
+{% if items|length > 3 %}
+RGRP{{ rec_index }}_{{ etype }}["{{ etype }} ({{ items|length }})"]:::{{ cls }}
+RGRP{{ rec_index }}_{{ etype }} -->|references| REC{{ rec_index }}
+click RGRP{{ rec_index }}_{{ etype }} href "/search/run?kind={{ _rkind }}&query={{ _rslug | urlencode }}" "Show all {{ etype }}"
+{% else %}
+{% for l in items %}
+{% set info = (rec.linked_labels or {}).get(l.id, {}) %}
+{% set _rid = l.id.split(':')[-2] if l.id.count(':') >= 3 else (l.id.split(':')[-1] if ':' in l.id else l.id) %}
+{% set lname = info.name if info.name else (param_titles.get(l.id) or (etype ~ ': ' ~ _rid)) %}
+RV{{ rec_index }}_{{ etype }}_{{ loop.index0 }}["{{ esc_label(lname) }}"]:::{{ cls }}
+RV{{ rec_index }}_{{ etype }}_{{ loop.index0 }} -->|references| REC{{ rec_index }}
+click RV{{ rec_index }}_{{ etype }}_{{ loop.index0 }} href "/search/view/{{ l.id }}" "Open"
+{% endfor %}
+{% endif %}
+{% endfor %}
+classDef rec_self fill:#4299e1,stroke:#2b6cb0,color:#fff,font-weight:bold;
+classDef cls_risk fill:#fed7d7,stroke:#c53030,color:#222;
+classDef cls_activity fill:#fefcbf,stroke:#d69e2e,color:#222;
+classDef cls_reservoir fill:#c6f6d5,stroke:#276749,color:#222;
+classDef cls_wellbore fill:#bee3f8,stroke:#2b6cb0,color:#222;
+classDef cls_concept fill:#e9d8fd,stroke:#6b46c1,color:#222;
+classDef cls_collection fill:#feebc8,stroke:#c05621,color:#222;
+classDef cls_dataspace fill:#b2f5ea,stroke:#234e52,color:#222;
+classDef cls_volumes fill:#c4f1f9,stroke:#086f83,color:#222;
+classDef cls_document fill:#fefcbf,stroke:#975a16,color:#222;
+classDef cls_geo fill:#c6f6d5,stroke:#22543d,color:#222;
+classDef cls_ancestry fill:#e2e8f0,stroke:#4a5568,color:#222;
+classDef cls_decision fill:#fbd38d,stroke:#b7791f,color:#222,font-weight:bold;
+classDef cls_default fill:#edf2f7,stroke:#718096,color:#222;
+            </pre>
+
+              {% if not (rec.links or []) %}<div class="muted" style="margin-top:.3rem;">No linked objects.</div>{% endif %}
+          </section>
+

@@ -1,0 +1,63 @@
+{# ──────────────────────────────────────────────────────────────────────────────
+   Reservoir Estimated Volumes Card.
+   Included from search.html when is_rev is true.
+   Expects: rec, name, volns
+   ────────────────────────────────────────────────────────────────────────────── #}
+
+          {# ══════════ RESERVOIR ESTIMATED VOLUMES CARD ══════════ #}
+          <div class="rev-card">
+            <div class="rev-header">
+              <h4>{{ name or 'Reservoir Estimated Volumes' }}</h4>
+              <div class="rev-subtitle">{{ (rec.data or {}).get('Description') or rec.kind or '' }}</div>
+            </div>
+            <div class="rev-body">
+              {# ── Volume headline KPIs ── #}
+              {% if volns.has_o10 or volns.has_o50 or volns.has_o90 or volns.has_g10 or volns.has_g50 or volns.has_g90 %}
+              <div class="bd-section-title">Volume Totals</div>
+              <div class="bd-kpi-row">
+                {% if volns.has_o10 or volns.has_o50 or volns.has_o90 %}
+                <div class="bd-kpi oil">
+                  <div class="bd-kpi-label">Oil in Place</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o10 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o50 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o90 / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                {% endif %}
+                {% if volns.has_g10 or volns.has_g50 or volns.has_g90 %}
+                <div class="bd-kpi gas">
+                  <div class="bd-kpi-label">Gas in Place</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g10 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g50 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g90 / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                {% endif %}
+                <div class="bd-kpi total">
+                  <div class="bd-kpi-label">Total</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o10 + volns.g10) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o50 + volns.g50) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o90 + volns.g90) / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+              </div>
+              {% endif %}
+
+              {# ── Metadata highlights ── #}
+              <div class="bd-meta-grid" style="margin-top:.6rem;">
+                {% set rev_data = rec.data or {} %}
+                {% if rev_data.get('ParentObjectID') %}
+                <div class="bd-meta-item"><div class="bd-label">Parent</div><div class="bd-value"><a href="/search/view/{{ rev_data.get('ParentObjectID') }}">{{ rev_data.get('ParentObjectID','').split(':')[-2] if ':' in (rev_data.get('ParentObjectID') or '') else rev_data.get('ParentObjectID') }}</a></div></div>
+                {% endif %}
+                {% if rev_data.get('ReservoirIDs') %}
+                <div class="bd-meta-item"><div class="bd-label">Reservoir(s)</div><div class="bd-value">{{ rev_data.get('ReservoirIDs')|join(', ') if rev_data.get('ReservoirIDs') is iterable else rev_data.get('ReservoirIDs') }}</div></div>
+                {% endif %}
+              </div>
+            </div>
+          </div>{# /rev-card #}

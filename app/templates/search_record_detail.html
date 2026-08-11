@@ -1,0 +1,212 @@
+{# ──────────────────────────────────────────────────────────────────────────────
+   Per-record detail block: variable setup, overview, metadata, sub-section includes.
+   Included from search.html and search_more_fragment.html inside a {% for rec in batch %} loop.
+   Expects: rec, rec_index, show_block (bool), esc_label (macro) in scope.
+   ────────────────────────────────────────────────────────────────────────────── #}
+      {% set raw_name = (rec.data or {}).get('Name') or '' %}
+      {% set feature_name = (rec.data or {}).get('FeatureName') or '' %}
+      {% set name = raw_name if (raw_name and raw_name != '|UNNAMED|') else (feature_name or raw_name) %}
+      {# ETPDataspace fallback: extract path from URI or ID when Name is empty #}
+      {% if not name and 'ETPDataspace' in (rec.kind or '') %}
+        {% set ds_uri = ((rec.data or {}).get('DatasetProperties') or {}).get('URI') or '' %}
+        {% if 'dataspace(' in ds_uri %}
+          {% set name = ds_uri.split('dataspace(')[1].split(')')[0] %}
+        {% elif 'ETPDataspace:' in (rec.id or '') %}
+          {% set name = (rec.id or '').split('ETPDataspace:')[1].split(':')[0].replace('-', '/', 1) %}
+        {% endif %}
+      {% endif %}
+      {% set label = rec.display_name or name or rec.id %}
+
+      {# Volumes helpers #}
+      {% set vol = rec.volumes or {} %}
+      {% set vmap = vol.ColumnValues or {} %}
+      {% set key_cols = vol.KeyColumns or [] %}
+      {% set val_cols = vol.Columns or [] %}
+      {% set key_names = [] %}
+      {% for k in key_cols %}{% set _ = key_names.append(k.ColumnName) %}{% endfor %}
+      {% set value_names = [] %}
+      {% for c in val_cols %}
+        {% if (c.ColumnRole or '').lower() == 'value' %}
+          {% set _ = value_names.append(c.ColumnName) %}
+        {% endif %}
+      {% endfor %}
+      {% if value_names|length == 0 and vmap %}
+        {% for cname, _vals in vmap.items() %}
+          {% if cname not in key_names %}
+            {% set _ = value_names.append(cname) %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% set headers = key_names + value_names %}
+      {% set sample_col = ((key_names|length > 0 and key_names[0]) or (value_names|length > 0 and value_names[0]) or '') %}
+      {% set nrows = (sample_col and (vmap.get(sample_col) or [])|length) or 0 %}
+      {% set has_volumes = (vmap and headers|length > 0 and nrows > 0) %}
+      {% set is_business_decision = ('businessdecision' in ((rec.kind or '')|lower)) %}
+      {% set is_rev = ('reservoirestimatedvolumes' in ((rec.kind or '')|lower)) %}
+      {% set is_dataspace = ('etpdataspace' in ((rec.kind or '')|lower)) %}
+      {# Collect GeoModelDataspace / ETPDataspace parameters from data.Parameters #}
+      {% set ds_params = [] %}
+      {% for p in ((rec.data or {}).get('Parameters') or []) if p is mapping %}
+        {% if 'etpdataspace' in ((p.get('DataObjectParameter') or '')|lower) or p.get('Title') == 'GeoModelDataspace' %}
+          {% set _ = ds_params.append(p) %}
+        {% endif %}
+      {% endfor %}
+
+      {# Headline volume candidates from reconstructed table.
+         Strategy: prefer the grand TOTAL row (Zone=TOTAL & SegmentID=TOTAL) when present;
+         otherwise sum only per-segment/per-facies rows (exclude rows where any key is 'TOTAL'
+         to avoid double-counting totals that are already aggregations). #}
+      {% set volns = namespace(o10=0.0,o50=0.0,o90=0.0,g10=0.0,g50=0.0,g90=0.0,has_o10=false,has_o50=false,has_o90=false,has_g10=false,has_g50=false,has_g90=false, grand_idx=-1) %}
+      {# Find grand total row: all key columns == 'TOTAL' #}
+      {% set zones = vmap.get('Zone') or [] %}
+      {% set seg_ids = vmap.get('SegmentID') or [] %}
+      {% set facies_col = vmap.get('Facies') or [] %}
+      {% for i in range(nrows) %}
+        {% set z = (zones[i]|string if zones|length > i else '') %}
+        {% set s = (seg_ids[i]|string if seg_ids|length > i else '') %}
+        {% set f = (facies_col[i]|string if facies_col|length > i else '') %}
+        {% if (z|upper) == 'TOTAL' or (z|upper) == 'TOTALS' %}
+          {% if (s|upper) == 'TOTAL' or (s|upper) == 'TOTALS' %}
+            {% if (f|upper) == 'TOTAL' or (f|upper) == 'TOTALS' or f == '' %}
+              {% set volns.grand_idx = i %}
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      {% if volns.grand_idx >= 0 %}
+        {# Use grand total row directly #}
+        {% set gi = volns.grand_idx %}
+        {% set op10 = (vmap.get('Oil.P10') or []) %}{% if op10|length > gi %}{% set volns.o10 = op10[gi]|float %}{% set volns.has_o10 = true %}{% endif %}
+        {% set op50 = (vmap.get('Oil.P50') or []) %}{% if op50|length > gi %}{% set volns.o50 = op50[gi]|float %}{% set volns.has_o50 = true %}{% endif %}
+        {% set op90 = (vmap.get('Oil.P90') or []) %}{% if op90|length > gi %}{% set volns.o90 = op90[gi]|float %}{% set volns.has_o90 = true %}{% endif %}
+        {% set gp10 = (vmap.get('Gas.P10') or []) %}{% if gp10|length > gi %}{% set volns.g10 = gp10[gi]|float %}{% set volns.has_g10 = true %}{% endif %}
+        {% set gp50 = (vmap.get('Gas.P50') or []) %}{% if gp50|length > gi %}{% set volns.g50 = gp50[gi]|float %}{% set volns.has_g50 = true %}{% endif %}
+        {% set gp90 = (vmap.get('Gas.P90') or []) %}{% if gp90|length > gi %}{% set volns.g90 = gp90[gi]|float %}{% set volns.has_g90 = true %}{% endif %}
+      {% else %}
+        {# No grand total row - sum only non-TOTAL rows to avoid double-counting #}
+        {% for i in range(nrows) %}
+          {% set z = (zones[i]|string if zones|length > i else '') %}
+          {% set s = (seg_ids[i]|string if seg_ids|length > i else '') %}
+          {% set f = (facies_col[i]|string if facies_col|length > i else '') %}
+          {% if (z|upper) not in ('TOTAL','TOTALS') and (s|upper) not in ('TOTAL','TOTALS') and (f|upper) not in ('TOTAL','TOTALS') %}
+            {% if (vmap.get('Oil.P10') or [])|length > i %}{% set volns.o10 = volns.o10 + ((vmap.get('Oil.P10') or [])[i]|float) %}{% set volns.has_o10 = true %}{% endif %}
+            {% if (vmap.get('Oil.P50') or [])|length > i %}{% set volns.o50 = volns.o50 + ((vmap.get('Oil.P50') or [])[i]|float) %}{% set volns.has_o50 = true %}{% endif %}
+            {% if (vmap.get('Oil.P90') or [])|length > i %}{% set volns.o90 = volns.o90 + ((vmap.get('Oil.P90') or [])[i]|float) %}{% set volns.has_o90 = true %}{% endif %}
+            {% if (vmap.get('Gas.P10') or [])|length > i %}{% set volns.g10 = volns.g10 + ((vmap.get('Gas.P10') or [])[i]|float) %}{% set volns.has_g10 = true %}{% endif %}
+            {% if (vmap.get('Gas.P50') or [])|length > i %}{% set volns.g50 = volns.g50 + ((vmap.get('Gas.P50') or [])[i]|float) %}{% set volns.has_g50 = true %}{% endif %}
+            {% if (vmap.get('Gas.P90') or [])|length > i %}{% set volns.g90 = volns.g90 + ((vmap.get('Gas.P90') or [])[i]|float) %}{% set volns.has_g90 = true %}{% endif %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% set ext_eq = ((rec.data or {}).get('ext') or {}).get('equinor') or {} %}
+
+      {# ── GeoLabelSet canonical data (preferred source) ── #}
+      {% set gls = rec.bd_geolabel or {} %}
+      {% set gls_vols = gls.get('volumes_by_segment') or {} %}
+      {% set gls_props = gls.get('properties') or {} %}
+      {% set gls_unc = gls.get('uncertainty') or {} %}
+      {% set has_gls_vol = (gls_vols.get('TOTAL') and gls_vols['TOTAL'].get('Oil.P50') is not none) %}
+      {% set has_gls_props = (gls_props|length > 0) %}
+
+      {# ── Production forecast from ColumnBasedTable ── #}
+      {% set bd_prod = rec.bd_production or {} %}
+
+      {# ── Maps from linked RDDMS dataspaces ── #}
+      {% set bd_maps_raw = rec.bd_maps or {} %}
+      {% set bd_maps = (bd_maps_raw.get('maps') if bd_maps_raw is mapping else []) or [] %}
+
+      {# ── Stat WPC table volume helpers ── #}
+      {% set has_table_vol = (volns.has_o10 or volns.has_o50 or volns.has_o90 or volns.has_g10 or volns.has_g50 or volns.has_g90) %}
+
+      <div class="rec-block" id="rec-{{ rec_index }}" {% if show_block %}style=""{% else %}style="display:none"{% endif %}>
+
+        <div class="record-sections">
+          <section class="section-card">
+            <h5>Overview</h5>
+            <div class="mini-grid">
+              <div class="k">Name</div><div style="font-weight:700;">{{ name or '-' }}</div>
+              <div class="k">Description</div><div>{{ (rec.data or {}).get('Description') or '-' }}</div>
+              <div class="k">Kind</div><div>{{ rec.kind or '-' }}</div>
+              <div class="k">ID</div><div>{{ rec.id or '-' }}</div>
+              <div class="k">Version</div><div>{{ rec.version if rec.version is not none else '-' }}</div>
+              <div class="k">ParentObjectID</div><div>{{ (rec.data or {}).get('ParentObjectID') or '-' }}</div>
+            </div>
+            {% if ((rec.data or {}).get('ExtensionProperties') or {}).get('Markdown') %}
+            <div style="margin-top:.6rem;">
+              <button type="button" onclick="openMarkdownFromSection(this)" title="Render embedded Markdown documentation" style="padding:.35rem .8rem;border:1px solid #007079;border-radius:4px;background:#007079;color:#fff;cursor:pointer;font-size:.85rem;">📄 View Documentation</button>
+            </div>
+            {% endif %}
+            {# ── Metadata sub-section (collapsible) ── #}
+            <details style="margin-top:.8rem;">
+            <summary style="cursor:pointer;font-weight:600;font-size:.9rem;">Metadata</summary>
+            <div class="meta-container">
+              <div class="meta-toolbar" style="display:flex;gap:.5rem;align-items:center;margin:.25rem 0;">
+                <input type="text" class="meta-filter" placeholder="Filter metadata names…" style="flex:1;max-width:20rem;">
+                <button type="button" class="meta-copy" title="Copy table as CSV">Copy (CSV)</button>
+                <button type="button" class="btn-json-modal" onclick="openJsonModal(this)" title="View full record as JSON" style="font-size:.82rem;padding:.2rem .6rem;border:1px solid #004578;border-radius:4px;background:#fff;color:#004578;cursor:pointer;">{ } Full Record</button>
+                {% if ((rec.data or {}).get('ExtensionProperties') or {}).get('Markdown') %}
+                <button type="button" class="btn-md-render" onclick="openMarkdownFromSection(this)" title="Render embedded Markdown documentation" style="font-size:.82rem;padding:.2rem .6rem;border:1px solid #007079;border-radius:4px;background:#fff;color:#007079;cursor:pointer;">📄 Render Markdown</button>
+                {% endif %}
+              </div>
+              <table class="meta-table" style="width:100%;border-collapse:collapse">
+                <thead>
+                  <tr><th class="meta-name">Name</th><th>Value</th></tr>
+                </thead>
+                <tbody>
+                  {% set rendered_count = namespace(v=0) %}
+                  {% for p in rec.metadata_pairs or [] %}
+                    {% set n = (p.name or '') %}
+                    {% set nl = n|lower %}
+                    {% if ('volumes' in nl)
+                          or ('columnvalues' in nl)
+                          or ('columnbasedtable' in nl)
+                          or ('reservoirestimatedvolumes' in nl)
+                          or ('[0]' in n) or ('[1]' in n) or ('[2]' in n) or ('[3]' in n) or ('[4]' in n)
+                          or ('.0.' in n) or ('.1.' in n) or ('.2.' in n) or ('.3.' in n) or ('.4.' in n)
+                    %}
+                    {% else %}
+                      {% set rendered_count.v = rendered_count.v + 1 %}
+                      <tr>
+                        <td class="meta-name">{{ n }}</td>
+                        <td>{{ p.value|pretty_val|safe }}</td>
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
+                  {% if rendered_count.v == 0 %}
+                    <tr><td colspan="2" class="muted">No non-tabular metadata to display.</td></tr>
+                  {% endif %}
+                </tbody>
+              </table>
+              {% if has_volumes %}
+              <div class="muted" style="font-size:.85rem;margin-top:.25rem;">Tabular volume arrays are intentionally hidden here and shown only in the reconstructed table below.</div>
+              {% endif %}
+            </div>
+            {# Hidden JSON payload for the modal #}
+            <script type="application/json" class="rec-json-data">{{ rec.data | tojson }}</script>
+            </details>
+          </section>
+
+          {# ══════════ ETPDataspace record card ══════════ #}
+          {% include "search_dataspace.html" %}
+
+          {# ══════════ DATA SOURCES / ANCESTRY section ══════════ #}
+          {% if ds_params and not is_dataspace and not is_business_decision %}
+          {% include "search_datasources.html" %}
+          {% endif %}
+
+          {% if is_business_decision %}
+          {% include "search_bd.html" %}
+          {% endif %}
+
+          {% if is_rev %}
+          {% include "search_rev.html" %}
+          {% endif %}
+
+          {% include "search_relationships.html" %}
+          {% if has_volumes %}
+          {% include "search_volumes.html" %}
+          {% endif %}
+
+          {% include "search_production.html" %}
+          {% include "search_maps.html" %}

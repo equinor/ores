@@ -1,0 +1,72 @@
+{# ──────────────────────────────────────────────────────────────────────────────
+   Maps section (BD Grid2d maps + DDMS-linked maps).
+   Included from search.html for records with map data.
+   Expects: rec, rec_index, bd_maps, bd_maps_raw, is_business_decision, label
+   ────────────────────────────────────────────────────────────────────────────── #}
+
+          {# ── Maps (Grid2dRepresentation from linked RDDMS dataspaces) ── #}
+          {% if bd_maps %}
+          {% set hero = bd_maps[0] %}
+          {% set maps_total = (bd_maps_raw.get('maps_total') if bd_maps_raw is mapping else 0) or bd_maps|length %}
+          <section class="section-card" id="bd-maps-section-{{ rec_index }}">
+            <h5>Maps</h5>
+            <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;">
+              {% if bd_maps|length > 1 %}
+              <select id="bd-map-select-{{ rec_index }}" onchange="switchBdMap(this, {{ rec_index }})"
+                      style="font-size:.84rem;padding:.25rem .5rem;border:1px solid #cbd5e0;border-radius:4px;max-width:420px;">
+                {% for mp in bd_maps %}
+                <option value="{{ loop.index0 }}"
+                        data-ds="{{ mp.ds }}" data-uuid="{{ mp.uuid }}"
+                        data-title="{{ mp.title }}" data-dsname="{{ mp.ds_name or mp.ds }}"
+                        {% if loop.first %}selected{% endif %}>{{ mp.title }}{% if mp.interpretation %} - {{ mp.interpretation }}{% endif %}</option>
+                {% endfor %}
+              </select>
+              {% else %}
+              <span style="font-weight:600;font-size:.88rem;color:#2d3748;">{{ hero.title }}{% if hero.interpretation %} - {{ hero.interpretation }}{% endif %}</span>
+              {% endif %}
+              <span style="font-size:.72rem;background:#e2e8f0;border-radius:999px;padding:.1rem .4rem;color:#4a5568;" id="bd-map-dsname-{{ rec_index }}">{{ hero.ds_name or hero.ds }}</span>
+              {% if maps_total > 1 %}
+              <span style="font-size:.72rem;background:#bee3f8;border-radius:999px;padding:.1rem .4rem;color:#2b6cb0;">{{ maps_total }} maps in dataspace</span>
+              {% endif %}
+            </div>
+            <div id="bd-map-img-{{ rec_index }}" style="margin-bottom:.3rem;position:relative;min-height:120px;">
+              <img src="/keys/object/map.png?ds={{ hero.ds }}&amp;uuid={{ hero.uuid }}&amp;w=12&amp;h=8&amp;dpi=100"
+                   alt="Map: {{ hero.title }}"
+                   loading="lazy"
+                   style="max-width:100%;border-radius:6px;border:1px solid #e2e8f0;" />
+            </div>
+            <div id="bd-map-links-{{ rec_index }}" style="font-size:.72rem;color:#a0aec0;word-break:break-all;">
+              <code>/keys/object/map.png?ds={{ hero.ds }}&amp;uuid={{ hero.uuid }}</code>
+              <a href="/keys/object/map.json?ds={{ hero.ds }}&amp;uuid={{ hero.uuid }}" target="_blank" style="margin-left:.5rem;font-size:.72rem;">JSON ↗</a>
+              <a href="/keys?ds={{ hero.ds }}" style="margin-left:.5rem;font-size:.72rem;">Browse dataspace →</a>
+            </div>
+          </section>
+          {% endif %}
+
+          {# ── DDMS-linked map (non-BD records with Grid2d DDMSDatasets) ── #}
+          {% if not is_business_decision %}
+          {% set ddms_maps = [] %}
+          {% for ref in (rec.ddms_refs or []) %}
+            {% if ref.rtype == 'map' %}{% set _ = ddms_maps.append(ref) %}{% endif %}
+          {% endfor %}
+          {% for ref in ddms_maps %}
+            <section class="section-card ddms-map-section" data-ds="{{ ref.ds }}" data-uuid="{{ ref.uuid }}">
+              <h5>RDDMS Map</h5>
+              <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem;">
+                <span style="font-weight:600;font-size:.88rem;color:#2d3748;">{{ label }}</span>
+                <span style="font-size:.72rem;background:#e2e8f0;border-radius:999px;padding:.1rem .4rem;color:#4a5568;">{{ ref.ds }}</span>
+              </div>
+              <div class="ddms-map-placeholder" style="margin-bottom:.3rem;text-align:center;">
+                <button type="button" class="btn-load-ddms-map" style="padding:.35rem .8rem;font-size:.85rem;cursor:pointer;" onclick="loadDdmsMap(this)">Load map</button>
+                <span class="ddms-map-status muted" style="margin-left:.5rem;"></span>
+              </div>
+              <div style="font-size:.72rem;color:#a0aec0;word-break:break-all;">
+                <a href="/keys/object/map.json?ds={{ ref.ds }}&amp;uuid={{ ref.uuid }}" target="_blank" style="font-size:.72rem;">Map JSON ↗</a>
+                <a href="/keys?ds={{ ref.ds }}" style="margin-left:.5rem;font-size:.72rem;">Browse dataspace →</a>
+              </div>
+            </section>
+          {% endfor %}
+          {% endif %}
+
+        </div>
+      </div>

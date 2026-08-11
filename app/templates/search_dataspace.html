@@ -1,0 +1,39 @@
+{# ──────────────────────────────────────────────────────────────────────────────
+   ETPDataspace record card.
+   Included from search.html when is_dataspace is true.
+   Expects: rec, rec_index
+   ────────────────────────────────────────────────────────────────────────────── #}
+
+          {% if is_dataspace %}
+          {% set ds_props = (rec.data or {}).get('DatasetProperties') or {} %}
+          {% set ds_uri   = ds_props.get('URI') or (rec.data or {}).get('DatasetProperties.URI') or '' %}
+          {% set ds_srv   = ds_props.get('ServerURL') or '' %}
+          <div class="sources-card">
+            <div class="sources-header">
+              <h5>🗄 Reservoir DDMS Dataspace</h5>
+              <span class="sources-kind-badge">ETPDataspace</span>
+            </div>
+            <div class="sources-body">
+              {% if ds_uri %}
+              <div style="margin-bottom:.35rem;font-size:.85rem;color:#4a5568;">EML URI - use this to address the dataspace in ETP / RESQML clients:</div>
+              <div class="eml-block" id="eml-uri-{{ rec_index }}">
+                {{ ds_uri }}
+                <button class="eml-copy-btn" onclick="navigator.clipboard.writeText('{{ ds_uri }}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})" type="button">Copy</button>
+              </div>
+              {% endif %}
+              {% if ds_srv %}
+              <div style="margin-top:.4rem;">
+                <span class="mini-grid"><span class="k" style="font-size:.8rem;">Server URL</span>
+                <code style="font-size:.82rem;color:#2b6cb0;">{{ ds_srv }}</code></span>
+              </div>
+              {% endif %}
+              <div style="margin-top:.6rem;">
+                <a href="/search/view/{{ rec.id }}" style="font-size:.85rem;">Open full record →</a>
+                {% if ds_uri %}{% set ds_link_name = ds_uri | replace('eml:///dataspace(', '') | replace(')', '') %}
+                <a href="/keys?ds={{ ds_link_name }}" style="font-size:.85rem;margin-left:1.2rem;">Browse in RDDMS →</a>
+                <a href="/keys?ds={{ ds_link_name }}#graphql-section" style="font-size:.85rem;margin-left:1.2rem;">GraphQL Deep Query →</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endif %}

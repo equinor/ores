@@ -1,0 +1,47 @@
+{# ──────────────────────────────────────────────────────────────────────────────
+   Data Sources / Ancestry card (Reservoir DDMS references).
+   Included from search.html for non-dataspace, non-BD records with ds_params.
+   Expects: rec, rec_index, ds_params
+   ────────────────────────────────────────────────────────────────────────────── #}
+
+          <div class="sources-card">
+            <div class="sources-header">
+              <h5>Data Sources</h5>
+              <span class="sources-kind-badge">Reservoir DDMS</span>
+            </div>
+            <div class="sources-body">
+              <div style="font-size:.85rem;color:#4a5568;margin-bottom:.55rem;">
+                Geomodel data referenced by this record is stored in a Reservoir DDMS (ETP) dataspace.
+              </div>
+              {% for p in ds_params %}
+                {% set ds_id = p.get('DataObjectParameter') or '' %}
+                {% set ds_info = (rec.linked_labels or {}).get(ds_id) or {} %}
+                {% set ds_data = ds_info.get('data') or {} %}
+                {% set raw_uri = (ds_data.get('DatasetProperties') or {}).get('URI') or ds_data.get('DatasetProperties.URI') or '' %}
+                {% set srv_url = (ds_data.get('DatasetProperties') or {}).get('ServerURL') or '' %}
+                <div class="ds-entry">
+                  <div class="ds-name">
+                    {% if ds_id %}<a href="/search/view/{{ ds_id }}">{{ ds_info.name or p.get('Title') or 'Dataspace' }}</a>{% else %}{{ p.get('Title') or 'Dataspace' }}{% endif %}
+                  </div>
+                  {% if p.get('Selection') or p.get('Description') %}
+                  <div style="font-size:.82rem;color:#718096;margin-top:.1rem;">{{ p.get('Selection') or p.get('Description') }}</div>
+                  {% endif %}
+                  {% if ds_id %}<div class="ds-id">OSDU: {{ ds_id }}</div>{% endif %}
+                  {% if raw_uri %}
+                  <div style="margin-top:.4rem;font-size:.82rem;color:#4a5568;">EML URI:</div>
+                  <div class="eml-block" id="eml-{{ rec_index }}-{{ loop.index }}">
+                    {{ raw_uri }}
+                    <button class="eml-copy-btn" onclick="navigator.clipboard.writeText('{{ raw_uri }}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})" type="button">Copy</button>
+                  </div>
+                  {% endif %}
+                  {% if srv_url %}<div class="ds-server">Server: <code>{{ srv_url }}</code></div>{% endif %}
+                  {% if raw_uri %}{% set ds_link_name = raw_uri | replace('eml:///dataspace(', '') | replace(')', '') %}
+                  <div style="margin-top:.4rem;">
+                    <a href="/keys?ds={{ ds_link_name }}">Browse in RDDMS →</a>
+                    <a href="/keys?ds={{ ds_link_name }}#graphql-section" style="margin-left:1rem;">GraphQL Deep Query →</a>
+                  </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>

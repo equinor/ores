@@ -40,6 +40,7 @@ log = logging.getLogger("rddms-admin.search")
 router = APIRouter()
 
 _KIND_CACHE_TTL = 300  # 5 minutes – used by cached_call for kind resolution
+_PAGE_SIZE = 50        # records per batch for incremental loading
 templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
 
 templates.env.filters["pretty_val"] = _jinja_pretty_val
@@ -919,7 +920,7 @@ async def search_run(
                         log.warning("[SEARCH] Exception fetching %s: %s", rid, e)
                     return None
 
-            full_records = await asyncio.gather(*[_fetch_full(rid) for rid in all_hit_ids])
+            full_records = await asyncio.gather(*[_fetch_full(rid) for rid in all_hit_ids[:_PAGE_SIZE]])
             valid_records = [
                 f for f in full_records
                 if f is not None
@@ -959,6 +960,8 @@ async def search_run(
                 key=lambda r: (r.get("display_name") or r.get("id") or "").lower()
             )
 
+        remaining_ids = all_hit_ids[_PAGE_SIZE:]
+
         return templates.TemplateResponse(
             request, "search.html",
             {
@@ -966,6 +969,10 @@ async def search_run(
                     "results": enriched_results,
                     "totalCount": merged_total_count or len(enriched_results),
                 },
+                "batch": enriched_results,
+                "offset": 0,
+                "remaining_ids": remaining_ids,
+                "page_size": _PAGE_SIZE,
                 "kind": kind,
                 "kinds_extra": kinds_extra,
                 "kind_options": _MANIFEST_KINDS,
@@ -1010,6 +1017,91 @@ async def search_run(
             },
             status_code=500,
         )
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Incremental "Load More" – enrich the next batch of record IDs
+# ──────────────────────────────────────────────────────────────────────────────
+
+@router.post("/search/more", response_class=JSONResponse)
+async def search_more(request: Request):
+    """Enrich the next batch of record IDs and return rendered HTML fragment.
+
+    Request body JSON:
+        ids    – list of OSDU record IDs to enrich (max _PAGE_SIZE)
+        offset – 0-based index of the first record in this batch
+                 (used for rec_index numbering in the template)
+    Returns JSON:
+        html   – rendered HTML with <!--SPLIT--> separating table rows from
+                 detail blocks
+        count  – number of records actually returned
+    """
+    at = _access_token(request)
+    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
+    search_url = f"https://{osdu.OSDU_BASE_URL}/api/search/v2/query"
+    hdr = osdu.headers(at)
+
+    body = await request.json()
+    ids = body.get("ids", [])[:_PAGE_SIZE]
+    offset = int(body.get("offset", 0))
+
+    if not ids:
+        return JSONResponse({"html": "", "count": 0})
+
+    _sem = osdu.API_SEMAPHORE
+
+    async with osdu.http_client(timeout=60) as client:
+        async def _fetch_full(rid: str):
+            async with _sem:
+                try:
+                    r = await client.get(f"{storage_url}/{rid}", headers=hdr)
+                    if r.status_code == 200:
+                        return r.json()
+                    log.warning("[SEARCH-MORE] fetch failed %s: %d", rid, r.status_code)
+                except Exception as e:
+                    log.warning("[SEARCH-MORE] exception fetching %s: %s", rid, e)
+                return None
+
+        full_records = await asyncio.gather(*[_fetch_full(rid) for rid in ids])
+        valid_records = [
+            f for f in full_records
+            if f is not None
+            and (f.get("data") or {}).get("IsDiscoverable") is not False
+            and (f.get("data") or {}).get("Name") not in (".", "")
+        ]
+
+        enriched: List[Dict[str, Any]] = []
+        for full in valid_records:
+            try:
+                enriched.append(
+                    await _enrich_record_light(full, client, storage_url, search_url, hdr)
+                )
+            except Exception as e:
+                log.warning("[SEARCH-MORE] enrich failed %s: %s", full.get("id", "?"), e)
+                enriched.append({
+                    "id": full.get("id"),
+                    "kind": full.get("kind"),
+                    "version": full.get("version"),
+                    "display_name": (full.get("data") or {}).get("Name") or full.get("id", ""),
+                    "display_description": "",
+                    "data": full.get("data", {}),
+                    "volumes": {},
+                    "links": [],
+                    "linked_labels": {},
+                    "metadata_pairs": [],
+                    "bd_geolabel": {},
+                    "bd_production": {},
+                    "bd_activity": {},
+                    "bd_maps": {"maps": [], "all": []},
+                    "ddms_refs": [],
+                })
+
+    enriched.sort(key=lambda r: (r.get("display_name") or r.get("id") or "").lower())
+
+    html = templates.get_template("search_more_fragment.html").render(
+        batch=enriched, offset=offset,
+    )
+    return JSONResponse({"html": html, "count": len(enriched)})
 
 
 # ──────────────────────────────────────────────────────────────────────────────

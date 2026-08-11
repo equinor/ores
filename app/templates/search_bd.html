@@ -1,0 +1,875 @@
+{# ──────────────────────────────────────────────────────────────────────────────
+   Business Decision Card.
+   Included from search.html when is_business_decision is true.
+   Expects: rec, name, ext_eq, has_gls_vol, gls_vols, gls_unc, has_table_vol,
+            volns, has_gls_props, gls_props, ds_params, bd_maps, bd_maps_raw,
+            rec_index, bd_prod
+   ────────────────────────────────────────────────────────────────────────────── #}
+
+          {# ══════════ BUSINESS DECISION CARD ══════════ #}
+          <div class="bd-card">
+            <div class="bd-header">
+              <h4>{{ name or 'Business Decision' }}</h4>
+              <div class="bd-subtitle">{{ (rec.data or {}).get('DecisionSummary') or (rec.data or {}).get('Description') or '' }}</div>
+            </div>
+            <div class="bd-body">
+
+              {# ── Gate metadata ── #}
+              <div class="bd-meta-grid">
+                <div class="bd-meta-item">
+                  <div class="bd-label">Project</div>
+                  <div class="bd-value">{{ (rec.data or {}).get('ProjectName') or '-' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Decision Gate</div>
+                  <div class="bd-value">{{ ((rec.data or {}).get('DecisionLevelID') or '-').split(':')[-2] if ':' in ((rec.data or {}).get('DecisionLevelID') or '') else (rec.data or {}).get('DecisionLevelID') or '-' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Status</div>
+                  <div class="bd-value">{{ ((rec.data or {}).get('ApprovalStatusID') or '-').split(':')[-2] if ':' in ((rec.data or {}).get('ApprovalStatusID') or '') else (rec.data or {}).get('ApprovalStatusID') or '-' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Decision Date</div>
+                  <div class="bd-value">{{ (rec.data or {}).get('DecisionDate') or '-' }}</div>
+                </div>
+                <div class="bd-meta-item">
+                  <div class="bd-label">Due Date</div>
+                  <div class="bd-value">{{ (rec.data or {}).get('DecisionDueDate') or '-' }}</div>
+                </div>
+                {% if ext_eq.get('DevelopmentConcept') %}
+                {% set dcon = ext_eq.get('DevelopmentConcept') %}
+                {% set rtgt = dcon.get('ReservoirTarget') or {} %}
+                {% set fac  = dcon.get('FacilityConcept') or {} %}
+                {% set wp   = dcon.get('WellPlan') or {} %}
+                {% if rtgt.get('FormationName') %}
+                <div class="bd-meta-item">
+                  <div class="bd-label">Formation</div>
+                  <div class="bd-value">{{ rtgt.get('FormationName') }}</div>
+                </div>
+                {% endif %}
+                {% if wp.get('Producers') is not none %}
+                <div class="bd-meta-item">
+                  <div class="bd-label">Wells</div>
+                  <div class="bd-value">{{ (wp.get('Producers') or 0) + (wp.get('Injectors') or 0) }}{% if wp.get('MultilateralWells') %} ({{ wp.get('MultilateralWells') }} MLT){% endif %}</div>
+                </div>
+                {% endif %}
+                {% if fac.get('FacilityType') %}
+                <div class="bd-meta-item">
+                  <div class="bd-label">Facility</div>
+                  <div class="bd-value">{{ fac.get('FacilityType') }}</div>
+                </div>
+                {% endif %}
+                {% endif %}
+              </div>
+
+              {# ── Headline Volumes ── #}
+              <div class="bd-section-title">Headline Volumes (STOIIP)</div>
+              <div class="bd-kpi-row">
+                {% if has_gls_vol %}
+                {# ─── Source: GeoLabelSet canonical record (preferred) ─── #}
+                {% set gtot = gls_vols.get('TOTAL') or {} %}
+                <div class="bd-kpi oil">
+                  <div class="bd-kpi-label">STOIIP Total</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{% set v = gtot.get('Oil.P90') %}{{ '%.2f'|format(v/1000000) if v is not none else '-' }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{% set v = gtot.get('Oil.P50') %}{{ '%.2f'|format(v/1000000) if v is not none else '-' }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{% set v = gtot.get('Oil.P10') %}{{ '%.2f'|format(v/1000000) if v is not none else '-' }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
+                </div>
+                {# Recoverable & RF from GeoLabelSet uncertainty #}
+                {% if gls_unc.get('Recoverable.P50') is not none %}
+                <div class="bd-kpi gas">
+                  <div class="bd-kpi-label">Recoverable Oil</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{% set v = gls_unc.get('Recoverable.P90') %}{{ '%.2f'|format(v/1000000) if v is not none else '-' }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{% set v = gls_unc.get('Recoverable.P50') %}{{ '%.2f'|format(v/1000000) if v is not none else '-' }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{% set v = gls_unc.get('Recoverable.P10') %}{{ '%.2f'|format(v/1000000) if v is not none else '-' }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
+                </div>
+                {% endif %}
+                {% if gls_unc.get('RecoveryFactor.P50') is not none %}
+                <div class="bd-kpi total">
+                  <div class="bd-kpi-label">Recovery Factor</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ gls_unc.get('RecoveryFactor.P90', '-') }}%</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ gls_unc.get('RecoveryFactor.P50', '-') }}%</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ gls_unc.get('RecoveryFactor.P10', '-') }}%</div></div>
+                  </div>
+                </div>
+                {% endif %}
+                {# Per-segment STOIIP from GeoLabelSet #}
+                {% for sname, svals in gls_vols.items() if sname != 'TOTAL' %}
+                <div class="bd-kpi {{ loop.cycle('gas','total','oil') }}">
+                  <div class="bd-kpi-label">{{ sname }}</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{% set v = svals.get('Oil.P90') %}{{ '%.2f'|format(v/1000000) if v is not none else '-' }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{% set v = svals.get('Oil.P50') %}{{ '%.2f'|format(v/1000000) if v is not none else '-' }}</div></div>
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{% set v = svals.get('Oil.P10') %}{{ '%.2f'|format(v/1000000) if v is not none else '-' }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">MSm³</div>
+                </div>
+                {% endfor %}
+                {% elif has_table_vol %}
+                {# ─── Fallback 1: stat WPC ColumnValues (m³) → Mm³ ─── #}
+                <div class="bd-kpi oil">
+                  <div class="bd-kpi-label">Oil in Place</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o10 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o50 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.o90 / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                <div class="bd-kpi gas">
+                  <div class="bd-kpi-label">Gas in Place</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g10 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g50 / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format(volns.g90 / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                <div class="bd-kpi total">
+                  <div class="bd-kpi-label">Total</div>
+                  <div class="bd-kpi-stat">
+                    <div><div class="bd-kpi-pct">P10</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o10 + volns.g10) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P50</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o50 + volns.g50) / 1000000) }}</div></div>
+                    <div><div class="bd-kpi-pct">P90</div><div class="bd-kpi-num">{{ '%.2f'|format((volns.o90 + volns.g90) / 1000000) }}</div></div>
+                  </div>
+                  <div class="bd-kpi-pct" style="margin-top:.2rem">Mm³</div>
+                </div>
+                {% else %}
+                <div class="muted">No headline volumes available for this record.</div>
+                {% endif %}
+              </div>
+
+              {# ── Development Concept (v3 structured sub-objects) ── #}
+              {% if ext_eq.get('DevelopmentConcept') %}
+              {% set dcon = ext_eq.get('DevelopmentConcept') %}
+              {% set fac  = dcon.get('FacilityConcept') or {} %}
+              {% set wp   = dcon.get('WellPlan') or {} %}
+              {% set ds   = dcon.get('DrainageStrategy') or {} %}
+              {% set rtgt = dcon.get('ReservoirTarget') or {} %}
+              {% set pt   = dcon.get('ProductionTechnology') or {} %}
+              <div class="bd-section-title">Development Concept{% if dcon.get('DecisionGate') %} <span style="font-weight:400;color:#718096;">({{ dcon.get('DecisionGate') }})</span>{% endif %}</div>
+
+              {# ─── Key headline items (always visible) ─── #}
+              <div class="bd-devcon-grid">
+                {% if fac.get('FacilityType') %}
+                <div class="bd-devcon-item"><div class="bd-label">Facility</div><div class="bd-value">{{ fac.get('FacilityType') }}{% if fac.get('HostFacility') %} → {{ fac.get('HostFacility') }}{% endif %}</div></div>
+                {% endif %}
+                {% if wp.get('Producers') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Wells</div><div class="bd-value">{{ wp.get('Producers') }}P + {{ wp.get('Injectors') or 0 }}I{% if wp.get('ContingentWells') %} (+{{ wp.get('ContingentWells') }} contingent){% endif %}</div></div>
+                {% endif %}
+                {% if ds.get('PrimaryRecoveryMechanism') %}
+                <div class="bd-devcon-item"><div class="bd-label">Recovery</div><div class="bd-value">{{ ds.get('PrimaryRecoveryMechanism') }}{% if ds.get('InjectionType') and ds.get('InjectionType') != 'None' %} ({{ ds.get('InjectionType') }}){% endif %}</div></div>
+                {% endif %}
+                {% if rtgt.get('FormationName') %}
+                <div class="bd-devcon-item"><div class="bd-label">Target</div><div class="bd-value">{{ rtgt.get('FormationName') }}{% if rtgt.get('Age') %}, {{ rtgt.get('Age') }}{% endif %}</div></div>
+                {% endif %}
+                {% set dr = rtgt.get('DepthRange_mTVDMSL') or {} %}
+                {% if dr.get('Min') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Depth</div><div class="bd-value">{{ dr.get('Min') }}–{{ dr.get('Max') }} m TVD</div></div>
+                {% endif %}
+                {% if fac.get('WaterDepth_m') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Water Depth</div><div class="bd-value">{{ fac.get('WaterDepth_m') }} m</div></div>
+                {% endif %}
+              </div>
+
+              {# ─── Full details (collapsible) ─── #}
+              <details class="bd-collapse" style="margin-top:.3rem;">
+              <summary style="font-size:.82rem;font-weight:600;color:#4a5568;cursor:pointer;">Full Concept Details ▸</summary>
+              <div style="margin-top:.4rem;">
+
+              {% if dcon.get('Summary') %}<div style="font-size:.85rem;color:#4a5568;line-height:1.45;margin-bottom:.5rem;">{{ dcon.get('Summary') }}</div>{% endif %}
+
+              {# - Facility Concept - #}
+              {% if fac %}
+              <div style="font-size:.82rem;font-weight:600;color:#4a5568;margin:.5rem 0 .2rem;">Facility Concept</div>
+              <div class="bd-devcon-grid">
+                {% if fac.get('DistanceToHost_km') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Distance to Host</div><div class="bd-value">{{ fac.get('DistanceToHost_km') }} km</div></div>
+                {% endif %}
+                {% if fac.get('TemplateCount') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Templates</div><div class="bd-value">{{ fac.get('TemplateCount') }}{% if fac.get('SlotsPerTemplate') %} × {{ fac.get('SlotsPerTemplate') }} slots{% endif %}{% if fac.get('TotalSlots') %} ({{ fac.get('TotalSlots') }} total){% endif %}</div></div>
+                {% endif %}
+                {% if fac.get('ArtificialLift') %}
+                <div class="bd-devcon-item"><div class="bd-label">Artificial Lift</div><div class="bd-value">{{ fac.get('ArtificialLift') }}</div></div>
+                {% endif %}
+                {% if fac.get('SubseaBoostingPump') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Subsea Boost</div><div class="bd-value">{{ 'Yes' if fac.get('SubseaBoostingPump') else 'No' }}</div></div>
+                {% endif %}
+                {% set pcap = fac.get('ProcessingCapacity') or {} %}
+                {% if pcap.get('OilRate_Sm3d') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Oil Capacity</div><div class="bd-value">{{ pcap.get('OilRate_Sm3d') }} Sm³/d</div></div>
+                {% endif %}
+                {% if pcap.get('WaterTreatment_m3d') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Water Treatment</div><div class="bd-value">{{ pcap.get('WaterTreatment_m3d') }} m³/d</div></div>
+                {% endif %}
+                {% if fac.get('Flowlines') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Flowlines</div><div class="bd-value" style="display:flex;gap:.6rem;flex-wrap:wrap;">
+                  {% for fl in fac.get('Flowlines') %}
+                  <span>{{ fl.get('Count', 1) }}× {{ fl.get('Diameter_in', '') }}″ {{ fl.get('Type', '') }}{% if fl.get('Length_km') %} ({{ fl.get('Length_km') }} km){% endif %}</span>
+                  {% endfor %}
+                </div></div>
+                {% endif %}
+                {% if fac.get('HostModifications') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Host Modifications</div><div class="bd-value">{{ fac.get('HostModifications') }}</div></div>
+                {% endif %}
+                {% if fac.get('Provisions') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Provisions</div><div class="bd-value">{{ fac.get('Provisions') }}</div></div>
+                {% endif %}
+              </div>
+              {% endif %}
+
+              {# - Well Plan - #}
+              {% if wp %}
+              <div style="font-size:.82rem;font-weight:600;color:#4a5568;margin:.6rem 0 .2rem;">Well Plan</div>
+              <div class="bd-devcon-grid">
+                {% if wp.get('AvgWellDepth_mMD') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Avg Depth</div><div class="bd-value">~{{ wp.get('AvgWellDepth_mMD') }} m MD</div></div>
+                {% endif %}
+                {% if wp.get('DrillingDuration_days') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Drill Duration</div><div class="bd-value">{{ wp.get('DrillingDuration_days') }} d/well</div></div>
+                {% endif %}
+                {% if wp.get('CompletionType') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Completion</div><div class="bd-value">{{ wp.get('CompletionType') }}{% if wp.get('SandControl') %} · {{ wp.get('SandControl') }}{% endif %}{% if wp.get('InflowControl') %} · {{ wp.get('InflowControl') }}{% endif %}</div></div>
+                {% endif %}
+                {% if wp.get('WellTypes') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Well Types</div><div class="bd-value" style="display:flex;gap:.6rem;flex-wrap:wrap;">
+                  {% for wt in wp.get('WellTypes') %}
+                  <span>{{ wt.get('Count', '') }}× {{ wt.get('Type', '') }}{% if wt.get('TargetZone') %} → {{ wt.get('TargetZone') }}{% endif %}</span>
+                  {% endfor %}
+                </div></div>
+                {% endif %}
+                {% if wp.get('PilotStrategy') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Pilot Strategy</div><div class="bd-value">{{ wp.get('PilotStrategy') }}</div></div>
+                {% endif %}
+                {% if wp.get('CriticalDecisions') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Critical Decisions</div><div class="bd-value"><ul style="margin:0;padding-left:1.2rem;">
+                  {% for cd in wp.get('CriticalDecisions') %}<li>{{ cd }}</li>{% endfor %}
+                </ul></div></div>
+                {% endif %}
+              </div>
+              {% endif %}
+
+              {# - Drainage Strategy - #}
+              {% if ds %}
+              <div style="font-size:.82rem;font-weight:600;color:#4a5568;margin:.6rem 0 .2rem;">Drainage Strategy</div>
+              <div class="bd-devcon-grid">
+                {% if ds.get('InjectionStrategy') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Injection Strategy</div><div class="bd-value">{{ ds.get('InjectionStrategy') }}</div></div>
+                {% endif %}
+                {% if ds.get('IORStrategy') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">IOR Strategy</div><div class="bd-value">{{ ds.get('IORStrategy') }}</div></div>
+                {% endif %}
+                {% if ds.get('DevelopmentPhases') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Phases</div><div class="bd-value" style="display:flex;gap:.6rem;flex-wrap:wrap;">
+                  {% for ph in ds.get('DevelopmentPhases') %}
+                  <span><strong>{{ ph.get('Phase', '') }}</strong>: {{ ph.get('Description', '') }}{% if ph.get('Wells') %} ({{ ph.get('Wells') }} wells){% endif %}{% if ph.get('StartDate') %} - {{ ph.get('StartDate') }}{% endif %}</span>
+                  {% endfor %}
+                </div></div>
+                {% endif %}
+                {% if ds.get('AquiferSupport') %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">Aquifer Support</div><div class="bd-value">{{ ds.get('AquiferSupport') }}</div></div>
+                {% endif %}
+              </div>
+              {% endif %}
+
+              {# - Reservoir Target - #}
+              {% if rtgt %}
+              <div style="font-size:.82rem;font-weight:600;color:#4a5568;margin:.6rem 0 .2rem;">Reservoir Target</div>
+              <div class="bd-devcon-grid">
+                {% if rtgt.get('GroupName') %}
+                <div class="bd-devcon-item"><div class="bd-label">Group</div><div class="bd-value">{{ rtgt.get('GroupName') }}</div></div>
+                {% endif %}
+                {% if rtgt.get('FieldArea') %}
+                <div class="bd-devcon-item"><div class="bd-label">Field Area</div><div class="bd-value">{{ rtgt.get('FieldArea') }}</div></div>
+                {% endif %}
+                {% if rtgt.get('Zones') %}
+                <div class="bd-devcon-item"><div class="bd-label">Zones</div><div class="bd-value">{{ rtgt.get('Zones') | join(', ') }}</div></div>
+                {% endif %}
+                {% if rtgt.get('ReservoirSegmentIDs') %}
+                <div class="bd-devcon-item"><div class="bd-label">Segments</div><div class="bd-value">{{ rtgt.get('ReservoirSegmentIDs') | length }} referenced</div></div>
+                {% endif %}
+                {% set contacts = rtgt.get('Contacts') or {} %}
+                {% if contacts.get('OWC_mTVDSS') is not none or contacts.get('ODT_mTVDSS') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Contacts</div><div class="bd-value">{% if contacts.get('OWC_mTVDSS') is not none %}OWC {{ contacts.get('OWC_mTVDSS') }}m{% endif %}{% if contacts.get('ODT_mTVDSS') is not none %}{% if contacts.get('OWC_mTVDSS') is not none %} · {% endif %}ODT {{ contacts.get('ODT_mTVDSS') }}m{% endif %}</div></div>
+                {% endif %}
+                {% set fm = rtgt.get('FluidModel') or {} %}
+                {% if fm.get('ReferencePressure_bar') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Reservoir P/T</div><div class="bd-value">{{ fm.get('ReferencePressure_bar') }} bar{% if fm.get('Temperature_degC') is not none %} / {{ fm.get('Temperature_degC') }}°C{% endif %} @ {{ fm.get('ReferenceDepth_m', '') }} m</div></div>
+                {% endif %}
+                {% if fm.get('API_gravity') is not none %}
+                <div class="bd-devcon-item"><div class="bd-label">Fluid</div><div class="bd-value">{{ fm.get('Type', 'Oil') }}{% if fm.get('API_gravity') %}, {{ fm.get('API_gravity') }}° API{% endif %}{% if fm.get('GOR_Sm3Sm3') %}, GOR {{ fm.get('GOR_Sm3Sm3') }} Sm³/Sm³{% endif %}</div></div>
+                {% endif %}
+              </div>
+              {% endif %}
+
+              {# - Production Technology - #}
+              {% if pt %}
+              <div style="font-size:.82rem;font-weight:600;color:#4a5568;margin:.6rem 0 .2rem;">Production Technology</div>
+              <div class="bd-devcon-grid">
+                {% for lbl, key in [('Sand Management', 'SandManagement'), ('Scale Risk', 'ScaleRisk'), ('Emulsion Risk', 'EmulsionRisk'), ('Wax Risk', 'WaxRisk'), ('Corrosion', 'CorrosionStrategy'), ('Metering', 'MeteringStrategy'), ('Automation', 'WellAutomation'), ('Water Mgmt', 'WaterManagement')] %}
+                {% if pt.get(key) %}
+                <div class="bd-devcon-item" style="grid-column:1/-1;"><div class="bd-label">{{ lbl }}</div><div class="bd-value">{{ pt.get(key) }}</div></div>
+                {% endif %}
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              </div>{# /details content #}
+              </details>
+              {% endif %}
+
+              {# ── Reservoir Properties (from GeoLabelSet canonical record) ── #}
+              {% if has_gls_props %}
+              <details class="bd-collapse">
+              <summary class="bd-section-title" style="cursor:pointer;">Reservoir Properties ▸</summary>
+              <div class="bd-resprop-grid">
+                {% if gls_props.get('Pressure') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Pressure</div><div class="bd-value">{{ gls_props.get('Pressure') }} bar</div></div>
+                {% endif %}
+                {% if gls_props.get('Temperature') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Temperature</div><div class="bd-value">{{ gls_props.get('Temperature') }} °C</div></div>
+                {% endif %}
+                {% if gls_props.get('NetToGross') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Net / Gross</div><div class="bd-value">{{ gls_props.get('NetToGross') }}</div></div>
+                {% endif %}
+                {# ─ Porosity: may be scalar or per-facies dict ─ #}
+                {% set gls_por = gls_props.get('Porosity') %}
+                {% if gls_por is mapping %}
+                {% for facies_name, facies_val in gls_por.items() %}
+                <div class="bd-resprop-item"><div class="bd-label">Porosity ({{ facies_name }})</div><div class="bd-value">{{ facies_val }}</div></div>
+                {% endfor %}
+                {% elif gls_por is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Porosity</div><div class="bd-value">{{ gls_por }}</div></div>
+                {% endif %}
+                {% if gls_props.get('Permeability') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Avg. Permeability</div><div class="bd-value">{{ gls_props.get('Permeability') }} mD</div></div>
+                {% endif %}
+                {% if gls_props.get('OilWaterContact') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">OWC (TVDSS)</div><div class="bd-value">{{ gls_props.get('OilWaterContact') }} m</div></div>
+                {% endif %}
+                {% if gls_props.get('Viscosity') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Oil Viscosity</div><div class="bd-value">{{ gls_props.get('Viscosity') }} cP</div></div>
+                {% endif %}
+                {% if gls_props.get('FormationVolumeFactor') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">Bo Factor</div><div class="bd-value">{{ gls_props.get('FormationVolumeFactor') }}</div></div>
+                {% endif %}
+                {% if gls_props.get('GasOilRatio') is not none %}
+                <div class="bd-resprop-item"><div class="bd-label">GOR</div><div class="bd-value">{{ gls_props.get('GasOilRatio') }} Sm³/Sm³</div></div>
+                {% endif %}
+              </div>
+              </details>
+              {% endif %}
+
+              {# ── Key Economics ── #}
+              {% set proj_specs = (rec.data or {}).get('ProjectSpecifications') or [] %}
+              {% set econ = ext_eq.get('KeyEconomics') or {} %}
+              {% if proj_specs %}
+              <div class="bd-section-title">Key Economics</div>
+              <div class="bd-econ-row">
+                {% for ps in proj_specs if ps is mapping %}
+                {% set pt_raw = ps.get('ParameterTypeID', '') %}
+                {% set pt_name = pt_raw.split(':')[-2] if ':' in pt_raw else pt_raw %}
+                {% set unit_raw = ps.get('UnitOfMeasureID', '') %}
+                {% set unit = unit_raw.split(':')[-2] if ':' in unit_raw else unit_raw %}
+                {% set val = ps.get('DataQuantityParameter') %}
+                {% if val is not none %}
+                <div class="bd-econ">
+                  <div class="bd-econ-label">{{ pt_name | replace('_', ' ') }}</div>
+                  <div class="bd-econ-num">{% if 'USD' in unit or 'MUSD' in unit %}${% endif %}{{ val }}{% if 'percent' in unit %}%{% elif unit %} {{ unit }}{% endif %}</div>
+                </div>
+                {% endif %}
+                {% endfor %}
+              </div>
+              {% elif econ and (econ.get('NPV_10pct_MUSD') is not none or econ.get('CAPEX_MNOK') is not none) %}
+              <div class="bd-section-title">Key Economics</div>
+              {% if econ.get('Note') %}<div style="font-size:.82rem;color:#718096;margin-bottom:.4rem;">{{ econ.get('Note') }}</div>{% endif %}
+              <div class="bd-econ-row">
+                {% if econ.get('NPV_10pct_MUSD') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">NPV (10%)</div><div class="bd-econ-num">${{ econ.get('NPV_10pct_MUSD') }}M</div></div>
+                {% endif %}
+                {% if econ.get('IRR_pct') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">IRR</div><div class="bd-econ-num">{{ econ.get('IRR_pct') }}%</div></div>
+                {% endif %}
+                {% if econ.get('CAPEX_MNOK') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">CAPEX</div><div class="bd-econ-num">{{ econ.get('CAPEX_MNOK') }} MNOK</div></div>
+                {% endif %}
+                {% if econ.get('OPEX_MNOK_pa') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">OPEX / yr</div><div class="bd-econ-num">{{ econ.get('OPEX_MNOK_pa') }} MNOK</div></div>
+                {% endif %}
+                {% if econ.get('BreakevenOilPrice_USDperbbl') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">Breakeven</div><div class="bd-econ-num">${{ econ.get('BreakevenOilPrice_USDperbbl') }}/bbl</div></div>
+                {% endif %}
+                {% if econ.get('Payback_years') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">Payback</div><div class="bd-econ-num">{{ econ.get('Payback_years') }} yr</div></div>
+                {% endif %}
+                {% if econ.get('OilPriceAssumption_USDperbbl') is not none %}
+                <div class="bd-econ"><div class="bd-econ-label">Oil Price</div><div class="bd-econ-num">${{ econ.get('OilPriceAssumption_USDperbbl') }}/bbl</div></div>
+                {% endif %}
+              </div>
+              {% if econ.get('Currency') %}<div style="font-size:.78rem;color:#a0aec0;margin-top:.2rem;">{{ econ.get('Currency') }}</div>{% endif %}
+              {% elif econ and econ.get('Note') %}
+              <div class="bd-section-title">Key Economics</div>
+              <div style="font-size:.88rem;color:#718096;">{{ econ.get('Note') }}</div>
+              {% endif %}
+
+              {# ── Schedule Milestones ── #}
+              {% set act_states = (rec.data or {}).get('ActivityStates') or [] %}
+              {% set sched = ext_eq.get('ScheduleMilestones') or [] %}
+              {% if act_states %}
+              <div class="bd-section-title">Schedule</div>
+              <div class="bd-schedule">
+                {% for st in act_states if st is mapping %}
+                <div class="sched-ms">{{ st.get('Remark') or '-' }}</div>
+                <div class="sched-date">{{ st.get('EffectiveDateTime') or '-' }}</div>
+                {% set st_raw = st.get('ActivityStatusID', '') %}
+                {% set st_label = st_raw.split(':')[-2] if ':' in st_raw else (st_raw or 'Planned') %}
+                <div class="sched-status {{ st_label | lower }}">{{ st_label }}</div>
+                {% endfor %}
+              </div>
+              {% elif sched %}
+              <div class="bd-section-title">Schedule</div>
+              <div class="bd-schedule">
+                {% for ms in sched if ms is mapping %}
+                <div class="sched-ms">{{ ms.get('Milestone') or '-' }}</div>
+                <div class="sched-date">{{ ms.get('Date') or '-' }}</div>
+                <div class="sched-status {{ (ms.get('Status') or 'planned') | lower }}">{{ ms.get('Status') or '-' }}</div>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              {# ── Alternatives ── #}
+              {% if ext_eq.get('Alternatives') %}
+              <div class="bd-section-title">Alternatives</div>
+              <ul class="bd-alt-list">
+                {% for alt in ext_eq.get('Alternatives') or [] %}
+                <li class="rank-{{ alt.get('Rank', 0) }}">
+                  <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;">
+                    <span class="bd-alt-name">{{ alt.get('Name') or 'Alternative' }}</span>
+                    {% if alt.get('Rank') is not none %}<span class="bd-alt-rank">Rank {{ alt.get('Rank') }}</span>{% endif %}
+                    {% if alt.get('RecommendedAction') %}<span class="bd-alt-rank" style="background:#e6fffa;color:#276749;">{{ alt.get('RecommendedAction') }}</span>{% endif %}
+                  </div>
+                  {% if alt.get('Rationale') %}<div class="bd-alt-rationale">{{ alt.get('Rationale') }}</div>{% endif %}
+                  {% if alt.get('NPV_10pct_MUSD') is not none or alt.get('CAPEX_MNOK') is not none or alt.get('IRR_pct') is not none %}
+                  <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.3rem;">
+                    {% if alt.get('NPV_10pct_MUSD') is not none %}<span class="bd-alt-rank" style="background:#f0fff4;color:#276749;">NPV ${{ alt.get('NPV_10pct_MUSD') }}M</span>{% endif %}
+                    {% if alt.get('CAPEX_MNOK') is not none %}<span class="bd-alt-rank" style="background:#ebf8ff;color:#2b6cb0;">CAPEX {{ alt.get('CAPEX_MNOK') }} MNOK</span>{% endif %}
+                    {% if alt.get('IRR_pct') is not none %}<span class="bd-alt-rank" style="background:#fefcbf;color:#975a16;">IRR {{ alt.get('IRR_pct') }}%</span>{% endif %}
+                  </div>
+                  {% endif %}
+                </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+
+              {# ── Ontology Panels: Gate Checklist, Relationships, Timeline ── #}
+              {% include "bd_ontology_panels.html" ignore missing %}
+
+              {# ── Risks ── #}
+              {% if (rec.data or {}).get('RiskIDs') %}
+              <div class="bd-section-title">Risks</div>
+              <div class="bd-risk-chips">
+                {% for rid in (rec.data or {}).get('RiskIDs') or [] %}
+                  {% set rinfo = (rec.linked_labels or {}).get(rid, {}) %}
+                  <a class="bd-risk-chip" href="/search/view/{{ rid }}" title="{{ rid }}">{{ rinfo.name or rid.split(':')[-2] if ':' in rid else rid }}</a>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              {# ── Uncertainty Summary (methodology + P10/P50/P90 volume ranges) ── #}
+              {% set usumm = ext_eq.get('UncertaintySummary') or {} %}
+              {% if usumm %}
+              <details class="bd-collapse" open>
+              <summary class="bd-section-title" style="cursor:pointer;">Uncertainty Summary ▸</summary>
+              <div style="font-size:.86rem;color:#4a5568;line-height:1.5;">
+                {% if usumm.get('Basis') %}<div style="margin-bottom:.4rem;">{{ usumm.get('Basis') }}</div>{% endif %}
+                {% if usumm.get('MethodologyReference') %}<div style="margin-bottom:.4rem;color:#718096;">Method: {{ usumm.get('MethodologyReference') }}</div>{% endif %}
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:.4rem;">
+                  {% if usumm.get('TotalRealisations') is not none %}<span class="bd-alt-rank" style="background:#ebf4ff;color:#2b6cb0;">{{ usumm.get('TotalRealisations') }} realisations</span>{% endif %}
+                  {% set sel = usumm.get('SelectedRealisations') or {} %}
+                  {% if sel %}
+                  {% for key, val in sel.items() %}<span class="bd-alt-rank" style="background:#f0fff4;color:#276749;">{{ key }}: {{ val }}</span>{% endfor %}
+                  {% endif %}
+                </div>
+                {% if usumm.get('Note') %}<div style="font-size:.82rem;color:#a0aec0;margin-bottom:.4rem;">{{ usumm.get('Note') }}</div>{% endif %}
+                {# P-value volume table (if any volume data exists) #}
+                {% set stoiip = usumm.get('StaticInPlace_Oil_MSm3') or {} %}
+                {% set recov = usumm.get('Recoverable_Oil_MSm3') or {} %}
+                {% set rf = usumm.get('RecoveryFactor_pct') or {} %}
+                {% set tstoiip = usumm.get('TargetSTOIIP_MSm3') or {} %}
+                {% if stoiip or recov or rf or tstoiip %}
+                <table style="width:100%;border-collapse:collapse;margin-top:.4rem;font-size:.84rem;">
+                  <thead>
+                    <tr style="border-bottom:1px solid #e2e8f0;color:#718096;">
+                      <th style="text-align:left;padding:.25rem .4rem;">Metric</th>
+                      <th style="text-align:right;padding:.25rem .4rem;">P90</th>
+                      <th style="text-align:right;padding:.25rem .4rem;">{% if stoiip.get('REF') is not none or tstoiip.get('REF') is not none %}REF{% else %}P50{% endif %}</th>
+                      <th style="text-align:right;padding:.25rem .4rem;">P10</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if stoiip %}
+                    <tr style="border-bottom:1px solid #f7fafc;">
+                      <td style="padding:.25rem .4rem;">STOIIP (MSm³)</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ stoiip.get('P90', '-') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ stoiip.get('REF') or stoiip.get('P50', '-') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ stoiip.get('P10', '-') }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if tstoiip %}
+                    <tr style="border-bottom:1px solid #f7fafc;">
+                      <td style="padding:.25rem .4rem;">Target STOIIP (MSm³)</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ tstoiip.get('P90', '-') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ tstoiip.get('REF') or tstoiip.get('P50', '-') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ tstoiip.get('P10', '-') }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if recov %}
+                    <tr style="border-bottom:1px solid #f7fafc;">
+                      <td style="padding:.25rem .4rem;">Recoverable (MSm³)</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ recov.get('P90', '-') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ recov.get('REF') or recov.get('P50', '-') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ recov.get('P10', '-') }}</td>
+                    </tr>
+                    {% endif %}
+                    {% if rf %}
+                    <tr>
+                      <td style="padding:.25rem .4rem;">Recovery Factor (%)</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ rf.get('P90', '-') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ rf.get('REF') or rf.get('P50', '-') }}</td>
+                      <td style="text-align:right;padding:.25rem .4rem;">{{ rf.get('P10', '-') }}</td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+                {% if tstoiip.get('Note') %}<div style="font-size:.78rem;color:#a0aec0;margin-top:.2rem;">{{ tstoiip.get('Note') }}</div>{% endif %}
+                {% endif %}
+              </div>
+              </details>
+              {% endif %}
+
+              {# ── Data Sources (ETPDataspace / RDDMS geomodel) ── #}
+              {% if ds_params %}
+              <div class="bd-section-title">Data Sources</div>
+              {% for p in ds_params %}
+                {% set ds_id   = p.get('DataObjectParameter') or '' %}
+                {% set ds_info = (rec.linked_labels or {}).get(ds_id) or {} %}
+                {% set ds_data = ds_info.get('data') or {} %}
+                {% set raw_uri = (ds_data.get('DatasetProperties') or {}).get('URI') or ds_data.get('DatasetProperties.URI') or '' %}
+                {% set srv_url = (ds_data.get('DatasetProperties') or {}).get('ServerURL') or '' %}
+                <div class="ds-entry">
+                  <div class="ds-name">
+                    {% if ds_id %}<a href="/search/view/{{ ds_id }}">{{ ds_info.name or p.get('Title') or 'Dataspace' }}</a>{% else %}{{ p.get('Title') or 'Dataspace' }}{% endif %}
+                    <span style="font-size:.78rem;background:#bee3f8;border-radius:999px;padding:.1rem .4rem;color:#2b6cb0;margin-left:.4rem;font-weight:400;">Reservoir DDMS</span>
+                  </div>
+                  {% if p.get('Selection') or p.get('Description') %}
+                  <div style="font-size:.82rem;color:#718096;margin-top:.1rem;">{{ p.get('Selection') or p.get('Description') }}</div>
+                  {% endif %}
+                  {% if ds_id %}<div class="ds-id">OSDU: {{ ds_id }}</div>{% endif %}
+                  {% if raw_uri %}
+                  <div style="margin-top:.4rem;font-size:.82rem;color:#4a5568;">EML URI:</div>
+                  <div class="eml-block">
+                    {{ raw_uri }}
+                    <button class="eml-copy-btn" onclick="navigator.clipboard.writeText('{{ raw_uri }}').then(()=>{this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)})" type="button">Copy</button>
+                  </div>
+                  {% endif %}
+                  {% if srv_url %}<div class="ds-server">Server: <code>{{ srv_url }}</code></div>{% endif %}
+                  {% if raw_uri %}{% set ds_link_name = raw_uri | replace('eml:///dataspace(', '') | replace(')', '') %}
+                  <div style="margin-top:.4rem;">
+                    <a href="/keys?ds={{ ds_link_name }}">Browse in RDDMS →</a>
+                    <a href="/keys?ds={{ ds_link_name }}#graphql-section" style="margin-left:1rem;">GraphQL Deep Query →</a>
+                  </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+              {% endif %}
+
+              {# ── Data Provenance (from Remarks with source=DataProvenance) ── #}
+              {% set prov_remarks = [] %}
+              {% for rm in ((rec.data or {}).get('Remarks') or []) if rm is mapping and 'Provenance' in (rm.get('RemarkSource') or '') %}
+                {% set _ = prov_remarks.append(rm) %}
+              {% endfor %}
+              {% if prov_remarks %}
+              <div class="bd-section-title" style="margin-top:1rem;">Data Provenance</div>
+              <div style="margin-top:.3rem;">
+                {% for rm in prov_remarks %}
+                <div style="font-size:.84rem;color:#4a5568;padding:.2rem 0 .2rem .6rem;border-left:2px solid #b794f4;">{{ rm.get('Remark', '') | linkify }}</div>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              {# ── Authors & Review Team ── #}
+              {% set personnel = (rec.data or {}).get('Personnel') or [] %}
+              {% set authors = ext_eq.get('Authors') or [] %}
+              {% set d_owners = (rec.data or {}).get('DecisionOwners') or [] %}
+              {% set d_makers = (rec.data or {}).get('DecisionMakers') or [] %}
+              {% set contribs = (rec.data or {}).get('Contributors') or [] %}
+              {% set rt = ext_eq.get('ReviewTeam') or {} %}
+              {% if personnel or authors or d_owners or d_makers or contribs or rt %}
+              <details class="bd-collapse">
+              <summary class="bd-section-title" style="cursor:pointer;">Authors & Governance ▸</summary>
+              <div class="bd-meta-grid">
+                {# Prefer canonical Personnel[], fall back to ext.equinor Authors #}
+                {% if personnel %}
+                {% for p in personnel %}
+                <div class="bd-meta-item">
+                  <div class="bd-label">{{ p.get('ProjectRoleID', '').split(':')[-2] | replace('_', ' ') if p.get('ProjectRoleID') and ':' in p.get('ProjectRoleID', '') else 'Author' }}</div>
+                  <div class="bd-value">{{ p.get('Name') or '-' }}</div>
+                  {% if p.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ p.get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% else %}
+                {% for a in authors %}
+                <div class="bd-meta-item">
+                  <div class="bd-label">{{ a.get('Role') or 'Author' }}</div>
+                  <div class="bd-value">{{ a.get('Name') or '-' }}</div>
+                  {% if a.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ a.get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {# Governance: prefer canonical DecisionMakers → ApprovedBy #}
+                {% if d_makers %}
+                {% for m in d_makers %}
+                <div class="bd-meta-item" style="border-left:2px solid #68d391;">
+                  <div class="bd-label">Approved By</div>
+                  <div class="bd-value">{{ m.get('Name') }}</div>
+                  {% if m.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ m.get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% elif rt.get('ApprovedBy') %}
+                <div class="bd-meta-item" style="border-left:2px solid #68d391;">
+                  <div class="bd-label">Approved By</div>
+                  <div class="bd-value">{{ rt['ApprovedBy'].get('Name') }}</div>
+                  {% if rt['ApprovedBy'].get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ rt['ApprovedBy'].get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endif %}
+                {# Decision Owners #}
+                {% if d_owners %}
+                {% for o in d_owners %}
+                <div class="bd-meta-item" style="border-left:2px solid #d69e2e;">
+                  <div class="bd-label">Decision Owner</div>
+                  <div class="bd-value">{{ o.get('Name') or '-' }}</div>
+                  {% if o.get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ o.get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {# Contributors: show all with role label (QA highlighted, others labelled by role/org) #}
+                {% if contribs %}
+                {% for c in contribs %}
+                {% set c_org = c.get('Organisation') or '' %}
+                {% set c_role = 'QA Recommender' if 'QA' in c_org else (c.get('ProjectRoleID', '').split(':')[-2] | replace('_', ' ') if c.get('ProjectRoleID') and ':' in c.get('ProjectRoleID', '') else 'Contributor') %}
+                {% set c_color = '#90cdf4' if 'QA' in c_org else '#e2e8f0' %}
+                <div class="bd-meta-item" style="border-left:2px solid {{ c_color }};">
+                  <div class="bd-label">{{ c_role }}</div>
+                  <div class="bd-value">{{ c.get('Name') or '-' }}</div>
+                  {% if c_org %}<div style="font-size:.75rem;color:#a0aec0;">{{ c_org }}</div>{% endif %}
+                </div>
+                {% endfor %}
+                {% elif rt.get('QARecommender') %}
+                <div class="bd-meta-item" style="border-left:2px solid #90cdf4;">
+                  <div class="bd-label">QA Recommender</div>
+                  <div class="bd-value">{{ rt['QARecommender'].get('Name') }}</div>
+                  {% if rt['QARecommender'].get('Organisation') %}<div style="font-size:.75rem;color:#a0aec0;">{{ rt['QARecommender'].get('Organisation') }}</div>{% endif %}
+                </div>
+                {% endif %}
+              </div>
+              </details>
+              {% endif %}
+
+              {# ── Recommendations / Remarks (grouped by source, excl. DataProvenance) ── #}
+              {% set remarks_all = (rec.data or {}).get('Remarks') or [] %}
+              {% set remarks = [] %}
+              {% for rm in remarks_all if rm is mapping and 'Provenance' not in (rm.get('RemarkSource') or '') %}
+                {% set _ = remarks.append(rm) %}
+              {% endfor %}
+              {% set recos = ext_eq.get('Recommendations') or ext_eq.get('DG2Recommendations') or ext_eq.get('DG3Recommendations') or [] %}
+              {% if remarks or recos %}
+              {% set has_sources = remarks and remarks[0] is mapping and remarks[0].get('RemarkSource') %}
+              {% if has_sources %}
+              <details class="bd-collapse" open>
+              <summary class="bd-section-title" style="cursor:pointer;">Remarks & Recommendations ({{ remarks | length }}) ▸</summary>
+              <div style="margin-top:.3rem;">
+                {% set sources_seen = [] %}
+                {% for rm in remarks if rm is mapping %}
+                  {% set src = rm.get('RemarkSource', 'General') %}
+                  {% if src not in sources_seen %}
+                    {% set _ = sources_seen.append(src) %}
+                    <div style="font-size:.78rem;font-weight:600;color:#4a5568;margin-top:.5rem;margin-bottom:.2rem;">{{ src }}</div>
+                  {% endif %}
+                  <div style="font-size:.84rem;color:#4a5568;padding:.2rem 0 .2rem .6rem;border-left:2px solid {% if 'Condition' in src %}#f6ad55{% elif 'Dissent' in src %}#fc8181{% elif 'Audit' in src %}#90cdf4{% elif 'Recommendation' in src %}#9ae6b4{% else %}#e2e8f0{% endif %};">{{ rm.get('Remark', '') | linkify }}</div>
+                {% endfor %}
+              </div>
+              </details>
+              {% else %}
+              <div class="bd-section-title">Recommendations for Next Gate</div>
+              <ol style="margin:0 0 0 1.2rem;padding:0;color:#4a5568;font-size:.88rem;line-height:1.5;">
+                {% if remarks %}
+                {% for rm in remarks %}
+                <li style="margin-bottom:.25rem;">{{ rm.get('Remark') if rm is mapping else rm }}</li>
+                {% endfor %}
+                {% else %}
+                {% for r in recos %}
+                <li style="margin-bottom:.25rem;">{{ r }}</li>
+                {% endfor %}
+                {% endif %}
+              </ol>
+              {% endif %}
+              {% endif %}
+
+              {# ── FMU Activity (linked from PriorActivityIDs) ── #}
+              {% set bd_act = rec.bd_activity or {} %}
+              {% if bd_act and bd_act.get('Name') %}
+              <details class="bd-collapse">
+              <summary class="bd-section-title" style="cursor:pointer;">FMU Activity ▸</summary>
+              <div style="background:#f7fafc;border:1px solid #e2e8f0;border-radius:8px;padding:.75rem;margin-top:.3rem;">
+                <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem;">
+                  <span style="font-weight:600;font-size:.92rem;color:#2d3748;">{{ bd_act.get('Name') }}</span>
+                  {% if bd_act.get('WorkflowStatus') %}
+                  <span class="bd-alt-rank" style="background:{% if bd_act.get('WorkflowStatus') == 'Completed' %}#c6f6d5{% else %}#fefcbf{% endif %};color:{% if bd_act.get('WorkflowStatus') == 'Completed' %}#276749{% else %}#975a16{% endif %};">{{ bd_act.get('WorkflowStatus') }}</span>
+                  {% endif %}
+                </div>
+                <div style="font-size:.78rem;color:#718096;margin-bottom:.4rem;">By: {{ bd_act.get('Originator', '') }} · {{ bd_act.get('CreationDateTime', '')[:10] }}</div>
+                {% if bd_act.get('Description') %}
+                <div style="font-size:.84rem;color:#4a5568;line-height:1.45;margin-bottom:.5rem;">{{ bd_act.get('Description')[:500] }}{% if bd_act.get('Description')|length > 500 %}…{% endif %}</div>
+                {% endif %}
+
+                {# Activity Parameters - grouped by role #}
+                {% set act_params = bd_act.get('Parameters') or [] %}
+                {% set act_labels = bd_act.get('param_labels') or {} %}
+                {% if act_params %}
+                {% set act_inputs = [] %}
+                {% set act_outputs = [] %}
+                {% set act_workflow = [] %}
+                {% for p in act_params if p is mapping %}
+                  {% set role = p.get('ParameterRoleID', '') %}
+                  {% if 'Output' in role %}
+                    {% set _ = act_outputs.append(p) %}
+                  {% elif 'Workflow' in role %}
+                    {% set _ = act_workflow.append(p) %}
+                  {% elif 'Input' in role %}
+                    {% set _ = act_inputs.append(p) %}
+                  {% else %}
+                    {% set _ = act_workflow.append(p) %}
+                  {% endif %}
+                {% endfor %}
+
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.5rem;">
+                  {% if act_inputs %}
+                  <div style="background:#ebf8ff;border-radius:6px;padding:.5rem;">
+                    <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;color:#2b6cb0;margin-bottom:.3rem;">Inputs ({{ act_inputs|length }})</div>
+                    {% for p in act_inputs[:10] %}
+                    <div style="font-size:.82rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #bee3f8;">
+                      <span style="font-weight:500;">{{ p.get('Title', '') }}</span>
+                      {% if p.get('DataObjectParameter') %}
+                      {% set dop = p.get('DataObjectParameter', '') %}
+                      <div style="font-size:.72rem;word-break:break-all;"><a href="/search/view/{{ dop }}" style="color:#2b6cb0;" title="{{ dop }}">{{ act_labels.get(dop, '') or dop.split('--')[-1].split(':')[0] }} →</a></div>
+                      {% elif p.get('StringParameter') %}
+                      {% set sp_in = p.get('StringParameter', '').strip() %}
+                      {% if sp_in.startswith('[') and sp_in.endswith(']') %}{% set sp_in = sp_in[1:-1].strip() %}{% endif %}
+                      {% if sp_in.startswith('{') and sp_in.endswith('}') %}{% set sp_in = sp_in[1:-1].strip() %}{% endif %}
+                      <div style="font-size:.72rem;color:#718096;">{{ sp_in[:120] }}{% if sp_in|length > 120 %}…{% endif %}</div>
+                      {% elif p.get('Description') %}
+                      <div style="font-size:.72rem;color:#718096;">{{ p.get('Description', '')[:100] }}{% if p.get('Description', '')|length > 100 %}…{% endif %}</div>
+                      {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% if act_inputs|length > 10 %}<div style="font-size:.75rem;color:#a0aec0;margin-top:.2rem;">… +{{ act_inputs|length - 10 }} more</div>{% endif %}
+                  </div>
+                  {% endif %}
+
+                  {% if act_workflow %}
+                  <div style="background:#fefcbf;border-radius:6px;padding:.5rem;">
+                    <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;color:#975a16;margin-bottom:.3rem;">Workflow ({{ act_workflow|length }})</div>
+                    {% for p in act_workflow[:8] %}
+                    <div style="font-size:.82rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #fbd38d;">
+                      <span style="font-weight:500;">{{ p.get('Title', '') }}</span>
+                      {% if p.get('DataObjectParameter') %}
+                      {% set dop = p.get('DataObjectParameter', '') %}
+                      <div style="font-size:.72rem;word-break:break-all;"><a href="/search/view/{{ dop }}" style="color:#975a16;" title="{{ dop }}">{{ act_labels.get(dop, '') or dop.split('--')[-1].split(':')[0] }} →</a></div>
+                      {% elif p.get('StringParameter') %}
+                      {% set sp_raw = p.get('StringParameter', '') %}
+                      {% set sp_display = sp_raw.strip() %}
+                      {% if sp_display.startswith('[') and sp_display.endswith(']') %}
+                        {% set sp_display = sp_display[1:-1].strip() %}
+                      {% endif %}
+                      {% if sp_display.startswith('{') and sp_display.endswith('}') %}
+                        {% set sp_display = sp_display[1:-1].strip() %}
+                      {% endif %}
+                      <div style="font-size:.72rem;color:#718096;">{{ sp_display[:140] }}{% if sp_display|length > 140 %}…{% endif %}</div>
+                      {% elif p.get('IntegerParameter') is not none %}
+                      <div style="font-size:.72rem;color:#718096;">{{ p.get('IntegerParameter') }}</div>
+                      {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% if act_workflow|length > 8 %}<div style="font-size:.75rem;color:#a0aec0;margin-top:.2rem;">… +{{ act_workflow|length - 8 }} more</div>{% endif %}
+                  </div>
+                  {% endif %}
+
+                  {% if act_outputs %}
+                  <div style="background:#f0fff4;border-radius:6px;padding:.5rem;">
+                    <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;color:#276749;margin-bottom:.3rem;">Outputs ({{ act_outputs|length }}{% if bd_maps %} + Maps{% endif %})</div>
+                    {% for p in act_outputs[:12] %}
+                    <div style="font-size:.82rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #9ae6b4;">
+                      <span style="font-weight:500;">{{ p.get('Title', '') }}</span>
+                      {% if p.get('DataObjectParameter') %}
+                      {% set dop = p.get('DataObjectParameter', '') %}
+                      <div style="font-size:.72rem;word-break:break-all;"><a href="/search/view/{{ dop }}" style="color:#276749;" title="{{ dop }}">{{ act_labels.get(dop, '') or dop.split('--')[-1].split(':')[0] }} →</a></div>
+                      {% elif p.get('StringParameter') %}
+                      {% set sp_out = p.get('StringParameter', '').strip() %}
+                      {% if sp_out.startswith('[') and sp_out.endswith(']') %}{% set sp_out = sp_out[1:-1].strip() %}{% endif %}
+                      {% if sp_out.startswith('{') and sp_out.endswith('}') %}{% set sp_out = sp_out[1:-1].strip() %}{% endif %}
+                      <div style="font-size:.72rem;color:#718096;">{{ sp_out[:120] }}{% if sp_out|length > 120 %}…{% endif %}</div>
+                      {% elif p.get('Description') %}
+                      <div style="font-size:.72rem;color:#718096;">{{ p.get('Description', '')[:100] }}{% if p.get('Description', '')|length > 100 %}…{% endif %}</div>
+                      {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% if act_outputs|length > 12 %}<div style="font-size:.75rem;color:#a0aec0;margin-top:.2rem;">… +{{ act_outputs|length - 12 }} more</div>{% endif %}
+                    {# ── Hero map from linked RDDMS ── #}
+                    {% if bd_maps %}
+                    {% set hero_act = bd_maps[0] %}
+                    <div style="margin-top:.4rem;border-top:1px dashed #9ae6b4;padding-top:.4rem;">
+                      <div style="font-size:.72rem;font-weight:600;text-transform:uppercase;color:#276749;margin-bottom:.2rem;">Maps (RDDMS)</div>
+                      <div style="font-size:.82rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #9ae6b4;">
+                        <span style="font-weight:500;">{{ hero_act.title }}{% if hero_act.interpretation %} - {{ hero_act.interpretation }}{% endif %}</span>
+                        <div style="font-size:.72rem;word-break:break-all;">
+                          <a href="/keys/object/map.json?ds={{ hero_act.ds }}&amp;uuid={{ hero_act.uuid }}" target="_blank" style="color:#276749;" title="Object metadata">json ↗</a>
+                          <span style="color:#a0aec0;margin:0 .2rem;">·</span>
+                          <span style="color:#a0aec0;">{{ hero_act.ds }}/{{ hero_act.uuid }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    {% endif %}
+                  </div>
+                  {% elif bd_maps %}
+                  {# No existing outputs but hero depth-surface discovered - show standalone #}
+                  <div style="background:#f0fff4;border-radius:6px;padding:.5rem;">
+                    {% set hero_act2 = bd_maps[0] %}
+                    <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;color:#276749;margin-bottom:.3rem;">Output - Maps</div>
+                    <div style="font-size:.82rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #9ae6b4;">
+                      <span style="font-weight:500;">{{ hero_act2.title }}{% if hero_act2.interpretation %} - {{ hero_act2.interpretation }}{% endif %}</span>
+                      <div style="font-size:.72rem;word-break:break-all;">
+                        <a href="/keys/object/map.json?ds={{ hero_act2.ds }}&amp;uuid={{ hero_act2.uuid }}" target="_blank" style="color:#276749;">json ↗</a>
+                        <span style="color:#a0aec0;margin:0 .2rem;">·</span>
+                        <span style="color:#a0aec0;">{{ hero_act2.ds }}/{{ hero_act2.uuid }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {% endif %}
+                </div>
+                {% endif %}
+
+                {% if bd_act.get('id') %}
+                <div style="margin-top:.5rem;"><a href="/search/view/{{ bd_act.get('id') }}" style="font-size:.82rem;">Open full Activity record →</a></div>
+                {% endif %}
+              </div>
+              </details>
+              {% endif %}
+
+            </div>{# /bd-body #}
+          </div>{# /bd-card #}

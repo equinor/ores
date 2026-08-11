@@ -1,0 +1,52 @@
+{# ──────────────────────────────────────────────────────────────────────────────
+   Fragment rendered by POST /search/more for incremental "Load More" results.
+   Returns two sections separated by <!--SPLIT--> marker:
+     1. <tr> rows for the results table
+     2. <div class="rec-block"> detail blocks
+   Expects: batch (list of enriched records), offset (0-based starting index).
+   ────────────────────────────────────────────────────────────────────────────── #}
+{% for rec in batch %}
+  {% set rec_index = offset + loop.index %}
+  {% set d = rec.data or {} %}
+  {% set raw_name = d.get('Name') or '' %}
+  {% set feature_name = d.get('FeatureName') or '' %}
+  {% set display_name = rec.display_name or (raw_name if (raw_name and raw_name != '|UNNAMED|') else (feature_name or raw_name or '-')) %}
+  {% set desc = rec.display_description or d.get('Description') %}
+  {% set ddms_ds = d.get('DDMSDatasets', []) %}
+  {% set ds_raw = ddms_ds[0] if ddms_ds else '' %}
+  {% if "dataspace('" in ds_raw %}
+    {% set ds_label = ds_raw.split("dataspace('")[1].split("')")[0] %}
+  {% elif 'dataspace(' in ds_raw %}
+    {% set ds_label = ds_raw.split('dataspace(')[1].split(')')[0] %}
+  {% else %}
+    {% set ds_label = ds_raw or '-' %}
+  {% endif %}
+  <tr data-rec-idx="{{ rec_index }}">
+    <td title="Name={{ raw_name }}  FeatureName={{ feature_name }}">{{ display_name }}</td>
+    <td>{{ desc or '-' }}</td>
+    <td title="{{ rec.kind or '' }}">{{ rec.kind or '-' }}</td>
+    <td title="{{ ds_raw }}">{{ ds_label }}</td>
+    <td><a href="/search/view/{{ rec.id }}">View Details</a></td>
+    <td title="{{ rec.id }}">{{ rec.id or '-' }}</td>
+  </tr>
+{% endfor %}
+<!--SPLIT-->
+{% macro esc_label(s) -%}
+  {{ (s or '')
+    | replace('\r',' ')
+    | replace('\n',' ')
+    | replace('"','ʺ')
+    | replace('[','⦋')
+    | replace(']','⦌')
+    | replace('|','¦')
+    | replace('{','⦃')
+    | replace('}','⦄')
+    | replace('–','-')
+    | replace('—','-')
+  }}
+{%- endmacro %}
+{% for rec in batch %}
+  {% set rec_index = offset + loop.index %}
+  {% set show_block = false %}
+  {% include "search_record_detail.html" %}
+{% endfor %}

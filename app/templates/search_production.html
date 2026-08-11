@@ -1,0 +1,83 @@
+{# ──────────────────────────────────────────────────────────────────────────────
+   Production Profile section (chart + table).
+   Included from search.html for records with production data.
+   Expects: rec, rec_index, ext_eq, bd_prod, prod_profile (set in parent)
+   ────────────────────────────────────────────────────────────────────────────── #}
+
+          {# ── Production Profile (prefer ColumnBasedTable, fall back to ext.equinor) ── #}
+          {% set prod_profile = ext_eq.get('ProductionProfile') or {} %}
+          {% set pp_src = bd_prod if (bd_prod and bd_prod.get('Years')) else {} %}
+          {% set pp_fallback = prod_profile if (not pp_src and prod_profile.get('Years')) else {} %}
+          {% set pp = pp_src or pp_fallback %}
+          {% set prod_years = pp.get('Years') or [] %}
+          {% if prod_years %}
+          {# If from CBT, summary may be in pp.summary; from ext, directly in prod_profile #}
+          {% set pp_summary = pp.get('summary') or {} %}
+          {% set pp_eur = pp_summary.get('EUR_MSm3') or prod_profile.get('EUR_MSm3') %}
+          {% set pp_peak = pp_summary.get('PeakOilRate_kSm3d') or prod_profile.get('PeakOilRate_kSm3d') %}
+          {% set pp_stoiip = pp_summary.get('STOIIP_P50_MSm3') or prod_profile.get('STOIIP_P50_MSm3') %}
+          {# Detect unit scale: OPM Flow data is in Sm³/d, legacy data in kSm³/d #}
+          {% set pp_oil = pp.get('OilRate_kSm3d') or [] %}
+          {% set pp_gas = pp.get('GasRate_kSm3d') or [] %}
+          {% set pp_water = pp.get('WaterRate_kSm3d') or [] %}
+          {% set pp_inj = pp.get('WaterInjRate_kSm3d') or [] %}
+          {% set pp_cum = pp.get('CumOil_MSm3') or [] %}
+          {% set pp_wcut = pp.get('WaterCut_pct') or [] %}
+          {% set pp_fpr = pp.get('FPR_barsa') or [] %}
+          {% set pp_wells = pp.get('WellsOnline') or [] %}
+          {% set pp_injwells = pp.get('InjectorsOnline') or [] %}
+          {# Auto-detect Sm³/d scale: if max oil rate > 100 then data is in Sm³/d, convert display to kSm³/d #}
+          {% set max_oil = pp_oil | max if pp_oil else 0 %}
+          {% set is_sm3d = max_oil > 100 %}
+          {% set rate_unit = 'Sm³/d' if is_sm3d else 'kSm³/d' %}
+          {% set cum_unit = 'Sm³' if (pp_cum and pp_cum[-1] > 100000) else 'MSm³' %}
+          <section class="section-card">
+            <h5>Production Profile</h5>
+            {% if pp_eur is not none or pp_peak is not none or pp_stoiip is not none %}
+            <div class="bd-econ-row" style="margin-bottom:.5rem;">
+              {% if pp_stoiip is not none %}<div class="bd-econ"><div class="bd-econ-label">STOIIP P50</div><div class="bd-econ-num">{{ pp_stoiip }} MSm³</div></div>{% endif %}
+              {% if pp_eur is not none %}<div class="bd-econ"><div class="bd-econ-label">EUR</div><div class="bd-econ-num">{{ pp_eur }} MSm³</div></div>{% endif %}
+              {% if pp_peak is not none %}<div class="bd-econ"><div class="bd-econ-label">Peak Oil Rate</div><div class="bd-econ-num">{{ pp_peak }} kSm³/d</div></div>{% endif %}
+            </div>
+            {% endif %}
+            {% set pp_note = pp.get('Note') or prod_profile.get('Note') %}
+            {% if pp_note %}<div style="font-size:.82rem;color:#718096;margin-bottom:.4rem;">{{ pp_note }}</div>{% endif %}
+            <div class="prod-legend">
+              <span class="leg-oil">Oil Rate ({{ rate_unit }})</span>
+              <span class="leg-water">Water Rate ({{ rate_unit }})</span>
+              <span class="leg-gas" style="border-bottom:2px dashed rgba(56,161,105,.85);background:none;padding-bottom:1px;">Gas Rate ({{ rate_unit }})</span>
+              <span class="leg-cum">Cum. Oil ({{ cum_unit }})</span>
+            </div>
+            <div class="prod-chart-wrap">
+              <canvas id="prodChart{{ rec_index }}"></canvas>
+            </div>
+            <details>
+              <summary style="cursor:pointer;font-size:.85rem;color:#4a5568;">Show production table</summary>
+              <div class="table-scroll" style="margin-top:.4rem;">
+              <table>
+                <tr>
+                  <th>Date</th><th>Prod.</th><th>Inj.</th>
+                  <th>Oil ({{ rate_unit }})</th><th>Gas ({{ rate_unit }})</th><th>Water ({{ rate_unit }})</th>
+                  <th>Inj. ({{ rate_unit }})</th><th>Cum. Oil ({{ cum_unit }})</th>
+                  <th>Pres. (bar)</th><th>WCT</th>
+                </tr>
+                {% for yr in prod_years %}
+                <tr>
+                  <td>{{ yr }}</td>
+                  <td>{{ pp_wells[loop.index0] if pp_wells|length > loop.index0 else '-' }}</td>
+                  <td>{{ pp_injwells[loop.index0] if pp_injwells|length > loop.index0 else '-' }}</td>
+                  <td>{{ '%.0f' | format(pp_oil[loop.index0]) if pp_oil|length > loop.index0 else '-' }}</td>
+                  <td>{{ '%.0f' | format(pp_gas[loop.index0]) if pp_gas|length > loop.index0 else '-' }}</td>
+                  <td>{{ '%.0f' | format(pp_water[loop.index0]) if pp_water|length > loop.index0 else '-' }}</td>
+                  <td>{{ '%.0f' | format(pp_inj[loop.index0]) if pp_inj|length > loop.index0 else '-' }}</td>
+                  <td>{{ '%.0f' | format(pp_cum[loop.index0]) if pp_cum|length > loop.index0 else '-' }}</td>
+                  <td>{{ '%.1f' | format(pp_fpr[loop.index0]) if pp_fpr|length > loop.index0 else '-' }}</td>
+                  <td>{{ '%.3f' | format(pp_wcut[loop.index0]) if pp_wcut|length > loop.index0 else '-' }}</td>
+                </tr>
+                {% endfor %}
+              </table>
+              </div>
+            </details>
+          </section>
+          {% endif %}
+
