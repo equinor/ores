@@ -68,70 +68,38 @@
       <button type="button" class="btn-ex" id="btn-examples">Examples ▾</button>
       <div class="examples-popup" id="examples-popup">
         <div class="ex-hdr">OSDU Search query syntax</div>
-        <div class="ex-item" data-q="data.Name:&quot;*Drogon*&quot;" data-target="searchQuery" data-kind="osdu:wks:master-data--BusinessDecision:*">
+        <div class="ex-item" data-q="data.Name:&quot;*Drogon*&quot;" data-target="searchQuery">
           <code>data.Name:"*Drogon*"</code>
           <span class="ex-desc">Wildcard match – Name contains "Drogon"</span>
         </div>
-        <div class="ex-item" data-q="data.Name:&quot;*Drogon*&quot; AND data.Name:&quot;*DG2*&quot;" data-target="searchQuery" data-kind="osdu:wks:master-data--Risk:*">
+        <div class="ex-item" data-q="data.Name:&quot;*Drogon*&quot; AND data.Name:&quot;*DG2*&quot;" data-target="searchQuery">
           <code>data.Name:"*Drogon*" AND data.Name:"*DG2*"</code>
           <span class="ex-desc">Boolean AND – both conditions must match</span>
         </div>
-        <div class="ex-item" data-q="data.Name:&quot;*Fault*&quot; OR data.Name:&quot;*Seal*&quot;" data-target="searchQuery" data-kind="osdu:wks:master-data--Risk:*">
+        <div class="ex-item" data-q="data.Name:&quot;*Fault*&quot; OR data.Name:&quot;*Seal*&quot;" data-target="searchQuery">
           <code>data.Name:"*Fault*" OR data.Name:"*Seal*"</code>
           <span class="ex-desc">Boolean OR – match either condition</span>
         </div>
-        <div class="ex-item" data-q="data.Name:&quot;*DG2*&quot;" data-target="searchQuery" data-kind="osdu:wks:work-product-component--StructureMap:*">
-          <code>data.Name:"*DG2*"</code>
-          <span class="ex-desc">Wildcard match – structure maps for DG2</span>
-        </div>
-        <div class="ex-item" data-q="NOT data.Name:&quot;*DG1*&quot;" data-target="searchQuery" data-kind="osdu:wks:master-data--BusinessDecision:*">
+        <div class="ex-item" data-q="NOT data.Name:&quot;*DG1*&quot;" data-target="searchQuery">
           <code>NOT data.Name:"*DG1*"</code>
           <span class="ex-desc">Negation – exclude records matching pattern</span>
         </div>
-        <div class="ex-item" data-q="data.StratigraphicColumnRankInterpretationSet:*" data-target="searchQuery" data-kind="osdu:wks:work-product-component--StratigraphicColumn:*">
+        <div class="ex-item" data-q="data.StratigraphicColumnRankInterpretationSet:*" data-target="searchQuery">
           <code>data.StratigraphicColumnRankInterpretationSet:*</code>
-          <span class="ex-desc">Field existence – has rank interpretations linked</span>
+          <span class="ex-desc">Field existence – check if a nested field is populated</span>
         </div>
-        <div class="ex-item" data-q="data.Name:&quot;*Drogon*&quot;" data-target="searchQuery" data-kind="osdu:wks:work-product-component--Document:*">
-          <code>data.Name:"*Drogon*"</code>
-          <span class="ex-desc">Documents – find Drogon-related reports</span>
-        </div>
-        <div class="ex-item" data-q="data.Name:&quot;*basevolon*&quot;" data-target="searchQuery" data-kind="osdu:wks:work-product-component--StructureMap:*">
-          <code>data.Name:"*basevolon*"</code>
-          <span class="ex-desc">Structure maps for a specific horizon</span>
-        </div>
-        <div class="ex-item" data-q="data.FacilityName:&quot;*55/33*&quot;" data-target="searchQuery" data-kind="osdu:wks:master-data--Well:*">
+        <div class="ex-hdr" style="margin-top:.5rem;">Common OSDU search fields</div>
+        <div class="ex-item" data-q="data.FacilityName:&quot;*55/33*&quot;" data-target="searchQuery">
           <code>data.FacilityName:"*55/33*"</code>
-          <span class="ex-desc">Wells – Drogon field wells (55/33 block)</span>
+          <span class="ex-desc">FacilityName – wells/wellbores by block or licence</span>
         </div>
-        <div class="ex-item" data-q="data.FacilityName:&quot;*15/9*&quot;" data-target="searchQuery" data-kind="osdu:wks:master-data--Well:*">
-          <code>data.FacilityName:"*15/9*"</code>
-          <span class="ex-desc">Wells – Volve field wells (15/9 block)</span>
-        </div>
-        <div class="ex-item" data-q="data.TargetFormation:&quot;*Valysar*&quot;" data-target="searchQuery" data-kind="osdu:wks:master-data--Wellbore:*">
+        <div class="ex-item" data-q="data.TargetFormation:&quot;*Valysar*&quot;" data-target="searchQuery">
           <code>data.TargetFormation:"*Valysar*"</code>
-          <span class="ex-desc">Wellbores – targeting Valysar formation (Drogon)</span>
+          <span class="ex-desc">TargetFormation – wellbores targeting a formation</span>
         </div>
-        <div class="ex-item" data-q="data.Name:&quot;*&quot;" data-target="searchQuery" data-kind="osdu:wks:work-product-component--WellLog:*">
-          <code>data.Name:"*"</code>
-          <span class="ex-desc">Well Logs – WITSML-based log data (GR, DT, RHOB…)</span>
-        </div>
-        <div class="ex-hdr" style="margin-top:.5rem;">ETP / WITSML / RDDMS</div>
-        <div class="ex-item" data-q="*" data-target="searchQuery" data-kind="osdu:wks:dataset--ETPDataspace:*">
+        <div class="ex-item" data-q="*" data-target="searchQuery">
           <code>*</code>
-          <span class="ex-desc">ETP Dataspaces – all RDDMS-registered geomodel dataspaces</span>
-        </div>
-        <div class="ex-item" data-q="data.Name:&quot;*KKS*&quot;" data-target="searchQuery" data-kind="osdu:wks:work-product-component--WellLog:*">
-          <code>data.Name:"*KKS*"</code>
-          <span class="ex-desc">Well Logs – Chevron KKS-1 (CVX DLIS→WITSML)</span>
-        </div>
-        <div class="ex-item" data-q="data.FacilityName:&quot;*DROGON*&quot;" data-target="searchQuery" data-kind="osdu:wks:master-data--Well:*">
-          <code>data.FacilityName:"*DROGON*"</code>
-          <span class="ex-desc">Wells – Drogon field (ETP/WITSML ingested)</span>
-        </div>
-        <div class="ex-item" data-q="data.Name:&quot;*Composite*&quot; OR data.Name:&quot;*Trajectory*&quot;" data-target="searchQuery" data-kind="osdu:wks:work-product-component--WellLog:*">
-          <code>data.Name:"*Composite*" OR data.Name:"*Trajectory*"</code>
-          <span class="ex-desc">Well Logs + Trajectories – composite/directional data</span>
+          <span class="ex-desc">Match all – return all records of the selected kind</span>
         </div>
       </div>
     </span>
