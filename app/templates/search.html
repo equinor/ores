@@ -716,6 +716,9 @@
     <script>window.__mermaidManual = true;</script>
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose',
+        flowchart: { htmlLabels: true, nodeSpacing: 20, rankSpacing: 30, padding: 8 }
+      });
 
       /* ── Provenance DAG popup ── */
       window.showProvenanceDag = async function(recordId) {
