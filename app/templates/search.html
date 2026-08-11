@@ -182,7 +182,7 @@
   <input type="text" name="query" id="refdataQuery" value="{{ refdata_q or '*' }}" placeholder="* or data.Name:Exploration" style="width:100%;max-width:600px;">
 
   <label>limit</label>
-  <input type="number" name="limit" value="{{ limit or 50 }}" min="1" max="100">
+  <input type="number" name="limit" value="{{ limit or 50 }}" min="1" max="500">
 
   <button type="submit" class="btn">Search Reference Data</button>
 </form>
@@ -499,8 +499,11 @@
 {# ── Schema Results Table ── #}
 {% if schema_results is defined and schema_results %}
   <h4>Schemas ({{ schema_results|length }}{% if schema_total and schema_total > schema_results|length %} of {{ schema_total }}{% endif %})</h4>
+  {% if schema_results|length > 50 %}
+  <div id="schema-pager" style="display:flex;align-items:center;gap:12px;margin-bottom:8px;font-size:13px;"></div>
+  {% endif %}
   <div class="results-scroll">
-    <table class="results-table">
+    <table class="results-table" id="schema-results-table">
       <thead>
         <tr>
           <th>Entity Type</th>
@@ -537,8 +540,11 @@
 {# ── Reference Data Results Table ── #}
 {% if refdata_results is defined and refdata_results %}
   <h4>Reference Data ({{ refdata_results|length }}{% if refdata_total and refdata_total > refdata_results|length %} of {{ refdata_total }}{% endif %})</h4>
+  {% if refdata_results|length > 50 %}
+  <div id="refdata-pager" style="display:flex;align-items:center;gap:12px;margin-bottom:8px;font-size:13px;"></div>
+  {% endif %}
   <div class="results-scroll">
-    <table class="results-table">
+    <table class="results-table" id="refdata-results-table">
       <thead>
         <tr>
           <th>Name</th>
@@ -986,6 +992,45 @@
     </script>
   {% endif %}
 {% endif %}
+
+{# ── Schema & Refdata table pagination ── #}
+<script>
+(function() {
+  var PAGE_SIZE = 50;
+
+  function paginateTable(tableId, pagerId) {
+    var table = document.getElementById(tableId);
+    var pager = document.getElementById(pagerId);
+    if (!table) return;
+    var tbody = table.querySelector('tbody');
+    if (!tbody) return;
+    var rows = Array.from(tbody.querySelectorAll('tr'));
+    if (rows.length <= PAGE_SIZE) return; // no pagination needed
+    var page = 0;
+    var totalPages = Math.ceil(rows.length / PAGE_SIZE);
+
+    function renderPage() {
+      var start = page * PAGE_SIZE;
+      var end = Math.min(start + PAGE_SIZE, rows.length);
+      rows.forEach(function(r, i) {
+        r.style.display = (i >= start && i < end) ? '' : 'none';
+      });
+      if (pager) {
+        pager.innerHTML =
+          '<button onclick="window.__tblPrev_' + tableId + '()"' + (page <= 0 ? ' disabled' : '') + ' style="padding:2px 10px;cursor:pointer;">&#8249; Prev</button>' +
+          '<span>Showing ' + (start + 1) + '\u2013' + end + ' of ' + rows.length + '</span>' +
+          '<button onclick="window.__tblNext_' + tableId + '()"' + (page >= totalPages - 1 ? ' disabled' : '') + ' style="padding:2px 10px;cursor:pointer;">Next &#8250;</button>';
+      }
+    }
+    window['__tblPrev_' + tableId] = function() { if (page > 0) { page--; renderPage(); } };
+    window['__tblNext_' + tableId] = function() { if (page < totalPages - 1) { page++; renderPage(); } };
+    renderPage();
+  }
+
+  paginateTable('schema-results-table', 'schema-pager');
+  paginateTable('refdata-results-table', 'refdata-pager');
+})();
+</script>
 
 {# ── Schema & Refdata inline detail viewer + table sorting: loaded from /static/search.js ── #}
 

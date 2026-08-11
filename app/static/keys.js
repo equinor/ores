@@ -324,9 +324,10 @@ function renderResultCards(data) {
             <ul style="margin:.3em 0 0 1.2em;padding:0;">${ds.warnings.map(w => `<li>${esc(w)}</li>`).join('')}</ul>
           </div>`;
     }
-    (ds.objects || []).forEach(obj => {
-      html += renderObjectCard(obj);
-    });
+    html += '<div id="ez-ds-cards"></div>';
+    if ((ds.objects || []).length > 50) {
+      html += '<div id="ez-ds-pager" style="display:flex;align-items:center;gap:12px;margin:8px 0;font-size:13px;"></div>';
+    }
   }
 
   // Federated results
@@ -343,9 +344,10 @@ function renderResultCards(data) {
             <ul style="margin:.3em 0 0 1.2em;padding:0;">${fs.warnings.map(w => `<li>${esc(w)}</li>`).join('')}</ul>
           </div>`;
     }
-    (fs.hits || []).forEach(hit => {
-      html += renderFederatedCard(hit);
-    });
+    html += '<div id="ez-fed-cards"></div>';
+    if ((fs.hits || []).length > 50) {
+      html += '<div id="ez-fed-pager" style="display:flex;align-items:center;gap:12px;margin:8px 0;font-size:13px;"></div>';
+    }
   }
 
   // Browse results (paginated)
@@ -416,6 +418,60 @@ function renderResultCards(data) {
     window.__ezBrowsePrev = function () { if (browsePage > 0) { browsePage--; renderBrowsePage(); } };
     window.__ezBrowseNext = function () { var pages = Math.ceil(objs.length / BROWSE_PAGE); if (browsePage < pages - 1) { browsePage++; renderBrowsePage(); } };
     renderBrowsePage();
+  }
+
+  // Paginate deep search cards
+  if (d.deepSearch && (d.deepSearch.objects || []).length > 0) {
+    var DS_PAGE = 50;
+    var dsContainer = document.getElementById('ez-ds-cards');
+    var dsPager = document.getElementById('ez-ds-pager');
+    var dsPage = 0;
+    var dsObjs = d.deepSearch.objects;
+    function renderDsPage() {
+      var start = dsPage * DS_PAGE;
+      var end = Math.min(start + DS_PAGE, dsObjs.length);
+      var h = '';
+      for (var i = start; i < end; i++) {
+        h += renderObjectCard(dsObjs[i]);
+      }
+      if (dsContainer) dsContainer.innerHTML = h;
+      if (dsPager) {
+        var pages = Math.ceil(dsObjs.length / DS_PAGE);
+        dsPager.innerHTML = '<button onclick="window.__ezDsPrev()"' + (dsPage <= 0 ? ' disabled' : '') + ' style="padding:2px 10px;cursor:pointer;">&#8249; Prev</button>' +
+          '<span>Showing ' + (start + 1) + '\u2013' + end + ' of ' + dsObjs.length + '</span>' +
+          '<button onclick="window.__ezDsNext()"' + (dsPage >= pages - 1 ? ' disabled' : '') + ' style="padding:2px 10px;cursor:pointer;">Next &#8250;</button>';
+      }
+    }
+    window.__ezDsPrev = function () { if (dsPage > 0) { dsPage--; renderDsPage(); } };
+    window.__ezDsNext = function () { var pages = Math.ceil(dsObjs.length / DS_PAGE); if (dsPage < pages - 1) { dsPage++; renderDsPage(); } };
+    renderDsPage();
+  }
+
+  // Paginate federated search cards
+  if (d.federatedSearch && (d.federatedSearch.hits || []).length > 0) {
+    var FED_PAGE = 50;
+    var fedContainer = document.getElementById('ez-fed-cards');
+    var fedPager = document.getElementById('ez-fed-pager');
+    var fedPage = 0;
+    var fedHits = d.federatedSearch.hits;
+    function renderFedPage() {
+      var start = fedPage * FED_PAGE;
+      var end = Math.min(start + FED_PAGE, fedHits.length);
+      var h = '';
+      for (var i = start; i < end; i++) {
+        h += renderFederatedCard(fedHits[i]);
+      }
+      if (fedContainer) fedContainer.innerHTML = h;
+      if (fedPager) {
+        var pages = Math.ceil(fedHits.length / FED_PAGE);
+        fedPager.innerHTML = '<button onclick="window.__ezFedPrev()"' + (fedPage <= 0 ? ' disabled' : '') + ' style="padding:2px 10px;cursor:pointer;">&#8249; Prev</button>' +
+          '<span>Showing ' + (start + 1) + '\u2013' + end + ' of ' + fedHits.length + '</span>' +
+          '<button onclick="window.__ezFedNext()"' + (fedPage >= pages - 1 ? ' disabled' : '') + ' style="padding:2px 10px;cursor:pointer;">Next &#8250;</button>';
+      }
+    }
+    window.__ezFedPrev = function () { if (fedPage > 0) { fedPage--; renderFedPage(); } };
+    window.__ezFedNext = function () { var pages = Math.ceil(fedHits.length / FED_PAGE); if (fedPage < pages - 1) { fedPage++; renderFedPage(); } };
+    renderFedPage();
   }
 
   // Check for 3D-renderable objects and show "Show 3D Results" button
@@ -574,9 +630,9 @@ function validateEasyQuery() {
   // Limit bounds
   const limit = parseInt($('ez-limit').value);
   if (isNaN(limit) || limit < 1) {
-    errors.push('Limit must be a positive integer (1–200).');
+    errors.push('Limit must be a positive integer (1–2000).');
   } else if (limit > 200) {
-    errors.push('Limit exceeds maximum (200). It will be capped server-side.');
+    errors.push('Limit exceeds maximum (2000). It will be capped server-side.');
   }
 
   // Threshold validation for deep_search / cross_system
@@ -3502,6 +3558,10 @@ function buildMermaidFromDeepSearch(data) {
   // deep_search response (top-level or any aliased field with .objects[].relations)
   const ds = _findDeepSearchResult(data.data);
   if (!ds) return '';
+  if (ds.length > 200) {
+    console.warn('Mermaid: skipping diagram for', ds.length, 'objects (max 200)');
+    return '';
+  }
   const lines = ['graph TD'];
   ds.forEach((obj, oi) => {
     const oid = _nodeId(obj.uuid) + oi;
@@ -3540,6 +3600,10 @@ function buildMermaidFromFederated(data) {
   // federatedSearch response (top-level or aliased)
   const fs = _findField(data.data, 'federatedSearch');
   if (!fs || !fs.hits || !fs.hits.length) return '';
+  if (fs.hits.length > 200) {
+    console.warn('Mermaid: skipping diagram for', fs.hits.length, 'hits (max 200)');
+    return '';
+  }
   const lines = ['graph TD'];
   fs.hits.forEach((hit, hi) => {
     const hid = _nodeId(hit.uuid) + hi;

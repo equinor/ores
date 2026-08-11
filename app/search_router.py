@@ -41,6 +41,9 @@ router = APIRouter()
 
 _KIND_CACHE_TTL = 300  # 5 minutes – used by cached_call for kind resolution
 _PAGE_SIZE = 50        # records per batch for incremental loading
+_MAX_RECORD_LIMIT = 1000   # hard cap for records search
+_MAX_SCHEMA_LIMIT = 500    # hard cap for schema search
+_MAX_REFDATA_LIMIT = 500   # hard cap for reference data search
 templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
 
 templates.env.filters["pretty_val"] = _jinja_pretty_val
@@ -805,6 +808,7 @@ async def search_run(
     limit: int = 50,
 ):
     """Run an OSDU Search v2 query, then enrich each hit."""
+    limit = max(1, min(limit, _MAX_RECORD_LIMIT))
     at = _access_token(request)
     search_url = f"https://{osdu.OSDU_BASE_URL}/api/search/v2/query"
     storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
@@ -1133,6 +1137,7 @@ async def search_schemas(
     limit: int = 50,
 ):
     """Search the OSDU Schema Service for registered schemas."""
+    limit = max(1, min(limit, _MAX_SCHEMA_LIMIT))
     at = _access_token(request)
     schema_url = f"https://{osdu.OSDU_BASE_URL}/api/schema-service/v1/schema"
     hdr = osdu.headers(at)
@@ -1309,6 +1314,7 @@ async def search_refdata(
     limit: int = 50,
 ):
     """Search for reference-data records in OSDU."""
+    limit = max(1, min(limit, _MAX_REFDATA_LIMIT))
     at = _access_token(request)
     search_url = f"https://{osdu.OSDU_BASE_URL}/api/search/v2/query"
     hdr = osdu.headers(at)

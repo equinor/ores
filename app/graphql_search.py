@@ -767,6 +767,7 @@ async def _deep_search_pg(
     Strategy: Fetch objects in bulk, then use batch queries for properties
     and relations instead of N+1 individual queries.
     """
+    warnings: List[str] = []
     pg_schema = await _pg_schema_for_dataspace(pool, dataspace)
     if not pg_schema:
         return DeepSearchResult(
@@ -782,6 +783,8 @@ async def _deep_search_pg(
 
     async with pool.acquire() as conn:
         # Step 1: List objects of type_name(s) in batch
+        # Cap SQL results to limit*3 per type to avoid loading 100K+ rows
+        sql_cap = limit * 3
         all_resources = []
         for tn in type_names:
             parts = tn.split(".", 1)
@@ -793,7 +796,8 @@ async def _deep_search_pg(
                     JOIN {pg_schema}.uri u ON t.uri_id = u.id
                     WHERE u.ml = $1 AND t.xml = $2
                     ORDER BY r.obj_id
-                """, parts[0], parts[1])
+                    LIMIT $3
+                """, parts[0], parts[1], sql_cap)
             else:
                 resources = await conn.fetch(f"""
                     SELECT r.obj_id, r.guid, r.name, t.xml as typ_xml, u.ml
@@ -802,9 +806,34 @@ async def _deep_search_pg(
                     JOIN {pg_schema}.uri u ON t.uri_id = u.id
                     WHERE t.xml ILIKE '%' || $1 || '%'
                     ORDER BY r.obj_id
-                """, tn)
+                    LIMIT $2
+                """, tn, sql_cap)
             for r in resources:
                 all_resources.append((r, f"{r['ml']}.{r['typ_xml']}"))
+            if len(resources) >= sql_cap:
+                # Count actual total for this type to report truncation
+                if len(parts) == 2:
+                    cnt_row = await conn.fetchrow(f"""
+                        SELECT count(*) as cnt
+                        FROM {pg_schema}.res r
+                        JOIN {pg_schema}.typ t ON r.typ_id = t.id
+                        JOIN {pg_schema}.uri u ON t.uri_id = u.id
+                        WHERE u.ml = $1 AND t.xml = $2
+                    """, parts[0], parts[1])
+                else:
+                    cnt_row = await conn.fetchrow(f"""
+                        SELECT count(*) as cnt
+                        FROM {pg_schema}.res r
+                        JOIN {pg_schema}.typ t ON r.typ_id = t.id
+                        JOIN {pg_schema}.uri u ON t.uri_id = u.id
+                        WHERE t.xml ILIKE '%' || $1 || '%'
+                    """, tn)
+                actual_total = cnt_row["cnt"] if cnt_row else sql_cap
+                warnings.append(
+                    f"Dataspace has {actual_total} objects of type {tn} — "
+                    f"showing first {sql_cap}. Use titleContains to narrow results "
+                    f"or increase limit."
+                )
 
         total_scanned = len(all_resources)
 
@@ -1022,6 +1051,7 @@ async def _deep_search_pg(
         total_matched=len(matched),
         query_description=" AND ".join(desc_parts),
         backend="PostgreSQL",
+        warnings=warnings or None,
     )
 
 
@@ -1584,7 +1614,7 @@ async def _deep_search_discovery(
 # ──────────────────────────────────────────────────────────────────────────────
 
 # Hard limits to prevent runaway queries
-_MAX_LIMIT = 200
+_MAX_LIMIT = 2000
 _MAX_SAMPLE_SIZE = 10_000
 _VALID_DIRECTIONS = {"both", "targets", "sources"}
 
