@@ -292,12 +292,19 @@
 <script type="module">
   import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
   mermaid.initialize({
-    startOnLoad: true,
+    startOnLoad: false,
     theme: 'default',
     securityLevel: 'loose',
     themeVariables: { fontSize: '13px' },
     flowchart: { curve: 'basis', nodeSpacing: 30, rankSpacing: 40 }
   });
+  // Auto-render on pages that don't manage Mermaid themselves (e.g. howto articles)
+  window.__mermaidAutoRender = async function() {
+    const nodes = document.querySelectorAll('pre.mermaid:not([data-processed])');
+    if (nodes.length) await mermaid.run({ nodes: Array.from(nodes) });
+  };
+  // Search page sets window.__mermaidManual = true to suppress auto-render
+  if (!window.__mermaidManual) window.__mermaidAutoRender();
 </script>
 <script src=/static/app.js></script>
 {% block scripts %}{% endblock %}

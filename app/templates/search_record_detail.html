@@ -144,20 +144,6 @@
               <div class="k">ParentObjectID</div><div>{{ (rec.data or {}).get('ParentObjectID') }}</div>
               {% endif %}
             </div>
-            {# ── Linked record badges ── #}
-            {% set link_counts = {} %}
-            {% for l in (rec.links or []) %}
-              {% set lkind = l.get('kind') or l.get('id','') %}
-              {% set short = lkind.split('--')[-1].split(':')[0] if '--' in lkind else lkind.split(':')[-2] if ':' in lkind else lkind %}
-              {% if short %}{% set _ = link_counts.__setitem__(short, link_counts.get(short, 0) + 1) %}{% endif %}
-            {% endfor %}
-            {% if link_counts %}
-            <div class="badge-row">
-              {% for ltype, lcount in link_counts.items() %}
-              <span class="link-badge" title="{{ lcount }} linked {{ ltype }} record(s)">{{ ltype }} × {{ lcount }}</span>
-              {% endfor %}
-            </div>
-            {% endif %}
             {% if ((rec.data or {}).get('ExtensionProperties') or {}).get('Markdown') %}
             <div style="margin-top:.6rem;">
               <button type="button" onclick="openMarkdownFromSection(this)" title="Render embedded Markdown documentation" style="padding:.35rem .8rem;border:1px solid #007079;border-radius:4px;background:#007079;color:#fff;cursor:pointer;font-size:.85rem;">📄 View Documentation</button>

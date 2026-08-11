@@ -713,11 +713,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
     <script src="/static/search.js"></script>
+    <script>window.__mermaidManual = true;</script>
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose',
-        flowchart: { htmlLabels: true, nodeSpacing: 20, rankSpacing: 30, padding: 8 }
-      });
 
       /* ── Provenance DAG popup ── */
       window.showProvenanceDag = async function(recordId) {
