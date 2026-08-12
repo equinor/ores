@@ -150,6 +150,8 @@ SeismicBinGrid
 
 A comprehensive WPC decision requires structured records across these domains. Each uses standard OSDU M27 kinds — no custom schema extensions needed beyond `ext.equinor`.
 
+> **Current scope (Aug 2026):** Field development WPC at **DG0/DG1**. Per Equinor's Decision Gate Process mapping, DG0–DG1 content types are: Wells, FluidContacts, Time/Depth Maps, Velocity Model, HC Volumes, Reservoir Properties (GeoLabelSet), Production Tables. The demo additionally covers PVT, Core Analysis, FMU/DesignMatrix, Well Design, and Risks — exceeding DG0/DG1 minimum requirements.
+
 ### 4.1 Decision & Economics
 
 | Aspect | Record Kind(s) | Key Fields |
@@ -226,6 +228,7 @@ A comprehensive WPC decision requires structured records across these domains. E
 | `_enrich_bd_volumes()` | REV → stat volumes (P90/P50/P10) | `rec.bd_volumes` |
 | `_enrich_bd_geolabel()` | GeoLabelSet → per-zone properties + volumes | `rec.bd_geolabel` |
 | `_enrich_bd_production()` | ColumnBasedTable → 15-year forecast | `rec.bd_production` |
+| `_enrich_bd_pvt()` | ColumnBasedTable (PVT) → base-case fluid props | `rec.bd_pvt` |
 | `_enrich_bd_developmentconcept()` | DevelopmentConcept → facility/well plan | `data.ext.equinor.DevelopmentConcept` |
 | `_enrich_bd_activity()` | Activity → workflow provenance | `rec.bd_activity` |
 | `_enrich_bd_maps()` | ETPDataspace → Grid2d maps | `rec.bd_maps` |
@@ -235,10 +238,11 @@ A comprehensive WPC decision requires structured records across these domains. E
 
 | Section | Template | Displays |
 |---|---|---|
-| BD card | `search_bd.html` | Gate level, approval, headline KPIs, alternatives, reservoir properties, risks |
+| BD card | `search_bd.html` | Gate level, approval, headline KPIs, alternatives, reservoir properties, PVT, risks |
 | Facility | `search_facility.html` | FacilityConcept, WellPlan, DrainageStrategy tiles |
 | Volumes | `search_volumes.html` | ColumnBasedTable rendering |
 | Production | `search_production.html` | Chart.js multi-axis (oil/water rates + cumulative) |
+| PVT | `search_bd.html` (inline) | Low/Base/High case fluid property table |
 | Maps | `search_maps.html` | RDDMS Grid2d preview |
 | REV | `search_rev.html` | Statistical volumes card |
 
@@ -252,6 +256,7 @@ A comprehensive WPC decision requires structured records across these domains. E
 | Development Concept | Facility, wells, formation per gate | (descriptive) |
 | Alternatives | Ranked alternatives per gate | (per-gate) |
 | Reservoir Properties | NTG, Phi, Sw, K, NetPay per segment per gate | Δ |
+| PVT Fluid Properties | Pres, Tres, Pb, μ, Bo, GOR per gate (base case) | Δ |
 | Risks | Risk chips with severity evolution | Added/removed/mitigated/reduced |
 
 ---
