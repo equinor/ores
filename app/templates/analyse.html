@@ -302,6 +302,9 @@
     // ── RESERVOIR PROPERTIES ──
     html += buildPropertiesSection(gates, propDiffs);
 
+    // ── PVT FLUID PROPERTIES ──
+    html += buildPvtSection(gates);
+
     // ── RISKS ──
     html += buildRiskSection(gates, riskDiffs);
 
@@ -611,6 +614,36 @@
         }
         h += '</tr>';
       }
+    });
+    h += '</tbody></table></div></div>';
+    return h;
+  }
+
+  function buildPvtSection(gates) {
+    const hasPvt = gates.some(g => g.pvt && g.pvt._cases);
+    if (!hasPvt) return '';
+
+    // Collect all PVT property names across gates (exclude Case and _*)
+    const allCols = new Set();
+    gates.forEach(g => {
+      if (g.pvt && g.pvt._cases) {
+        Object.keys(g.pvt._cases).forEach(k => { if (k !== 'Case' && !k.startsWith('_')) allCols.add(k); });
+      }
+    });
+    if (!allCols.size) return '';
+
+    let h = '<div class="cmp-section"><div class="cmp-title">PVT Fluid Properties (base case)</div>';
+    h += '<div style="overflow-x:auto;"><table class="cmp-table"><thead><tr><th>Property</th>';
+    gates.forEach(g => { h += `<th>${esc(g.gate_label)}</th>`; });
+    h += '</tr></thead><tbody>';
+
+    Array.from(allCols).sort().forEach(col => {
+      h += `<tr><td>${esc(col)}</td>`;
+      gates.forEach(g => {
+        const v = (g.pvt || {})[col];
+        h += `<td class="${v != null ? 'cmp-val' : 'cmp-empty'}">${v != null ? fmtNum(v) : '-'}</td>`;
+      });
+      h += '</tr>';
     });
     h += '</tbody></table></div></div>';
     return h;

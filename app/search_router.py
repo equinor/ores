@@ -507,6 +507,7 @@ async def _enrich_record_light(
         _enrich_bd_production,
         _enrich_bd_activity,
         _enrich_bd_developmentconcept,
+        _enrich_bd_pvt,
     )
 
     rid = full.get("id", "")
@@ -568,6 +569,7 @@ async def _enrich_record_light(
     bd_geolabel: Dict[str, Any] = {}
     bd_production: Dict[str, Any] = {}
     bd_activity: Dict[str, Any] = {}
+    bd_pvt: Dict[str, Any] = {}
     if "businessdecision" in (full.get("kind") or "").lower():
         try:
             vol_task = _enrich_bd_volumes(data_block, client, storage_url, hdr) \
@@ -576,8 +578,9 @@ async def _enrich_record_light(
             prod_task = _enrich_bd_production(data_block, client, storage_url, hdr)
             act_task = _enrich_bd_activity(data_block, client, storage_url, hdr)
             dc_task = _enrich_bd_developmentconcept(data_block, client, storage_url, hdr)
-            vol_r, gl_r, prod_r, act_r, _ = await asyncio.gather(
-                vol_task, gl_task, prod_task, act_task, dc_task,
+            pvt_task = _enrich_bd_pvt(data_block, client, storage_url, hdr)
+            vol_r, gl_r, prod_r, act_r, _, pvt_r = await asyncio.gather(
+                vol_task, gl_task, prod_task, act_task, dc_task, pvt_task,
                 return_exceptions=True,
             )
             if isinstance(vol_r, dict) and vol_r.get("ColumnValues"):
@@ -589,11 +592,14 @@ async def _enrich_record_light(
                 bd_production = prod_r
             if isinstance(act_r, dict):
                 bd_activity = act_r
+            if isinstance(pvt_r, dict):
+                bd_pvt = pvt_r
         except Exception as e:
             log.warning("[ENRICH-LIGHT] BD enrichment failed for %s: %s", rid, e)
     result["bd_geolabel"] = bd_geolabel
     result["bd_production"] = bd_production
     result["bd_activity"] = bd_activity
+    result["bd_pvt"] = bd_pvt
     result["bd_maps"] = {"maps": [], "all": []}
     return result
 
@@ -619,6 +625,7 @@ async def _enrich_record(
         _enrich_bd_activity,
         _enrich_bd_maps,
         _enrich_bd_collaboration,
+        _enrich_bd_pvt,
     )
 
     rid = full.get("id", "")
@@ -632,6 +639,7 @@ async def _enrich_record(
     bd_activity: Dict[str, Any] = {}
     bd_maps: Dict[str, Any] = {"maps": [], "all": []}
     bd_collab: Dict[str, Any] = {}
+    bd_pvt: Dict[str, Any] = {}
     if "businessdecision" in (full.get("kind") or "").lower():
         data_block["_record_id"] = rid  # needed by _enrich_bd_collaboration
         vol_task = _enrich_bd_volumes(data_block, client, storage_url, hdr) \
@@ -642,8 +650,9 @@ async def _enrich_record(
         act_task = _enrich_bd_activity(data_block, client, storage_url, hdr)
         map_task = _enrich_bd_maps(data_block, client, storage_url, hdr)
         collab_task = _enrich_bd_collaboration(data_block, client, search_url, storage_url, hdr)
-        vol_r, gl_r, prod_r, _, act_r, map_r, collab_r = await asyncio.gather(
-            vol_task, gl_task, prod_task, dc_task, act_task, map_task, collab_task,
+        pvt_task = _enrich_bd_pvt(data_block, client, storage_url, hdr)
+        vol_r, gl_r, prod_r, _, act_r, map_r, collab_r, pvt_r = await asyncio.gather(
+            vol_task, gl_task, prod_task, dc_task, act_task, map_task, collab_task, pvt_task,
             return_exceptions=True,
         )
         if isinstance(vol_r, dict) and vol_r.get("ColumnValues"):
@@ -658,6 +667,8 @@ async def _enrich_record(
             bd_maps = map_r
         if isinstance(collab_r, dict):
             bd_collab = collab_r
+        if isinstance(pvt_r, dict):
+            bd_pvt = pvt_r
 
     # Generic WPC/master-data links (exclude reference-data)
     try:
@@ -761,6 +772,7 @@ async def _enrich_record(
         "bd_activity": bd_activity,
         "bd_maps": bd_maps,
         "bd_collab": bd_collab,
+        "bd_pvt": bd_pvt,
         "ddms_refs": ddms_refs,
     }
 

@@ -797,6 +797,83 @@ async def _enrich_bd_developmentconcept(
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# BD enrichment: PVT properties from linked ColumnBasedTable
+# ──────────────────────────────────────────────────────────────────────────────
+
+async def _enrich_bd_pvt(
+    data_block: Dict[str, Any],
+    client: httpx.AsyncClient,
+    storage_url: str,
+    hdr: dict,
+) -> Dict[str, Any]:
+    """Fetch PVT ColumnBasedTable from BD Parameters[] (tagged 'PVT').
+
+    Returns a dict with base-case PVT properties or empty dict.
+    """
+    params = data_block.get("Parameters") or []
+    if not isinstance(params, list):
+        return {}
+
+    target_id: str = ""
+    for p in params:
+        if not isinstance(p, dict):
+            continue
+        dop = p.get("DataObjectParameter") or ""
+        if "ColumnBasedTable" not in dop:
+            continue
+        keys = p.get("Keys") or []
+        is_pvt = any(
+            (kv.get("StringParameterKey") or "").upper() == "PVT"
+            for kv in keys if isinstance(kv, dict)
+        )
+        if is_pvt:
+            target_id = dop
+            break
+
+    if not target_id:
+        return {}
+
+    try:
+        r = await client.get(f"{storage_url}/{target_id}", headers=hdr)
+        if r.status_code != 200:
+            return {}
+        d = (r.json() or {}).get("data", {}) or {}
+        table = d.get("Table") or {}
+        cv = table.get("ColumnValues") or {}
+        if not cv:
+            return {}
+
+        # Find base case row index
+        cases = cv.get("Case") or []
+        base_idx = None
+        for i, c in enumerate(cases):
+            if isinstance(c, str) and c.lower() == "base":
+                base_idx = i
+                break
+        if base_idx is None and cases:
+            base_idx = 0
+
+        if base_idx is None:
+            return {}
+
+        # Extract base-case values
+        result: Dict[str, Any] = {}
+        for col_name, col_vals in cv.items():
+            if col_name == "Case":
+                continue
+            if isinstance(col_vals, list) and base_idx < len(col_vals):
+                result[col_name] = col_vals[base_idx]
+
+        # Include all cases for template rendering
+        result["_cases"] = cv
+        result["_description"] = d.get("Description") or ""
+        return result
+    except Exception as e:
+        log.warning("[BD-PVT] Failed to fetch PVT %s: %s", target_id, e)
+        return {}
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # BD enrichment: CollaborationProject → lifecycle events + gate checklist
 # ──────────────────────────────────────────────────────────────────────────────
 

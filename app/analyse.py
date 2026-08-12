@@ -515,6 +515,10 @@ async def analyse_compare(
                         data_block, client, storage_url, hdr
                     )
 
+                    # PVT enrichment
+                    from .bd_enrichment import _enrich_bd_pvt
+                    pvt = await _enrich_bd_pvt(data_block, client, storage_url, hdr)
+
                     ext_eq = (
                         (data_block or {}).get("ext") or {}
                     ).get("equinor") or {}
@@ -557,6 +561,7 @@ async def analyse_compare(
                         "schedule": ext_eq.get("ScheduleMilestones") or [],
                         "gls_volumes": gls.get("volumes_by_segment") or {},
                         "gls_uncertainty": gls.get("uncertainty") or {},
+                        "pvt": pvt or {},
                         "_sort_key": _extract_dg_sort_key(data_block),
                     }
                     return gate

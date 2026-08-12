@@ -112,6 +112,9 @@
       {# ── Production forecast from ColumnBasedTable ── #}
       {% set bd_prod = rec.bd_production or {} %}
 
+      {# ── PVT properties from linked ColumnBasedTable ── #}
+      {% set bd_pvt = rec.bd_pvt or {} %}
+
       {# ── Maps from linked RDDMS dataspaces ── #}
       {% set bd_maps_raw = rec.bd_maps or {} %}
       {% set bd_maps = (bd_maps_raw.get('maps') if bd_maps_raw is mapping else []) or [] %}

@@ -3,7 +3,7 @@
    Included from search.html when is_business_decision is true.
    Expects: rec, name, ext_eq, has_gls_vol, gls_vols, gls_unc, has_table_vol,
             volns, has_gls_props, gls_props, ds_params, bd_maps, bd_maps_raw,
-            rec_index, bd_prod
+            rec_index, bd_prod, bd_pvt
    ────────────────────────────────────────────────────────────────────────────── #}
 
           {# ══════════ BUSINESS DECISION CARD ══════════ #}
@@ -371,6 +371,45 @@
                 {% endif %}
               </div>
               </details>
+
+              {# ── PVT Fluid Properties (from ColumnBasedTable) ── #}
+              {% if bd_pvt and bd_pvt.get('_cases') %}
+              {% set pvt_cases = bd_pvt.get('_cases') or {} %}
+              {% set pvt_case_names = pvt_cases.get('Case') or [] %}
+              <details class="bd-section" open>
+              <summary class="bd-section-title" style="cursor:pointer;">PVT Fluid Properties ▸
+                <span class="bd-meta-badge" style="font-size:.72rem;margin-left:.5rem;">{{ pvt_case_names|length }} cases</span>
+              </summary>
+              <div style="overflow-x:auto;margin-top:.5rem;">
+                <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left;border-bottom:2px solid #e2e8f0;padding:.35rem .5rem;">Property</th>
+                      {% for cn in pvt_case_names %}
+                      <th style="text-align:right;border-bottom:2px solid #e2e8f0;padding:.35rem .5rem;">{{ cn }}</th>
+                      {% endfor %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for col_name, col_vals in pvt_cases.items() if col_name != 'Case' %}
+                    <tr>
+                      <td style="padding:.3rem .5rem;border-bottom:1px solid #f3f2f1;">{{ col_name }}</td>
+                      {% for v in col_vals %}
+                      <td style="text-align:right;padding:.3rem .5rem;border-bottom:1px solid #f3f2f1;font-weight:600;">
+                        {% if v is number %}{{ "%.3g"|format(v) }}{% else %}{{ v }}{% endif %}
+                      </td>
+                      {% endfor %}
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% if bd_pvt.get('_description') %}
+              <div style="font-size:.75rem;color:#666;margin-top:.4rem;">{{ bd_pvt['_description'] }}</div>
+              {% endif %}
+              </details>
+              {% endif %}
+
               {# ── Uncertainty popup modal (from GeoLabelSet) ── #}
               {% if gls_unc %}
               <div id="unc-modal-{{ rec_index }}" class="popup-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.45);align-items:center;justify-content:center;">
