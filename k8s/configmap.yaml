@@ -41,8 +41,8 @@ data:
   INSTANCE_EQNDEV_AUTHORITY: "osdu"
   INSTANCE_EQNDEV_SCHEMA_SOURCE: "wks"
   INSTANCE_EQNDEV_DEFAULT_LEGAL_TAG: "dev-equinor-private-default"
-  INSTANCE_EQNDEV_DEFAULT_OWNERS: "data.default.owners@dev.dataservices.energy"
-  INSTANCE_EQNDEV_DEFAULT_VIEWERS: "data.default.viewers@dev.dataservices.energy"
+  INSTANCE_EQNDEV_DEFAULT_OWNERS: "data.ores.owners@dev.dataservices.energy"
+  INSTANCE_EQNDEV_DEFAULT_VIEWERS: "data.office.global.viewers@dev.dataservices.energy"
   INSTANCE_EQNDEV_DEFAULT_COUNTRIES: "NO"
 
   # ── "eqndeva" - Equinor SWE dev, shared app token (backup) ──
