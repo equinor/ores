@@ -7,7 +7,7 @@ Uses the ORES instance/auth infrastructure (k8s/configmap.yaml + secret.yaml)
 to authenticate and push RESQML payloads to Reservoir-DDMS v2 instances.
 
 Target instances (from ORES k8s config):
-  - eqndev   — Equinor SWE dev (per_user_pkce or client_credentials)
+  - eqndev   — SWE dev (per_user_pkce or client_credentials)
   - interop  — ADME Interop (client_credentials)
   - preship  — Microsoft pre-ship M26
 

@@ -33,7 +33,7 @@ _switch_lock = threading.Lock()
 class OsduInstance:
     """Configuration for a single OSDU instance."""
     name: str
-    hostname: str = ""                      # e.g. equinorswedev.energy.azure.com
+    hostname: str = ""                      # e.g. dev.energy.azure.com
     data_partition_id: str = ""             # e.g. dev, opendes
     tenant_id: str = ""
     client_id: str = ""

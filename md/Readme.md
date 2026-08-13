@@ -122,7 +122,7 @@ Different instances can use different credentials. The middleware doesn't care -
 
 > **Key point:** PKCE login is **always available** regardless of the instance's primary auth mode.
 > The "Sign in with Microsoft" button appears on every page and on the login page.
-> An expired client secret or refresh token doesn't lock users out - they can still sign in with their own Equinor account.
+> An expired client secret or refresh token doesn't lock users out - they can still sign in with their own Microsoft account.
 
 > **Confidential client:** When a `CLIENT_SECRET` is configured, it must be included in **every** OAuth2 request
 > (authorize, token exchange, refresh). Omitting it causes Azure AD error `AADSTS7000218`.

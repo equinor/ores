@@ -488,7 +488,7 @@ async def _smda_token_from_az_cli() -> Optional[Dict[str, Any]]:
 
     Azure CLI uses Microsoft's first-party app registration (04b07795-...)
     which has broad consent in most enterprise tenants.  This is the
-    "standard Equinor token" approach.
+    "standard token" approach.
     """
     import asyncio
     import json as _json

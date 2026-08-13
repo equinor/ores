@@ -72,7 +72,7 @@ The shared refresh token enables zero-click access for every visitor. An admin m
 # Step 1 - generate a PKCE auth URL and open it in a browser
 python demo/mint_refresh_token.py
 
-# Step 2 - sign in with your Equinor account; the browser redirects to
+# Step 2 - sign in with your account; the browser redirects to
 # localhost:8400 (page won't load - that's expected). Copy the full URL
 # from the address bar and exchange it:
 python demo/mint_refresh_token.py --callback "http://localhost:8400/callback?code=...&state=..."
