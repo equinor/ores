@@ -6,8 +6,8 @@
       "id": "dev:master-data--Risk:Drogon-DG0-ProspectRisk:1",
       "kind": "osdu:wks:master-data--Risk:1.0.0",
       "acl": {
-        "owners": ["data.default.owners@dev.dataservices.energy"],
-        "viewers": ["data.default.viewers@dev.dataservices.energy"]
+        "owners": ["data.ores.owners@dev.dataservices.energy"],
+        "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
       },
       "legal": {
         "legaltags": ["dev-equinor-private-default"],
@@ -27,8 +27,8 @@
       "id": "dev:master-data--Risk:Drogon-DG0-DataMaturity:1",
       "kind": "osdu:wks:master-data--Risk:1.0.0",
       "acl": {
-        "owners": ["data.default.owners@dev.dataservices.energy"],
-        "viewers": ["data.default.viewers@dev.dataservices.energy"]
+        "owners": ["data.ores.owners@dev.dataservices.energy"],
+        "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
       },
       "legal": {
         "legaltags": ["dev-equinor-private-default"],
@@ -48,8 +48,8 @@
       "id": "dev:master-data--Risk:Drogon-DG0-CommercialViability:1",
       "kind": "osdu:wks:master-data--Risk:1.0.0",
       "acl": {
-        "owners": ["data.default.owners@dev.dataservices.energy"],
-        "viewers": ["data.default.viewers@dev.dataservices.energy"]
+        "owners": ["data.ores.owners@dev.dataservices.energy"],
+        "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
       },
       "legal": {
         "legaltags": ["dev-equinor-private-default"],
@@ -69,8 +69,8 @@
       "id": "dev:master-data--Risk:Drogon-DG0-InfrastructureAccess:1",
       "kind": "osdu:wks:master-data--Risk:1.0.0",
       "acl": {
-        "owners": ["data.default.owners@dev.dataservices.energy"],
-        "viewers": ["data.default.viewers@dev.dataservices.energy"]
+        "owners": ["data.ores.owners@dev.dataservices.energy"],
+        "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
       },
       "legal": {
         "legaltags": ["dev-equinor-private-default"],

@@ -233,7 +233,7 @@ def main():
 
     # Extract Reservoir ID and compliance from MasterWP
     reservoir_id = ""
-    acl   = {"owners": ["data.default.owners@dev.dataservices.energy"],
+    acl   = {"owners": ["data.ores.owners@dev.dataservices.energy"],
              "viewers": ["data.office.global.viewers@dev.dataservices.energy"]}
     legal = {"legaltags": ["dev-equinor-private-default"],
              "otherRelevantDataCountries": ["NO"]}

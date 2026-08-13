@@ -37,7 +37,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 
 # ── OSDU envelope defaults (same as gen_wells_drogon.py) ────────────────
 ID_PREFIX   = "dev"
-OWNERS      = ["data.default.owners@dev.dataservices.energy"]
+OWNERS      = ["data.ores.owners@dev.dataservices.energy"]
 VIEWERS     = ["data.office.global.viewers@dev.dataservices.energy"]
 LEGAL_TAGS  = ["dev-equinor-private-default"]
 COUNTRY     = ["NO"]

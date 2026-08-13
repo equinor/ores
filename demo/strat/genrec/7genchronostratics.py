@@ -132,7 +132,7 @@ def main():
     # Accept both --partition and --namespace (alias)
     ap.add_argument('--partition', default='dev', help="Data partition id (aka namespace), e.g., dev | opendes | equinor-dev")
     ap.add_argument('--namespace', default='', help="Alias for --partition")
-    ap.add_argument('--owners', default='data.default.owners@dev.dataservices.energy')
+    ap.add_argument('--owners', default='data.ores.owners@dev.dataservices.energy')
     ap.add_argument('--viewers', default='data.office.global.viewers@dev.dataservices.energy')
     ap.add_argument('--legaltag', default='dev-equinor-osdu-reference-default')
     ap.add_argument('--countries', default='NO')
@@ -152,7 +152,7 @@ def main():
     # Normalize and ensure defaults are actually populated
     def _listize(csv: str) -> List[str]:
         return [x.strip() for x in (csv or '').split(',') if x.strip()]
-    owners  = _listize(args.owners)  or ["data.default.owners@dev.dataservices.energy"]
+    owners  = _listize(args.owners)  or ["data.ores.owners@dev.dataservices.energy"]
     viewers = _listize(args.viewers) or ["data.office.global.viewers@dev.dataservices.energy"]
     countries = [x.strip().upper()[:2] for x in (args.countries or 'NO').replace(';', ',').split(',') if x.strip()]
     if not countries: countries = ["NO"]

@@ -238,7 +238,7 @@ def main():
     # Your preferred defaults
     ap.add_argument('--partition', default='dev', help="Data partition id (aka namespace), e.g., dev | opendes | equinor-dev")
     ap.add_argument('--namespace', default='', help="Alias for --partition")
-    ap.add_argument('--owners', default='data.default.owners@dev.dataservices.energy')
+    ap.add_argument('--owners', default='data.ores.owners@dev.dataservices.energy')
     ap.add_argument('--viewers', default='data.office.global.viewers@dev.dataservices.energy')
     ap.add_argument('--legaltag', default='dev-equinor-osdu-reference-default')
     ap.add_argument('--countries', default='NO')

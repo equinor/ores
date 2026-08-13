@@ -52,7 +52,7 @@ DATASPACE_NAME = "maap/drogon_dg"  # dataspace path in Reservoir DDMS
 DATASPACE_ID_SUFFIX = DATASPACE_NAME.replace("/", "-")  # maap-drogon_dg
 
 DEFAULT_ACL = {
-    "owners":  ["data.default.owners@dev.dataservices.energy"],
+    "owners":  ["data.ores.owners@dev.dataservices.energy"],
     "viewers": ["data.office.global.viewers@dev.dataservices.energy"],
 }
 DEFAULT_LEGAL = {

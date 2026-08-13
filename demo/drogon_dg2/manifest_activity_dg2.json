@@ -9,7 +9,7 @@
         "kind": "osdu:wks:dataset--ETPDataspace:1.0.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -39,7 +39,7 @@
         "kind": "osdu:wks:work-product-component--ActivityTemplate:1.0.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -364,7 +364,7 @@
         "kind": "osdu:wks:work-product-component--Activity:1.0.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"

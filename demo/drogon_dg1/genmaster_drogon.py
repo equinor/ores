@@ -22,7 +22,7 @@ from typing import Dict, List
 SCRIPT_DIR = Path(__file__).resolve().parent  # demo/drogon
 
 # ── Defaults ────────────────────────────────────────────────────────────
-DEFAULT_OWNERS  = ["data.default.owners@dev.dataservices.energy"]
+DEFAULT_OWNERS  = ["data.ores.owners@dev.dataservices.energy"]
 DEFAULT_VIEWERS = ["data.office.global.viewers@dev.dataservices.energy"]
 DEFAULT_LEGAL   = ["dev-equinor-private-default"]
 DEFAULT_COUNTRY = ["NO"]

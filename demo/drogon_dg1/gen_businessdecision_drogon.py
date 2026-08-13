@@ -26,7 +26,7 @@ from typing import Any, Dict, List
 SCRIPT_DIR = Path(__file__).resolve().parent
 
 DEFAULT_ACL = {
-    "owners":  ["data.default.owners@dev.dataservices.energy"],
+    "owners":  ["data.ores.owners@dev.dataservices.energy"],
     "viewers": ["data.office.global.viewers@dev.dataservices.energy"],
 }
 DEFAULT_LEGAL = {

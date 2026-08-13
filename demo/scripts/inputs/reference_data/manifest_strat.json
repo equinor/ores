@@ -5,10 +5,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:dataset--ETPDataspace:1.0.1",
@@ -40,10 +40,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--Activity:1.4.0",
@@ -89,10 +89,10 @@
         "kind": "osdu:wks:work-product-component--Activity:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
@@ -129,10 +129,10 @@
     {
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.default.viewers@dev.dataservices.energy"
+          "data.office.global.viewers@dev.dataservices.energy"
         ]
       },
       "kind": "osdu:wks:master-data--CollaborationProject:1.0.0",
@@ -157,18 +157,18 @@
         "CreationDateTime": "2026-03-25T12:41:07.278Z",
         "DefaultWIPACL": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "ProjectContributorACL": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "ExtensionProperties": {
@@ -179,10 +179,10 @@
     {
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.default.viewers@dev.dataservices.energy"
+          "data.office.global.viewers@dev.dataservices.energy"
         ]
       },
       "kind": "osdu:wks:master-data--ActivityTemplate:1.1.0",
@@ -218,10 +218,10 @@
     {
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.default.viewers@dev.dataservices.energy"
+          "data.office.global.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T20:20:04.564Z",
@@ -245,10 +245,10 @@
     {
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.default.viewers@dev.dataservices.energy"
+          "data.office.global.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T20:20:04.564Z",
@@ -272,10 +272,10 @@
     {
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.default.viewers@dev.dataservices.energy"
+          "data.office.global.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T20:20:04.564Z",

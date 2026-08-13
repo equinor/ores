@@ -22,7 +22,7 @@ from typing import Any, Dict, List
 SCRIPT_DIR = Path(__file__).resolve().parent  # demo/drogon
 
 DEFAULT_LEGALTAG = "dev-equinor-osdu-reference-default"
-DEFAULT_ACL_OWNER = "data.default.owners@dev.dataservices.energy"
+DEFAULT_ACL_OWNER = "data.ores.owners@dev.dataservices.energy"
 DEFAULT_ACL_VIEWER = "data.office.global.viewers@dev.dataservices.energy"
 DEFAULT_COUNTRIES = ["NO"]
 

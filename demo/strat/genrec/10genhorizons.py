@@ -118,7 +118,7 @@ def main():
                     help=f"Chrono ref-data manifest (default: {MANIFEST_CH})")
     ap.add_argument("--partition", default="dev")
     ap.add_argument("--namespace", default="", help="Alias for --partition")
-    ap.add_argument("--owners", default="data.default.owners@dev.dataservices.energy")
+    ap.add_argument("--owners", default="data.ores.owners@dev.dataservices.energy")
     ap.add_argument("--viewers", default="data.office.global.viewers@dev.dataservices.energy")
     ap.add_argument("--legaltag", default="dev-equinor-osdu-reference-default")
     ap.add_argument("--countries", default="NO")

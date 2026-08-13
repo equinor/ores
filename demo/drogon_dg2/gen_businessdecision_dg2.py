@@ -47,7 +47,7 @@ if str(DG1_DIR) not in sys.path:
 from _shared import load_json  # noqa: E402
 
 DEFAULT_ACL = {
-    "owners":  ["data.default.owners@dev.dataservices.energy"],
+    "owners":  ["data.ores.owners@dev.dataservices.energy"],
     "viewers": ["data.office.global.viewers@dev.dataservices.energy"],
 }
 DEFAULT_LEGAL = {

@@ -60,6 +60,7 @@
             {% set type_class_map = {
               'Risk': 'cls_risk',
               'Activity': 'cls_activity',
+              'ActivityTemplate': 'cls_activity',
               'Reservoir': 'cls_reservoir',
               'Wellbore': 'cls_wellbore',
               'Well': 'cls_wellbore',
@@ -67,6 +68,7 @@
               'DevelopmentConcept': 'cls_concept',
               'CollaborationProject': 'cls_concept',
               'PersistedCollection': 'cls_collection',
+              'CollaborationProjectCollection': 'cls_collection',
               'ETPDataspace': 'cls_dataspace',
               'ReservoirEstimatedVolumes': 'cls_volumes',
               'ColumnBasedTable': 'cls_volumes',
@@ -75,6 +77,35 @@
               'ReservoirSegment': 'cls_geo',
               'Field': 'cls_geo',
               'BusinessDecision': 'cls_decision',
+              'TubularAssembly': 'cls_wellbore',
+              'PPFGDataset': 'cls_wellbore',
+              'PlannedLithology': 'cls_wellbore',
+            } %}
+            {# Semantic sort order for entity types in graph (lower = higher in graph).
+               Types not listed here get sort_key 50 and fall back to alphabetical. #}
+            {% set type_sort_order = {
+              'PersistedCollection': 1,
+              'CollaborationProjectCollection': 2,
+              'CollaborationProject': 3,
+              'ETPDataspace': 5,
+              'Reservoir': 10,
+              'ReservoirSegment': 11,
+              'Field': 12,
+              'Well': 15,
+              'Wellbore': 16,
+              'WellboreTrajectory': 17,
+              'ReservoirEstimatedVolumes': 20,
+              'ColumnBasedTable': 21,
+              'GeoLabelSet': 22,
+              'DevelopmentConcept': 25,
+              'TubularAssembly': 26,
+              'PPFGDataset': 27,
+              'PlannedLithology': 28,
+              'Activity': 30,
+              'ActivityTemplate': 31,
+              'Document': 35,
+              'Risk': 40,
+              'BusinessDecision': 45,
             } %}
             {# Define a role→edge-label mapping #}
             {% set role_label_map = {
@@ -112,7 +143,12 @@ REC{{ rec_index }} -->|child| C{{ rec_index }}c{{ loop.index0 }}
 click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open child"
 {% endfor %}
 {# ── Forward links: group >3 items into a collapsed node, else show individually ── #}
-{% for etype in ns_grp.fwd_groups.keys()|sort %}
+{# Build sorted entity type list using semantic sort order #}
+{% set _fwd_sorted = [] %}
+{% for etype in ns_grp.fwd_groups.keys() %}
+  {% set _ = _fwd_sorted.append((type_sort_order.get(etype, 50), etype)) %}
+{% endfor %}
+{% for _sort_key, etype in _fwd_sorted|sort %}
 {% set items = ns_grp.fwd_groups[etype] %}
 {% set cls = type_class_map.get(etype, 'cls_default') %}
 {% set grp_lbl = role_label_map.get(items[0].role|default(''), etype|lower) or param_rels.get(items[0].id, '') or etype|lower %}
@@ -126,7 +162,7 @@ click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open chil
 {% endfor %}
 {% set _slug = _fwd_ids | join(' OR ') %}
 {# Never collapse types where each item has distinct semantics #}
-{% set _never_collapse = ['PersistedCollection', 'Document', 'FileCollection.Bluware.OpenVDS'] %}
+{% set _never_collapse = ['PersistedCollection', 'Document', 'FileCollection.Bluware.OpenVDS', 'TubularAssembly', 'Activity'] %}
 {% if items|length > 3 and etype not in _never_collapse %}
 GRP{{ rec_index }}_{{ etype }}["{{ etype }} ({{ items|length }})"]:::{{ cls }}
 REC{{ rec_index }} -->|{{ grp_lbl }}| GRP{{ rec_index }}_{{ etype }}
@@ -144,7 +180,11 @@ click F{{ rec_index }}_{{ etype }}_{{ loop.index0 }} href "/search/view/{{ l.id 
 {% endif %}
 {% endfor %}
 {# ── Reverse links: group >3 items into a collapsed node ── #}
-{% for etype in ns_grp.rev_groups.keys()|sort %}
+{% set _rev_sorted = [] %}
+{% for etype in ns_grp.rev_groups.keys() %}
+  {% set _ = _rev_sorted.append((type_sort_order.get(etype, 50), etype)) %}
+{% endfor %}
+{% for _sort_key, etype in _rev_sorted|sort %}
 {% set items = ns_grp.rev_groups[etype] %}
 {% set cls = type_class_map.get(etype, 'cls_default') %}
 {% set _rns = items[0].id.split(':')[1].split('--')[0] if items[0].id.count(':') >= 3 and '--' in items[0].id else 'master-data' %}

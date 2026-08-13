@@ -5,10 +5,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:dataset--ETPDataspace:1.0.1",
@@ -42,10 +42,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--Activity:1.4.0",
@@ -1611,10 +1611,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:reference-data--PropertyType:1.0.0",
@@ -1644,10 +1644,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:reference-data--PropertyType:1.0.0",
@@ -1677,10 +1677,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:reference-data--PropertyType:1.0.0",
@@ -1710,10 +1710,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:reference-data--PropertyType:1.0.0",
@@ -1743,10 +1743,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:reference-data--PropertyType:1.0.0",
@@ -1776,10 +1776,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:reference-data--PropertyType:1.0.0",
@@ -1809,10 +1809,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:reference-data--PropertyType:1.0.0",
@@ -1842,10 +1842,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:reference-data--PropertyType:1.0.0",
@@ -1875,10 +1875,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:reference-data--PropertyType:1.0.0",
@@ -1908,10 +1908,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
@@ -1948,10 +1948,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
@@ -1988,10 +1988,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
@@ -2028,10 +2028,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
@@ -2068,10 +2068,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
@@ -2108,10 +2108,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
@@ -2148,10 +2148,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
@@ -2188,10 +2188,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
@@ -2228,10 +2228,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
@@ -2268,10 +2268,10 @@
       {
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.default.viewers@dev.dataservices.energy"
+            "data.office.global.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--GenericRepresentation:1.2.0",
@@ -2311,10 +2311,10 @@
     {
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.default.viewers@dev.dataservices.energy"
+          "data.office.global.viewers@dev.dataservices.energy"
         ]
       },
       "kind": "osdu:wks:master-data--ActivityTemplate:1.1.0",
@@ -2349,10 +2349,10 @@
     {
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.default.viewers@dev.dataservices.energy"
+          "data.office.global.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-11T19:59:44.024Z",
@@ -2375,10 +2375,10 @@
     {
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.default.viewers@dev.dataservices.energy"
+          "data.office.global.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-11T19:59:44.024Z",
@@ -2401,10 +2401,10 @@
     {
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.default.viewers@dev.dataservices.energy"
+          "data.office.global.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-11T19:59:44.024Z",
@@ -2427,10 +2427,10 @@
     {
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.default.viewers@dev.dataservices.energy"
+          "data.office.global.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-11T19:59:44.024Z",
@@ -2453,10 +2453,10 @@
     {
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.default.viewers@dev.dataservices.energy"
+          "data.office.global.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-11T19:59:44.024Z",

@@ -6,7 +6,7 @@
       "kind": "osdu:wks:reference-data--StratigraphicRoleType:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -37,7 +37,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -66,7 +66,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -95,7 +95,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -124,7 +124,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -153,7 +153,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -182,7 +182,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -211,7 +211,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -240,7 +240,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -269,7 +269,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -298,7 +298,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -327,7 +327,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -356,7 +356,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -385,7 +385,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -414,7 +414,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -443,7 +443,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -472,7 +472,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -501,7 +501,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -530,7 +530,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -559,7 +559,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -588,7 +588,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -617,7 +617,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -646,7 +646,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -675,7 +675,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -704,7 +704,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -733,7 +733,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -762,7 +762,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -791,7 +791,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -820,7 +820,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -849,7 +849,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -878,7 +878,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -907,7 +907,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -936,7 +936,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -965,7 +965,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -994,7 +994,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1023,7 +1023,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1052,7 +1052,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1081,7 +1081,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1110,7 +1110,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1139,7 +1139,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1168,7 +1168,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1197,7 +1197,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1226,7 +1226,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1255,7 +1255,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1284,7 +1284,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1313,7 +1313,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1342,7 +1342,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1371,7 +1371,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1400,7 +1400,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1429,7 +1429,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1458,7 +1458,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1487,7 +1487,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1516,7 +1516,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1545,7 +1545,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1574,7 +1574,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1603,7 +1603,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1632,7 +1632,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1661,7 +1661,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1690,7 +1690,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1719,7 +1719,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1748,7 +1748,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1777,7 +1777,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1806,7 +1806,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1835,7 +1835,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1864,7 +1864,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1893,7 +1893,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1922,7 +1922,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1951,7 +1951,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -1980,7 +1980,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2009,7 +2009,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2038,7 +2038,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2067,7 +2067,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2096,7 +2096,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2125,7 +2125,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2154,7 +2154,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2183,7 +2183,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2212,7 +2212,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2241,7 +2241,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2270,7 +2270,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2299,7 +2299,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2328,7 +2328,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2357,7 +2357,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2386,7 +2386,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2415,7 +2415,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2444,7 +2444,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2473,7 +2473,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2502,7 +2502,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2531,7 +2531,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2560,7 +2560,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2589,7 +2589,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2618,7 +2618,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2647,7 +2647,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2676,7 +2676,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2705,7 +2705,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2734,7 +2734,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2763,7 +2763,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2792,7 +2792,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2821,7 +2821,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2850,7 +2850,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2879,7 +2879,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2908,7 +2908,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2937,7 +2937,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2966,7 +2966,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -2995,7 +2995,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3024,7 +3024,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3053,7 +3053,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3082,7 +3082,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3111,7 +3111,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3140,7 +3140,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3169,7 +3169,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3198,7 +3198,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3227,7 +3227,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3256,7 +3256,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3285,7 +3285,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3314,7 +3314,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3343,7 +3343,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3372,7 +3372,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3401,7 +3401,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3430,7 +3430,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3459,7 +3459,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3488,7 +3488,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3517,7 +3517,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3546,7 +3546,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3575,7 +3575,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3604,7 +3604,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3633,7 +3633,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3662,7 +3662,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3691,7 +3691,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3720,7 +3720,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3749,7 +3749,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3778,7 +3778,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3807,7 +3807,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3836,7 +3836,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3865,7 +3865,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3894,7 +3894,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3923,7 +3923,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3952,7 +3952,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -3981,7 +3981,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4010,7 +4010,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4039,7 +4039,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4068,7 +4068,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4097,7 +4097,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4126,7 +4126,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4155,7 +4155,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4184,7 +4184,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4213,7 +4213,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4242,7 +4242,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4271,7 +4271,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4300,7 +4300,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4329,7 +4329,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4358,7 +4358,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4387,7 +4387,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4416,7 +4416,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4445,7 +4445,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4474,7 +4474,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4503,7 +4503,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4532,7 +4532,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4561,7 +4561,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4590,7 +4590,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4619,7 +4619,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4648,7 +4648,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4677,7 +4677,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4706,7 +4706,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4735,7 +4735,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4764,7 +4764,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4793,7 +4793,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4822,7 +4822,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4851,7 +4851,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4880,7 +4880,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4909,7 +4909,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4938,7 +4938,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4967,7 +4967,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -4996,7 +4996,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5025,7 +5025,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5054,7 +5054,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5083,7 +5083,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5112,7 +5112,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5141,7 +5141,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5170,7 +5170,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5199,7 +5199,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5228,7 +5228,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5260,7 +5260,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5297,7 +5297,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5346,7 +5346,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5413,7 +5413,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.3.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5542,7 +5542,7 @@
         "kind": "osdu:wks:work-product-component--StratigraphicColumn:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5574,7 +5574,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5605,7 +5605,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5636,7 +5636,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5667,7 +5667,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5698,7 +5698,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5729,7 +5729,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5760,7 +5760,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5791,7 +5791,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5822,7 +5822,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5853,7 +5853,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5884,7 +5884,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5915,7 +5915,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5946,7 +5946,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -5977,7 +5977,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6008,7 +6008,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6039,7 +6039,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6070,7 +6070,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6101,7 +6101,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6132,7 +6132,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6163,7 +6163,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6194,7 +6194,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6225,7 +6225,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6256,7 +6256,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6287,7 +6287,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6318,7 +6318,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6349,7 +6349,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6380,7 +6380,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6411,7 +6411,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6442,7 +6442,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6473,7 +6473,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6504,7 +6504,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6535,7 +6535,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6566,7 +6566,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6597,7 +6597,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6628,7 +6628,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6659,7 +6659,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6690,7 +6690,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6721,7 +6721,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6752,7 +6752,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6783,7 +6783,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6814,7 +6814,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6845,7 +6845,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6876,7 +6876,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6907,7 +6907,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6938,7 +6938,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -6969,7 +6969,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7000,7 +7000,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7031,7 +7031,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7062,7 +7062,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7093,7 +7093,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7124,7 +7124,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7155,7 +7155,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7186,7 +7186,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7217,7 +7217,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7248,7 +7248,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7279,7 +7279,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7310,7 +7310,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7341,7 +7341,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7372,7 +7372,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7403,7 +7403,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7434,7 +7434,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7465,7 +7465,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7496,7 +7496,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7527,7 +7527,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7558,7 +7558,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7589,7 +7589,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7620,7 +7620,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7651,7 +7651,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7682,7 +7682,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7713,7 +7713,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7744,7 +7744,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7775,7 +7775,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7806,7 +7806,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7837,7 +7837,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7868,7 +7868,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7899,7 +7899,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7930,7 +7930,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7961,7 +7961,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -7992,7 +7992,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8023,7 +8023,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8054,7 +8054,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8085,7 +8085,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8116,7 +8116,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8147,7 +8147,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8178,7 +8178,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8209,7 +8209,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8240,7 +8240,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8271,7 +8271,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8302,7 +8302,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8333,7 +8333,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8364,7 +8364,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8395,7 +8395,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8426,7 +8426,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8457,7 +8457,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8488,7 +8488,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8519,7 +8519,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8550,7 +8550,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8581,7 +8581,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8612,7 +8612,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8643,7 +8643,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8674,7 +8674,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8705,7 +8705,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8736,7 +8736,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8767,7 +8767,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8798,7 +8798,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8829,7 +8829,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8860,7 +8860,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8891,7 +8891,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8922,7 +8922,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8953,7 +8953,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -8984,7 +8984,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -9015,7 +9015,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -9046,7 +9046,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -9077,7 +9077,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -9108,7 +9108,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -9139,7 +9139,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -9170,7 +9170,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -9201,7 +9201,7 @@
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"

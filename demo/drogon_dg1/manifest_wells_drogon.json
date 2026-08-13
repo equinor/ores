@@ -7,7 +7,7 @@
       "kind": "osdu:wks:master-data--Well:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -43,7 +43,7 @@
       "kind": "osdu:wks:master-data--Wellbore:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -84,7 +84,7 @@
       "kind": "osdu:wks:master-data--Well:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -121,7 +121,7 @@
       "kind": "osdu:wks:master-data--Wellbore:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -162,7 +162,7 @@
       "kind": "osdu:wks:master-data--Wellbore:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -203,7 +203,7 @@
       "kind": "osdu:wks:master-data--Well:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -239,7 +239,7 @@
       "kind": "osdu:wks:master-data--Wellbore:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -280,7 +280,7 @@
       "kind": "osdu:wks:master-data--Well:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -316,7 +316,7 @@
       "kind": "osdu:wks:master-data--Wellbore:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -357,7 +357,7 @@
       "kind": "osdu:wks:master-data--Well:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -393,7 +393,7 @@
       "kind": "osdu:wks:master-data--Wellbore:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -434,7 +434,7 @@
       "kind": "osdu:wks:master-data--Well:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -470,7 +470,7 @@
       "kind": "osdu:wks:master-data--Wellbore:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -511,7 +511,7 @@
       "kind": "osdu:wks:master-data--Well:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -547,7 +547,7 @@
       "kind": "osdu:wks:master-data--Wellbore:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -588,7 +588,7 @@
       "kind": "osdu:wks:master-data--Well:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -624,7 +624,7 @@
       "kind": "osdu:wks:master-data--Wellbore:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -665,7 +665,7 @@
       "kind": "osdu:wks:master-data--Well:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -702,7 +702,7 @@
       "kind": "osdu:wks:master-data--Wellbore:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -743,7 +743,7 @@
       "kind": "osdu:wks:master-data--Wellbore:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"

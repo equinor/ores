@@ -63,8 +63,8 @@ INSTANCES: Dict[str, Dict[str, Any]] = {
         "hostname":  "equinorswedev.energy.azure.com",
         "partition": "dev",
         "legal_tag": "dev-equinor-private-default",
-        "owners":    "data.default.owners@dev.dataservices.energy",
-        "viewers":   "data.default.viewers@dev.dataservices.energy",
+        "owners":    "data.ores.owners@dev.dataservices.energy",
+        "viewers":   "data.office.global.viewers@dev.dataservices.energy",
         "countries": "NO",
     },
     "preship": {

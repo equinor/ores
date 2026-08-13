@@ -7,7 +7,7 @@
       "kind": "osdu:wks:master-data--CollaborationProject:1.0.0",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -31,7 +31,7 @@
         "ParentProjectID": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
         "ProjectContributorACL": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -39,7 +39,7 @@
         },
         "DefaultWIPACL": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"
@@ -234,7 +234,7 @@
         "kind": "osdu:wks:work-product-component--CollaborationProjectCollection:1.0.0",
         "acl": {
           "owners": [
-            "data.default.owners@dev.dataservices.energy"
+            "data.ores.owners@dev.dataservices.energy"
           ],
           "viewers": [
             "data.office.global.viewers@dev.dataservices.energy"

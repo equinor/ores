@@ -6,8 +6,8 @@
       "id": "dev:master-data--BusinessDecision:Drogon-DG0-EvaluateOpportunity:1",
       "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
       "acl": {
-        "owners": ["data.default.owners@dev.dataservices.energy"],
-        "viewers": ["data.default.viewers@dev.dataservices.energy"]
+        "owners": ["data.ores.owners@dev.dataservices.energy"],
+        "viewers": ["data.office.global.viewers@dev.dataservices.energy"]
       },
       "legal": {
         "legaltags": ["dev-equinor-private-default"],

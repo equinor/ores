@@ -2,7 +2,7 @@
   "kind": "osdu:wks:Manifest:1.0.0",
   "acl": {
     "owners": [
-      "data.default.owners@dev.dataservices.energy"
+      "data.ores.owners@dev.dataservices.energy"
     ],
     "viewers": [
       "data.office.global.viewers@dev.dataservices.energy"
@@ -22,7 +22,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:TotalGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -47,7 +47,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:TotalHydrocarbonGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -72,7 +72,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Non-AssociatedGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -97,7 +97,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Non-AssociatedHydrocarbonGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -122,7 +122,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:AssociatedGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -147,7 +147,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:AssociatedHydrocarbon:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -172,7 +172,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:GasCapGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -197,7 +197,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:GasCapHydrocarbonGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -222,7 +222,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:DissolvedGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -247,7 +247,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:DissolvedHydrocarbonGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -272,7 +272,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Condensate:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -297,7 +297,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:CondensateGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -322,7 +322,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:CondensateOil:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -347,7 +347,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Oil:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -372,7 +372,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:CarbonDioxide:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -397,7 +397,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:HydrogenSulfide:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -422,7 +422,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Nitrogen:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -447,7 +447,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Hydrocarbon:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -472,7 +472,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Petroleum:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -497,7 +497,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:Water:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -522,7 +522,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:BulkOil:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -547,7 +547,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:BulkGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -572,7 +572,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:BulkTotal:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -597,7 +597,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:NetOil:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -622,7 +622,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:NetGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -647,7 +647,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:NetTotal:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -672,7 +672,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:PorvOil:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -697,7 +697,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:PorvGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -722,7 +722,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:PorvTotal:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -747,7 +747,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:HcpvOil:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"
@@ -772,7 +772,7 @@
       "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:HcpvGas:",
       "acl": {
         "owners": [
-          "data.default.owners@dev.dataservices.energy"
+          "data.ores.owners@dev.dataservices.energy"
         ],
         "viewers": [
           "data.office.global.viewers@dev.dataservices.energy"

@@ -18,17 +18,33 @@ A WPC decision is modelled as a **BusinessDecision** record linked to evidence, 
 graph TD
     BD["<b>BusinessDecision</b><br/>WPC Decision"]
 
-    BD -->|evidences| EPKG["PersistedCollection<br/>Evidence Package"]
-    BD -->|evidences| VOL["ReservoirEstimatedVolumes<br/>STOIIP P90/P50/P10"]
-    BD -->|evidences| GEOMODEL["ETPDataspace<br/>RDDMS geomodel"]
-    BD -->|evidences| WELL_EXP["Wellbore<br/>Exploration well"]
+    BD -->|evidence package| EPKG["PersistedCollection<br/>WPC Evidence Package"]
+    BD -->|evidences| GEOMODEL["PersistedCollection<br/>Geomodel evidence"]
+    BD -->|evidences| DRILL["PersistedCollection<br/>Drilling evidence"]
+    BD -->|evidences| RESENG["PersistedCollection<br/>Reservoir eng. evidence"]
+    BD -->|evidences| MDATA["PersistedCollection<br/>Master data"]
 
-    BD -->|informs| PROD_PROF["ColumnBasedTable<br/>Production Profile"]
-    BD -->|informs| DC["DevelopmentConcept<br/>Facility + WellPlan"]
-    BD -->|informs| W_PROD["Wellbore: Producers"]
-    BD -->|informs| W_INJ["Wellbore: Injectors"]
+    EPKG --> GEOMODEL
+    EPKG --> DRILL
+    EPKG --> RESENG
+    EPKG --> MDATA
 
-    BD -->|constrains| R["Risk records"]
+    GEOMODEL -->|contains| DS["ETPDataspace<br/>RDDMS geomodel"]
+    GEOMODEL -->|contains| SM["StructureMap, Grid,<br/>Faults, Horizons (126)"]
+
+    DRILL -->|contains| TRAJ["WellboreTrajectory (3)"]
+    DRILL -->|contains| DOCS["Document records (3)"]
+
+    RESENG -->|contains| VOL["ReservoirEstimatedVolumes<br/>STOIIP P90/P50/P10"]
+    RESENG -->|contains| DC["DevelopmentConcept<br/>Facility + WellPlan"]
+    RESENG -->|contains| CBT["ColumnBasedTable<br/>ProdProfile, PVT, Cost, Core"]
+
+    MDATA -->|contains| RES["Reservoir + Segments"]
+    MDATA -->|contains| WELLS["Wells + Wellbores<br/>(planned + SMDA)"]
+
+    BD -->|constrains| R["Risk records (8)"]
+    BD -->|informs| W_PROD["Well: Producers"]
+    BD -->|informs| W_INJ["Well: Injectors"]
 
     BD -.-|"inline ext.equinor.Alternatives[]"| ALT
 
@@ -40,13 +56,26 @@ graph TD
     end
 ```
 
-### 2.1 Core Record Types
+### 2.1 Evidence Package Structure
+
+The WPC evidence is organised as a **nested hierarchy** of PersistedCollections by discipline. Items with >3 records are grouped into a sub-collection. The top-level evidence package references the sub-collections (not individual records).
+
+```
+WPC Evidence Package (PersistedCollection)
+ ├── Geomodel evidence (PersistedCollection) — RDDMS objects + ETP dataspace
+ ├── Drilling evidence (PersistedCollection) — trajectories, programs, documents
+ ├── Reservoir engineering evidence (PersistedCollection) — volumes, PVT, FMU, completions
+ ├── Master data (PersistedCollection) — reservoir, segments, wells
+ └── Risks (direct refs) — cross-cutting, at top level
+```
+
+### 2.2 Core Record Types
 
 | Record Kind | Role in WPC | Key Fields |
 |---|---|---|
 | `BusinessDecision` | Gate decision record | DecisionLevelID, ApprovalStatusID, Parameters[], RiskIDs[], ProjectSpecifications[], ext.equinor.Alternatives[] |
 | `CollaborationProject` | Long-lived project wrapper | LifecycleEvents[], ActivityStates[] (gate checklist), Personnel[], TrustedCollectionID |
-| `PersistedCollection` | Frozen evidence snapshot | ResourceCollectionID (list of all evidence record IDs) |
+| `PersistedCollection` | Frozen evidence snapshot (can nest) | DataReferences[] (list of evidence record IDs or sub-collection IDs) |
 | `CollaborationProjectCollection` | Living SoR collection | Updated as new records are ingested |
 | `ReservoirEstimatedVolumes` | Statistical volumes | Volumes.ColumnBasedTable with P90/P50/P10 per zone |
 | `DevelopmentConcept` | Facility + well plan | FacilityConcept, WellPlan, DrainageStrategy, ReservoirTarget |
@@ -56,7 +85,7 @@ graph TD
 | `Risk` | Decision hazards | Severity, Probability, MitigationActions[], MitigationActionIDs[], ext.equinor status |
 | `Activity` | Workflow provenance | ActivityTemplateID, Parameters[] (inputs/outputs), WorkflowStatus |
 
-### 2.2 Relationship Edges (Parameters[])
+### 2.3 Relationship Edges (Parameters[])
 
 All inter-record links use `Parameters[]` with `Keys[ParameterKey="relationship"]` to define typed edges:
 
@@ -69,7 +98,7 @@ All inter-record links use `Parameters[]` with `Keys[ParameterKey="relationship"
 | `alternativeTo` | Decision alternatives | Competing BD at same gate level |
 | `mitigates` | Mitigation action → risk | Activity → Risk |
 
-### 2.3 Interpretation Chain (RDDMS → Catalog)
+### 2.4 Interpretation Chain (RDDMS → Catalog)
 
 ```
 LocalBoundaryFeature
