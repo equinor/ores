@@ -64,6 +64,7 @@ _HOWTO_SECTIONS: list[dict] = [
                 "desc": "Model DG1–DG4 decisions as BusinessDecision records",
                 "children": [
                     {"slug": "bd-demo",      "file": "BdDemo.md",       "title": "BD Guide",        "desc": "Data model, lifecycle, relationships & ORES tooling"},
+                    {"slug": "drogon-data-model", "file": "DrogonDataModel.md", "title": "Drogon Data Model", "desc": "DG1 record inventory, pipeline, RESQML & ETP ingestion"},
                     {"slug": "volumes",      "file": "Volumes.md",      "title": "Volumes",        "desc": "ReservoirEstimatedVolumes WPC & fmu-dataio mapping"},
                     {"slug": "geolabelset",  "file": "GeoLabelSet.md",  "title": "GeoLabelSet",   "desc": "Reservoir volumes & statistics manifests"},
                     {"slug": "risk",         "file": "Risk.md",         "title": "Risk",           "desc": "Subsurface risk data management"},

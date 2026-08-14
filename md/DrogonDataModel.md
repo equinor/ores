@@ -44,7 +44,7 @@ graph TD
 
     subgraph "Decision Support"
         RISK["Risk<br/><i>Porosity &amp; Cementation</i>"]
-        BD["BusinessDecision<br/><i>DG1 Identify &amp; Assess</i>"]
+        BD["BusinessDecision<br/><i>DG1 Concept Selection</i>"]
     end
 
     subgraph "Reference Data"
@@ -119,7 +119,7 @@ graph TD
 | 13 | `work-product-component--ActivityTemplate` | Volumetrics Workflow Template | `aa2791c8…` |
 | 14 | `work-product-component--Activity` | DG1 Volumetrics Workflow Run | `ead6e342…` |
 | 15 | `master-data--Risk` | Porosity & Cementation | `Drogon-PorosityAndCementation` |
-| 16 | `master-data--BusinessDecision` | DG1 Identify & Assess | `Drogon-DG1-Identify` |
+| 16 | `master-data--BusinessDecision` | DG1 Concept Selection | `Drogon-DG1-Identify` |
 
 ### BusinessDecision enrichment (ext.equinor)
 
@@ -178,14 +178,10 @@ The `ActivityTemplate` declares all parameter slots for the workflow. The
 | `OutputVolumes` | Output (DataObject) | RAW REV WPC (`68f57fdc…`) |
 | `ReportTable` | Output (DataObject) | STAT REV WPC (`0ed7364d…`) |
 
-> The `Variables` and `DesignMatrix` values are taken verbatim from
-> `resqml/obj_Activity_MISSING.xml` - the original RESQML activity descriptor
-> provided by the RMS workflow.
-
 **Design rationale - one Activity, not three:**
 One `ActivityTemplate` + one `Activity` is the correct OSDU pattern for an
 atomic workflow execution. The three *logical* steps (generate parameters →
-run RMS → aggregate statistics) belong in the activity *description*, not
+run simulation → aggregate statistics) belong in the activity *description*, not
 in three separate Activity records. Three records would only be appropriate
 if each step were independently re-runnable and separately provenance-tracked.
 
@@ -276,19 +272,19 @@ flowchart LR
 
 ### Running the Pipeline
 
-```powershell
+```bash
 # Full pipeline (default)
-.\demo\drogon\run_pipeline.ps1
+bash demo/drogon_dg1/run_pipeline.sh
 
 # Generate only, no ingestion
-.\demo\drogon\run_pipeline.ps1 -SkipIngest
+bash demo/drogon_dg1/run_pipeline.sh --skip-ingest
 
 # Re-ingest single record (e.g. after editing BD)
-py demo/drogon_dg1/ingest_records_batch.py --start 14 --delay 0
+python demo/drogon_dg1/ingest_records_batch.py --start 14 --delay 0
 
 # RDDMS ingestion (requires Docker + open-etp-sslclient image)
-pwsh demo/drogon_dg1/resqml/ingest_rddms.ps1
-pwsh demo/drogon_dg1/resqml/ingest_rddms.ps1 -SkipCreate   # reuse existing dataspace
+bash demo/drogon_dg1/resqml/ingest_rddms.sh
+bash demo/drogon_dg1/resqml/ingest_rddms.sh --skip-create   # reuse existing dataspace
 ```
 
 ---
@@ -296,49 +292,56 @@ pwsh demo/drogon_dg1/resqml/ingest_rddms.ps1 -SkipCreate   # reuse existing data
 ## RESQML / Reservoir DDMS
 
 The workflow is also represented as RESQML 2.0.1 EPC objects ingested into the
-**Reservoir DDMS** dataspace `maap/drogon_dg` via the ETP WebSocket API using
-the `open-etp-sslclient` Docker image.
+**Reservoir DDMS** via the ETP WebSocket protocol. The dataspace
+`maap/drogon_dg` holds the geomodel objects.
 
-### EPC files
+### ETP Ingestion
 
-| File | Contents |
-|------|----------|
-| `resqml/drogon_tables.epc` | 3 × `obj_Grid2dRepresentation` (params, RAW volumes, STAT volumes) + `StringTableLookup` objects for column names/UoMs |
-| `resqml/drogon_activity.epc` | 1 × `obj_ActivityTemplate` + 1 × `obj_Activity` (merged, matching OSDU record UUIDs) |
+Ingestion uses the `open-etp-sslclient` Docker image to push EPC packages
+into the Reservoir DDMS over ETP (Energistics Transfer Protocol):
 
-### RESQML Activity - merged single Activity
+```bash
+# Create dataspace + ingest EPC
+bash demo/drogon_dg1/resqml/ingest_rddms.sh
 
-The EPC carries **one** `obj_ActivityTemplate` and **one** `obj_Activity`
-(same design rationale as the OSDU record - one atomic workflow execution).
+# Re-ingest into existing dataspace (skip create)
+bash demo/drogon_dg1/resqml/ingest_rddms.sh --skip-create
+```
 
-The Activity parameters mirror the OSDU record exactly, with data-object
-references pointing to the `Grid2dRepresentation` UUIDs in `drogon_tables.epc`:
+The ETP channel handles authentication, dataspace creation, and object
+upload in a single session. Objects are validated against the RESQML 2.0.1
+schema on the server side.
+
+### RESQML Objects
+
+| Object Type | Count | Purpose |
+|-------------|-------|---------|
+| `obj_Grid2dRepresentation` | 3 | Tabular data: parameters, RAW volumes, STAT volumes |
+| `StringTableLookup` | 3 | Column names and UoMs for the grid representations |
+| `obj_ActivityTemplate` | 1 | Workflow definition (mirrors OSDU ActivityTemplate) |
+| `obj_Activity` | 1 | Execution record (mirrors OSDU Activity) |
+
+The RESQML Activity parameters mirror the OSDU record, with data-object
+references pointing to the `Grid2dRepresentation` UUIDs:
 
 | Parameter | RESQML type | Value / UUID |
 |-----------|-------------|--------------|
-| `InputParameters` | `DataObjectParameter` | params `Grid2dRepresentation` (`38458cd4…`) |
-| `Process` | `StringParameter` | `"RMS DecisionExample - Drogon"` |
+| `InputParameters` | `DataObjectParameter` | params Grid2d (`38458cd4…`) |
+| `Process` | `StringParameter` | `"DecisionExample - Drogon"` |
 | `NumberOfRealizations` | `IntegerQuantityParameter` | `3` |
-| `Workflow` | `StringParameter` | `"DecisionExample"` |
-| `ReportTableName` | `StringParameter` | `"DecisionExample_report"` |
-| `Method` | `StringParameter` | `"User_Defined"` |
-| `Variables` | `StringParameter` | JSON (10 OWC/PHIT variables, verbatim from `obj_Activity_MISSING.xml`) |
-| `DesignMatrix` | `StringParameter` | JSON (3 realisations B/L/H) |
-| `OutputParameters` | `DataObjectParameter` | params `Grid2dRepresentation` (`38458cd4…`) |
-| `OutputVolumes` | `DataObjectParameter` | RAW volumes `Grid2dRepresentation` (`d0f6d781…`) |
-| `ReportTable` | `DataObjectParameter` | STAT volumes `Grid2dRepresentation` (`fde25126…`) |
+| `OutputVolumes` | `DataObjectParameter` | RAW volumes Grid2d (`d0f6d781…`) |
+| `ReportTable` | `DataObjectParameter` | STAT volumes Grid2d (`fde25126…`) |
 
-> `obj_Activity_MISSING.xml` in `resqml/` is the original RESQML Activity
-> descriptor exported from RMS. Its `MISSING` UUIDs and template reference
-> were filled in and incorporated into `gen_resqml.py` and `gen_activity_drogon.py`.
+### UUID Alignment
 
-### UUID alignment
+The RESQML UUIDs (`b727ee57…` template, `aea6e528…` activity) and the OSDU
+WPC IDs (`aa2791c8…` template, `ead6e342…` activity) are generated from the
+same namespace seeds — ensuring cross-system traceability between OSDU Storage
+and Reservoir DDMS.
 
-The `obj_ActivityTemplate` UUID in the EPC (`b727ee57…`) and the `obj_Activity`
-UUID (`aea6e528…`) are generated deterministically by `gen_resqml.py`. The
-corresponding OSDU WPC IDs (`aa2791c8…` template, `ead6e342…` activity) are
-generated by `gen_activity_drogon.py` from the same namespace seeds - ensuring
-cross-system traceability.
+> **Reference:** The source EPC files are maintained in the
+> [OSDU data-definitions GitLab](https://community.opengroup.org/osdu/data/data-definitions)
+> examples for reproducibility.
 
 ---
 
@@ -354,7 +357,7 @@ cross-system traceability.
 | **BD.PriorActivityIDs → Activity** | The BD cites the *activity that produced the evidence*, not the artefacts directly. The Activity in turn links to all evidence via its output parameters and `ancestry.children`. |
 | **`ReportTableName` vs `ReportTable`** | `ReportTable` as a title was used twice - once for the input string name and once for the output DataObject. Renamed the input slot to `ReportTableName` to avoid the collision. |
 | **Human-readable IDs for singletons** | Risk (`Drogon-PorosityAndCementation`) and BD (`Drogon-DG1-Identify`) use descriptive IDs instead of UUIDs since there's one of each. |
-| **Dual ingestion (REST + RDDMS)** | OSDU Storage REST API holds the searchable WPC metadata; Reservoir DDMS holds the RESQML EPC (geometry + tabular data + activity chain) for interoperability with subsurface tools. |
+| **Dual ingestion (REST + RDDMS)** | OSDU Storage REST API holds the searchable WPC metadata; Reservoir DDMS holds the RESQML objects (geometry + tabular data + activity chain) for interoperability with subsurface tools via ETP. |
 
 ---
 
@@ -372,7 +375,7 @@ The Record Explorer (`/strat`) provides:
 
 ## Web UI Alternative (Script-Free)
 
-For workshops, talks, or quick testing, the ORES [/add-dg](/add-dg) web UI can create a complete BusinessDecision record interactively - equivalent to what `gen_businessdecision_drogon.py` produces:
+The ORES [/add-dg](/add-dg) web UI can create a complete BusinessDecision record interactively - equivalent to what `gen_businessdecision_drogon.py` produces:
 
 | Step | UI Panel | Script equivalent |
 |------|----------|-------------------|

@@ -2,6 +2,7 @@
 
 > **Scope:** In-depth guide to the BusinessDecision data model in OSDU — business cases, temporal lifecycle, relationship semantics, collaboration patterns, and ORES tooling. Field-agnostic.
 > For the BD schema reference, see [Business Decision](/howto/business-decision).
+> For the Drogon demo record inventory & pipeline, see [Drogon Data Model](/howto/drogon-data-model).
 > For volumes, risks, uncertainty, see the sibling articles under Business Decision.
 
 ---
