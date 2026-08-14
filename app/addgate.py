@@ -507,7 +507,7 @@ async def create_bd(request: Request):
     risk_edges: List[Dict[str, str]] = body.get("risk_edges", [])
     for re in risk_edges:
         rid = re.get("id", "").strip()
-        rel = re.get("relationship", "constrains")
+        rel = re.get("relationship", "constrainedBy")
         if rid:
             parameters.append(_make_param(
                 f"Risk: {rid.split(':')[-1].split(':')[0] if ':' in rid else rid}",

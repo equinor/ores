@@ -30,14 +30,14 @@
       {
         "title": "DG1 Evidence Package",
         "target_id": "dev:work-product-component--PersistedCollection:Drogon-DG1-EvidencePackage:1",
-        "type": "evidences",
+        "type": "evidencedBy",
         "artifact": "PersistedCollection",
         "selection": "All DG1 volumetrics artifacts, reservoir context, risks"
       },
       {
         "title": "Headline volumes (GeoLabelSet)",
         "target_id": "dev:work-product-component--GeoLabelSet:Drogon-DG1-GeoLabelSet:1",
-        "type": "evidences",
+        "type": "evidencedBy",
         "artifact": "GeoLabelSet",
         "role": "Input",
         "selection": "P10/P50/P90 per segment, derived from stat REV"
@@ -45,7 +45,7 @@
       {
         "title": "In-place volumes (P10/P50/P90)",
         "target_id": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1",
-        "type": "evidences",
+        "type": "evidencedBy",
         "artifact": "REV-stats",
         "role": "Output",
         "selection": "Statistical aggregates from FMU run #47"
@@ -53,7 +53,7 @@
       {
         "title": "Input parameters table",
         "target_id": "dev:work-product-component--ColumnBasedTable:Drogon-DG1-InputParameters:1",
-        "type": "informs",
+        "type": "informedBy",
         "artifact": "ColumnBasedTable-params",
         "role": "Input",
         "selection": "OWC, porosity, NTG per segment/facies"
@@ -61,20 +61,20 @@
       {
         "title": "Geomodel dataspace (RDDMS)",
         "target_id": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
-        "type": "evidences",
+        "type": "evidencedBy",
         "artifact": "ETPDataspace",
         "selection": "Structural + property model"
       },
       {
         "title": "Porosity risk",
         "target_id": "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
-        "type": "constrains",
+        "type": "constrainedBy",
         "selection": "Floodplain facies porosity poorly constrained"
       },
       {
         "title": "Fault compartment risk",
         "target_id": "dev:master-data--Risk:Drogon-FaultCompartment:1",
-        "type": "constrains",
+        "type": "constrainedBy",
         "selection": "NE fault communication uncertain"
       }
     ],

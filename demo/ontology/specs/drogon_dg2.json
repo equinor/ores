@@ -33,7 +33,7 @@
       {
         "title": "DG2 Evidence Package",
         "target_id": "dev:work-product-component--PersistedCollection:Drogon-DG2-EvidencePackage:1",
-        "type": "evidences",
+        "type": "evidencedBy",
         "artifact": "PersistedCollection",
         "selection": "Full gate evidence (99 artifacts)"
       },
@@ -46,7 +46,7 @@
       {
         "title": "Revised volumes (post porosity downgrade)",
         "target_id": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1",
-        "type": "evidences",
+        "type": "evidencedBy",
         "artifact": "REV-stats",
         "role": "Input",
         "selection": "P50 STOIIP 312→287 MSm³ (-8%). Feb 2026 revision."
@@ -61,7 +61,7 @@
       {
         "title": "Production forecast (20-year)",
         "target_id": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1",
-        "type": "informs",
+        "type": "informedBy",
         "artifact": "ProductionForecast",
         "role": "Input",
         "selection": "OPM Flow: 7P/3I, WAG year 5. Peak 45 kbbl/d year 3."
@@ -69,7 +69,7 @@
       {
         "title": "Development Concept — Full 7-segment (SELECTED)",
         "target_id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-FullScope:1",
-        "type": "informs",
+        "type": "selects",
         "artifact": "DevelopmentConcept",
         "role": "Output",
         "selection": "Subsea tieback to FPSO, 12 km, 2 manifolds. APPROVED."
@@ -85,7 +85,7 @@
       {
         "title": "Updated geomodel (RDDMS)",
         "target_id": "dev:dataset--ETPDataspace:maap-drogon_dg2:1",
-        "type": "evidences",
+        "type": "evidencedBy",
         "artifact": "ETPDataspace",
         "selection": "Post-DG1: structural uncertainty + porosity revised"
       },
@@ -99,7 +99,7 @@
       {
         "title": "Porosity risk (ESCALATED)",
         "target_id": "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
-        "type": "constrains",
+        "type": "constrainedBy",
         "selection": "Severity Medium→High. Porosity revised 0.18→0.14."
       },
       {
@@ -111,13 +111,13 @@
       {
         "title": "Water breakthrough risk (NEW)",
         "target_id": "dev:master-data--Risk:Drogon-WaterBreakthrough:1",
-        "type": "constrains",
+        "type": "constrainedBy",
         "selection": "High water cut risk in SouthWing"
       },
       {
         "title": "Subsea tieback distance risk (NEW)",
         "target_id": "dev:master-data--Risk:Drogon-SubseaTiebackDistance:1",
-        "type": "constrains",
+        "type": "constrainedBy",
         "selection": "12 km tieback at 380m depth"
       }
     ],
@@ -215,12 +215,12 @@
     ],
 
     "relationships": [
-      {"title": "GeoModel Dataspace (current)", "target_id": "dev:dataset--ETPDataspace:maap-drogon_dg2:1", "type": "evidences", "artifact": "ETPDataspace", "selection": "DG2 updated model"},
+      {"title": "GeoModel Dataspace (current)", "target_id": "dev:dataset--ETPDataspace:maap-drogon_dg2:1", "type": "evidencedBy", "artifact": "ETPDataspace", "selection": "DG2 updated model"},
       {"title": "GeoModel Dataspace (DG1 baseline)", "target_id": "dev:dataset--ETPDataspace:maap-drogon_dg:1", "type": "supersedes", "artifact": "ETPDataspace", "selection": "Superseded by DG2"},
-      {"title": "Statistical Volumes", "target_id": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1", "type": "evidences", "artifact": "REV-stats"},
-      {"title": "Evidence Package (frozen)", "target_id": "dev:work-product-component--PersistedCollection:Drogon-DG2-EvidencePackage:1", "type": "evidences", "artifact": "PersistedCollection"},
-      {"title": "Production Forecast", "target_id": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1", "type": "informs", "artifact": "ProductionForecast"},
-      {"title": "Full-scope concept (selected)", "target_id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-FullScope:1", "type": "informs", "artifact": "DevelopmentConcept"}
+      {"title": "Statistical Volumes", "target_id": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1", "type": "evidencedBy", "artifact": "REV-stats"},
+      {"title": "Evidence Package (frozen)", "target_id": "dev:work-product-component--PersistedCollection:Drogon-DG2-EvidencePackage:1", "type": "evidencedBy", "artifact": "PersistedCollection"},
+      {"title": "Production Forecast", "target_id": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1", "type": "informedBy", "artifact": "ProductionForecast"},
+      {"title": "Full-scope concept (selected)", "target_id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-FullScope:1", "type": "selects", "artifact": "DevelopmentConcept"}
     ]
   },
 
@@ -235,7 +235,7 @@
       "parameters": [
         {"title": "Target BusinessDecision", "target_id": "dev:master-data--BusinessDecision:Drogon-DG2-ConceptSelect:1", "type": "informs", "role": "InputReference"},
         {"title": "Previous Volume Record (superseded)", "target_id": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG1-REV-Statistics:1", "type": "supersedes", "artifact": "REV-stats", "role": "Input"},
-        {"title": "New Volume Record", "target_id": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1", "type": "evidences", "artifact": "REV-stats", "role": "Output"},
+        {"title": "New Volume Record", "target_id": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1", "type": "produces", "artifact": "REV-stats", "role": "Output"},
         {"title": "Reason", "value": "Floodplain facies porosity revised 0.18→0.14 based on core data (wells 15/9-F-11, 15/9-F-14)."},
         {"title": "Actor", "value": "Reservoir engineering team (subsurface lead)"}
       ]

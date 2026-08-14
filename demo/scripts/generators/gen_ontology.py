@@ -44,9 +44,9 @@ Spec format:
       {"name": "Reduced scope", "rank": 2, "rationale": "...", "action": "Consider"}
     ],
     "relationships": [
-      {"title": "Evidence Package", "target_id": "...", "type": "evidences", "artifact": "PersistedCollection"},
+      {"title": "Evidence Package", "target_id": "...", "type": "evidencedBy", "artifact": "PersistedCollection"},
       {"title": "Prior gate", "target_id": "...", "type": "supersedes"},
-      {"title": "Geomodel", "target_id": "...", "type": "evidences", "artifact": "ETPDataspace"}
+      {"title": "Geomodel", "target_id": "...", "type": "evidencedBy", "artifact": "ETPDataspace"}
     ],
     "risk_ids": ["dev:master-data--Risk:..."],
     "remarks": [
@@ -69,7 +69,7 @@ Spec format:
       ...
     ],
     "relationships": [
-      {"title": "GeoModel Dataspace", "target_id": "...", "type": "evidences", "artifact": "ETPDataspace"}
+      {"title": "GeoModel Dataspace", "target_id": "...", "type": "evidencedBy", "artifact": "ETPDataspace"}
     ]
   },
 
@@ -81,7 +81,7 @@ Spec format:
       "start": "2026-02-12T14:00:00Z",
       "end": "2026-02-12T16:00:00Z",
       "parameters": [
-        {"title": "Target BD", "target_id": "...", "type": "informs"},
+        {"title": "Target BD", "target_id": "...", "type": "informedBy"},
         {"title": "Reason", "value": "Porosity revised 0.18→0.14"}
       ]
     }

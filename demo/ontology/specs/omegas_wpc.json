@@ -49,7 +49,7 @@
         "DataObjectParameter": "dev:work-product-component--GeoLabelSet:OmegaSor-SSVP-Volumes:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "GeoLabelSet"},
-          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+          {"ParameterKey": "relationship", "StringParameterKey": "evidencedBy"}
         ]
       },
       {
@@ -60,7 +60,7 @@
         "DataObjectParameter": "dev:work-product-component--PersistedCollection:OmegaSor-WPC-Evidence:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "PersistedCollection"},
-          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+          {"ParameterKey": "relationship", "StringParameterKey": "evidencedBy"}
         ]
       },
       {
@@ -71,7 +71,7 @@
         "DataObjectParameter": "dev:work-product-component--ReservoirEstimatedVolumes:OmegaSor-SSVP-Statistics:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "REV-stats"},
-          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+          {"ParameterKey": "relationship", "StringParameterKey": "evidencedBy"}
         ]
       },
       {
@@ -82,7 +82,7 @@
         "DataObjectParameter": "dev:work-product-component--ColumnBasedTable:OmegaSor-SSVP-ProductionForecast:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "ProductionForecast"},
-          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+          {"ParameterKey": "relationship", "StringParameterKey": "informedBy"}
         ]
       },
       {
@@ -93,7 +93,7 @@
         "DataObjectParameter": "dev:work-product-component--DevelopmentConcept:OmegaSor-SSVP-Concept:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "DevelopmentConcept"},
-          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+          {"ParameterKey": "relationship", "StringParameterKey": "informedBy"}
         ]
       },
       {
@@ -104,7 +104,7 @@
         "DataObjectParameter": "dev:dataset--ETPDataspace:maap-omegas:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"},
-          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+          {"ParameterKey": "relationship", "StringParameterKey": "evidencedBy"}
         ]
       },
       {
@@ -114,7 +114,7 @@
         "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
         "DataObjectParameter": "dev:master-data--Wellbore:34-4-19S:1",
         "Keys": [
-          {"ParameterKey": "relationship", "StringParameterKey": "evidences"}
+          {"ParameterKey": "relationship", "StringParameterKey": "evidencedBy"}
         ]
       },
       {
@@ -124,7 +124,7 @@
         "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
         "DataObjectParameter": "dev:master-data--Risk:OmegaSor-BariumScale-00061:1",
         "Keys": [
-          {"ParameterKey": "relationship", "StringParameterKey": "constrains"}
+          {"ParameterKey": "relationship", "StringParameterKey": "constrainedBy"}
         ]
       },
       {
@@ -134,7 +134,7 @@
         "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
         "DataObjectParameter": "dev:master-data--Risk:OmegaSor-Injectivity:1",
         "Keys": [
-          {"ParameterKey": "relationship", "StringParameterKey": "constrains"}
+          {"ParameterKey": "relationship", "StringParameterKey": "constrainedBy"}
         ]
       },
       {
@@ -145,7 +145,7 @@
         "DataObjectParameter": "dev:work-product-component--WellPlan:OmegaSor-Producer1:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "Producer"},
-          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+          {"ParameterKey": "relationship", "StringParameterKey": "informedBy"}
         ]
       },
       {
@@ -156,7 +156,7 @@
         "DataObjectParameter": "dev:work-product-component--WellPlan:OmegaSor-Injector1:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "Injector"},
-          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+          {"ParameterKey": "relationship", "StringParameterKey": "informedBy"}
         ]
       },
       {
@@ -167,7 +167,7 @@
         "DataObjectParameter": "dev:work-product-component--WellPlan:OmegaSor-Pilot:1",
         "Keys": [
           {"ParameterKey": "artifact", "StringParameterKey": "Pilot"},
-          {"ParameterKey": "relationship", "StringParameterKey": "informs"}
+          {"ParameterKey": "relationship", "StringParameterKey": "informedBy"}
         ]
       }
     ],

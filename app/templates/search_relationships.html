@@ -111,14 +111,18 @@
             {% set role_label_map = {
               'parameter-object': '',
               'prior-activity': 'activity',
-              'risk': 'constrains',
-              'evidence': 'evidences',
+              'risk': 'constrainedBy',
+              'evidence': 'evidencedBy',
               'project': 'project',
               'parent-work-product': 'parent',
               'parent-object': 'parent',
               'referenced-by': 'refs',
               'informs': 'informs',
+              'informedBy': 'informedBy',
+              'selects': 'selects',
               'supersedes': 'supersedes',
+              'mitigates': 'mitigates',
+              'produces': 'produces',
             } %}
             <pre class="mermaid">
 graph LR
