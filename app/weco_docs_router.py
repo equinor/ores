@@ -174,7 +174,7 @@ def _render_md(filename: str) -> tuple[str, str]:
         raise HTTPException(404, f"WeCo doc not found: {filename}")
     source = md_path.read_text(encoding="utf-8")
     converter = _md.Markdown(extensions=_md_extensions, extension_configs={
-        "toc": {"permalink": True, "toc_depth": "2-4"},
+        "toc": {"permalink": "#", "toc_depth": "2-4"},
         "pymdownx.superfences": {
             "custom_fences": [{
                 "name": "mermaid",

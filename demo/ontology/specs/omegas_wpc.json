@@ -64,6 +64,17 @@
         ]
       },
       {
+        "Title": "WPC Ontology & Dataset Documentation",
+        "Selection": "Full dataset documentation: ontology record graph, relationship edges, conventions, ingestion pipeline",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:work-product-component--Document:OmegaSor-WPC-DatasetDoc:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "Document"},
+          {"ParameterKey": "relationship", "StringParameterKey": "evidencedBy"}
+        ]
+      },
+      {
         "Title": "Statistical volumes (P90/Mean/P10)",
         "Selection": "Simulation model 10th June. STOIIP 15.8/19.3/22.9 MSm³, Recoverable 3.3/5.4/8.0 MSm³, RF 16/28.5/43%.",
         "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",

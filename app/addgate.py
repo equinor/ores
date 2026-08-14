@@ -83,11 +83,11 @@ async def add_dg_page(request: Request):
 # ── Decision-level reference data ──────────────────────────────────────────
 
 _FALLBACK_LEVELS = [
-    {"id": "DG0", "name": "DG0 - Screening / SSVP"},
-    {"id": "DG1", "name": "DG1 - Identify & Assess"},
-    {"id": "DG2", "name": "DG2 - Concept Select"},
-    {"id": "DG3", "name": "DG3 - Sanction / FID"},
-    {"id": "DG4", "name": "DG4 - Start-up"},
+    {"id": "DG0", "name": "DG0 - Business Case Maturity"},
+    {"id": "DG1", "name": "DG1 - Concept Selection"},
+    {"id": "DG2", "name": "DG2 - Concept Maturity"},
+    {"id": "DG3", "name": "DG3 - Project Sanction"},
+    {"id": "DG4", "name": "DG4 - Execution Completion"},
     {"id": "WPC", "name": "WPC - Well Planning Committee"},
 ]
 

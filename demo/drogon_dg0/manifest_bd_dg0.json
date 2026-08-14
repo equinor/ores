@@ -14,14 +14,14 @@
         "otherRelevantDataCountries": ["NO"]
       },
       "data": {
-        "Name": "Drogon DG0 - Evaluate Opportunity",
-        "Description": "DG0 initial opportunity screening for the Drogon prospect. Valysar formation in Volantis Group, 7 fault-bounded segments. Pre-drill analogue-based volumetric estimate, geological risk screening, and strategic fit assessment. Recommends proceed to DG1 Identify & Assess.",
+        "Name": "Drogon DG0 - Business Case Maturity",
+        "Description": "DG0 business-case maturity for the Drogon prospect. Valysar formation in Volantis Group, 7 fault-bounded segments. Pre-drill analogue-based volumetric estimate, geological risk screening, and strategic fit assessment. Recommends proceed to DG1 Concept Selection.",
         "ProjectName": "Drogon Field Development",
         "DecisionLevelID": "dev:reference-data--DecisionLevel:DG0:",
         "ApprovalStatusID": "dev:reference-data--DecisionApprovalStatus:Approved:",
         "DecisionDueDate": "2025-06-01",
         "DecisionDate": "2025-05-15",
-        "DecisionSummary": "Screen Drogon prospect for field development potential. Analogue-based STOIIP estimate 25–45 MSm³ oil in Valysar formation. 7 fault-bounded segments identified from seismic interpretation. Strategic fit confirmed (Snorre area infrastructure). Approve proceed to DG1 with initial FMU volumetric assessment.",
+        "DecisionSummary": "Screen Drogon prospect for field development potential. Analogue-based STOIIP estimate 25–45 MSm³ oil in Valysar formation. 7 fault-bounded segments identified from seismic interpretation. Strategic fit confirmed (Snorre area infrastructure). Approve proceed to DG1 Concept Selection with initial FMU volumetric assessment.",
         "ReservoirIDs": [
           "dev:master-data--Reservoir:Drogon:1"
         ],
@@ -100,13 +100,13 @@
             "MilestoneID": "DG0",
             "EffectiveDateTime": "2025-05-15",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:",
-            "Remark": "DG0 Evaluate Opportunity"
+            "Remark": "DG0 Business Case Maturity"
           },
           {
             "MilestoneID": "DG1",
             "EffectiveDateTime": "2025-12-15",
             "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:",
-            "Remark": "DG1 Identify & Assess"
+            "Remark": "DG1 Concept Selection"
           }
         ],
         "SpatialArea": {

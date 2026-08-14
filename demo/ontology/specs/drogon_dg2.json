@@ -6,8 +6,8 @@
 
   "business_decision": {
     "id": "dev:master-data--BusinessDecision:Drogon-DG2-ConceptSelect:1",
-    "name": "Drogon DG2 - Concept Select",
-    "description": "DG2 concept selection. Full 7-segment vs reduced-scope evaluation. Volumes revised post porosity downgrade.",
+    "name": "Drogon DG2 - Concept Maturity",
+    "description": "DG2 concept maturity. Full 7-segment vs reduced-scope evaluation. Volumes revised post porosity downgrade.",
     "project_name": "Drogon Field Development",
     "decision_level": "DG2",
     "approval_status": "Approved",
@@ -170,10 +170,10 @@
     ],
 
     "activity_states": [
-      {"milestone_id": "DG1", "date": "2026-02-28T00:00:00Z", "status": "Completed", "remark": "DG1 Approved"},
-      {"milestone_id": "DG2", "date": "2026-05-15T00:00:00Z", "status": "Completed", "remark": "DG2 Approved — full 7-segment"},
-      {"milestone_id": "DG3", "date": "2027-01-01T00:00:00Z", "status": "Planned", "remark": "DG3 FEED"},
-      {"milestone_id": "DG4", "date": "2027-07-01T00:00:00Z", "status": "Planned", "remark": "FID"}
+      {"milestone_id": "DG1", "date": "2026-02-28T00:00:00Z", "status": "Completed", "remark": "DG1 Concept Selection — Approved"},
+      {"milestone_id": "DG2", "date": "2026-05-15T00:00:00Z", "status": "Completed", "remark": "DG2 Concept Maturity — full 7-segment"},
+      {"milestone_id": "DG3", "date": "2027-01-01T00:00:00Z", "status": "Planned", "remark": "DG3 Project Sanction"},
+      {"milestone_id": "DG4", "date": "2027-07-01T00:00:00Z", "status": "Planned", "remark": "DG4 Execution Completion"}
     ]
   },
 
@@ -188,7 +188,7 @@
     "trusted_collection_id": "dev:work-product-component--CollaborationProjectCollection:Drogon-DG2-TrustedData:1",
 
     "lifecycle_events": [
-      {"event_id": "DG1Approved", "name": "DG1 Approved", "datetime": "2026-02-28T09:00:00Z", "remark": "Identify & Assess gate passed. P50 312 MSm³. Proceed to DG2."},
+      {"event_id": "DG1Approved", "name": "DG1 Approved", "datetime": "2026-02-28T09:00:00Z", "remark": "Concept selection gate passed. P50 312 MSm³. Proceed to DG2."},
       {"event_id": "VolumeRevision", "name": "P50 STOIIP revised", "datetime": "2026-02-12T14:00:00Z", "remark": "Porosity 0.18→0.14 (core data). P50 312→287 MSm³ (-8%)."},
       {"event_id": "RiskAdded", "name": "New risks added", "datetime": "2026-03-20T10:00:00Z", "remark": "WaterBreakthrough (SouthWing) + SubseaTiebackDistance (12km) registered."},
       {"event_id": "RiskMitigated", "name": "Fault risk mitigated", "datetime": "2026-04-15T11:00:00Z", "remark": "4D seismic confirms communication across NE fault. High→Low."},

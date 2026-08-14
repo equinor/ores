@@ -63,7 +63,7 @@ _HOWTO_SECTIONS: list[dict] = [
                 "title": "Business Decision",
                 "desc": "Model DG1–DG4 decisions as BusinessDecision records",
                 "children": [
-                    {"slug": "bd-demo",      "file": "BdDemo.md",       "title": "Drogon Demo",    "desc": "Drogon DG package: search, analyse & data model"},
+                    {"slug": "bd-demo",      "file": "BdDemo.md",       "title": "BD Guide",        "desc": "Data model, lifecycle, relationships & ORES tooling"},
                     {"slug": "volumes",      "file": "Volumes.md",      "title": "Volumes",        "desc": "ReservoirEstimatedVolumes WPC & fmu-dataio mapping"},
                     {"slug": "geolabelset",  "file": "GeoLabelSet.md",  "title": "GeoLabelSet",   "desc": "Reservoir volumes & statistics manifests"},
                     {"slug": "risk",         "file": "Risk.md",         "title": "Risk",           "desc": "Subsurface risk data management"},
@@ -162,7 +162,7 @@ def _render_md(filename: str) -> tuple[str, str]:
         raise HTTPException(404, f"Article not found: {filename}")
     source = md_path.read_text(encoding="utf-8")
     converter = _md.Markdown(extensions=_md_extensions, extension_configs={
-        "toc": {"permalink": True, "toc_depth": "2-4"},
+        "toc": {"permalink": "#", "toc_depth": "2-4"},
         "pymdownx.superfences": {
             "custom_fences": [{
                 "name": "mermaid",

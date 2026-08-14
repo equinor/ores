@@ -2,12 +2,12 @@
   "generator": "ontology",
   "project": "Drogon",
   "gate": "DG1",
-  "description": "Drogon DG1 Identify & Assess — baseline BD with relationship keys, typed remarks, and economics",
+  "description": "Drogon DG1 Concept Selection — baseline BD with relationship keys, typed remarks, and economics",
 
   "business_decision": {
     "id": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
-    "name": "Drogon DG1 - Identify & Assess",
-    "description": "DG1 volume assessment of the Volantis Group, Drogon field. P10/P50/P90 oil & gas estimates across 7 segments.",
+    "name": "Drogon DG1 - Concept Selection",
+    "description": "DG1 concept selection: shortlist viable concepts for Volantis Group, Drogon field. P10/P50/P90 oil & gas estimates across 7 segments.",
     "project_name": "Drogon Field Development",
     "decision_level": "DG1",
     "approval_status": "Approved",
@@ -114,10 +114,10 @@
     ],
 
     "activity_states": [
-      {"milestone_id": "DG1", "date": "2026-02-28T00:00:00Z", "status": "Completed", "remark": "DG1 Identify & Assess — Approved"},
-      {"milestone_id": "DG2", "date": "2026-05-15T00:00:00Z", "status": "Planned", "remark": "DG2 Concept Select"},
-      {"milestone_id": "DG3", "date": "2027-01-01T00:00:00Z", "status": "Planned", "remark": "DG3 FEED"},
-      {"milestone_id": "DG4", "date": "2027-07-01T00:00:00Z", "status": "Planned", "remark": "FID"}
+      {"milestone_id": "DG1", "date": "2026-02-28T00:00:00Z", "status": "Completed", "remark": "DG1 Concept Selection — Approved"},
+      {"milestone_id": "DG2", "date": "2026-05-15T00:00:00Z", "status": "Planned", "remark": "DG2 Concept Maturity"},
+      {"milestone_id": "DG3", "date": "2027-01-01T00:00:00Z", "status": "Planned", "remark": "DG3 Project Sanction"},
+      {"milestone_id": "DG4", "date": "2027-07-01T00:00:00Z", "status": "Planned", "remark": "DG4 Execution Completion"}
     ]
   }
 }
