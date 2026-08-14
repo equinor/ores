@@ -106,6 +106,32 @@ from ._registry import register
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# Partition prefix rewriting
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Specs use "dev:" as the canonical prefix.  When generating for a different
+# partition (e.g. "opendes") we rewrite every occurrence in record IDs,
+# reference strings, ACLs, and legal tags.
+
+_CANONICAL_PFX = "dev"
+
+
+def _rewrite_partition(obj: Any, src: str, dst: str) -> Any:
+    """Recursively replace '{src}:' prefix with '{dst}:' in all strings."""
+    if src == dst:
+        return obj
+    if isinstance(obj, str):
+        if obj.startswith(f"{src}:"):
+            return f"{dst}:{obj[len(src)+1:]}"
+        return obj.replace(f"@{src}.", f"@{dst}.")
+    if isinstance(obj, list):
+        return [_rewrite_partition(v, src, dst) for v in obj]
+    if isinstance(obj, dict):
+        return {k: _rewrite_partition(v, src, dst) for k, v in obj.items()}
+    return obj
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # Main generator entry point
 # ═══════════════════════════════════════════════════════════════════════════════
 
@@ -144,6 +170,10 @@ def generate(
         tpl_rec, act_rec = _build_activity(act_spec, project, gate, pfx, acl, legal, refs)
         records.append(tpl_rec)
         records.append(act_rec)
+
+    # ── Rewrite partition prefix if target differs from canonical ──
+    if pfx != _CANONICAL_PFX:
+        records = _rewrite_partition(records, _CANONICAL_PFX, pfx)
 
     return records
 

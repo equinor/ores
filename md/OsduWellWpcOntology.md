@@ -19,10 +19,10 @@ graph TD
     BD["<b>BusinessDecision</b><br/>WPC Decision"]
 
     BD -->|evidence package| EPKG["PersistedCollection<br/>WPC Evidence Package"]
-    BD -->|evidences| GEOMODEL["PersistedCollection<br/>Geomodel evidence"]
-    BD -->|evidences| DRILL["PersistedCollection<br/>Drilling evidence"]
-    BD -->|evidences| RESENG["PersistedCollection<br/>Reservoir eng. evidence"]
-    BD -->|evidences| MDATA["PersistedCollection<br/>Master data"]
+    BD -->|evidencedBy| GEOMODEL["PersistedCollection<br/>Geomodel evidence"]
+    BD -->|evidencedBy| DRILL["PersistedCollection<br/>Drilling evidence"]
+    BD -->|evidencedBy| RESENG["PersistedCollection<br/>Reservoir eng. evidence"]
+    BD -->|evidencedBy| MDATA["PersistedCollection<br/>Master data"]
 
     EPKG --> GEOMODEL
     EPKG --> DRILL
@@ -42,9 +42,9 @@ graph TD
     MDATA -->|contains| RES["Reservoir + Segments"]
     MDATA -->|contains| WELLS["Wells + Wellbores<br/>(planned + SMDA)"]
 
-    BD -->|constrains| R["Risk records (8)"]
-    BD -->|informs| W_PROD["Well: Producers"]
-    BD -->|informs| W_INJ["Well: Injectors"]
+    BD -->|constrainedBy| R["Risk records (8)"]
+    BD -->|informedBy| W_PROD["Well: Producers"]
+    BD -->|informedBy| W_INJ["Well: Injectors"]
 
     BD -.-|"inline ext.equinor.Alternatives[]"| ALT
 
@@ -91,9 +91,9 @@ All inter-record links use `Parameters[]` with `Keys[ParameterKey="relationship"
 
 | Edge Type | Meaning | Example Target |
 |---|---|---|
-| `evidences` | Supporting evidence for the decision | PersistedCollection, REV, ETPDataspace, Wellbore |
-| `informs` | Outputs that the decision informs | DevelopmentConcept, ColumnBasedTable (production), planned Wellbores |
-| `constrains` | Constraints on the decision | Risk records |
+| `evidencedBy` | Target provides evidence for the decision | PersistedCollection, REV, ETPDataspace, Wellbore |
+| `informedBy` | Outputs that the decision informs | DevelopmentConcept, ColumnBasedTable (production), planned Wellbores |
+| `constrainedBy` | Target constrains the decision | Risk records |
 | `supersedes` | Gate evolution (DG1→DG2) | Prior gate's BD |
 | `alternativeTo` | Decision alternatives | Competing BD at same gate level |
 | `mitigates` | Mitigation action → risk | Activity → Risk |

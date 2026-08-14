@@ -522,12 +522,12 @@
   <div class="addgate-panel">
     <h3>5. Risk Records</h3>
     <p class="muted" style="margin-top:-.4rem; font-size:.82rem;">
-      Link <code>master-data--Risk</code> records with typed relationship edges (<code>constrains</code> or <code>mitigates</code>).
+      Link <code>master-data--Risk</code> records with typed relationship edges (<code>constrainedBy</code> or <code>mitigates</code>).
     </p>
     <div style="display:flex;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap;">
       <input type="text" id="risk-input" placeholder="dev:master-data--Risk:…" style="flex:1;min-width:200px;" />
       <select id="risk-edge-type" style="width:130px;font-size:12px;" title="Relationship edge type">
-        <option value="constrains" selected>constrains</option>
+        <option value="constrainedBy" selected>constrainedBy</option>
         <option value="mitigates">mitigates</option>
       </select>
       <button class="btn" type="button" onclick="openBrowse('risk-input','osdu:wks:master-data--Risk:*')">Browse</button>

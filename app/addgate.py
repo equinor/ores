@@ -358,49 +358,49 @@ async def create_bd(request: Request):
         parameters.append(_make_param(
             "In-place volumes raw (per realisation)",
             "Raw per-realisation volumes",
-            rev_raw_id, "InPlaceVol-raw", "evidences",
+            rev_raw_id, "InPlaceVol-raw", "evidencedBy",
         ))
 
     if rev_stats_id:
         parameters.append(_make_param(
             "In-place volume statistics (P10/P50/P90)",
             "Aggregated statistics for the assessment",
-            rev_stats_id, "InPlaceVol-stats", "evidences",
+            rev_stats_id, "InPlaceVol-stats", "evidencedBy",
         ))
 
     if production_profile_id:
         parameters.append(_make_param(
             "Production profile",
             "Production forecast / profile linked to the decision",
-            production_profile_id, "ProductionProfile", "informs",
+            production_profile_id, "ProductionProfile", "informedBy",
         ))
 
     if geolabelset_id:
         parameters.append(_make_param(
             "GeoLabelSet",
             "Headline KPI values per segment",
-            geolabelset_id, "GeoLabelSet", "evidences",
+            geolabelset_id, "GeoLabelSet", "evidencedBy",
         ))
 
     if params_id:
         parameters.append(_make_param(
             "Input parameters",
             "Per-segment input parameters",
-            params_id, "ColumnBasedTable-params", "evidences",
+            params_id, "ColumnBasedTable-params", "evidencedBy",
         ))
 
     if dataspace_id:
         parameters.append(_make_param(
             "GeoModelDataspace",
             "RDDMS ETP dataspace with geomodel EPC files",
-            dataspace_id, "ETPDataspace", "evidences", role="InputReference",
+            dataspace_id, "ETPDataspace", "evidencedBy", role="InputReference",
         ))
 
     if collection_id:
         parameters.append(_make_param(
             "PersistedCollection",
             "Persisted collection of related records",
-            collection_id, "PersistedCollection", "evidences", role="InputReference",
+            collection_id, "PersistedCollection", "evidencedBy", role="InputReference",
         ))
 
     # ── Well-specific parameters (WPC / Dev Well / Exploration) ──
@@ -408,56 +408,56 @@ async def create_bd(request: Request):
         parameters.append(_make_param(
             "Planned producer well",
             "Development/production well subject of this decision",
-            well_prod_id, "Producer", "informs", role="Output",
+            well_prod_id, "Producer", "selects", role="Output",
         ))
 
     if well_inj_id:
         parameters.append(_make_param(
             "Planned injector well",
             "Injection well subject of this decision",
-            well_inj_id, "Injector", "informs", role="Output",
+            well_inj_id, "Injector", "selects", role="Output",
         ))
 
     if wellbore_id:
         parameters.append(_make_param(
             "Target wellbore",
             "Wellbore reference for well decision",
-            wellbore_id, "Wellbore", "informs", role="Output",
+            wellbore_id, "Wellbore", "selects", role="Output",
         ))
 
     if trajectory_id:
         parameters.append(_make_param(
             "Wellbore trajectory",
             "Planned or as-drilled wellbore trajectory",
-            trajectory_id, "WellboreTrajectory", "evidences",
+            trajectory_id, "WellboreTrajectory", "evidencedBy",
         ))
 
     if devconcept_id:
         parameters.append(_make_param(
             "Development Concept",
             "Well plan, facilities, drainage strategy for this decision",
-            devconcept_id, "DevelopmentConcept", "informs",
+            devconcept_id, "DevelopmentConcept", "informedBy",
         ))
 
     if wellcost_id:
         parameters.append(_make_param(
             "Well Cost AFE",
             "Cost breakdown per phase (AFE estimate)",
-            wellcost_id, "WellCostAFE", "evidences",
+            wellcost_id, "WellCostAFE", "evidencedBy",
         ))
 
     if tubular_id:
         parameters.append(_make_param(
             "Completion design (TubularAssembly)",
             "Casing, completion, tubing design for well",
-            tubular_id, "TubularAssembly", "evidences",
+            tubular_id, "TubularAssembly", "evidencedBy",
         ))
 
     if drilling_collection_id:
         parameters.append(_make_param(
             "Drilling evidence package",
             "Trajectories, drilling programs, wellbore reports",
-            drilling_collection_id, "DrillingCollection", "evidences", role="InputReference",
+            drilling_collection_id, "DrillingCollection", "evidencedBy", role="InputReference",
         ))
 
     if collab_project_id:

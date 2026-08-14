@@ -29,7 +29,7 @@ from _auth import get_token, load_instance  # noqa: E402
 
 sys.path.insert(0, str(REPO_ROOT / "demo" / "scripts"))
 from scripts.generators import run_generator  # noqa: E402
-from scripts.generators._common import load_json  # noqa: E402
+from scripts.generators._common import load_json, default_acl, default_legal  # noqa: E402
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -234,14 +234,8 @@ def build_stubs(
     partition: str,
 ) -> List[Dict[str, Any]]:
     """Build minimal placeholder records for missing referenced IDs."""
-    acl = {
-        "owners": [f"data.default.owners@{partition}.dataservices.energy"],
-        "viewers": [f"data.office.global.viewers@{partition}.dataservices.energy"],
-    }
-    legal = {
-        "legaltags": [f"{partition}-equinor-private-default"],
-        "otherRelevantDataCountries": ["NO"],
-    }
+    acl = default_acl(partition)
+    legal = default_legal(partition)
     stubs = []
     for rid in sorted(missing_ids):
         kind = _id_to_kind(rid)
