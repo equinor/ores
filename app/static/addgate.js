@@ -332,21 +332,22 @@
         {name: 'Proceed with well programme (recommended)', rank: 1, action: 'Approve', rationale: 'Execute planned wells per approved drainage strategy.'},
         {name: 'Revised well count / phasing', rank: 2, action: 'Consider', rationale: 'Adjust number or sequencing of wells based on updated subsurface model.'},
         {name: 'Alternative drainage strategy', rank: 3, action: 'Consider', rationale: 'Evaluate alternative completion or injection approach.'},
-        {name: 'Defer – acquire more data', rank: 4, action: 'Fallback', rationale: 'Postpone well commitment until key subsurface uncertainties are resolved.'},
+        {name: 'Defer – reassess well targets', rank: 4, action: 'Fallback', rationale: 'Postpone well commitment until reservoir model or well targets are confirmed.'},
       ],
       economics: [
-        {type: 'NPV_10pct', value: '', unit: 'MNOK'},
-        {type: 'IRR', value: '', unit: '%'},
-        {type: 'CAPEX', value: '', unit: 'MNOK'},
-        {type: 'BreakevenOil', value: '', unit: 'USD/bbl'},
-        {type: 'Recoverable_P50', value: '', unit: 'MSm3'},
-        {type: 'Well_Cost', value: '', unit: 'MNOK'},
-        {type: 'Well_Duration', value: '', unit: 'days'},
+        {type: 'Well_Programme_Cost', value: '', unit: 'MNOK'},
+        {type: 'Num_Producers', value: '', unit: 'count'},
+        {type: 'Num_Injectors', value: '', unit: 'count'},
+        {type: 'Avg_Well_Cost', value: '', unit: 'MNOK'},
+        {type: 'Avg_Well_Duration', value: '', unit: 'days'},
         {type: 'Rig_Rate', value: '', unit: 'MNOK/day'},
+        {type: 'Production_Uplift', value: '', unit: 'kSm3/d'},
+        {type: 'Cost_per_Sm3', value: '', unit: 'NOK/Sm3'},
       ],
       linkedRecordHints: {
         wellProd: true,
         wellInj: true,
+        wellbore: true,
         devConcept: true,
         wellCostAFE: true,
         tubularAssembly: true,
@@ -366,11 +367,12 @@
         {type: 'Duration_estimate', value: '', unit: 'days'},
         {type: 'Rig_Rate', value: '', unit: 'MNOK/day'},
         {type: 'Contingency', value: '', unit: '%'},
-        {type: 'NPV_10pct', value: '', unit: 'MNOK'},
+        {type: 'Expected_Productivity', value: '', unit: 'Sm3/d'},
       ],
       linkedRecordHints: {
         wellProd: true,
         wellInj: true,
+        wellbore: true,
         trajectory: true,
         devConcept: true,
         tubularAssembly: true,
@@ -396,6 +398,7 @@
       ],
       linkedRecordHints: {
         wellProd: true,
+        wellbore: true,
         trajectory: true,
         tubularAssembly: true,
         drillingCollection: true,
@@ -505,7 +508,7 @@
     var hints = preset.linkedRecordHints || {};
     var wellSection = document.getElementById('well-links-section');
     if (wellSection) {
-      var showWell = (hints.wellProd || hints.wellInj || hints.wellExploration || hints.trajectory || hints.tubularAssembly || hints.devConcept || hints.wellCostAFE || hints.drillingCollection || hints.geoscienceCollection);
+      var showWell = (hints.wellProd || hints.wellInj || hints.wellbore || hints.wellExploration || hints.trajectory || hints.tubularAssembly || hints.devConcept || hints.wellCostAFE || hints.drillingCollection || hints.geoscienceCollection);
       wellSection.style.display = showWell ? '' : 'none';
       if (showWell) wellSection.open = true;
     }
@@ -1135,16 +1138,22 @@
       name: 'FMU Ensemble Workflow',
       desc: 'Full FMU ensemble run (ERT + forward model chain)',
       params: [
-        {title:'CaseCollection',  desc:'FMU case/ensemble collection', isInput:true,  isOutput:false, kind:'DataObject', min:1, max:1},
-        {title:'DesignMatrix',    desc:'Design matrix (sensitivity/MC)', isInput:true, isOutput:false, kind:'DataObject', min:1, max:1},
-        {title:'ForwardModel',    desc:'Forward model chain description', isInput:true, isOutput:false, kind:'string',  min:1, max:1},
-        {title:'NumberOfRealizations', desc:'Total realisations',       isInput:true,  isOutput:false, kind:'integer',   min:1, max:1},
-        {title:'Simulator',       desc:'Flow simulator (OPM/Eclipse)',  isInput:true,  isOutput:false, kind:'string',    min:0, max:1},
-        {title:'InputSurfaces',   desc:'Input surfaces/grids',         isInput:true,  isOutput:false, kind:'DataObject', min:0, max:1},
-        {title:'OutputVolumes',   desc:'Raw per-realisation volumes',   isInput:false, isOutput:true,  kind:'DataObject', min:1, max:1},
-        {title:'OutputStatistics',desc:'P10/P50/P90 aggregated',       isInput:false, isOutput:true,  kind:'DataObject', min:1, max:1},
-        {title:'OutputSurfaces',  desc:'Generated output surfaces',    isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
-        {title:'OutputProfiles',  desc:'Production profiles',          isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+        {title:'SeismicData',          desc:'3D/4D seismic interpretation data for conditioning',   isInput:true,  isOutput:false, kind:'DataObject', min:0, max:1},
+        {title:'Horizons',             desc:'Structural horizon surfaces input to grid',             isInput:true,  isOutput:false, kind:'DataObject', min:0, max:1},
+        {title:'Wells',                desc:'Well data: trajectories, logs, completions',            isInput:true,  isOutput:false, kind:'DataObject', min:0, max:1},
+        {title:'StratigraphicColumn',  desc:'Zone definitions and facies grouping',                  isInput:true,  isOutput:false, kind:'DataObject', min:0, max:1},
+        {title:'ReservoirProperties',  desc:'Petrophysical properties: porosity, permeability, Kv/Kh, PVT', isInput:true, isOutput:false, kind:'string', min:0, max:1},
+        {title:'FaultModel',           desc:'Fault framework with regions and fault seal parameters', isInput:true, isOutput:false, kind:'string',     min:0, max:1},
+        {title:'DesignMatrix',         desc:'Design matrix (sensitivity/Monte Carlo layout)',         isInput:true,  isOutput:false, kind:'DataObject', min:1, max:1},
+        {title:'UncertaintyParameters',desc:'Uncertainty distributions for ensemble sampling',       isInput:true,  isOutput:false, kind:'string',     min:0, max:1},
+        {title:'ForwardModelChain',    desc:'Ordered model chain (e.g. DESIGN2PARAMS → RMS → OPM Flow)', isInput:true, isOutput:false, kind:'string', min:1, max:1},
+        {title:'NumberOfRealizations', desc:'Total realisations',                                    isInput:true,  isOutput:false, kind:'integer',    min:1, max:1},
+        {title:'Simulator',            desc:'Flow simulator (OPM / Eclipse)',                        isInput:true,  isOutput:false, kind:'string',     min:0, max:1},
+        {title:'OutputVolumes',        desc:'Per-realisation reservoir volumes',                      isInput:false, isOutput:true,  kind:'DataObject', min:1, max:1},
+        {title:'OutputStatistics',     desc:'P10/P50/P90 aggregated volumes',                        isInput:false, isOutput:true,  kind:'DataObject', min:1, max:1},
+        {title:'OutputProductionProfiles', desc:'Production/injection profiles',                     isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+        {title:'OutputStructureMaps',  desc:'Generated structure maps',                              isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+        {title:'OutputGridProperties', desc:'Grid property realisations',                            isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
       ]
     },
     drilling: {
@@ -1174,14 +1183,23 @@
       ]
     },
     interpretation: {
-      name: 'Interpretation Session',
-      desc: 'Seismic or geological interpretation',
+      name: 'Seismic Interpretation Workflow',
+      desc: 'Horizon and fault picking on 3D seismic, depth conversion, property extraction',
       params: [
-        {title:'InputSurvey',     desc:'Seismic survey input',         isInput:true,  isOutput:false, kind:'DataObject', min:1, max:1},
-        {title:'Interpreter',     desc:'Person who interpreted',       isInput:true,  isOutput:false, kind:'string',     min:1, max:1},
-        {title:'Method',          desc:'Interpretation method/software', isInput:true, isOutput:false, kind:'string',    min:0, max:1},
-        {title:'OutputHorizons',  desc:'Interpreted horizon surfaces',  isInput:false, isOutput:true, kind:'DataObject', min:0, max:1},
-        {title:'OutputFaults',    desc:'Interpreted fault surfaces',    isInput:false, isOutput:true, kind:'DataObject', min:0, max:1},
+        {title:'SeismicTraceData',        desc:'3D/2D seismic cube(s) used for interpretation',          isInput:true,  isOutput:false, kind:'DataObject', min:1, max:1},
+        {title:'HorizonName',             desc:'Name of horizon being picked (e.g. TopVolantis)',        isInput:true,  isOutput:false, kind:'string',     min:1, max:1},
+        {title:'VelocityModel',           desc:'Velocity model for depth conversion',                   isInput:true,  isOutput:false, kind:'DataObject', min:0, max:1},
+        {title:'WellControlPoints',       desc:'Well trajectories and logs for horizon ties',            isInput:true,  isOutput:false, kind:'DataObject', min:0, max:1},
+        {title:'Interpreter',             desc:'Interpreter name/email',                                isInput:true,  isOutput:false, kind:'string',     min:1, max:1},
+        {title:'PickingMethod',           desc:'Interactive / Automatic / Hybrid',                      isInput:true,  isOutput:false, kind:'string',     min:0, max:1},
+        {title:'InterpretationDate',      desc:'Date/time of interpretation session (ISO 8601)',         isInput:true,  isOutput:false, kind:'string',     min:0, max:1},
+        {title:'GeoModelDataspace',       desc:'RDDMS ETP dataspace for RESQML objects',                isInput:true,  isOutput:false, kind:'DataObject', min:0, max:1},
+        {title:'OutputHorizonControlPoints', desc:'Interpreter picks (PointSetRepresentation in RDDMS)',   isInput:false, isOutput:true, kind:'DataObject', min:0, max:1},
+        {title:'OutputSeismicHorizon',    desc:'Gridded TWT surface (Grid2dRepresentation)',             isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+        {title:'OutputStructureMap',      desc:'Depth-converted surface (Grid2dRepresentation)',         isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+        {title:'OutputSeismicFault',      desc:'Fault sticks picked on seismic (PolylineSetRep)',        isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+        {title:'OutputProperties',        desc:'Property grids (amplitude, coherence, thickness)',       isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
+        {title:'QCReport',                desc:'Interpretation QC / validation document',                isInput:false, isOutput:true,  kind:'DataObject', min:0, max:1},
       ]
     },
     qc: {
