@@ -9,8 +9,6 @@
 
 ## 1. What BusinessDecision Models
 
-### Graphic
-
 ```mermaid
 graph LR
     subgraph "Today — Fragmented"
@@ -29,9 +27,6 @@ graph LR
     PPT -.->|"replace with"| BD
     XLS -.->|"replace with"| BD
 ```
-
-### Text
-
 A `BusinessDecision` is an OSDU **master-data** record (`osdu:wks:master-data--BusinessDecision:1.0.0`) that captures a staged technical/business decision — not just *what* was decided, but *why*, *based on what evidence*, *constrained by which risks*, and *how it relates* to prior and subsequent decisions.
 
 It inherits from `AbstractProjectActivity`, which provides the `Parameters[]` mechanism — the same typed input/output/context pattern used by `Activity` and other project entities. This inheritance is the key design choice: a decision gate is treated as a specialised activity with richer governance semantics.
@@ -42,18 +37,9 @@ It inherits from `AbstractProjectActivity`, which provides the `Parameters[]` me
 - **Auditability** — regulatory and partner reviews demand frozen, reproducible evidence packages
 - **Cross-gate analysis** — how do volumes, risks, economics evolve from DG1 through DG4 to FID?
 - **Decision quality** — move from "was the process followed?" to "was the decision good?"
-
-> **Comment**
-> - Today, most decision knowledge lives in slide decks, spreadsheets, and people's heads. Not queryable, not traceable, not auditable.
-> - BD doesn't replace the human decision process — it creates a structured, machine-readable representation of what was decided and why.
-> - The schema is domain-agnostic: the same record structure models field development, well drilling, exploration, CCS, decommissioning.
-> - Key design principle: one BD per gate, one CollaborationProject across all gates for that asset/discipline.
-
 ---
 
 ## 2. Business Cases & Decision Types
-
-### Graphic
 
 ```mermaid
 mindmap
@@ -83,9 +69,6 @@ mindmap
       P&A Plan → Execute
       Site Verify
 ```
-
-### Text
-
 The BD schema is **domain-agnostic** — the same record structure models any staged decision:
 
 | Decision Type | Typical Gates | Key Evidence | Business Driver |
@@ -100,19 +83,9 @@ The BD schema is **domain-agnostic** — the same record structure models any st
 Each type has its own milestone vocabulary (DecisionLevel reference data) and evidence requirements, but all share the same linking patterns (`Parameters[]`, `RiskIDs`, `PriorActivityIDs`).
 
 **A decision gate (DG)** is a predefined point in the Capital Value Process (CVP) where Equinor decides to move the project to the next phase, further mature it in the current phase, or terminate the business case.
-
-> **Comment**
-> - The business case for BD in OSDU is strongest in field development (DG0–DG4) because the evidence chain is longest and most complex — volumes, geomodels, forecasts, risks, multiple development concepts.
-> - WPC decisions are high-frequency: dozens per year per field. Structured BD records enable portfolio-level well planning queries.
-> - CCS is emerging: regulatory requirements for monitoring plans and containment evidence map naturally to BD + PersistedCollection.
-> - For accelerated or marginal well workflows (MF-TEX, DW550), DG1 can be omitted or phases combined — DG2 may include early long-lead pre-investments to shorten time to first oil.
-> - All types use the same code path in ORES — no domain-specific UI needed.
-
 ---
 
 ## 3. Decision Gate Lifecycle
-
-### Graphic
 
 ```mermaid
 graph LR
@@ -140,9 +113,6 @@ graph LR
     style DG2 fill:#2563eb,color:#fff,stroke:#1e40af
     style FID fill:#16a34a,color:#fff
 ```
-
-### Text
-
 A decision gate **does not exist in isolation**. It is one step in a multi-year lifecycle. The temporal flow matters:
 
 1. **DG0 — Business-Case Maturity:** Early concept framing. Opportunity recognised, licence strategy and pre-investment needs aligned. BD record created with project name, reservoir link, initial risk register.
@@ -155,12 +125,7 @@ A decision gate **does not exist in isolation**. It is one step in a multi-year 
 
 **Cross-gate deltas** are the analytical payoff: how did P50 STOIIP change from DG1 to DG2? Which risks were added vs. resolved? Did the chosen development concept survive from DG2 to DG3?
 
-> **Comment**
-> - The `supersedes` chain (DG2 → DG1 → DG0) is the temporal backbone — it lets you traverse backwards through decision history.
-> - Gates are typically 6–18 months apart. Between gates, the CollaborationProject's TrustedCollection grows incrementally.
-> - The PersistedCollection (evidence package) is a per-gate snapshot — immutable after gate approval.
-> - Cross-gate comparison is the killer feature: volume evolution, risk lifecycle, concept stability.
-> - In practice, DG0 and DG1 are often created retroactively when a team adopts BD. That's fine — the data model supports backfilling.
+In practice, DG0 and DG1 are often created retroactively when a team adopts BD — the data model supports backfilling.
 
 ### 3.1 Related Governance Terms
 
@@ -170,18 +135,9 @@ A decision gate **does not exist in isolation**. It is one step in a multi-year 
 | **VPbo / APbo** | Validation/approval of business opportunity — milestones in MF-TEX and business-opportunity flows that interact with DG0/DG2 for keeper wells and prospects |
 | **SDG / SDG3–SDG4** | Stage gates in Technology/Delivery model — used for technology/solution implementation; value reporting starts from SDG3/SDG4 in T&I governance |
 | **MF-TEX** | Marginal Field / Accelerated Field Development — customised gate sequencing where DG1 can be omitted, phases combined, and DG2 may include early long-lead pre-investments |
-
-> **Comment**
-> - DGSP maps directly to `PersistedCollection` in OSDU — both are frozen evidence bundles for a specific gate.
-> - VPbo/APbo are pre-DG milestones that can be modelled as `ActivityStates[]` entries on the CollaborationProject.
-> - SDG gates are a related but separate concept — they govern technology products that feed into project DGs.
-> - Sources: ARIS process definitions, PD/MF-TEX guidance, Equinor decision-document guidance (Docmap).
-
 ---
 
 ## 4. Data Model Deep Dive
-
-### Graphic
 
 ```mermaid
 graph TD
@@ -202,9 +158,6 @@ graph TD
     style PARAMS fill:#2563eb,color:#fff
     style P2 fill:#7c3aed,color:#fff
 ```
-
-### Text
-
 The BD record has four layers of structured data:
 
 **Layer 1 — Identity & Governance:**
@@ -252,18 +205,9 @@ This is the most important part. Each `Parameters[]` entry links the BD to a tar
 ```
 
 The `Keys[]` sub-array carries the edge semantics. The `relationship` key names the edge type; the `artifact` key names the target kind (used for rendering icons and grouping). This convention turns every `Parameters[]` entry into a **typed, directed edge** — sufficient for graph rendering without a dedicated graph database.
-
-> **Comment**
-> - `Parameters[]` is inherited from `AbstractProjectActivity` — it's the same mechanism used by `Activity`, `CollaborationProject`, etc.
-> - The `Keys[]` convention (`ParameterKey="relationship"`) is an application-level pattern, not enforced by the OSDU schema. This means it passes validation but requires discipline.
-> - `Remarks[]` with `RemarkSource` categories (Recommendation, Condition, Audit) support structured meeting notes — useful for regulatory reviews.
-> - `PriorActivityIDs` links to the `Activity` records that produced the evidence — this is the provenance chain.
-
 ---
 
 ## 5. Relationship Types — The Edge Vocabulary
-
-### Graphic
 
 ```mermaid
 graph TD
@@ -286,9 +230,6 @@ graph TD
     style DC fill:#16a34a,color:#fff
     style DC2 fill:#6b7280,color:#fff
 ```
-
-### Text
-
 Nine relationship types, all stored as `Parameters[].Keys[ParameterKey="relationship"]` values. All labels read **from the source record's perspective**:
 
 | # | Edge Type | Source → Target | Semantics | Example |
@@ -306,19 +247,9 @@ Nine relationship types, all stored as `Parameters[].Keys[ParameterKey="relation
 **Direction convention:** Edges radiate **outward** from the source record. A BD's `Parameters[]` entries point TO the evidence, TO the prior gate, TO the risks. An Activity's `Parameters[]` entries point TO the BD it informs and TO the data it produces.
 
 **Why not a graph database?** OSDU is a schema-validated document store. There is no native graph traversal API, no reverse-link index, no N-hop query. The "graph" is computed at the application layer (ORES) by following `Parameters[]` references with REST calls. This trade-off means zero infrastructure cost for graph capabilities — at the price of more REST calls per page load.
-
-> **Comment**
-> - 7 edge types for BD, 2 for Activity = 9 total. This covers all real-world gate relationships we've encountered.
-> - Edge labels read from source: "this BD is *evidencedBy* the volumes", not "the volumes *evidence* this BD".
-> - The same convention works for WPC decisions, well planning, CCS — not just field development.
-> - ORES renders these edges as a Mermaid graph on the BD detail page — no manual graph drawing needed.
-> - Future: if OSDU adds a graph traversal API, the same edge data would be natively traversable. Nothing wasted.
-
 ---
 
 ## 6. CollaborationProject — The Cross-Gate Namespace
-
-### Graphic
 
 ```mermaid
 graph TD
@@ -349,10 +280,7 @@ graph TD
     style TC fill:#16a34a,color:#fff
     style BD2 fill:#2563eb,color:#fff
 ```
-
-### Text
-
-A `CollaborationProject` (`master-data--CollaborationProject:1.0.0`) is the **persistent identity** that outlives any single gate. It bridges the **System of Engagement** (where teams iterate on work-in-progress) and the **System of Record** (where curated, trusted data accumulates).
+A `CollaborationProject` (`master-data--CollaborationProject:1.0.0`) is the **persistent identity** that outlives any single gate. Think of CP as the "project folder" and BD as the "gate review meeting minutes". It bridges the **System of Engagement** (where teams iterate on work-in-progress) and the **System of Record** (where curated, trusted data accumulates).
 
 **Key relationships:**
 
@@ -379,19 +307,9 @@ A `CollaborationProject` (`master-data--CollaborationProject:1.0.0`) is the **pe
 | Purpose | Cross-gate namespace + SoR accumulation | Gate-scoped decision record + evidence |
 | Evidence | TrustedCollection grows incrementally | PersistedCollection is per-gate snapshot |
 | Timeline | ActivityStates[] spans all gates | DecisionDate is one moment |
-
-> **Comment**
-> - Think of CP as the "project folder" and BD as the "gate review meeting minutes".
-> - The CP's TrustedCollection is cumulative: after DG1, it has 10 references; after DG2, 25; after DG3, 40. Each gate adds to the SoR.
-> - `LifecycleEvents[]` is the audit log: "DG2 approved by J. Smith on 2026-05-10, pending condition: update risk register".
-> - `Remarks[]` with `RemarkSource: Condition` captures gate approval conditions — critical for regulatory compliance.
-> - CP is optional for simple use cases (single-gate demos), but essential for real multi-year asset management.
-
 ---
 
 ## 7. Evidence Packages — PersistedCollection
-
-### Graphic
 
 ```mermaid
 graph TD
@@ -427,9 +345,6 @@ graph TD
     style PC fill:#7c3aed,color:#fff
     style BD fill:#2563eb,color:#fff
 ```
-
-### Text
-
 A `PersistedCollection` (`work-product-component--PersistedCollection:1.0.0`) bundles all evidence artifacts for a single gate into a **frozen, versioned set**. Unlike the CollaborationProject's TrustedCollection (which grows incrementally), a PersistedCollection is a **snapshot** — it represents "everything the gate committee saw when they approved".
 
 **Why freeze evidence?**
@@ -449,18 +364,9 @@ A `PersistedCollection` (`work-product-component--PersistedCollection:1.0.0`) bu
 | Mutability | Grows per gate | Frozen at approval |
 | Purpose | "What's currently trusted?" | "What was reviewed at this gate?" |
 | Record type | `CollaborationProjectCollection` WPC | `PersistedCollection` WPC |
-
-> **Comment**
-> - A typical DG2 evidence package has 80–120 DataReferences (geomodel grids, maps, volumes, risks, wells, simulator tables, documents).
-> - The PersistedCollection itself is a WPC — it can be versioned, but in practice it's write-once at gate approval.
-> - Nested collections are possible: a top-level PersistedCollection can reference sub-collections for each discipline (geomodel evidence, drilling evidence, reservoir engineering evidence).
-> - ORES resolves DataReferences[] and groups by kind for rendering — one REST call to fetch the collection, N calls to fetch metadata for each referenced record.
-
 ---
 
 ## 8. Activity & Provenance
-
-### Graphic
 
 ```mermaid
 graph LR
@@ -481,9 +387,6 @@ graph LR
     style BD fill:#2563eb,color:#fff
     style TMPL fill:#6b7280,color:#fff
 ```
-
-### Text
-
 `Activity` records (`work-product-component--Activity:1.0.0`) are the **provenance layer** — they record who did what, when, with which inputs, producing which outputs. Each Activity is a "verb" in the decision narrative.
 
 **Activity → BD linkage:**
@@ -503,17 +406,11 @@ graph LR
 
 The full chain: **human action → Activity → data artifact → BD → decision**. Every link is queryable.
 
-> **Comment**
-> - Activities are the "how" — BDs are the "what" and "why".
-> - ActivityTemplate standardisation enables cross-project comparison: "all ensemble runs across all fields in 2026".
-> - The provenance chain is critical for decision quality: if volumes are questioned, trace back through Activity to the input parameters and the responsible team.
-> - ORES presets for Activities: Custom, Reservoir Simulation, Ensemble Run, Drilling & Completion, Production Test, Interpretation, QC.
+ORES provides Activity presets: Custom, Reservoir Simulation, Ensemble Run, Drilling & Completion, Production Test, Interpretation, QC.
 
 ---
 
 ## 9. Risk Management Across Gates
-
-### Graphic
 
 ```mermaid
 graph TD
@@ -543,9 +440,6 @@ graph TD
     style R4_DG2 fill:#dc2626,color:#fff
     style BD2 fill:#2563eb,color:#fff
 ```
-
-### Text
-
 Risk records (`master-data--Risk:1.2.0`) are linked to BDs via two mechanisms:
 
 1. **`RiskIDs[]`** — built-in BD field, lists all Risk record references for the gate
@@ -572,18 +466,9 @@ Risk records (`master-data--Risk:1.2.0`) are linked to BDs via two mechanisms:
 | `MitigationOwner` | Responsible person |
 
 ORES renders risk evolution as **chips with colour-coded severity/probability** and computes deltas between gates automatically.
-
-> **Comment**
-> - Risk lifecycle is one of the strongest arguments for structured BD data: "which risks always escalate?", "which mitigation strategies work?", "what's the typical risk count at DG2 vs DG3?"
-> - Cross-gate risk comparison requires matching risks by name or ID across BDs — ORES does this by searching for Risk records shared across gates.
-> - `constrainedBy` means "this decision is constrained by this risk" — the risk limits what's possible.
-> - `mitigates` means "this evidence/activity reduces this risk's impact" — new data changes the risk profile.
-
 ---
 
 ## 10. Alternatives & Concept Evaluation
-
-### Graphic
 
 ```mermaid
 graph TD
@@ -602,9 +487,6 @@ graph TD
     style DEFER fill:#6b7280,color:#fff
     style BD fill:#2563eb,color:#fff
 ```
-
-### Text
-
 DG2 (Concept Select) is the gate where alternatives are formally evaluated. The BD uses two edge types for this:
 
 | Edge | Target | Meaning |
@@ -624,17 +506,11 @@ The selection rationale is captured in the BD's `DecisionSummary` and `Remarks[]
 - Portfolio analysis: "across all DG2s, what % of selected concepts had the highest NPV?"
 - Learning: "which rejected alternatives were reconsidered at later gates?"
 
-> **Comment**
-> - `DevelopmentConcept` is a custom schema (not in OSDU standard). It's registered as a local schema — searchable, validated, evolvable.
-> - The `selects`/`alternativeTo` pair captures the full concept evaluation: one selected, N rejected.
-> - Economics KPIs on the BD (via addgate UI) complement the DevelopmentConcept fields — the BD carries the headline numbers, the DevConcept carries the detail.
-> - Alternatives can also be modelled using the Equinor extension (`ext.equinor.Alternatives[]`) inline on the BD — simpler but less reusable.
+Alternatively, concepts can be modelled inline using `ext.equinor.Alternatives[]` on the BD record — simpler but less reusable than separate DevelopmentConcept WPCs.
 
 ---
 
 ## 11. Using ORES — Search
-
-### Graphic
 
 ```mermaid
 graph LR
@@ -653,9 +529,6 @@ graph LR
     style SEARCH fill:#1e40af,color:#fff
     style DETAIL fill:#7c3aed,color:#fff
 ```
-
-### Text
-
 Open the **Search** tab (`/search`) and query for kind `osdu:wks:master-data--BusinessDecision:*.*.*`.
 
 OSDU Search returns card-rendered results showing each decision gate record with its name, project, decision level, and approval status. Click a result card to see:
@@ -674,18 +547,9 @@ OSDU Search returns card-rendered results showing each decision gate record with
 | Project | `data.ProjectName` | `"Drogon*"` |
 | Reservoir | `data.Parameters.DataObjectParameter` | `"*Reservoir*"` |
 | Date range | `data.DecisionDate` | `[2026-01-01 TO 2026-12-31]` |
-
-> **Comment**
-> - The relationship graph is the key differentiator — no other OSDU UI renders Parameters[] as a visual graph.
-> - `bd_enrichment.py` does 7 parallel async fetches per BD view: CP, activities, risks, volumes, checklist, remarks, relationships.
-> - Risk chips update dynamically — if a linked Risk record changes, the chip reflects the current state (not the gate-era state).
-> - Gate readiness is computed from `ActivityStates[]` on the CollaborationProject — shows % complete and which milestones are outstanding.
-
 ---
 
 ## 12. Using ORES — Analyse
-
-### Graphic
 
 ```mermaid
 graph TD
@@ -706,9 +570,6 @@ graph TD
     style CMP fill:#7c3aed,color:#fff
     style RES fill:#16a34a,color:#fff
 ```
-
-### Text
-
 Open the **Analyse** tab (`/analyse`). ORES lists all `Reservoir` master-data records. Select a reservoir and ORES automatically:
 
 1. **Finds all BDs** linked to that reservoir (via `Parameters.DataObjectParameter`)
@@ -733,18 +594,11 @@ Open the **Analyse** tab (`/analyse`). ORES lists all `Reservoir` master-data re
 - **Concept stability** — does the selected concept survive from DG2 to DG3, or is it revised every gate?
 - **Schedule adherence** — how often do milestone dates slip between gates?
 
-> **Comment**
-> - The analyse view computes deltas automatically — no manual calculation needed.
-> - STOIIP-by-segment catches zone-level changes that the total might mask (e.g., Valysar drops 15% but Therys gains 8% → total only drops 3%).
-> - Risk evolution is the most asked-for feature: "show me which risks were added vs. resolved between DG1 and DG2".
-> - Works with any reservoir that has ≥2 BD records linked to it. For a single BD, it shows the evidence package without deltas.
-> - Portfolio mode (future): compare across reservoirs — "all DG2s in the Norwegian Sea".
+Volume comparison is per-segment: zone-level changes (e.g. Valysar drops 15% but Therys gains 8%) can be masked when only the total is shown. Works with any reservoir that has ≥2 BD records linked to it.
 
 ---
 
 ## 13. Using ORES — AddGate Web UI
-
-### Graphic
 
 ```mermaid
 graph TD
@@ -767,9 +621,6 @@ graph TD
     style PREVIEW fill:#2563eb,color:#fff
     style OSDU fill:#1e40af,color:#fff
 ```
-
-### Text
-
 The ORES [/add-dg](/add-dg) page supports **full self-service creation** of BusinessDecision records — including all linked metadata typically provided by scripts.
 
 | Panel | What it fills | Data Model Impact |
@@ -790,13 +641,6 @@ The ORES [/add-dg](/add-dg) page supports **full self-service creation** of Busi
 - Relationship edge type (evidencedBy, informedBy, constrainedBy, …)
 
 This is where the relationship graph is built.
-
-> **Comment**
-> - Presets auto-fill milestones, economics, and alternative templates — saves 10+ minutes per BD vs. hand-crafting JSON.
-> - The linked records panel (§4) is where the ontology conventions are enforced: artifact type + relationship type together create the typed edge.
-> - Preview shows the exact JSON that will be PUT to OSDU — useful for schema validation and learning the data model.
-> - Works on any OSDU instance (eqndev, interop, or custom) — partition, legal tags, and ACLs are set from the active connection.
-
 ### 13.1 Schedule Templates
 
 | Template | Milestones | Typical Use |
@@ -833,18 +677,9 @@ The Activity tab supports `ActivityTemplate` and `Activity` records with presets
 | QC | Quality control review |
 
 See [Activity guide](/howto/activity) for details.
-
-> **Comment**
-> - Activity records are the provenance layer — they link inputs to outputs with timestamps and responsible teams.
-> - The Activity's Parameters[] edges use `informs` (→ BD) and `produces` (→ output data).
-> - ActivityTemplate defines the workflow type — shared across activities of the same kind.
-> - The preset list maps to Equinor's actual workflow types — can be extended for other operators.
-
 ---
 
 ## 14. Summary — How the Pieces Fit Together
-
-### Graphic
 
 ```mermaid
 graph TD
@@ -900,9 +735,6 @@ graph TD
     style CPC fill:#16a34a,color:#fff
     style RISK fill:#dc2626,color:#fff
 ```
-
-### Text
-
 The full pattern:
 
 1. **One `BusinessDecision` per gate** — carries identity, governance, risks, personnel, Parameters[] edges
@@ -914,9 +746,3 @@ The full pattern:
 
 The knowledge graph emerges at the application layer (ORES), not from the platform. OSDU provides schema-validated storage and keyword search. ORES provides graph traversal, enrichment, visualisation, and cross-gate analytics.
 
-> **Comment**
-> - This is the complete picture: master data for identity, WPCs for evidence, datasets for geomodels, reference data for catalogs.
-> - The three collection types serve different purposes: Parameters[] (typed edges), TrustedCollection (cumulative SoR), PersistedCollection (frozen evidence).
-> - The 9 edge types cover all real-world gate relationships we've encountered across field dev, well planning, exploration, CCS.
-> - ORES is the application layer that makes this queryable and visual — without it, the data is structured but not easily navigable.
-> - For field-specific examples (Drogon, Omega Sør), see the respective Demo.md files.

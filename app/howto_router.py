@@ -10,6 +10,8 @@ from __future__ import annotations
 import os
 from pathlib import Path as _Path
 
+import re as _re
+
 import markdown as _md
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
@@ -175,6 +177,13 @@ def _render_md(filename: str) -> tuple[str, str]:
         },
     })
     html_body = converter.convert(source)
+    # Wrap tables in scrollable container so wide tables don't blow out layout
+    html_body = _re.sub(
+        r"(<table\b)",
+        r'<div class="table-wrap">\1',
+        html_body,
+    )
+    html_body = html_body.replace("</table>", "</table></div>")
     toc_html = getattr(converter, "toc", "")
     return html_body, toc_html
 

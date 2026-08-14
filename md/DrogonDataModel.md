@@ -111,7 +111,7 @@ graph TD
 |---|------|------|----------------|
 | 0 | `reference-data--ReservoirEstimatedVolumePropertyType` | AssociatedLiquid | `AssociatedLiquid_` |
 | 1 | `master-data--Reservoir` | Drogon | `Drogon` |
-| 2–8 | `master-data--ReservoirSegment` | West Lowland, Central South, Central North, North Horst, Central Ramp, Central Horst, East Lowland | 7 UUIDs |
+| 2–8 | `master-data--ReservoirSegment` | West Lowland, Central South/North, North Horst, Central Ramp/Horst, East Lowland | 7 UUIDs |
 | 9 | `work-product` | Drogon Reservoir Study | `37dcb76b…` |
 | 10 | `work-product-component--ReservoirEstimatedVolumes` | RAW (per realisation) | `68f57fdc…` |
 | 11 | `work-product-component--ReservoirEstimatedVolumes` | Statistics (P10/P50/P90) | `0ed7364d…` |
@@ -256,19 +256,19 @@ flowchart LR
 
 ### Pipeline Steps
 
-| Step | Script | Input | Output |
-|------|--------|-------|--------|
-| 0 | `split_valysar.py` | `valysar_volumes.csv` (raw FMU export) | `valysar_volumes.csv` + `valysar_parameters.csv` |
-| 1 | `genmaster_drogon.py` | volumes CSV | `manifest_masterwp_drogon.json` (1 Reservoir, 7 Segments, 1 WorkProduct) |
-| 2 | `genrawmanifest_drogon.py` | volumes CSV + master manifest | `manifest_wpcraw_drogon.json` (raw REV WPC) |
-| 3 | `genstatmanifest_drogon.py` | volumes CSV + master manifest | `manifest_wpcstat_drogon.json` (statistical REV WPC) |
-| 4 | `genparamsmanifest_drogon.py` | parameters CSV + master manifest | `manifest_wpcparams_drogon.json` (ColumnBasedTable WPC) |
-| 5 | `gen_risk_drogon.py` | master + stat manifests | `manifest_risk_drogon.json` (Risk) |
-| 5b | `gen_activity_drogon.py` | master + raw + stat + params manifests | `manifest_activity_drogon.json` (ActivityTemplate + Activity) |
-| 6 | `gen_businessdecision_drogon.py` | all prior manifests incl. activity | `manifest_bd_drogon.json` (BusinessDecision) |
-| 7 | `manifest2records_drogon.py` | 7 manifests + 1 reftype | `records/` - 17 individual JSON files |
-| 8 | `ingest_records_batch.py` | `records/*.json` + `.env` | Single batch PUT to OSDU Storage API (auto-fallback to sequential on failure) |
-| 8b | `gen_resqml.py` + `ingest_rddms.ps1` | `records/*.json` | RESQML EPC → Reservoir DDMS via Docker ETP |
+| Step | Script | Output |
+|------|--------|--------|
+| 0 | `split_valysar.py` | Split CSV → volumes + parameters |
+| 1 | `genmaster_drogon.py` | Reservoir, 7 Segments, WorkProduct |
+| 2 | `genrawmanifest_drogon.py` | RAW REV WPC |
+| 3 | `genstatmanifest_drogon.py` | Statistical REV WPC |
+| 4 | `genparamsmanifest_drogon.py` | ColumnBasedTable WPC |
+| 5 | `gen_risk_drogon.py` | Risk manifest |
+| 5b | `gen_activity_drogon.py` | ActivityTemplate + Activity |
+| 6 | `gen_businessdecision_drogon.py` | BusinessDecision |
+| 7 | `manifest2records_drogon.py` | `records/` — 17 JSON files |
+| 8 | `ingest_records_batch.py` | Batch PUT to OSDU Storage |
+| 8b | `gen_resqml.py` + `ingest_rddms.sh` | RESQML EPC → RDDMS via ETP |
 
 ### Running the Pipeline
 
@@ -349,15 +349,15 @@ and Reservoir DDMS.
 
 | Decision | Rationale |
 |----------|-----------|
-| **Ancestry in `data.ancestry`** | Top-level `ancestry` requires numeric timestamp versions (unavailable at generation time). The indexer mirrors `data.ancestry` → `ancestry.*` automatically. |
-| **Single batch PUT for all 17 records** | The OSDU Storage API accepts up to 500 records in one PUT. A single call is far faster than sequential; the script auto-falls back to sequential-with-retry if the batch call fails. |
-| **Two REV WPCs** (raw + stats) | Separates per-realisation detail from P10/P50/P90 summary. Both share the same WorkProduct container and Reservoir context. |
-| **ColumnBasedTable for parameters** | OWC depths and porosity values are per-segment, per-facies, per-realisation - fits the ColumnBasedTable schema (key/value columns with UoM). |
-| **One Activity, not three** | One `ActivityTemplate` + one `Activity` is the correct OSDU pattern for an atomic workflow execution. The three logical steps belong in the description, not in three records. |
-| **BD.PriorActivityIDs → Activity** | The BD cites the *activity that produced the evidence*, not the artefacts directly. The Activity in turn links to all evidence via its output parameters and `ancestry.children`. |
-| **`ReportTableName` vs `ReportTable`** | `ReportTable` as a title was used twice - once for the input string name and once for the output DataObject. Renamed the input slot to `ReportTableName` to avoid the collision. |
-| **Human-readable IDs for singletons** | Risk (`Drogon-PorosityAndCementation`) and BD (`Drogon-DG1-Identify`) use descriptive IDs instead of UUIDs since there's one of each. |
-| **Dual ingestion (REST + RDDMS)** | OSDU Storage REST API holds the searchable WPC metadata; Reservoir DDMS holds the RESQML objects (geometry + tabular data + activity chain) for interoperability with subsurface tools via ETP. |
+| **Ancestry in `data.ancestry`** | Top-level `ancestry` requires numeric timestamp versions. The indexer mirrors `data.ancestry` → `ancestry.*` automatically. |
+| **Single batch PUT** | OSDU Storage accepts up to 500 records per PUT. Auto-falls back to sequential on failure. |
+| **Two REV WPCs** (raw + stats) | Separates per-realisation detail from P10/P50/P90 summary. Same WorkProduct + Reservoir context. |
+| **ColumnBasedTable for params** | OWC/porosity per segment/facies/realisation fits the key/value column schema with UoM. |
+| **One Activity, not three** | One template + one activity per atomic workflow. Three logical steps belong in the description. |
+| **BD → Activity** | BD cites the activity that produced evidence, not the artefacts directly. |
+| **`ReportTableName`** | Renamed from `ReportTable` to avoid collision with the output DataObject of the same name. |
+| **Human-readable IDs** | Singletons (Risk, BD) use descriptive IDs; multi-instance records use UUIDs. |
+| **Dual ingestion** | REST API for searchable metadata; Reservoir DDMS for RESQML objects via ETP. |
 
 ---
 
