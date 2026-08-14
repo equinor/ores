@@ -10,8 +10,9 @@ activity provenance, risk assessment, and a decision gate - all linked
 through typed references and ancestry.
 
 The result is **17 records** in OSDU Storage that form a self-contained,
-navigable data graph. The same workflow execution is also represented as
-RESQML 2.0.1 EPC objects ingested into the **Reservoir DDMS** via ETP/WebSocket.
+navigable data graph. Part of the model is also represented as
+RESQML objects ingested into the **Reservoir DDMS** via ETP API or EPC file.
+The data below are are available in the OSDU interop instance.
 
 ---
 
@@ -291,9 +292,7 @@ bash demo/drogon_dg1/resqml/ingest_rddms.sh --skip-create   # reuse existing dat
 
 ## RESQML / Reservoir DDMS
 
-The workflow is also represented as RESQML 2.0.1 EPC objects ingested into the
-**Reservoir DDMS** via the ETP WebSocket protocol. The dataspace
-`maap/drogon_dg` holds the geomodel objects.
+Spatial objects and their semantics are represented as RESQML 2.0.1 objects ingested into the **Reservoir DDMS** via the ETP API protocol (ALternative: EPC+H5 file). The dataspace `maap/drogon_dg` holds the geomodel objects.
 
 ### ETP Ingestion
 
@@ -390,5 +389,5 @@ The ORES [/add-dg](/add-dg) web UI can create a complete BusinessDecision record
 The UI also supports creating **ActivityTemplate** and **Activity** records (Activity tab) with the "Reservoir Simulation" preset matching the Drogon template schema exactly.
 
 **When to use which:**
-- **Scripts** (`run_pipeline.ps1`): reproducible, version-controlled, full pipeline including REV/CBT/RDDMS
+- **Scripts** (`run_pipeline.sh`): reproducible, version-controlled, full pipeline including REV/CBT/RDDMS
 - **Web UI** (`/add-dg`): one-off demos, exploring BD structure, rapid prototyping without Python setup
