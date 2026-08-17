@@ -219,9 +219,29 @@ def _build_bd(
     if bd.get("prior_activity_ids"):
         data["PriorActivityIDs"] = bd["prior_activity_ids"]
 
+    # ── ReservoirIDs[] — always set when reservoir_id is provided ──
+    if bd.get("reservoir_id"):
+        data["ReservoirIDs"] = [bd["reservoir_id"]]
+
     # ── Parameters[] — passthrough (capital-P) or build from relationships ──
     if bd.get("Parameters"):
-        data["Parameters"] = bd["Parameters"]
+        data["Parameters"] = list(bd["Parameters"])
+        # Ensure reservoir parameter is present even with passthrough
+        if bd.get("reservoir_id"):
+            has_reservoir_param = any(
+                isinstance(p, dict)
+                and bd["reservoir_id"] in (p.get("DataObjectParameter") or "")
+                for p in data["Parameters"]
+            )
+            if not has_reservoir_param:
+                data["Parameters"].append({
+                    "Title": "Reservoir scope",
+                    "Selection": bd.get("reservoir_description", f"{project} reservoir"),
+                    "ParameterKindID": ref_id(pfx, "ParameterKind", "DataObject"),
+                    "ParameterRoleID": ref_id(pfx, "ParameterRole", "InputReference"),
+                    "DataObjectParameter": bd["reservoir_id"],
+                    "Keys": [{"ParameterKey": "artifact", "StringParameterKey": "Reservoir"}],
+                })
     else:
         params = []
         for rel in bd.get("relationships") or []:

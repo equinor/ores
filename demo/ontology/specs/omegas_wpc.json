@@ -9,6 +9,7 @@
     "name": "Omega Sør – WPC Well Planning Committee Decision",
     "description": "WPC decision for Omega Sør Alfa. Approve drilling 1 producer (CAP-X ST from 34/4-19 S) + 1 injector (4-slot template). Subsea tieback to Snorre N. First oil Jan 2029.",
     "project_name": "Omega Sør Alfa Field Development",
+    "reservoir_id": "dev:master-data--Reservoir:OmegaSorAlfa:1",
     "decision_level": "WPC",
     "approval_status": "Pending",
     "decision_due_date": "2026-09-30",

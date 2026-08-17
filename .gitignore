@@ -20,6 +20,7 @@ weco_deploy_key.pub
 
 # ── Binary / generated artifacts ──
 *.pptx
+*.doc
 *.epc
 *.h5
 *.zip
@@ -48,6 +49,9 @@ demo/drogonresqml22/manifest_drogon221_eqndev.json
 demo/scripts/inputs/*omegas*
 demo/scripts/inputs/examples/*omegas*
 demo/scripts/inputs/records/
+
+md/*.py
+md/mermaid_pngs
 
 # ── Local runtime artifacts ──
 ores_tokens.db
