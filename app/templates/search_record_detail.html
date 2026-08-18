@@ -44,10 +44,12 @@
       {% set is_business_decision = ('businessdecision' in ((rec.kind or '')|lower)) %}
       {% set is_rev = ('reservoirestimatedvolumes' in ((rec.kind or '')|lower)) %}
       {% set is_dataspace = ('etpdataspace' in ((rec.kind or '')|lower)) %}
-      {# Collect GeoModelDataspace / ETPDataspace parameters from data.Parameters #}
+      {# Collect GeoModelDataspace / ETPDataspace / external DB parameters from data.Parameters #}
       {% set ds_params = [] %}
       {% for p in ((rec.data or {}).get('Parameters') or []) if p is mapping %}
         {% if 'etpdataspace' in ((p.get('DataObjectParameter') or '')|lower) or p.get('Title') == 'GeoModelDataspace' %}
+          {% set _ = ds_params.append(p) %}
+        {% elif (p.get('Keys') or []) | selectattr('ParameterKey', 'equalto', 'url') | list %}
           {% set _ = ds_params.append(p) %}
         {% endif %}
       {% endfor %}

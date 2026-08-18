@@ -629,7 +629,7 @@
               </details>
               {% endif %}
 
-              {# ── Data Sources (ETPDataspace / RDDMS geomodel) ── #}
+              {# ── Data Sources (ETPDataspace / RDDMS geomodel / external DBs) ── #}
               {% if ds_params %}
               <div class="bd-section-title">Data Sources</div>
               {% for p in ds_params %}
@@ -638,15 +638,21 @@
                 {% set ds_data = ds_info.get('data') or {} %}
                 {% set raw_uri = (ds_data.get('DatasetProperties') or {}).get('URI') or ds_data.get('DatasetProperties.URI') or '' %}
                 {% set srv_url = (ds_data.get('DatasetProperties') or {}).get('ServerURL') or '' %}
+                {% set ext_url = '' %}
+                {% set badge = 'Reservoir DDMS' %}
+                {% for k in (p.get('Keys') or []) if k is mapping %}
+                  {% if k.get('ParameterKey') == 'url' %}{% set ext_url = k.get('StringParameterKey', '') %}{% endif %}
+                  {% if k.get('ParameterKey') == 'artifact' and k.get('StringParameterKey') not in ('ETPDataspace',) %}{% set badge = k.get('StringParameterKey', badge) %}{% endif %}
+                {% endfor %}
                 <div class="ds-entry">
                   <div class="ds-name">
-                    {% if ds_id %}<a href="/search/view/{{ ds_id }}">{{ ds_info.name or p.get('Title') or 'Dataspace' }}</a>{% else %}{{ p.get('Title') or 'Dataspace' }}{% endif %}
-                    <span style="font-size:.78rem;background:#bee3f8;border-radius:999px;padding:.1rem .4rem;color:#2b6cb0;margin-left:.4rem;font-weight:400;">Reservoir DDMS</span>
+                    {% if ext_url %}<a href="{{ ext_url }}" target="_blank" rel="noopener">{{ p.get('Title') or 'External Source' }}</a>{% elif ds_id %}<a href="/search/view/{{ ds_id }}">{{ ds_info.name or p.get('Title') or 'Dataspace' }}</a>{% else %}{{ p.get('Title') or 'Dataspace' }}{% endif %}
+                    <span style="font-size:.78rem;background:{% if ext_url %}#fed7d7{% else %}#bee3f8{% endif %};border-radius:999px;padding:.1rem .4rem;color:{% if ext_url %}#9b2c2c{% else %}#2b6cb0{% endif %};margin-left:.4rem;font-weight:400;">{{ badge }}</span>
                   </div>
                   {% if p.get('Selection') or p.get('Description') %}
                   <div style="font-size:.82rem;color:#718096;margin-top:.1rem;">{{ p.get('Selection') or p.get('Description') }}</div>
                   {% endif %}
-                  {% if ds_id %}<div class="ds-id">OSDU: {{ ds_id }}</div>{% endif %}
+                  {% if ds_id and not ext_url %}<div class="ds-id">OSDU: {{ ds_id }}</div>{% endif %}
                   {% if raw_uri %}
                   <div style="margin-top:.4rem;font-size:.82rem;color:#4a5568;">EML URI:</div>
                   <div class="eml-block">
