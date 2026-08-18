@@ -1,0 +1,117 @@
+{
+  "generator": "ontology",
+  "project": "Drogon",
+  "gate": "DG0",
+  "description": "Drogon DG0 Business Case Maturity — pre-drill screening with analogue-based volumes and strategic fit assessment",
+
+  "business_decision": {
+    "id": "dev:master-data--BusinessDecision:Drogon-DG0-EvaluateOpportunity:1",
+    "name": "Drogon DG0 - Business Case Maturity",
+    "description": "DG0 business-case maturity for the Drogon prospect. Valysar formation in Volantis Group, 7 fault-bounded segments. Pre-drill analogue-based volumetric estimate, geological risk screening, and strategic fit assessment. Recommends proceed to DG1 Concept Selection.",
+    "project_name": "Drogon Field Development",
+    "reservoir_id": "dev:master-data--Reservoir:Drogon:1",
+    "decision_level": "DG0",
+    "approval_status": "Approved",
+    "decision_due_date": "2025-06-01",
+    "decision_date": "2025-05-15",
+    "decision_summary": "Screen Drogon prospect for field development potential. Analogue-based STOIIP estimate 25–45 MSm³ oil in Valysar formation. 7 fault-bounded segments identified from seismic interpretation. Strategic fit confirmed (Snorre area infrastructure). Approve proceed to DG1 Concept Selection with initial FMU volumetric assessment.",
+
+    "Personnel": [
+      {"Name": "Inge Lehmann", "ProjectRoleID": "dev:reference-data--ProjectRole:GeoscienceLead:", "Organisation": "Drogon Subsurface"}
+    ],
+    "DecisionOwners": [
+      {"Name": "Inge Lehmann", "Organisation": "Drogon Subsurface Lead"}
+    ],
+    "DecisionMakers": [
+      {"Name": "Pyotr Kropotkin", "Organisation": "Drogon Project Director"}
+    ],
+
+    "risk_ids": [
+      "dev:master-data--Risk:Drogon-DG0-ProspectRisk:1",
+      "dev:master-data--Risk:Drogon-DG0-DataMaturity:1",
+      "dev:master-data--Risk:Drogon-DG0-CommercialViability:1",
+      "dev:master-data--Risk:Drogon-DG0-InfrastructureAccess:1",
+      "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+      "dev:master-data--Risk:Drogon-FaultCompartment:1"
+    ],
+
+    "Parameters": [
+      {
+        "Title": "Reservoir scope",
+        "Selection": "Valysar reservoir – 7 fault-bounded segments in Volantis Group",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:master-data--Reservoir:Drogon:1"
+      },
+      {
+        "Title": "GeoModel Dataspace (RDDMS)",
+        "Selection": "RDDMS ETP dataspace with Drogon seismic interpretation and initial geomodel",
+        "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+        "DataObjectParameter": "dev:dataset--ETPDataspace:maap-drogon_dg:1",
+        "Keys": [
+          {"ParameterKey": "artifact", "StringParameterKey": "ETPDataspace"}
+        ]
+      }
+    ],
+
+    "ProjectSpecifications": [
+      {"ParameterTypeID": "dev:reference-data--ParameterType:STOIIP_Analogue:", "DataQuantityParameter": 35, "UnitOfMeasureID": "dev:reference-data--UnitOfMeasure:MSm3:"}
+    ],
+
+    "uncertainty_summary": {
+      "Basis": "Analogue-based screening estimate (pre-drill). Valysar formation, 7 segments.",
+      "StaticInPlace_Oil_MSm3": {"P90": 25.0, "P50": 35.0, "P10": 45.0}
+    },
+
+    "Remarks": [
+      {"RemarkSource": "DG0 Recommendations", "Remark": "Proceed to DG1 with FMU Level 2 static volumetrics (3+ realisations)"},
+      {"RemarkSource": "DG0 Recommendations", "Remark": "Assess OWC uncertainty across all 7 segments using available well data"},
+      {"RemarkSource": "DG0 Recommendations", "Remark": "Evaluate porosity risk from Floodplain vs Channel facies distribution"}
+    ],
+
+    "ActivityStates": [
+      {"MilestoneID": "DG0", "EffectiveDateTime": "2025-05-15", "ActivityStatusID": "dev:reference-data--ActivityStatus:Completed:", "Remark": "DG0 Business Case Maturity"},
+      {"MilestoneID": "DG1", "EffectiveDateTime": "2025-12-15", "ActivityStatusID": "dev:reference-data--ActivityStatus:Planned:", "Remark": "DG1 Concept Selection"}
+    ]
+  },
+
+  "risks": [
+    {
+      "id": "dev:master-data--Risk:Drogon-DG0-ProspectRisk:1",
+      "name": "Drogon DG0 – Prospect Risk (Trap & Seal)",
+      "description": "Risk that the Valysar prospect does not contain a viable hydrocarbon accumulation. Key elements: 4-way dip closure on Top Brent may be breached by sub-seismic faults; seal effectiveness of Upper Volantis shales uncertain at burial depth >3500 m; hydrocarbon charge timing relative to trap formation. Pre-drill Pg estimate ~0.65 based on regional analogues.",
+      "category": "Subsurface",
+      "level": "Medium",
+      "status": "Open",
+      "mitigation": "Seismic reprocessing for fault detection; AVO analysis for fluid discrimination; regional seal study from offset wells."
+    },
+    {
+      "id": "dev:master-data--Risk:Drogon-DG0-DataMaturity:1",
+      "name": "Drogon DG0 – Data Maturity & Analogue Dependency",
+      "description": "Risk that pre-drill subsurface understanding is insufficient for reliable volumetric and concept screening. No well penetration in Valysar at DG0; reservoir properties (porosity, NTG, Sw) based on Snorre/Statfjord analogues. Seismic depth conversion uncertainty ±50 m at reservoir level. OWC position inferred from regional pressure gradients only.",
+      "category": "Subsurface",
+      "level": "High",
+      "status": "Open",
+      "mitigation": "Plan exploration/appraisal well with core + MDT program; acquire velocity survey for depth calibration; commission analogue study from Snorre Brent reservoir."
+    },
+    {
+      "id": "dev:master-data--Risk:Drogon-DG0-CommercialViability:1",
+      "name": "Drogon DG0 – Commercial Viability",
+      "description": "Risk that the Drogon development is not commercially viable under realistic oil price and cost scenarios. Analogue-based STOIIP range 25–45 MSm³ with recovery factor 20–35% yields EUR 5–16 MSm³. Breakeven oil price estimated 45–65 USD/bbl depending on concept. CAPEX uncertainty ±40% at screening stage.",
+      "category": "Commercial",
+      "level": "Medium",
+      "status": "Open",
+      "mitigation": "Run economic screening with P10/P50/P90 volumes × 3 oil price scenarios; benchmark CAPEX against recent subsea tie-backs in Tampen area; confirm host platform capacity and availability."
+    },
+    {
+      "id": "dev:master-data--Risk:Drogon-DG0-InfrastructureAccess:1",
+      "name": "Drogon DG0 – Infrastructure Access & Tie-back",
+      "description": "Risk that suitable host infrastructure is unavailable or uneconomic for a Drogon tie-back. Nearest candidates: Njord A (semi-sub, 15 km), Draugen (concrete, 25 km). Host platform processing capacity, remaining field life, and flow assurance all uncertain at DG0.",
+      "category": "Facilities",
+      "level": "Low",
+      "status": "Open",
+      "mitigation": "Host platform capacity study; flow assurance screening (wax appearance, hydrate curve); pipeline routing desktop study; engage host platform operator for capacity reservation."
+    }
+  ]
+}

@@ -259,5 +259,61 @@
         {"title": "Actor", "value": "Reservoir engineering team (subsurface lead)"}
       ]
     }
+  ],
+
+  "risks": [
+    {
+      "id": "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+      "name": "Drogon - Porosity and cementation uncertainty (ESCALATED at DG2)",
+      "description": "Porosity revised 0.18→0.14 based on core data. STOIIP reduced 8%. Now the dominant volume uncertainty driver. Severity escalated Medium→High.",
+      "category": "Subsurface",
+      "level": "High",
+      "status": "Open",
+      "mitigation": "CentralFlanks core (3 wells) before DG3. Condition for gate passage.",
+      "inherent_severity": "S4",
+      "inherent_probability": "P4",
+      "residual_severity": "S3",
+      "residual_probability": "P3"
+    },
+    {
+      "id": "dev:master-data--Risk:Drogon-FaultCompartment:1",
+      "name": "Drogon - Fault compartmentalization (MITIGATED at DG2)",
+      "description": "4D seismic confirms pressure communication across NE boundary fault. Risk downgraded High→Low. No longer a development constraint.",
+      "category": "Subsurface",
+      "level": "Low",
+      "status": "Mitigated",
+      "mitigation": "Confirmed via 4D seismic reprocessing (2026-04-15). No further action required.",
+      "inherent_severity": "S4",
+      "inherent_probability": "P3",
+      "residual_severity": "S2",
+      "residual_probability": "P1",
+      "risk_status": "Mitigated"
+    },
+    {
+      "id": "dev:master-data--Risk:Drogon-WaterBreakthrough:1",
+      "name": "Drogon - Early water breakthrough (SouthWing)",
+      "description": "High water cut risk in SouthWing segment due to thin oil column (8m) and proximity to OWC. Could reduce segment recovery by 30–50%. Impact on field plateau duration.",
+      "category": "Subsurface",
+      "level": "Medium",
+      "status": "Open",
+      "mitigation": "Rate-controlled production in SouthWing; down-dip perforations; monitor with downhole gauges. Consider WAG if water cut exceeds 60%.",
+      "inherent_severity": "S3",
+      "inherent_probability": "P3",
+      "residual_severity": "S2",
+      "residual_probability": "P3"
+    },
+    {
+      "id": "dev:master-data--Risk:Drogon-SubseaTiebackDistance:1",
+      "name": "Drogon - Subsea tieback distance (12 km)",
+      "description": "Long subsea tieback introduces flow assurance risks (hydrates, wax, slugging) and higher CAPEX. Pipeline routing across uneven seabed terrain may add 15–20% to flowline cost.",
+      "category": "Facilities",
+      "level": "Medium",
+      "status": "Open",
+      "mitigation": "Insulated flowline with MEG injection; thermal simulation for steady-state and shutdown; pipeline routing study (geotechnical survey Q3 2026).",
+      "inherent_severity": "S3",
+      "inherent_probability": "P2",
+      "residual_severity": "S2",
+      "residual_probability": "P2"
+    }
   ]
 }

@@ -171,6 +171,11 @@ def generate(
         records.append(tpl_rec)
         records.append(act_rec)
 
+    # ── Risks ──
+    for risk_spec in spec.get("risks") or []:
+        risk_rec = _build_risk(risk_spec, project, gate, pfx, acl, legal)
+        records.append(risk_rec)
+
     # ── Rewrite partition prefix if target differs from canonical ──
     if pfx != _CANONICAL_PFX:
         records = _rewrite_partition(records, _CANONICAL_PFX, pfx)
@@ -326,6 +331,62 @@ def _build_bd(
     return {
         "id": record_id,
         "kind": "osdu:wks:master-data--BusinessDecision:1.0.0",
+        "acl": acl,
+        "legal": legal,
+        "data": data,
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Risk builder
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+def _build_risk(
+    risk: Dict[str, Any],
+    project: str,
+    gate: str,
+    pfx: str,
+    acl: Dict,
+    legal: Dict,
+) -> Dict[str, Any]:
+    """Build a Risk master-data record."""
+    record_id = risk.get("id") or md_id(pfx, "Risk", det_uuid(f"{project}-{gate}-{risk['name']}"))
+
+    data: Dict[str, Any] = {
+        "Name": risk["name"],
+        "Description": risk.get("description", ""),
+        "IsDiscoverable": True,
+    }
+    if risk.get("category"):
+        data["RiskCategoryID"] = ref_id(pfx, "RiskCategory", risk["category"])
+    if risk.get("level"):
+        data["RiskLevelID"] = ref_id(pfx, "RiskLevel", risk["level"])
+    if risk.get("status"):
+        data["RiskStatusID"] = ref_id(pfx, "RiskStatus", risk["status"])
+    if risk.get("mitigation"):
+        data["MitigationPlan"] = risk["mitigation"]
+
+    # ext.equinor fields for severity/probability (used in analyse risk diff)
+    ext_eq: Dict[str, Any] = {}
+    if risk.get("inherent_severity"):
+        ext_eq["InherentSeverity"] = risk["inherent_severity"]
+    if risk.get("inherent_probability"):
+        ext_eq["InherentProbability"] = risk["inherent_probability"]
+    if risk.get("residual_severity"):
+        ext_eq["ResidualSeverity"] = risk["residual_severity"]
+    if risk.get("residual_probability"):
+        ext_eq["ResidualProbability"] = risk["residual_probability"]
+    if risk.get("risk_status"):
+        ext_eq["Status"] = risk["risk_status"]
+    if risk.get("risk_category_id"):
+        ext_eq["RiskCategoryID"] = risk["risk_category_id"]
+    if ext_eq:
+        data["ext"] = {"equinor": ext_eq}
+
+    return {
+        "id": record_id,
+        "kind": "osdu:wks:master-data--Risk:1.0.0",
         "acl": acl,
         "legal": legal,
         "data": data,

@@ -137,5 +137,34 @@
       {"milestone_id": "DG3", "date": "2027-01-01T00:00:00Z", "status": "Planned", "remark": "DG3 Project Sanction"},
       {"milestone_id": "DG4", "date": "2027-07-01T00:00:00Z", "status": "Planned", "remark": "DG4 Execution Completion"}
     ]
-  }
+  },
+
+  "risks": [
+    {
+      "id": "dev:master-data--Risk:Drogon-PorosityAndCementation:1",
+      "name": "Drogon - Porosity and cementation uncertainty",
+      "description": "The Valysar fluvial system shows significant facies-dependent porosity variation (Floodplain ~0.10, Channel ~0.28, Crevasse ~0.21). Cementation and diagenetic effects further reduce effective porosity, particularly in the deeper segments.",
+      "category": "Subsurface",
+      "level": "Medium",
+      "status": "Open",
+      "mitigation": "Acquire additional core data; calibrate porosity model against well logs; run facies-conditioned uncertainty.",
+      "inherent_severity": "S3",
+      "inherent_probability": "P4",
+      "residual_severity": "S2",
+      "residual_probability": "P3"
+    },
+    {
+      "id": "dev:master-data--Risk:Drogon-FaultCompartment:1",
+      "name": "Drogon - Fault transmissibility and reservoir compartmentalization",
+      "description": "Fault transmissibility analysis indicates uncertainty in whether bounding and intra-reservoir faults act as baffles or barriers in the Valysar formation. Compartmentalization could isolate hydrocarbons in poorly-drained fault blocks.",
+      "category": "Subsurface",
+      "level": "High",
+      "status": "Open",
+      "mitigation": "Production testing to establish inter-compartment pressure communication; targeted additional wells to drain isolated blocks; 4D seismic for connectivity.",
+      "inherent_severity": "S4",
+      "inherent_probability": "P3",
+      "residual_severity": "S3",
+      "residual_probability": "P2"
+    }
+  ]
 }

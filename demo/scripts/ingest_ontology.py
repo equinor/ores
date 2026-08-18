@@ -2,8 +2,13 @@
 """
 demo/ontology/ingest.py — Generate ontology records from specs and ingest to OSDU.
 
-All records are generated on-the-fly from specs in ./specs/.
-No pre-generated JSON files are needed.
+Specs live alongside their project data:
+  demo/drogon_dg0/spec.json
+  demo/drogon_dg1/spec.json
+  demo/drogon_dg2/spec.json
+  demo/eqn/omegas/spec.json
+  demo/eqn/omegas/spec_geolabelset.json
+  demo/eqn/omegas/spec_document.json
 
 Usage:
   python demo/ontology/ingest.py --target eqndev
@@ -21,34 +26,36 @@ from typing import Any, Dict, List
 import httpx
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = SCRIPT_DIR.parent.parent
-SPECS_DIR = SCRIPT_DIR / "specs"
+DEMO_DIR = SCRIPT_DIR.parent
+REPO_ROOT = DEMO_DIR.parent
 
-sys.path.insert(0, str(REPO_ROOT / "demo"))
+sys.path.insert(0, str(DEMO_DIR))
 from _auth import get_token, load_instance  # noqa: E402
 
-sys.path.insert(0, str(REPO_ROOT / "demo" / "scripts"))
+sys.path.insert(0, str(DEMO_DIR / "scripts"))
 from scripts.generators import run_generator  # noqa: E402
 from scripts.generators._common import load_json, default_acl, default_legal  # noqa: E402
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Spec groups — ordered for dependency resolution
+# Spec groups — paths relative to demo/
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Interop target: public demo (Drogon only)
 INTEROP_SPECS = [
-    "drogon_dg1.json",
-    "drogon_dg2.json",
+    "drogon_dg0/spec.json",
+    "drogon_dg1/spec.json",
+    "drogon_dg2/spec.json",
 ]
 
 # Eqndev target: Drogon + Omegas (confidential)
 EQNDEV_SPECS = [
-    "drogon_dg1.json",
-    "drogon_dg2.json",
-    "omegas_wpc.json",
-    "omegas_geolabelset.json",
-    "omegas_document.json",
+    "drogon_dg0/spec.json",
+    "drogon_dg1/spec.json",
+    "drogon_dg2/spec.json",
+    "eqn/omegas/spec.json",
+    "eqn/omegas/spec_geolabelset.json",
+    "eqn/omegas/spec_document.json",
 ]
 
 
@@ -57,15 +64,15 @@ EQNDEV_SPECS = [
 # ═══════════════════════════════════════════════════════════════════════════════
 
 
-def generate_all(spec_names: List[str], partition: str) -> List[Dict[str, Any]]:
-    """Generate OSDU records from all listed specs."""
+def generate_all(spec_paths: List[str], partition: str) -> List[Dict[str, Any]]:
+    """Generate OSDU records from all listed spec paths (relative to demo/)."""
     records: List[Dict[str, Any]] = []
-    for name in spec_names:
-        spec_path = SPECS_DIR / name
+    for rel_path in spec_paths:
+        spec_path = DEMO_DIR / rel_path
         spec = load_json(spec_path)
         generated = run_generator(spec, partition, spec_path.parent)
         records.extend(generated)
-        print(f"  {name}: {len(generated)} records")
+        print(f"  {rel_path}: {len(generated)} records")
     return records
 
 
