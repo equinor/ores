@@ -347,13 +347,13 @@
               <option value="rel_grid_targets">Fault relations (both directions)</option>
               <option value="rel_well_chain">Well chain: Feature → Interp → Traj</option>
             </optgroup>
-            <optgroup label="Deep Search (RESQML)">
-              <option value="deep_poro">Faults + relation graph</option>
-              <option value="deep_perm">Horizons + relations</option>
-              <option value="deep_sw">Stratigraphic units + boundaries</option>
-              <option value="deep_all_props">Boundary features (horizons + faults)</option>
-              <option value="deep_grid2d_horizons">PolylineSet (fault sticks)</option>
-              <option value="deep_grid2d_arrays">Grid2D array statistics</option>
+            <optgroup label="Deep Search (Grid Properties)">
+              <option value="deep_poro">Grid: porosity &gt; 0.20</option>
+              <option value="deep_perm">Grid: permeability &gt; 10 mD</option>
+              <option value="deep_sw">Grid: water saturation &lt; 0.50</option>
+              <option value="deep_all_props">Grid: all properties inventory</option>
+              <option value="deep_grid2d_horizons">Surfaces: depth statistics</option>
+              <option value="deep_grid2d_arrays">Surfaces: arrays + sample values</option>
               <option value="deep_well_gr_filter">Well log filter: GR &gt; 50 API</option>
               <option value="array_stats">PointSet array stats + sample values</option>
             </optgroup>
@@ -374,6 +374,8 @@
               <option value="fed_enrich">Horizons + relations (federated)</option>
               <option value="xref_grid_props">Catalog faults → RDDMS representations</option>
               <option value="xref_horizon_reps">Catalog horizons → RDDMS surfaces</option>
+              <option value="xref_grid_poro_perm">Grid + porosity filter (federated)</option>
+              <option value="xref_well_grid_props">Wells + grid properties (topology)</option>
               <option value="xref_orphan_rddms">RDDMS orphans / catalog ghosts</option>
             </optgroup>
             <optgroup label="Well Data (WITSML)">

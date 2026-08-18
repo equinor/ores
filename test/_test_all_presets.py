@@ -1,4 +1,9 @@
-"""Test all GraphQL presets (both Easy Mode and JSON/GraphQL mode) against live server."""
+"""Test all GraphQL presets (both Easy Mode and JSON/GraphQL mode) against live server.
+
+Verifies:
+  1. No GraphQL errors returned
+  2. Non-nil results (totalMatched > 0 or hits/objects list non-empty)
+"""
 import requests, json, sys
 
 BASE = 'http://localhost:8000'
@@ -24,15 +29,15 @@ gql_presets = {
     'rel_grid_targets': None,
     'rel_well_chain': None,
 
-    # Deep Search
-    'deep_poro': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_FaultInterpretation" includeRelations: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} }} }} }}',
-    'deep_perm': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_HorizonInterpretation" includeRelations: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} }} }} }}',
-    'deep_sw': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_StratigraphicUnitInterpretation" includeRelations: true limit: 5) {{ totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} }} }} }}',
-    'deep_all_props': f'{{ horizons: deepSearch({DS_ARG} typeName: "resqml20.obj_GeneticBoundaryFeature" includeRelations: true limit: 5) {{ totalScanned totalMatched objects {{ uuid title relations {{ uuid name typeName direction }} }} }} faults: deepSearch({DS_ARG} typeName: "resqml20.obj_TectonicBoundaryFeature" includeRelations: true limit: 5) {{ totalMatched objects {{ uuid title relations {{ uuid name typeName direction }} }} }} }}',
+    # Deep Search — IjkGrid property filters
+    'deep_poro': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ kind: "porosity" arrayFilter: {{ operator: GT, threshold: 0.20 }} }} limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
+    'deep_perm': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ kind: "permeability" arrayFilter: {{ operator: GT, threshold: 10.0 }} }} limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
+    'deep_sw': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ kind: "saturation" titleContains: "Water" arrayFilter: {{ operator: LT, threshold: 0.50 }} }} limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
+    'deep_all_props': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} }} }} }} }}',
 
     # Surfaces & Arrays
-    'deep_grid2d_horizons': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_PolylineSetRepresentation" includeRelations: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} }} }} }}',
-    'deep_grid2d_arrays': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_Grid2dRepresentation" includeRelations: true includeStatistics: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} }} }} }} }}',
+    'deep_grid2d_horizons': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_Grid2dRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ titleContains: "depth" }} limit: 10) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} }} }} }} }}',
+    'deep_grid2d_arrays': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_Grid2dRepresentation" includeRelations: true includeStatistics: true includeSampleValues: true limit: 10) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} arrays {{ path totalElements statistics {{ count minValue maxValue mean stdDev }} sampleValues }} }} }} }} }}',
     'array_stats': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_PointSetRepresentation" includeRelations: true includeStatistics: true includeSampleValues: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} arrays {{ path totalElements statistics {{ count minValue maxValue mean stdDev }} sampleValues }} }} }} }} }}',
 
     # Stratigraphy
@@ -61,6 +66,8 @@ gql_presets = {
     # Cross-system
     'xref_grid_props': f'{{ federatedSearch(text: "*" kind: "osdu:wks:work-product-component--FaultInterpretation:*" dataspaces: {DS_LIST} typeName: "resqml20.obj_FaultInterpretation" searchCatalog: true searchRddms: true includeRelations: true limit: 5) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms osduId osduKind relations {{ uuid name typeName direction }} }} }} }}',
     'xref_horizon_reps': f'{{ federatedSearch(text: "*" kind: "osdu:wks:work-product-component--HorizonInterpretation:*" dataspaces: {DS_LIST} typeName: "resqml20.obj_HorizonInterpretation" searchCatalog: true searchRddms: true includeRelations: true relationFilter: ["Grid2d", "PointSet", "TriangulatedSet"] limit: 5) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title dataspace foundInCatalog foundInLocalRddms osduId osduKind relations {{ uuid name typeName direction }} }} }} }}',
+    'xref_grid_poro_perm': f'{{ federatedSearch(text: "*" kind: "osdu:wks:work-product-component--IjkGridRepresentation:*" dataspaces: {DS_LIST} typeName: "resqml20.obj_IjkGridRepresentation" searchCatalog: true searchRddms: true includeRelations: true includeProperties: true includeStatistics: true propertyFilter: {{ kind: "porosity" arrayFilter: {{ operator: GT, threshold: 0.15 }} }} limit: 5) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms osduId osduKind relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
+    'xref_well_grid_props': f'{{ wells: deepSearch({DS_ARG} typeName: "resqml20.obj_WellboreTrajectoryRepresentation" includeRelations: true limit: 10) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} }} }} grids: deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ kind: "porosity" }} limit: 5) {{ totalMatched objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} }} }} }} }}',
     'xref_orphan_rddms': f'{{ federatedSearch(text: "{DS_NAME}" kind: "osdu:wks:work-product-component--*:*" dataspaces: {DS_LIST} searchCatalog: true searchRddms: true limit: 20) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms osduId }} }} }}',
 }
 
@@ -110,11 +117,35 @@ def summarize(d):
     return ' | '.join(parts)
 
 
+def has_results(data):
+    """Check if any field in the response has non-empty results."""
+    if not data:
+        return False
+    for k, v in data.items():
+        if isinstance(v, str):
+            if v:  # status string, etc.
+                return True
+        elif isinstance(v, list):
+            if len(v) > 0:
+                return True
+        elif isinstance(v, dict):
+            if v.get('objects') and len(v['objects']) > 0:
+                return True
+            if v.get('hits') and len(v['hits']) > 0:
+                return True
+            if v.get('totalMatched', 0) > 0 or v.get('totalMerged', 0) > 0:
+                return True
+        elif isinstance(v, (int, float)):
+            if v > 0:
+                return True
+    return False
+
+
 def run_tests(label, presets):
     print(f'\n{"="*70}')
     print(f'  {label} ({len(presets)} presets)')
     print(f'{"="*70}\n')
-    ok = err = 0
+    ok = err = nil_results = 0
     for name, query in presets.items():
         try:
             r = requests.post(URL, headers=headers, json={'query': query}, timeout=30)
@@ -127,6 +158,10 @@ def run_tests(label, presets):
             elif not data.get('data'):
                 print(f'  EMPTY  {name}: no data field')
                 err += 1
+            elif not has_results(data['data']):
+                summary = summarize(data['data'])
+                print(f'  NIL    {name}: query OK but 0 results — {summary}')
+                nil_results += 1
             else:
                 summary = summarize(data['data'])
                 print(f'  OK     {name}: {summary}')
@@ -134,7 +169,7 @@ def run_tests(label, presets):
         except Exception as e:
             print(f'  FAIL   {name}: {e}')
             err += 1
-    return ok, err
+    return ok, err, nil_results
 
 
 print(f'Testing against {URL} (ds={DS})\n')
@@ -166,17 +201,18 @@ gql_presets = {k: v for k, v in gql_presets.items() if v is not None}
 easy_presets = {k: v for k, v in easy_presets.items() if v is not None}
 
 
-ok1, err1 = run_tests('GraphQL Mode (JSON tab) presets', gql_presets)
-ok2, err2 = run_tests('Easy Mode presets', easy_presets)
+ok1, err1, nil1 = run_tests('GraphQL Mode (JSON tab) presets', gql_presets)
+ok2, err2, nil2 = run_tests('Easy Mode presets', easy_presets)
 
 total_ok = ok1 + ok2
 total_err = err1 + err2
-total = total_ok + total_err
+total_nil = nil1 + nil2
+total = total_ok + total_err + total_nil
 
 print(f'\n{"="*70}')
-print(f'  TOTAL: {total_ok}/{total} OK, {total_err} errors')
-print(f'    GraphQL Mode: {ok1}/{ok1+err1}')
-print(f'    Easy Mode:    {ok2}/{ok2+err2}')
+print(f'  TOTAL: {total_ok}/{total} OK, {total_err} errors, {total_nil} nil-results')
+print(f'    GraphQL Mode: {ok1}/{ok1+err1+nil1} OK, {err1} err, {nil1} nil')
+print(f'    Easy Mode:    {ok2}/{ok2+err2+nil2} OK, {err2} err, {nil2} nil')
 print(f'{"="*70}')
 
-sys.exit(1 if total_err > 0 else 0)
+sys.exit(1 if (total_err > 0 or total_nil > 0) else 0)

@@ -2681,102 +2681,123 @@ const GQL_PRESETS = {
 }`,
 
   // ─── Deep Search ───────────────────────────────────────────────────
-  deep_poro: `# Faults with relation graph
+  deep_poro: `# Grid cells with porosity > 0.20 (reservoir quality cutoff)
+# IMPOSSIBLE in OSDU catalog: catalog has no cell-level property values.
+# deepSearch traverses: IjkGrid → attached ContinuousProperty → HDF5 arrays
+# Returns statistics + fraction of cells passing the threshold.
 {
   deepSearch(
     $DS_ARG
-    typeName: "resqml20.obj_FaultInterpretation"
+    typeName: "resqml20.obj_IjkGridRepresentation"
     includeRelations: true
-    limit: 10
+    includeStatistics: true
+    propertyFilter: {
+      kind: "porosity"
+      arrayFilter: { operator: GT, threshold: 0.20 }
+    }
+    limit: 5
   ) {
     backend totalScanned totalMatched queryDescription
     objects {
       uuid title
       relations { uuid name typeName direction }
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean stdDev }
+        matchingCells { count total fraction }
+      }
     }
   }
 }`,
-  deep_perm: `# Horizons with relations (surfaces, features)
+  deep_perm: `# Grid cells with permeability > 10 mD (flow unit cutoff)
+# Combines topology (which grid) + numerical filter (cell values > 10)
+# Only possible via RDDMS array access — catalog stores no HDF5 data.
 {
   deepSearch(
     $DS_ARG
-    typeName: "resqml20.obj_HorizonInterpretation"
+    typeName: "resqml20.obj_IjkGridRepresentation"
     includeRelations: true
-    limit: 10
+    includeStatistics: true
+    propertyFilter: {
+      kind: "permeability"
+      arrayFilter: { operator: GT, threshold: 10.0 }
+    }
+    limit: 5
   ) {
     backend totalScanned totalMatched queryDescription
     objects {
       uuid title
       relations { uuid name typeName direction }
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean stdDev }
+        matchingCells { count total fraction }
+      }
     }
   }
 }`,
-  deep_sw: `# Stratigraphic units + boundary relations
+  deep_sw: `# Grid cells with water saturation < 0.50 (hydrocarbon zone)
+# Identifies grid objects where >50% of volume is hydrocarbon-filled.
+# Requires reading HDF5 arrays — not available in any catalog search.
 {
   deepSearch(
     $DS_ARG
-    typeName: "resqml20.obj_StratigraphicUnitInterpretation"
+    typeName: "resqml20.obj_IjkGridRepresentation"
     includeRelations: true
-    limit: 10
+    includeStatistics: true
+    propertyFilter: {
+      kind: "saturation"
+      titleContains: "Water"
+      arrayFilter: { operator: LT, threshold: 0.50 }
+    }
+    limit: 5
   ) {
     backend totalScanned totalMatched queryDescription
     objects {
       uuid title
       relations { uuid name typeName direction }
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean stdDev }
+        matchingCells { count total fraction }
+      }
     }
   }
 }`,
-  deep_all_props: `# All boundary features (horizons + faults)
+  deep_all_props: `# All properties attached to IjkGrid (porosity, perm, Sw, NTG, facies…)
+# Shows the full property inventory for each grid representation.
+# Graph traversal: IjkGrid ← ContinuousProperty/DiscreteProperty sources
 {
-  horizons: deepSearch(
+  deepSearch(
     $DS_ARG
-    typeName: "resqml20.obj_GeneticBoundaryFeature"
+    typeName: "resqml20.obj_IjkGridRepresentation"
     includeRelations: true
-    limit: 10
+    includeStatistics: true
+    limit: 5
   ) {
-    totalScanned totalMatched
+    backend totalScanned totalMatched queryDescription
     objects {
       uuid title
       relations { uuid name typeName direction }
-    }
-  }
-  faults: deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_TectonicBoundaryFeature"
-    includeRelations: true
-    limit: 10
-  ) {
-    totalMatched
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean stdDev }
+      }
     }
   }
 }`,
 
   // ─── Surfaces & Arrays ─────────────────────────────────────────────
-  deep_grid2d_horizons: `# PolylineSet (fault sticks) → parent interpretations
-{
-  deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_PolylineSetRepresentation"
-    includeRelations: true
-    limit: 10
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
-    }
-  }
-}`,
-  deep_grid2d_arrays: `# Grid2D surfaces with numerical statistics (depth/time values)
+  deep_grid2d_horizons: `# Horizon surfaces with depth statistics (min/max/mean depth)
+# Surfaces are Grid2D representations — numerical arrays with Z values.
+# OSDU catalog knows the WPC exists but has NO numerical depth data.
 {
   deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_Grid2dRepresentation"
     includeRelations: true
     includeStatistics: true
+    propertyFilter: { titleContains: "depth" }
     limit: 10
   ) {
     backend totalScanned totalMatched queryDescription
@@ -2786,6 +2807,29 @@ const GQL_PRESETS = {
       properties {
         title kind uom
         statistics { count minValue maxValue mean stdDev }
+      }
+    }
+  }
+}`,
+  deep_grid2d_arrays: `# Grid2D surfaces — full statistics + sample values for preview
+# Only possible through RDDMS (HDF5 access), never in catalog search.
+{
+  deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_Grid2dRepresentation"
+    includeRelations: true
+    includeStatistics: true
+    includeSampleValues: true
+    limit: 10
+  ) {
+    backend totalScanned totalMatched queryDescription
+    objects {
+      uuid title
+      relations { uuid name typeName direction }
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean stdDev }
+        arrays { path totalElements statistics { count minValue maxValue mean stdDev } sampleValues }
       }
     }
   }
@@ -3087,6 +3131,87 @@ const GQL_PRESETS = {
       uuid title typeName dataspace
       foundInCatalog foundInLocalRddms
       osduId
+    }
+  }
+}`,
+  xref_grid_poro_perm: `# FEDERATED: Grid zones with porosity > 0.15 AND permeability stats
+# WHY THIS IS UNIQUE:
+#   - OSDU catalog: knows grids exist, but has NO cell values
+#   - RDDMS alone: has arrays, but no business metadata (who approved, project)
+#   - Federated GraphQL: catalog metadata + RDDMS numerical arrays + graph
+#
+# This query finds IjkGrid representations, filters by porosity > 0.15,
+# and returns BOTH catalog metadata (OSDU ID, kind) AND property statistics.
+# The Drogon model has grids with PORO, PERMX, Sw, NTG, FACIES properties.
+{
+  federatedSearch(
+    text: "*"
+    kind: "osdu:wks:work-product-component--IjkGridRepresentation:*"
+    dataspaces: $DS_LIST
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    searchCatalog: true
+    searchRddms: true
+    includeRelations: true
+    includeProperties: true
+    includeStatistics: true
+    propertyFilter: {
+      kind: "porosity"
+      arrayFilter: { operator: GT, threshold: 0.15 }
+    }
+    limit: 5
+  ) {
+    totalCatalog totalLocalRddms totalMerged sources
+    hits {
+      uuid title typeName dataspace
+      foundInCatalog foundInLocalRddms
+      osduId osduKind
+      relations { uuid name typeName direction }
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean stdDev }
+        matchingCells { count total fraction }
+      }
+    }
+  }
+}`,
+  xref_well_grid_props: `# FEDERATED: Wells + their grid-intersecting properties
+# Finds WellboreTrajectory objects in RDDMS, shows which grid properties
+# (PORO, PERMX) are attached to grids that the well penetrates.
+# 
+# Step 1: This query finds well trajectories with their RESQML graph
+# Step 2: The relations show which IjkGrid the blocked well references
+#
+# OSDU catalog cannot answer: "which grid cells does this well pass through?"
+# Only RDDMS topology graph knows the BlockedWellbore→IjkGrid link.
+{
+  wells: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_WellboreTrajectoryRepresentation"
+    includeRelations: true
+    limit: 10
+  ) {
+    backend totalScanned totalMatched queryDescription
+    objects {
+      uuid title
+      relations { uuid name typeName direction }
+    }
+  }
+  grids: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    includeRelations: true
+    includeStatistics: true
+    propertyFilter: { kind: "porosity" }
+    limit: 5
+  ) {
+    totalMatched
+    objects {
+      uuid title
+      relations { uuid name typeName direction }
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean stdDev }
+      }
     }
   }
 }`,
