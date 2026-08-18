@@ -51,6 +51,23 @@
         ],
         "Parameters": [
           {
+            "Title": "Prior gate (DG0 Business Case Maturity)",
+            "Selection": "DG0 approved \u2013 proceed to DG1 Concept Selection",
+            "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": "dev:reference-data--ParameterRole:InputReference:",
+            "DataObjectParameter": "dev:master-data--BusinessDecision:Drogon-DG0-EvaluateOpportunity:1",
+            "Keys": [
+              {
+                "ParameterKey": "gate",
+                "StringParameterKey": "DG0"
+              },
+              {
+                "ParameterKey": "relationship",
+                "StringParameterKey": "supersedes"
+              }
+            ]
+          },
+          {
             "Title": "Raw volumes (per realisation)",
             "Selection": "Per-realisation FMU output",
             "ParameterKindID": "dev:reference-data--ParameterKind:DataObject:",

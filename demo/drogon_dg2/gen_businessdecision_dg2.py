@@ -361,7 +361,10 @@ def _build_parameters(
             "ParameterKindID": f"{pfx}:reference-data--ParameterKind:DataObject:",
             "ParameterRoleID": f"{pfx}:reference-data--ParameterRole:InputReference:",
             "DataObjectParameter": dg1_bd_id,
-            "Keys": [{"ParameterKey": "gate", "StringParameterKey": "DG1"}],
+            "Keys": [
+                {"ParameterKey": "gate", "StringParameterKey": "DG1"},
+                {"ParameterKey": "relationship", "StringParameterKey": "supersedes"},
+            ],
         },
     ]
     # Document references

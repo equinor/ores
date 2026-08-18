@@ -1532,17 +1532,31 @@ async def api_refdata_kinds(request: Request):
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Provenance DAG — walk PriorDecisionID chains
+# Provenance DAG — walk BD chains via Parameters, ancestry & project search
 # ──────────────────────────────────────────────────────────────────────────────
+
+_BD_RETURNED_FIELDS = [
+    "id", "data.Name", "data.DecisionLevel",
+    "data.DecisionLevelID", "data.DecisionDate",
+    "data.DecisionDueDate", "data.ApprovalStatus",
+    "data.PriorDecisionID", "data.Parameters",
+    "data.ProjectName", "ancestry",
+]
 
 @router.get("/search/api/provenance-dag/{record_id:path}")
 async def provenance_dag(request: Request, record_id: str):
     """
-    Walk PriorDecisionID chain from a BD record and return the full DAG.
+    Build the full decision-gate provenance DAG for a BusinessDecision.
 
-    Returns JSON: {nodes: [{id, name, decision_level, date, status}], edges: [{from, to, label}]}
-    Walks both backwards (PriorDecisionID) and forwards (search for BDs that reference this one).
-    Max depth: 10.
+    Discovery strategy (all gates, not just direct predecessor):
+      1. Fetch the root record
+      2. Walk backwards via PriorDecisionID, Parameters[] BD refs, ancestry.parents
+      3. Walk forwards via ancestry.children and OSDU search for referencing BDs
+      4. Search by ProjectName to discover sibling gates in the same project
+      5. Recursively resolve any newly discovered BD nodes (max depth 10)
+
+    Returns JSON: {nodes: [{id, name, decision_level, date, status}],
+                   edges: [{from, to, label}], root: str}
     """
     at = _access_token(request)
     storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
@@ -1550,17 +1564,18 @@ async def provenance_dag(request: Request, record_id: str):
     hdr = osdu.headers(at)
 
     nodes: dict[str, dict] = {}
-    edges: list[dict] = []
+    edges_set: set[tuple[str, str, str]] = set()  # dedup (from, to, label)
     visited: set[str] = set()
+
+    def _is_bd(rid: str) -> bool:
+        return "master-data--BusinessDecision:" in rid
 
     def _node_from_record(rec: dict) -> dict:
         data = rec.get("data", {})
-        # DecisionLevel: prefer plain field, else extract from DecisionLevelID ref-data ID
         dl = data.get("DecisionLevel", "")
         if not dl:
             dl_id = data.get("DecisionLevelID", "")
             if dl_id:
-                # e.g. "dev:reference-data--DecisionLevel:DG2:" → "DG2"
                 parts = dl_id.split(":")
                 dl = parts[-2] if len(parts) >= 2 and parts[-2] else parts[-1]
         return {
@@ -1571,24 +1586,47 @@ async def provenance_dag(request: Request, record_id: str):
             "status": data.get("ApprovalStatus", ""),
         }
 
-    def _extract_prior_bd(data: dict) -> str | None:
-        """Extract prior BD ID from either top-level PriorDecisionID or Parameters[]."""
-        # 1. Explicit field
+    def _extract_bd_links(rid: str, rec: dict) -> list[tuple[str, str, str]]:
+        """Extract ALL BD-to-BD edges from a record (PriorDecisionID, Parameters, ancestry)."""
+        data = rec.get("data", {})
+        links: list[tuple[str, str, str]] = []
+
+        # 1. Explicit PriorDecisionID
         prior = data.get("PriorDecisionID", "")
-        if prior:
-            return prior
-        # 2. Parameters[] with DataObjectParameter pointing to a BD record
+        if prior and _is_bd(prior):
+            links.append((rid, prior, "supersedes"))
+
+        # 2. Parameters[] — any DataObjectParameter referencing a BD
         for param in data.get("Parameters") or []:
             obj = param.get("DataObjectParameter", "")
-            if "master-data--BusinessDecision:" in obj:
-                # Confirm it's a prior-gate reference (key or title hint)
-                keys = param.get("Keys") or []
+            if not obj or not _is_bd(obj) or obj == rid:
+                continue
+            # Derive edge label from relationship key, title, or role
+            label = ""
+            for k in param.get("Keys") or []:
+                if isinstance(k, dict) and (k.get("ParameterKey") or "").lower() == "relationship":
+                    label = k.get("StringParameterKey", "")
+                    break
+            if not label:
                 title = (param.get("Title") or "").lower()
-                if "prior" in title or "gate" in title or any(
-                    (k.get("ParameterKey") or "").lower() == "gate" for k in keys
-                ):
-                    return obj
-        return None
+                if "prior" in title or "gate" in title:
+                    label = "supersedes"
+                elif "successor" in title:
+                    label = "precedes"
+                else:
+                    label = param.get("Title") or "linked"
+            links.append((rid, obj, label))
+
+        # 3. ancestry.parents / ancestry.children — BD-to-BD only
+        ancestry = rec.get("ancestry", {}) or data.get("ancestry", {}) or {}
+        for parent_id in ancestry.get("parents") or []:
+            if _is_bd(parent_id) and parent_id != rid:
+                links.append((parent_id, rid, "parent"))
+        for child_id in ancestry.get("children") or []:
+            if _is_bd(child_id) and child_id != rid:
+                links.append((rid, child_id, "parent"))
+
+        return links
 
     async def _fetch(client, rid: str) -> dict | None:
         try:
@@ -1597,79 +1635,88 @@ async def provenance_dag(request: Request, record_id: str):
         except Exception:
             return None
 
-    async def _walk_back(client, rid: str, depth: int = 0):
-        """Walk backwards via PriorDecisionID or Parameters[] BD reference."""
-        if depth > 10 or rid in visited:
+    async def _process_record(client, rid: str, rec: dict, depth: int):
+        """Add node + edges from a record and recursively resolve linked BDs."""
+        if rid in visited or depth > 10:
             return
         visited.add(rid)
-        rec = await _fetch(client, rid)
-        if not rec:
-            return
         nodes[rid] = _node_from_record(rec)
-        prior = _extract_prior_bd(rec.get("data", {}))
-        if prior:
-            edges.append({"from": rid, "to": prior, "label": "supersedes"})
-            await _walk_back(client, prior, depth + 1)
 
-    async def _find_forward(client, rid: str):
-        """Find BDs that reference this record as prior gate (PriorDecisionID or Parameters)."""
-        # Search for explicit PriorDecisionID
+        bd_links = _extract_bd_links(rid, rec)
+        for frm, to, label in bd_links:
+            edges_set.add((frm, to, label))
+
+        # Recursively fetch any newly discovered BD neighbours
+        neighbours = {to for _, to, _ in bd_links if to not in visited}
+        neighbours |= {frm for frm, _, _ in bd_links if frm not in visited}
+        for nid in neighbours:
+            nrec = await _fetch(client, nid)
+            if nrec:
+                await _process_record(client, nid, nrec, depth + 1)
+
+    async def _search_referencing_bds(client, rid: str):
+        """Find BDs that reference rid via PriorDecisionID or Parameters[]."""
+        queries = [
+            f"data.PriorDecisionID:\"{rid}\"",
+            f"data.Parameters.DataObjectParameter:\"{rid}\"",
+        ]
+        for q in queries:
+            payload = {
+                "kind": "osdu:wks:master-data--BusinessDecision:*",
+                "query": q,
+                "limit": 20,
+                "returnedFields": _BD_RETURNED_FIELDS,
+            }
+            try:
+                r = await client.post(search_url, json=payload, headers=hdr)
+                if r.is_success:
+                    for rec in r.json().get("results", []):
+                        cid = rec.get("id", "")
+                        if cid and cid not in visited:
+                            await _process_record(client, cid, rec, 2)
+            except Exception:
+                pass
+
+    async def _search_project_siblings(client, project_name: str):
+        """Find all BDs in the same project to discover all gate stages."""
+        if not project_name:
+            return
         payload = {
             "kind": "osdu:wks:master-data--BusinessDecision:*",
-            "query": f"data.PriorDecisionID:\"{rid}\"",
-            "limit": 20,
-            "returnedFields": ["id", "data.Name", "data.DecisionLevel",
-                               "data.DecisionLevelID", "data.DecisionDate",
-                               "data.DecisionDueDate", "data.ApprovalStatus",
-                               "data.PriorDecisionID", "data.Parameters"],
+            "query": f"data.ProjectName:\"{project_name}\"",
+            "limit": 50,
+            "returnedFields": _BD_RETURNED_FIELDS,
         }
         try:
             r = await client.post(search_url, json=payload, headers=hdr)
             if r.is_success:
                 for rec in r.json().get("results", []):
-                    child_id = rec.get("id", "")
-                    if child_id and child_id not in nodes:
-                        nodes[child_id] = _node_from_record(rec)
-                        prior = _extract_prior_bd(rec.get("data", {}))
-                        if prior:
-                            edges.append({"from": child_id, "to": prior, "label": "supersedes"})
-        except Exception:
-            pass
-        # Search for Parameters[].DataObjectParameter reference
-        payload2 = {
-            "kind": "osdu:wks:master-data--BusinessDecision:*",
-            "query": f"data.Parameters.DataObjectParameter:\"{rid}\"",
-            "limit": 20,
-            "returnedFields": ["id", "data.Name", "data.DecisionLevel",
-                               "data.DecisionLevelID", "data.DecisionDate",
-                               "data.DecisionDueDate", "data.ApprovalStatus",
-                               "data.PriorDecisionID", "data.Parameters"],
-        }
-        try:
-            r = await client.post(search_url, json=payload2, headers=hdr)
-            if r.is_success:
-                for rec in r.json().get("results", []):
-                    child_id = rec.get("id", "")
-                    if child_id and child_id not in nodes:
-                        nodes[child_id] = _node_from_record(rec)
-                        prior = _extract_prior_bd(rec.get("data", {}))
-                        if prior:
-                            edges.append({"from": child_id, "to": prior, "label": "supersedes"})
+                    cid = rec.get("id", "")
+                    if cid and cid not in visited:
+                        await _process_record(client, cid, rec, 2)
         except Exception:
             pass
 
     try:
         async with osdu.http_client(timeout=30) as client:
-            await _walk_back(client, record_id)
-            # Also find forward successors for all nodes in the chain
-            for nid in list(nodes.keys()):
-                await _find_forward(client, nid)
+            # 1. Fetch & process root record
+            root_rec = await _fetch(client, record_id)
+            if root_rec:
+                await _process_record(client, record_id, root_rec, 0)
+
+                # 2. Search for BDs that reference any known node
+                for nid in list(nodes.keys()):
+                    await _search_referencing_bds(client, nid)
+
+                # 3. Discover sibling gates via ProjectName
+                project = (root_rec.get("data") or {}).get("ProjectName", "")
+                await _search_project_siblings(client, project)
     except Exception as exc:
         log.warning("Provenance DAG error: %s", exc)
 
     return JSONResponse({
         "nodes": list(nodes.values()),
-        "edges": edges,
+        "edges": [{"from": f, "to": t, "label": l} for f, t, l in edges_set],
         "root": record_id,
     })
 

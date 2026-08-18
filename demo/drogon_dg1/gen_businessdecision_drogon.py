@@ -102,6 +102,9 @@ def main():
     if Path(args.devconcept).exists():
         devconcept_wpc_id = _find_id(load_json(args.devconcept), "DevelopmentConcept")
 
+    # DG0 BD ID (prior gate)
+    dg0_bd_id = f"{args.id_prefix}:master-data--BusinessDecision:Drogon-DG0-EvaluateOpportunity:1"
+
     # GeoLabelSet (written directly to records/ by gengeolabelset_drogon.py)
     geolabelset_id = ""
     gls_path = Path(args.geolabelset)
@@ -142,6 +145,17 @@ def main():
             "RiskIDs": risk_ids,
             "PriorActivityIDs": prior_activity_ids,
             "Parameters": [
+                {
+                    "Title": "Prior gate (DG0 Business Case Maturity)",
+                    "Selection": "DG0 approved – proceed to DG1 Concept Selection",
+                    "ParameterKindID": f"{args.id_prefix}:reference-data--ParameterKind:DataObject:",
+                    "ParameterRoleID": f"{args.id_prefix}:reference-data--ParameterRole:InputReference:",
+                    "DataObjectParameter": dg0_bd_id,
+                    "Keys": [
+                        {"ParameterKey": "gate", "StringParameterKey": "DG0"},
+                        {"ParameterKey": "relationship", "StringParameterKey": "supersedes"},
+                    ],
+                },
                 {
                     "Title": "Raw volumes (per realisation)",
                     "Selection": "Per-realisation FMU output",

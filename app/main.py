@@ -140,7 +140,7 @@ async def inject_access_token(request: Request, call_next):
 
     # 3. No token at all - redirect to login page (for browser) or 401 (for API)
     if not access_token:
-        if path.startswith("/api") or (path.startswith("/weco/") and not path.endswith(".html")):
+        if path.startswith("/api") or path.startswith("/search/api/") or (path.startswith("/weco/") and not path.endswith(".html")):
             return JSONResponse({"error": "Authentication required. No env token and no session."}, status_code=401)
         return RedirectResponse("/login-page")
 

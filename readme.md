@@ -192,7 +192,7 @@ Detailed guides live in [`md/`](md/Readme.md):
 
 ## License
 
-Copyright 2024 Equinor ASA
+Copyright 2026 Equinor ASA
 
 Licensed under the [Apache License, Version 2.0](LICENSE).
 You may obtain a copy of the License at <http://www.apache.org/licenses/LICENSE-2.0>.

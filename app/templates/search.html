@@ -704,6 +704,7 @@
         try {
           const resp = await fetch('/search/api/provenance-dag/' + recordId);
           if (!resp.ok) {
+            const txt = await resp.text();
             content.innerHTML = `<span class="muted">Error ${resp.status}: ${resp.statusText}</span>`;
             return;
           }
@@ -714,15 +715,29 @@
             return;
           }
 
-          // Build Mermaid graph TD (top-down)
-          let md = 'graph TD\n';
-          const statusIcon = s => s === 'Approved' ? '✓ ' : s === 'Pending' ? '⏳ ' : '';
+          // Sort nodes by decision_level (DG0 < DG1 < DG2 …)
+          const dgOrder = n => {
+            const m = (n.decision_level || '').match(/DG(\d+)/i);
+            return m ? parseInt(m[1]) : 99;
+          };
+          dag.nodes.sort((a, b) => dgOrder(a) - dgOrder(b));
+
+          // Build Mermaid graph LR (left-to-right timeline)
+          let md = 'graph LR\n';
+          const statusIcon = s => {
+            const sl = (s || '').toLowerCase();
+            if (sl.includes('approved') || sl.includes('completed')) return '✓ ';
+            if (sl.includes('pending') || sl.includes('planned')) return '⏳ ';
+            return '';
+          };
           dag.nodes.forEach((n, i) => {
-            const label = `${n.decision_level || '?'}: ${n.name || n.id.split(':').slice(-2, -1)[0]}`;
+            const dl = n.decision_level || '?';
+            const nm = n.name || n.id.split(':').slice(-2, -1)[0];
+            const label = `${dl}: ${nm}`;
             const esc = label.replace(/"/g, '#quot;');
             const cls = n.id === recordId ? 'rec_self' : 'cls_decision';
             md += `N${i}["${statusIcon(n.status)}${esc}"]:::${cls}\n`;
-            md += `click N${i} href "/search/view/${encodeURIComponent(n.id)}" "Open ${n.decision_level}"\n`;
+            md += `click N${i} href "/search/view/${encodeURIComponent(n.id)}" "Open ${dl}"\n`;
           });
 
           // Build index for edges
@@ -730,8 +745,14 @@
           dag.nodes.forEach((n, i) => { idxMap[n.id] = i; });
           dag.edges.forEach(e => {
             const fi = idxMap[e.from], ti = idxMap[e.to];
-            if (fi !== undefined && ti !== undefined) {
-              md += `N${ti} -->|${e.label}| N${fi}\n`;
+            if (fi === undefined || ti === undefined) return;
+            const lbl = (e.label || 'linked').replace(/"/g, '#quot;');
+            // "supersedes": from supersedes to → arrow from to→from (earlier to later)
+            // "parent": from is parent of to → arrow from→to
+            if (lbl === 'supersedes') {
+              md += `N${ti} -->|${lbl}| N${fi}\n`;
+            } else {
+              md += `N${fi} -->|${lbl}| N${ti}\n`;
             }
           });
 
