@@ -14,8 +14,26 @@
     "decision_due_date": "2026-03-15",
     "decision_date": "2026-02-28",
     "decision_summary": "Assess Valysar in-place volumes and recommend proceed/no-go for DG2.",
+    "reservoir_id": "dev:master-data--Reservoir:Drogon:1",
     "activity_state_template_id": "dev:work-product-component--ActivityStateTemplate:FieldDevelopment:1",
     "project_type_id": "dev:reference-data--ProjectType:FieldDevelopment:",
+
+    "Personnel": [
+      {"Name": "Inge Lehmann", "ProjectRoleID": "dev:reference-data--ProjectRole:GeoscienceLead:", "Organisation": "Drogon Subsurface"},
+      {"Name": "Vladimir Vernadsky", "ProjectRoleID": "dev:reference-data--ProjectRole:ReservoirEngineer:", "Organisation": "Drogon Reservoir Management"},
+      {"Name": "Friedrich Mohs", "ProjectRoleID": "dev:reference-data--ProjectRole:Petrophysicist:", "Organisation": "Drogon Petec"},
+      {"Name": "Abraham G. Werner", "ProjectRoleID": "dev:reference-data--ProjectRole:FMULead:", "Organisation": "Drogon Geomodelling"}
+    ],
+    "DecisionOwners": [
+      {"Name": "Inge Lehmann", "Organisation": "Drogon Subsurface Lead"}
+    ],
+    "DecisionMakers": [
+      {"Name": "Pyotr Kropotkin", "Organisation": "Drogon Project Director"}
+    ],
+    "Contributors": [
+      {"Name": "Abraham G. Werner", "Organisation": "Drogon Geomodelling"},
+      {"Name": "Alexander von Humboldt", "Organisation": "ST MSU Subsurface QA"}
+    ],
 
     "risk_ids": [
       "dev:master-data--Risk:Drogon-PorosityAndCementation:1",

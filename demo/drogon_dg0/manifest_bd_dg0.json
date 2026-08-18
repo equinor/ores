@@ -118,6 +118,14 @@
           }
         },
         "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ED50-UTM31N:",
+        "ext": {
+          "equinor": {
+            "UncertaintySummary": {
+              "Basis": "Analogue-based screening estimate (pre-drill). Valysar formation, 7 segments.",
+              "StaticInPlace_Oil_MSm3": {"P90": 25.0, "P50": 35.0, "P10": 45.0}
+            }
+          }
+        },
         "ancestry": {
           "parents": [],
           "children": [

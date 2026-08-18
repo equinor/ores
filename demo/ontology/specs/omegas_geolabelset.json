@@ -4,15 +4,15 @@
   "project": "OmegaSor",
   "reservoir_id": "dev:master-data--Reservoir:OmegaSorAlfa:1",
   "label_property": "Oil",
-  "label_uom": "MSm3",
+  "label_uom": "m3",
   "labels": [
     {
       "segment": "Alfa",
-      "P90": 15.8,
-      "P50": 19.3,
-      "P10": 22.9,
+      "P90": 15800000,
+      "P50": 19300000,
+      "P10": 22900000,
       "property": "Oil",
-      "uom": "MSm3"
+      "uom": "m3"
     }
   ]
 }

@@ -292,6 +292,16 @@ def _build_bd(
             for st in bd["activity_states"]
         ]
 
+    # ── Personnel / DecisionOwners / DecisionMakers / Contributors (passthrough) ──
+    if bd.get("Personnel"):
+        data["Personnel"] = bd["Personnel"]
+    if bd.get("DecisionOwners"):
+        data["DecisionOwners"] = bd["DecisionOwners"]
+    if bd.get("DecisionMakers"):
+        data["DecisionMakers"] = bd["DecisionMakers"]
+    if bd.get("Contributors"):
+        data["Contributors"] = bd["Contributors"]
+
     # ── ext.equinor (uncertainty, alternatives, project type) ──
     ext_eq: Dict[str, Any] = {}
     if bd.get("uncertainty_summary"):
