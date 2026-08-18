@@ -340,55 +340,37 @@
               <option value="status">Backend status</option>
               <option value="dataspaces">List dataspaces</option>
               <option value="types">Resource types &amp; counts</option>
-              <option value="objects_grid">Browse PointSets</option>
-              <option value="objects_wells">Browse wellbore features</option>
+              <option value="objects_grid">Browse objects by type</option>
             </optgroup>
             <optgroup label="Relations (graph traversal)">
-              <option value="rel_grid_targets">Fault relations (both directions)</option>
-              <option value="rel_well_chain">Well chain: Feature → Interp → Traj</option>
+              <option value="rel_grid_targets">Object relations (both directions)</option>
             </optgroup>
-            <optgroup label="Deep Search (Grid Properties)">
-              <option value="deep_poro">Grid: porosity &gt; 0.20</option>
-              <option value="deep_perm">Grid: permeability &gt; 10 mD</option>
-              <option value="deep_sw">Grid: water saturation &lt; 0.50</option>
+            <optgroup label="Deep Search (numerical arrays)">
+              <option value="deep_poro">Grid: porosity &gt; 0.20 (arrayFilter)</option>
               <option value="deep_all_props">Grid: all properties inventory</option>
-              <option value="deep_grid2d_horizons">Surfaces: depth statistics</option>
-              <option value="deep_grid2d_arrays">Surfaces: arrays + sample values</option>
-              <option value="deep_well_gr_filter">Well log filter: GR &gt; 50 API</option>
-              <option value="array_stats">PointSet array stats + sample values</option>
+              <option value="deep_grid2d_arrays">Surfaces: statistics + sample values</option>
             </optgroup>
-            <optgroup label="Stratigraphy">
-              <option value="strat_column">Strat column → units</option>
-              <option value="strat_horizons">Horizons → surfaces</option>
+            <optgroup label="Stratigraphy &amp; FIRP">
+              <option value="strat_column">Strat column → ranks → units</option>
               <option value="xref_strat_horizons">Federated: catalog ↔ RDDMS horizons</option>
-            </optgroup>
-            <optgroup label="FIRP Hierarchy (Feature→Interp→Rep→Prop)">
-              <option value="struct_features_to_reps">Features → Interps → Representations</option>
-              <option value="struct_faults_graph">Fault FIRP chain</option>
-              <option value="struct_org_model">Organization → structural framework</option>
-              <option value="markers_by_horizon">Wellbore markers by horizon (3D)</option>
+              <option value="struct_features_to_reps">FIRP: Features → Interps → Reps</option>
+              <option value="markers_by_horizon">Wellbore markers by horizon</option>
             </optgroup>
             <optgroup label="Federated (Catalog + RDDMS)">
-              <option value="fed_local">Local RDDMS only</option>
-              <option value="fed_both">All sources merged</option>
-              <option value="fed_enrich">Horizons + relations (federated)</option>
-              <option value="xref_grid_props">Catalog faults → RDDMS representations</option>
-              <option value="xref_horizon_reps">Catalog horizons → RDDMS surfaces</option>
+              <option value="fed_enrich">Federated + relations</option>
               <option value="xref_grid_poro_perm">Grid + porosity filter (federated)</option>
               <option value="xref_well_grid_props">Wells + grid properties (topology)</option>
               <option value="xref_orphan_rddms">RDDMS orphans / catalog ghosts</option>
             </optgroup>
-            <optgroup label="Well Data (WITSML)">
-              <option value="deep_well_phit">WITSML logs + relations</option>
-              <option value="deep_well_perm">Search WITSML by name</option>
-              <option value="deep_well_all">All WITSML types + statistics</option>
-              <option value="witsml_browse_wells">Browse wells (hierarchy)</option>
+            <optgroup label="WITSML">
+              <option value="witsml_browse_wells">Well hierarchy + relations</option>
             </optgroup>
           </select>
           <span class="btn btn-action" id="gql-run">▶ Run</span>
           <span class="btn" id="gql-save-query" style="font-size:12px;padding:3px 10px;" title="Save current query">💾 Save</span>
           <span class="muted" id="gql-status" style="font-size:12px;"></span>
         </div>
+        <div id="gql-preset-tooltip" style="display:none;font-size:11px;line-height:1.4;color:#444;background:#f8f8f8;border:1px solid #e0e0e0;border-radius:4px;padding:6px 10px;margin-bottom:8px;max-width:700px;white-space:pre-line;font-family:'Fira Code',Consolas,monospace;"></div>
 
         <!-- ── Saved GraphQL queries ── -->
         <div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-bottom:8px;">

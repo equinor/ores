@@ -591,6 +591,52 @@ class PropertyFilter:
 # Computation helpers
 # ──────────────────────────────────────────────────────────────────────────────
 
+from .graphql_refdata import ALIAS_TO_CANONICAL, STANDARD_PROPERTY_KINDS
+
+# Build reverse lookup: canonical name → set of all aliases + the name itself
+_CANONICAL_TO_ALIASES: Dict[str, set] = {}
+for _pk in STANDARD_PROPERTY_KINDS:
+    _all_names = {_pk["name"].lower()} | {a.lower() for a in _pk["aliases"]}
+    _CANONICAL_TO_ALIASES[_pk["name"].lower()] = _all_names
+
+
+def _kind_matches(filter_kind: str, stored_kind: str, property_title: str = "") -> bool:
+    """Check if a user's kind filter matches a stored property kind.
+
+    Matching rules (in order):
+      1. Substring: filter_kind appears in stored_kind (existing behavior)
+      2. Alias expansion: resolve filter_kind to canonical, then check if stored_kind
+         or property_title matches any alias of that canonical kind.
+      3. Reverse: resolve stored_kind to canonical, check if filter_kind is an alias.
+    """
+    fk = filter_kind.lower()
+    sk = stored_kind.lower()
+    pt = property_title.lower()
+
+    # 1. Direct substring match (backwards-compatible)
+    if fk in sk or fk in pt:
+        return True
+
+    # 2. Resolve filter_kind via alias table
+    canonical = ALIAS_TO_CANONICAL.get(fk)
+    if canonical:
+        aliases = _CANONICAL_TO_ALIASES.get(canonical, set())
+        # Check if stored kind matches any alias
+        if sk in aliases or any(a in sk for a in aliases):
+            return True
+        # Check property title against aliases
+        if any(a in pt for a in aliases):
+            return True
+
+    # 3. Resolve stored_kind via alias table (handles "volume of shale" → "shale volume")
+    stored_canonical = ALIAS_TO_CANONICAL.get(sk)
+    if stored_canonical:
+        aliases = _CANONICAL_TO_ALIASES.get(stored_canonical, set())
+        if fk in aliases or any(fk in a for a in aliases):
+            return True
+
+    return False
+
 
 def _compute_statistics(values: List[float]) -> ArrayStatistics:
     finite = [v for v in values if math.isfinite(v)]
@@ -977,10 +1023,9 @@ async def _deep_search_pg(
                     # Kind from batch cache
                     kind = kind_cache.get(p_obj_id, "Unknown")
 
-                    # Kind filter
+                    # Kind filter (with alias resolution)
                     if property_filter and property_filter.kind:
-                        if property_filter.kind.lower() not in kind.lower() and \
-                           property_filter.kind.lower() not in p_name.lower():
+                        if not _kind_matches(property_filter.kind, kind, p_name):
                             continue
 
                     prop_info = PropertyInfo(
@@ -1226,9 +1271,9 @@ async def _deep_search_rest(
                 _kind_cache[p_uuid] = kind
                 uom = p_obj.get("UOM") or p_obj.get("Uom") or None
 
-            # Kind filter
+            # Kind filter (with alias resolution)
             if property_filter and property_filter.kind:
-                if property_filter.kind.lower() not in kind.lower():
+                if not _kind_matches(property_filter.kind, kind, p_name):
                     continue
 
             # Title filter on property
@@ -1520,15 +1565,15 @@ async def _deep_search_discovery(
             elif "Points" in p_type:
                 kind = "points"
 
-            # Kind filter
+            # Kind filter (with alias resolution)
             if property_filter and property_filter.kind:
-                if property_filter.kind.lower() not in kind.lower():
+                if not _kind_matches(property_filter.kind, kind, p_name):
                     # If we have a kind filter but only type-inferred kind,
                     # try to fetch the actual object for precise kind (lazy)
                     try:
                         p_obj = await _rest_get_resource(token, dataspace, p_type, p_uuid)
                         kind = _extract_property_kind(p_obj)
-                        if property_filter.kind.lower() not in kind.lower():
+                        if not _kind_matches(property_filter.kind, kind, p_name):
                             continue
                     except Exception:
                         continue

@@ -2631,22 +2631,10 @@ const GQL_PRESETS = {
     typeName
   }
 }`,
-  objects_wells: `# Browse wellbore features
-{
-  resqmlObjects(
-    dataspace: "$DS"
-    typeName: "resqml20.obj_WellboreFeature"
-    limit: 30
-  ) {
-    uuid
-    title
-    typeName
-  }
-}`,
 
   // ─── Relationships ────────────────────────────────────────────────
-  rel_grid_targets: `# Object relations for a specific fault (paste UUID from browse)
-# Step 1: Run "Faults + relation graph" to find UUIDs
+  rel_grid_targets: `# Object relations for a specific object (paste UUID from browse)
+# Step 1: Run "Browse objects" to find UUIDs
 # Step 2: Paste a UUID below to explore its full graph
 {
   objectRelations(
@@ -2654,23 +2642,6 @@ const GQL_PRESETS = {
     typeName: "resqml20.obj_FaultInterpretation"
     uuid: "PASTE-UUID-HERE"
     direction: "both"
-  ) {
-    uuid
-    name
-    typeName
-    direction
-    contentType
-  }
-}`,
-  rel_well_chain: `# Well chain: find all objects that reference a well feature
-# Step 1: Run "Browse wellbores" to find UUIDs
-# Step 2: Paste a UUID below
-{
-  objectRelations(
-    dataspace: "$DS"
-    typeName: "resqml20.obj_WellboreFeature"
-    uuid: "PASTE-UUID-HERE"
-    direction: "sources"
   ) {
     uuid
     name
@@ -2694,61 +2665,6 @@ const GQL_PRESETS = {
     propertyFilter: {
       kind: "porosity"
       arrayFilter: { operator: GT, threshold: 0.20 }
-    }
-    limit: 5
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
-      properties {
-        title kind uom
-        statistics { count minValue maxValue mean stdDev }
-        matchingCells { count total fraction }
-      }
-    }
-  }
-}`,
-  deep_perm: `# Grid cells with permeability > 10 mD (flow unit cutoff)
-# Combines topology (which grid) + numerical filter (cell values > 10)
-# Only possible via RDDMS array access — catalog stores no HDF5 data.
-{
-  deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_IjkGridRepresentation"
-    includeRelations: true
-    includeStatistics: true
-    propertyFilter: {
-      kind: "permeability"
-      arrayFilter: { operator: GT, threshold: 10.0 }
-    }
-    limit: 5
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
-      properties {
-        title kind uom
-        statistics { count minValue maxValue mean stdDev }
-        matchingCells { count total fraction }
-      }
-    }
-  }
-}`,
-  deep_sw: `# Grid cells with water saturation < 0.50 (hydrocarbon zone)
-# Identifies grid objects where >50% of volume is hydrocarbon-filled.
-# Requires reading HDF5 arrays — not available in any catalog search.
-{
-  deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_IjkGridRepresentation"
-    includeRelations: true
-    includeStatistics: true
-    propertyFilter: {
-      kind: "saturation"
-      titleContains: "Water"
-      arrayFilter: { operator: LT, threshold: 0.50 }
     }
     limit: 5
   ) {
@@ -2788,29 +2704,6 @@ const GQL_PRESETS = {
 }`,
 
   // ─── Surfaces & Arrays ─────────────────────────────────────────────
-  deep_grid2d_horizons: `# Horizon surfaces with depth statistics (min/max/mean depth)
-# Surfaces are Grid2D representations — numerical arrays with Z values.
-# OSDU catalog knows the WPC exists but has NO numerical depth data.
-{
-  deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_Grid2dRepresentation"
-    includeRelations: true
-    includeStatistics: true
-    propertyFilter: { titleContains: "depth" }
-    limit: 10
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
-      properties {
-        title kind uom
-        statistics { count minValue maxValue mean stdDev }
-      }
-    }
-  }
-}`,
   deep_grid2d_arrays: `# Grid2D surfaces — full statistics + sample values for preview
 # Only possible through RDDMS (HDF5 access), never in catalog search.
 {
@@ -2863,21 +2756,6 @@ const GQL_PRESETS = {
     }
   }
 }`,
-  strat_horizons: `# Horizons → features → surface representations
-{
-  horizons: deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_HorizonInterpretation"
-    includeRelations: true
-    limit: 10
-  ) {
-    totalMatched
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
-    }
-  }
-}`,
   xref_strat_horizons: `# FEDERATED: Catalog horizon WPCs ↔ RDDMS object graph
 #
 # The gen_markers_strat_drogon.py script creates HorizonInterpretation
@@ -2912,142 +2790,7 @@ const GQL_PRESETS = {
   }
 }`,
 
-  // ─── Well Data ─────────────────────────────────────────────────────
-  deep_well_phit: `# WITSML logs + RESQML array statistics
-{
-  logs: deepSearch(
-    dataspace: "$DS"
-    typeName: "witsml21.Log"
-    includeRelations: true
-    limit: 10
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
-    }
-  }
-}`,
-  deep_well_perm: `# Search WITSML by name (titleContains)
-{
-  deepSearch(
-    dataspace: "$DS"
-    category: "witsml"
-    titleContains: "A-1"
-    includeRelations: true
-    limit: 10
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title typeName
-      relations { uuid name typeName direction }
-    }
-  }
-}`,
-  deep_well_all: `# All WITSML types + statistics
-{
-  deepSearch(
-    dataspace: "$DS"
-    category: "witsml"
-    includeRelations: true
-    includeStatistics: true
-    limit: 30
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title typeName
-      relations { uuid name typeName direction }
-      properties {
-        title kind uom
-        statistics { count minValue maxValue mean stdDev }
-      }
-    }
-  }
-}`,
-  deep_well_gr_filter: `# Well log filter: GR > 50 API (shale cutoff)
-{
-  deepSearch(
-    dataspace: "$DS"
-    typeName: "witsml21.Log"
-    includeStatistics: true
-    propertyFilter: {
-      kind: "GR"
-      arrayFilter: { operator: GT, threshold: 50.0 }
-    }
-    limit: 10
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title typeName
-      properties {
-        title kind uom
-        statistics { count minValue maxValue mean stdDev }
-        matchingCells { count total fraction }
-      }
-    }
-  }
-}`,
-
-  // ─── Arrays ────────────────────────────────────────────────────────
-  array_stats: `# PointSet representations with numerical statistics (XYZ coordinates)
-{
-  deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_PointSetRepresentation"
-    includeRelations: true
-    includeStatistics: true
-    includeSampleValues: true
-    limit: 10
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title
-      relations { uuid name typeName direction }
-      properties {
-        title kind uom
-        statistics { count minValue maxValue mean stdDev }
-        arrays { path totalElements statistics { count minValue maxValue mean stdDev } sampleValues }
-      }
-    }
-  }
-}`,
   // ─── Federated (Catalog + RDDMS) ────────────────────────────────────────
-  fed_local: `# Local RDDMS only (skip catalog)
-{
-  federatedSearch(
-    text: "*"
-    searchCatalog: false
-    searchRddms: true
-    searchRemoteRddms: false
-    dataspaces: $DS_LIST
-    limit: 20
-  ) {
-    totalLocalRddms totalMerged sources
-    hits {
-      uuid title typeName dataspace
-      foundInLocalRddms
-    }
-  }
-}`,
-  fed_both: `# All sources merged (catalog + local + remote)
-{
-  federatedSearch(
-    text: "$DS_NAME"
-    kind: "osdu:wks:work-product-component--*:*"
-    dataspaces: $DS_LIST
-    searchCatalog: true
-    searchRddms: true
-    searchRemoteRddms: true
-    limit: 20
-  ) {
-    totalCatalog totalLocalRddms totalRemoteRddms totalMerged sources
-    hits {
-      uuid title typeName dataspace
-      foundInCatalog foundInLocalRddms foundInRemoteRddms
-      osduId osduKind
-    }
-  }
-}`,
   fed_enrich: `# Federated + relations (horizons)
 {
   federatedSearch(
@@ -3068,53 +2811,6 @@ const GQL_PRESETS = {
   }
 }`,
   // ─── Cross-System (impossible with just OSDU catalog search) ────────────
-  xref_grid_props: `# Catalog faults → RDDMS representations (graph traversal)
-# OSDU Search finds the fault WPC record but has NO representation data.
-# GraphQL bridges: catalog hit → UUID → RDDMS graph → PolylineSets
-{
-  federatedSearch(
-    text: "*"
-    kind: "osdu:wks:work-product-component--FaultInterpretation:*"
-    dataspaces: $DS_LIST
-    typeName: "resqml20.obj_FaultInterpretation"
-    searchCatalog: true
-    searchRddms: true
-    includeRelations: true
-    limit: 10
-  ) {
-    totalCatalog totalLocalRddms totalMerged sources
-    hits {
-      uuid title typeName dataspace
-      foundInCatalog foundInLocalRddms
-      osduId osduKind
-      relations { uuid name typeName direction }
-    }
-  }
-}`,
-  xref_horizon_reps: `# Catalog horizons → RDDMS surfaces (reverse graph edges)
-# Catalog knows HorizonInterpretation records exist, but WHICH Grid2D
-# surfaces reference that horizon? Only RDDMS graph knows.
-{
-  federatedSearch(
-    text: "*"
-    kind: "osdu:wks:work-product-component--HorizonInterpretation:*"
-    dataspaces: $DS_LIST
-    typeName: "resqml20.obj_HorizonInterpretation"
-    searchCatalog: true
-    searchRddms: true
-    includeRelations: true
-    relationFilter: ["Grid2d", "PointSet", "TriangulatedSet"]
-    limit: 10
-  ) {
-    totalCatalog totalLocalRddms totalMerged sources
-    hits {
-      uuid title dataspace
-      foundInCatalog foundInLocalRddms
-      osduId osduKind
-      relations { uuid name typeName direction }
-    }
-  }
-}`,
   xref_orphan_rddms: `# RDDMS orphans (not in catalog) vs catalog ghosts (not in RDDMS)
 # Impossible with single-system search — requires comparing both
 {
@@ -3246,36 +2942,6 @@ const GQL_PRESETS = {
     }
   }
 }`,
-  struct_faults_graph: `# Fault FIRP chain: Feature → Interpretation → PolylineSet
-{
-  deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_FaultInterpretation"
-    includeRelations: true
-    limit: 10
-  ) {
-    backend totalScanned totalMatched queryDescription
-    objects {
-      uuid title typeName
-      relations { uuid name typeName direction }
-    }
-  }
-}`,
-  struct_org_model: `# Structural framework: OrganizationFeature → all members
-{
-  deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_OrganizationFeature"
-    includeRelations: true
-    limit: 5
-  ) {
-    totalMatched
-    objects {
-      uuid title typeName
-      relations { uuid name typeName direction }
-    }
-  }
-}`,
 
   // ─── Numerical Properties (3D grid cell values) ───────────────────────
   markers_by_horizon: `# Wellbore markers by horizon (renderable in 3D)
@@ -3364,6 +3030,21 @@ function gqlLoadPreset() {
   query = query.replace(/\$DS_NAME/g, dsName);
   query = query.replace(/\$DS/g, gqlCurrentDs());
   gqlEditor.value = query;
+
+  // Show preset explanation tooltip (extracted from # comment lines)
+  const tooltip = document.getElementById('gql-preset-tooltip');
+  if (tooltip) {
+    const lines = tpl.split('\n');
+    const comments = lines
+      .filter(l => l.trim().startsWith('#'))
+      .map(l => l.trim().replace(/^#\s?/, ''));
+    if (comments.length > 0) {
+      tooltip.textContent = comments.join('\n');
+      tooltip.style.display = 'block';
+    } else {
+      tooltip.style.display = 'none';
+    }
+  }
 }
 
 gqlPreset.addEventListener('change', gqlLoadPreset);

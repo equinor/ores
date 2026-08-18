@@ -23,49 +23,29 @@ gql_presets = {
     'dataspaces': '{ dataspaces { path uri } }',
     'types': f'{{ resourceTypes(dataspace: "{DS}") {{ name count }} }}',
     'objects_grid': f'{{ resqmlObjects(dataspace: "{DS}" typeName: "resqml20.obj_PointSetRepresentation" limit: 5) {{ uuid title typeName }} }}',
-    'objects_wells': f'{{ resqmlObjects(dataspace: "{DS}" typeName: "resqml20.obj_WellboreFeature" limit: 5) {{ uuid title typeName }} }}',
 
     # Relations (requires real UUIDs — resolved dynamically below)
     'rel_grid_targets': None,
-    'rel_well_chain': None,
 
-    # Deep Search — IjkGrid property filters
+    # Deep Search — IjkGrid property filter + array threshold
     'deep_poro': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ kind: "porosity" arrayFilter: {{ operator: GT, threshold: 0.20 }} }} limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
-    'deep_perm': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ kind: "permeability" arrayFilter: {{ operator: GT, threshold: 10.0 }} }} limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
-    'deep_sw': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ kind: "saturation" titleContains: "Water" arrayFilter: {{ operator: LT, threshold: 0.50 }} }} limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
     'deep_all_props': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} }} }} }} }}',
 
-    # Surfaces & Arrays
-    'deep_grid2d_horizons': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_Grid2dRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ titleContains: "depth" }} limit: 10) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} }} }} }} }}',
+    # Surfaces with sample values
     'deep_grid2d_arrays': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_Grid2dRepresentation" includeRelations: true includeStatistics: true includeSampleValues: true limit: 10) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} arrays {{ path totalElements statistics {{ count minValue maxValue mean stdDev }} sampleValues }} }} }} }} }}',
-    'array_stats': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_PointSetRepresentation" includeRelations: true includeStatistics: true includeSampleValues: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} arrays {{ path totalElements statistics {{ count minValue maxValue mean stdDev }} sampleValues }} }} }} }} }}',
 
     # Stratigraphy
     'strat_column': f'{{ col: deepSearch({DS_ARG} typeName: "resqml20.obj_StratigraphicColumn" includeRelations: true limit: 5) {{ totalMatched objects {{ uuid title relations {{ uuid name typeName direction }} }} }} units: deepSearch({DS_ARG} typeName: "resqml20.obj_StratigraphicUnitInterpretation" includeRelations: true limit: 20) {{ totalMatched objects {{ uuid title relations {{ uuid name typeName direction }} }} }} }}',
-    'strat_horizons': f'{{ horizons: deepSearch({DS_ARG} typeName: "resqml20.obj_HorizonInterpretation" includeRelations: true limit: 5) {{ totalMatched objects {{ uuid title relations {{ uuid name typeName direction }} }} }} }}',
     'xref_strat_horizons': f'{{ federatedSearch(text: "*" kind: "osdu:wks:work-product-component--HorizonInterpretation:*" dataspaces: {DS_LIST} typeName: "resqml20.obj_HorizonInterpretation" searchCatalog: true searchRddms: true includeRelations: true relationFilter: ["Grid2d", "PointSet", "Boundary", "Stratigraphic", "TriangulatedSet"] limit: 5) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title dataspace foundInCatalog foundInLocalRddms osduId osduKind relations {{ uuid name typeName direction }} }} }} }}',
 
     # FIRP
     'struct_features_to_reps': f'{{ features: deepSearch({DS_ARG} typeName: "resqml20.obj_GeneticBoundaryFeature" includeRelations: true limit: 5) {{ totalMatched objects {{ uuid title typeName relations {{ uuid name typeName direction }} }} }} faultFeatures: deepSearch({DS_ARG} typeName: "resqml20.obj_TectonicBoundaryFeature" includeRelations: true limit: 5) {{ totalMatched objects {{ uuid title typeName relations {{ uuid name typeName direction }} }} }} }}',
-    'struct_faults_graph': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_FaultInterpretation" includeRelations: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title typeName relations {{ uuid name typeName direction }} }} }} }}',
-    'struct_org_model': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_OrganizationFeature" includeRelations: true limit: 5) {{ totalMatched objects {{ uuid title typeName relations {{ uuid name typeName direction }} }} }} }}',
     'markers_by_horizon': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_WellboreMarkerFrameRepresentation" includeRelations: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title typeName relations {{ uuid name typeName direction contentType }} }} }} }}',
 
-    # Well Data (WITSML)
-    'deep_well_phit': f'{{ logs: deepSearch(dataspace: "{DS}" typeName: "witsml21.Log" includeRelations: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} }} }} }}',
-    'deep_well_perm': f'{{ deepSearch(dataspace: "{DS}" category: "witsml" titleContains: "A-1" includeRelations: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title typeName relations {{ uuid name typeName direction }} }} }} }}',
-    'deep_well_all': f'{{ deepSearch(dataspace: "{DS}" category: "witsml" includeRelations: true includeStatistics: true limit: 10) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title typeName relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} }} }} }} }}',
-    'deep_well_gr_filter': f'{{ deepSearch(dataspace: "{DS}" typeName: "witsml21.Log" includeStatistics: true propertyFilter: {{ kind: "GR" arrayFilter: {{ operator: GT, threshold: 50.0 }} }} limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title typeName properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
-    'witsml_browse_wells': f'{{ wells: deepSearch({DS_ARG} typeName: "witsml21.Well" includeRelations: true limit: 5) {{ backend totalScanned totalMatched objects {{ uuid title typeName relations {{ uuid name typeName direction }} }} }} wellbores: deepSearch({DS_ARG} typeName: "witsml21.Wellbore" includeRelations: true limit: 5) {{ totalMatched objects {{ uuid title typeName relations {{ uuid name typeName direction }} }} }} }}',
-
     # Federated
-    'fed_local': f'{{ federatedSearch(text: "*" searchCatalog: false searchRddms: true searchRemoteRddms: false dataspaces: {DS_LIST} limit: 10) {{ totalLocalRddms totalMerged sources hits {{ uuid title typeName dataspace foundInLocalRddms }} }} }}',
-    'fed_both': f'{{ federatedSearch(text: "{DS_NAME}" kind: "osdu:wks:work-product-component--*:*" dataspaces: {DS_LIST} searchCatalog: true searchRddms: true searchRemoteRddms: true limit: 10) {{ totalCatalog totalLocalRddms totalRemoteRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms foundInRemoteRddms osduId osduKind }} }} }}',
     'fed_enrich': f'{{ federatedSearch(text: "*" dataspaces: {DS_LIST} typeName: "resqml20.obj_HorizonInterpretation" searchCatalog: true searchRddms: true includeRelations: true limit: 5) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms relations {{ uuid name typeName direction }} }} }} }}',
 
     # Cross-system
-    'xref_grid_props': f'{{ federatedSearch(text: "*" kind: "osdu:wks:work-product-component--FaultInterpretation:*" dataspaces: {DS_LIST} typeName: "resqml20.obj_FaultInterpretation" searchCatalog: true searchRddms: true includeRelations: true limit: 5) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms osduId osduKind relations {{ uuid name typeName direction }} }} }} }}',
-    'xref_horizon_reps': f'{{ federatedSearch(text: "*" kind: "osdu:wks:work-product-component--HorizonInterpretation:*" dataspaces: {DS_LIST} typeName: "resqml20.obj_HorizonInterpretation" searchCatalog: true searchRddms: true includeRelations: true relationFilter: ["Grid2d", "PointSet", "TriangulatedSet"] limit: 5) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title dataspace foundInCatalog foundInLocalRddms osduId osduKind relations {{ uuid name typeName direction }} }} }} }}',
     'xref_grid_poro_perm': f'{{ federatedSearch(text: "*" kind: "osdu:wks:work-product-component--IjkGridRepresentation:*" dataspaces: {DS_LIST} typeName: "resqml20.obj_IjkGridRepresentation" searchCatalog: true searchRddms: true includeRelations: true includeProperties: true includeStatistics: true propertyFilter: {{ kind: "porosity" arrayFilter: {{ operator: GT, threshold: 0.15 }} }} limit: 5) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms osduId osduKind relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
     'xref_well_grid_props': f'{{ wells: deepSearch({DS_ARG} typeName: "resqml20.obj_WellboreTrajectoryRepresentation" includeRelations: true limit: 10) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} }} }} grids: deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ kind: "porosity" }} limit: 5) {{ totalMatched objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} }} }} }} }}',
     'xref_orphan_rddms': f'{{ federatedSearch(text: "{DS_NAME}" kind: "osdu:wks:work-product-component--*:*" dataspaces: {DS_LIST} searchCatalog: true searchRddms: true limit: 20) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms osduId }} }} }}',
@@ -186,13 +166,10 @@ def fetch_uuid(type_name):
         return None
 
 fault_uuid = fetch_uuid('resqml20.obj_FaultInterpretation')
-well_uuid = fetch_uuid('resqml20.obj_WellboreFeature')
 grid_uuid = fetch_uuid('resqml20.obj_IjkGridRepresentation')
 
 if fault_uuid:
     gql_presets['rel_grid_targets'] = f'{{ objectRelations(dataspace: "{DS}" typeName: "resqml20.obj_FaultInterpretation" uuid: "{fault_uuid}" direction: "both") {{ uuid name typeName direction contentType }} }}'
-if well_uuid:
-    gql_presets['rel_well_chain'] = f'{{ objectRelations(dataspace: "{DS}" typeName: "resqml20.obj_WellboreFeature" uuid: "{well_uuid}" direction: "sources") {{ uuid name typeName direction contentType }} }}'
 if grid_uuid:
     easy_presets['ez_relations'] = f'{{ objectRelations(dataspace: "{DS}" typeName: "resqml20.obj_IjkGridRepresentation" uuid: "{grid_uuid}" direction: "both") {{ uuid name typeName direction contentType }} }}'
 
