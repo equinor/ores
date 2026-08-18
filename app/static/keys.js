@@ -2987,6 +2987,86 @@ const GQL_PRESETS = {
       relations { uuid name typeName direction }
     }
   }
+}`,
+
+  // ─── Native RDDMS GraphQL (M27+) ─────────────────────────────────────
+  // These queries use the native ETP-backed GraphQL endpoint on the RDDMS
+  // etp-client (M27 release). They expose capabilities beyond REST:
+  //   • True graph traversal with edges (not just relations)
+  //   • Full object content (parsed XML→JSON)
+  //   • Array metadata and dimensions
+  //   • Batch graph search across multiple URIs in one call
+  //
+  // Requires: RDDMS etp-client with /graphql endpoint (M27+).
+  // Falls back to REST automatically if native GQL is unavailable.
+
+  native_graph_traverse: `# NATIVE GQL (M27+): Full graph traversal with edges
+# Unlike objectRelations (flat list), this returns a true graph structure
+# with directed edges — enabling visualization of RESQML topology.
+# The depth parameter controls how many hops to traverse.
+#
+# Requires: local etp-client with /graphql endpoint (M27 release)
+# Fallback: REST-based simplified graph (nodes + target edges only)
+{
+  nativeGraphSearch(
+    dataspace: "$DS"
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    depth: 2
+    limit: 3
+  ) {
+    backend
+    resources {
+      uri name dataObjectType
+      sourceCount targetCount
+      lastChanged activeStatus
+    }
+    edges {
+      sourceUri targetUri
+    }
+  }
+}`,
+
+  native_object_content: `# NATIVE GQL (M27+): Full object content as JSON
+# Fetches the complete parsed RESQML/EML XML as a JSON tree via ETP Store.
+# Use to inspect Citation, CRS references, geometry params, property kinds.
+#
+# Step 1: Get a UUID from "Browse objects" preset
+# Step 2: Paste it below to see the full object body
+#
+# Requires: local etp-client with /graphql endpoint (M27 release)
+# Fallback: REST $format=json (similar but not identical structure)
+{
+  nativeObjectContent(
+    dataspace: "$DS"
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    limit: 1
+  ) {
+    uri name dataObjectType
+    content
+  }
+}`,
+
+  native_array_metadata: `# NATIVE GQL (M27+): Array dimensions & types without downloading data
+# Shows what arrays exist inside a resource (grid geometry, property values)
+# with their shape, logical type, and last-write timestamp — without
+# actually downloading the (potentially GB-sized) array payload.
+#
+# Requires: local etp-client with /graphql endpoint (M27 release)
+# Fallback: REST array listing (paths only, no dimensions/types)
+{
+  nativeArrayMetadata(
+    dataspace: "$DS"
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    limit: 2
+  ) {
+    uri name
+    arrays {
+      pathInResource
+      dimensions
+      logicalArrayType
+      storeLastWrite
+    }
+  }
 }`
 };
 

@@ -281,7 +281,7 @@ async def _rest_read_array(token: str, ds: str, typ: str, uuid: str, path: str) 
 # they transparently fall back to the REST wrappers above.
 # ──────────────────────────────────────────────────────────────────────────────
 
-from .rddms_gql import gql_available, gql_query, Q_DATASPACES, Q_RESOURCES, Q_GRAPH_SEARCH, Q_TARGETS, Q_SOURCES, Q_ARRAYS
+from .rddms_gql import gql_available, gql_query, Q_DATASPACES, Q_RESOURCES, Q_GRAPH_SEARCH, Q_TARGETS, Q_SOURCES, Q_ARRAYS, Q_CONTENT
 
 
 async def _gql_or_rest_list_dataspaces(token: str) -> List[Dict[str, Any]]:
@@ -560,6 +560,69 @@ class FederatedSearchResult:
     query_description: str
     sources: List[str]  # e.g. ["OSDU catalog", "PostgreSQL", "Remote RDDMS"]
     warnings: Optional[List[str]] = None  # surfaced errors / hints
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Native RDDMS GraphQL types (M27+ etp-client with /graphql endpoint)
+# These expose ETP-native capabilities not available through REST:
+#   • True graph traversal with directed edges
+#   • Full object content (parsed XML → JSON)
+#   • Array metadata with dimensions and types
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+@strawberry.type
+class GraphEdge:
+    """A directed edge in the ETP resource graph."""
+    source_uri: str
+    target_uri: str
+
+
+@strawberry.type
+class GraphNode:
+    """A resource node in the ETP graph (lightweight metadata)."""
+    uri: str
+    name: str
+    data_object_type: Optional[str] = None
+    source_count: Optional[int] = None
+    target_count: Optional[int] = None
+    last_changed: Optional[str] = None
+    active_status: Optional[str] = None
+
+
+@strawberry.type
+class NativeGraphResult:
+    """Result of a native ETP graph traversal (M27+). Includes directed edges."""
+    resources: List[GraphNode]
+    edges: List[GraphEdge]
+    backend: str  # "NativeGQL" or "REST (simplified)"
+
+
+@strawberry.type
+class NativeObjectContent:
+    """Full parsed object content from ETP Store protocol (M27+)."""
+    uri: str
+    name: str
+    data_object_type: Optional[str] = None
+    content: Optional[strawberry.scalars.JSON] = None  # The full parsed XML→JSON body
+
+
+@strawberry.type
+class NativeArrayMeta:
+    """Array metadata from ETP DataArray protocol (M27+)."""
+    path_in_resource: str
+    dimensions: Optional[List[int]] = None
+    logical_array_type: Optional[str] = None
+    transport_array_type: Optional[str] = None
+    store_last_write: Optional[str] = None
+
+
+@strawberry.type
+class NativeResourceWithArrays:
+    """A resource with its array metadata (M27+)."""
+    uri: str
+    name: str
+    arrays: List[NativeArrayMeta]
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -2448,3 +2511,190 @@ async def federated_search_impl(
         sources=sources,
         warnings=(validation_warnings or None),
     )
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Native RDDMS GraphQL implementations (M27+ etp-client)
+# Uses native /graphql when available; REST fallback with simplified results.
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+async def native_graph_search_impl(
+    token: str,
+    dataspace: str,
+    type_name: str,
+    depth: int = 2,
+    limit: int = 5,
+) -> NativeGraphResult:
+    """
+    True graph traversal via native ETP GraphQL (M27+).
+    Returns resources + directed edges. Falls back to REST relations if unavailable.
+    """
+    # First: get objects to start traversal from
+    resources_raw = await _gql_or_rest_list_resources(token, dataspace, type_name, limit)
+
+    if await gql_available(token):
+        # Build ETP URIs for batch graph search
+        uris = [_build_etp_uri(dataspace, type_name, r["uuid"]) for r in resources_raw]
+        if uris:
+            try:
+                graph = await _gql_or_rest_graph_search(token, uris, depth)
+                nodes = [
+                    GraphNode(
+                        uri=r.get("uri", ""),
+                        name=r.get("name", ""),
+                        data_object_type=r.get("dataObjectType"),
+                        source_count=r.get("sourceCount"),
+                        target_count=r.get("targetCount"),
+                        last_changed=r.get("lastChanged"),
+                        active_status=r.get("activeStatus"),
+                    )
+                    for r in graph.get("resources", [])
+                ]
+                edges = [
+                    GraphEdge(source_uri=e.get("sourceUri", ""), target_uri=e.get("targetUri", ""))
+                    for e in graph.get("edges", [])
+                ]
+                if nodes:
+                    return NativeGraphResult(resources=nodes, edges=edges, backend="NativeGQL")
+            except Exception as e:
+                log.debug("native graph search failed, using REST fallback: %s", e)
+
+    # REST fallback: return resources as nodes, relations as pseudo-edges
+    nodes = []
+    edges = []
+    for r in resources_raw:
+        uri = _build_etp_uri(dataspace, type_name, r["uuid"])
+        nodes.append(GraphNode(uri=uri, name=r["title"], data_object_type=type_name))
+        # Get targets for each object
+        try:
+            targets = await _gql_or_rest_list_targets(token, dataspace, type_name, r["uuid"])
+            for t in targets:
+                parsed = _parse_eml_entry(t)
+                t_type = parsed.get("contentType") or parsed.get("dataObjectType") or t.get("dataObjectType", "")
+                t_uuid = parsed.get("uuid") or ""
+                t_name = parsed.get("name") or t.get("name", "")
+                if t_uuid:
+                    t_uri = _build_etp_uri(dataspace, t_type, t_uuid)
+                    nodes.append(GraphNode(uri=t_uri, name=t_name, data_object_type=t_type))
+                    edges.append(GraphEdge(source_uri=uri, target_uri=t_uri))
+        except Exception:
+            pass
+    # Deduplicate nodes by URI
+    seen = set()
+    unique_nodes = []
+    for n in nodes:
+        if n.uri not in seen:
+            seen.add(n.uri)
+            unique_nodes.append(n)
+    return NativeGraphResult(resources=unique_nodes, edges=edges, backend="REST (simplified)")
+
+
+async def native_object_content_impl(
+    token: str,
+    dataspace: str,
+    type_name: str,
+    uuid: Optional[str] = None,
+    limit: int = 1,
+) -> List[NativeObjectContent]:
+    """
+    Fetch full parsed object content via native ETP GraphQL (M27+).
+    Returns the RESQML/EML XML parsed as JSON.
+    Falls back to REST XML endpoint if native GQL is unavailable.
+    """
+    # If no UUID given, fetch list and take first N
+    if uuid:
+        resources_raw = [{"uuid": uuid, "title": ""}]
+    else:
+        resources_raw = await _gql_or_rest_list_resources(token, dataspace, type_name, limit)
+
+    results: List[NativeObjectContent] = []
+
+    if await gql_available(token):
+        for r in resources_raw[:limit]:
+            uri = _build_etp_uri(dataspace, type_name, r["uuid"])
+            try:
+                resp = await gql_query(token, Q_CONTENT, {"uri": uri})
+                resource = (resp.get("data") or {}).get("resource")
+                if resource:
+                    content_data = resource.get("content")
+                    results.append(NativeObjectContent(
+                        uri=uri,
+                        name=resource.get("name", r.get("title", "")),
+                        data_object_type=resource.get("dataObjectType") or type_name,
+                        content=content_data.get("data") if content_data else None,
+                    ))
+                    continue
+            except Exception as e:
+                log.debug("native content fetch failed for %s: %s", uri, e)
+        if results:
+            return results
+
+    # REST fallback: fetch object JSON representation
+    for r in resources_raw[:limit]:
+        uri = _build_etp_uri(dataspace, type_name, r["uuid"])
+        try:
+            json_content = await _rest_get_object_json(token, dataspace, type_name, r["uuid"])
+            results.append(NativeObjectContent(
+                uri=uri,
+                name=r.get("title", ""),
+                data_object_type=type_name,
+                content=json_content,
+            ))
+        except Exception as e:
+            log.debug("REST content fetch failed for %s: %s", r["uuid"], e)
+            results.append(NativeObjectContent(
+                uri=uri, name=r.get("title", ""), data_object_type=type_name, content=None,
+            ))
+    return results
+
+
+async def _rest_get_object_json(token: str, ds: str, typ: str, uuid: str) -> Optional[Any]:
+    """Fetch object JSON via REST (fallback when native GQL unavailable)."""
+    enc = urllib.parse.quote(ds, safe="")
+    url = osdu._rddms_url(f"/dataspaces/{enc}/resources/{typ}/{uuid}")
+    try:
+        async with osdu.http_client() as client:
+            r = await client.get(url, headers=osdu.headers(token), params={"$format": "json"})
+            if r.status_code == 200:
+                ct = r.headers.get("content-type", "")
+                if "json" in ct:
+                    return r.json()
+                # XML response — return as wrapped string
+                return {"_format": "xml", "_raw": r.text[:8000]}
+    except Exception as e:
+        log.debug("_rest_get_object_json failed for %s/%s: %s", typ, uuid, e)
+    return None
+
+
+async def native_array_metadata_impl(
+    token: str,
+    dataspace: str,
+    type_name: str,
+    limit: int = 5,
+) -> List[NativeResourceWithArrays]:
+    """
+    Fetch array metadata (dimensions, types) via native ETP GraphQL (M27+).
+    Falls back to REST array listing if unavailable.
+    """
+    resources_raw = await _gql_or_rest_list_resources(token, dataspace, type_name, limit)
+    results: List[NativeResourceWithArrays] = []
+
+    for r in resources_raw:
+        uri = _build_etp_uri(dataspace, type_name, r["uuid"])
+        arrays_raw = await _gql_or_rest_list_arrays(token, dataspace, type_name, r["uuid"])
+        arrays = []
+        for a in arrays_raw:
+            uid_info = a.get("uid") or {}
+            path = uid_info.get("pathInResource", "") if isinstance(uid_info, dict) else ""
+            dims = a.get("dimensions") or None
+            arrays.append(NativeArrayMeta(
+                path_in_resource=path,
+                dimensions=dims,
+                logical_array_type=a.get("logicalArrayType"),
+                transport_array_type=a.get("transportArrayType"),
+                store_last_write=a.get("storeLastWrite"),
+            ))
+        results.append(NativeResourceWithArrays(uri=uri, name=r.get("title", ""), arrays=arrays))
+
+    return results

@@ -41,6 +41,9 @@ from .graphql_search import (
     RelationInfo, ResqmlObject, DataspaceInfo, TypeSummary,
     DeepSearchResult, FederatedHit, FederatedSearchResult,
     ArrayFilter, PropertyFilter,
+    # Native RDDMS GQL types (M27+)
+    GraphEdge, GraphNode, NativeGraphResult, NativeObjectContent,
+    NativeArrayMeta, NativeResourceWithArrays,
     # Type registry
     RESQML_TYPE_CATEGORIES, ALL_COMMON_RESQML_TYPES, resolve_type_names,
     # REST wrappers (only those still used directly in this file)
@@ -55,6 +58,8 @@ from .graphql_search import (
     _compute_statistics,
     # Search implementations (called from Query stubs)
     deep_search_impl, federated_search_impl,
+    # Native RDDMS GQL implementations (M27+)
+    native_graph_search_impl, native_object_content_impl, native_array_metadata_impl,
     # Validation helpers
     validate_object_relations_direction, _VALID_DIRECTIONS,
 )
@@ -404,6 +409,71 @@ class Query:
             include_relations, include_properties, include_statistics,
             property_filter, limit, relation_filter,
         )
+
+    # ──────────────────────────────────────────────────────────────────────
+    # Native RDDMS GraphQL (M27+ etp-client with /graphql endpoint)
+    # These expose ETP-native capabilities beyond REST:
+    #   • True graph traversal with directed edges
+    #   • Full object content (parsed XML → JSON)
+    #   • Array metadata with dimensions & types
+    # Falls back to REST automatically if native GQL is unavailable.
+    # ──────────────────────────────────────────────────────────────────────
+
+    @strawberry.field(
+        description=(
+            "Native ETP graph traversal (M27+). Returns resources and directed edges "
+            "forming the RESQML topology graph. Unlike objectRelations (which gives a "
+            "flat list), this preserves full graph structure for visualization. "
+            "Uses native /graphql endpoint when available; REST fallback otherwise."
+        )
+    )
+    async def native_graph_search(
+        self,
+        info: Info,
+        dataspace: str,
+        type_name: str = "resqml20.obj_IjkGridRepresentation",
+        depth: int = 2,
+        limit: int = 3,
+    ) -> NativeGraphResult:
+        token = _get_token_from_info(info)
+        return await native_graph_search_impl(token, dataspace, type_name, depth, limit)
+
+    @strawberry.field(
+        description=(
+            "Full object content as JSON (M27+). Fetches the complete parsed "
+            "RESQML/EML XML body via ETP Store protocol. Use to inspect Citation, "
+            "CRS references, geometry parameters, property kind definitions, etc. "
+            "Uses native /graphql endpoint when available; REST $format=json fallback."
+        )
+    )
+    async def native_object_content(
+        self,
+        info: Info,
+        dataspace: str,
+        type_name: str = "resqml20.obj_IjkGridRepresentation",
+        uuid: Optional[str] = None,
+        limit: int = 1,
+    ) -> List[NativeObjectContent]:
+        token = _get_token_from_info(info)
+        return await native_object_content_impl(token, dataspace, type_name, uuid, limit)
+
+    @strawberry.field(
+        description=(
+            "Array metadata without downloading data (M27+). Shows what arrays exist "
+            "inside a resource (grid geometry, property values) with shape, logical type, "
+            "and last-write timestamp — without fetching the (potentially GB-sized) payload. "
+            "Uses native /graphql endpoint when available; REST fallback otherwise."
+        )
+    )
+    async def native_array_metadata(
+        self,
+        info: Info,
+        dataspace: str,
+        type_name: str = "resqml20.obj_IjkGridRepresentation",
+        limit: int = 2,
+    ) -> List[NativeResourceWithArrays]:
+        token = _get_token_from_info(info)
+        return await native_array_metadata_impl(token, dataspace, type_name, limit)
 
 
 # ──────────────────────────────────────────────────────────────────────────────

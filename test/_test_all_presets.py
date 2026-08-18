@@ -49,6 +49,11 @@ gql_presets = {
     'xref_grid_poro_perm': f'{{ federatedSearch(text: "*" kind: "osdu:wks:work-product-component--IjkGridRepresentation:*" dataspaces: {DS_LIST} typeName: "resqml20.obj_IjkGridRepresentation" searchCatalog: true searchRddms: true includeRelations: true includeProperties: true includeStatistics: true propertyFilter: {{ kind: "porosity" arrayFilter: {{ operator: GT, threshold: 0.15 }} }} limit: 5) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms osduId osduKind relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
     'xref_well_grid_props': f'{{ wells: deepSearch({DS_ARG} typeName: "resqml20.obj_WellboreTrajectoryRepresentation" includeRelations: true limit: 10) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} }} }} grids: deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ kind: "porosity" }} limit: 5) {{ totalMatched objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} }} }} }} }}',
     'xref_orphan_rddms': f'{{ federatedSearch(text: "{DS_NAME}" kind: "osdu:wks:work-product-component--*:*" dataspaces: {DS_LIST} searchCatalog: true searchRddms: true limit: 20) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms osduId }} }} }}',
+
+    # Native RDDMS GraphQL (M27+ — uses REST fallback on ADME interop)
+    'native_graph_traverse': f'{{ nativeGraphSearch(dataspace: "{DS}" typeName: "resqml20.obj_IjkGridRepresentation" depth: 1 limit: 2) {{ backend resources {{ uri name dataObjectType }} edges {{ sourceUri targetUri }} }} }}',
+    'native_object_content': f'{{ nativeObjectContent(dataspace: "{DS}" typeName: "resqml20.obj_ContinuousProperty" limit: 1) {{ uri name dataObjectType content }} }}',
+    'native_array_metadata': f'{{ nativeArrayMetadata(dataspace: "{DS}" typeName: "resqml20.obj_ContinuousProperty" limit: 2) {{ uri name arrays {{ pathInResource dimensions }} }} }}',
 }
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -112,6 +117,8 @@ def has_results(data):
             if v.get('objects') and len(v['objects']) > 0:
                 return True
             if v.get('hits') and len(v['hits']) > 0:
+                return True
+            if v.get('resources') and len(v['resources']) > 0:
                 return True
             if v.get('totalMatched', 0) > 0 or v.get('totalMerged', 0) > 0:
                 return True
