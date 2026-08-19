@@ -156,12 +156,19 @@ def resolve_token(cli_token: Optional[str] = None, instance: str = "eqndev") -> 
         print("  ✓ Using token from OSDU_TOKEN env var")
         return env_token
 
-    # 3. ores k8s fallback (if _auth.py is available)
+    # 3. ores auth fallback (scripts package or demo/_auth.py)
     try:
         script_dir = Path(__file__).resolve().parent
+        demo_dir = script_dir.parent
+        sys.path.insert(0, str(demo_dir))
         sys.path.insert(0, str(script_dir))
-        from _auth import get_token  # noqa: E402
-        print("  Minting token via ores k8s/secret.yaml...")
+        try:
+            from _auth import get_token  # noqa: E402
+        except ImportError:
+            # Try the scripts package auth module
+            sys.path.insert(0, str(demo_dir))
+            from scripts.auth import get_token  # noqa: E402
+        print(f"  Minting token for {instance}...")
         token = get_token(instance, verbose=True)
         if token:
             return token
@@ -358,6 +365,10 @@ Prerequisites:
                     help="Bearer token (or set OSDU_TOKEN env var)")
     ap.add_argument("--instance", default="eqndev",
                     help="OSDU instance name for k8s fallback auth (default: eqndev)")
+    ap.add_argument("--target", metavar="INSTANCE",
+                    help="Push to a different OSDU instance (e.g. interop). "
+                         "Uses ACL/legal/storage from that instance's config. "
+                         "Auth token is also minted for the target.")
     ap.add_argument("--rddms-dir", metavar="DIR", default=str(DEFAULT_RDDMS_DIR),
                     help=f"Path to local RDDMS client (default: {DEFAULT_RDDMS_DIR})")
     ap.add_argument("--port", type=int, default=None,
@@ -398,11 +409,33 @@ Prerequisites:
 
     local_base = f"http://localhost:{port}{api_root}"
 
-    # Derive ACL defaults from partition
-    owners = [f"data.default.owners@{partition}.dataservices.energy"]
-    viewers = [f"data.default.viewers@{partition}.dataservices.energy"]
-    legal_tag = f"{partition}-default-legal-tag"
-    countries = ["NO"]
+    # ── Determine push target (--target overrides rddms config) ──────────
+    target_instance = args.target or args.instance
+    target_cfg = None
+    if args.target:
+        try:
+            script_dir = Path(__file__).resolve().parent
+            demo_dir = script_dir.parent
+            if str(demo_dir) not in sys.path:
+                sys.path.insert(0, str(demo_dir))
+            from scripts.config import load_config
+            target_cfg = load_config(args.target)
+        except Exception as e:
+            print(f"  ⚠ Could not load config for --target {args.target}: {e}")
+
+    if target_cfg:
+        owners = target_cfg.owners
+        viewers = target_cfg.viewers
+        legal_tag = target_cfg.legal_tag
+        countries = target_cfg.countries
+        osdu_url = f"https://{target_cfg.host}"
+        partition = target_cfg.partition
+    else:
+        # Derive ACL defaults from RDDMS partition
+        owners = [f"data.default.owners@{partition}.dataservices.energy"]
+        viewers = [f"data.default.viewers@{partition}.dataservices.energy"]
+        legal_tag = f"{partition}-default-legal-tag"
+        countries = ["NO"]
 
     storage_url = f"{osdu_url}/api/storage/v2"
 
@@ -414,6 +447,8 @@ Prerequisites:
     print(f"║  Partition:  {partition:<40s}║")
     print(f"║  Local port: {port:<40d}║")
     print(f"║  OSDU URL:   {osdu_url:<40s}║")
+    if args.target:
+        print(f"║  Target:     {args.target:<40s}║")
     print(f"╚══════════════════════════════════════════════════════╝")
 
     # ── Step 1: Get token ────────────────────────────────────────────────
@@ -422,9 +457,12 @@ Prerequisites:
         print("  [dry-run] Skipping auth")
         token = "DRY_RUN_TOKEN"
     else:
-        token = resolve_token(cli_token=args.token, instance=args.instance)
+        token = resolve_token(cli_token=args.token, instance=target_instance)
 
     headers = make_headers(token, partition)
+
+    # Local etp-client headers (bearer guard only checks format, not validity)
+    local_headers = make_headers(token, partition)
 
     # ── Step 2: Check local client ───────────────────────────────────────
     print(f"\n═══ Local OpenETP Client (port {port}) ═══")
@@ -443,7 +481,7 @@ Prerequisites:
         return
 
     t0 = time.time()
-    manifest = build_manifest(local_base, headers, dataspace, uris=args.uris)
+    manifest = build_manifest(local_base, local_headers, dataspace, uris=args.uris)
     elapsed = time.time() - t0
 
     if manifest is None:

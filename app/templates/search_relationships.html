@@ -80,6 +80,26 @@
               'TubularAssembly': 'cls_wellbore',
               'PPFGDataset': 'cls_wellbore',
               'PlannedLithology': 'cls_wellbore',
+              'LocalBoundaryFeature': 'cls_feature',
+              'LocalRockVolumeFeature': 'cls_feature',
+              'LocalModelFeature': 'cls_feature',
+              'HorizonInterpretation': 'cls_interp',
+              'FaultInterpretation': 'cls_interp',
+              'StratigraphicUnitInterpretation': 'cls_interp',
+              'StratigraphicColumnRankInterpretation': 'cls_interp',
+              'StratigraphicColumn': 'cls_interp',
+              'WellboreInterpretation': 'cls_interp',
+              'StructureMap': 'cls_repr',
+              'IjkGridRepresentation': 'cls_repr',
+              'GenericRepresentation': 'cls_repr',
+              'HorizonControlPoints': 'cls_repr',
+              'GridConnectionSetRepresentation': 'cls_repr',
+              'SubRepresentation': 'cls_repr',
+              'WellboreMarkerSet': 'cls_repr',
+              'WellboreTrajectory': 'cls_wellbore',
+              'WellLog': 'cls_wellbore',
+              'GenericProperty': 'cls_property',
+              'LocalModelCompoundCrs': 'cls_crs',
             } %}
             {# Semantic sort order for entity types in graph (lower = higher in graph).
                Types not listed here get sort_key 50 and fall back to alphabetical. #}
@@ -106,6 +126,25 @@
               'Document': 35,
               'Risk': 40,
               'BusinessDecision': 45,
+              'LocalBoundaryFeature': 55,
+              'LocalRockVolumeFeature': 56,
+              'LocalModelFeature': 57,
+              'HorizonInterpretation': 60,
+              'FaultInterpretation': 61,
+              'StratigraphicUnitInterpretation': 62,
+              'StratigraphicColumnRankInterpretation': 63,
+              'StratigraphicColumn': 64,
+              'WellboreInterpretation': 65,
+              'StructureMap': 70,
+              'IjkGridRepresentation': 71,
+              'GenericRepresentation': 72,
+              'HorizonControlPoints': 73,
+              'GridConnectionSetRepresentation': 74,
+              'SubRepresentation': 75,
+              'WellboreMarkerSet': 76,
+              'WellLog': 77,
+              'GenericProperty': 80,
+              'LocalModelCompoundCrs': 85,
             } %}
             {# Define a role→edge-label mapping #}
             {% set role_label_map = {
@@ -123,6 +162,9 @@
               'supersedes': 'supersedes',
               'mitigates': 'mitigates',
               'produces': 'produces',
+              'feature': 'feature',
+              'interpretation': 'interpretation',
+              'representation': 'representation',
             } %}
             <pre class="mermaid">
 graph LR
@@ -225,6 +267,11 @@ classDef cls_document fill:#fefcbf,stroke:#975a16,color:#222;
 classDef cls_geo fill:#c6f6d5,stroke:#22543d,color:#222;
 classDef cls_ancestry fill:#e2e8f0,stroke:#4a5568,color:#222;
 classDef cls_decision fill:#fbd38d,stroke:#b7791f,color:#222,font-weight:bold;
+classDef cls_feature fill:#f0fff4,stroke:#276749,color:#222;
+classDef cls_interp fill:#ebf8ff,stroke:#2b6cb0,color:#222;
+classDef cls_repr fill:#faf5ff,stroke:#6b46c1,color:#222;
+classDef cls_property fill:#fffff0,stroke:#975a16,color:#222;
+classDef cls_crs fill:#e2e8f0,stroke:#4a5568,color:#222;
 classDef cls_default fill:#edf2f7,stroke:#718096,color:#222;
             </pre>
 

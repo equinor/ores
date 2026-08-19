@@ -64,6 +64,13 @@ def _role_from_path(path: str) -> str:
         return "ancestry-parent"
     if "ancestry.children" in p:
         return "ancestry-child"
+    # RESQML FIRP relationship fields
+    if "featureid" in p:
+        return "feature"
+    if "interpretationid" in p:
+        return "interpretation"
+    if "representationid" in p:
+        return "representation"
     return "ref"
 
 
