@@ -848,20 +848,6 @@
         try { mermaid.run({ nodes: nodes }); } catch (e) { console.warn('Mermaid render failed:', e); }
       }
 
-      // Graph tab switcher (Provenance / Relationships) — renders Mermaid on demand
-      window._switchGraph = function(btn, view, idx) {
-        const panel = document.getElementById('graph-panel-' + idx);
-        if (!panel) return;
-        panel.querySelectorAll('.graph-tab').forEach(t => t.classList.remove('active'));
-        btn.classList.add('active');
-        panel.querySelectorAll('.graph-view').forEach(v => v.classList.remove('active'));
-        const target = document.getElementById('gv-' + view + '-' + idx);
-        if (target) {
-          target.classList.add('active');
-          renderMermaidIn(target);
-        }
-      };
-
       /* ── Production profile Chart.js rendering ── */
       const chartInstances = {};
       function renderProdChart(container) {

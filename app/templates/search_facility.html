@@ -55,6 +55,13 @@
               <button onclick="this.closest('.popup-modal').style.display='none'"
                       style="position:absolute;top:.5rem;right:.75rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#666;">✕</button>
               <h4 style="margin:0 0 1rem;">{{ dc.get('Name') or 'Development Concept' }}</h4>
+              {% if dc.get('Summary') %}<div style="font-size:.85rem;color:#4a5568;line-height:1.4;margin-bottom:.8rem;">{{ dc.Summary }}</div>{% endif %}
+              {% if dc.get('DecisionGate') or dc.get('ConceptID') %}
+              <div style="font-size:.82rem;color:#718096;margin-bottom:.6rem;">
+                {% if dc.get('DecisionGate') %}<span>Gate: <strong>{{ dc.DecisionGate }}</strong></span>{% endif %}
+                {% if dc.get('ConceptID') %}<span style="margin-left:.8rem;">Concept: {{ dc.ConceptID }}</span>{% endif %}
+              </div>
+              {% endif %}
 
               {# Facility details #}
               {% if fc %}
@@ -113,6 +120,20 @@
                 {% for pk, pv in pt.items() if pv is string %}
                 <div style="margin-bottom:.3rem;"><span class="k">{{ pk }}:</span> {{ pv }}</div>
                 {% endfor %}
+              </div>
+              {% endif %}
+
+              {# Fallback when no sub-objects are populated #}
+              {% if not fc and not wp and not ds and not pt %}
+              <div style="font-size:.85rem;color:#718096;padding:1rem;text-align:center;">
+                No facility or well plan details available for this concept.
+                {% if dc.items() | list | length > 0 %}
+                <div class="mini-grid" style="margin-top:.6rem;text-align:left;">
+                  {% for dk, dv in dc.items() if dv is string and dk != 'Name' and dk != 'Summary' %}
+                  <div class="k">{{ dk }}</div><div>{{ dv }}</div>
+                  {% endfor %}
+                </div>
+                {% endif %}
               </div>
               {% endif %}
             </div>
