@@ -116,6 +116,10 @@ def extract_osdu_links(data_block: Dict[str, Any]) -> List[Dict[str, Any]]:
     for k, v in data_block.items():
         if k == "ancestry":
             continue
+        # Direct string values (e.g. FeatureID, InterpretationID)
+        if isinstance(v, str) and _looks_like_osdu_id(v):
+            links.append({"id": v, "role": _role_from_path(k), "source_path": k})
+            continue
         for found in _walk_collect_ids(v, k):
             links.append(found)
 

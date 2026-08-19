@@ -454,11 +454,31 @@ async def _reverse_lookup(
     search_url: str,
     hdr: Dict[str, str],
 ) -> List[Dict[str, Any]]:
-    """Find records that reference *record_id* (reverse relationships)."""
+    """Find records that reference *record_id* (reverse relationships).
+
+    For RESQML records that exist in both master-data and WPC namespaces
+    (e.g. BoundaryFeature / LocalBoundaryFeature), also searches by UUID
+    so that cross-namespace FIRP links are discovered.
+    """
     try:
+        # Build query terms: always search for the full record ID
+        terms = [f'"{record_id}"']
+
+        # Extract UUID from the record ID for cross-namespace matching
+        # e.g. "dev:master-data--BoundaryFeature:uuid" → also find
+        #      "dev:work-product-component--LocalBoundaryFeature:uuid"
+        parts = record_id.split(":")
+        if len(parts) >= 3:
+            # UUID is typically the segment after the kind--Type: part
+            uuid_candidate = parts[-1] if parts[-1] else (parts[-2] if len(parts) > 3 else "")
+            # Valid UUID: 32+ hex chars with dashes
+            if len(uuid_candidate) >= 32 and "-" in uuid_candidate:
+                terms.append(f'"{uuid_candidate}"')
+
+        query = " OR ".join(terms)
         payload = {
             "kind": "*:*:*:*",
-            "query": f'"{record_id}"',
+            "query": query,
             "limit": 20,
             "returnedFields": ["id", "kind"],
         }
