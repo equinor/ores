@@ -1,0 +1,86 @@
+{
+  "id": "dev:work-product-component--PersistedCollection:Drogon-DG2-Wells:1",
+  "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+  "acl": {
+    "owners": [
+      "data.ores.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 – Wells & Stratigraphy Package",
+    "Description": "Well data evidence for DG2 Concept Select. Drogon wells (55/33-A-1 through A-6) + wellbores, lithostratigraphic column (Volantis Group: Valysar, Therys, Volon), wellbore marker sets (formation tops per wellbore). 53 data references.",
+    "DataReferences": [
+      "dev:master-data--Well:8d2ed785-d692-4bf4-b44e-8a47770b8fbb:1",
+      "dev:master-data--Wellbore:acf53067-62fa-4f7e-895f-45d86f1126d4:1",
+      "dev:master-data--Well:c229e605-e616-41f8-a640-356a74d31ca7:1",
+      "dev:master-data--Wellbore:9dc6aaa5-399f-4258-abf8-69cbebcf12e0:1",
+      "dev:master-data--Wellbore:81aace80-fc92-425d-8426-9219ecfe7172:1",
+      "dev:master-data--Well:148cad72-1340-4fc4-99d1-a4865c51e9f1:1",
+      "dev:master-data--Wellbore:80565fac-407d-458f-bfbb-4505b448a7c9:1",
+      "dev:master-data--Well:0ffbbf80-aa44-4d63-80ce-9dfbf62702f9:1",
+      "dev:master-data--Wellbore:55d473c8-5ad8-4eb4-9c8f-e5c9c888e150:1",
+      "dev:master-data--Well:674ac67f-44ea-40a6-a459-1871fccb73f1:1",
+      "dev:master-data--Wellbore:086f2dae-dec1-499d-90bf-97aaff3d8792:1",
+      "dev:master-data--Well:a0828e44-df61-4260-ae80-f810236a6f4c:1",
+      "dev:master-data--Wellbore:8d4e95b0-e2c8-4b01-9686-c556ec49e183:1",
+      "dev:master-data--Well:d64b4241-0c35-44c3-90e0-d9747871bfc5:1",
+      "dev:master-data--Wellbore:ff5e9950-fe2e-4ed2-97f9-d2abab7b4d24:1",
+      "dev:master-data--Well:514ca441-df59-4ec1-a464-0454c9ec2715:1",
+      "dev:master-data--Wellbore:b3a8e359-567c-4905-8d36-ebc92edece96:1",
+      "dev:master-data--Well:ee6bfe28-aee2-499d-8f1e-d10673ddf22a:1",
+      "dev:master-data--Wellbore:2ff28ed9-e8f1-4f69-922c-ef294dbd5fb7:1",
+      "dev:master-data--Wellbore:9e80bdaf-21c0-4fe0-9c6e-510c7bf88f64:1",
+      "dev:work-product-component--StratigraphicUnitInterpretation:Drogon-Volve-NordlandGroup:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:Drogon-Volve-ShetlandGroup:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:Drogon-Volve-TherysFormation:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:Drogon-Volve-VolonFormation:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:Drogon-Volve-VolantisFormation:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:Drogon-Volve-DraupneFormation:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:Drogon-Volve-HeatherFormation:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:Drogon-Volve-HuginFormation:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:Drogon-Volve-SleipnerFormation:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:Drogon-Volve-SkagerrakFormation:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:Drogon-Volve-UpperVolantisMember:",
+      "dev:work-product-component--StratigraphicUnitInterpretation:Drogon-Volve-LowerVolantisMember:",
+      "dev:work-product-component--StratigraphicColumnRankInterpretation:Drogon-Volve-Litho-Group:",
+      "dev:work-product-component--StratigraphicColumnRankInterpretation:Drogon-Volve-Litho-Formation:",
+      "dev:work-product-component--StratigraphicColumnRankInterpretation:Drogon-Volve-Litho-Member:",
+      "dev:work-product-component--StratigraphicColumn:Drogon-Volve-Lithostratigraphy:",
+      "dev:work-product-component--HorizonInterpretation:02e954a9-d7db-4b57-aef7-12b8ebf47a65:",
+      "dev:work-product-component--HorizonInterpretation:6c6eeb68-bb4d-4fa4-9eb4-b880b5bd7086:",
+      "dev:work-product-component--HorizonInterpretation:db54a781-84ad-41e5-8bdd-c510246375cd:",
+      "dev:work-product-component--HorizonInterpretation:3657ca0b-d21f-41ca-801b-4a6a7eb1f426:",
+      "dev:work-product-component--HorizonInterpretation:7da0e4d7-1955-4031-8eaf-68a93515414d:",
+      "dev:work-product-component--HorizonInterpretation:011ae8ee-bfa5-4804-a675-1f4704b1730c:",
+      "dev:work-product-component--WellboreMarkerSet:e0e6cf87-349e-49ec-bf7e-30ff0c5c884b:",
+      "dev:work-product-component--WellboreMarkerSet:9ac945e3-a655-4a7e-9c40-e8eecd9b0274:",
+      "dev:work-product-component--WellboreMarkerSet:b11bf81e-f8bc-48b5-a03d-9ac45f3af276:",
+      "dev:work-product-component--WellboreMarkerSet:d53ce054-4f4e-4a60-80dd-93ea23477299:",
+      "dev:work-product-component--WellboreMarkerSet:afa8497b-a51c-4971-8d52-191d07e8fa97:",
+      "dev:work-product-component--WellboreMarkerSet:19076723-13d3-42b2-acd1-ab0a682c4891:",
+      "dev:work-product-component--WellboreMarkerSet:4e638fda-a7a0-4f1a-abfb-b8e1bfd58cc4:",
+      "dev:work-product-component--WellboreMarkerSet:e7960826-ca8a-4ecd-8d6b-092a6a25da2d:",
+      "dev:work-product-component--WellboreMarkerSet:042fdd2e-5e59-4e5b-9616-e8959272fc9c:",
+      "dev:work-product-component--WellboreMarkerSet:d71134b7-2203-4e72-81fe-f0cbf574f4e5:",
+      "dev:work-product-component--WellboreMarkerSet:a401228b-b628-42e2-b9ab-db94f75bfff6:"
+    ],
+    "Tags": [
+      "DG2",
+      "Drogon",
+      "Wells",
+      "Stratigraphy",
+      "WellboreMarkerSet"
+    ]
+  }
+}

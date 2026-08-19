@@ -1,0 +1,48 @@
+{
+  "id": "dev:work-product-component--GenericRepresentation:be92eecc-13d4-516c-93aa-eee5299f2679:1",
+  "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.ores.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 - volon--klogh_average",
+    "Description": "Zone-averaged permeability map for Volon",
+    "CoordinateReferenceSystemID": "dev:reference-data--CoordinateReferenceSystem:ST_WGS84_UTM37N_P32637:",
+    "ReservoirID": "dev:master-data--Reservoir:Drogon:1",
+    "NodeCountOnIAxis": 280,
+    "NodeCountOnJAxis": 440,
+    "BinWidthOnIaxis": 25.0,
+    "BinWidthOnJaxis": 25.0,
+    "DDMSDatasets": [
+      "eml:///dataspace('maap/drogon_dg')/resqml22.Grid2dRepresentation('be92eecc-13d4-516c-93aa-eee5299f2679')"
+    ],
+    "FMU": {
+      "Content": "property",
+      "PropertyAttribute": "permeability",
+      "StratigraphicReference": "Volon"
+    },
+    "DomainTypeID": "dev:reference-data--DomainType:Depth:",
+    "ZoneName": "Volon",
+    "FacetIDs": [
+      "dev:reference-data--FacetType:statistics:",
+      "dev:reference-data--FacetRole:P50:"
+    ],
+    "data.ancestry.inputs": [
+      "dev:work-product-component--IjkGridRepresentation:Drogon-DG2-Geogrid:1",
+      "dev:dataset--ETPDataspace:maap-drogon_dg:1"
+    ]
+  }
+}

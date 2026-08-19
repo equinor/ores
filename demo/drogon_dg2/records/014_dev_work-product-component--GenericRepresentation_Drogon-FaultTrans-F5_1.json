@@ -1,0 +1,37 @@
+{
+  "id": "dev:work-product-component--GenericRepresentation:Drogon-FaultTrans-F5:1",
+  "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.ores.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon – Fault Transmissibility: F5",
+    "Description": "Fault F5 - North Horst Boundary. Transmissibility multiplier: 0.60. Moderate-good - tracer detected across fault, 4D consistent. Connects segments: NorthHorst ↔ CentralRamp. Grid connections: 870 cells.",
+    "FaultName": "F5",
+    "TransmissibilityMultiplier": 0.6,
+    "SegmentsConnected": [
+      "NorthHorst",
+      "CentralRamp"
+    ],
+    "SealDescription": "Moderate-good - tracer detected across fault, 4D consistent",
+    "GridConnections": 870,
+    "DDMSDatasets": [
+      "eml:///dataspace('maap/drogon')/resqml20.obj_GridConnectionSetRepresentation('6827aafe-68a8-5892-b20e-a1ab617cc0b7')"
+    ],
+    "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_ContinuousProperty('6827aafe-68a8-5892-b20e-a1ab617cc0b7')",
+    "ResourceID": "6827aafe-68a8-5892-b20e-a1ab617cc0b7"
+  }
+}

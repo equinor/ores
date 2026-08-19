@@ -1,0 +1,37 @@
+{
+  "id": "dev:work-product-component--GenericRepresentation:Drogon-FaultTrans-F3:1",
+  "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.ores.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon – Fault Transmissibility: F3",
+    "Description": "Fault F3 - Central-East Compartment Boundary. Transmissibility multiplier: 0.10. Strong baffle - juxtaposition seal (Valysar vs Therys shale). Connects segments: CentralNorth ↔ EastLowland. Grid connections: 650 cells.",
+    "FaultName": "F3",
+    "TransmissibilityMultiplier": 0.1,
+    "SegmentsConnected": [
+      "CentralNorth",
+      "EastLowland"
+    ],
+    "SealDescription": "Strong baffle - juxtaposition seal (Valysar vs Therys shale)",
+    "GridConnections": 650,
+    "DDMSDatasets": [
+      "eml:///dataspace('maap/drogon')/resqml20.obj_GridConnectionSetRepresentation('040877de-4590-5962-b79c-92207f651983')"
+    ],
+    "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_ContinuousProperty('040877de-4590-5962-b79c-92207f651983')",
+    "ResourceID": "040877de-4590-5962-b79c-92207f651983"
+  }
+}

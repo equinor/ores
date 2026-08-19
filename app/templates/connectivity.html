@@ -89,6 +89,12 @@
   <!-- Query Form -->
   <div class="conn-form">
     <div class="conn-row">
+      <div class="conn-field" style="min-width: 220px;">
+        <label>Dataspace</label>
+        <select id="dataspace" onchange="onDataspaceChanged()"></select>
+      </div>
+    </div>
+    <div class="conn-row">
       <div class="conn-field">
         <label>Well A</label>
         <select id="well-a"></select>
@@ -99,11 +105,7 @@
       </div>
       <div class="conn-field">
         <label>Target Zone</label>
-        <select id="zone">
-          <option value="Valysar" selected>Valysar (Shallow Marine)</option>
-          <option value="Therys">Therys (Marine Shale)</option>
-          <option value="Volon">Volon (Fluvial)</option>
-        </select>
+        <input type="text" id="zone" value="" placeholder="e.g. Valysar, Brent, Tarbert...">
       </div>
     </div>
 
@@ -183,26 +185,66 @@
 <script>
 const $ = id => document.getElementById(id);
 
-// Load wells on page init
-async function loadWells() {
+// Load dataspaces from the GraphQL backend
+async function loadDataspaces() {
   try {
-    const resp = await fetch('/api/connectivity/wells');
+    const resp = await fetch('/api/graphql/query', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({query: '{ dataspaces { path } }'})
+    });
+    const json = await resp.json();
+    const dsSel = $('dataspace');
+    const paths = (json.data?.dataspaces || []).map(d => d.path);
+    paths.forEach(p => {
+      const o = document.createElement('option');
+      o.value = p;
+      o.textContent = p;
+      if (p.includes('drogon')) o.selected = true;
+      dsSel.appendChild(o);
+    });
+    // Load wells for selected dataspace
+    await loadWells();
+  } catch(e) {
+    console.error('Failed to load dataspaces:', e);
+    // Fallback: add a default
+    const o = document.createElement('option');
+    o.value = 'maap/drogon'; o.textContent = 'maap/drogon';
+    $('dataspace').appendChild(o);
+    await loadWells();
+  }
+}
+
+async function onDataspaceChanged() {
+  // Clear wells and reload for new dataspace
+  $('well-a').innerHTML = '';
+  $('well-b').innerHTML = '';
+  await loadWells();
+}
+
+// Load wells from RDDMS for the selected dataspace
+async function loadWells() {
+  const ds = $('dataspace').value;
+  if (!ds) return;
+  try {
+    const resp = await fetch(`/api/connectivity/wells?dataspace=${encodeURIComponent(ds)}`);
     const data = await resp.json();
     const selA = $('well-a');
     const selB = $('well-b');
     data.wells.forEach(w => {
-      const opt = name => {
+      const mkOpt = () => {
         const o = document.createElement('option');
         o.value = w.name;
-        o.textContent = `${w.name} (${w.segment}, ${w.type})`;
+        o.textContent = w.name;
         return o;
       };
-      selA.appendChild(opt());
-      selB.appendChild(opt());
+      selA.appendChild(mkOpt());
+      selB.appendChild(mkOpt());
     });
-    // Default selection: A-2 vs A-3 (interesting case)
+    // Default: pick first two different wells
     if (selA.options.length >= 2) selA.selectedIndex = 1;
     if (selB.options.length >= 3) selB.selectedIndex = 2;
+    if (data.error) console.warn('Wells endpoint warning:', data.error);
   } catch(e) {
     console.error('Failed to load wells:', e);
   }
@@ -216,8 +258,8 @@ async function runConnectivityQuery() {
   const payload = {
     well_a: $('well-a').value,
     well_b: $('well-b').value,
-    zone: $('zone').value,
-    dataspace: 'maap/drogon',
+    zone: $('zone').value || null,
+    dataspace: $('dataspace').value,
     property_filters: {
       ntg_min: parseFloat($('ntg-min').value),
       kh_min: parseFloat($('kh-min').value),
@@ -323,6 +365,6 @@ function renderResults(r) {
 }
 
 // Init
-loadWells();
+loadDataspaces();
 </script>
 {% endblock %}

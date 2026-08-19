@@ -1,0 +1,37 @@
+{
+  "id": "dev:work-product-component--GenericRepresentation:Drogon-FaultTrans-F1:1",
+  "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.ores.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon – Fault Transmissibility: F1",
+    "Description": "Fault F1 - Central Horst Boundary (West). Transmissibility multiplier: 0.80. Good communication - 4D confirms pressure support. Connects segments: CentralHorst ↔ WestLowland. Grid connections: 1420 cells.",
+    "FaultName": "F1",
+    "TransmissibilityMultiplier": 0.8,
+    "SegmentsConnected": [
+      "CentralHorst",
+      "WestLowland"
+    ],
+    "SealDescription": "Good communication - 4D confirms pressure support",
+    "GridConnections": 1420,
+    "DDMSDatasets": [
+      "eml:///dataspace('maap/drogon')/resqml20.obj_GridConnectionSetRepresentation('89706ccf-5663-5cf4-bc26-df5dae48e248')"
+    ],
+    "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_ContinuousProperty('89706ccf-5663-5cf4-bc26-df5dae48e248')",
+    "ResourceID": "89706ccf-5663-5cf4-bc26-df5dae48e248"
+  }
+}

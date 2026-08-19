@@ -1,0 +1,40 @@
+{
+  "id": "dev:work-product-component--PersistedCollection:Drogon-DG2-Seismic:1",
+  "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+  "acl": {
+    "owners": [
+      "data.ores.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 – Seismic Package",
+    "Description": "Seismic evidence for DG2 Concept Select. Drogon 3D survey (436×276 bins, 25 m spacing): SeismicBinGrid, 2 SeismicTraceData (far/near offset, time domain, 2000 samples), with OpenVDS converted volumes and original SEG-Y files. 7 data references.",
+    "DataReferences": [
+      "dev:work-product-component--SeismicBinGrid:drogon-seismic-bingrid",
+      "dev:work-product-component--SeismicTraceData:drogon-amp-far-time-20180101",
+      "dev:work-product-component--SeismicTraceData:drogon-amp-near-time-20180101",
+      "dev:dataset--FileCollection.Bluware.OpenVDS:drogon-amplitude-far-time-20180101",
+      "dev:dataset--FileCollection.Bluware.OpenVDS:drogon-amplitude-near-time-20180101",
+      "dev:dataset--FileCollection.SEGY:drogon-amplitude-far-time-20180101",
+      "dev:dataset--FileCollection.SEGY:drogon-amplitude-near-time-20180101"
+    ],
+    "Tags": [
+      "DG2",
+      "Drogon",
+      "Seismic",
+      "OpenVDS",
+      "BinGrid"
+    ]
+  }
+}

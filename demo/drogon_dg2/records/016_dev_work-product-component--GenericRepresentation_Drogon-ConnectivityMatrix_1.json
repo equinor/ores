@@ -1,0 +1,66 @@
+{
+  "id": "dev:work-product-component--GenericRepresentation:Drogon-ConnectivityMatrix:1",
+  "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.ores.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 – Fault Connectivity Matrix",
+    "Description": "Summary of inter-segment connectivity for Drogon field. 6 faults bounding 7 reservoir segments. Transmissibility multipliers derived from fault seal analysis (juxtaposition + shale smear) and calibrated to 4D seismic and tracer response (DG2 appraisal data). Key finding: F2 and F3 act as baffles isolating East Lowland segment, explaining early water breakthrough and poor sweep in well A-3.",
+    "ConnectivityMatrix": {
+      "CentralHorst ↔ WestLowland": {
+        "fault": "F1",
+        "transmissibility": 0.8,
+        "seal_quality": "open",
+        "grid_connections": 1420
+      },
+      "CentralHorst ↔ EastLowland": {
+        "fault": "F2",
+        "transmissibility": 0.15,
+        "seal_quality": "baffle",
+        "grid_connections": 980
+      },
+      "CentralNorth ↔ EastLowland": {
+        "fault": "F3",
+        "transmissibility": 0.1,
+        "seal_quality": "baffle",
+        "grid_connections": 650
+      },
+      "WestLowland ↔ CentralSouth": {
+        "fault": "F4",
+        "transmissibility": 0.45,
+        "seal_quality": "moderate",
+        "grid_connections": 1100
+      },
+      "NorthHorst ↔ CentralRamp": {
+        "fault": "F5",
+        "transmissibility": 0.6,
+        "seal_quality": "moderate",
+        "grid_connections": 870
+      },
+      "CentralRamp ↔ CentralHorst": {
+        "fault": "F6",
+        "transmissibility": 0.95,
+        "seal_quality": "open",
+        "grid_connections": 1560
+      }
+    },
+    "TotalFaults": 6,
+    "OpenFaults": 2,
+    "BaffleFaults": 4,
+    "SealingFaults": 0
+  }
+}

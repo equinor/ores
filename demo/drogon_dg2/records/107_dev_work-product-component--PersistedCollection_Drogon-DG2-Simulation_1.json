@@ -1,0 +1,42 @@
+{
+  "id": "dev:work-product-component--PersistedCollection:Drogon-DG2-Simulation:1",
+  "kind": "osdu:wks:work-product-component--PersistedCollection:1.0.0",
+  "acl": {
+    "owners": [
+      "data.ores.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon DG2 – Simulation & Volumes Package",
+    "Description": "Dynamic simulation evidence for DG2 Concept Select. 250-realisation FMU volumes (raw + P10/P50/P90 statistics), design matrix (21 parameters), 20-year production forecast, simulator tables (relperm, PVT, summary vectors, well completions, group tree). OPM Flow simulator. 9 data references.",
+    "DataReferences": [
+      "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Raw:1",
+      "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1",
+      "dev:work-product-component--ColumnBasedTable:Drogon-DG2-DesignMatrix:1",
+      "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1",
+      "dev:work-product-component--ColumnBasedTable:Drogon-DG2-RelPerm:1",
+      "dev:work-product-component--ColumnBasedTable:967c8a8d-c9f7-5ff9-83a7-e5f991dae2f5:1",
+      "dev:work-product-component--ColumnBasedTable:b8ac5e0a-a29b-5290-8ba3-757e861abf4a:1",
+      "dev:work-product-component--ColumnBasedTable:d55ec954-bb8d-576e-8435-26e01e0de068:1",
+      "dev:work-product-component--ColumnBasedTable:23e1ac87-3ba2-5e11-832c-73f8aa79de97:1"
+    ],
+    "Tags": [
+      "DG2",
+      "Drogon",
+      "Simulation",
+      "Volumes",
+      "FMU"
+    ]
+  }
+}

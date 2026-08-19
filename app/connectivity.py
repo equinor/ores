@@ -1,14 +1,15 @@
 """
 connectivity.py - Connectivity query engine for field development workflows.
 
-Provides a high-level query that combines:
-  1. Stratigraphic correlation (are wells in the same zone?)
-  2. Structural analysis (are there faults between them?)
-  3. Property quality assessment (NTG, permeability along corridor)
-  4. Business decision evidence (risk records, 4D results)
-  5. Production response (per-well performance comparison)
+Queries LIVE data from OSDU catalog + RDDMS to assess reservoir connectivity
+between any two wells in any field/dataspace. No hardcoded field data.
 
-This is the backend for the Connectivity Explorer UI.
+Combines:
+  1. Stratigraphic correlation (markers from RDDMS WellboreMarkerFrameRepresentation)
+  2. Structural analysis (faults from FaultInterpretation + GridConnectionSet)
+  3. Property quality assessment (grid/well properties via deepSearch)
+  4. Business decision evidence (Risk/DevConcept WPCs from OSDU catalog)
+  5. Production response (ColumnBasedTable WPCs from OSDU catalog)
 
 Usage via API:
   POST /api/connectivity/query
@@ -16,6 +17,7 @@ Usage via API:
     "well_a": "55/33-A-2",
     "well_b": "55/33-A-3",
     "zone": "Valysar",
+    "dataspace": "maap/drogon",
     "property_filters": {"ntg_min": 0.5, "kh_min": 100, "sw_max": 0.6},
     "include_faults": true,
     "include_production": true,
@@ -26,7 +28,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from dataclasses import dataclass, field
+import re
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException, Request
@@ -37,6 +39,7 @@ import os
 
 from . import osdu
 from .common import access_token as _access_token
+from .pg_backend import get_pool as _get_pool
 
 router = APIRouter()
 templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), "templates"))
@@ -44,7 +47,7 @@ log = logging.getLogger("rddms-admin.connectivity")
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Data model
+# Data model (request/response)
 # ──────────────────────────────────────────────────────────────────────────────
 
 class ConnectivityRequest(BaseModel):
@@ -60,10 +63,10 @@ class ConnectivityRequest(BaseModel):
 
 class FaultAssessment(BaseModel):
     fault_name: str
-    transmissibility: float
-    seal_quality: str  # "open", "moderate", "baffle", "seal"
-    segments_connected: List[str]
-    description: str
+    transmissibility: Optional[float] = None
+    seal_quality: str = "unknown"
+    segments_connected: List[str] = []
+    description: str = ""
 
 
 class PropertyCorridor(BaseModel):
@@ -72,182 +75,314 @@ class PropertyCorridor(BaseModel):
     mean_permeability: Optional[float] = None
     mean_ntg: Optional[float] = None
     mean_sw: Optional[float] = None
-    quality_assessment: str  # "excellent", "good", "moderate", "poor"
+    quality_assessment: str = "unknown"
 
 
 class ProductionComparison(BaseModel):
     well: str
-    segment: str
+    segment: str = ""
     peak_oil_rate: Optional[float] = None
     current_water_cut: Optional[float] = None
     cumulative_oil: Optional[float] = None
-    performance_rating: str  # "good", "average", "poor"
+    performance_rating: str = "unknown"
 
 
 class BDEvidence(BaseModel):
-    record_type: str  # "Risk", "DevelopmentConcept", "Activity"
+    record_type: str
     name: str
-    status: str
-    description: str
-    relevance: str  # Why this is relevant to the connectivity question
+    status: str = ""
+    description: str = ""
+    relevance: str = ""
 
 
 class ConnectivityResult(BaseModel):
-    # Summary
-    connected: Optional[bool] = None  # True/False/None(uncertain)
-    confidence: str = "low"  # "high", "medium", "low"
+    connected: Optional[bool] = None
+    confidence: str = "low"
     summary: str = ""
-
-    # Stratigraphic assessment
     same_zone: bool = False
     zone_detail: str = ""
-
-    # Structural assessment
     faults_between: List[FaultAssessment] = []
     structural_summary: str = ""
-
-    # Property corridor
     property_corridor: Optional[PropertyCorridor] = None
-
-    # Production evidence
     production: List[ProductionComparison] = []
     production_summary: str = ""
-
-    # BD evidence chain
     bd_evidence: List[BDEvidence] = []
-
-    # Recommendations
     recommendations: List[str] = []
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Well / segment registry (from Drogon model)
+# Live data queries — fetch from RDDMS (via internal GraphQL) + OSDU catalog
 # ──────────────────────────────────────────────────────────────────────────────
 
-WELL_SEGMENTS = {
-    "55/33-A-1": "CentralHorst",
-    "55/33-A-2": "CentralHorst",
-    "55/33-A-3": "EastLowland",
-    "55/33-A-4": "WestLowland",
-    "55/33-A-5": "CentralHorst",
-    "55/33-A-6": "EastLowland",
-    # Short names
-    "A-1": "CentralHorst",
-    "A-2": "CentralHorst",
-    "A-3": "EastLowland",
-    "A-4": "WestLowland",
-    "A-5": "CentralHorst",
-    "A-6": "EastLowland",
-}
-
-WELL_ZONES = {
-    "55/33-A-1": ["Valysar", "Therys"],
-    "55/33-A-2": ["Valysar"],
-    "55/33-A-3": ["Valysar"],
-    "55/33-A-4": ["Valysar", "Volon"],
-    "55/33-A-5": ["Valysar"],
-    "55/33-A-6": ["Valysar", "Therys"],
-}
-
-# Fault connectivity matrix: (segA, segB) → fault info
-FAULT_MATRIX = {
-    ("CentralHorst", "WestLowland"): {
-        "name": "F1", "trans": 0.80, "quality": "open",
-        "desc": "Good communication - 4D confirms pressure support",
-    },
-    ("CentralHorst", "EastLowland"): {
-        "name": "F2", "trans": 0.15, "quality": "baffle",
-        "desc": "Partial baffle - shale smear in Therys, conduit in Valysar",
-    },
-    ("CentralNorth", "EastLowland"): {
-        "name": "F3", "trans": 0.10, "quality": "baffle",
-        "desc": "Strong baffle - juxtaposition seal (Valysar vs Therys shale)",
-    },
-    ("WestLowland", "CentralSouth"): {
-        "name": "F4", "trans": 0.45, "quality": "moderate",
-        "desc": "Moderate - partial juxtaposition, some sand-on-sand windows",
-    },
-    ("NorthHorst", "CentralRamp"): {
-        "name": "F5", "trans": 0.60, "quality": "moderate",
-        "desc": "Moderate-good - tracer detected across fault",
-    },
-    ("CentralRamp", "CentralHorst"): {
-        "name": "F6", "trans": 0.95, "quality": "open",
-        "desc": "Essentially open - relay ramp with full sand juxtaposition",
-    },
-}
-
-# Segment-level property averages (from grid properties)
-SEGMENT_PROPERTIES = {
-    "CentralHorst": {"porosity": 0.24, "permeability": 320.0, "ntg": 0.68, "sw": 0.28},
-    "EastLowland": {"porosity": 0.19, "permeability": 85.0, "ntg": 0.42, "sw": 0.45},
-    "WestLowland": {"porosity": 0.22, "permeability": 210.0, "ntg": 0.58, "sw": 0.32},
-    "CentralSouth": {"porosity": 0.21, "permeability": 180.0, "ntg": 0.55, "sw": 0.35},
-    "CentralNorth": {"porosity": 0.23, "permeability": 250.0, "ntg": 0.62, "sw": 0.30},
-    "NorthHorst": {"porosity": 0.20, "permeability": 150.0, "ntg": 0.50, "sw": 0.38},
-    "CentralRamp": {"porosity": 0.22, "permeability": 200.0, "ntg": 0.60, "sw": 0.33},
-}
-
-# Per-well production summary (from gen_well_production_dg2.py profiles)
-WELL_PRODUCTION = {
-    "55/33-A-1": {"peak_oil": 3500, "current_wcut": 0.35, "cum_oil": 2.8e6, "rating": "good"},
-    "55/33-A-2": {"peak_oil": 3400, "current_wcut": 0.32, "cum_oil": 2.6e6, "rating": "good"},
-    "55/33-A-3": {"peak_oil": 2100, "current_wcut": 0.58, "cum_oil": 1.4e6, "rating": "poor"},
-    "55/33-A-4": {"peak_oil": 2700, "current_wcut": 0.42, "cum_oil": 2.0e6, "rating": "average"},
-}
-
-# BD evidence records relevant to connectivity
-BD_EVIDENCE_RECORDS = [
-    {
-        "type": "Risk",
-        "name": "Drogon-FaultCompartment",
-        "status": "Mitigated (High → Low)",
-        "desc": "Fault transmissibility and reservoir compartmentalization risk. 4D seismic confirms communication across F1, F5, F6. F2/F3 remain as partial baffles.",
-        "relevance": "Directly addresses inter-segment connectivity uncertainty",
-    },
-    {
-        "type": "DevelopmentConcept",
-        "name": "Drogon-DG2-InfillWells",
-        "status": "Contingent (Phase 2)",
-        "desc": "Infill wells targeting isolated fault compartments. Trigger: confirmed isolation by 4D/tracer. Candidate: East Lowland (poor sweep via A-3).",
-        "relevance": "Poor A-3 performance attributed to F2/F3 baffling",
-    },
-    {
-        "type": "Activity",
-        "name": "4D Seismic Acquisition (planned)",
-        "status": "Planned Q3 2021",
-        "desc": "4D seismic to confirm/deny inter-segment pressure communication. Priority: East Lowland isolation hypothesis.",
-        "relevance": "Will resolve remaining connectivity uncertainty for F2/F3",
-    },
-    {
-        "type": "Activity",
-        "name": "Water Tracer Injection (A-5)",
-        "status": "Completed Q2 2020",
-        "desc": "Tracer injected in A-5 (CentralHorst). Detected in A-1 (same segment, 3 months) and A-4 (WestLowland via F1, 8 months). NOT detected in A-3 (EastLowland).",
-        "relevance": "Confirms F2 acts as baffle — no tracer communication to East Lowland",
-    },
-]
+async def _run_deep_search(token: str, dataspace: str, type_name: str = None,
+                           category: str = None, include_relations: bool = True,
+                           include_statistics: bool = False, property_filter=None,
+                           limit: int = 30) -> List[Dict[str, Any]]:
+    """Run a deep search via the internal GraphQL schema (same as /api/graphql/query)."""
+    from .graphql_search import deep_search_impl
+    result = await deep_search_impl(
+        token=token,
+        dataspace=dataspace,
+        dataspaces=None,
+        type_name=type_name,
+        category=category,
+        title_contains=None,
+        property_filter=property_filter,
+        include_relations=include_relations,
+        relation_filter=None,
+        include_statistics=include_statistics,
+        include_sample_values=False,
+        sample_size=0,
+        limit=limit,
+    )
+    # Result is a DeepSearchResult strawberry type — extract objects
+    objects = []
+    for obj in (result.objects or []):
+        o = {"uuid": obj.uuid, "title": obj.title, "typeName": obj.type_name}
+        if obj.relations:
+            o["relations"] = [
+                {"uuid": r.uuid, "name": r.name, "typeName": r.type_name, "direction": r.direction}
+                for r in obj.relations
+            ]
+        if obj.properties:
+            o["properties"] = []
+            for p in obj.properties:
+                prop = {"title": p.title, "kind": p.kind, "uom": p.uom}
+                if p.statistics:
+                    prop["statistics"] = {
+                        "count": p.statistics.count, "mean": p.statistics.mean,
+                        "minValue": p.statistics.min_value, "maxValue": p.statistics.max_value,
+                    }
+                if p.matching_cells:
+                    prop["matchingCells"] = {
+                        "count": p.matching_cells.count, "total": p.matching_cells.total,
+                        "fraction": p.matching_cells.fraction,
+                    }
+                o["properties"].append(prop)
+        objects.append(o)
+    return objects
 
 
-def _resolve_well_name(name: str) -> str:
-    """Normalize well name to full form."""
-    name = name.strip()
-    if name in WELL_SEGMENTS:
-        return name
-    # Try matching short form
-    for full_name in WELL_SEGMENTS:
-        if full_name.endswith(name) or name in full_name:
-            return full_name
-    return name
+async def _search_catalog(token: str, kind: str, query: str, limit: int = 20) -> List[Dict]:
+    """Search OSDU catalog via the Search v2 API."""
+    try:
+        search_url = f"https://{osdu.OSDU_BASE_URL}/api/search/v2/query"
+        hdr = osdu.headers(token)
+        payload = {"kind": kind, "query": query, "limit": limit}
+        async with osdu.http_client(timeout=30) as client:
+            resp = await client.post(search_url, json=payload, headers=hdr)
+            resp.raise_for_status()
+            data = resp.json()
+            return data.get("results", [])
+    except Exception as e:
+        log.debug("Catalog search failed (kind=%s, q=%s): %s", kind, query, e)
+        return []
 
 
-def _find_faults_between(seg_a: str, seg_b: str) -> List[Dict]:
-    """Find faults separating two segments (check both orderings)."""
+async def _fetch_wells(token: str, dataspace: str) -> List[Dict[str, Any]]:
+    """Fetch well features from RDDMS via deep search."""
+    return await _run_deep_search(token, dataspace, category="well", limit=50)
+
+
+async def _fetch_markers(token: str, dataspace: str) -> List[Dict[str, Any]]:
+    """Fetch wellbore marker frames (formation tops per well)."""
+    return await _run_deep_search(
+        token, dataspace,
+        type_name="resqml20.obj_WellboreMarkerFrameRepresentation",
+        limit=50,
+    )
+
+
+async def _fetch_faults(token: str, dataspace: str) -> List[Dict[str, Any]]:
+    """Fetch fault interpretations with relations."""
+    return await _run_deep_search(
+        token, dataspace,
+        type_name="resqml20.obj_FaultInterpretation",
+        include_statistics=True,
+        limit=20,
+    )
+
+
+async def _fetch_grid_properties(token: str, dataspace: str) -> List[Dict[str, Any]]:
+    """Fetch grid property statistics (porosity, permeability, NTG, Sw)."""
+    return await _run_deep_search(
+        token, dataspace,
+        type_name="resqml20.obj_IjkGridRepresentation",
+        include_statistics=True,
+        limit=5,
+    )
+
+
+async def _fetch_production_records(token: str, well_names: List[str]) -> List[Dict[str, Any]]:
+    """Fetch per-well production WPC records from OSDU catalog."""
+    results = []
+    for name in well_names:
+        short = name.split("-")[-1] if "-" in name else name
+        hits = await _search_catalog(
+            token,
+            kind="osdu:wks:work-product-component--ColumnBasedTable:*",
+            query=f"WellProd AND {short}",
+            limit=5,
+        )
+        for hit in hits:
+            data = hit.get("data", {})
+            results.append({
+                "well": name,
+                "name": data.get("Name", ""),
+                "segment": data.get("ReservoirSegment", ""),
+                "well_type": data.get("WellType", ""),
+                "table": data.get("Table", {}),
+            })
+    return results
+
+
+async def _fetch_bd_records(token: str, field_name: str) -> List[Dict[str, Any]]:
+    """Fetch Risk + DevelopmentConcept + Activity records from OSDU catalog."""
+    results = []
+    for kind_suffix in ("Risk", "DevelopmentConcept", "Activity"):
+        hits = await _search_catalog(
+            token,
+            kind=f"osdu:wks:work-product-component--{kind_suffix}:*",
+            query=field_name,
+            limit=20,
+        )
+        for hit in hits:
+            data = hit.get("data", {})
+            results.append({
+                "type": kind_suffix,
+                "name": data.get("Name", hit.get("id", "")),
+                "description": data.get("Description", ""),
+                "status": data.get("Status", data.get("RiskStatus", "")),
+            })
+    return results
+
+
+async def _fetch_fault_connectivity(token: str, field_name: str) -> List[Dict[str, Any]]:
+    """Fetch fault transmissibility / connectivity WPCs from OSDU catalog."""
+    hits = await _search_catalog(
+        token,
+        kind="osdu:wks:work-product-component--GenericRepresentation:*",
+        query=f"({field_name}) AND (FaultTrans OR ConnectivityMatrix OR Transmissibility)",
+        limit=20,
+    )
+    results = []
+    for hit in hits:
+        data = hit.get("data", {})
+        results.append({
+            "name": data.get("Name", ""),
+            "fault_name": data.get("FaultName", ""),
+            "transmissibility": data.get("TransmissibilityMultiplier"),
+            "segments": data.get("SegmentsConnected", []),
+            "seal_desc": data.get("SealDescription", ""),
+            "connectivity_matrix": data.get("ConnectivityMatrix"),
+        })
+    return results
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Analysis helpers
+# ──────────────────────────────────────────────────────────────────────────────
+
+def _match_well(objects: List[Dict], well_name: str) -> List[Dict]:
+    """Find RDDMS objects whose title matches a well name (fuzzy)."""
+    name_lower = well_name.lower().replace(" ", "")
+    matches = []
+    for obj in objects:
+        title = (obj.get("title") or "").lower().replace(" ", "")
+        if name_lower in title or title in name_lower:
+            matches.append(obj)
+            continue
+        # Match short form: "A-2" matches "55/33-A-2"
+        parts = well_name.split("-")
+        if len(parts) >= 2:
+            short = parts[-1]
+            if short.lower() in title:
+                matches.append(obj)
+    return matches
+
+
+def _extract_zones_from_markers(marker_objects: List[Dict], well_name: str) -> List[str]:
+    """Extract zone names from marker frame relations for a specific well."""
+    well_markers = _match_well(marker_objects, well_name)
+    zones = set()
+    for m in well_markers:
+        for rel in m.get("relations", []):
+            rel_name = rel.get("name", "")
+            rel_type = rel.get("typeName", "")
+            if "Horizon" in rel_type or "Stratigraphic" in rel_type:
+                zones.add(rel_name)
+        # Also extract from title patterns (e.g. "A-2 Markers: Valysar, Therys")
+        title = m.get("title", "")
+        # Common formation names
+        for token in re.split(r'[\s,;/|]+', title):
+            if len(token) > 3 and token[0].isupper() and token.isalpha():
+                zones.add(token)
+    return sorted(zones) if zones else []
+
+
+def _find_faults_between_wells(
+    fault_objects: List[Dict],
+    fault_connectivity: List[Dict],
+    well_a_segment: str,
+    well_b_segment: str,
+) -> List[FaultAssessment]:
+    """Find faults separating two segments using catalog connectivity data."""
     faults = []
-    for (s1, s2), info in FAULT_MATRIX.items():
-        if (s1 == seg_a and s2 == seg_b) or (s1 == seg_b and s2 == seg_a):
-            faults.append(info)
+
+    # Try catalog connectivity records (have transmissibility values)
+    for fc in fault_connectivity:
+        segments = fc.get("segments", [])
+        if not segments:
+            continue
+        segs_lower = [s.lower() for s in segments]
+        if (well_a_segment.lower() in segs_lower and
+                well_b_segment.lower() in segs_lower):
+            trans = fc.get("transmissibility")
+            quality = "unknown"
+            if trans is not None:
+                quality = ("open" if trans > 0.7 else "moderate" if trans > 0.3
+                           else "baffle" if trans > 0.05 else "seal")
+            faults.append(FaultAssessment(
+                fault_name=fc.get("fault_name") or fc.get("name", "?"),
+                transmissibility=trans,
+                seal_quality=quality,
+                segments_connected=segments,
+                description=fc.get("seal_desc", ""),
+            ))
+
+    # If no catalog connectivity records matched, list RDDMS faults
+    if not faults and fault_objects:
+        for fo in fault_objects[:5]:
+            faults.append(FaultAssessment(
+                fault_name=fo.get("title", "Unknown Fault"),
+                transmissibility=None,
+                seal_quality="unknown",
+                description="Fault in RDDMS — transmissibility not yet quantified. "
+                            "Ingest fault property records for seal assessment.",
+            ))
+
     return faults
+
+
+def _extract_property_stats(grid_objects: List[Dict]) -> Dict[str, float]:
+    """Extract average property values from grid deepSearch results."""
+    props = {}
+    for grid in grid_objects:
+        for p in grid.get("properties", []):
+            title = (p.get("title") or "").lower()
+            stats = p.get("statistics") or {}
+            mean = stats.get("mean")
+            if mean is None:
+                continue
+            if "phit" in title or "poro" in title:
+                props.setdefault("porosity", mean)
+            elif "klogh" in title or "perm" in title:
+                props.setdefault("permeability", mean)
+            elif "ntg" in title or "net" in title:
+                props.setdefault("ntg", mean)
+            elif title.startswith("sw") or "saturation" in title:
+                props.setdefault("sw", mean)
+    return props
 
 
 def _assess_property_quality(props: Dict[str, float]) -> str:
@@ -261,228 +396,320 @@ def _assess_property_quality(props: Dict[str, float]) -> str:
         score += 1
     if props.get("sw", 1.0) < 0.35:
         score += 1
-
     if score >= 4:
         return "excellent"
     elif score >= 3:
         return "good"
     elif score >= 2:
         return "moderate"
-    else:
-        return "poor"
+    return "poor"
 
 
-def _compute_corridor_properties(seg_a: str, seg_b: str) -> Dict[str, float]:
-    """Average properties along the corridor between two segments."""
-    props_a = SEGMENT_PROPERTIES.get(seg_a, {})
-    props_b = SEGMENT_PROPERTIES.get(seg_b, {})
-    if not props_a or not props_b:
-        return {}
-    return {
-        "porosity": (props_a["porosity"] + props_b["porosity"]) / 2,
-        "permeability": (props_a["permeability"] + props_b["permeability"]) / 2,
-        "ntg": (props_a["ntg"] + props_b["ntg"]) / 2,
-        "sw": (props_a["sw"] + props_b["sw"]) / 2,
-    }
+def _extract_production_summary(
+    prod_records: List[Dict], well_name: str
+) -> Optional[ProductionComparison]:
+    """Extract production KPIs from a ColumnBasedTable record."""
+    for rec in prod_records:
+        if rec.get("well") != well_name:
+            continue
+        table = rec.get("table", {})
+        col_values = table.get("ColumnValues", [])
+        columns = table.get("Columns", [])
+
+        col_map = {}
+        for i, col_def in enumerate(columns):
+            col_name = col_def.get("ColumnName", "")
+            idx = i + 1  # +1 because first ColumnValues is the key column
+            if idx < len(col_values):
+                values = (col_values[idx].get("NumberColumn") or
+                          col_values[idx].get("StringColumn") or [])
+                col_map[col_name] = values
+
+        peak_oil = max(col_map["WOPR"]) if col_map.get("WOPR") else None
+        wcut_values = col_map.get("WWCT", [])
+        current_wcut = wcut_values[-1] if wcut_values else None
+        cum_values = col_map.get("WOPT", [])
+        cum_oil = cum_values[-1] if cum_values else None
+
+        rating = "unknown"
+        if current_wcut is not None:
+            rating = "good" if current_wcut < 0.35 else "average" if current_wcut < 0.50 else "poor"
+
+        return ProductionComparison(
+            well=well_name,
+            segment=rec.get("segment", ""),
+            peak_oil_rate=peak_oil,
+            current_water_cut=current_wcut,
+            cumulative_oil=cum_oil,
+            performance_rating=rating,
+        )
+    return None
 
 
-def _filter_relevant_bd(seg_a: str, seg_b: str, faults: List[Dict]) -> List[BDEvidence]:
-    """Select BD records relevant to this connectivity question."""
-    fault_names = {f["name"] for f in faults}
+def _filter_relevant_bd(
+    bd_records: List[Dict], well_names: List[str], fault_names: List[str]
+) -> List[BDEvidence]:
+    """Filter BD records to those relevant to the connectivity question."""
     results = []
-    for bd in BD_EVIDENCE_RECORDS:
-        # Include if mentions relevant faults or segments
-        text = bd["desc"].lower()
-        relevant = False
-        if any(fn.lower() in text for fn in fault_names):
-            relevant = True
-        if seg_a.lower() in text or seg_b.lower() in text:
-            relevant = True
-        if "compartment" in text or "connectivity" in text:
-            relevant = True
-        if relevant:
+    keywords = [w.lower() for w in well_names + fault_names]
+    keywords += ["compartment", "connectivity", "seal", "baffle", "communication"]
+
+    for bd in bd_records:
+        desc = (bd.get("description") or "").lower()
+        name = (bd.get("name") or "").lower()
+        text = desc + " " + name
+
+        if any(kw in text for kw in keywords):
+            relevance = "Related to inter-segment connectivity"
+            matching_faults = [f for f in fault_names if f.lower() in text]
+            if matching_faults:
+                relevance = f"Mentions fault(s): {', '.join(matching_faults)}"
+            elif any(w.lower() in text for w in well_names):
+                relevance = "Mentions well(s) in query"
+
             results.append(BDEvidence(
-                record_type=bd["type"],
-                name=bd["name"],
-                status=bd["status"],
-                description=bd["desc"],
-                relevance=bd["relevance"],
+                record_type=bd.get("type", ""),
+                name=bd.get("name", ""),
+                status=bd.get("status", ""),
+                description=bd.get("description", "")[:300],
+                relevance=relevance,
             ))
     return results
 
 
+def _infer_segment(well_objects: List[Dict], well_name: str) -> str:
+    """Infer the well's reservoir segment from RDDMS relations or title."""
+    matched = _match_well(well_objects, well_name)
+    for obj in matched:
+        for rel in obj.get("relations", []):
+            name = rel.get("name", "")
+            if any(kw in name.lower() for kw in ("segment", "region", "block", "compartment")):
+                return name
+        # Check title for segment keywords
+        title = obj.get("title", "")
+        # Generic pattern: pick up CamelCase segment names
+        segments = re.findall(r'[A-Z][a-z]+(?:[A-Z][a-z]+)+', title)
+        if segments:
+            return segments[0]
+    return "unknown"
+
+
 # ──────────────────────────────────────────────────────────────────────────────
-# Main query engine
+# Main query engine — orchestrates live data fetches
 # ──────────────────────────────────────────────────────────────────────────────
 
-def run_connectivity_query(req: ConnectivityRequest) -> ConnectivityResult:
-    """Execute the full connectivity assessment."""
+async def run_connectivity_query(req: ConnectivityRequest, token: str) -> ConnectivityResult:
+    """Execute connectivity assessment using live OSDU/RDDMS data from any dataspace."""
     result = ConnectivityResult()
+    dataspace = req.dataspace
 
-    well_a = _resolve_well_name(req.well_a)
-    well_b = _resolve_well_name(req.well_b)
+    # Extract field name for catalog queries: "maap/drogon" → "Drogon"
+    field_name = dataspace.split("/")[-1].replace("_", " ").replace("-", " ").title()
 
-    seg_a = WELL_SEGMENTS.get(well_a)
-    seg_b = WELL_SEGMENTS.get(well_b)
+    # ── Parallel data fetch from RDDMS + catalog ─────────────────────────
+    fetch_results = await asyncio.gather(
+        _fetch_wells(token, dataspace),
+        _fetch_markers(token, dataspace),
+        _fetch_faults(token, dataspace),
+        _fetch_grid_properties(token, dataspace),
+        _fetch_fault_connectivity(token, field_name),
+        _fetch_bd_records(token, field_name),
+        return_exceptions=True,
+    )
 
-    if not seg_a:
-        result.summary = f"Unknown well: {req.well_a}"
-        return result
-    if not seg_b:
-        result.summary = f"Unknown well: {req.well_b}"
-        return result
+    wells, markers, faults, grid_props, fault_conn, bd_records = fetch_results
+
+    # Gracefully handle individual failures
+    if isinstance(wells, Exception):
+        log.warning("Well fetch failed: %s", wells); wells = []
+    if isinstance(markers, Exception):
+        log.warning("Marker fetch failed: %s", markers); markers = []
+    if isinstance(faults, Exception):
+        log.warning("Fault fetch failed: %s", faults); faults = []
+    if isinstance(grid_props, Exception):
+        log.warning("Grid prop fetch failed: %s", grid_props); grid_props = []
+    if isinstance(fault_conn, Exception):
+        log.warning("Fault conn fetch failed: %s", fault_conn); fault_conn = []
+    if isinstance(bd_records, Exception):
+        log.warning("BD fetch failed: %s", bd_records); bd_records = []
+
+    # Production (sequential — depends on well names)
+    prod_records = []
+    if req.include_production:
+        try:
+            prod_records = await _fetch_production_records(token, [req.well_a, req.well_b])
+        except Exception as e:
+            log.debug("Production fetch failed: %s", e)
 
     # ── 1. Stratigraphic assessment ──────────────────────────────────────
-    zones_a = WELL_ZONES.get(well_a, [])
-    zones_b = WELL_ZONES.get(well_b, [])
-    target_zone = req.zone or "Valysar"
+    zones_a = _extract_zones_from_markers(markers, req.well_a)
+    zones_b = _extract_zones_from_markers(markers, req.well_b)
+    target_zone = req.zone
 
-    if target_zone in zones_a and target_zone in zones_b:
+    if target_zone and target_zone in zones_a and target_zone in zones_b:
         result.same_zone = True
-        result.zone_detail = f"Both wells penetrate {target_zone} Fm (shallow marine)"
-    elif set(zones_a) & set(zones_b):
-        common = set(zones_a) & set(zones_b)
+        result.zone_detail = f"Both wells penetrate {target_zone}"
+    elif zones_a and zones_b and (set(zones_a) & set(zones_b)):
+        common = sorted(set(zones_a) & set(zones_b))
         result.same_zone = True
         result.zone_detail = f"Wells share zone(s): {', '.join(common)}"
+    elif not zones_a and not zones_b:
+        result.zone_detail = "No marker data found — cannot assess stratigraphy"
     else:
         result.same_zone = False
-        result.zone_detail = f"No common zone: {well_a}={zones_a}, {well_b}={zones_b}"
+        result.zone_detail = f"No common zone: {req.well_a}={zones_a or '?'}, {req.well_b}={zones_b or '?'}"
 
     # ── 2. Structural assessment (faults) ────────────────────────────────
+    seg_a = _infer_segment(wells, req.well_a)
+    seg_b = _infer_segment(wells, req.well_b)
+
     if req.include_faults:
-        if seg_a == seg_b:
+        if seg_a == seg_b and seg_a != "unknown":
             result.structural_summary = f"Same segment ({seg_a}) — no bounding faults"
-        else:
-            faults = _find_faults_between(seg_a, seg_b)
-            for f in faults:
-                result.faults_between.append(FaultAssessment(
-                    fault_name=f["name"],
-                    transmissibility=f["trans"],
-                    seal_quality=f["quality"],
-                    segments_connected=[seg_a, seg_b],
-                    description=f["desc"],
-                ))
+        elif seg_a == "unknown" or seg_b == "unknown":
             if faults:
-                worst = min(faults, key=lambda x: x["trans"])
                 result.structural_summary = (
-                    f"Fault {worst['name']} between {seg_a} ↔ {seg_b} "
-                    f"(trans={worst['trans']:.2f}, {worst['quality']})"
+                    f"Segment assignment uncertain. "
+                    f"{len(faults)} fault(s) in {dataspace} — listed for reference."
                 )
+                for fo in faults[:5]:
+                    result.faults_between.append(FaultAssessment(
+                        fault_name=fo.get("title", "?"),
+                        seal_quality="unknown",
+                        description="Segment membership undetermined",
+                    ))
             else:
-                result.structural_summary = (
-                    f"No direct fault boundary between {seg_a} and {seg_b} — "
-                    f"may require multi-hop path"
-                )
+                result.structural_summary = "No fault data found in RDDMS"
+        else:
+            found_faults = _find_faults_between_wells(faults, fault_conn, seg_a, seg_b)
+            result.faults_between = found_faults
+            if found_faults:
+                with_trans = [f for f in found_faults if f.transmissibility is not None]
+                if with_trans:
+                    worst = min(with_trans, key=lambda x: x.transmissibility)
+                    result.structural_summary = (
+                        f"Fault {worst.fault_name} between {seg_a} ↔ {seg_b} "
+                        f"(trans={worst.transmissibility:.2f}, {worst.seal_quality})"
+                    )
+                else:
+                    result.structural_summary = (
+                        f"{len(found_faults)} fault(s) between {seg_a} ↔ {seg_b} "
+                        f"(transmissibility not quantified)"
+                    )
+            else:
+                result.structural_summary = f"No direct fault found between {seg_a} and {seg_b}"
 
     # ── 3. Property corridor ─────────────────────────────────────────────
-    corridor_props = _compute_corridor_properties(seg_a, seg_b)
-    if corridor_props:
-        quality = _assess_property_quality(corridor_props)
+    props = _extract_property_stats(grid_props)
+    if props:
+        quality = _assess_property_quality(props)
         result.property_corridor = PropertyCorridor(
-            zone=target_zone,
-            mean_porosity=round(corridor_props["porosity"], 3),
-            mean_permeability=round(corridor_props["permeability"], 1),
-            mean_ntg=round(corridor_props["ntg"], 3),
-            mean_sw=round(corridor_props["sw"], 3),
+            zone=target_zone or "all",
+            mean_porosity=round(props["porosity"], 3) if "porosity" in props else None,
+            mean_permeability=round(props["permeability"], 1) if "permeability" in props else None,
+            mean_ntg=round(props["ntg"], 3) if "ntg" in props else None,
+            mean_sw=round(props["sw"], 3) if "sw" in props else None,
             quality_assessment=quality,
         )
-
-        # Apply user property filters
+        # Apply user thresholds
         if req.property_filters:
-            filters = req.property_filters
+            f = req.property_filters
             passes = True
-            if "ntg_min" in filters and corridor_props["ntg"] < filters["ntg_min"]:
+            if "ntg_min" in f and props.get("ntg", 1.0) < f["ntg_min"]:
                 passes = False
-            if "kh_min" in filters and corridor_props["permeability"] < filters["kh_min"]:
+            if "kh_min" in f and props.get("permeability", 9999) < f["kh_min"]:
                 passes = False
-            if "sw_max" in filters and corridor_props["sw"] > filters["sw_max"]:
+            if "sw_max" in f and props.get("sw", 0.0) > f["sw_max"]:
                 passes = False
             if not passes:
                 result.property_corridor.quality_assessment = "poor (below filter thresholds)"
+    else:
+        result.property_corridor = PropertyCorridor(
+            zone=target_zone or "all",
+            quality_assessment="no data — grid properties not found in RDDMS",
+        )
 
     # ── 4. Production response ───────────────────────────────────────────
-    if req.include_production:
-        for wname in [well_a, well_b]:
-            prod = WELL_PRODUCTION.get(wname)
+    if req.include_production and prod_records:
+        for wname in [req.well_a, req.well_b]:
+            prod = _extract_production_summary(prod_records, wname)
             if prod:
-                result.production.append(ProductionComparison(
-                    well=wname,
-                    segment=WELL_SEGMENTS[wname],
-                    peak_oil_rate=prod["peak_oil"],
-                    current_water_cut=prod["current_wcut"],
-                    cumulative_oil=prod["cum_oil"],
-                    performance_rating=prod["rating"],
-                ))
-
-        # Compare performance
+                result.production.append(prod)
         if len(result.production) == 2:
             p1, p2 = result.production
             if p1.performance_rating != p2.performance_rating:
-                poor_well = p1 if p1.performance_rating == "poor" else p2
-                good_well = p2 if p1.performance_rating == "poor" else p1
-                result.production_summary = (
-                    f"{poor_well.well} ({poor_well.segment}) underperforms vs "
-                    f"{good_well.well} ({good_well.segment}): "
-                    f"WCT {poor_well.current_water_cut:.0%} vs {good_well.current_water_cut:.0%}, "
-                    f"Cum.Oil {poor_well.cumulative_oil/1e6:.1f} vs {good_well.cumulative_oil/1e6:.1f} MSm³"
-                )
+                poor = p1 if p1.performance_rating == "poor" else p2
+                good = p2 if p1.performance_rating == "poor" else p1
+                wcut_str = ""
+                if poor.current_water_cut is not None and good.current_water_cut is not None:
+                    wcut_str = f"WCT {poor.current_water_cut:.0%} vs {good.current_water_cut:.0%}"
+                result.production_summary = f"{poor.well} underperforms vs {good.well}: {wcut_str}"
             else:
                 result.production_summary = "Similar production performance"
+    elif req.include_production:
+        result.production_summary = "No per-well production records found in catalog"
 
     # ── 5. BD evidence ───────────────────────────────────────────────────
-    if req.include_bd_evidence:
-        faults_info = [{"name": f.fault_name} for f in result.faults_between]
-        result.bd_evidence = _filter_relevant_bd(seg_a, seg_b, faults_info)
+    if req.include_bd_evidence and bd_records:
+        fault_names = [f.fault_name for f in result.faults_between]
+        result.bd_evidence = _filter_relevant_bd(
+            bd_records, [req.well_a, req.well_b], fault_names
+        )
 
-    # ── 6. Synthesis: connected or not? ──────────────────────────────────
-    if seg_a == seg_b:
+    # ── 6. Synthesis ─────────────────────────────────────────────────────
+    if seg_a == seg_b and seg_a != "unknown":
         result.connected = True
         result.confidence = "high"
         result.summary = (
-            f"Wells {well_a} and {well_b} are in the same segment ({seg_a}) "
-            f"with no intervening faults — high confidence connectivity."
+            f"Wells {req.well_a} and {req.well_b} are in the same segment ({seg_a}) "
+            f"— high confidence connectivity."
         )
     elif result.faults_between:
-        best_trans = max(f.transmissibility for f in result.faults_between)
-        if best_trans > 0.7:
-            result.connected = True
-            result.confidence = "high"
-        elif best_trans > 0.3:
-            result.connected = True
-            result.confidence = "medium"
+        with_trans = [f for f in result.faults_between if f.transmissibility is not None]
+        if with_trans:
+            best_trans = max(f.transmissibility for f in with_trans)
+            if best_trans > 0.7:
+                result.connected = True
+                result.confidence = "high"
+            elif best_trans > 0.3:
+                result.connected = True
+                result.confidence = "medium"
+            else:
+                result.connected = None
+                result.confidence = "low"
+            result.summary = (
+                f"{'Connected' if result.connected else 'Uncertain connectivity'} "
+                f"between {req.well_a} and {req.well_b} via "
+                f"{result.faults_between[0].fault_name} (trans={best_trans:.2f})."
+            )
         else:
-            result.connected = None  # Uncertain
+            result.connected = None
             result.confidence = "low"
-
-        trans_desc = f"trans={best_trans:.2f}"
-        prop_desc = ""
-        if result.property_corridor:
-            prop_desc = f", corridor {result.property_corridor.quality_assessment} quality"
-
-        result.summary = (
-            f"{'Connected' if result.connected else 'Uncertain connectivity'} "
-            f"between {well_a} ({seg_a}) and {well_b} ({seg_b}). "
-            f"Fault barrier: {result.faults_between[0].fault_name} ({trans_desc}){prop_desc}."
-        )
+            result.summary = (
+                f"Faults detected but transmissibility not quantified. "
+                f"Ingest fault property records for definitive assessment."
+            )
     else:
         result.connected = None
         result.confidence = "low"
         result.summary = (
-            f"No direct structural connection found between {seg_a} and {seg_b}. "
-            f"Multi-segment path analysis needed."
+            f"Insufficient structural data in {dataspace}. "
+            f"Ensure wells, faults, and properties are ingested."
         )
 
     # ── 7. Recommendations ───────────────────────────────────────────────
     if result.connected is None or result.confidence == "low":
-        result.recommendations.append("Acquire 4D seismic to resolve connectivity uncertainty")
-        result.recommendations.append("Consider inter-well tracer test")
-    if result.faults_between and any(f.seal_quality == "baffle" for f in result.faults_between):
+        if not fault_conn:
+            result.recommendations.append("Ingest fault transmissibility records to quantify seal")
+        if not prod_records:
+            result.recommendations.append("Ingest per-well production for performance comparison")
+        result.recommendations.append("Consider 4D seismic or inter-well tracer for confirmation")
+    if any(f.seal_quality == "baffle" for f in result.faults_between):
         result.recommendations.append("Evaluate infill well in isolated segment")
-        result.recommendations.append("Consider fault reactivation pressure analysis")
     if result.property_corridor and "poor" in result.property_corridor.quality_assessment:
-        result.recommendations.append("Review depositional model — low NTG may indicate channel pinch-out")
+        result.recommendations.append("Review depositional model — low NTG may indicate pinch-out")
     if any(p.performance_rating == "poor" for p in result.production):
-        result.recommendations.append("Investigate poor producer — possible completion or sweep issue")
+        result.recommendations.append("Investigate poor producer — possible connectivity/sweep issue")
 
     return result
 
@@ -501,10 +728,11 @@ async def connectivity_page(request: Request):
 
 
 @router.post("/api/connectivity/query")
-async def connectivity_query(req: ConnectivityRequest):
-    """Execute a connectivity query and return structured results."""
+async def connectivity_query(request: Request, req: ConnectivityRequest):
+    """Execute a connectivity query using live OSDU + RDDMS data."""
     try:
-        result = run_connectivity_query(req)
+        token = _access_token(request)
+        result = await run_connectivity_query(req, token)
         return JSONResponse(content=result.model_dump())
     except Exception as e:
         log.exception("Connectivity query failed")
@@ -512,33 +740,41 @@ async def connectivity_query(req: ConnectivityRequest):
 
 
 @router.get("/api/connectivity/wells")
-async def connectivity_wells():
-    """Return available wells for the connectivity query UI."""
-    wells = []
-    for name, segment in WELL_SEGMENTS.items():
-        if "/" in name:  # Only full names
-            zones = WELL_ZONES.get(name, [])
-            wells.append({
-                "name": name,
-                "segment": segment,
-                "zones": zones,
-                "type": "injector" if name in ("55/33-A-5", "55/33-A-6") else "producer",
-            })
-    return JSONResponse(content={"wells": wells})
+async def connectivity_wells(request: Request, dataspace: str = "maap/drogon"):
+    """Return available wells by querying RDDMS for the given dataspace."""
+    try:
+        token = _access_token(request)
+        wells = await _fetch_wells(token, dataspace)
+        result = []
+        seen = set()
+        for w in wells:
+            title = w.get("title", "")
+            tname = w.get("typeName", "")
+            if "WellboreFeature" in tname or "WellboreTrajectory" in tname:
+                if title not in seen:
+                    seen.add(title)
+                    result.append({"name": title, "uuid": w.get("uuid", ""), "type": tname})
+        return JSONResponse(content={"wells": result, "dataspace": dataspace})
+    except Exception as e:
+        log.debug("Wells fetch error: %s", e)
+        return JSONResponse(content={"wells": [], "dataspace": dataspace, "error": str(e)})
 
 
 @router.get("/api/connectivity/segments")
-async def connectivity_segments():
-    """Return segment properties for the connectivity query UI."""
-    return JSONResponse(content={
-        "segments": SEGMENT_PROPERTIES,
-        "faults": [
-            {
-                "name": info["name"],
-                "segments": list(segs),
-                "transmissibility": info["trans"],
-                "quality": info["quality"],
-            }
-            for segs, info in FAULT_MATRIX.items()
-        ],
-    })
+async def connectivity_segments(request: Request, dataspace: str = "maap/drogon"):
+    """Return fault connectivity data from OSDU catalog + RDDMS."""
+    try:
+        token = _access_token(request)
+        field_name = dataspace.split("/")[-1].replace("_", " ").title()
+        fault_conn, faults_rddms = await asyncio.gather(
+            _fetch_fault_connectivity(token, field_name),
+            _fetch_faults(token, dataspace),
+        )
+        return JSONResponse(content={
+            "dataspace": dataspace,
+            "faults_catalog": fault_conn,
+            "faults_rddms": [{"name": f.get("title"), "uuid": f.get("uuid")} for f in faults_rddms],
+        })
+    except Exception as e:
+        log.debug("Segments fetch error: %s", e)
+        return JSONResponse(content={"dataspace": dataspace, "error": str(e)})

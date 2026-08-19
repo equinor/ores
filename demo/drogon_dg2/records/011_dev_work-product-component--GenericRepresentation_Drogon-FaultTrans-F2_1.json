@@ -1,0 +1,37 @@
+{
+  "id": "dev:work-product-component--GenericRepresentation:Drogon-FaultTrans-F2:1",
+  "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+  "acl": {
+    "owners": [
+      "data.ores.owners@dev.dataservices.energy"
+    ],
+    "viewers": [
+      "data.office.global.viewers@dev.dataservices.energy"
+    ]
+  },
+  "legal": {
+    "legaltags": [
+      "dev-equinor-private-default"
+    ],
+    "otherRelevantDataCountries": [
+      "NO"
+    ]
+  },
+  "data": {
+    "Name": "Drogon – Fault Transmissibility: F2",
+    "Description": "Fault F2 - East Lowland Boundary. Transmissibility multiplier: 0.15. Partial baffle - shale smear in Therys interval, conduit in Valysar. Connects segments: CentralHorst ↔ EastLowland. Grid connections: 980 cells.",
+    "FaultName": "F2",
+    "TransmissibilityMultiplier": 0.15,
+    "SegmentsConnected": [
+      "CentralHorst",
+      "EastLowland"
+    ],
+    "SealDescription": "Partial baffle - shale smear in Therys interval, conduit in Valysar",
+    "GridConnections": 980,
+    "DDMSDatasets": [
+      "eml:///dataspace('maap/drogon')/resqml20.obj_GridConnectionSetRepresentation('93142d60-e33d-59ab-b464-cf2be1249467')"
+    ],
+    "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_ContinuousProperty('93142d60-e33d-59ab-b464-cf2be1249467')",
+    "ResourceID": "93142d60-e33d-59ab-b464-cf2be1249467"
+  }
+}

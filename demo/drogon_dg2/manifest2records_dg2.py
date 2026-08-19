@@ -34,6 +34,9 @@ MANIFEST_ORDER = [
     (SCRIPT_DIR, "manifest_wpcstat_dg2.json"),
     # DG2-specific Production Forecast
     (SCRIPT_DIR, "manifest_wpc_production_dg2.json"),
+    # DG2 per-well production + fault connectivity
+    (SCRIPT_DIR, "manifest_well_production_dg2.json"),
+    (SCRIPT_DIR, "manifest_fault_trans_dg2.json"),
     # DG2 geomodel artifacts (grid, maps, sim tables, polygons)
     (SCRIPT_DIR, "manifest_grid_dg2.json"),
     (SCRIPT_DIR, "manifest_maps_dg2.json"),
