@@ -880,15 +880,7 @@ $('ez-action').addEventListener('change', () => {
 // renderable in 3D via the "Show 3D Results" button.
 const ezExMarkers = $('ez-ex-markers');
 if (ezExMarkers) {
-  ezExMarkers.addEventListener('click', () => {
-    $('ez-action').value = 'deep_search';
-    $('ez-action').dispatchEvent(new Event('change'));
-    $('ez-type').value = 'resqml20.obj_WellboreMarkerFrameRepresentation';
-    $('ez-type').dispatchEvent(new Event('change'));
-    $('ez-prop').value = '';
-    if ($('ez-relations')) $('ez-relations').checked = true;
-    $('ez-run').click();
-  });
+  ezExMarkers.addEventListener('click', () => runFieldDevPreset('markers_by_horizon'));
 }
 
 // Easy-mode field dev examples — run the full compound preset, stay in Easy Mode
@@ -1350,22 +1342,32 @@ function extractRenderableObjects(data) {
   if (!data || !data.data) return [];
   const d = data.data;
   const objs = [];
+  const seen = new Set();
+  function _add(o) {
+    if (o.uuid && is3dType(o.typeName) && !seen.has(o.uuid)) {
+      objs.push({ uuid: o.uuid, title: o.title, typeName: o.typeName });
+      seen.add(o.uuid);
+    }
+  }
 
+  // Single-alias deepSearch
   if (d.deepSearch && d.deepSearch.objects) {
-    d.deepSearch.objects.forEach(o => {
-      if (is3dType(o.typeName)) objs.push({ uuid: o.uuid, title: o.title, typeName: o.typeName });
-    });
+    d.deepSearch.objects.forEach(_add);
   }
   if (d.federatedSearch && d.federatedSearch.hits) {
-    d.federatedSearch.hits.forEach(h => {
-      if (is3dType(h.typeName)) objs.push({ uuid: h.uuid, title: h.title, typeName: h.typeName });
-    });
+    d.federatedSearch.hits.forEach(_add);
   }
   if (d.resqmlObjects) {
-    d.resqmlObjects.forEach(o => {
-      if (is3dType(o.typeName)) objs.push({ uuid: o.uuid, title: o.title, typeName: o.typeName });
-    });
+    d.resqmlObjects.forEach(_add);
   }
+  // Compound queries: scan all aliases for deepSearch-like results
+  Object.keys(d).forEach(key => {
+    if (key === 'deepSearch' || key === 'federatedSearch' || key === 'resqmlObjects') return;
+    const v = d[key];
+    if (v && v.objects && Array.isArray(v.objects)) {
+      v.objects.forEach(_add);
+    }
+  });
   return objs;
 }
 
@@ -3067,7 +3069,10 @@ const GQL_PRESETS = {
 }`,
 
   // ─── Numerical Properties (3D grid cell values) ───────────────────────
-  markers_by_horizon: `# Wellbore markers by horizon (renderable in 3D)
+  markers_by_horizon: `# Wellbore markers grouped by the horizon/feature they pick
+# Each marker frame ties a well to a stratigraphic surface — the
+# relations show which GeneticBoundaryFeature (horizon) is picked.
+# Results are renderable in 3D as bedding-disk markers along trajectories.
 {
   deepSearch(
     $DS_ARG
@@ -3196,14 +3201,35 @@ const GQL_PRESETS = {
   // These presets combine spatial topology, properties, and production
   // to answer real subsurface questions for field development workflows.
 
-  field_bypassed_oil: `# FIELD DEV: Find bypassed oil — low Sw zones with good permeability
-# Identifies fault blocks with remaining mobile oil that could be
-# targets for infill wells or workover candidates.
+  field_bypassed_oil: `# FIELD DEV: Bypassed oil screening — per-grid property overview
+# Shows ALL properties on each grid object so you can cross-reference:
+#   Sw (water saturation) — low Sw means oil still in place
+#   KLOGH (permeability)  — high perm means producible
+#   PHIT (porosity)       — confirms reservoir quality
 #
-# Logic: cells with Sw < 0.4 (oil still in place) AND good permeability
-# (KLOGH > 100 mD) means producible oil that hasn't been swept yet.
+# One filtered sub-query highlights the key criterion (low Sw < 0.4).
+# Compare the Sw and KLOGH matchingCells fractions on the SAME grid
+# to estimate the overlap — the true bypassed oil zone.
+#
+# Note: the API filters one property at a time. The "all properties"
+# query gives you the full picture per grid to cross-reference visually.
 {
-  lowSw: deepSearch(
+  allGridProps: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    includeStatistics: true
+    limit: 5
+  ) {
+    backend totalScanned totalMatched
+    objects {
+      uuid title
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean stdDev }
+      }
+    }
+  }
+  lowSwCells: deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_IjkGridRepresentation"
     includeStatistics: true
@@ -3213,17 +3239,16 @@ const GQL_PRESETS = {
     }
     limit: 5
   ) {
-    backend totalScanned totalMatched
+    totalMatched
     objects {
       uuid title
       properties {
-        title kind uom
-        statistics { count minValue maxValue mean }
+        title
         matchingCells { count total fraction }
       }
     }
   }
-  goodPerm: deepSearch(
+  highPermCells: deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_IjkGridRepresentation"
     includeStatistics: true
@@ -3237,38 +3262,58 @@ const GQL_PRESETS = {
     objects {
       uuid title
       properties {
-        title statistics { mean maxValue }
+        title
         matchingCells { count total fraction }
       }
     }
   }
 }`,
 
-  field_water_breakthrough: `# FIELD DEV: Water breakthrough diagnosis — high-perm streaks in wells
-# Finds wellbore intervals with permeability > 500 mD that could act as
-# water conduits (thief zones). Cross-reference with fault connectivity
-# to diagnose early water cut rise.
+  field_water_breakthrough: `# FIELD DEV: Water breakthrough diagnosis — per-well log overview
+# Shows ALL log properties on each wellbore frame so you can see
+# KLOGH, Sw, PHIT, VSH together for each well.
 #
-# A-3 in Drogon shows early WC due to:
-#   • F2 fault conduit in Valysar interval (baffle overall, but sand window)
-#   • High-perm streak at 1870–1885m MD acting as water pathway
+# High-perm streaks (KLOGH > 500 mD) can act as water conduits.
+# Wells where high-perm cells overlap with high Sw = water breakthrough.
+# Relations identify which wellbore each log frame belongs to.
+#
+# Fault connections show inter-segment transmissibility —
+# a high-perm well near a conductive fault is the likely breakthrough path.
 {
-  wellLogs: deepSearch(
+  allWellLogs: deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_WellboreFrameRepresentation"
     includeStatistics: true
-    propertyFilter: {
-      titleContains: "KLOGH"
-      arrayFilter: { operator: GT, threshold: 500.0 }
-    }
-    limit: 10
+    includeRelations: true
+    limit: 14
   ) {
     backend totalScanned totalMatched
     objects {
       uuid title
+      relations { name typeName direction }
       properties {
         title kind uom
         statistics { count minValue maxValue mean }
+      }
+    }
+  }
+  highPermStreaks: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_WellboreFrameRepresentation"
+    includeStatistics: true
+    includeRelations: true
+    propertyFilter: {
+      titleContains: "KLOGH"
+      arrayFilter: { operator: GT, threshold: 500.0 }
+    }
+    limit: 14
+  ) {
+    totalMatched
+    objects {
+      uuid title
+      relations { name typeName direction }
+      properties {
+        title
         matchingCells { count total fraction }
       }
     }
@@ -3334,23 +3379,25 @@ const GQL_PRESETS = {
   }
 }`,
 
-  field_completion_ntg: `# FIELD DEV: Completion optimization — best NTG × Kh interval per well
-# Finds well log intervals with high net-to-gross and permeability
+  field_completion_ntg: `# FIELD DEV: Completion optimization — best pay intervals per well
+# Finds well log intervals with good porosity and permeability
 # (the "pay zone") for completion/perforation design.
 #
-# Filter: NTG > 0.5 identifies net sand intervals.
-# Combine with Sw < 0.3 to find intervals above OWC.
+# Properties: PHIT (porosity), KLOGH (perm), VSH (shale volume), Sw
+# Filter: PHIT > 0.15 and KLOGH > 100 identify net pay intervals.
+# Low Sw (< 0.3) confirms the interval is above the oil-water contact.
+# Relations show which wellbore each log belongs to.
 {
-  ntgLogs: deepSearch(
+  payPorosity: deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_WellboreFrameRepresentation"
     includeStatistics: true
     includeRelations: true
     propertyFilter: {
-      titleContains: "NTG"
-      arrayFilter: { operator: GT, threshold: 0.5 }
+      titleContains: "PHIT"
+      arrayFilter: { operator: GT, threshold: 0.15 }
     }
-    limit: 10
+    limit: 14
   ) {
     backend totalScanned totalMatched
     objects {
@@ -3363,19 +3410,42 @@ const GQL_PRESETS = {
       }
     }
   }
-  swLogs: deepSearch(
+  payPerm: deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_WellboreFrameRepresentation"
     includeStatistics: true
+    includeRelations: true
     propertyFilter: {
-      titleContains: "Sw"
-      arrayFilter: { operator: LT, threshold: 0.3 }
+      titleContains: "KLOGH"
+      arrayFilter: { operator: GT, threshold: 100.0 }
     }
-    limit: 10
+    limit: 14
   ) {
     totalMatched
     objects {
       uuid title
+      relations { name typeName direction }
+      properties {
+        title statistics { mean maxValue }
+        matchingCells { count total fraction }
+      }
+    }
+  }
+  aboveOwc: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_WellboreFrameRepresentation"
+    includeStatistics: true
+    includeRelations: true
+    propertyFilter: {
+      titleContains: "Sw"
+      arrayFilter: { operator: LT, threshold: 0.3 }
+    }
+    limit: 14
+  ) {
+    totalMatched
+    objects {
+      uuid title
+      relations { name typeName direction }
       properties {
         title statistics { mean }
         matchingCells { count total fraction }
@@ -3384,65 +3454,67 @@ const GQL_PRESETS = {
   }
 }`,
 
-  field_segment_ranking: `# FIELD DEV: Rank segments for infill targeting
-# Combines NTG quality + porosity + permeability across the grid to
-# identify which reservoir zones/segments have the best rock quality
-# for additional drainage points.
+  field_segment_ranking: `# FIELD DEV: Segment overview for infill targeting
+# Shows fault-bounded segments and what's in each one:
+#   1. Faults — segment boundaries with names (F1–F6)
+#   2. Structural organization — how faults group into segments
+#   3. Grid connections — inter-segment links across faults
+#   4. Wells — trajectory relations show which segment each well sits in
 #
-# Use with volumetrics (STOIIP per segment) and connectivity matrix
-# to produce a risk-weighted infill ranking.
+# Cross-reference fault names with well relations to see
+# which segments are drained vs. undrained for infill candidates.
 {
-  porosity: deepSearch(
+  faults: deepSearch(
     $DS_ARG
-    typeName: "resqml20.obj_IjkGridRepresentation"
-    includeStatistics: true
-    propertyFilter: {
-      kind: "porosity"
-      arrayFilter: { operator: GT, threshold: 0.18 }
-    }
-    limit: 5
+    typeName: "resqml20.obj_FaultInterpretation"
+    includeRelations: true
+    limit: 10
   ) {
-    totalMatched
+    backend totalScanned totalMatched
     objects {
-      uuid title
-      properties {
-        title kind
-        statistics { count mean stdDev }
-        matchingCells { count total fraction }
-      }
+      uuid title typeName
+      relations { uuid name typeName direction }
     }
   }
-  permeability: deepSearch(
+  structuralOrg: deepSearch(
     $DS_ARG
-    typeName: "resqml20.obj_IjkGridRepresentation"
-    includeStatistics: true
-    propertyFilter: {
-      kind: "permeability"
-      arrayFilter: { operator: GT, threshold: 50.0 }
-    }
+    typeName: "resqml20.obj_OrganizationFeature"
+    includeRelations: true
     limit: 5
   ) {
     totalMatched
     objects {
-      uuid title
+      uuid title typeName
+      relations { uuid name typeName direction }
+    }
+  }
+  gridConnections: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_GridConnectionSetRepresentation"
+    includeRelations: true
+    includeStatistics: true
+    limit: 5
+  ) {
+    totalMatched
+    objects {
+      uuid title typeName
+      relations { uuid name typeName direction }
       properties {
         title kind uom
-        statistics { count mean maxValue }
-        matchingCells { count total fraction }
+        statistics { count minValue maxValue mean }
       }
     }
   }
-  facies: deepSearch(
+  wells: deepSearch(
     $DS_ARG
-    typeName: "resqml20.obj_IjkGridRepresentation"
-    includeStatistics: true
-    propertyFilter: { titleContains: "FACIES" }
-    limit: 5
+    typeName: "resqml20.obj_WellboreTrajectoryRepresentation"
+    includeRelations: true
+    limit: 18
   ) {
     totalMatched
     objects {
       uuid title
-      properties { title kind statistics { count minValue maxValue } }
+      relations { name typeName direction }
     }
   }
 }`
