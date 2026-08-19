@@ -540,3 +540,55 @@ async def pg_read_array_by_id(pool, dataspace: str, ary_id: int, ary_type: int =
             return []
         values = list(struct.unpack_from(f"<{n_elements}{fmt_char}", raw))
         return [float(v) for v in values]
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# FIRP relationship queries (Feature ↔ Interpretation ↔ Representation ↔ Property)
+# ──────────────────────────────────────────────────────────────────────────────
+
+async def pg_firp_relationships(
+    pool, dataspace: str, guid: str
+) -> Dict[str, List[Dict[str, Any]]]:
+    """Query forward and reverse RESQML relationships for a given object UUID.
+
+    Returns {"forward": [...], "reverse": [...]} where each item is:
+        {"guid": str, "name": str, "type": str}
+    ``type`` is the EML short type like 'obj_HorizonInterpretation'.
+    """
+    schema = await pg_schema_for_dataspace(pool, dataspace)
+    if not schema:
+        return {"forward": [], "reverse": []}
+
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            f"SELECT obj_id FROM {schema}.res WHERE guid=$1", guid
+        )
+        if not row:
+            return {"forward": [], "reverse": []}
+        obj_id = row["obj_id"]
+
+        fwd_rows = await conn.fetch(f"""
+            SELECT r2.guid, r2.name, t2.xml AS typ
+            FROM {schema}.rel rl
+            JOIN {schema}.res r2 ON r2.obj_id = rl.dst_id
+            JOIN {schema}.typ t2 ON r2.typ_id = t2.id
+            WHERE rl.obj_id = $1
+        """, obj_id)
+
+        rev_rows = await conn.fetch(f"""
+            SELECT r2.guid, r2.name, t2.xml AS typ
+            FROM {schema}.rel rl
+            JOIN {schema}.res r2 ON r2.obj_id = rl.obj_id
+            JOIN {schema}.typ t2 ON r2.typ_id = t2.id
+            WHERE rl.dst_id = $1
+        """, obj_id)
+
+    forward = [
+        {"guid": str(r["guid"]), "name": r["name"] or "", "type": r["typ"] or ""}
+        for r in fwd_rows
+    ]
+    reverse = [
+        {"guid": str(r["guid"]), "name": r["name"] or "", "type": r["typ"] or ""}
+        for r in rev_rows
+    ]
+    return {"forward": forward, "reverse": reverse}

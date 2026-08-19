@@ -132,7 +132,8 @@ click REC{{ rec_index }} href "/search/view/{{ rec.id }}" "Open record"
 {% set pinfo = (rec.linked_labels or {}).get(p, {}) %}
 {% set _ptype = p.split('--')[1].split(':')[0] if '--' in p else '' %}
 {% set _pid = p.split(':')[-2] if p.count(':') >= 3 else (p.split(':')[-1] if ':' in p else p) %}
-{% set pname = pinfo.name if pinfo.name else (param_titles.get(p) or (_ptype ~ ': ' ~ _pid if _ptype else p)) %}
+{% set _pid_display = _ptype if (_pid | length >= 32 and '-' in _pid) else _pid %}
+{% set pname = pinfo.name if pinfo.name else (param_titles.get(p) or (_ptype ~ ': ' ~ _pid_display if _ptype else p)) %}
 P{{ rec_index }}a{{ loop.index0 }}["{{ esc_label(pname) }}"]:::cls_ancestry
 P{{ rec_index }}a{{ loop.index0 }} -->|parent| REC{{ rec_index }}
 click P{{ rec_index }}a{{ loop.index0 }} href "/search/view/{{ p }}" "Open parent"
@@ -141,7 +142,8 @@ click P{{ rec_index }}a{{ loop.index0 }} href "/search/view/{{ p }}" "Open paren
 {% set cinfo = (rec.linked_labels or {}).get(ch, {}) %}
 {% set _ctype = ch.split('--')[1].split(':')[0] if '--' in ch else '' %}
 {% set _cid = ch.split(':')[-2] if ch.count(':') >= 3 else (ch.split(':')[-1] if ':' in ch else ch) %}
-{% set cname = cinfo.name if cinfo.name else (param_titles.get(ch) or (_ctype ~ ': ' ~ _cid if _ctype else ch)) %}
+{% set _cid_display = _ctype if (_cid | length >= 32 and '-' in _cid) else _cid %}
+{% set cname = cinfo.name if cinfo.name else (param_titles.get(ch) or (_ctype ~ ': ' ~ _cid_display if _ctype else ch)) %}
 C{{ rec_index }}c{{ loop.index0 }}["{{ esc_label(cname) }}"]:::cls_ancestry
 REC{{ rec_index }} -->|child| C{{ rec_index }}c{{ loop.index0 }}
 click C{{ rec_index }}c{{ loop.index0 }} href "/search/view/{{ ch }}" "Open child"
@@ -175,7 +177,8 @@ click GRP{{ rec_index }}_{{ etype }} href "/search/run?kind={{ _kind }}&query={{
 {% for l in items %}
 {% set info = (rec.linked_labels or {}).get(l.id, {}) %}
 {% set _fid = l.id.split(':')[-2] if l.id.count(':') >= 3 else (l.id.split(':')[-1] if ':' in l.id else l.id) %}
-{% set lname = info.name if info.name else (param_titles.get(l.id) or _fid) %}
+{% set _fid_display = etype if (_fid | length >= 32 and '-' in _fid) else _fid %}
+{% set lname = info.name if info.name else (param_titles.get(l.id) or _fid_display) %}
 {% set edge_lbl = role_label_map.get(l.role|default(''), '') or param_rels.get(l.id, '') or param_titles.get(l.id, '').split('(')[0]|trim|lower|truncate(25, killwords=False, end='') or etype|lower %}
 F{{ rec_index }}_{{ etype }}_{{ loop.index0 }}["{{ esc_label(lname) }}"]:::{{ cls }}
 REC{{ rec_index }} -->|{{ edge_lbl }}| F{{ rec_index }}_{{ etype }}_{{ loop.index0 }}

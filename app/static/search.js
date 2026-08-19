@@ -743,7 +743,9 @@
   if (!tbody) return;
 
   function rows() { return Array.prototype.slice.call(tbody.querySelectorAll('tr')); }
-  if (rows().length <= PAGE_SIZE) return;  // small result set – no paging needed
+  // Skip pager if no rows and no load-more button (truly small or empty result set)
+  var hasLoadMore = !!document.getElementById('btn-load-more');
+  if (rows().length <= PAGE_SIZE && !hasLoadMore) return;
 
   var page = 0;
   var nav = document.createElement('div');

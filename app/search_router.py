@@ -846,6 +846,10 @@ async def search_run(
         enriched_results: List[Dict[str, Any]] = []
         seen_record_ids: Set[str] = set()
         merged_total_count = 0
+        # Fetch up to _MAX_RECORD_LIMIT IDs from OSDU (independent of user's
+        # display limit).  We enrich only _PAGE_SIZE at a time; the rest go to
+        # remaining_ids for incremental "Load More" paging.
+        osdu_fetch_limit = min(_MAX_RECORD_LIMIT, max(int(limit), 500))
         async with osdu.http_client(timeout=60) as client:
             # Phase 1: Search all kinds
             all_hit_ids: List[str] = []
@@ -853,7 +857,7 @@ async def search_run(
                 payload = {
                     "kind": current_kind,
                     "query": query,
-                    "limit": int(limit),
+                    "limit": osdu_fetch_limit,
                     "returnedFields": ["id", "kind", "version"],
                     "trackTotalCount": True,
                 }
@@ -889,9 +893,9 @@ async def search_run(
                                 if rid and rid not in seen_record_ids:
                                     seen_record_ids.add(rid)
                                     all_hit_ids.append(rid)
-                                if len(all_hit_ids) >= int(limit):
+                                if len(all_hit_ids) >= osdu_fetch_limit:
                                     break
-                            if len(all_hit_ids) >= int(limit):
+                            if len(all_hit_ids) >= osdu_fetch_limit:
                                 break
                         continue  # skip the normal search for this kind
 
@@ -923,9 +927,9 @@ async def search_run(
                     if rid and rid not in seen_record_ids:
                         seen_record_ids.add(rid)
                         all_hit_ids.append(rid)
-                    if len(all_hit_ids) >= int(limit):
+                    if len(all_hit_ids) >= osdu_fetch_limit:
                         break
-                if len(all_hit_ids) >= int(limit):
+                if len(all_hit_ids) >= osdu_fetch_limit:
                     break
 
             # Phase 2: Fetch full storage records in parallel

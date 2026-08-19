@@ -638,6 +638,17 @@
     </table>
     </div>
 
+    {# ── Load More button (right after table for visibility) ── #}
+    {% if remaining_ids and remaining_ids|length > 0 %}
+    <div id="load-more-wrap" style="text-align:center;margin:.8rem 0;">
+      <button type="button" id="btn-load-more" class="btn" style="min-width:14rem;">
+        Load More ({{ remaining_ids|length }} remaining)
+      </button>
+      <div id="load-more-status" class="muted" style="margin-top:.3rem;font-size:.85rem;"></div>
+    </div>
+    <script type="application/json" id="remaining-ids-data">{{ remaining_ids | tojson }}</script>
+    {% endif %}
+
     {% macro esc_label(s) -%}
       {{ (s or '')
         | replace('\r',' ')
@@ -660,17 +671,6 @@
       {% include "search_record_detail.html" %}
     {% endfor %}
     </div>
-
-    {# ── Load More button (shown when remaining_ids exist) ── #}
-    {% if remaining_ids and remaining_ids|length > 0 %}
-    <div id="load-more-wrap" style="text-align:center;margin:1.5rem 0;">
-      <button type="button" id="btn-load-more" class="btn" style="min-width:14rem;">
-        Load More ({{ remaining_ids|length }} remaining)
-      </button>
-      <div id="load-more-status" class="muted" style="margin-top:.3rem;font-size:.85rem;"></div>
-    </div>
-    <script type="application/json" id="remaining-ids-data">{{ remaining_ids | tojson }}</script>
-    {% endif %}
 
     {# ── Provenance DAG modal ── #}
     <div id="provenance-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.45);align-items:center;justify-content:center;">
@@ -981,6 +981,8 @@
               }
               // Attach click handlers to new rows
               attachRowClickHandlers();
+              // Refresh table pager to include new rows
+              if (window.__resultsPaginateRefresh) window.__resultsPaginateRefresh();
               // Cache mermaid source on new pre.mermaid elements
               blocksContainer.querySelectorAll('pre.mermaid').forEach(el => {
                 if (!el.dataset.src) el.dataset.src = el.textContent;
