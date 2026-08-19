@@ -168,8 +168,12 @@
 
           {# ═══════════════════════════════════════════════════════════════════
              3. FACILITY & WELL PLAN (KPI tiles + detail popup)
+                 Skipped for BD records — already rendered in search_bd.html
+                 Development Concept section with full facility/well/drainage detail.
              ═══════════════════════════════════════════════════════════════════ #}
+          {% if not is_business_decision %}
           {% include "search_facility.html" %}
+          {% endif %}
 
           {# ═══════════════════════════════════════════════════════════════════
              4. REV card

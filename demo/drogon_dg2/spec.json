@@ -87,7 +87,7 @@
       },
       {
         "title": "Development Concept — Full 7-segment (SELECTED)",
-        "target_id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-FullScope:1",
+        "target_id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2:1",
         "type": "selects",
         "artifact": "DevelopmentConcept",
         "role": "Output",
@@ -95,7 +95,7 @@
       },
       {
         "title": "Development Concept — Reduced scope (REJECTED)",
-        "target_id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-ReducedScope:1",
+        "target_id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-Reduced:1",
         "type": "alternativeTo",
         "artifact": "DevelopmentConcept",
         "role": "Output",
@@ -239,7 +239,7 @@
       {"title": "Statistical Volumes", "target_id": "dev:work-product-component--ReservoirEstimatedVolumes:Drogon-DG2-REV-Statistics:1", "type": "evidencedBy", "artifact": "REV-stats"},
       {"title": "Evidence Package (frozen)", "target_id": "dev:work-product-component--PersistedCollection:Drogon-DG2-EvidencePackage:1", "type": "evidencedBy", "artifact": "PersistedCollection"},
       {"title": "Production Forecast", "target_id": "dev:work-product-component--ColumnBasedTable:Drogon-DG2-ProductionForecast:1", "type": "informedBy", "artifact": "ProductionForecast"},
-      {"title": "Full-scope concept (selected)", "target_id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-FullScope:1", "type": "selects", "artifact": "DevelopmentConcept"}
+      {"title": "Full-scope concept (selected)", "target_id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2:1", "type": "selects", "artifact": "DevelopmentConcept"}
     ]
   },
 
