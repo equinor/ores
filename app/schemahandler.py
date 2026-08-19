@@ -125,9 +125,12 @@ def extract_osdu_links(data_block: Dict[str, Any]) -> List[Dict[str, Any]]:
 
     # de-duplicate by ID.  When the same record appears under multiple
     # roles keep the most specific one (anything other than "ref" wins).
+    # Also strip trailing colons from IDs (RDDMS manifest appends ":"
+    # to FIRP references but actual record IDs don't have them).
     seen: Dict[str, Dict[str, Any]] = {}   # id → link dict
     for l in links:
-        rid = l.get("id", "")
+        rid = l.get("id", "").rstrip(":")
+        l["id"] = rid
         prev = seen.get(rid)
         if prev is None:
             seen[rid] = l

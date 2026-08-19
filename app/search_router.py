@@ -541,6 +541,34 @@ async def _enrich_record_light(
         log.warning("[ENRICH-LIGHT] extract_osdu_links failed for %s: %s", rid, e)
         links = []
 
+    # Hydrate labels for forward-linked records (parallel, bounded)
+    linked_labels: Dict[str, Dict[str, Any]] = {}
+    if links:
+        try:
+            unique_lids = []
+            for l in links[:50]:
+                lid = l.get("id")
+                if lid and lid not in linked_labels:
+                    unique_lids.append(lid)
+                    linked_labels[lid] = {}
+
+            async def _fetch_label_light(lid: str):
+                try:
+                    r_link = await client.get(f"{storage_url}/{lid}", headers=hdr)
+                    if r_link.status_code == 200:
+                        rr = r_link.json()
+                        nm = _best_name(rr.get("data") or {}, rr.get("kind") or "")
+                        return (lid, {"name": nm or None, "kind": rr.get("kind")})
+                except Exception:
+                    pass
+                return (lid, {})
+
+            results = await asyncio.gather(*[_fetch_label_light(lid) for lid in unique_lids])
+            for lid, entry in results:
+                linked_labels[lid] = entry
+        except Exception as e:
+            log.warning("[ENRICH-LIGHT] label hydration failed for %s: %s", rid, e)
+
     # Compact metadata pairs from data{}
     metadata_pairs: list = []
     try:
@@ -566,7 +594,7 @@ async def _enrich_record_light(
     result["display_description"] = _best_description(data_block) or ""
     result["volumes"] = volumes
     result["links"] = links
-    result["linked_labels"] = {}
+    result["linked_labels"] = linked_labels
     result["metadata_pairs"] = metadata_pairs
     # Parse DDMSDatasets URIs for direct RDDMS visualisation (string-only, no API calls)
     ddms_refs: list[dict[str, str]] = []
