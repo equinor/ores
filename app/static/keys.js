@@ -481,6 +481,115 @@ function renderResultCards(data) {
   }
 }
 
+// ── Compound query renderer (multi-alias deepSearch results) ───────────
+// Field dev presets return multiple named aliases (e.g. lowSw, goodPerm).
+// Each alias is a deepSearch result — render them as separate sections.
+function renderCompoundResults(data, explanation) {
+  const container = $('ez-results');
+  if (!data || !data.data) {
+    container.innerHTML = '<p class="muted">No results</p>';
+    return;
+  }
+  const d = data.data;
+  const aliases = Object.keys(d);
+  let html = '';
+
+  // Explanation banner
+  if (explanation) {
+    html += `<div style="margin-bottom:10px;padding:10px 14px;background:#e8eaf6;border:1px solid #9fa8da;border-radius:4px;font-size:12px;line-height:1.5;white-space:pre-line;font-family:'Fira Code',Consolas,monospace;color:#283593;">
+      ${esc(explanation)}</div>`;
+  }
+
+  // Collect all renderable objects across aliases for 3D
+  let allRenderableObjs = [];
+
+  aliases.forEach(alias => {
+    const ds = d[alias];
+    if (!ds || typeof ds !== 'object') return;
+    // It's a deepSearch result if it has objects or totalMatched
+    if (!ds.objects && ds.totalMatched === undefined) return;
+
+    const label = alias.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+    const matchInfo = ds.totalMatched !== undefined
+      ? `<strong>${ds.totalMatched}</strong> matched / <strong>${ds.totalScanned || '?'}</strong> scanned`
+      : '';
+    const backendTag = ds.backend ? `<span class="tag">${esc(ds.backend)}</span>` : '';
+
+    html += `<div style="margin:12px 0 6px 0;padding:8px 12px;background:#e8f5e9;border-radius:4px;border-left:4px solid #4caf50;font-size:13px;">
+          <strong style="color:#1b5e20;">${esc(label)}</strong>
+          &nbsp;|&nbsp; ${matchInfo} ${backendTag}
+        </div>`;
+
+    if (ds.objects && ds.objects.length > 0) {
+      ds.objects.forEach(obj => {
+        html += renderObjectCard(obj);
+      });
+      // Collect for 3D
+      const objs = ds.objects.filter(o => o.uuid);
+      allRenderableObjs = allRenderableObjs.concat(objs);
+    } else {
+      html += '<div style="padding:6px 12px;color:#605e5c;font-size:12px;">No matching objects</div>';
+    }
+  });
+
+  container.innerHTML = html || '<p class="muted">Query returned no renderable results.</p>';
+
+  // 3D button for all collected objects
+  if (allRenderableObjs.length > 0) {
+    const renderableForViz = extractRenderableObjects(data);
+    if (renderableForViz.length > 0) {
+      insertShow3DButton(container, renderableForViz);
+    }
+  }
+}
+
+// ── Field dev preset runner (stays in Easy Mode) ─────────────────────────
+async function runFieldDevPreset(presetKey) {
+  const tpl = GQL_PRESETS[presetKey];
+  if (!tpl) return;
+
+  // Extract explanation from comment lines
+  const lines = tpl.split('\n');
+  const explanation = lines
+    .filter(l => l.trim().startsWith('#'))
+    .map(l => l.trim().replace(/^#\s?/, ''))
+    .join('\n');
+
+  // Resolve template variables
+  let query = tpl.replace(/\$DS_ARG/g, gqlDataspacesArg());
+  query = query.replace(/\$DS_LIST/g, gqlDataspacesList());
+  const dsName = (gqlCurrentDs().split('/').pop() || 'Drogon').replace(/^\w/, c => c.toUpperCase());
+  query = query.replace(/\$DS_NAME/g, dsName);
+  query = query.replace(/\$DS/g, gqlCurrentDs());
+
+  $('ez-status').textContent = 'Running field dev query…';
+  $('ez-results').innerHTML = '';
+
+  try {
+    const resp = await fetch('/api/graphql/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query }),
+    });
+    const data = await resp.json();
+    if (data.errors && data.errors.length) {
+      $('ez-status').textContent = `Error: ${data.errors[0].message}`;
+      $('ez-results').innerHTML = `<pre style="color:#a80000;font-size:12px;padding:8px;background:#fde7e9;border-radius:4px;">${esc(JSON.stringify(data.errors, null, 2))}</pre>`;
+    } else {
+      const totalObjs = Object.values(data.data || {}).reduce((n, v) =>
+        n + ((v && v.objects) ? v.objects.length : 0), 0);
+      $('ez-status').textContent = `Done – ${totalObjs} object(s) across ${Object.keys(data.data || {}).length} sub-queries`;
+      renderCompoundResults(data, explanation);
+    }
+    // Also populate the GraphQL tab for inspection
+    $('gql-output').textContent = JSON.stringify(data, null, 2);
+    $('gql-editor').value = query;
+    gqlPreset.value = presetKey;
+  } catch (e) {
+    $('ez-status').textContent = 'Request failed: ' + e.message;
+  }
+}
+
 function renderObjectCard(obj) {
   const tShort = (obj.typeName || '').replace(/^resqml\d+\.obj_/, '');
   const cat = (_refData.resqmlTypes.find(t => t.name === obj.typeName) || {}).category || 'Grid';
@@ -782,7 +891,7 @@ if (ezExMarkers) {
   });
 }
 
-// Easy-mode field dev examples — these switch to GraphQL tab and load the full preset
+// Easy-mode field dev examples — run the full compound preset, stay in Easy Mode
 const _ezFieldDevExamples = [
   { id: 'ez-ex-bypassed', preset: 'field_bypassed_oil' },
   { id: 'ez-ex-highperm', preset: 'field_water_breakthrough' },
@@ -792,15 +901,7 @@ const _ezFieldDevExamples = [
 _ezFieldDevExamples.forEach(ex => {
   const btn = $(ex.id);
   if (btn) {
-    btn.addEventListener('click', () => {
-      // Switch to GraphQL tab
-      $('mode-advanced').click();
-      // Select the preset in dropdown and load it
-      gqlPreset.value = ex.preset;
-      gqlLoadPreset();
-      // Auto-run
-      $('gql-run').click();
-    });
+    btn.addEventListener('click', () => runFieldDevPreset(ex.preset));
   }
 });
 
@@ -3095,20 +3196,20 @@ const GQL_PRESETS = {
   // These presets combine spatial topology, properties, and production
   // to answer real subsurface questions for field development workflows.
 
-  field_bypassed_oil: `# FIELD DEV: Find bypassed oil — high Sw zones with good permeability
+  field_bypassed_oil: `# FIELD DEV: Find bypassed oil — low Sw zones with good permeability
 # Identifies fault blocks with remaining mobile oil that could be
 # targets for infill wells or workover candidates.
 #
-# Logic: cells with Sw > 0.5 AND good permeability (KLOGH) means
-# mobile oil is present but not being swept — likely isolated by faults.
+# Logic: cells with Sw < 0.4 (oil still in place) AND good permeability
+# (KLOGH > 100 mD) means producible oil that hasn't been swept yet.
 {
-  highSw: deepSearch(
+  lowSw: deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_IjkGridRepresentation"
     includeStatistics: true
     propertyFilter: {
       titleContains: "Sw"
-      arrayFilter: { operator: GT, threshold: 0.5 }
+      arrayFilter: { operator: LT, threshold: 0.4 }
     }
     limit: 5
   ) {
