@@ -831,7 +831,7 @@
                   <span class="bd-alt-rank" style="background:{% if bd_act.get('WorkflowStatus') == 'Completed' %}#c6f6d5{% else %}#fefcbf{% endif %};color:{% if bd_act.get('WorkflowStatus') == 'Completed' %}#276749{% else %}#975a16{% endif %};">{{ bd_act.get('WorkflowStatus') }}</span>
                   {% endif %}
                 </div>
-                <div style="font-size:.78rem;color:#718096;margin-bottom:.4rem;">By: {{ bd_act.get('Originator', '') }} · {{ bd_act.get('CreationDateTime', '')[:10] }}</div>
+                <div style="font-size:.84rem;color:#718096;margin-bottom:.4rem;">By: {{ bd_act.get('Originator', '') }} · {{ bd_act.get('CreationDateTime', '')[:10] }}</div>
                 {% if bd_act.get('Description') %}
                 <div style="font-size:.84rem;color:#4a5568;line-height:1.45;margin-bottom:.5rem;">{{ bd_act.get('Description')[:500] }}{% if bd_act.get('Description')|length > 500 %}…{% endif %}</div>
                 {% endif %}
@@ -898,9 +898,9 @@
                       {% if sp_display.startswith('{') and sp_display.endswith('}') %}
                         {% set sp_display = sp_display[1:-1].strip() %}
                       {% endif %}
-                      <div style="font-size:.72rem;color:#718096;">{{ sp_display[:140] }}{% if sp_display|length > 140 %}…{% endif %}</div>
+                      <div style="font-size:.80rem;color:#718096;">{{ sp_display[:140] }}{% if sp_display|length > 140 %}…{% endif %}</div>
                       {% elif p.get('IntegerParameter') is not none %}
-                      <div style="font-size:.72rem;color:#718096;">{{ p.get('IntegerParameter') }}</div>
+                      <div style="font-size:.80rem;color:#718096;">{{ p.get('IntegerParameter') }}</div>
                       {% endif %}
                     </div>
                     {% endfor %}
@@ -912,18 +912,18 @@
                   <div style="background:#f0fff4;border-radius:6px;padding:.5rem;">
                     <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;color:#276749;margin-bottom:.3rem;">Outputs ({{ act_outputs|length }}{% if bd_maps %} + Maps{% endif %})</div>
                     {% for p in act_outputs[:12] %}
-                    <div style="font-size:.82rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #9ae6b4;">
+                    <div style="font-size:.88rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #9ae6b4;">
                       <span style="font-weight:500;">{{ p.get('Title', '') }}</span>
                       {% if p.get('DataObjectParameter') %}
                       {% set dop = p.get('DataObjectParameter', '') %}
-                      <div style="font-size:.72rem;word-break:break-all;"><a href="/search/view/{{ dop }}" style="color:#276749;" title="{{ dop }}">{{ act_labels.get(dop, '') or dop.split('--')[-1].split(':')[0] }} →</a></div>
+                      <div style="font-size:.80rem;word-break:break-all;"><a href="/search/view/{{ dop }}" style="color:#276749;" title="{{ dop }}">{{ act_labels.get(dop, '') or dop.split('--')[-1].split(':')[0] }} →</a></div>
                       {% elif p.get('StringParameter') %}
                       {% set sp_out = p.get('StringParameter', '').strip() %}
                       {% if sp_out.startswith('[') and sp_out.endswith(']') %}{% set sp_out = sp_out[1:-1].strip() %}{% endif %}
                       {% if sp_out.startswith('{') and sp_out.endswith('}') %}{% set sp_out = sp_out[1:-1].strip() %}{% endif %}
-                      <div style="font-size:.72rem;color:#718096;">{{ sp_out[:120] }}{% if sp_out|length > 120 %}…{% endif %}</div>
+                      <div style="font-size:.80rem;color:#718096;">{{ sp_out[:120] }}{% if sp_out|length > 120 %}…{% endif %}</div>
                       {% elif p.get('Description') %}
-                      <div style="font-size:.72rem;color:#718096;">{{ p.get('Description', '')[:100] }}{% if p.get('Description', '')|length > 100 %}…{% endif %}</div>
+                      <div style="font-size:.80rem;color:#718096;">{{ p.get('Description', '')[:100] }}{% if p.get('Description', '')|length > 100 %}…{% endif %}</div>
                       {% endif %}
                     </div>
                     {% endfor %}
@@ -932,10 +932,10 @@
                     {% if bd_maps %}
                     {% set hero_act = bd_maps[0] %}
                     <div style="margin-top:.4rem;border-top:1px dashed #9ae6b4;padding-top:.4rem;">
-                      <div style="font-size:.72rem;font-weight:600;text-transform:uppercase;color:#276749;margin-bottom:.2rem;">Maps (RDDMS)</div>
-                      <div style="font-size:.82rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #9ae6b4;">
+                      <div style="font-size:.80rem;font-weight:600;text-transform:uppercase;color:#276749;margin-bottom:.2rem;">Maps (RDDMS)</div>
+                      <div style="font-size:.88rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #9ae6b4;">
                         <span style="font-weight:500;">{{ hero_act.title }}{% if hero_act.interpretation %} - {{ hero_act.interpretation }}{% endif %}</span>
-                        <div style="font-size:.72rem;word-break:break-all;">
+                        <div style="font-size:.80rem;word-break:break-all;">
                           <a href="/keys/object/map.json?ds={{ hero_act.ds }}&amp;uuid={{ hero_act.uuid }}" target="_blank" style="color:#276749;" title="Object metadata">json ↗</a>
                           <span style="color:#a0aec0;margin:0 .2rem;">·</span>
                           <span style="color:#a0aec0;">{{ hero_act.ds }}/{{ hero_act.uuid }}</span>
@@ -949,9 +949,9 @@
                   <div style="background:#f0fff4;border-radius:6px;padding:.5rem;">
                     {% set hero_act2 = bd_maps[0] %}
                     <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;color:#276749;margin-bottom:.3rem;">Output - Maps</div>
-                    <div style="font-size:.82rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #9ae6b4;">
+                    <div style="font-size:.88rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #9ae6b4;">
                       <span style="font-weight:500;">{{ hero_act2.title }}{% if hero_act2.interpretation %} - {{ hero_act2.interpretation }}{% endif %}</span>
-                      <div style="font-size:.72rem;word-break:break-all;">
+                      <div style="font-size:.80rem;word-break:break-all;">
                         <a href="/keys/object/map.json?ds={{ hero_act2.ds }}&amp;uuid={{ hero_act2.uuid }}" target="_blank" style="color:#276749;">json ↗</a>
                         <span style="color:#a0aec0;margin:0 .2rem;">·</span>
                         <span style="color:#a0aec0;">{{ hero_act2.ds }}/{{ hero_act2.uuid }}</span>
