@@ -1,0 +1,298 @@
+{
+  "kind": "osdu:wks:Manifest:1.0.0",
+  "ReferenceData": [],
+  "MasterData": [],
+  "Data": {
+    "Datasets": [],
+    "WorkProductComponents": [
+      {
+        "id": "dev:work-product-component--GenericRepresentation:Drogon-FaultTrans-F1:1",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+        "acl": {
+          "owners": [
+            "data.ores.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon \u2013 Fault Transmissibility: F1",
+          "Description": "Fault F1 - Central Horst Boundary (West). Transmissibility multiplier: 0.80. Good communication - 4D confirms pressure support. Connects segments: CentralHorst \u2194 WestLowland. Grid connections: 1420 cells.",
+          "FaultName": "F1",
+          "TransmissibilityMultiplier": 0.8,
+          "SegmentsConnected": [
+            "CentralHorst",
+            "WestLowland"
+          ],
+          "SealDescription": "Good communication - 4D confirms pressure support",
+          "GridConnections": 1420,
+          "DDMSDatasets": [
+            "eml:///dataspace('maap/drogon')/resqml20.obj_GridConnectionSetRepresentation('89706ccf-5663-5cf4-bc26-df5dae48e248')"
+          ],
+          "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_ContinuousProperty('89706ccf-5663-5cf4-bc26-df5dae48e248')",
+          "ResourceID": "89706ccf-5663-5cf4-bc26-df5dae48e248"
+        }
+      },
+      {
+        "id": "dev:work-product-component--GenericRepresentation:Drogon-FaultTrans-F2:1",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+        "acl": {
+          "owners": [
+            "data.ores.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon \u2013 Fault Transmissibility: F2",
+          "Description": "Fault F2 - East Lowland Boundary. Transmissibility multiplier: 0.15. Partial baffle - shale smear in Therys interval, conduit in Valysar. Connects segments: CentralHorst \u2194 EastLowland. Grid connections: 980 cells.",
+          "FaultName": "F2",
+          "TransmissibilityMultiplier": 0.15,
+          "SegmentsConnected": [
+            "CentralHorst",
+            "EastLowland"
+          ],
+          "SealDescription": "Partial baffle - shale smear in Therys interval, conduit in Valysar",
+          "GridConnections": 980,
+          "DDMSDatasets": [
+            "eml:///dataspace('maap/drogon')/resqml20.obj_GridConnectionSetRepresentation('93142d60-e33d-59ab-b464-cf2be1249467')"
+          ],
+          "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_ContinuousProperty('93142d60-e33d-59ab-b464-cf2be1249467')",
+          "ResourceID": "93142d60-e33d-59ab-b464-cf2be1249467"
+        }
+      },
+      {
+        "id": "dev:work-product-component--GenericRepresentation:Drogon-FaultTrans-F3:1",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+        "acl": {
+          "owners": [
+            "data.ores.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon \u2013 Fault Transmissibility: F3",
+          "Description": "Fault F3 - Central-East Compartment Boundary. Transmissibility multiplier: 0.10. Strong baffle - juxtaposition seal (Valysar vs Therys shale). Connects segments: CentralNorth \u2194 EastLowland. Grid connections: 650 cells.",
+          "FaultName": "F3",
+          "TransmissibilityMultiplier": 0.1,
+          "SegmentsConnected": [
+            "CentralNorth",
+            "EastLowland"
+          ],
+          "SealDescription": "Strong baffle - juxtaposition seal (Valysar vs Therys shale)",
+          "GridConnections": 650,
+          "DDMSDatasets": [
+            "eml:///dataspace('maap/drogon')/resqml20.obj_GridConnectionSetRepresentation('040877de-4590-5962-b79c-92207f651983')"
+          ],
+          "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_ContinuousProperty('040877de-4590-5962-b79c-92207f651983')",
+          "ResourceID": "040877de-4590-5962-b79c-92207f651983"
+        }
+      },
+      {
+        "id": "dev:work-product-component--GenericRepresentation:Drogon-FaultTrans-F4:1",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+        "acl": {
+          "owners": [
+            "data.ores.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon \u2013 Fault Transmissibility: F4",
+          "Description": "Fault F4 - West Lowland Internal. Transmissibility multiplier: 0.45. Moderate - partial juxtaposition, some sand-on-sand windows. Connects segments: WestLowland \u2194 CentralSouth. Grid connections: 1100 cells.",
+          "FaultName": "F4",
+          "TransmissibilityMultiplier": 0.45,
+          "SegmentsConnected": [
+            "WestLowland",
+            "CentralSouth"
+          ],
+          "SealDescription": "Moderate - partial juxtaposition, some sand-on-sand windows",
+          "GridConnections": 1100,
+          "DDMSDatasets": [
+            "eml:///dataspace('maap/drogon')/resqml20.obj_GridConnectionSetRepresentation('9e452267-7997-5188-bddc-d3a8df94fd86')"
+          ],
+          "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_ContinuousProperty('9e452267-7997-5188-bddc-d3a8df94fd86')",
+          "ResourceID": "9e452267-7997-5188-bddc-d3a8df94fd86"
+        }
+      },
+      {
+        "id": "dev:work-product-component--GenericRepresentation:Drogon-FaultTrans-F5:1",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+        "acl": {
+          "owners": [
+            "data.ores.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon \u2013 Fault Transmissibility: F5",
+          "Description": "Fault F5 - North Horst Boundary. Transmissibility multiplier: 0.60. Moderate-good - tracer detected across fault, 4D consistent. Connects segments: NorthHorst \u2194 CentralRamp. Grid connections: 870 cells.",
+          "FaultName": "F5",
+          "TransmissibilityMultiplier": 0.6,
+          "SegmentsConnected": [
+            "NorthHorst",
+            "CentralRamp"
+          ],
+          "SealDescription": "Moderate-good - tracer detected across fault, 4D consistent",
+          "GridConnections": 870,
+          "DDMSDatasets": [
+            "eml:///dataspace('maap/drogon')/resqml20.obj_GridConnectionSetRepresentation('6827aafe-68a8-5892-b20e-a1ab617cc0b7')"
+          ],
+          "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_ContinuousProperty('6827aafe-68a8-5892-b20e-a1ab617cc0b7')",
+          "ResourceID": "6827aafe-68a8-5892-b20e-a1ab617cc0b7"
+        }
+      },
+      {
+        "id": "dev:work-product-component--GenericRepresentation:Drogon-FaultTrans-F6:1",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+        "acl": {
+          "owners": [
+            "data.ores.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon \u2013 Fault Transmissibility: F6",
+          "Description": "Fault F6 - Central Ramp. Transmissibility multiplier: 0.95. Essentially open - relay ramp with full sand juxtaposition. Connects segments: CentralRamp \u2194 CentralHorst. Grid connections: 1560 cells.",
+          "FaultName": "F6",
+          "TransmissibilityMultiplier": 0.95,
+          "SegmentsConnected": [
+            "CentralRamp",
+            "CentralHorst"
+          ],
+          "SealDescription": "Essentially open - relay ramp with full sand juxtaposition",
+          "GridConnections": 1560,
+          "DDMSDatasets": [
+            "eml:///dataspace('maap/drogon')/resqml20.obj_GridConnectionSetRepresentation('8e422922-821c-538e-aafd-291dc528e28d')"
+          ],
+          "ResourceURI": "eml:///dataspace('maap/drogon')/resqml20.obj_ContinuousProperty('8e422922-821c-538e-aafd-291dc528e28d')",
+          "ResourceID": "8e422922-821c-538e-aafd-291dc528e28d"
+        }
+      },
+      {
+        "id": "dev:work-product-component--GenericRepresentation:Drogon-ConnectivityMatrix:1",
+        "kind": "osdu:wks:work-product-component--GenericRepresentation:1.0.0",
+        "acl": {
+          "owners": [
+            "data.ores.owners@dev.dataservices.energy"
+          ],
+          "viewers": [
+            "data.office.global.viewers@dev.dataservices.energy"
+          ]
+        },
+        "legal": {
+          "legaltags": [
+            "dev-equinor-private-default"
+          ],
+          "otherRelevantDataCountries": [
+            "NO"
+          ]
+        },
+        "data": {
+          "Name": "Drogon DG2 \u2013 Fault Connectivity Matrix",
+          "Description": "Summary of inter-segment connectivity for Drogon field. 6 faults bounding 7 reservoir segments. Transmissibility multipliers derived from fault seal analysis (juxtaposition + shale smear) and calibrated to 4D seismic and tracer response (DG2 appraisal data). Key finding: F2 and F3 act as baffles isolating East Lowland segment, explaining early water breakthrough and poor sweep in well A-3.",
+          "ConnectivityMatrix": {
+            "CentralHorst \u2194 WestLowland": {
+              "fault": "F1",
+              "transmissibility": 0.8,
+              "seal_quality": "open",
+              "grid_connections": 1420
+            },
+            "CentralHorst \u2194 EastLowland": {
+              "fault": "F2",
+              "transmissibility": 0.15,
+              "seal_quality": "baffle",
+              "grid_connections": 980
+            },
+            "CentralNorth \u2194 EastLowland": {
+              "fault": "F3",
+              "transmissibility": 0.1,
+              "seal_quality": "baffle",
+              "grid_connections": 650
+            },
+            "WestLowland \u2194 CentralSouth": {
+              "fault": "F4",
+              "transmissibility": 0.45,
+              "seal_quality": "moderate",
+              "grid_connections": 1100
+            },
+            "NorthHorst \u2194 CentralRamp": {
+              "fault": "F5",
+              "transmissibility": 0.6,
+              "seal_quality": "moderate",
+              "grid_connections": 870
+            },
+            "CentralRamp \u2194 CentralHorst": {
+              "fault": "F6",
+              "transmissibility": 0.95,
+              "seal_quality": "open",
+              "grid_connections": 1560
+            }
+          },
+          "TotalFaults": 6,
+          "OpenFaults": 2,
+          "BaffleFaults": 4,
+          "SealingFaults": 0
+        }
+      }
+    ]
+  }
+}

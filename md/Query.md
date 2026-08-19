@@ -400,6 +400,343 @@ Use the resolve endpoint to check an alias: `GET /api/graphql/resolve-alias?term
 
 ---
 
+# Field Development Queries
+
+ORES supports high-level queries that combine **spatial topology** (well locations, faults, stratigraphic correlation), **reservoir properties** (NTG, permeability, porosity), **production data** (per-well rates and cumulative), and **business decision records** (risks, development concepts, activities) into a single assessment.
+
+These queries address common field development questions that cannot be answered by any single data source alone — they require traversing the RESQML object graph, evaluating array-level properties, and cross-referencing the OSDU catalog.
+
+---
+
+## Connectivity Explorer (`/connectivity`)
+
+The Connectivity Explorer is a purpose-built UI that answers the fundamental field development question:
+
+> **"Are two well intervals connected by good reservoir properties, or are they isolated by faults / poor rock quality?"**
+
+### How it works
+
+1. Select **Well A** and **Well B** from the Drogon wells
+2. Choose the **target zone** (Valysar, Therys, Volon)
+3. Set **property thresholds** (NTG min, Kh min, Sw max)
+4. Toggle evidence sources (faults, production, BD records)
+5. Click **Run Connectivity Query**
+
+The engine performs a multi-step assessment:
+
+| Step | Analysis | Data sources |
+|------|----------|--------------|
+| 1. Stratigraphic | Are both wells in the same zone? | WellboreMarkerSet, StratigraphicColumn |
+| 2. Structural | Are there faults between segments? | TectonicBoundaryFeature, GridConnectionSet, StructuralOrganization |
+| 3. Property corridor | Is the connecting rock good quality? | Grid ContinuousProperty (PHIT, KLOGH, NTG, Sw) per segment |
+| 4. Production | Does performance confirm connectivity? | Per-well ColumnBasedTable (WOPR, WWCT) |
+| 5. BD evidence | What do risk records and activities say? | Risk, DevelopmentConcept, Activity WPCs |
+| 6. Synthesis | Connected / uncertain / isolated? | All of the above + recommendations |
+
+### API
+
+```http
+POST /api/connectivity/query
+Content-Type: application/json
+
+{
+  "well_a": "55/33-A-2",
+  "well_b": "55/33-A-3",
+  "zone": "Valysar",
+  "dataspace": "maap/drogon",
+  "property_filters": {"ntg_min": 0.5, "kh_min": 100, "sw_max": 0.6},
+  "include_faults": true,
+  "include_production": true,
+  "include_bd_evidence": true
+}
+```
+
+### Example Results
+
+#### Example 1: A-2 vs A-3 (different segments, fault-baffled)
+
+```
+✗ UNCERTAIN CONNECTIVITY  (confidence: low)
+
+Stratigraphic: ✓ Both wells penetrate Valysar Fm (shallow marine)
+Structural:    ⚠ Fault F2 between CentralHorst ↔ EastLowland (trans=0.15, baffle)
+Properties:    Corridor: porosity 0.215, perm 203 mD, NTG 0.55, Sw 0.37 — moderate quality
+Production:    A-3 underperforms vs A-2: WCT 58% vs 32%, Cum.Oil 1.4 vs 2.6 MSm³
+BD Evidence:   Risk "FaultCompartment" mitigated for F1/F5/F6 but F2/F3 remain baffles
+               Tracer from A-5: NOT detected in A-3 (confirms F2 barrier)
+               Infill wells targeting East Lowland planned (Phase 2)
+
+Recommendations:
+  → Acquire 4D seismic to resolve connectivity uncertainty
+  → Consider inter-well tracer test
+  → Evaluate infill well in isolated segment
+  → Investigate poor producer — possible completion or sweep issue
+```
+
+#### Example 2: A-1 vs A-2 (same segment, well-connected)
+
+```
+✓ CONNECTED  (confidence: high)
+
+Stratigraphic: ✓ Both wells penetrate Valysar Fm (shallow marine)
+Structural:    No bounding faults — same segment (CentralHorst)
+Properties:    Corridor: porosity 0.240, perm 320 mD, NTG 0.68, Sw 0.28 — excellent quality
+Production:    Similar performance — both rated "good"
+BD Evidence:   4D confirms communication, tracer detected A-5→A-1 (3 months)
+```
+
+---
+
+## Common Field Development Query Patterns
+
+These queries combine multiple data sources to answer real field development questions. Each can be run via GraphQL presets on the `/keys` page.
+
+### 1. Bypassed Oil Identification
+
+> "Which fault block has high remaining saturation and enough permeability for an infill well?"
+
+```graphql
+# Step 1: Find grid segments with high Sw (remaining oil = 1 - Sw)
+{
+  deepSearch(
+    dataspace: "maap/drogon"
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    includeStatistics: true
+    propertyFilter: {
+      titleContains: "Sw"
+      arrayFilter: { operator: GT, threshold: 0.5 }
+    }
+    limit: 5
+  ) {
+    objects {
+      uuid title
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean }
+        matchingCells { count total fraction }
+      }
+    }
+  }
+}
+```
+
+Combined with segment volumetrics and well drainage patterns, this identifies bypassed compartments.
+
+### 2. Water Breakthrough Diagnosis
+
+> "Why did water cut rise faster than expected in A-3?"
+
+```graphql
+# Find high-perm streaks (potential water conduits) in well logs
+{
+  deepSearch(
+    dataspace: "maap/drogon"
+    typeName: "resqml20.obj_WellboreFrameRepresentation"
+    includeStatistics: true
+    propertyFilter: {
+      titleContains: "KLOGH"
+      arrayFilter: { operator: GT, threshold: 500.0 }
+    }
+    limit: 10
+  ) {
+    objects {
+      uuid title
+      properties {
+        title kind uom
+        statistics { mean maxValue }
+        matchingCells { count total fraction }
+      }
+    }
+  }
+}
+```
+
+Cross-reference with:
+- Fault seal quality (F2 transmissibility = 0.15 → partial conduit)
+- Per-well production (A-3 WWCT rising at 2.5%/month vs expected 1.5%)
+- BD risk record (compartment isolation confirms poor sweep)
+
+### 3. Infill Well Targeting
+
+> "Rank undrained segments by risk-weighted recoverable volume"
+
+```graphql
+# Step 1: Get volumetrics per segment (STOIIP from catalog)
+{
+  federatedSearch(
+    text: "volume"
+    kind: "osdu:wks:work-product-component--ColumnBasedTable:*"
+    dataspaces: ["maap/drogon_dg"]
+    searchCatalog: true
+    searchRddms: false
+    limit: 20
+  ) {
+    hits { uuid title osduKind }
+  }
+}
+```
+
+```graphql
+# Step 2: Get property quality per segment from grid
+{
+  deepSearch(
+    dataspace: "maap/drogon"
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    includeStatistics: true
+    propertyFilter: { titleContains: "NTG" }
+    limit: 5
+  ) {
+    objects {
+      uuid title
+      properties {
+        title statistics { mean minValue maxValue }
+        matchingCells { count total fraction }
+      }
+    }
+  }
+}
+```
+
+Combine: STOIIP × NTG × (1 - risk_factor) → segment ranking for infill.
+
+### 4. Injection Support Verification
+
+> "Is injection from A-5 reaching producer A-2, or is a fault blocking sweep?"
+
+```graphql
+# Check fault connectivity between injector and producer segments
+{
+  faults: deepSearch(
+    dataspace: "maap/drogon"
+    typeName: "resqml20.obj_FaultInterpretation"
+    includeRelations: true
+    limit: 10
+  ) {
+    objects {
+      uuid title
+      relations { uuid name typeName direction }
+    }
+  }
+  gridConn: deepSearch(
+    dataspace: "maap/drogon"
+    typeName: "resqml20.obj_GridConnectionSetRepresentation"
+    includeRelations: true
+    includeStatistics: true
+    limit: 5
+  ) {
+    objects {
+      uuid title
+      relations { name typeName direction }
+      properties { title kind statistics { mean } }
+    }
+  }
+}
+```
+
+Cross-reference with per-well production:
+- A-5 WWIR = 6,500 Sm³/d (full injection target)
+- A-2 pressure stable at 270 bar (injection support confirmed)
+- A-3 pressure declining at 2 bar/month (injection not reaching East Lowland)
+
+### 5. Completion Optimization
+
+> "Which interval in well A-3 has the best NTG × Kh product away from OWC?"
+
+```graphql
+# Well log properties for A-3
+{
+  deepSearch(
+    dataspace: "maap/drogon"
+    category: "well"
+    titleContains: "A-3"
+    includeStatistics: true
+    includeRelations: true
+    limit: 10
+  ) {
+    objects {
+      uuid title typeName
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean }
+      }
+      relations { name typeName direction }
+    }
+  }
+}
+```
+
+Use well log PHIT, KLOGH, Sw curves to identify the best net interval above the OWC (from markers at 1,892m TVDSS in East Lowland).
+
+---
+
+## Per-Well Production Data
+
+Individual well production vectors are available as `ColumnBasedTable` WPC records:
+
+| Well | Type | Segment | Vectors |
+|------|------|---------|---------|
+| 55/33-A-1 | Producer | CentralHorst | WOPR, WWPR, WWCT, WBHP, WOPT |
+| 55/33-A-2 | Producer | CentralHorst | WOPR, WWPR, WWCT, WBHP, WOPT |
+| 55/33-A-3 | Producer | EastLowland | WOPR, WWPR, WWCT, WBHP, WOPT |
+| 55/33-A-4 | Producer | WestLowland | WOPR, WWPR, WWCT, WBHP, WOPT |
+| 55/33-A-5 | Injector | CentralHorst | WWIR, WBHP |
+| 55/33-A-6 | Injector | EastLowland | WWIR, WBHP |
+
+Each record includes a `Segment` column (fault compartment) and `Phase` column (History/Prediction), enabling queries like:
+
+```json
+{
+  "kind": "osdu:wks:work-product-component--ColumnBasedTable:*",
+  "query": "WellProd AND EastLowland"
+}
+```
+
+### Key performance indicators (from production profiles)
+
+| Well | Segment | Peak Oil (Sm³/d) | Final WCT | Cum. Oil (MSm³) | Rating |
+|------|---------|------------------|-----------|------------------|--------|
+| A-1 | CentralHorst | 3,500 | 35% | 2.8 | Good |
+| A-2 | CentralHorst | 3,400 | 32% | 2.6 | Good |
+| A-3 | EastLowland | 2,100 | 58% | 1.4 | Poor |
+| A-4 | WestLowland | 2,700 | 42% | 2.0 | Average |
+
+**A-3's poor performance** is explained by:
+- Fault F2 baffling (trans = 0.15) → poor injection support from A-5
+- Earlier water breakthrough (onset at 10 months vs 18 for CentralHorst wells)
+- Lower NTG in East Lowland segment (0.42 vs 0.68 in CentralHorst)
+
+---
+
+## Fault Connectivity Data
+
+Fault transmissibility multipliers are available as catalog records:
+
+| Fault | Segments Connected | Transmissibility | Seal Quality |
+|-------|-------------------|------------------|--------------|
+| F1 | CentralHorst ↔ WestLowland | 0.80 | Open |
+| F2 | CentralHorst ↔ EastLowland | 0.15 | Baffle |
+| F3 | CentralNorth ↔ EastLowland | 0.10 | Baffle |
+| F4 | WestLowland ↔ CentralSouth | 0.45 | Moderate |
+| F5 | NorthHorst ↔ CentralRamp | 0.60 | Moderate |
+| F6 | CentralRamp ↔ CentralHorst | 0.95 | Open |
+
+A **Connectivity Matrix** summary record aggregates all fault properties:
+- 2 open faults (F1, F6) — confirmed by 4D and tracer
+- 2 moderate faults (F4, F5) — partially confirmed
+- 2 baffles (F2, F3) — isolate East Lowland segment
+
+### Ingestion options
+
+| Method | When to use | API |
+|--------|-------------|-----|
+| REST array write | Update existing trans values on GridConnectionSet | `begin_transaction()` → `write_array()` → `commit()` |
+| EPC re-upload | Add new fault objects or structural changes | ETP import CLI |
+| WPC catalog record | Store seal assessment / connectivity matrix | OSDU Storage manifest ingest |
+
+---
+
+---
+
 # Technical Appendix
 
 ---

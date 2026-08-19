@@ -3067,6 +3067,261 @@ const GQL_PRESETS = {
       storeLastWrite
     }
   }
+}`,
+
+  // ─── Field Development Queries ─────────────────────────────────────────
+  // These presets combine spatial topology, properties, and production
+  // to answer real subsurface questions for field development workflows.
+
+  field_bypassed_oil: `# FIELD DEV: Find bypassed oil — high Sw zones with good permeability
+# Identifies fault blocks with remaining mobile oil that could be
+# targets for infill wells or workover candidates.
+#
+# Logic: cells with Sw > 0.5 AND good permeability (KLOGH) means
+# mobile oil is present but not being swept — likely isolated by faults.
+{
+  highSw: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    includeStatistics: true
+    propertyFilter: {
+      titleContains: "Sw"
+      arrayFilter: { operator: GT, threshold: 0.5 }
+    }
+    limit: 5
+  ) {
+    backend totalScanned totalMatched
+    objects {
+      uuid title
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean }
+        matchingCells { count total fraction }
+      }
+    }
+  }
+  goodPerm: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    includeStatistics: true
+    propertyFilter: {
+      titleContains: "KLOGH"
+      arrayFilter: { operator: GT, threshold: 100.0 }
+    }
+    limit: 5
+  ) {
+    totalMatched
+    objects {
+      uuid title
+      properties {
+        title statistics { mean maxValue }
+        matchingCells { count total fraction }
+      }
+    }
+  }
+}`,
+
+  field_water_breakthrough: `# FIELD DEV: Water breakthrough diagnosis — high-perm streaks in wells
+# Finds wellbore intervals with permeability > 500 mD that could act as
+# water conduits (thief zones). Cross-reference with fault connectivity
+# to diagnose early water cut rise.
+#
+# A-3 in Drogon shows early WC due to:
+#   • F2 fault conduit in Valysar interval (baffle overall, but sand window)
+#   • High-perm streak at 1870–1885m MD acting as water pathway
+{
+  wellLogs: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_WellboreFrameRepresentation"
+    includeStatistics: true
+    propertyFilter: {
+      titleContains: "KLOGH"
+      arrayFilter: { operator: GT, threshold: 500.0 }
+    }
+    limit: 10
+  ) {
+    backend totalScanned totalMatched
+    objects {
+      uuid title
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean }
+        matchingCells { count total fraction }
+      }
+    }
+  }
+  faultConnections: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_GridConnectionSetRepresentation"
+    includeRelations: true
+    includeStatistics: true
+    limit: 5
+  ) {
+    totalMatched
+    objects {
+      uuid title
+      relations { name typeName direction }
+      properties { title kind statistics { mean minValue maxValue } }
+    }
+  }
+}`,
+
+  field_injection_support: `# FIELD DEV: Verify injection support across faults
+# Checks if injection from A-5 (CentralHorst) reaches producers in other
+# segments. Combines fault geometry with well trajectory topology.
+#
+# Expected result: A-1/A-2 (same segment) get pressure support.
+# A-3 (EastLowland, across F2 baffle) does NOT — pressure declining.
+{
+  faults: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_FaultInterpretation"
+    includeRelations: true
+    limit: 10
+  ) {
+    backend totalScanned totalMatched
+    objects {
+      uuid title typeName
+      relations { uuid name typeName direction }
+    }
+  }
+  structuralOrg: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_StructuralOrganizationInterpretation"
+    includeRelations: true
+    limit: 5
+  ) {
+    totalMatched
+    objects {
+      uuid title
+      relations { uuid name typeName direction }
+    }
+  }
+  wells: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_WellboreTrajectoryRepresentation"
+    includeRelations: true
+    limit: 12
+  ) {
+    totalMatched
+    objects {
+      uuid title
+      relations { name typeName direction }
+    }
+  }
+}`,
+
+  field_completion_ntg: `# FIELD DEV: Completion optimization — best NTG × Kh interval per well
+# Finds well log intervals with high net-to-gross and permeability
+# (the "pay zone") for completion/perforation design.
+#
+# Filter: NTG > 0.5 identifies net sand intervals.
+# Combine with Sw < 0.3 to find intervals above OWC.
+{
+  ntgLogs: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_WellboreFrameRepresentation"
+    includeStatistics: true
+    includeRelations: true
+    propertyFilter: {
+      titleContains: "NTG"
+      arrayFilter: { operator: GT, threshold: 0.5 }
+    }
+    limit: 10
+  ) {
+    backend totalScanned totalMatched
+    objects {
+      uuid title
+      relations { name typeName direction }
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean }
+        matchingCells { count total fraction }
+      }
+    }
+  }
+  swLogs: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_WellboreFrameRepresentation"
+    includeStatistics: true
+    propertyFilter: {
+      titleContains: "Sw"
+      arrayFilter: { operator: LT, threshold: 0.3 }
+    }
+    limit: 10
+  ) {
+    totalMatched
+    objects {
+      uuid title
+      properties {
+        title statistics { mean }
+        matchingCells { count total fraction }
+      }
+    }
+  }
+}`,
+
+  field_segment_ranking: `# FIELD DEV: Rank segments for infill targeting
+# Combines NTG quality + porosity + permeability across the grid to
+# identify which reservoir zones/segments have the best rock quality
+# for additional drainage points.
+#
+# Use with volumetrics (STOIIP per segment) and connectivity matrix
+# to produce a risk-weighted infill ranking.
+{
+  porosity: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    includeStatistics: true
+    propertyFilter: {
+      kind: "porosity"
+      arrayFilter: { operator: GT, threshold: 0.18 }
+    }
+    limit: 5
+  ) {
+    totalMatched
+    objects {
+      uuid title
+      properties {
+        title kind
+        statistics { count mean stdDev }
+        matchingCells { count total fraction }
+      }
+    }
+  }
+  permeability: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    includeStatistics: true
+    propertyFilter: {
+      kind: "permeability"
+      arrayFilter: { operator: GT, threshold: 50.0 }
+    }
+    limit: 5
+  ) {
+    totalMatched
+    objects {
+      uuid title
+      properties {
+        title kind uom
+        statistics { count mean maxValue }
+        matchingCells { count total fraction }
+      }
+    }
+  }
+  facies: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    includeStatistics: true
+    propertyFilter: { titleContains: "FACIES" }
+    limit: 5
+  ) {
+    totalMatched
+    objects {
+      uuid title
+      properties { title kind statistics { count minValue maxValue } }
+    }
+  }
 }`
 };
 

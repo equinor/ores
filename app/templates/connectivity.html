@@ -1,0 +1,328 @@
+{% extends "base.html" %}
+{% block title %}Connectivity Explorer{% endblock %}
+
+{% block head %}
+<style>
+  .conn-container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+  .conn-header { margin-bottom: 24px; }
+  .conn-header h2 { margin: 0 0 8px 0; font-size: 1.6em; }
+  .conn-header p { color: var(--eq-grey); margin: 0; }
+
+  .conn-form { background: var(--eq-light); border: 1px solid var(--eq-border); border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+  .conn-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: end; margin-bottom: 12px; }
+  .conn-field { display: flex; flex-direction: column; min-width: 180px; }
+  .conn-field label { font-size: 12px; font-weight: 600; color: var(--eq-slate); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .conn-field select, .conn-field input { padding: 8px 10px; border: 1px solid var(--eq-border); border-radius: 4px; font-size: 14px; }
+  .conn-field input[type="number"] { width: 90px; }
+
+  .conn-checks { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+  .conn-checks label { font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+
+  .conn-btn { background: var(--eq-red); color: #fff; border: none; border-radius: 6px; padding: 10px 28px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 12px; transition: background 0.2s; }
+  .conn-btn:hover { background: var(--eq-red-dark); }
+  .conn-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+  /* Results */
+  .conn-results { display: none; }
+  .conn-results.visible { display: block; }
+
+  .conn-summary { background: #fff; border: 2px solid var(--eq-border); border-radius: 8px; padding: 16px 20px; margin-bottom: 20px; }
+  .conn-summary.connected { border-color: #107c10; }
+  .conn-summary.uncertain { border-color: #ffb900; }
+  .conn-summary.disconnected { border-color: #d13438; }
+
+  .conn-verdict { font-size: 1.3em; font-weight: 700; margin-bottom: 8px; }
+  .conn-verdict .icon { font-size: 1.2em; margin-right: 6px; }
+  .conn-confidence { font-size: 13px; color: var(--eq-grey); }
+
+  .conn-section { background: #fff; border: 1px solid var(--eq-border); border-radius: 6px; padding: 16px; margin-bottom: 16px; }
+  .conn-section h4 { margin: 0 0 10px 0; font-size: 14px; color: var(--eq-slate); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--eq-border); padding-bottom: 6px; }
+
+  .fault-card { background: var(--eq-light); border-radius: 4px; padding: 10px 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+  .fault-trans { font-size: 1.4em; font-weight: 700; min-width: 60px; text-align: center; }
+  .fault-trans.open { color: #107c10; }
+  .fault-trans.moderate { color: #ffb900; }
+  .fault-trans.baffle { color: #d13438; }
+  .fault-detail { flex: 1; }
+  .fault-name { font-weight: 600; }
+  .fault-desc { font-size: 12px; color: var(--eq-grey); margin-top: 2px; }
+  .fault-segments { font-size: 11px; color: var(--eq-link); }
+
+  .prop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .prop-cell { background: var(--eq-light); border-radius: 4px; padding: 10px; text-align: center; }
+  .prop-value { font-size: 1.3em; font-weight: 700; }
+  .prop-label { font-size: 11px; color: var(--eq-grey); text-transform: uppercase; }
+  .prop-quality { margin-top: 8px; font-weight: 600; font-size: 13px; }
+  .prop-quality.excellent, .prop-quality.good { color: #107c10; }
+  .prop-quality.moderate { color: #ffb900; }
+  .prop-quality.poor { color: #d13438; }
+
+  .prod-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .prod-table th { background: var(--eq-light); padding: 8px; text-align: left; font-weight: 600; }
+  .prod-table td { padding: 8px; border-bottom: 1px solid var(--eq-border); }
+  .rating-good { color: #107c10; font-weight: 600; }
+  .rating-average { color: #ffb900; font-weight: 600; }
+  .rating-poor { color: #d13438; font-weight: 600; }
+
+  .bd-card { border-left: 3px solid var(--eq-link); padding: 8px 12px; margin-bottom: 8px; background: #f0f8ff; border-radius: 0 4px 4px 0; }
+  .bd-type { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--eq-link); }
+  .bd-name { font-weight: 600; margin: 2px 0; }
+  .bd-status { font-size: 12px; color: var(--eq-slate); }
+  .bd-relevance { font-size: 12px; color: var(--eq-grey); font-style: italic; margin-top: 4px; }
+
+  .reco-list { list-style: none; padding: 0; }
+  .reco-list li { padding: 6px 0 6px 20px; position: relative; font-size: 13px; }
+  .reco-list li::before { content: "→"; position: absolute; left: 0; color: var(--eq-red); font-weight: 700; }
+
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 8px; vertical-align: middle; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="conn-container">
+  <div class="conn-header">
+    <h2>Connectivity Explorer</h2>
+    <p>Assess reservoir connectivity between wells — combining stratigraphy, faults, properties, production, and business decision evidence.</p>
+  </div>
+
+  <!-- Query Form -->
+  <div class="conn-form">
+    <div class="conn-row">
+      <div class="conn-field">
+        <label>Well A</label>
+        <select id="well-a"></select>
+      </div>
+      <div class="conn-field">
+        <label>Well B</label>
+        <select id="well-b"></select>
+      </div>
+      <div class="conn-field">
+        <label>Target Zone</label>
+        <select id="zone">
+          <option value="Valysar" selected>Valysar (Shallow Marine)</option>
+          <option value="Therys">Therys (Marine Shale)</option>
+          <option value="Volon">Volon (Fluvial)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="conn-row">
+      <div class="conn-field">
+        <label>NTG min</label>
+        <input type="number" id="ntg-min" value="0.5" step="0.05" min="0" max="1">
+      </div>
+      <div class="conn-field">
+        <label>Kh min (mD)</label>
+        <input type="number" id="kh-min" value="100" step="10" min="0">
+      </div>
+      <div class="conn-field">
+        <label>Sw max</label>
+        <input type="number" id="sw-max" value="0.6" step="0.05" min="0" max="1">
+      </div>
+    </div>
+
+    <div class="conn-checks">
+      <label><input type="checkbox" id="inc-faults" checked> Faults between</label>
+      <label><input type="checkbox" id="inc-production" checked> Production response</label>
+      <label><input type="checkbox" id="inc-bd" checked> BD evidence</label>
+    </div>
+
+    <button class="conn-btn" id="run-query" onclick="runConnectivityQuery()">Run Connectivity Query</button>
+  </div>
+
+  <!-- Results -->
+  <div class="conn-results" id="results">
+    <!-- Summary -->
+    <div class="conn-summary" id="summary-box">
+      <div class="conn-verdict" id="verdict"></div>
+      <div id="summary-text"></div>
+      <div class="conn-confidence" id="confidence-text"></div>
+    </div>
+
+    <!-- Stratigraphy -->
+    <div class="conn-section" id="sect-strat">
+      <h4>Stratigraphic Assessment</h4>
+      <div id="strat-content"></div>
+    </div>
+
+    <!-- Faults -->
+    <div class="conn-section" id="sect-faults">
+      <h4>Structural Assessment — Faults Between Wells</h4>
+      <div id="fault-summary"></div>
+      <div id="fault-cards"></div>
+    </div>
+
+    <!-- Properties -->
+    <div class="conn-section" id="sect-props">
+      <h4>Property Corridor Assessment</h4>
+      <div id="prop-content"></div>
+    </div>
+
+    <!-- Production -->
+    <div class="conn-section" id="sect-prod">
+      <h4>Production Response Comparison</h4>
+      <div id="prod-summary"></div>
+      <div id="prod-table"></div>
+    </div>
+
+    <!-- BD Evidence -->
+    <div class="conn-section" id="sect-bd">
+      <h4>Business Decision Evidence Chain</h4>
+      <div id="bd-cards"></div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="conn-section" id="sect-reco">
+      <h4>Recommendations</h4>
+      <ul class="reco-list" id="reco-list"></ul>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// Load wells on page init
+async function loadWells() {
+  try {
+    const resp = await fetch('/api/connectivity/wells');
+    const data = await resp.json();
+    const selA = $('well-a');
+    const selB = $('well-b');
+    data.wells.forEach(w => {
+      const opt = name => {
+        const o = document.createElement('option');
+        o.value = w.name;
+        o.textContent = `${w.name} (${w.segment}, ${w.type})`;
+        return o;
+      };
+      selA.appendChild(opt());
+      selB.appendChild(opt());
+    });
+    // Default selection: A-2 vs A-3 (interesting case)
+    if (selA.options.length >= 2) selA.selectedIndex = 1;
+    if (selB.options.length >= 3) selB.selectedIndex = 2;
+  } catch(e) {
+    console.error('Failed to load wells:', e);
+  }
+}
+
+async function runConnectivityQuery() {
+  const btn = $('run-query');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Analysing...';
+
+  const payload = {
+    well_a: $('well-a').value,
+    well_b: $('well-b').value,
+    zone: $('zone').value,
+    dataspace: 'maap/drogon',
+    property_filters: {
+      ntg_min: parseFloat($('ntg-min').value),
+      kh_min: parseFloat($('kh-min').value),
+      sw_max: parseFloat($('sw-max').value),
+    },
+    include_faults: $('inc-faults').checked,
+    include_production: $('inc-production').checked,
+    include_bd_evidence: $('inc-bd').checked,
+  };
+
+  try {
+    const resp = await fetch('/api/connectivity/query', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload),
+    });
+    const result = await resp.json();
+    renderResults(result);
+  } catch(e) {
+    alert('Query failed: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Run Connectivity Query';
+  }
+}
+
+function renderResults(r) {
+  const results = $('results');
+  results.classList.add('visible');
+
+  // Summary
+  const box = $('summary-box');
+  box.className = 'conn-summary ' + (r.connected === true ? 'connected' : r.connected === false ? 'disconnected' : 'uncertain');
+  const icon = r.connected === true ? '✓' : r.connected === false ? '✗' : '⚠';
+  $('verdict').innerHTML = `<span class="icon">${icon}</span> ${r.connected === true ? 'Connected' : r.connected === false ? 'Not Connected' : 'Uncertain Connectivity'}`;
+  $('summary-text').textContent = r.summary;
+  $('confidence-text').textContent = `Confidence: ${r.confidence}`;
+
+  // Stratigraphy
+  const stratIcon = r.same_zone ? '✓' : '⚠';
+  $('strat-content').innerHTML = `<p>${stratIcon} ${r.zone_detail}</p>`;
+
+  // Faults
+  $('fault-summary').innerHTML = `<p>${r.structural_summary}</p>`;
+  const faultHtml = r.faults_between.map(f => {
+    const cls = f.transmissibility > 0.7 ? 'open' : f.transmissibility > 0.3 ? 'moderate' : 'baffle';
+    return `<div class="fault-card">
+      <div class="fault-trans ${cls}">${f.transmissibility.toFixed(2)}</div>
+      <div class="fault-detail">
+        <div class="fault-name">${f.fault_name} — ${f.seal_quality}</div>
+        <div class="fault-desc">${f.description}</div>
+        <div class="fault-segments">${f.segments_connected.join(' ↔ ')}</div>
+      </div>
+    </div>`;
+  }).join('');
+  $('fault-cards').innerHTML = faultHtml || '<p style="color:var(--eq-grey)">No faults between segments</p>';
+  $('sect-faults').style.display = $('inc-faults').checked ? '' : 'none';
+
+  // Properties
+  if (r.property_corridor) {
+    const pc = r.property_corridor;
+    $('prop-content').innerHTML = `
+      <div class="prop-grid">
+        <div class="prop-cell"><div class="prop-value">${pc.mean_porosity?.toFixed(3) || '—'}</div><div class="prop-label">Porosity</div></div>
+        <div class="prop-cell"><div class="prop-value">${pc.mean_permeability?.toFixed(0) || '—'}</div><div class="prop-label">Perm (mD)</div></div>
+        <div class="prop-cell"><div class="prop-value">${pc.mean_ntg?.toFixed(3) || '—'}</div><div class="prop-label">NTG</div></div>
+        <div class="prop-cell"><div class="prop-value">${pc.mean_sw?.toFixed(3) || '—'}</div><div class="prop-label">Sw</div></div>
+      </div>
+      <div class="prop-quality ${pc.quality_assessment.split(' ')[0]}">Corridor quality: ${pc.quality_assessment}</div>
+    `;
+  } else {
+    $('prop-content').innerHTML = '<p>No property data available</p>';
+  }
+
+  // Production
+  $('prod-summary').innerHTML = r.production_summary ? `<p>${r.production_summary}</p>` : '';
+  if (r.production.length > 0) {
+    let rows = r.production.map(p => `<tr>
+      <td>${p.well}</td><td>${p.segment}</td>
+      <td>${p.peak_oil_rate?.toFixed(0) || '—'}</td>
+      <td>${p.current_water_cut != null ? (p.current_water_cut * 100).toFixed(0) + '%' : '—'}</td>
+      <td>${p.cumulative_oil ? (p.cumulative_oil / 1e6).toFixed(2) + ' MSm³' : '—'}</td>
+      <td class="rating-${p.performance_rating}">${p.performance_rating}</td>
+    </tr>`).join('');
+    $('prod-table').innerHTML = `<table class="prod-table">
+      <tr><th>Well</th><th>Segment</th><th>Peak Oil (Sm³/d)</th><th>Water Cut</th><th>Cum. Oil</th><th>Rating</th></tr>
+      ${rows}</table>`;
+  }
+  $('sect-prod').style.display = $('inc-production').checked ? '' : 'none';
+
+  // BD Evidence
+  const bdHtml = r.bd_evidence.map(bd => `<div class="bd-card">
+    <div class="bd-type">${bd.record_type}</div>
+    <div class="bd-name">${bd.name} <span class="bd-status">(${bd.status})</span></div>
+    <div class="bd-relevance">${bd.relevance}</div>
+  </div>`).join('');
+  $('bd-cards').innerHTML = bdHtml || '<p style="color:var(--eq-grey)">No relevant BD records</p>';
+  $('sect-bd').style.display = $('inc-bd').checked ? '' : 'none';
+
+  // Recommendations
+  const recoHtml = r.recommendations.map(rec => `<li>${rec}</li>`).join('');
+  $('reco-list').innerHTML = recoHtml || '<li>No specific recommendations</li>';
+}
+
+// Init
+loadWells();
+</script>
+{% endblock %}
