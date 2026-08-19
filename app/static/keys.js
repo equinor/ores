@@ -21,6 +21,16 @@ function esc(s) {
   return d.innerHTML;
 }
 
+// Global helper: click a "Graph" button on a browse/relation card → switch to
+// Object Relations mode, fill UUID, and run the query.
+window.__ezShowGraph = function(uuid, typeName) {
+  $('ez-action').value = 'relations';
+  $('ez-action').dispatchEvent(new Event('change'));
+  if ($('ez-uuid')) $('ez-uuid').value = uuid;
+  if ($('ez-type') && typeName) $('ez-type').value = typeName;
+  $('ez-run').click();
+};
+
 // ═══════════════════════════════════════════════════════════════════════════
 // EASY MODE: Visual Query Builder + Colored Result Cards
 // ═══════════════════════════════════════════════════════════════════════════
@@ -369,6 +379,8 @@ function renderResultCards(data) {
     html += `<div style="margin-bottom:8px;padding:8px 12px;background:#fff3e0;border-radius:4px;border-left:4px solid #ff9800;font-size:13px;">
           <strong>${rels.length}</strong> relations (${targets.length} targets, ${sources.length} sources)
         </div>`;
+    // Inline Mermaid graph for relation results
+    html += '<div id="ez-rel-mermaid" style="margin-bottom:12px;padding:10px;background:#fff;border:1px solid #e1dfdd;border-radius:6px;overflow-x:auto;"></div>';
     rels.forEach(rel => {
       const tShort = (rel.typeName || '').replace(/^resqml\d+\.obj_/, '');
       const dirColor = rel.direction === 'target' ? '#1565c0' : '#2e7d32';
@@ -379,11 +391,31 @@ function renderResultCards(data) {
             <strong>${esc(rel.name)}</strong>
             <span class="tag">${tShort}</span>
             <span style="color:#605e5c;font-size:11px;">${esc(rel.contentType || '')}</span>
+            <span class="btn" style="font-size:10px;padding:2px 8px;margin-left:auto;cursor:pointer;" onclick="window.__ezShowGraph('${esc(rel.uuid)}','${esc(rel.typeName)}')" title="Traverse this object">🔗 Graph</span>
           </div>`;
     });
   }
 
   container.innerHTML = html || '<p class="muted">Query returned no renderable results. Check JSON tab for raw output.</p>';
+
+  // Render inline Mermaid for relation results in Easy Mode
+  if (d.objectRelations && d.objectRelations.length) {
+    const relMermaidEl = document.getElementById('ez-rel-mermaid');
+    if (relMermaidEl) {
+      try {
+        const code = buildMermaidFromRelations(data);
+        if (code) {
+          _mermaidRenderCount++;
+          const id = 'ez-rel-mmd-' + _mermaidRenderCount;
+          mermaid.render(id, code).then(({ svg }) => {
+            relMermaidEl.innerHTML = svg;
+          }).catch(e => {
+            relMermaidEl.innerHTML = `<span style="color:#a80000;font-size:12px;">Diagram error: ${e.message}</span>`;
+          });
+        }
+      } catch (e) { console.warn('Inline mermaid error:', e); }
+    }
+  }
 
   // Paginate browse cards
   if (d.resqmlObjects && d.resqmlObjects.length > 0) {
@@ -405,6 +437,7 @@ function renderResultCards(data) {
           '<span style="font-size:11px;font-family:monospace;color:#605e5c;user-select:all;flex-shrink:0;">' + esc(obj.uuid) + '</span>' +
           '<strong style="color:' + colors.fg + ';">' + esc(obj.title) + '</strong>' +
           '<span class="tag" style="background:' + colors.bg + ';color:' + colors.fg + ';border:1px solid ' + colors.border + ';">' + tShort + '</span>' +
+          '<span class="btn" style="font-size:10px;padding:2px 8px;margin-left:auto;cursor:pointer;" onclick="window.__ezShowGraph(\'' + esc(obj.uuid) + '\',\'' + esc(obj.typeName) + '\')" title="Show relationship graph">🔗 Graph</span>' +
           '</div>';
       }
       if (browseContainer) browseContainer.innerHTML = h;
@@ -3878,20 +3911,34 @@ function buildMermaidFromRelations(data) {
   // object_relations response (top-level or aliased)
   const rels = _findField(data.data, 'objectRelations');
   if (!rels || !rels.length) return '';
+  // Try to get the queried object's name and type from the UUID field
+  const ezUuid = $('ez-uuid') ? $('ez-uuid').value.trim() : '';
+  const ezType = $('ez-type') ? $('ez-type').value : '';
+  const centerType = _sanitize(_shortType(ezType));
+  // Look for a title from browse results cache (if available)
+  let centerLabel = centerType || 'Query Object';
+  if (ezUuid) centerLabel = _sanitize(ezUuid.substring(0, 8)) + ' : ' + centerLabel;
   const lines = ['graph LR'];
   const centerId = 'center';
-  lines.push(`  ${centerId}["Query Object"]`);
-  rels.forEach((r, i) => {
-    const nid = _nodeId(r.uuid) + i;
+  lines.push(`  ${centerId}["${centerLabel}"]:::cls_center`);
+  // Group by direction for layout
+  const targets = rels.filter(r => r.direction === 'target');
+  const sources = rels.filter(r => r.direction === 'source');
+  targets.forEach((r, i) => {
+    const nid = _nodeId(r.uuid) + 't' + i;
     const label = _sanitize(r.name) || _sanitize(_shortType(r.typeName || r.type_name));
     const stype = _sanitize(_shortType(r.typeName || r.type_name));
     lines.push(`  ${nid}["${label} : ${stype}"]`);
-    if (r.direction === 'target') {
-      lines.push(`  ${centerId} -->|target| ${nid}`);
-    } else {
-      lines.push(`  ${nid} -->|source| ${centerId}`);
-    }
+    lines.push(`  ${centerId} -->|target| ${nid}`);
   });
+  sources.forEach((r, i) => {
+    const nid = _nodeId(r.uuid) + 's' + i;
+    const label = _sanitize(r.name) || _sanitize(_shortType(r.typeName || r.type_name));
+    const stype = _sanitize(_shortType(r.typeName || r.type_name));
+    lines.push(`  ${nid}["${label} : ${stype}"]`);
+    lines.push(`  ${nid} -->|source| ${centerId}`);
+  });
+  lines.push('  classDef cls_center fill:#fff3e0,stroke:#ff9800,stroke-width:2px,color:#e65100');
   return lines.join('\n');
 }
 
