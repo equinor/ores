@@ -40,7 +40,7 @@ from .graphql_search import (
     ComparisonOperator, ArrayStatistics, CellMatch, ArrayInfo, PropertyInfo,
     RelationInfo, ResqmlObject, DataspaceInfo, TypeSummary,
     DeepSearchResult, FederatedHit, FederatedSearchResult,
-    ArrayFilter, PropertyFilter,
+    ArrayFilter, PropertyFilter, CompoundFilter,
     # Native RDDMS GQL types (M27+)
     GraphEdge, GraphNode, NativeGraphResult, NativeObjectContent,
     NativeArrayMeta, NativeResourceWithArrays,
@@ -336,6 +336,7 @@ class Query:
         category: Optional[str] = None,
         title_contains: Optional[str] = None,
         property_filter: Optional[PropertyFilter] = None,
+        compound_filter: Optional[CompoundFilter] = None,
         include_relations: bool = False,
         relation_filter: Optional[List[str]] = None,
         include_statistics: bool = True,
@@ -352,13 +353,15 @@ class Query:
 
         Supports querying multiple dataspaces at once via 'dataspaces' param.
         Use 'category' to search all types in a category (e.g. "grid", "well").
+        Use 'compoundFilter' to AND-combine multiple property thresholds
+        and get the cell-level intersection count.
         """
         token = _get_token_from_info(info)
         return await deep_search_impl(
             token, dataspace, dataspaces, type_name, title_contains,
             property_filter, include_relations, include_statistics,
             include_sample_values, sample_size, limit, relation_filter,
-            category=category,
+            category=category, compound_filter=compound_filter,
         )
 
     @strawberry.field(

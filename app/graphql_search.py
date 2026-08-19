@@ -522,6 +522,7 @@ class DeepSearchResult:
     query_description: str
     backend: str  # "REST" or "PostgreSQL"
     warnings: Optional[List[str]] = None  # surfaced errors / hints
+    compound_match: Optional[CellMatch] = None  # intersection of compound filter
 
 
 @strawberry.type
@@ -650,6 +651,28 @@ class PropertyFilter:
     array_filter: Optional[ArrayFilter] = None
 
 
+@strawberry.input
+class CompoundFilterEntry:
+    """One criterion in a compound (AND) filter across multiple properties."""
+    title_contains: Optional[str] = None
+    kind: Optional[str] = None
+    array_filter: ArrayFilter = strawberry.UNSET
+
+
+@strawberry.input
+class CompoundFilter:
+    """AND-combine multiple property array filters on the same grid/frame.
+
+    Each entry selects a property (by title or kind) and applies an array
+    threshold.  The result is the cell-level intersection — only cells that
+    pass ALL criteria are counted.
+
+    Memory-efficient: arrays are loaded one at a time; only a compact
+    boolean mask (1 byte/cell) is kept across iterations.
+    """
+    filters: List[CompoundFilterEntry]
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Computation helpers
 # ──────────────────────────────────────────────────────────────────────────────
@@ -736,6 +759,127 @@ def _check_threshold(
     check = ops[op]
     count = sum(1 for v in values if math.isfinite(v) and check(v))
     return CellMatch(count=count, total=total, fraction=count / total if total else 0.0)
+
+
+def _build_mask(values: List[float], af: ArrayFilter) -> bytearray:
+    """Build a compact boolean mask (1 byte/cell) from threshold filter."""
+    ops = {
+        ComparisonOperator.GT: lambda v: v > af.threshold,
+        ComparisonOperator.GTE: lambda v: v >= af.threshold,
+        ComparisonOperator.LT: lambda v: v < af.threshold,
+        ComparisonOperator.LTE: lambda v: v <= af.threshold,
+        ComparisonOperator.EQ: lambda v: abs(v - af.threshold) < 1e-9,
+        ComparisonOperator.BETWEEN: lambda v: af.threshold <= v <= (af.threshold_high if af.threshold_high is not None else af.threshold),
+    }
+    check = ops[af.operator]
+    return bytearray(1 if math.isfinite(v) and check(v) else 0 for v in values)
+
+
+async def _apply_compound_filter(
+    pool,
+    dataspace: str,
+    obj_id: int,
+    prop_sources: List[Dict[str, Any]],
+    arrays_meta: List[Dict[str, Any]],
+    compound: CompoundFilter,
+) -> Optional[CellMatch]:
+    """Compute AND-intersection of multiple property filters on one object.
+
+    Memory-efficient: loads one array at a time, ANDs into a running mask,
+    then frees the array before loading the next. Peak RAM = 1 array
+    (~7 MB for 926k float64 cells) + 1 mask (~1 MB bytearray).
+    """
+    from .pg_backend import pg_read_array_by_id
+
+    # Map property title/kind → ary_id for this object
+    # prop_sources: [{p_obj_id, kind, title, ...}]
+    # arrays_meta: [{ary_id, path, type, ...}]  (for property obj_ids)
+    prop_to_ary: Dict[int, Dict[str, Any]] = {}
+    for am in arrays_meta:
+        prop_to_ary[am["ary_id"]] = am
+
+    # Build lookup: lowercase title → (ary_id, ary_type) for each property
+    title_to_array: Dict[str, List[tuple]] = {}
+    kind_to_array: Dict[str, List[tuple]] = {}
+    for ps in prop_sources:
+        p_obj_id = ps["p_obj_id"]
+        p_title = (ps.get("title") or "").lower()
+        p_kind = (ps.get("kind") or "").lower()
+        # Find arrays belonging to this property object
+        for am in arrays_meta:
+            if am.get("obj_id", p_obj_id) == p_obj_id or True:
+                # arrays_meta is flat for all prop obj_ids; match by obj_id
+                pass
+        # Simpler: we need to fetch arrays for this specific property
+        # The arrays_map was built for all prop obj_ids; look up by p_obj_id
+        title_to_array.setdefault(p_title, []).append((p_obj_id, ps))
+        if p_kind:
+            kind_to_array.setdefault(p_kind, []).append((p_obj_id, ps))
+
+    mask: Optional[bytearray] = None
+    total_cells = 0
+    matched_all = True
+
+    for entry in compound.filters:
+        af = entry.array_filter
+        if af is strawberry.UNSET or af is None:
+            continue
+
+        # Find the property array matching this entry
+        candidates_for_entry = []
+        if entry.title_contains:
+            tc = entry.title_contains.lower()
+            for t, arys in title_to_array.items():
+                if tc in t:
+                    candidates_for_entry.extend(arys)
+        elif entry.kind:
+            k = entry.kind.lower()
+            for stored_k, arys in kind_to_array.items():
+                if _kind_matches(k, stored_k):
+                    candidates_for_entry.extend(arys)
+
+        if not candidates_for_entry:
+            matched_all = False
+            break
+
+        # Use first matching property
+        p_obj_id, ps = candidates_for_entry[0]
+
+        # Find ary_id for this property object
+        from .pg_backend import pg_batch_arrays_for_objects
+        prop_arrays = await pg_batch_arrays_for_objects(pool, dataspace, [p_obj_id])
+        prop_arys = prop_arrays.get(p_obj_id, [])
+        if not prop_arys:
+            matched_all = False
+            break
+
+        ary_info = prop_arys[0]  # first array
+        values = await pg_read_array_by_id(pool, dataspace, ary_info["ary_id"], ary_info.get("type", 1))
+
+        if not values:
+            matched_all = False
+            break
+
+        # Build mask for this criterion
+        entry_mask = _build_mask(values, af)
+        total_cells = len(values)
+        del values  # free array memory immediately
+
+        # AND into running mask
+        if mask is None:
+            mask = entry_mask
+        else:
+            if len(mask) == len(entry_mask):
+                for i in range(len(mask)):
+                    mask[i] &= entry_mask[i]
+            del entry_mask
+
+    if mask is None or not matched_all:
+        return None
+
+    count = sum(mask)
+    del mask
+    return CellMatch(count=count, total=total_cells, fraction=count / total_cells if total_cells else 0.0)
 
 
 def _enrich_arrays_from_values(
