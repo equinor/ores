@@ -64,41 +64,53 @@ Can OSDU's existing schema and services support this without additional graph in
 ### Graphic
 
 ```mermaid
-mindmap
-  root((Decision<br/>Gates))
-    Traceability
-      Evidence chains
-      Audit trail
-    Cross-gate
-      Volume evolution
-      Risk lifecycle
-    Gate readiness
-      Checklist
-      Completeness
-    Alternatives
-      Side-by-side
-      Ranked evaluation
-    Provenance
-      Activity records
-      Who/when/why
+graph TB
+    subgraph TIME["Through Time"]
+        direction LR
+        DG0["DG0"] --> DG1["DG1"] --> DG2["DG2"] --> DG3["DG3"] --> FID["FID"]
+    end
+
+    subgraph SPACE["Across Space"]
+        direction LR
+        CELL["Cell"] --> WELL["Well"] --> SEG["Segment"] --> FIELD["Field"] --> PORT["Portfolio"]
+    end
+
+    TIME --- BRIDGE
+    SPACE --- BRIDGE
+
+    BRIDGE["Use cases at<br/>the intersection"]
+    BRIDGE --> UC1["Gate readiness"]
+    BRIDGE --> UC2["Volume delta"]
+    BRIDGE --> UC3["Compound filter"]
+    BRIDGE --> UC4["Alternative eval"]
+    BRIDGE --> UC5["Portfolio ML"]
+
+    style TIME fill:transparent,stroke:#3b82f6
+    style SPACE fill:transparent,stroke:#10b981
+    style BRIDGE fill:#8b5cf6,color:#fff
+    style DG2 fill:#2563eb,color:#fff
+    style FIELD fill:#10b981,color:#fff
 ```
 
 ### Text
 
-| Use Case | What Teams Need | Relationship Pattern |
-|---|---|---|
-| **Decision traceability** | Link every DG decision to its evidence chain | `evidencedBy`, `supersedes` |
-| **Cross-gate analysis** | How volumes/risks/economics evolve DG1→FID | Lifecycle events + delta queries |
-| **Gate readiness** | "What's missing?" before a gate review | Checklist with completion status |
-| **Risk lifecycle** | Track escalation, mitigation, addition per gate | `constrainedBy`, `mitigates` |
-| **Alternative comparison** | Compare development concepts side-by-side | `alternativeTo` + ranked evaluation |
-| **Provenance** | Who changed what, when, with what impact | Activity records as first-class verbs |
-| **Evidence packages** | Frozen artifact bundles for regulatory review | PersistedCollections linked to decisions |
+| Axis | Scale | Use Case | ORES Feature |
+|---|---|---|---|
+| **Time** | Per gate | Gate readiness — is the evidence complete? | Progress bar + milestone checklist |
+| **Time** | Cross-gate | Volume / risk / economics evolution DG0→FID | Cross-gate analysis + trend charts |
+| **Time** | Lifecycle | Risk escalation, mitigation, resolution | Risk evolution timeline |
+| **Space** | Cell / property | Where is the sweet spot? (multi-property AND) | Compound filter on grid arrays |
+| **Space** | Well / interval | Best completion interval above OWC? | Well log deep search + markers |
+| **Space** | Segment / fault block | Is injection reaching the producer? | Connectivity explorer + fault data |
+| **Space** | Field | Bypassed oil, water breakthrough, segment ranking | Field dev presets (one-click) |
+| **Space** | Portfolio | P50 bias across assets, risk attribution | Cross-asset BD queries + ML corpus |
+| **Both** | Bridge | Decision → query → improve model → next gate | Feedback loop (provenance chain) |
 
 > **Comment**
-> - These aren't hypothetical — they come from real Equinor gate processes.
-> - Every one maps to a specific OSDU schema field pattern (next slide).
-> - The key theme: decision governance is a relationship-tracking problem.
+> - Use cases span two axes: through time (gate progression) and across space (cell → portfolio).
+> - The compound filter is the bridge: decision record identifies a risk, compound query locates the sweet spot.
+> - Portfolio queries are the long-term payoff: same schema across 50+ assets = queryable corpus.
+> - Every use case maps to an existing feature — not hypothetical.
 
 ---
 
@@ -381,6 +393,56 @@ Further domains: FMU ensemble tracking, well decision trees, CCS monitoring life
 > - Risk evolution analysis reveals systematic patterns — which risk types always escalate?
 > - All of this requires typed, queryable evidence chains — exactly what we've built.
 > - AI/ML angle: structured decision data as training corpus for decision-support models.
+
+---
+
+## Slide 9b: The Feedback Loop
+
+### Graphic
+
+```mermaid
+graph LR
+    BD["<b>BD</b><br/>Decision record<br/><i>identifies gap</i>"]
+    QUERY["<b>Query</b><br/>Compound filter<br/><i>locates sweet spot</i>"]
+    ANALYSE["<b>Analyse</b><br/>Cross-gate delta<br/><i>tracks evolution</i>"]
+    BRANCH["<b>Branch</b><br/>Dataspace clone<br/><i>tests alternative</i>"]
+    IMPROVE["<b>Improve</b><br/>Update geomodel<br/><i>new simulation</i>"]
+    DECIDE["<b>Decide</b><br/>Next-gate BD<br/><i>supersedes prior</i>"]
+
+    BD -->|"risk: compartment"| QUERY
+    QUERY -->|"Sw>0.5 in EastLowland"| ANALYSE
+    ANALYSE -->|"volume -8%, risk +2"| BRANCH
+    BRANCH -->|"infill well scenario"| IMPROVE
+    IMPROVE -->|"new REV, updated risk"| DECIDE
+    DECIDE -->|"supersedes"| BD
+
+    style BD fill:#2563eb,color:#fff
+    style QUERY fill:#10b981,color:#fff
+    style ANALYSE fill:#8b5cf6,color:#fff
+    style BRANCH fill:#f59e0b,color:#000
+    style IMPROVE fill:#ef4444,color:#fff
+    style DECIDE fill:#2563eb,color:#fff
+```
+
+### Text
+
+The analytical journey is a cycle:
+
+| Step | Action | Data flow |
+|---|---|---|
+| **1. Decision** | BD risk identifies "fault compartmentalisation" | BD → risk record |
+| **2. Query** | Compound filter: PORO > 0.2 AND PERM > 50 AND Sw < 0.5 | Grid arrays → sweet-spot cells |
+| **3. Analyse** | Cross-gate delta: STOIIP -8%, 2 new risks since DG1 | Volume + risk evolution |
+| **4. Branch** | Clone dataspace → add infill well → run simulation | RDDMS clone → new scenario |
+| **5. Improve** | Updated geomodel with infill well scenario | New REV + revised risks |
+| **6. Decide** | New BD (DG2) supersedes DG1, records outcome | BD with updated Parameters[] |
+
+All connected through `Parameters[]` edges and `Activity` provenance.
+
+> **Comment**
+> - This is the narrative arc the demo should follow.
+> - Each step is a live feature: BD panels → /keys compound filter → /analyse → dataspace clone → /add-dg
+> - The cycle closes: the next BD supersedes the prior, and cross-gate analytics show the delta.
 
 ---
 
