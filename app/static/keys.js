@@ -782,6 +782,28 @@ if (ezExMarkers) {
   });
 }
 
+// Easy-mode field dev examples — these switch to GraphQL tab and load the full preset
+const _ezFieldDevExamples = [
+  { id: 'ez-ex-bypassed', preset: 'field_bypassed_oil' },
+  { id: 'ez-ex-highperm', preset: 'field_water_breakthrough' },
+  { id: 'ez-ex-ntg', preset: 'field_completion_ntg' },
+  { id: 'ez-ex-poro', preset: 'field_segment_ranking' },
+];
+_ezFieldDevExamples.forEach(ex => {
+  const btn = $(ex.id);
+  if (btn) {
+    btn.addEventListener('click', () => {
+      // Switch to GraphQL tab
+      $('mode-advanced').click();
+      // Select the preset in dropdown and load it
+      gqlPreset.value = ex.preset;
+      gqlLoadPreset();
+      // Auto-run
+      $('gql-run').click();
+    });
+  }
+});
+
 // Load reference data on init
 loadReferenceData();
 

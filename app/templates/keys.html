@@ -325,6 +325,14 @@
             Examples:
             <span class="btn" id="ez-ex-markers" style="font-size:11px;padding:2px 9px;"
                   title="Wellbore markers grouped by the horizon/feature they pick — renders bedding-disk markers in 3D">🪨 Markers by horizon (3D)</span>
+            <span class="btn" id="ez-ex-bypassed" style="font-size:11px;padding:2px 9px;"
+                  title="Find bypassed oil: high Sw zones with good permeability (compound query)">🛢️ Bypassed oil</span>
+            <span class="btn" id="ez-ex-highperm" style="font-size:11px;padding:2px 9px;"
+                  title="Water breakthrough diagnosis: high-perm streaks + fault connections">💧 Water breakthrough</span>
+            <span class="btn" id="ez-ex-ntg" style="font-size:11px;padding:2px 9px;"
+                  title="Completion optimization: best NTG × Kh intervals per well">📐 Completion NTG</span>
+            <span class="btn" id="ez-ex-poro" style="font-size:11px;padding:2px 9px;"
+                  title="Rank fault blocks by pore volume and connectivity for infill targeting">📊 Segment ranking</span>
           </div>
 
           <!-- Easy Mode Results (colored cards) -->
@@ -369,6 +377,13 @@
               <option value="native_graph_traverse">Graph traversal with edges</option>
               <option value="native_object_content">Full object content (JSON)</option>
               <option value="native_array_metadata">Array dimensions &amp; types</option>
+            </optgroup>
+            <optgroup label="Field Development">
+              <option value="field_bypassed_oil">Bypassed oil (high Sw + good perm)</option>
+              <option value="field_water_breakthrough">Water breakthrough (high-perm streaks)</option>
+              <option value="field_injection_support">Injection support across faults</option>
+              <option value="field_completion_ntg">Completion optimization (NTG × Kh)</option>
+              <option value="field_segment_ranking">Segment ranking for infill</option>
             </optgroup>
           </select>
           <span class="btn btn-action" id="gql-run">▶ Run</span>
