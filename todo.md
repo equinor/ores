@@ -1,5 +1,18 @@
 # TODO - Ontology-Driven Improvements
 
+## Recently Completed (Aug 2026)
+
+| Item | What was done |
+|---|---|
+| **Compound cell-level AND filter** | New `compoundFilter` input on GraphQL `deepSearch` — ANDs multiple property thresholds at cell level, returns intersection count/fraction via `compoundMatch`. Memory-efficient: loads one array at a time (~7 MB), ANDs into a bytearray mask. PG-only; degrades gracefully on REST backends with a warning. |
+| **Field Development preset queries (6)** | `markers_by_horizon`, `field_bypassed_oil` (compound filter), `field_water_breakthrough` (3 sub-queries), `field_injection_support`, `field_completion_ntg` (3 sub-queries), `field_segment_ranking` (4 sub-queries). Each has a "HOW TO READ" comment explaining result interpretation. |
+| **Easy Mode field dev buttons** | 5 one-click buttons in Keys UI Easy Mode: Markers, Bypassed Oil, Water Breakthrough, Completion Pay, Segment Overview. Run full GraphQL presets but stay in Easy Mode with rendered results. |
+| **Easy Mode compound result rendering** | `renderCompoundResults()` displays multi-alias deepSearch results with explanation banner. `extractRenderableObjects()` scans all aliases in compound query responses for 3D visualization. |
+| **Drogon catalog records (13)** | Ingested to eqndev + interop: IjkGrid, WellboreFrame, Trajectory, Fault, StructuralOrg, GridConnection, OrganizationFeature, WellboreMarkerFrame objects for the Drogon field. |
+| **PG backend bug fixes** | Fixed `_apply_compound`: was querying `obj.guid` (doesn't exist) → corrected to `res.guid`. Fixed property source query to match `pg_batch_property_sources` pattern (rel.dst_id + typ filter). |
+
+---
+
 ## Already Covered - Ontology Features in M27 OSDU + ORES Today
 
 | Ontology Concept | OSDU/ORES Coverage | Status |
@@ -16,8 +29,8 @@
 | **Cross-gate namespace** | CollaborationProject as persistent master-data across DG1→FID; SoE↔SoR bridge | ✅ Full |
 | **Comparison / analytics** | `analyse.py`: cross-gate volume deltas, risk evolution, economics trends, property diffs | ✅ Full |
 | **Record creation with auto-linking** | `addgate.py`: one-click BD + Risks + Collection + CP + Activity; presets per project type | ✅ Full |
-| **Subsurface object graph** | RDDMS GraphQL: object_relations (forward/reverse), deep_search, federated_search across dataspaces | ✅ Full |
-| **Array/grid data access** | RDDMS: HDF5 arrays, statistics, sampling; Grid2d/IjkGrid property visualization | ✅ Full |
+| **Subsurface object graph** | RDDMS GraphQL: object_relations (forward/reverse), deep_search, federated_search across dataspaces; field dev presets with multi-query sub-graph exploration | ✅ Full |
+| **Array/grid data access** | RDDMS: HDF5 arrays, statistics, sampling; Grid2d/IjkGrid property visualization; compound cell-level AND filter with `compoundFilter` | ✅ Full |
 | **Workflow templates** | ActivityTemplate (7 presets: Simulation, FMU, Drilling, ProdTest, Interpretation, QC, Custom) | ✅ Full |
 | **Branching / versioning** | RDDMS dataspace clone + ETP transactions (start/commit/rollback) | ✅ Infrastructure exists, not yet surfaced as "alternatives" |
 | **Actions (verbs on objects)** | Activity + ActivityTemplate already model actions; each action run = Activity record with typed Parameters[] | ✅ Schema exists - surface in UI as named verbs |
@@ -26,6 +39,9 @@
 | **Decision alternatives** | `ext.equinor.Alternatives[]` on BD already holds Name, Rank, Rationale, RecommendedAction | ✅ Schema exists - already in Drogon demo |
 | **Gate checklist / required items** | `ActivityStates[]` with custom MilestoneID + ActivityStatusID ref-data; or derive from ActivityStateTemplate | ✅ Schema exists - define ref-data items per gate |
 | **Structured annotations** | `Remarks[]` with RemarkSource categorization - use as typed notes/comments | ✅ Schema exists - convention only |
+
+
+
 | **Live collaboration (real-time)** | No push notifications; polling only; no SSE/websocket feeds | ⚠️ Gap (infrastructure) |
 | **User-configurable dashboards** | Fixed templates per view; users cannot compose custom KPI layouts | ⚠️ Gap (UI framework) |
 | **Ontology-level access control** | OSDU ACL per record; no object-type or relationship-scoped permissions | ⚠️ Gap (OSDU platform limitation) |
@@ -128,11 +144,12 @@ No new schemas or APIs. Uses existing BD, Parameters[], Activity, PersistedColle
 - **Effort**: ~4-5 days. RDDMS comparison logic + diff rendering
 
 ### B3. Relationship-Aware Search
-- [ ] Extend search_router to support compound queries: "BD where Parameters[role=Output, kind=REV].P50 > X"
+- [x] Compound cell-level AND filter (`compoundFilter`) — done for RDDMS property arrays
+- [ ] Extend to OSDU side: "BD where Parameters[role=Output, kind=REV].P50 > X"
 - [ ] Requires post-search enrichment filtering (OSDU search can't query nested arrays)
 - [ ] Server-side: fetch candidates by kind → enrich → filter → return
-- **Deps**: Existing enrichment pipeline
-- **Effort**: ~3 days. Query parser + filter logic
+- **Deps**: Existing enrichment pipeline. RDDMS compound filter is the pattern to follow.
+- **Effort**: ~3 days for OSDU side. RDDMS side done.
 
 ### B4. Decision Branches via Dataspace Clone
 - [ ] ORES UI: "Create Alternative" button on BD → clones linked RDDMS dataspace → creates new BD with cloned dataspace reference
