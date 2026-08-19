@@ -1,9 +1,11 @@
 {# ──────────────────────────────────────────────────────────────────────────────
-   BD Ontology Panels: Gate Checklist, Relationship Graph, Activity Timeline
-   Included from search.html when bd_collab data is available.
+   BD Ontology Panels: Gate Checklist, Provenance DAG, Relationship Graph,
+   Alternative Comparison, Activity Timeline.
+   Included from search_bd.html via {% include %}.
+   Available context: rec (enriched record dict), bd_act, ext_eq, etc.
    ────────────────────────────────────────────────────────────────────────────── #}
 
-{# ── Gate Checklist Progress ── #}
+{# ── A1: Gate Checklist Progress ── #}
 {% set collab = rec.bd_collab or {} %}
 {% set checklist = collab.get('checklist') or [] %}
 {% set cl_completed = collab.get('checklist_completed', 0) %}
@@ -31,9 +33,166 @@
 </div>
 {% endif %}
 
-{# Relationship graph removed – merged into main Relationships section in search.html #}
+{# ── A2 + A4: Switchable Graph Panel (Provenance / Relationships) ── #}
+{% set bd_act_dag = bd_act or {} %}
+{% set act_params_dag = bd_act_dag.get('Parameters') or [] %}
+{% set fwd_links = rec.links or [] %}
+{% set ddms_refs = rec.ddms_refs or [] %}
+{% set has_prov = act_params_dag | length > 0 %}
+{% set has_rels = fwd_links | length > 1 or ddms_refs | length > 0 %}
+{% if has_prov or has_rels %}
 
-{# ── Activity Timeline (from LifecycleEvents) ── #}
+{# Pre-compute provenance data for Mermaid #}
+{% if has_prov %}
+{% set dag_inputs = [] %}
+{% set dag_outputs = [] %}
+{% set dag_workflow = [] %}
+{% set dag_labels = bd_act_dag.get('param_labels') or {} %}
+{% for p in act_params_dag if p is mapping %}
+  {% set role = p.get('ParameterRoleID', '') %}
+  {% if 'Output' in role %}{% set _ = dag_outputs.append(p) %}
+  {% elif 'Input' in role %}{% set _ = dag_inputs.append(p) %}
+  {% else %}{% set _ = dag_workflow.append(p) %}{% endif %}
+{% endfor %}
+{% endif %}
+
+<details class="bd-collapse">
+<summary class="bd-section-title" style="cursor:pointer;">Object Graph ▸</summary>
+<div class="graph-panel" id="graph-panel-{{ rec_index }}">
+  {# ── Tab bar ── #}
+  <div class="graph-tabs">
+    {% if has_prov %}<button class="graph-tab active" data-view="prov" onclick="_switchGraph(this,'prov',{{ rec_index }})">Provenance</button>{% endif %}
+    {% if has_rels %}<button class="graph-tab{% if not has_prov %} active{% endif %}" data-view="rels" onclick="_switchGraph(this,'rels',{{ rec_index }})">Relationships</button>{% endif %}
+  </div>
+
+  {# ── Provenance view (Mermaid LR flowchart) ── #}
+  {% if has_prov %}
+  <div class="graph-view{% if has_prov %} active{% endif %}" id="gv-prov-{{ rec_index }}">
+    <pre class="mermaid" id="mmd-prov-{{ rec_index }}">graph LR
+{% for p in dag_inputs[:12] %}
+{% set dop = p.get('DataObjectParameter', '') %}
+{% set plbl = dag_labels.get(dop, '') or p.get('Title', '') or (dop.split('--')[-1].split(':')[0] if dop else p.get('StringParameter', '')[:30]) %}
+{% set safe = plbl | replace('"', "'") | truncate(35, True, '…') %}
+  I{{ loop.index }}["{{ safe }}"]:::inp --> ACT
+{% endfor %}
+{% if dag_inputs|length > 12 %}
+  Imore["+ {{ dag_inputs|length - 12 }} more"]:::muted --> ACT
+{% endif %}
+  ACT["{{ (bd_act_dag.get('Name', 'Activity') | replace('"', "'"))[:40] }}"]:::act
+{% for p in dag_outputs[:12] %}
+{% set dop = p.get('DataObjectParameter', '') %}
+{% set plbl = dag_labels.get(dop, '') or p.get('Title', '') or (dop.split('--')[-1].split(':')[0] if dop else p.get('StringParameter', '')[:30]) %}
+{% set safe = plbl | replace('"', "'") | truncate(35, True, '…') %}
+  ACT --> O{{ loop.index }}["{{ safe }}"]:::out
+{% endfor %}
+{% if dag_outputs|length > 12 %}
+  ACT --> Omore["+ {{ dag_outputs|length - 12 }} more"]:::muted
+{% endif %}
+  classDef inp fill:#ebf8ff,stroke:#bee3f8,color:#2b6cb0
+  classDef out fill:#f0fff4,stroke:#9ae6b4,color:#276749
+  classDef act fill:#fbd38d,stroke:#dd6b20,color:#7b341e,font-weight:bold
+  classDef muted fill:#f7fafc,stroke:#e2e8f0,color:#a0aec0
+{% for p in dag_inputs[:12] %}
+{% set dop = p.get('DataObjectParameter', '') %}
+{% if dop %}  click I{{ loop.index }} href "/search/view/{{ dop }}" "Open record"
+{% endif %}
+{% endfor %}
+{% for p in dag_outputs[:12] %}
+{% set dop = p.get('DataObjectParameter', '') %}
+{% if dop %}  click O{{ loop.index }} href "/search/view/{{ dop }}" "Open record"
+{% endif %}
+{% endfor %}
+</pre>
+  </div>
+  {% endif %}
+
+  {# ── Relationships view (Mermaid radial graph) ── #}
+  {% if has_rels %}
+  <div class="graph-view{% if not has_prov %} active{% endif %}" id="gv-rels-{{ rec_index }}">
+    <pre class="mermaid" id="mmd-rels-{{ rec_index }}">graph TD
+  SELF["{{ (name or 'This Record') | replace('"', "'") }}"]:::self
+{% set ns = namespace(n=0) %}
+{% for l in fwd_links[:20] %}
+{% set ns.n = ns.n + 1 %}
+{% set lbl_info = (rec.linked_labels or {}).get(l.get('id', ''), {}) %}
+{% set lname = (lbl_info.get('name', '') or l.get('id', '').split('--')[-1].split(':')[0]) | replace('"', "'") | truncate(30, True, '…') %}
+{% set lkind = (lbl_info.get('kind', '') or '').split('--')[-1].split(':')[0] %}
+{% set role = (l.get('role', 'ref')).replace('ancestry-', '') %}
+  SELF -->|{{ role }}| L{{ ns.n }}["{{ lname }}"]:::linked
+{% if l.get('id') %}  click L{{ ns.n }} href "/search/view/{{ l.get('id') }}" "Open record"
+{% endif %}
+{% endfor %}
+{% if fwd_links|length > 20 %}
+  SELF --> Lmore["+ {{ fwd_links|length - 20 }} more"]:::muted
+{% endif %}
+{% for ref in ddms_refs[:6] %}
+{% set ns.n = ns.n + 1 %}
+  SELF -->|RDDMS| R{{ ns.n }}["{{ ref.ds | replace('"', "'") }}"]:::rddms
+  click R{{ ns.n }} href "/keys?ds={{ ref.ds }}" "Browse in RDDMS"
+{% endfor %}
+{% if ddms_refs|length > 6 %}
+  SELF --> Rmore["+ {{ ddms_refs|length - 6 }} more"]:::muted
+{% endif %}
+  classDef self fill:#4299e1,stroke:#2b6cb0,color:#fff,font-weight:bold
+  classDef linked fill:#f7fafc,stroke:#e2e8f0,color:#2d3748
+  classDef rddms fill:#fffff0,stroke:#fbd38d,color:#975a16
+  classDef muted fill:#f7fafc,stroke:#e2e8f0,color:#a0aec0
+</pre>
+  </div>
+  {% endif %}
+</div>
+</details>
+{% endif %}
+
+{# ── A3: Alternative Comparison Quick-View ── #}
+{% set alts = ext_eq.get('Alternatives') or [] %}
+{% if alts|length > 1 %}
+<details class="bd-collapse">
+<summary class="bd-section-title" style="cursor:pointer;">Alternative Comparison ({{ alts|length }}) ▸</summary>
+<div style="overflow-x:auto;margin-top:.3rem;">
+  <table class="alt-cmp-table">
+    <thead>
+      <tr>
+        <th>Rank</th><th>Alternative</th><th>Action</th>
+        {% set has_npv = alts | selectattr('NPV_10pct_MUSD', 'defined') | list | length > 0 %}
+        {% set has_capex = alts | selectattr('CAPEX_MNOK', 'defined') | list | length > 0 %}
+        {% set has_irr = alts | selectattr('IRR_pct', 'defined') | list | length > 0 %}
+        {% if has_npv or has_capex or has_irr %}
+          {% if has_npv %}<th>NPV</th>{% endif %}
+          {% if has_capex %}<th>CAPEX</th>{% endif %}
+          {% if has_irr %}<th>IRR</th>{% endif %}
+        {% endif %}
+        <th>Rationale</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for alt in alts | sort(attribute='Rank') %}
+      {% set is_rec = 'approve' in (alt.get('RecommendedAction', '') or '').lower() or 'select' in (alt.get('RecommendedAction', '') or '').lower() or 'recommend' in (alt.get('RecommendedAction', '') or '').lower() %}
+      <tr{% if is_rec %} style="background:#f0fff4;"{% endif %}>
+        <td style="text-align:center;font-weight:700;">{{ alt.get('Rank', '-') }}</td>
+        <td style="font-weight:600;">{{ alt.get('Name', '-') }}</td>
+        <td>{% if alt.get('RecommendedAction') %}<span class="bd-alt-rank" style="background:#e6fffa;color:#276749;">{{ alt.get('RecommendedAction') }}</span>{% else %}-{% endif %}</td>
+        {% if has_npv or has_capex or has_irr %}
+          {% if has_npv %}<td style="text-align:right;">{{ alt.get('NPV_10pct_MUSD', '-') }}{% if alt.get('NPV_10pct_MUSD') is not none %} MUSD{% endif %}</td>{% endif %}
+          {% if has_capex %}<td style="text-align:right;">{{ alt.get('CAPEX_MNOK', '-') }}{% if alt.get('CAPEX_MNOK') is not none %} MNOK{% endif %}</td>{% endif %}
+          {% if has_irr %}<td style="text-align:right;">{{ alt.get('IRR_pct', '-') }}{% if alt.get('IRR_pct') is not none %}%{% endif %}</td>{% endif %}
+        {% endif %}
+        <td style="font-size:.82rem;max-width:18rem;">{{ (alt.get('Rationale', '-') or '-')[:120] }}{% if (alt.get('Rationale', '') or '')|length > 120 %}…{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% set res_name = (rec.data or {}).get('ProjectName', '') or name %}
+{% if res_name %}
+<div style="margin-top:.4rem;font-size:.82rem;">
+  <a href="/analyse?reservoir={{ res_name | urlencode }}">Open full comparison in Analyse →</a>
+</div>
+{% endif %}
+</details>
+{% endif %}
+
+{# ── A6: Activity Timeline (from LifecycleEvents) ── #}
 {% set events = collab.get('events') or [] %}
 {% if events %}
 <details class="bd-collapse">

@@ -83,47 +83,37 @@ Items ranked by implementation complexity. Tiers:
 
 No new schemas or APIs. Uses existing BD, Parameters[], Activity, PersistedCollection, CollaborationProject, search, enrichment, analyse.
 
-### A1. Gate Completeness Progress Bar
-- [ ] Define per-DecisionLevel checklist as a JSON config in ORES (not a schema change - just app logic)
-- [ ] Compare BD's Parameters[] roles against the checklist → "7/9 items linked"
-- [ ] Show progress bar in search result cards and BD detail view
-- **Deps**: None. Uses existing `bd_enrichment` + `addgate` preset definitions
-- **Effort**: ~1 day. Config + UI template update
+### A1. Gate Completeness Progress Bar ✅
+- [x] `_enrich_bd_collaboration()` extracts ActivityStates[] checklist with MilestoneID + completion status
+- [x] Progress bar + checklist grid in `bd_ontology_panels.html` (included from search_bd.html)
+- [x] CSS in `search_styles.html` (`.bd-checklist-bar`, `.bd-cl-*`)
 
-### A2. Visual Provenance DAG
-- [ ] Render Activity → inputs/outputs as a directed graph (D3/Mermaid in template)
-- [ ] `_enrich_bd_activity()` already resolves Activity + ActivityTemplate + parameter labels
-- [ ] Add a "Provenance" tab on BD detail view showing the DAG
-- **Deps**: None. Data already fetched in enrichment
-- **Effort**: ~1 day. Frontend rendering only
+### A2. Visual Provenance DAG ✅
+- [x] Pure HTML/CSS flowchart: Inputs → Activity → Outputs
+- [x] Renders Activity parameters grouped by ParameterRoleID (Input/Output/Workflow)
+- [x] Clickable links navigate to source OSDU records; param_labels resolved
+- [x] Collapsible `<details>` in BD card, shows input/output counts in summary
 
-### A3. Decision Alternative Comparison View
-- [ ] `analyse.py` already compares gates for same Reservoir - extend to compare two BDs at same gate level (alternatives)
-- [ ] Side-by-side: volumes, risks, economics, development concept diffs
-- [ ] UI: pick two BDs → show delta table (reuse existing metric delta logic)
-- **Deps**: A working analyse.py (already exists)
-- **Effort**: ~2 days. Minor backend extension + new template section
+### A3. Decision Alternative Comparison View ✅
+- [x] Inline comparison table in BD card when >1 alternative exists (rank, name, action, economics, rationale)
+- [x] "Open full comparison in Analyse →" link to cross-gate analysis
+- [x] Full alternative comparison already in `analyse.html` (`buildAlternativesSection` + bar charts)
 
-### A4. Object Relationship Graph Explorer
-- [ ] From any record, show forward links (Parameters[], explicit IDs) and reverse links (OSDU reverse lookup)
-- [ ] Render as interactive node graph (D3 force layout or similar)
-- [ ] Clicking a node navigates to that record's detail view
-- **Deps**: Existing search enrichment already resolves forward + reverse links
-- **Effort**: ~2-3 days. New template + recursive link resolution (depth-limited)
+### A4. Object Relationship Graph Explorer ✅
+- [x] Groups forward + reverse OSDU links by role (parent, child, reference, etc.)
+- [x] Clickable nodes navigate to record detail; kind labels shown
+- [x] RDDMS dataspace refs shown as separate group with link to Keys browser
+- [x] Central self-node + grouped satellite layout in `bd_ontology_panels.html`
 
-### A5. Cross-Gate Risk Evolution Timeline
-- [ ] `analyse.py` already tracks risk added/removed/escalated per gate
-- [ ] Render as a timeline/swimlane view: risk lifecycle across DG1→DG2→DG3
-- [ ] Highlight escalations, new risks, mitigated items
-- **Deps**: analyse.py risk diff logic
-- **Effort**: ~1-2 days. Visualization only
+### A5. Cross-Gate Risk Evolution Timeline ✅
+- [x] Risk evolution table + Chart.js bar chart in `analyse.html` (`buildRiskSection` + `chartRiskEvo`)
+- [x] Shows open/mitigated/total per gate with severity change chips (↑/↓/✓)
+- [x] Stacked bar + line chart with per-gate risk counts
 
-### A6. CollaborationProject Activity Feed (simulated)
-- [ ] Query Activities linked to CP (via PriorActivityIDs or Parameters[])
-- [ ] Show chronological feed: "DG1 created", "Volume estimate updated (Activity X)", "Risk R3 added"
-- [ ] Derive from existing Activity records + BD creation timestamps
-- **Deps**: None - interprets existing records as events
-- **Effort**: ~2 days. Query logic + feed UI
+### A6. CollaborationProject Activity Feed ✅
+- [x] `_enrich_bd_collaboration()` extracts LifecycleEvents[] from CP
+- [x] Vertical timeline in `bd_ontology_panels.html` with colored dots per event type
+- [x] Event types: CreationEvent, EvidenceAdded, RiskEscalation, RiskMitigation, VolumeUpdate, StateTransition, ApprovalGranted
 
 ---
 
