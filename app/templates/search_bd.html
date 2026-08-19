@@ -654,8 +654,16 @@
                 {% endif %}
                 <div class="ds-entry">
                   <div class="ds-name">
-                    {% if ext_url %}<a href="{{ ext_url }}" target="_blank" rel="noopener">{{ p.get('Title') or 'External Source' }}</a>{% elif ds_id %}<a href="/search/view/{{ ds_id }}" target="_blank">{{ ds_info.name or p.get('Title') or 'Dataspace' }}</a>{% else %}{{ p.get('Title') or 'Dataspace' }}{% endif %}
-                    <span style="font-size:.78rem;background:{% if ext_url %}#fed7d7{% elif 'Wellbore' in badge or 'Well' in badge %}#e9d8fd{% else %}#bee3f8{% endif %};border-radius:999px;padding:.1rem .4rem;color:{% if ext_url %}#9b2c2c{% elif 'Wellbore' in badge or 'Well' in badge %}#553c9a{% else %}#2b6cb0{% endif %};margin-left:.4rem;font-weight:400;">{{ badge }}</span>
+                    {# When both OSDU record and external URL exist, show record link + "Open in …" #}
+                    {% if ds_id and ext_url %}
+                      <a href="/search/view/{{ ds_id }}">{{ ds_info.name or p.get('Title') or 'Record' }}</a>
+                      <a href="{{ ext_url }}" target="_blank" rel="noopener" style="margin-left:.5rem;font-size:.82rem;color:#2b6cb0;">Open in {{ badge }} ↗</a>
+                    {% elif ext_url %}
+                      <a href="{{ ext_url }}" target="_blank" rel="noopener">{{ p.get('Title') or 'External Source' }}</a>
+                    {% elif ds_id %}
+                      <a href="/search/view/{{ ds_id }}" target="_blank">{{ ds_info.name or p.get('Title') or 'Dataspace' }}</a>
+                    {% else %}{{ p.get('Title') or 'Dataspace' }}{% endif %}
+                    <span style="font-size:.78rem;background:{% if ext_url and not ds_id %}#fed7d7{% elif 'Wellbore' in badge or 'Well' in badge or 'WellCom' in badge %}#e9d8fd{% else %}#bee3f8{% endif %};border-radius:999px;padding:.1rem .4rem;color:{% if ext_url and not ds_id %}#9b2c2c{% elif 'Wellbore' in badge or 'Well' in badge or 'WellCom' in badge %}#553c9a{% else %}#2b6cb0{% endif %};margin-left:.4rem;font-weight:400;">{{ badge }}</span>
                   </div>
                   {% if p.get('Selection') or p.get('Description') %}
                   <div style="font-size:.82rem;color:#718096;margin-top:.1rem;">{{ p.get('Selection') or p.get('Description') }}</div>
