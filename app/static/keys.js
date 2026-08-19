@@ -3073,6 +3073,11 @@ const GQL_PRESETS = {
 # Each marker frame ties a well to a stratigraphic surface — the
 # relations show which GeneticBoundaryFeature (horizon) is picked.
 # Results are renderable in 3D as bedding-disk markers along trajectories.
+#
+# HOW TO READ: Each object is a WellboreMarkerFrameRepresentation — one
+# per well. Its relations list the horizons (GeneticBoundaryFeature) that
+# the well penetrates. Compare relations across wells to see which
+# horizons are picked consistently and which are missing (eroded/faulted out).
 {
   deepSearch(
     $DS_ARG
@@ -3201,69 +3206,41 @@ const GQL_PRESETS = {
   // These presets combine spatial topology, properties, and production
   // to answer real subsurface questions for field development workflows.
 
-  field_bypassed_oil: `# FIELD DEV: Bypassed oil screening — per-grid property overview
-# Shows ALL properties on each grid object so you can cross-reference:
-#   Sw (water saturation) — low Sw means oil still in place
-#   KLOGH (permeability)  — high perm means producible
-#   PHIT (porosity)       — confirms reservoir quality
+  field_bypassed_oil: `# FIELD DEV: Bypassed oil screening — compound cell intersection
+# Finds grid cells where BOTH conditions are true simultaneously:
+#   Sw < 0.4  (oil still in place — not swept)
+#   KLOGH > 100 mD  (permeable enough to produce)
 #
-# One filtered sub-query highlights the key criterion (low Sw < 0.4).
-# Compare the Sw and KLOGH matchingCells fractions on the SAME grid
-# to estimate the overlap — the true bypassed oil zone.
+# The compoundFilter ANDs the criteria at cell level and returns
+# the intersection count — the actual bypassed oil cell set.
+# Individual property stats are also shown for context.
 #
-# Note: the API filters one property at a time. The "all properties"
-# query gives you the full picture per grid to cross-reference visually.
+# HOW TO READ: Each object is an IjkGrid (the 3D geocellular model).
+# compoundMatch shows how many cells pass ALL filters simultaneously —
+# these are the bypassed-oil sweet spots. The fraction tells you what
+# share of the reservoir is prospective. Each property under the grid
+# shows its full statistics so you can gauge the overall distribution.
 {
-  allGridProps: deepSearch(
+  deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_IjkGridRepresentation"
     includeStatistics: true
+    compoundFilter: {
+      filters: [
+        { titleContains: "Sw", arrayFilter: { operator: LT, threshold: 0.4 } }
+        { titleContains: "KLOGH", arrayFilter: { operator: GT, threshold: 100.0 } }
+      ]
+    }
     limit: 5
   ) {
     backend totalScanned totalMatched
+    compoundMatch { count total fraction }
+    warnings
     objects {
       uuid title
       properties {
         title kind uom
         statistics { count minValue maxValue mean stdDev }
-      }
-    }
-  }
-  lowSwCells: deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_IjkGridRepresentation"
-    includeStatistics: true
-    propertyFilter: {
-      titleContains: "Sw"
-      arrayFilter: { operator: LT, threshold: 0.4 }
-    }
-    limit: 5
-  ) {
-    totalMatched
-    objects {
-      uuid title
-      properties {
-        title
-        matchingCells { count total fraction }
-      }
-    }
-  }
-  highPermCells: deepSearch(
-    $DS_ARG
-    typeName: "resqml20.obj_IjkGridRepresentation"
-    includeStatistics: true
-    propertyFilter: {
-      titleContains: "KLOGH"
-      arrayFilter: { operator: GT, threshold: 100.0 }
-    }
-    limit: 5
-  ) {
-    totalMatched
-    objects {
-      uuid title
-      properties {
-        title
-        matchingCells { count total fraction }
       }
     }
   }
@@ -3279,6 +3256,13 @@ const GQL_PRESETS = {
 #
 # Fault connections show inter-segment transmissibility —
 # a high-perm well near a conductive fault is the likely breakthrough path.
+#
+# HOW TO READ: allWellLogs lists every well's log frame with all its
+# properties — compare mean Sw across wells to spot which are watering out.
+# highPermStreaks shows only frames where KLOGH > 500 mD; matchingCells
+# tells you what fraction of each well's log is high-perm streak.
+# faultConnections lists inter-segment links; their transmissibility
+# properties tell you if water can cross from injector to producer segments.
 {
   allWellLogs: deepSearch(
     $DS_ARG
@@ -3340,6 +3324,13 @@ const GQL_PRESETS = {
 #
 # Expected result: A-1/A-2 (same segment) get pressure support.
 # A-3 (EastLowland, across F2 baffle) does NOT — pressure declining.
+#
+# HOW TO READ: Each fault object's relations show the horizons it cuts.
+# structuralOrg ties faults into named segments. wells lists trajectories
+# whose relations reveal which grid/segment each well penetrates.
+# Cross-reference: if two wells share relations to the same segment but
+# a fault with "baffle" or "seal" character sits between, injection
+# support is limited — that's your pressure-decline explanation.
 {
   faults: deepSearch(
     $DS_ARG
@@ -3387,6 +3378,12 @@ const GQL_PRESETS = {
 # Filter: PHIT > 0.15 and KLOGH > 100 identify net pay intervals.
 # Low Sw (< 0.3) confirms the interval is above the oil-water contact.
 # Relations show which wellbore each log belongs to.
+#
+# HOW TO READ: Each sub-query returns the same well log frames filtered
+# differently. matchingCells.fraction is the key metric — it tells you
+# what share of each well's log passes the threshold. A well that scores
+# high on all three (good PHIT, good KLOGH, low Sw) is the best
+# completion candidate. Compare fractions across wells to rank them.
 {
   payPorosity: deepSearch(
     $DS_ARG
@@ -3463,6 +3460,14 @@ const GQL_PRESETS = {
 #
 # Cross-reference fault names with well relations to see
 # which segments are drained vs. undrained for infill candidates.
+#
+# HOW TO READ: faults lists each named fault (F1–F6) with its horizon
+# relations. structuralOrg shows how faults and horizons are grouped into
+# segments. gridConnections lists cross-fault cell links — their property
+# statistics (transmissibility) tell you if segments communicate.
+# wells shows each trajectory and its relations to grids/wellbores.
+# A segment with no wells but connected to a producing segment via
+# a conductive fault is your top infill target.
 {
   faults: deepSearch(
     $DS_ARG

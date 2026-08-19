@@ -2042,6 +2042,7 @@ async def deep_search_impl(
     limit: int,
     relation_filter: Optional[List[str]] = None,
     category: Optional[str] = None,
+    compound_filter: Optional[CompoundFilter] = None,
 ) -> DeepSearchResult:
     """Core deep_search implementation, independent of Strawberry context.
 
@@ -2102,6 +2103,89 @@ async def deep_search_impl(
             result.warnings = validation_warnings + existing or None
         return result
 
+    # Helper: apply compound filter after search completes (PG only)
+    async def _apply_compound(result: DeepSearchResult) -> DeepSearchResult:
+        if not compound_filter or not compound_filter.filters:
+            return result
+        pool = await _get_pool()
+        if not pool or not result.objects:
+            return result
+        # compound filter only works on PG backend (needs array access)
+        if result.backend != "PostgreSQL":
+            result.warnings = list(result.warnings or []) + [
+                "compoundFilter requires PostgreSQL backend (not available via REST)"
+            ]
+            return result
+
+        ds = ds_list[0] if ds_list else None
+        if not ds:
+            return result
+
+        # Apply compound filter to each matched object
+        from .pg_backend import pg_schema_for_dataspace
+        schema = await pg_schema_for_dataspace(pool, ds)
+        if not schema:
+            return result
+
+        compound_results = []
+        for obj in result.objects:
+            # Look up obj_id and prop_sources from PG
+            async with pool.acquire() as conn:
+                row = await conn.fetchrow(
+                    f"SELECT obj_id FROM {schema}.res WHERE guid=$1", obj.uuid
+                )
+                if not row:
+                    continue
+                obj_id = row["obj_id"]
+                # Get property sources (same pattern as pg_batch_property_sources)
+                prop_rows = await conn.fetch(f"""
+                    SELECT r2.obj_id as p_obj_id, r2.name as title,
+                           t2.xml as p_typ_xml
+                    FROM {schema}.rel rel
+                    JOIN {schema}.res r2 ON rel.obj_id = r2.obj_id
+                    JOIN {schema}.typ t2 ON r2.typ_id = t2.id
+                    WHERE rel.dst_id = $1
+                      AND t2.xml IN ('obj_ContinuousProperty',
+                                     'obj_DiscreteProperty',
+                                     'obj_CategoricalProperty',
+                                     'obj_PointsProperty')
+                """, obj_id)
+
+            prop_sources = [
+                {"p_obj_id": pr["p_obj_id"], "title": pr["title"] or "",
+                 "kind": pr["title"] or ""}
+                for pr in prop_rows
+            ]
+
+            cm = await _apply_compound_filter(
+                pool, ds, obj_id, prop_sources, [], compound_filter,
+            )
+            if cm:
+                compound_results.append((obj, cm))
+
+        # Attach to result: use first object's compound match
+        # (typically all objects are the same grid)
+        if compound_results:
+            total_compound = sum(cm.count for _, cm in compound_results)
+            total_cells = sum(cm.total for _, cm in compound_results)
+            result.compound_match = CellMatch(
+                count=total_compound,
+                total=total_cells,
+                fraction=total_compound / total_cells if total_cells else 0.0,
+            )
+            n_filters = len(compound_filter.filters)
+            labels = [
+                f.title_contains or f.kind or "?"
+                for f in compound_filter.filters
+            ]
+            result.warnings = list(result.warnings or []) + [
+                f"Compound filter: {' AND '.join(labels)} → "
+                f"{total_compound:,} / {total_cells:,} cells "
+                f"({result.compound_match.fraction * 100:.1f}%) match ALL {n_filters} criteria"
+            ]
+
+        return result
+
     # Single dataspace: use existing path
     if len(ds_list) == 1:
         # Route 1: Discovery batch graph (MR 271) — tried first when enabled
@@ -2133,7 +2217,7 @@ async def deep_search_impl(
                     property_filter, include_relations, include_statistics,
                     include_sample_values, sample_size, limit, relation_filter,
                 ))
-            return _merge_warnings(result)
+            return _merge_warnings(await _apply_compound(result))
 
         # Route 3: REST N+1 fallback (always available)
         return _merge_warnings(await _deep_search_rest(
