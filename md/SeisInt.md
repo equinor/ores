@@ -597,3 +597,69 @@ Each RDDMS object should have **both** a universal and a specialised catalog ent
 | `POST /dataspaces/:id/clone` | Fork dataspace for project |
 | `POST /dataspaces/:id/lock` | Freeze as Source of Record |
 
+---
+
+## Appendix F: Demo Guide — Seismic Interpretation Features
+
+### Browsing interpretation objects
+
+1. `/keys` → Easy Mode → Browse → select **Structural** category
+2. Lists all `FaultInterpretation`, `HorizonInterpretation`, `TectonicBoundaryFeature` etc. in the dataspace
+3. Shows type badges and object counts per category
+
+### Querying fault connectivity
+
+```graphql
+# Find all faults and their grid connections
+{
+  faults: deepSearch(
+    dataspace: "maap/drogon"
+    typeName: "resqml20.obj_FaultInterpretation"
+    includeRelations: true
+    limit: 10
+  ) {
+    objects { uuid title relations { name typeName direction } }
+  }
+  connections: deepSearch(
+    dataspace: "maap/drogon"
+    typeName: "resqml20.obj_GridConnectionSetRepresentation"
+    includeStatistics: true
+    includeRelations: true
+    limit: 5
+  ) {
+    objects { uuid title properties { title statistics { mean } } }
+  }
+}
+```
+
+### Traversing the interpretation chain
+
+Use the Relations query in Easy Mode or GraphQL to walk:
+
+```
+LocalBoundaryFeature → FaultInterpretation → SeismicFault / GenericRepresentation
+LocalBoundaryFeature → HorizonInterpretation → SeismicHorizon / StructureMap
+```
+
+1. `/keys` → Relations → paste a `FaultInterpretation` UUID → direction "both"
+2. **Forward** (targets): shows the `LocalBoundaryFeature` it interprets
+3. **Reverse** (sources): shows all `SeismicFault` and `GenericRepresentation` records pointing to it
+
+### Linking to field development decisions
+
+Faults are referenced in the field development context via:
+- **GridConnectionSet** properties (transmissibility multipliers per fault)
+- **Compound filter**: `/keys` → Bypassed Oil button uses fault-block isolation as a selection criterion
+- **Connectivity Explorer** (`/connectivity`): checks if faults between two wells are barriers or conduits
+- **BD Risk records**: fault compartmentalisation risks reference the interpretation objects
+
+### Demo flow: seismic → structure → decision
+
+| Step | Where | What |
+|------|-------|------|
+| 1 | `/keys` → Browse "structural" | List faults and horizons in the Drogon dataspace |
+| 2 | `/keys` → Relations on a fault UUID | See GridConnectionSet + grid links |
+| 3 | `/connectivity` → A-2 vs A-3, Valysar | Shows F2 as a baffle between segments |
+| 4 | `/search` → "Drogon DG1" BD | Risk record "FaultCompartment" references F2 |
+| 5 | `/keys` → Segment Overview button | Ranks segments by property quality — East Lowland underperforms |
+

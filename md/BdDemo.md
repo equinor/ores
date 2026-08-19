@@ -746,3 +746,61 @@ The full pattern:
 
 The knowledge graph emerges at the application layer (ORES), not from the platform. OSDU provides schema-validated storage and keyword search. ORES provides graph traversal, enrichment, visualisation, and cross-gate analytics.
 
+---
+
+## 15. Demo Guide — New Ontology Features
+
+The BD search and analysis views now include six ontology-driven panels. Here's how to demonstrate them:
+
+### Gate Completeness Progress Bar
+
+1. `/search` → search for a BD with `ActivityStates[]` populated (e.g. "Drogon DG2")
+2. The **progress bar** appears at the top of the BD card showing checklist completion (e.g. 7/10 milestones satisfied)
+3. Expand the checklist grid to see each `MilestoneID` with its status (Satisfied / Outstanding / Waived)
+4. **Talking point:** Gate readiness is data-driven — no separate spreadsheet tracking
+
+### Visual Provenance DAG
+
+1. In any BD card, expand the **"Provenance"** details panel
+2. The flowchart shows: Inputs → Activity → Outputs, grouped by `ParameterRoleID`
+3. Click any node to navigate to the source OSDU record
+4. **Talking point:** Every decision is traceable to the workflow execution that produced its evidence
+
+### Decision Alternative Comparison
+
+1. Search for a BD with multiple alternatives (e.g. "Drogon DG1" — 3 alternatives)
+2. The **comparison table** appears inline: rank, name, recommended action, economics, rationale
+3. Click **"Open full comparison in Analyse →"** for cross-gate alternative evolution
+4. **Talking point:** Alternatives are structured data, not buried in slide decks
+
+### Object Relationship Graph Explorer
+
+1. In any BD card, expand the **"Relationships"** panel
+2. See grouped links: parents, children, references, RDDMS dataspaces — each clickable
+3. RDDMS dataspace references link directly to the `/keys` browser for that dataspace
+4. **Talking point:** The full evidence graph is navigable from the decision record
+
+### Cross-Gate Risk Evolution
+
+1. `/analyse` → select multiple Drogon gates (DG0, DG1, DG2)
+2. The **risk evolution** section shows open/mitigated/total per gate with trend indicators (↑/↓/✓)
+3. Stacked bar chart visualises risk profile changes over time
+4. **Talking point:** Risk evolution across gates answers "are we managing uncertainty or just adding it?"
+
+### Activity Feed (CollaborationProject)
+
+1. In any BD card linked to a CollaborationProject, expand the **"Activity Feed"** panel
+2. The vertical timeline shows events: EvidenceAdded, RiskEscalation, VolumeUpdate, StateTransition
+3. Each event has a timestamp, type badge, and description
+4. **Talking point:** The project journal is auto-populated from `LifecycleEvents[]` — no manual logging
+
+### Connecting to subsurface data
+
+To demonstrate the full subsurface-to-decision link:
+
+1. Start at `/keys` → run **Bypassed Oil** compound filter on `maap/drogon`
+2. Note the grid UUIDs with high sweet-spot fraction
+3. Switch to `/search` → find the Drogon DG1 BD
+4. Expand provenance → the Activity references the same geomodel
+5. **Talking point:** The compound filter identifies subsurface sweet spots; the BD tracks the decision made based on those results
+

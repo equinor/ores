@@ -391,3 +391,29 @@ The UI also supports creating **ActivityTemplate** and **Activity** records (Act
 **When to use which:**
 - **Scripts** (`run_pipeline.sh`): reproducible, version-controlled, full pipeline including REV/CBT/RDDMS
 - **Web UI** (`/add-dg`): one-off demos, exploring BD structure, rapid prototyping without Python setup
+
+---
+
+## Demo Walkthrough — Field Development Features
+
+The Drogon dataset now includes **13 RDDMS catalog records** (IjkGrid, WellboreFrame, Trajectory, Fault, StructuralOrganization, GridConnectionSet, OrganizationFeature, WellboreMarkerFrame) enabling end-to-end field development demos.
+
+### Guided demo flow
+
+| Step | Where | What to show |
+|------|-------|--------------|
+| 1. Browse subsurface objects | `/keys` → Easy Mode → Browse → IjkGrid | Shows all grids in `maap/drogon` with type badges |
+| 2. Filter by property | `/keys` → Easy Mode → Deep Search → PORO > 0.25 | Single-property filtering with statistics and match fraction |
+| 3. Compound filter | `/keys` → **Bypassed Oil** button | Multi-property AND (PORO + PERM + Sw) → sweet-spot cell fraction |
+| 4. Field dev presets | `/keys` → **Water Breakthrough** or **Segment Overview** | Multi-alias sub-queries with explanation banners |
+| 5. Graph traversal | `/keys` → Relations → pick a grid UUID | Forward/reverse RESQML links (grid → CRS, properties → grid) |
+| 6. Federated search | `/keys` → Easy Mode → Federated → "Drogon" | OSDU catalog + RDDMS combined results |
+| 7. Decision gate | `/search` → search "Drogon DG1" | BD card with provenance DAG, alternatives, gate checklist |
+| 8. Cross-gate analysis | `/analyse` → select Drogon gates | Volume deltas, risk evolution timeline, economics comparison |
+
+### Key talking points
+
+- **Compound filter** answers "where is the sweet spot?" — not just single-property screening
+- **Multi-alias presets** combine 3–4 sub-queries into one assessment (water breakthrough = high-Sw zones + high-perm streaks + production anomaly)
+- **Subsurface ↔ decision link**: the BD record's `Parameters[]` reference the Activity that produced the geomodel; the same geomodel objects are queryable via compound filter
+- **No code needed**: Easy Mode field dev buttons run production GraphQL presets behind the scenes

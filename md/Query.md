@@ -487,6 +487,107 @@ BD Evidence:   4D confirms communication, tracer detected A-5→A-1 (3 months)
 
 ---
 
+## Compound Filter — Multi-Property Cell-Level AND
+
+The `compoundFilter` extends `deepSearch` to apply **multiple property thresholds simultaneously at cell level**. Instead of asking "which grids have porosity > 0.25?" (single filter), you can ask "which cells have porosity > 0.25 AND permeability > 100 AND Sw < 0.4?" — only cells satisfying ALL conditions count.
+
+### How it works
+
+1. Each condition is evaluated independently as a bitmask over the property array
+2. Bitmasks are ANDed together → only cells passing ALL conditions survive
+3. The result reports the intersection count/fraction via `compoundMatch`
+4. Memory-efficient: loads one array at a time (~7 MB), ANDs into a running bytearray mask
+
+> **Backend:** PG-only. Degrades gracefully on REST backends with a warning in `queryDescription`.
+
+### Syntax
+
+```graphql
+{
+  deepSearch(
+    dataspace: "maap/drogon"
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    compoundFilter: [
+      { titleContains: "PORO", operator: GT, threshold: 0.25 }
+      { titleContains: "PERMX", operator: GT, threshold: 100.0 }
+      { titleContains: "SWATINIT", operator: LT, threshold: 0.4 }
+    ]
+    includeStatistics: true
+    limit: 5
+  ) {
+    backend totalScanned totalMatched queryDescription
+    objects {
+      uuid title
+      compoundMatch { count total fraction }
+      properties { title statistics { mean minValue maxValue } }
+    }
+  }
+}
+```
+
+### Reading the results
+
+| Field | Meaning |
+|-------|---------|
+| `compoundMatch.count` | Number of cells passing ALL conditions simultaneously |
+| `compoundMatch.total` | Total active cells in the grid |
+| `compoundMatch.fraction` | `count / total` — the "sweet spot" fraction |
+
+A grid with `fraction: 0.12` means 12% of active cells have good porosity AND good permeability AND low water saturation — potential infill targets.
+
+### Demo: Bypassed Oil (compound)
+
+```graphql
+# "Where is there good rock that still has oil?"
+# Combines: high porosity + high perm + high remaining oil (So = 1 - Sw)
+{
+  deepSearch(
+    dataspace: "maap/drogon"
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    compoundFilter: [
+      { titleContains: "PORO", operator: GT, threshold: 0.2 }
+      { titleContains: "PERMX", operator: GT, threshold: 50.0 }
+      { titleContains: "SWATINIT", operator: LT, threshold: 0.5 }
+    ]
+    includeStatistics: true
+    limit: 5
+  ) {
+    objects { uuid title compoundMatch { count total fraction } }
+  }
+}
+```
+
+---
+
+## Easy Mode — Field Development Buttons
+
+The `/keys` Easy Mode tab includes **5 one-click field development buttons** that run full GraphQL preset queries without leaving Easy Mode:
+
+| Button | What it runs | Key output |
+|--------|-------------|------------|
+| **Markers** | `markers_by_horizon` — lists wellbore markers grouped by horizon name | Horizon picks per well, depths, formation tops |
+| **Bypassed Oil** | `field_bypassed_oil` — compound filter (PORO > 0.2 AND PERM > 50 AND Sw < 0.5) | Sweet-spot cell fraction per grid |
+| **Water Breakthrough** | `field_water_breakthrough` — 3 sub-queries (high-Sw zones, high-perm streaks, production anomalies) | Multi-alias result with explanation per sub-query |
+| **Completion Pay** | `field_completion_ntg` — 3 sub-queries (NTG, Kh product, Sw above OWC) | Best interval identification per well |
+| **Segment Overview** | `field_segment_ranking` — 4 sub-queries ranking segments by property quality | Segment-by-segment comparison table |
+
+### How to use
+
+1. Navigate to `/keys` → select **Easy Mode** tab
+2. Click any **Field Dev** button (blue row below the standard query builder)
+3. Results render as colored cards with explanation banners describing each sub-query
+4. Click **"Show generated GraphQL"** to see the raw multi-alias query
+5. For 3D visualisation, objects from all aliases are automatically extracted for the viewer
+
+### Multi-alias result rendering
+
+Compound preset queries return multiple named `deepSearch` aliases (e.g. `highSw`, `highPerm`, `production`). The Easy Mode renderer:
+- Groups results by alias with a header banner explaining each sub-query's purpose
+- Shows per-alias match counts and statistics
+- Merges all alias objects for 3D rendering via `extractRenderableObjects()`
+
+---
+
 ## Common Field Development Query Patterns
 
 These queries combine multiple data sources to answer real field development questions. Each can be run via GraphQL presets on the `/keys` page.

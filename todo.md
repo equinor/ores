@@ -1,123 +1,6 @@
 # TODO - Ontology-Driven Improvements
 
-## Recently Completed (Aug 2026)
-
-| Item | What was done |
-|---|---|
-| **Compound cell-level AND filter** | New `compoundFilter` input on GraphQL `deepSearch` — ANDs multiple property thresholds at cell level, returns intersection count/fraction via `compoundMatch`. Memory-efficient: loads one array at a time (~7 MB), ANDs into a bytearray mask. PG-only; degrades gracefully on REST backends with a warning. |
-| **Field Development preset queries (6)** | `markers_by_horizon`, `field_bypassed_oil` (compound filter), `field_water_breakthrough` (3 sub-queries), `field_injection_support`, `field_completion_ntg` (3 sub-queries), `field_segment_ranking` (4 sub-queries). Each has a "HOW TO READ" comment explaining result interpretation. |
-| **Easy Mode field dev buttons** | 5 one-click buttons in Keys UI Easy Mode: Markers, Bypassed Oil, Water Breakthrough, Completion Pay, Segment Overview. Run full GraphQL presets but stay in Easy Mode with rendered results. |
-| **Easy Mode compound result rendering** | `renderCompoundResults()` displays multi-alias deepSearch results with explanation banner. `extractRenderableObjects()` scans all aliases in compound query responses for 3D visualization. |
-| **Drogon catalog records (13)** | Ingested to eqndev + interop: IjkGrid, WellboreFrame, Trajectory, Fault, StructuralOrg, GridConnection, OrganizationFeature, WellboreMarkerFrame objects for the Drogon field. |
-| **PG backend bug fixes** | Fixed `_apply_compound`: was querying `obj.guid` (doesn't exist) → corrected to `res.guid`. Fixed property source query to match `pg_batch_property_sources` pattern (rel.dst_id + typ filter). |
-
----
-
-## Already Covered - Ontology Features in M27 OSDU + ORES Today
-
-| Ontology Concept | OSDU/ORES Coverage | Status |
-|---|---|---|
-| **Object Types** (typed, schema-validated entities) | M27 kinds: BusinessDecision, Reservoir, Risk, Activity, CollaborationProject, DevelopmentConcept, REV, PersistedCollection, etc. | ✅ Full |
-| **Properties & nested structures** | JSON schema validation, typed sub-objects (FacilityConcept, WellPlan, DrainageStrategy, ProjectSpecifications) | ✅ Full |
-| **Semantic links between objects** | `Parameters[]` with role semantics (Input/Output/InputReference), `PriorActivityIDs`, `RiskIDs`, `DecisionLevelID` | ✅ Partial - works but implicit, not named edge types |
-| **Provenance / lineage** | Activity + ActivityTemplate chain; Parameters[] link inputs→outputs; `_enrich_bd_activity()` resolves full chain | ✅ Full |
-| **Reference-data catalogs** | DecisionLevel, ApprovalStatus, RiskCategory, RiskSeverity, RiskProbability, PropertyType, FacilityType, ArtificialLiftType | ✅ Full |
-| **Search & discovery** | ORES search: full-text, kind-filtered, wildcard, ref-data discovery; federated across OSDU + RDDMS | ✅ Full |
-| **Object detail & enrichment** | BD enrichment: volumes, GeoLabelSet, production, maps, activity, dev concept - auto-resolved on view | ✅ Full |
-| **Decision gate lifecycle** | ActivityStateTemplate milestones (6 presets: FieldDev, CCS, Exploration, Decom, IOR); gate progression DG0→FID | ✅ Full |
-| **Collections / evidence packages** | PersistedCollection (hierarchical, 99+ refs at DG2); domain bundles (subsurface, well, risk) | ✅ Full |
-| **Cross-gate namespace** | CollaborationProject as persistent master-data across DG1→FID; SoE↔SoR bridge | ✅ Full |
-| **Comparison / analytics** | `analyse.py`: cross-gate volume deltas, risk evolution, economics trends, property diffs | ✅ Full |
-| **Record creation with auto-linking** | `addgate.py`: one-click BD + Risks + Collection + CP + Activity; presets per project type | ✅ Full |
-| **Subsurface object graph** | RDDMS GraphQL: object_relations (forward/reverse), deep_search, federated_search across dataspaces; field dev presets with multi-query sub-graph exploration | ✅ Full |
-| **Array/grid data access** | RDDMS: HDF5 arrays, statistics, sampling; Grid2d/IjkGrid property visualization; compound cell-level AND filter with `compoundFilter` | ✅ Full |
-| **Workflow templates** | ActivityTemplate (7 presets: Simulation, FMU, Drilling, ProdTest, Interpretation, QC, Custom) | ✅ Full |
-| **Branching / versioning** | RDDMS dataspace clone + ETP transactions (start/commit/rollback) | ✅ Infrastructure exists, not yet surfaced as "alternatives" |
-| **Actions (verbs on objects)** | Activity + ActivityTemplate already model actions; each action run = Activity record with typed Parameters[] | ✅ Schema exists - surface in UI as named verbs |
-| **Named relationship types** | `Parameters[].Keys[ParameterKey]` already supports arbitrary tags - use as relationship-type label (e.g. `relationship-kind`=`evidences`) | ✅ Schema exists - define conventions + ref-data values |
-| **Object change history / audit** | `CollaborationProject.LifecycleEvents[]` has EventID, DateTime, Remark, ResourceCollectionID - **heavily underutilized** | ✅ Schema exists - populate on each state change |
-| **Decision alternatives** | `ext.equinor.Alternatives[]` on BD already holds Name, Rank, Rationale, RecommendedAction | ✅ Schema exists - already in Drogon demo |
-| **Gate checklist / required items** | `ActivityStates[]` with custom MilestoneID + ActivityStatusID ref-data; or derive from ActivityStateTemplate | ✅ Schema exists - define ref-data items per gate |
-| **Structured annotations** | `Remarks[]` with RemarkSource categorization - use as typed notes/comments | ✅ Schema exists - convention only |
-
-
-
-| **Live collaboration (real-time)** | No push notifications; polling only; no SSE/websocket feeds | ⚠️ Gap (infrastructure) |
-| **User-configurable dashboards** | Fixed templates per view; users cannot compose custom KPI layouts | ⚠️ Gap (UI framework) |
-| **Ontology-level access control** | OSDU ACL per record; no object-type or relationship-scoped permissions | ⚠️ Gap (OSDU platform limitation) |
-
-**Summary**: ~18/21 core ontology concepts are covered by existing M27 schema fields. Many "gaps" are actually underutilized fields that just need conventions and reference-data values. Only 3 true gaps remain: real-time push, configurable dashboards, and ontology-level ACL.
-
----
-
-## Existing M27 Fields to Exploit (no schema changes needed)
-
-| Field | Location | Current Use | Ontology Reuse |
-|---|---|---|---|
-| `Parameters[].Keys[ParameterKey]` | BD, Activity | artifact typing (`REV-raw`, `GeoLabelSet`) | **Relationship types**: set ParameterKey=`relationship-kind`, value=`evidences`/`supersedes`/`constrains` |
-| `ProjectSpecifications[]` | BD | Economics (NPV, IRR, CAPEX) | **Any quantified metric** - define new ParameterTypeID ref-data |
-| `ActivityStates[]` | BD, CP | Gate progression (DG1→DG4) | **Any lifecycle checklist** - custom MilestoneID + ActivityStatusID per gate |
-| `LifecycleEvents[]` | CollaborationProject | Minimal (creation only) | **Full audit trail** - EventID for state transitions, revisions, approvals |
-| `Remarks[]` | BD | Recommendations text | **Typed annotations** - RemarkSource as category key |
-| `ext.equinor.Alternatives[]` | BD | DG scenario ranking | **Decision alternatives** - already structured (Name, Rank, Rationale, Action). ⚠️ Custom extension (`data.ext.equinor`), not OSDU standard - portable via `ext` mechanism but needs agreement for cross-operator use |
-| `Activity` records | Standalone | Workflow provenance | **Actions as first-class verbs** - each user action = Activity with template |
-| `Parameters[].Selection` | BD, Activity | Sparse | **Context/explanation** per linked object |
-
-**Reference-data items to define** (zero schema changes, just new ref-data records):
-- `ParameterKey` conventions: `relationship-kind`, `gate-requirement`, `completeness-role`
-- `ParameterTypeID` additions: custom KPIs beyond economics
-- `MilestoneID` additions: per-gate required items (e.g. `DG2-Volumes`, `DG2-DevConcept`)
-- `ActivityStatusID` additions: `Satisfied`, `Outstanding`, `Waived`
-- `EventID` conventions: `StateTransition`, `EvidenceAdded`, `RiskEscalation`, `ApprovalGranted`
-
----
-
-Items ranked by implementation complexity. Tiers:
-- **A** = Implementable now in ORES demo with M27 schemas (no new kinds, no new APIs)
-- **B** = Needs minor ORES backend work or RDDMS endpoint additions (existing schemas)
-- **C** = Requires new OSDU schema extensions or significant new services
-
----
-
-## Tier A - Demo-ready with current M27 schemas
-
-No new schemas or APIs. Uses existing BD, Parameters[], Activity, PersistedCollection, CollaborationProject, search, enrichment, analyse.
-
-### A1. Gate Completeness Progress Bar ✅
-- [x] `_enrich_bd_collaboration()` extracts ActivityStates[] checklist with MilestoneID + completion status
-- [x] Progress bar + checklist grid in `bd_ontology_panels.html` (included from search_bd.html)
-- [x] CSS in `search_styles.html` (`.bd-checklist-bar`, `.bd-cl-*`)
-
-### A2. Visual Provenance DAG ✅
-- [x] Pure HTML/CSS flowchart: Inputs → Activity → Outputs
-- [x] Renders Activity parameters grouped by ParameterRoleID (Input/Output/Workflow)
-- [x] Clickable links navigate to source OSDU records; param_labels resolved
-- [x] Collapsible `<details>` in BD card, shows input/output counts in summary
-
-### A3. Decision Alternative Comparison View ✅
-- [x] Inline comparison table in BD card when >1 alternative exists (rank, name, action, economics, rationale)
-- [x] "Open full comparison in Analyse →" link to cross-gate analysis
-- [x] Full alternative comparison already in `analyse.html` (`buildAlternativesSection` + bar charts)
-
-### A4. Object Relationship Graph Explorer ✅
-- [x] Groups forward + reverse OSDU links by role (parent, child, reference, etc.)
-- [x] Clickable nodes navigate to record detail; kind labels shown
-- [x] RDDMS dataspace refs shown as separate group with link to Keys browser
-- [x] Central self-node + grouped satellite layout in `bd_ontology_panels.html`
-
-### A5. Cross-Gate Risk Evolution Timeline ✅
-- [x] Risk evolution table + Chart.js bar chart in `analyse.html` (`buildRiskSection` + `chartRiskEvo`)
-- [x] Shows open/mitigated/total per gate with severity change chips (↑/↓/✓)
-- [x] Stacked bar + line chart with per-gate risk counts
-
-### A6. CollaborationProject Activity Feed ✅
-- [x] `_enrich_bd_collaboration()` extracts LifecycleEvents[] from CP
-- [x] Vertical timeline in `bd_ontology_panels.html` with colored dots per event type
-- [x] Event types: CreationEvent, EvidenceAdded, RiskEscalation, RiskMitigation, VolumeUpdate, StateTransition, ApprovalGranted
-
----
-
-## Tier B - Needs ORES/RDDMS backend additions (M27 schemas still sufficient)
+## Open — Tier B (ORES/RDDMS backend additions, M27 schemas sufficient)
 
 ### B1. RDDMS Graph Traversal Endpoint
 - [ ] New endpoint: given a BD SRN, walk Parameters[] → resolve ETPDataspace links → list RESQML objects in those dataspaces
@@ -195,26 +78,18 @@ No new schemas or APIs. Uses existing BD, Parameters[], Activity, PersistedColle
 
 ---
 
-## Recommended Implementation Order
+## Implementation Order
 
 ```
-A1 (completeness bar)        ─┐
-A2 (provenance DAG)          ─┤── Sprint 1: quick wins, pure frontend
-A5 (risk timeline)           ─┘
-
-A3 (alternative comparison)  ─┐
-A4 (graph explorer)          ─┤── Sprint 2: navigation & comparison
-A6 (activity feed)           ─┘
-
 B4 (decision branches)       ─┐
-B3 (relationship search)     ─┤── Sprint 3: backend enrichment
+B3 (relationship search)     ─┤── Next: backend enrichment
 B5 (atomic actions + audit)  ─┘   (uses LifecycleEvents[] + Activity)
 
 B1 (RDDMS graph traversal)  ─┐
-B2 (dataspace diff)          ─┤── Sprint 4: cross-boundary integration
+B2 (dataspace diff)          ─┤── Then: cross-boundary integration
 B6 (change notification)     ─┘
 
-C1-C2 (SSE + dashboards)    ─── Sprint 5+: infrastructure (no new OSDU schemas needed)
+C1-C2 (SSE + dashboards)    ─── Later: infrastructure (no new OSDU schemas needed)
 
-Ref-data setup (run once):   ─── Sprint 0: define conventions for Keys[], MilestoneID, EventID
+Ref-data setup (run once):   ─── Define conventions for Keys[], MilestoneID, EventID
 ```

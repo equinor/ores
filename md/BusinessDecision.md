@@ -533,7 +533,38 @@ graph TD
 
 ---
 
-## 15. References
+## 15. Demo Guide — Ontology Panels in Practice
+
+The BD search view now renders six ontology-driven panels directly on each BD card. These demonstrate how the schema fields documented above translate into interactive features:
+
+| Panel | Schema source | What to look for |
+|-------|--------------|-----------------|
+| **Gate Completeness** | `ActivityStates[]` + MilestoneID/ActivityStatusID | Progress bar + per-milestone checklist |
+| **Provenance DAG** | Activity → `Parameters[]` (Input/Output) | Inputs → Activity → Outputs flowchart |
+| **Alternatives** | `ext.equinor.Alternatives[]` | Ranked comparison table (name, action, economics) |
+| **Relationships** | `Parameters[]` edge types + ancestry | Grouped graph: parents, children, refs, RDDMS dataspaces |
+| **Risk Evolution** | `RiskIDs[]` across `supersedes` chain | Per-gate open/mitigated counts with trend arrows |
+| **Activity Feed** | `CollaborationProject.LifecycleEvents[]` | Vertical timeline with typed events |
+
+### How to demonstrate
+
+1. **Search** `/search` → query "Drogon" → find a BD with gate data
+2. **Expand panels** — each `<details>` section opens to show the rendered ontology feature
+3. **Cross-gate** — go to `/analyse`, select multiple gates → volume deltas + risk evolution + economics trends
+4. **Create** — go to `/add-dg` → "Field Dev – DG2" preset → shows how all these fields get populated at creation time
+
+### Linking subsurface evidence
+
+The BD `Parameters[]` mechanism connects decisions to subsurface data:
+
+- `Parameters[role=Output, artifact=REV]` → volume evidence (REV WPC)
+- `Parameters[role=InputReference, artifact=ETPDataspace]` → RDDMS geomodel
+- The same geomodel objects can be queried with **compound filters** on `/keys` (multi-property cell-level AND)
+- Demo flow: `/keys` compound filter → identify sweet spots → `/search` BD → provenance shows the activity that produced the geomodel
+
+---
+
+## 16. References
 
 - [BusinessDecision schema example](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/Examples/master-data/BusinessDecision.1.0.0.json)
 - [AbstractProjectActivity ER](https://community.opengroup.org/osdu/data/data-definitions/-/blob/master/E-R/abstract/AbstractProjectActivity.1.2.0.md)
@@ -543,7 +574,7 @@ graph TD
 
 ---
 
-## 16. Related Guides
+## 17. Related Guides
 
 - [BD Demo — ORES Tooling](/howto/bd-demo) — Search, Analyse, AddGate UI
 - [Drogon Data Model](/howto/drogon-data-model) — DG1 record inventory, pipeline, RESQML & ETP
