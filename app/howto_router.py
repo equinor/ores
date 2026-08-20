@@ -94,14 +94,8 @@ _HOWTO_SECTIONS: list[dict] = [
             {
                 "slug": "properties",
                 "file": "Properties.md",
-                "title": "RESQML & OSDU Properties",
+                "title": "Properties",
                 "desc": "Property kinds, OSDU PropertyTypes, facets, groups & alias resolution",
-            },
-            {
-                "slug": "_ext_resqml_spec",
-                "external_url": "https://www.energistics.org/resqml-data-standards/",
-                "title": "RESQML Data Standards ↗",
-                "desc": "Energistics RESQML specification — property kinds, object types & data exchange",
             },
         ],
     },
@@ -116,6 +110,12 @@ _HOWTO_SECTIONS: list[dict] = [
                 "desc": "ActivityTemplate + Activity records for workflow provenance",
             },
             {
+                "slug": "crs-guide",
+                "file": "CrsGuide.md",
+                "title": "CRS Guide",
+                "desc": "RESQML ⇄ OSDU coordinate reference systems",
+            },
+            {
                 "slug": "pws",
                 "file": "PWS.md",
                 "title": "Project & Workflow Service",
@@ -126,12 +126,6 @@ _HOWTO_SECTIONS: list[dict] = [
                 "external_url": "https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/home/-/blob/main/README.md",
                 "title": "Reservoir DDMS Home ↗",
                 "desc": "Official OSDU Reservoir DDMS documentation – data model, ETP protocol, deployment & API reference",
-            },
-            {
-                "slug": "crs-guide",
-                "file": "CrsGuide.md",
-                "title": "CRS Guide",
-                "desc": "RESQML ⇄ OSDU coordinate reference systems",
             },
         ],
     },
