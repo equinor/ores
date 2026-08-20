@@ -543,6 +543,75 @@
               </ul>
               {% endif %}
 
+              {# ── B5: Quick Actions ── #}
+              <details class="bd-collapse">
+              <summary class="bd-section-title" style="cursor:pointer;">Quick Actions ▸</summary>
+              <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0;">
+                <button type="button" class="bd-action-btn" onclick="bdActionModal('alt','{{ rec.id }}')" title="Add a decision alternative">＋ Alternative</button>
+                <button type="button" class="bd-action-btn" onclick="bdActionModal('vol','{{ rec.id }}')" title="Link volume estimate">📊 Update Volume</button>
+                <button type="button" class="bd-action-btn" onclick="bdActionModal('risk','{{ rec.id }}')" title="Flag a risk">⚠ Flag Risk</button>
+              </div>
+              <div id="bd-action-result-{{ rec_index }}" style="font-size:.82rem;margin-top:.3rem;"></div>
+              </details>
+
+              {# ── Collaboration History (LifecycleEvents from linked CP) ── #}
+              {% set bd_cl = rec.bd_collab or {} %}
+              {% if bd_cl.get('events') %}
+              {% set cl_events = (bd_cl.get('events') or []) %}
+              {% set cl_recent = cl_events[-3:] %}
+              <details class="bd-collapse">
+              <summary class="bd-section-title" style="cursor:pointer;">Collaboration History ({{ cl_events|length }} events) ▸</summary>
+              <div style="margin-top:.4rem;">
+                {% if bd_cl.get('cp_name') %}
+                <div style="font-size:.82rem;color:#718096;margin-bottom:.4rem;">
+                  Project: <a href="/search/view/{{ bd_cl.get('cp_id') }}" style="color:#2b6cb0;">{{ bd_cl.get('cp_name') }}</a>
+                  {% if bd_cl.get('checklist_total') > 0 %}
+                   · Checklist: {{ bd_cl.get('checklist_completed', 0) }}/{{ bd_cl.get('checklist_total', 0) }}
+                  {% endif %}
+                </div>
+                {% endif %}
+                <div class="bd-timeline">
+                  {% for ev in cl_recent|reverse %}
+                  <div class="bd-timeline-item">
+                    <div class="bd-timeline-dot"></div>
+                    <div class="bd-timeline-content">
+                      <div class="bd-timeline-date">{{ ev.get('EventDate', '') }}</div>
+                      <div class="bd-timeline-event">{{ ev.get('EventID', '') }}</div>
+                      <div class="bd-timeline-desc">{{ ev.get('Description', '') }}</div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% if cl_events|length > 3 %}
+                <button type="button" class="bd-action-btn" style="margin-top:.4rem;" onclick="document.getElementById('collab-popup-{{ rec_index }}').style.display='flex'">Show all {{ cl_events|length }} events…</button>
+                {% endif %}
+              </div>
+              </details>
+              {# ── Full history popup (rendered but hidden) ── #}
+              {% if cl_events|length > 3 %}
+              <div id="collab-popup-{{ rec_index }}" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.4);align-items:center;justify-content:center;">
+                <div style="background:#fff;border-radius:8px;padding:1.5rem;max-width:32rem;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,.2);">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;">
+                    <span style="font-weight:700;font-size:1rem;">Collaboration History ({{ cl_events|length }})</span>
+                    <button type="button" onclick="this.closest('[id^=collab-popup]').style.display='none'" style="border:none;background:none;font-size:1.2rem;cursor:pointer;color:#718096;">✕</button>
+                  </div>
+                  <div class="bd-timeline">
+                    {% for ev in cl_events|reverse %}
+                    <div class="bd-timeline-item">
+                      <div class="bd-timeline-dot"></div>
+                      <div class="bd-timeline-content">
+                        <div class="bd-timeline-date">{{ ev.get('EventDate', '') }}</div>
+                        <div class="bd-timeline-event">{{ ev.get('EventID', '') }}</div>
+                        <div class="bd-timeline-desc">{{ ev.get('Description', '') }}</div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              {% endif %}
+
               {# ── Ontology Panels: Gate Checklist, Relationships, Timeline ── #}
               {% include "bd_ontology_panels.html" ignore missing %}
 
@@ -833,34 +902,55 @@
                 </div>
                 <div style="font-size:.84rem;color:#718096;margin-bottom:.4rem;">By: {{ bd_act.get('Originator', '') }} · {{ bd_act.get('CreationDateTime', '')[:10] }}</div>
                 {% if bd_act.get('Description') %}
-                <div style="font-size:.84rem;color:#4a5568;line-height:1.45;margin-bottom:.5rem;">{{ bd_act.get('Description')[:500] }}{% if bd_act.get('Description')|length > 500 %}…{% endif %}</div>
+                <div style="font-size:.84rem;color:#4a5568;line-height:1.45;margin-bottom:.5rem;">{{ bd_act.get('Description')[:200] }}{% if bd_act.get('Description')|length > 200 %}…{% endif %}</div>
                 {% endif %}
 
-                {# Activity Parameters - grouped by role #}
+                {# Activity Parameters - compact summary inline, full detail in popup #}
                 {% set act_params = bd_act.get('Parameters') or [] %}
                 {% set act_labels = bd_act.get('param_labels') or {} %}
                 {% if act_params %}
                 {% set act_inputs = [] %}
                 {% set act_outputs = [] %}
-                {% set act_workflow = [] %}
                 {% for p in act_params if p is mapping %}
                   {% set role = p.get('ParameterRoleID', '') %}
-                  {% if 'Output' in role %}
-                    {% set _ = act_outputs.append(p) %}
-                  {% elif 'Workflow' in role %}
-                    {% set _ = act_workflow.append(p) %}
-                  {% elif 'Input' in role %}
-                    {% set _ = act_inputs.append(p) %}
-                  {% else %}
-                    {% set _ = act_workflow.append(p) %}
+                  {% if 'Output' in role %}{% set _ = act_outputs.append(p) %}
+                  {% elif 'Input' in role %}{% set _ = act_inputs.append(p) %}
                   {% endif %}
                 {% endfor %}
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.4rem;">
+                  {% if act_inputs %}<span class="bd-alt-rank" style="background:#ebf8ff;color:#2b6cb0;">⬅ {{ act_inputs|length }} inputs</span>{% endif %}
+                  {% if act_outputs %}<span class="bd-alt-rank" style="background:#f0fff4;color:#276749;">➡ {{ act_outputs|length }} outputs</span>{% endif %}
+                  {% if bd_maps %}<span class="bd-alt-rank" style="background:#f0fff4;color:#276749;">🗺 {{ bd_maps|length }} maps</span>{% endif %}
+                </div>
+                <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                  <button type="button" class="bd-action-btn" onclick="document.getElementById('fmu-popup-{{ rec_index }}').style.display='flex'">View full I/O detail…</button>
+                  {% if bd_act.get('id') %}<a href="/search/view/{{ bd_act.get('id') }}" class="bd-action-btn" style="text-decoration:none;display:inline-block;">Open Activity record →</a>{% endif %}
+                </div>
+                {% endif %}
+              </div>
+              </details>
 
+              {# ── FMU Activity popup (full I/O grid) ── #}
+              {% if act_params %}
+              <div id="fmu-popup-{{ rec_index }}" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.4);align-items:center;justify-content:center;">
+                <div style="background:#fff;border-radius:8px;padding:1.5rem;max-width:56rem;width:95%;max-height:85vh;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,.2);">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;">
+                    <span style="font-weight:700;font-size:1rem;">{{ bd_act.get('Name') }} — I/O Detail</span>
+                    <button type="button" onclick="this.closest('[id^=fmu-popup]').style.display='none'" style="border:none;background:none;font-size:1.2rem;cursor:pointer;color:#718096;">✕</button>
+                  </div>
+                  {% if bd_act.get('Description') %}
+                  <div style="font-size:.84rem;color:#4a5568;line-height:1.45;margin-bottom:.6rem;">{{ bd_act.get('Description')[:500] }}{% if bd_act.get('Description')|length > 500 %}…{% endif %}</div>
+                  {% endif %}
+                  {% set act_workflow = [] %}
+                  {% for p in act_params if p is mapping %}
+                    {% set role = p.get('ParameterRoleID', '') %}
+                    {% if 'Output' not in role and 'Input' not in role %}{% set _ = act_workflow.append(p) %}{% endif %}
+                  {% endfor %}
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:.5rem;">
                   {% if act_inputs %}
                   <div style="background:#ebf8ff;border-radius:6px;padding:.5rem;">
                     <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;color:#2b6cb0;margin-bottom:.3rem;">Inputs ({{ act_inputs|length }})</div>
-                    {% for p in act_inputs[:10] %}
+                    {% for p in act_inputs[:15] %}
                     <div style="font-size:.88rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #bee3f8;">
                       <span style="font-weight:500;">{{ p.get('Title', '') }}</span>
                       {% if p.get('DataObjectParameter') %}
@@ -871,102 +961,69 @@
                       {% if sp_in.startswith('[') and sp_in.endswith(']') %}{% set sp_in = sp_in[1:-1].strip() %}{% endif %}
                       {% if sp_in.startswith('{') and sp_in.endswith('}') %}{% set sp_in = sp_in[1:-1].strip() %}{% endif %}
                       <div style="font-size:.80rem;color:#718096;">{{ sp_in[:120] }}{% if sp_in|length > 120 %}…{% endif %}</div>
-                      {% elif p.get('Description') %}
-                      <div style="font-size:.80rem;color:#718096;">{{ p.get('Description', '')[:100] }}{% if p.get('Description', '')|length > 100 %}…{% endif %}</div>
                       {% endif %}
                     </div>
                     {% endfor %}
-                    {% if act_inputs|length > 10 %}<div style="font-size:.75rem;color:#a0aec0;margin-top:.2rem;">… +{{ act_inputs|length - 10 }} more</div>{% endif %}
+                    {% if act_inputs|length > 15 %}<div style="font-size:.75rem;color:#a0aec0;margin-top:.2rem;">… +{{ act_inputs|length - 15 }} more</div>{% endif %}
                   </div>
                   {% endif %}
 
                   {% if act_workflow %}
                   <div style="background:#fefcbf;border-radius:6px;padding:.5rem;">
                     <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;color:#975a16;margin-bottom:.3rem;">Workflow ({{ act_workflow|length }})</div>
-                    {% for p in act_workflow[:8] %}
+                    {% for p in act_workflow[:10] %}
                     <div style="font-size:.88rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #fbd38d;">
                       <span style="font-weight:500;">{{ p.get('Title', '') }}</span>
                       {% if p.get('DataObjectParameter') %}
                       {% set dop = p.get('DataObjectParameter', '') %}
                       <div style="font-size:.80rem;word-break:break-all;"><a href="/search/view/{{ dop }}" style="color:#975a16;" title="{{ dop }}">{{ act_labels.get(dop, '') or dop.split('--')[-1].split(':')[0] }} →</a></div>
                       {% elif p.get('StringParameter') %}
-                      {% set sp_raw = p.get('StringParameter', '') %}
-                      {% set sp_display = sp_raw.strip() %}
-                      {% if sp_display.startswith('[') and sp_display.endswith(']') %}
-                        {% set sp_display = sp_display[1:-1].strip() %}
-                      {% endif %}
-                      {% if sp_display.startswith('{') and sp_display.endswith('}') %}
-                        {% set sp_display = sp_display[1:-1].strip() %}
-                      {% endif %}
+                      {% set sp_display = p.get('StringParameter', '').strip() %}
+                      {% if sp_display.startswith('[') and sp_display.endswith(']') %}{% set sp_display = sp_display[1:-1].strip() %}{% endif %}
+                      {% if sp_display.startswith('{') and sp_display.endswith('}') %}{% set sp_display = sp_display[1:-1].strip() %}{% endif %}
                       <div style="font-size:.80rem;color:#718096;">{{ sp_display[:140] }}{% if sp_display|length > 140 %}…{% endif %}</div>
-                      {% elif p.get('IntegerParameter') is not none %}
-                      <div style="font-size:.80rem;color:#718096;">{{ p.get('IntegerParameter') }}</div>
                       {% endif %}
                     </div>
                     {% endfor %}
-                    {% if act_workflow|length > 8 %}<div style="font-size:.75rem;color:#a0aec0;margin-top:.2rem;">… +{{ act_workflow|length - 8 }} more</div>{% endif %}
+                    {% if act_workflow|length > 10 %}<div style="font-size:.75rem;color:#a0aec0;margin-top:.2rem;">… +{{ act_workflow|length - 10 }} more</div>{% endif %}
                   </div>
                   {% endif %}
 
-                  {% if act_outputs %}
+                  {% if act_outputs or bd_maps %}
                   <div style="background:#f0fff4;border-radius:6px;padding:.5rem;">
-                    <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;color:#276749;margin-bottom:.3rem;">Outputs ({{ act_outputs|length }}{% if bd_maps %} + Maps{% endif %})</div>
-                    {% for p in act_outputs[:12] %}
+                    <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;color:#276749;margin-bottom:.3rem;">Outputs ({{ act_outputs|length }}{% if bd_maps %} + {{ bd_maps|length }} Maps{% endif %})</div>
+                    {% for p in act_outputs[:15] %}
                     <div style="font-size:.88rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #9ae6b4;">
                       <span style="font-weight:500;">{{ p.get('Title', '') }}</span>
                       {% if p.get('DataObjectParameter') %}
                       {% set dop = p.get('DataObjectParameter', '') %}
                       <div style="font-size:.80rem;word-break:break-all;"><a href="/search/view/{{ dop }}" style="color:#276749;" title="{{ dop }}">{{ act_labels.get(dop, '') or dop.split('--')[-1].split(':')[0] }} →</a></div>
-                      {% elif p.get('StringParameter') %}
-                      {% set sp_out = p.get('StringParameter', '').strip() %}
-                      {% if sp_out.startswith('[') and sp_out.endswith(']') %}{% set sp_out = sp_out[1:-1].strip() %}{% endif %}
-                      {% if sp_out.startswith('{') and sp_out.endswith('}') %}{% set sp_out = sp_out[1:-1].strip() %}{% endif %}
-                      <div style="font-size:.80rem;color:#718096;">{{ sp_out[:120] }}{% if sp_out|length > 120 %}…{% endif %}</div>
-                      {% elif p.get('Description') %}
-                      <div style="font-size:.80rem;color:#718096;">{{ p.get('Description', '')[:100] }}{% if p.get('Description', '')|length > 100 %}…{% endif %}</div>
                       {% endif %}
                     </div>
                     {% endfor %}
-                    {% if act_outputs|length > 12 %}<div style="font-size:.75rem;color:#a0aec0;margin-top:.2rem;">… +{{ act_outputs|length - 12 }} more</div>{% endif %}
-                    {# ── Hero map from linked RDDMS ── #}
+                    {% if act_outputs|length > 15 %}<div style="font-size:.75rem;color:#a0aec0;margin-top:.2rem;">… +{{ act_outputs|length - 15 }} more</div>{% endif %}
                     {% if bd_maps %}
-                    {% set hero_act = bd_maps[0] %}
                     <div style="margin-top:.4rem;border-top:1px dashed #9ae6b4;padding-top:.4rem;">
                       <div style="font-size:.80rem;font-weight:600;text-transform:uppercase;color:#276749;margin-bottom:.2rem;">Maps (RDDMS)</div>
+                      {% for mp in bd_maps[:5] %}
                       <div style="font-size:.88rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #9ae6b4;">
-                        <span style="font-weight:500;">{{ hero_act.title }}{% if hero_act.interpretation %} - {{ hero_act.interpretation }}{% endif %}</span>
+                        <span style="font-weight:500;">{{ mp.title }}{% if mp.interpretation %} - {{ mp.interpretation }}{% endif %}</span>
                         <div style="font-size:.80rem;word-break:break-all;">
-                          <a href="/keys/object/map.json?ds={{ hero_act.ds }}&amp;uuid={{ hero_act.uuid }}" target="_blank" style="color:#276749;" title="Object metadata">json ↗</a>
+                          <a href="/keys/object/map.json?ds={{ mp.ds }}&amp;uuid={{ mp.uuid }}" target="_blank" style="color:#276749;">json ↗</a>
                           <span style="color:#a0aec0;margin:0 .2rem;">·</span>
-                          <span style="color:#a0aec0;">{{ hero_act.ds }}/{{ hero_act.uuid }}</span>
+                          <span style="color:#a0aec0;">{{ mp.ds }}/{{ mp.uuid }}</span>
                         </div>
                       </div>
+                      {% endfor %}
+                      {% if bd_maps|length > 5 %}<div style="font-size:.75rem;color:#a0aec0;margin-top:.2rem;">… +{{ bd_maps|length - 5 }} more maps</div>{% endif %}
                     </div>
                     {% endif %}
                   </div>
-                  {% elif bd_maps %}
-                  {# No existing outputs but hero depth-surface discovered - show standalone #}
-                  <div style="background:#f0fff4;border-radius:6px;padding:.5rem;">
-                    {% set hero_act2 = bd_maps[0] %}
-                    <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;color:#276749;margin-bottom:.3rem;">Output - Maps</div>
-                    <div style="font-size:.88rem;color:#2d3748;padding:.15rem 0;border-bottom:1px solid #9ae6b4;">
-                      <span style="font-weight:500;">{{ hero_act2.title }}{% if hero_act2.interpretation %} - {{ hero_act2.interpretation }}{% endif %}</span>
-                      <div style="font-size:.80rem;word-break:break-all;">
-                        <a href="/keys/object/map.json?ds={{ hero_act2.ds }}&amp;uuid={{ hero_act2.uuid }}" target="_blank" style="color:#276749;">json ↗</a>
-                        <span style="color:#a0aec0;margin:0 .2rem;">·</span>
-                        <span style="color:#a0aec0;">{{ hero_act2.ds }}/{{ hero_act2.uuid }}</span>
-                      </div>
-                    </div>
-                  </div>
                   {% endif %}
                 </div>
-                {% endif %}
-
-                {% if bd_act.get('id') %}
-                <div style="margin-top:.5rem;"><a href="/search/view/{{ bd_act.get('id') }}" style="font-size:.82rem;">Open full Activity record →</a></div>
-                {% endif %}
+                </div>
               </div>
-              </details>
+              {% endif %}
               {% endif %}
 
             </div>{# /bd-body #}

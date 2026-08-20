@@ -1057,4 +1057,96 @@
 
 {# ── Schema & Refdata inline detail viewer + table sorting: loaded from /static/search.js ── #}
 
+{# ── B5 Quick Action Modals ── #}
+<div id="bd-action-overlay" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.4);align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:8px;padding:1.5rem;max-width:28rem;width:90%;box-shadow:0 4px 20px rgba(0,0,0,.2);">
+    <div id="bd-action-title" style="font-size:1.05rem;font-weight:700;margin-bottom:.8rem;"></div>
+    <div id="bd-action-form"></div>
+    <div style="display:flex;gap:.5rem;justify-content:flex-end;margin-top:1rem;">
+      <button type="button" onclick="bdActionClose()" style="padding:.35rem .8rem;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer;">Cancel</button>
+      <button type="button" id="bd-action-submit" style="padding:.35rem .8rem;border:1px solid #007079;border-radius:4px;background:#007079;color:#fff;cursor:pointer;font-weight:600;">Submit</button>
+    </div>
+    <div id="bd-action-msg" style="font-size:.82rem;margin-top:.4rem;"></div>
+  </div>
+</div>
+
+<script>
+(function() {
+  let _bdId = '';
+  let _actionType = '';
+
+  window.bdActionModal = function(type, bdId) {
+    _bdId = bdId; _actionType = type;
+    const overlay = document.getElementById('bd-action-overlay');
+    const title = document.getElementById('bd-action-title');
+    const form = document.getElementById('bd-action-form');
+    const msg = document.getElementById('bd-action-msg');
+    msg.textContent = '';
+
+    const inp = (id, label, ph, val) =>
+      `<div style="margin-bottom:.5rem;"><label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.15rem;">${label}</label><input id="${id}" value="${val||''}" placeholder="${ph}" style="width:100%;padding:.35rem .5rem;border:1px solid #cbd5e0;border-radius:4px;font-size:.88rem;box-sizing:border-box;"></div>`;
+
+    if (type === 'alt') {
+      title.textContent = 'Add Alternative';
+      form.innerHTML = inp('ba-name','Name','e.g. Water Injection','')
+        + inp('ba-rationale','Rationale','Why this option','')
+        + `<div style="margin-bottom:.5rem;"><label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.15rem;">Action</label>
+           <select id="ba-action" style="padding:.35rem .5rem;border:1px solid #cbd5e0;border-radius:4px;font-size:.88rem;">
+             <option>Consider</option><option>Recommend</option><option>Reject</option>
+           </select></div>`;
+    } else if (type === 'vol') {
+      title.textContent = 'Update Volume Reference';
+      form.innerHTML = inp('bv-id','REV Record ID','dev:work-product-component--ReservoirEstimatedVolumes:xxx:1','')
+        + `<div style="margin-bottom:.5rem;"><label style="font-size:.85rem;font-weight:600;display:block;margin-bottom:.15rem;">Artifact</label>
+           <select id="bv-artifact" style="padding:.35rem .5rem;border:1px solid #cbd5e0;border-radius:4px;font-size:.88rem;">
+             <option>InPlaceVol-stats</option><option>InPlaceVol-raw</option>
+           </select></div>`;
+    } else if (type === 'risk') {
+      title.textContent = 'Flag Risk';
+      form.innerHTML = inp('br-id','Risk Record ID','dev:master-data--Risk:xxx:1','');
+    }
+    overlay.style.display = 'flex';
+  };
+
+  window.bdActionClose = function() {
+    document.getElementById('bd-action-overlay').style.display = 'none';
+  };
+
+  document.getElementById('bd-action-submit').addEventListener('click', async function() {
+    const msg = document.getElementById('bd-action-msg');
+    msg.textContent = 'Submitting…'; msg.style.color = '#718096';
+    let url, body;
+    const enc = encodeURIComponent(_bdId);
+
+    if (_actionType === 'alt') {
+      url = `/api/bd/${enc}/add-alternative`;
+      body = { name: document.getElementById('ba-name').value.trim(),
+               rationale: document.getElementById('ba-rationale').value.trim(),
+               action: document.getElementById('ba-action').value };
+      if (!body.name) { msg.textContent = 'Name is required'; msg.style.color = '#9b2c2c'; return; }
+    } else if (_actionType === 'vol') {
+      url = `/api/bd/${enc}/update-volume`;
+      body = { rev_id: document.getElementById('bv-id').value.trim(),
+               artifact: document.getElementById('bv-artifact').value };
+      if (!body.rev_id) { msg.textContent = 'REV ID is required'; msg.style.color = '#9b2c2c'; return; }
+    } else if (_actionType === 'risk') {
+      url = `/api/bd/${enc}/flag-risk`;
+      body = { risk_id: document.getElementById('br-id').value.trim() };
+      if (!body.risk_id) { msg.textContent = 'Risk ID is required'; msg.style.color = '#9b2c2c'; return; }
+    }
+    try {
+      const r = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+      const d = await r.json();
+      if (d.ok) {
+        msg.textContent = '✓ Done' + (d.audit && d.audit.activity_id ? ' (audit: ' + d.audit.activity_id.split(':').pop() + ')' : '');
+        msg.style.color = '#276749';
+        setTimeout(() => { bdActionClose(); location.reload(); }, 1200);
+      } else {
+        msg.textContent = 'Error: ' + (d.error || r.status); msg.style.color = '#9b2c2c';
+      }
+    } catch(e) { msg.textContent = 'Error: ' + e.message; msg.style.color = '#9b2c2c'; }
+  });
+})();
+</script>
+
 {% endblock %}

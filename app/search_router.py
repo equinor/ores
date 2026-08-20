@@ -1902,3 +1902,257 @@ async def api_delete_query(request: Request, query_id: int):
     if not ok:
         return JSONResponse({"error": "Failed to delete"}, status_code=500)
     return {"deleted": query_id}
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# B3 – Relationship-Aware Search (OSDU side)
+#
+# Fetches BD candidates by kind → enriches via Parameters[] → filters by
+# nested criteria that OSDU Search v2 cannot express (e.g. "BD whose linked
+# REV WPC has P50 > X").
+# ──────────────────────────────────────────────────────────────────────────────
+
+@router.post("/api/search/filtered", response_class=JSONResponse,
+             summary="B3: Enrichment-filtered BD search")
+async def search_filtered(request: Request):
+    """Post-search enrichment filter for BusinessDecision records.
+
+    OSDU Search v2 cannot query nested arrays like
+    ``Parameters[role=Output, kind=REV].P50 > X``.
+    This endpoint:
+      1. Fetches BD candidates via OSDU Search (by kind + optional query).
+      2. Enriches each BD (volumes, geolabel, production, activity).
+      3. Filters enriched results using caller-supplied predicates.
+      4. Returns matching BDs with enriched data attached.
+
+    Expects JSON body::
+
+        {
+          "query": "*",              // OSDU query string (default "*")
+          "limit": 100,              // max candidates to fetch from OSDU
+          "filters": [               // post-enrichment predicates (AND-combined)
+            {
+              "path": "volumes.ColumnValues.Oil.P50",
+              "op": ">",            // =, !=, >, <, >=, <=, contains, exists
+              "value": 10.0
+            },
+            {
+              "path": "bd_geolabel.volumes_by_segment.TOTAL.Oil.P50",
+              "op": ">",
+              "value": 5.0
+            },
+            {
+              "path": "bd_production.OilRate_kSm3d",
+              "op": "exists"
+            },
+            {
+              "path": "data.Parameters",
+              "op": "contains_param",  // special: match within Parameters[]
+              "artifact": "ETPDataspace",
+              "relationship": "evidencedBy"
+            }
+          ]
+        }
+    """
+    at = _access_token(request)
+    body = await request.json()
+
+    query = body.get("query", "*")
+    limit = max(1, min(body.get("limit", 100), _MAX_RECORD_LIMIT))
+    filters = body.get("filters", [])
+
+    bd_kind = "osdu:wks:master-data--BusinessDecision:*"
+    search_url = f"https://{osdu.OSDU_BASE_URL}/api/search/v2/query"
+    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
+    hdr = osdu.headers(at)
+
+    try:
+        async with osdu.http_client(timeout=60) as client:
+            # Phase 1: Search for BD candidates
+            payload = {
+                "kind": bd_kind,
+                "query": query,
+                "limit": limit,
+                "returnedFields": ["id", "kind"],
+                "trackTotalCount": True,
+            }
+            r = await client.post(search_url, headers=hdr, json=payload)
+            r.raise_for_status()
+            res = r.json()
+            total = int(res.get("totalCount") or 0)
+            hit_ids = [
+                rec.get("id") for rec in res.get("results", [])
+                if rec.get("id")
+            ]
+
+            if not hit_ids:
+                return JSONResponse({
+                    "ok": True, "total_candidates": 0,
+                    "matched": 0, "results": [],
+                })
+
+            # Phase 2: Fetch full records
+            _sem = osdu.API_SEMAPHORE
+
+            async def _fetch(rid: str):
+                async with _sem:
+                    try:
+                        r2 = await client.get(f"{storage_url}/{rid}", headers=hdr)
+                        return r2.json() if r2.status_code == 200 else None
+                    except Exception:
+                        return None
+
+            full_records = await asyncio.gather(*[_fetch(rid) for rid in hit_ids])
+            valid = [f for f in full_records if f is not None]
+
+            # Phase 3: Enrich each BD
+            enriched: List[Dict[str, Any]] = []
+            for full in valid:
+                try:
+                    enriched.append(
+                        await _enrich_record_light(full, client, storage_url, search_url, hdr)
+                    )
+                except Exception as exc:
+                    log.warning("[B3-FILTER] enrich failed for %s: %s",
+                                full.get("id", "?"), exc)
+
+            # Phase 4: Apply post-enrichment filters (AND-combined)
+            matched = []
+            for rec in enriched:
+                if _match_all_filters(rec, filters):
+                    matched.append(rec)
+
+            return JSONResponse({
+                "ok": True,
+                "total_candidates": total,
+                "fetched": len(valid),
+                "matched": len(matched),
+                "results": matched,
+            })
+
+    except httpx.HTTPStatusError as e:
+        from .common import sanitize_upstream_error
+        return JSONResponse(
+            {"ok": False, "error": sanitize_upstream_error(e.response)},
+            status_code=e.response.status_code,
+        )
+    except Exception as e:
+        log.exception("[B3-FILTER] unexpected error: %s", e)
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+
+
+def _resolve_path(obj: Any, path: str) -> Any:
+    """Walk a dot-separated path into a nested dict/list structure.
+
+    Supports array indexing via ``[N]`` and ``[]`` (match-any in list).
+    Returns ``_MISSING`` sentinel if the path doesn't resolve.
+    """
+    parts = re.split(r"\.|(?=\[)", path)
+    current = obj
+    for part in parts:
+        if not part:
+            continue
+        m = re.match(r"\[(\d+)\]", part)
+        if m:
+            idx = int(m.group(1))
+            if isinstance(current, list) and 0 <= idx < len(current):
+                current = current[idx]
+            else:
+                return _MISSING
+        elif part == "[]":
+            # match-any: try each element in list
+            if isinstance(current, list):
+                return current  # caller iterates
+            return _MISSING
+        elif isinstance(current, dict):
+            if part in current:
+                current = current[part]
+            else:
+                return _MISSING
+        else:
+            return _MISSING
+    return current
+
+
+class _MissingSentinel:
+    """Sentinel for missing values in path resolution."""
+    pass
+
+
+_MISSING = _MissingSentinel()
+
+
+def _compare(actual: Any, op: str, expected: Any) -> bool:
+    """Compare *actual* to *expected* using *op*."""
+    if op == "exists":
+        return not isinstance(actual, _MissingSentinel) and actual is not None
+    if isinstance(actual, _MissingSentinel):
+        return False
+    if op == "contains":
+        return str(expected).lower() in str(actual).lower()
+    try:
+        # Attempt numeric comparison
+        a = float(actual) if not isinstance(actual, (int, float)) else actual
+        e = float(expected) if not isinstance(expected, (int, float)) else expected
+        if op == "=":
+            return a == e
+        if op == "!=":
+            return a != e
+        if op == ">":
+            return a > e
+        if op == "<":
+            return a < e
+        if op == ">=":
+            return a >= e
+        if op == "<=":
+            return a <= e
+    except (ValueError, TypeError):
+        # Fall back to string comparison
+        if op == "=":
+            return str(actual) == str(expected)
+        if op == "!=":
+            return str(actual) != str(expected)
+    return False
+
+
+def _match_all_filters(rec: Dict[str, Any], filters: List[Dict[str, Any]]) -> bool:
+    """Return True if *rec* passes ALL filters (AND semantics)."""
+    for f in filters:
+        op = f.get("op", "=")
+
+        # Special operator: match within Parameters[] array
+        if op == "contains_param":
+            params = (rec.get("data") or {}).get("Parameters") or []
+            artifact = f.get("artifact", "")
+            relationship = f.get("relationship", "")
+            role = f.get("role", "")
+            found = False
+            for p in params:
+                if not isinstance(p, dict):
+                    continue
+                keys = p.get("Keys") or []
+                key_vals = {
+                    kv.get("ParameterKey", ""): kv.get("StringParameterKey", "")
+                    for kv in keys if isinstance(kv, dict)
+                }
+                if artifact and key_vals.get("artifact") != artifact:
+                    continue
+                if relationship and key_vals.get("relationship") != relationship:
+                    continue
+                if role:
+                    role_id = p.get("ParameterRoleID") or ""
+                    if role.lower() not in role_id.lower():
+                        continue
+                found = True
+                break
+            if not found:
+                return False
+            continue
+
+        path = f.get("path", "")
+        value = f.get("value")
+        actual = _resolve_path(rec, path)
+
+        if not _compare(actual, op, value):
+            return False
+    return True

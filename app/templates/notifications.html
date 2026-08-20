@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block title %}ORES - Notifications{% endblock %}
+
+{% block content %}
+<style>
+  .notify-card { background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:1.2rem; margin-bottom:1rem; }
+  .notify-title { font-size:1.1rem; font-weight:700; color:#1a202c; margin-bottom:.5rem; }
+  .notify-status { display:inline-block; padding:.2rem .6rem; border-radius:4px; font-size:.82rem; font-weight:600; }
+  .status-ok { background:#c6f6d5; color:#276749; }
+  .status-err { background:#fed7d7; color:#9b2c2c; }
+  .status-pending { background:#fefcbf; color:#975a16; }
+  .sub-item { padding:.6rem; border:1px solid #e2e8f0; border-radius:6px; margin:.4rem 0; display:flex; justify-content:space-between; align-items:center; }
+  .sub-name { font-weight:600; color:#2d3748; }
+  .sub-topic { font-size:.82rem; color:#718096; }
+  .btn-sm { padding:.3rem .7rem; border:1px solid #ccc; border-radius:4px; background:#fff; cursor:pointer; font-size:.82rem; }
+  .btn-sm:hover { background:#f7fafc; }
+  .btn-danger { border-color:#fc8181; color:#9b2c2c; }
+  .btn-danger:hover { background:#fff5f5; }
+  .btn-primary { background:#007079; color:#fff; border-color:#007079; }
+  .btn-primary:hover { background:#005f66; }
+  .form-row { display:flex; gap:.5rem; align-items:center; margin-bottom:.5rem; flex-wrap:wrap; }
+  .form-row label { font-weight:600; min-width:7rem; font-size:.88rem; }
+  .form-row input { flex:1; min-width:15rem; padding:.35rem .5rem; border:1px solid #cbd5e0; border-radius:4px; font-size:.88rem; }
+  #notify-msg { margin-top:.5rem; font-size:.88rem; }
+  .changes-table { width:100%; border-collapse:collapse; margin-top:.5rem; font-size:.85rem; }
+  .changes-table th, .changes-table td { padding:.35rem .5rem; border-bottom:1px solid #e2e8f0; text-align:left; }
+  .changes-table th { background:#f7fafc; font-weight:600; }
+</style>
+
+<h1 style="margin-bottom:.5rem;">Notifications</h1>
+<p class="muted" style="margin-bottom:1rem;">OSDU Notification Service – test connectivity, manage push subscriptions, poll for record changes.</p>
+
+{# ── Service Connectivity ── #}
+<div class="notify-card">
+  <div class="notify-title">Service Status</div>
+  <div>
+    <span id="svc-status" class="notify-status status-pending">Checking…</span>
+    <button class="btn-sm" onclick="testService()" style="margin-left:.5rem;">Re-test</button>
+  </div>
+  <div id="svc-detail" style="font-size:.82rem;color:#718096;margin-top:.3rem;"></div>
+</div>
+
+{# ── Push Subscriptions ── #}
+<div class="notify-card">
+  <div class="notify-title">Push Subscriptions</div>
+  <div id="sub-list" style="margin-bottom:.8rem;"><span class="muted">Loading…</span></div>
+  <details>
+    <summary style="cursor:pointer;font-weight:600;font-size:.92rem;color:#007079;">Create Subscription</summary>
+    <div style="margin-top:.6rem;">
+      <div class="form-row"><label>Name</label><input id="sub-name" placeholder="e.g. bd-changes"></div>
+      <div class="form-row"><label>Topic</label><input id="sub-topic" placeholder="e.g. recordstopic" value="recordstopic"></div>
+      <div class="form-row"><label>Push endpoint</label><input id="sub-endpoint" placeholder="https://your-app.com/api/notifications/webhook"></div>
+      <div class="form-row"><label>Description</label><input id="sub-desc" placeholder="optional"></div>
+      <button class="btn-sm btn-primary" onclick="createSub()">Create</button>
+      <span id="sub-create-msg" style="font-size:.82rem;margin-left:.5rem;"></span>
+    </div>
+  </details>
+</div>
+
+{# ── Record Change Polling ── #}
+<div class="notify-card">
+  <div class="notify-title">Check Record Changes</div>
+  <p style="font-size:.85rem;color:#718096;margin-bottom:.5rem;">
+    Lightweight poll: enter OSDU record IDs (one per line) to check their last-modified timestamps.
+  </p>
+  <textarea id="poll-ids" rows="4" style="width:100%;max-width:40rem;font-size:.85rem;padding:.4rem;border:1px solid #cbd5e0;border-radius:4px;" placeholder="dev:master-data--BusinessDecision:mybd:1&#10;dev:work-product-component--Activity:xxx:1"></textarea>
+  <div style="margin-top:.5rem;">
+    <button class="btn-sm btn-primary" onclick="checkChanges()">Check Changes</button>
+  </div>
+  <div id="poll-results"></div>
+</div>
+
+{# ── Webhook Log ── #}
+<div class="notify-card">
+  <div class="notify-title">Webhook Endpoint</div>
+  <p style="font-size:.85rem;color:#718096;">
+    Push notifications are received at:
+    <code style="background:#edf2f7;padding:.15rem .4rem;border-radius:3px;">/api/notifications/webhook</code>
+  </p>
+  <p style="font-size:.82rem;color:#a0aec0;">
+    Use this URL as the <strong>push_endpoint</strong> when creating subscriptions. Incoming events are logged server-side.
+  </p>
+</div>
+
+<script>
+async function testService() {
+  const el = document.getElementById('svc-status');
+  const det = document.getElementById('svc-detail');
+  el.className = 'notify-status status-pending'; el.textContent = 'Checking…'; det.textContent = '';
+  try {
+    const r = await fetch('/api/notifications/test');
+    const d = await r.json();
+    if (d.status === 'ok' || r.ok) {
+      el.className = 'notify-status status-ok'; el.textContent = 'Connected';
+      det.textContent = JSON.stringify(d, null, 2);
+    } else {
+      el.className = 'notify-status status-err'; el.textContent = 'Error ' + (d.code || r.status);
+      det.textContent = d.body || d.error || JSON.stringify(d);
+    }
+  } catch(e) {
+    el.className = 'notify-status status-err'; el.textContent = 'Unreachable';
+    det.textContent = e.message;
+  }
+}
+
+async function loadSubs() {
+  const el = document.getElementById('sub-list');
+  try {
+    const r = await fetch('/api/notifications/subscriptions');
+    const d = await r.json();
+    if (!d.ok || !d.subscriptions || d.subscriptions.length === 0) {
+      el.innerHTML = '<span class="muted">No subscriptions found' + (d.error ? ' — ' + d.error : '') + '</span>';
+      return;
+    }
+    el.innerHTML = d.subscriptions.map(s => {
+      const name = s.name || s.Name || s.id || 'unnamed';
+      const topic = s.topic || s.Topic || '-';
+      const sid = s.id || s.Id || s.subscriptionId || name;
+      return `<div class="sub-item">
+        <div><span class="sub-name">${name}</span><br><span class="sub-topic">Topic: ${topic} · ID: ${sid}</span></div>
+        <button class="btn-sm btn-danger" onclick="deleteSub('${sid}')">Delete</button>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<span class="muted">Failed to load: ' + e.message + '</span>';
+  }
+}
+
+async function createSub() {
+  const msg = document.getElementById('sub-create-msg');
+  const name = document.getElementById('sub-name').value.trim();
+  const topic = document.getElementById('sub-topic').value.trim();
+  const endpoint = document.getElementById('sub-endpoint').value.trim();
+  const desc = document.getElementById('sub-desc').value.trim();
+  if (!name || !topic || !endpoint) { msg.textContent = 'Name, topic, and endpoint required'; return; }
+  msg.textContent = 'Creating…';
+  try {
+    const r = await fetch('/api/notifications/subscriptions', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({name, topic, push_endpoint: endpoint, description: desc})
+    });
+    const d = await r.json();
+    msg.textContent = d.ok ? 'Created ✓' : 'Error: ' + (d.error || r.status);
+    if (d.ok) loadSubs();
+  } catch(e) { msg.textContent = 'Error: ' + e.message; }
+}
+
+async function deleteSub(id) {
+  if (!confirm('Delete subscription ' + id + '?')) return;
+  try {
+    await fetch('/api/notifications/subscriptions/' + encodeURIComponent(id), {method:'DELETE'});
+    loadSubs();
+  } catch(e) { alert('Delete failed: ' + e.message); }
+}
+
+async function checkChanges() {
+  const ids = document.getElementById('poll-ids').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
+  const el = document.getElementById('poll-results');
+  if (!ids.length) { el.innerHTML = '<span class="muted">Enter at least one record ID</span>'; return; }
+  el.innerHTML = '<span class="muted">Checking…</span>';
+  try {
+    const r = await fetch('/api/notifications/check-changes', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({record_ids: ids})
+    });
+    const d = await r.json();
+    if (!d.ok || !d.records || !d.records.length) {
+      el.innerHTML = '<span class="muted">No results' + (d.error ? ' — ' + d.error : '') + '</span>';
+      return;
+    }
+    let html = '<table class="changes-table"><tr><th>Record ID</th><th>Kind</th><th>Version</th><th>Modified</th></tr>';
+    for (const rec of d.records) {
+      const mt = rec.modifyTime || rec.createTime || '-';
+      const ts = mt !== '-' ? new Date(mt).toLocaleString() : '-';
+      html += `<tr><td style="word-break:break-all;">${rec.id || '-'}</td><td>${(rec.kind||'').split('--').pop()}</td><td>${rec.version||'-'}</td><td>${ts}</td></tr>`;
+    }
+    html += '</table>';
+    el.innerHTML = html;
+  } catch(e) { el.innerHTML = '<span class="muted">Error: ' + e.message + '</span>'; }
+}
+
+// Auto-load on page open
+testService();
+loadSubs();
+</script>
+{% endblock %}

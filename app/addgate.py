@@ -2056,3 +2056,367 @@ def _set_nested(d: Dict[str, Any], dotkey: str, val: Any) -> None:
             d[part] = {}
         d = d[part]
     d[parts[-1]] = val
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# B5 – Atomic Collaboration Actions
+#
+# Targeted endpoints that update a single aspect of a BD + append audit trail
+# (LifecycleEvents[] on linked CP + Activity record for full provenance).
+# ──────────────────────────────────────────────────────────────────────────────
+
+async def _fetch_record(access_token: str, record_id: str) -> Optional[Dict[str, Any]]:
+    """Fetch a single OSDU record by ID. Returns None on failure."""
+    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
+    hdr = osdu.headers(access_token)
+    try:
+        async with osdu.http_client(timeout=20) as client:
+            r = await client.get(f"{storage_url}/{record_id}", headers=hdr)
+            if r.is_success:
+                return r.json()
+    except Exception as exc:
+        log.warning("[B5] fetch_record failed for %s: %s", record_id, exc)
+    return None
+
+
+async def _put_record(access_token: str, record: Dict[str, Any]) -> tuple[bool, str]:
+    """PUT a single record back to Storage API. Returns (ok, detail)."""
+    storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
+    hdr = osdu.headers(access_token)
+    try:
+        async with osdu.http_client(timeout=20) as client:
+            r = await client.put(storage_url, json=[record], headers=hdr)
+            if r.is_success:
+                return True, r.text[:500]
+            return False, f"HTTP {r.status_code}: {r.text[:500]}"
+    except Exception as exc:
+        return False, str(exc)
+
+
+async def _create_audit_activity(
+    access_token: str,
+    *,
+    action_name: str,
+    bd_id: str,
+    description: str = "",
+    input_ids: Optional[List[str]] = None,
+    output_ids: Optional[List[str]] = None,
+) -> Optional[str]:
+    """Create an Activity record documenting a collaboration action.
+
+    Returns the created Activity record ID, or None on failure.
+    """
+    id_prefix = osdu.DATA_PARTITION_ID or "dev"
+    rec_uuid = str(uuid.uuid4())[:12]
+    record_id = f"{id_prefix}:work-product-component--Activity:{rec_uuid}:1"
+    from datetime import datetime, timezone
+
+    parameters: List[Dict[str, Any]] = []
+    # BD as context
+    parameters.append({
+        "Title": "BusinessDecision",
+        "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:",
+        "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:",
+        "DataObjectParameter": bd_id,
+    })
+    for iid in (input_ids or []):
+        parameters.append({
+            "Title": "Input",
+            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:",
+            "DataObjectParameter": iid,
+        })
+    for oid_val in (output_ids or []):
+        parameters.append({
+            "Title": "Output",
+            "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:",
+            "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Output:",
+            "DataObjectParameter": oid_val,
+        })
+
+    record = {
+        "id": record_id,
+        "kind": "osdu:wks:work-product-component--Activity:1.0.0",
+        "acl": {"owners": osdu.DEFAULT_OWNERS, "viewers": osdu.DEFAULT_VIEWERS},
+        "legal": {
+            "legaltags": [osdu.DEFAULT_LEGAL_TAG],
+            "otherRelevantDataCountries": osdu.DEFAULT_COUNTRIES,
+        },
+        "data": {
+            "Name": action_name,
+            "Description": description,
+            "WorkflowStatus": "Completed",
+            "CreationDateTime": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "Parameters": parameters,
+        },
+    }
+    ok, detail = await _put_record(access_token, record)
+    if ok:
+        log.info("[B5] Audit Activity created: %s (%s)", record_id, action_name)
+        return record_id
+    log.warning("[B5] Audit Activity creation failed: %s", detail)
+    return None
+
+
+async def _audit_action(
+    access_token: str,
+    bd_record: Dict[str, Any],
+    *,
+    action_name: str,
+    event_id: str,
+    description: str,
+    input_ids: Optional[List[str]] = None,
+    output_ids: Optional[List[str]] = None,
+) -> Dict[str, Any]:
+    """Dual audit: append LifecycleEvent to linked CP + create Activity record.
+
+    Returns audit summary dict.
+    """
+    data = bd_record.get("data") or {}
+    bd_id = bd_record.get("id", "")
+    audit: Dict[str, Any] = {"lifecycle_event": False, "activity_id": None}
+
+    # Find linked CollaborationProject in Parameters[]
+    cp_id = ""
+    for p in (data.get("Parameters") or []):
+        if not isinstance(p, dict):
+            continue
+        dop = p.get("DataObjectParameter") or ""
+        if "CollaborationProject" in dop:
+            cp_id = dop
+            break
+
+    tasks = []
+    if cp_id:
+        tasks.append(_append_lifecycle_event(
+            access_token, cp_id,
+            event_id=event_id,
+            description=description,
+        ))
+    tasks.append(_create_audit_activity(
+        access_token,
+        action_name=action_name,
+        bd_id=bd_id,
+        description=description,
+        input_ids=input_ids,
+        output_ids=output_ids,
+    ))
+
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    if cp_id and not isinstance(results[0], Exception):
+        audit["lifecycle_event"] = results[0]
+    act_result = results[-1]
+    if not isinstance(act_result, Exception):
+        audit["activity_id"] = act_result
+
+    return audit
+
+
+@router.post("/api/bd/{bd_id:path}/add-alternative",
+             summary="B5: Add an alternative to a BusinessDecision")
+async def bd_add_alternative(request: Request, bd_id: str):
+    """Add an alternative to BD's ext.equinor.Alternatives[] array.
+
+    Expects JSON body::
+
+        {
+          "name": "Water Injection",
+          "rationale": "Higher sweep efficiency expected",
+          "action": "Recommend"   // Recommend | Consider | Reject
+        }
+
+    Also appends LifecycleEvent + creates Activity audit record.
+    """
+    at = _access_token(request)
+    body = await request.json()
+
+    name = body.get("name", "").strip()
+    if not name:
+        raise HTTPException(400, "name is required")
+
+    rec = await _fetch_record(at, bd_id)
+    if not rec:
+        raise HTTPException(404, f"BD not found: {bd_id}")
+
+    data = rec.get("data") or {}
+    ext_eq = data.setdefault("ext", {}).setdefault("equinor", {})
+    alts = ext_eq.get("Alternatives") or []
+
+    new_alt = {
+        "Name": name,
+        "Rank": len(alts) + 1,
+        "Rationale": body.get("rationale", ""),
+        "RecommendedAction": body.get("action", "Consider"),
+    }
+    alts.append(new_alt)
+    ext_eq["Alternatives"] = alts
+
+    ok, detail = await _put_record(at, rec)
+    if not ok:
+        return JSONResponse({"ok": False, "error": detail}, status_code=502)
+
+    audit = await _audit_action(
+        at, rec,
+        action_name=f"AddAlternative: {name}",
+        event_id="AlternativeAdded",
+        description=f"Alternative «{name}» added to BD {bd_id}",
+    )
+
+    return JSONResponse({
+        "ok": True,
+        "bd_id": bd_id,
+        "alternative": new_alt,
+        "alternatives_count": len(alts),
+        "audit": audit,
+    })
+
+
+@router.post("/api/bd/{bd_id:path}/update-volume",
+             summary="B5: Link or update volume reference on a BD")
+async def bd_update_volume(request: Request, bd_id: str):
+    """Add or replace a ReservoirEstimatedVolumes parameter on a BD.
+
+    Expects JSON body::
+
+        {
+          "rev_id": "dev:work-product-component--ReservoirEstimatedVolumes:xxx:1",
+          "artifact": "InPlaceVol-stats",   // InPlaceVol-stats | InPlaceVol-raw
+          "relationship": "evidencedBy"
+        }
+    """
+    at = _access_token(request)
+    body = await request.json()
+
+    rev_id = body.get("rev_id", "").strip()
+    if not rev_id:
+        raise HTTPException(400, "rev_id is required")
+    artifact = body.get("artifact", "InPlaceVol-stats")
+    relationship = body.get("relationship", "evidencedBy")
+
+    rec = await _fetch_record(at, bd_id)
+    if not rec:
+        raise HTTPException(404, f"BD not found: {bd_id}")
+
+    data = rec.get("data") or {}
+    params = data.setdefault("Parameters", [])
+    id_prefix = bd_id.split(":")[0] if ":" in bd_id else "dev"
+
+    # Remove existing param with same artifact tag
+    params[:] = [
+        p for p in params
+        if not (
+            isinstance(p, dict)
+            and "ReservoirEstimatedVolumes" in (p.get("DataObjectParameter") or "")
+            and any(
+                kv.get("StringParameterKey") == artifact
+                for kv in (p.get("Keys") or [])
+                if isinstance(kv, dict)
+            )
+        )
+    ]
+
+    new_param = {
+        "Title": f"In-place volumes ({artifact.replace('InPlaceVol-', '')})",
+        "Selection": "Volume estimate linked to decision",
+        "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
+        "DataObjectParameter": rev_id,
+        "Keys": [
+            {"ParameterKey": "artifact", "StringParameterKey": artifact},
+            {"ParameterKey": "relationship", "StringParameterKey": relationship},
+        ],
+    }
+    params.append(new_param)
+
+    ok, detail = await _put_record(at, rec)
+    if not ok:
+        return JSONResponse({"ok": False, "error": detail}, status_code=502)
+
+    audit = await _audit_action(
+        at, rec,
+        action_name=f"UpdateVolume: {artifact}",
+        event_id="VolumeUpdated",
+        description=f"Volume ref updated ({artifact}) on BD {bd_id}: {rev_id}",
+        input_ids=[rev_id],
+    )
+
+    return JSONResponse({
+        "ok": True,
+        "bd_id": bd_id,
+        "rev_id": rev_id,
+        "artifact": artifact,
+        "audit": audit,
+    })
+
+
+@router.post("/api/bd/{bd_id:path}/flag-risk",
+             summary="B5: Link a Risk record to a BD")
+async def bd_flag_risk(request: Request, bd_id: str):
+    """Add a Risk record reference to BD's Parameters[].
+
+    Expects JSON body::
+
+        {
+          "risk_id": "dev:master-data--Risk:xxx:1",
+          "relationship": "constrainedBy"
+        }
+    """
+    at = _access_token(request)
+    body = await request.json()
+
+    risk_id = body.get("risk_id", "").strip()
+    if not risk_id:
+        raise HTTPException(400, "risk_id is required")
+    relationship = body.get("relationship", "constrainedBy")
+
+    rec = await _fetch_record(at, bd_id)
+    if not rec:
+        raise HTTPException(404, f"BD not found: {bd_id}")
+
+    data = rec.get("data") or {}
+    params = data.setdefault("Parameters", [])
+    id_prefix = bd_id.split(":")[0] if ":" in bd_id else "dev"
+
+    # Check if this risk is already linked
+    already = any(
+        isinstance(p, dict) and p.get("DataObjectParameter") == risk_id
+        for p in params
+    )
+    if already:
+        return JSONResponse({
+            "ok": True, "bd_id": bd_id, "risk_id": risk_id,
+            "already_linked": True, "audit": {},
+        })
+
+    new_param = {
+        "Title": "Risk",
+        "Selection": "Risk linked to decision",
+        "ParameterKindID": f"{id_prefix}:reference-data--ParameterKind:DataObject:1",
+        "ParameterRoleID": f"{id_prefix}:reference-data--ParameterRole:Input:1",
+        "DataObjectParameter": risk_id,
+        "Keys": [
+            {"ParameterKey": "artifact", "StringParameterKey": "Risk"},
+            {"ParameterKey": "relationship", "StringParameterKey": relationship},
+        ],
+    }
+    params.append(new_param)
+
+    ok, detail = await _put_record(at, rec)
+    if not ok:
+        return JSONResponse({"ok": False, "error": detail}, status_code=502)
+
+    audit = await _audit_action(
+        at, rec,
+        action_name="FlagRisk",
+        event_id="RiskFlagged",
+        description=f"Risk {risk_id} linked to BD {bd_id}",
+        input_ids=[risk_id],
+    )
+
+    return JSONResponse({
+        "ok": True,
+        "bd_id": bd_id,
+        "risk_id": risk_id,
+        "already_linked": False,
+        "audit": audit,
+    })

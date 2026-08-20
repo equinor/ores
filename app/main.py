@@ -45,6 +45,7 @@ from .howto_router import router as howto_router
 from .weco_router import router as weco_router
 from .weco_docs_router import router as weco_docs_router
 from .connectivity import router as connectivity_router
+from .notification_router import router as notification_router
 
 # ──────────────────────────────────────────────────────────────────────────────
 # App setup & logging
@@ -180,6 +181,7 @@ app.include_router(howto_router)
 app.include_router(weco_router, prefix="/weco", tags=["weco"])
 app.include_router(weco_docs_router, prefix="/weco", tags=["weco-docs"])
 app.include_router(connectivity_router, tags=["connectivity"])
+app.include_router(notification_router, tags=["notifications"])
 
 
 app.mount(

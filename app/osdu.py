@@ -723,3 +723,126 @@ def normalize_obj(raw: Any, uuid: str) -> dict[str, Any]:
 # Backward-compat alias (used by structuremap, resqml_viz, bd_enrichment)
 _normalize_obj = normalize_obj
 
+
+# ======================================================================
+# OSDU Notification Service (Register-API)
+# https://community.opengroup.org/osdu/platform/system/notification/-/blob/main/docs/api/notification.yaml
+# ======================================================================
+
+def _notification_url(path: str = "") -> str:
+    """Build an OSDU Notification Service v1 URL."""
+    return f"https://{OSDU_BASE_URL}/api/notification/v1{path}"
+
+
+async def notification_test(access_token: str) -> dict[str, Any]:
+    """GET /api/notification/v1/test  — connectivity probe."""
+    hdr = headers(access_token)
+    async with _http(timeout=10) as client:
+        r = await client.get(_notification_url("/test"), headers=hdr)
+        if r.status_code == 200:
+            try:
+                return r.json()
+            except Exception:
+                return {"status": "ok", "raw": r.text[:200]}
+        return {"status": "error", "code": r.status_code, "body": r.text[:500]}
+
+
+async def notification_list_subscriptions(
+    access_token: str,
+    notification_id: str = "",
+) -> list[dict[str, Any]]:
+    """GET /api/notification/v1/push/subscriptions — list push subscriptions.
+
+    If *notification_id* is given, fetch just that single subscription.
+    """
+    hdr = headers(access_token)
+    async with _http(timeout=15) as client:
+        if notification_id:
+            url = _notification_url(f"/push/subscriptions/{notification_id}")
+        else:
+            url = _notification_url("/push/subscriptions")
+        r = await client.get(url, headers=hdr)
+        r.raise_for_status()
+        data = r.json()
+        if isinstance(data, list):
+            return data
+        if isinstance(data, dict):
+            return data.get("subscriptions", [data])
+        return []
+
+
+async def notification_create_subscription(
+    access_token: str,
+    *,
+    name: str,
+    topic: str,
+    push_endpoint: str,
+    description: str = "",
+) -> dict[str, Any]:
+    """POST /api/notification/v1/push/subscriptions — create push subscription.
+
+    Args:
+        name: subscription name (e.g. "bd-changes")
+        topic: OSDU record change topic / kind filter
+               (e.g. "recordstopic" for all, or a specific kind pattern)
+        push_endpoint: HTTPS URL that will receive POST callbacks
+        description: optional description
+    """
+    hdr = headers(access_token)
+    body: dict[str, Any] = {
+        "name": name,
+        "description": description or f"ORES subscription: {name}",
+        "topic": topic,
+        "pushEndpoint": push_endpoint,
+    }
+    async with _http(timeout=15) as client:
+        r = await client.post(
+            _notification_url("/push/subscriptions"),
+            headers=hdr, json=body,
+        )
+        r.raise_for_status()
+        return r.json()
+
+
+async def notification_delete_subscription(
+    access_token: str,
+    subscription_id: str,
+) -> bool:
+    """DELETE /api/notification/v1/push/subscriptions/{id}."""
+    hdr = headers(access_token)
+    async with _http(timeout=10) as client:
+        r = await client.delete(
+            _notification_url(f"/push/subscriptions/{subscription_id}"),
+            headers=hdr,
+        )
+        return r.is_success
+
+
+async def notification_record_changed(
+    access_token: str,
+    record_ids: list[str],
+) -> list[dict[str, Any]]:
+    """Query the OSDU Register service for change events affecting given record IDs.
+
+    Uses the OSDU Search API to find records by ID and check their
+    ``modifyTime`` / ``createTime`` metadata — this is the lightweight
+    polling approach when push subscriptions aren't configured.
+    """
+    if not record_ids:
+        return []
+    hdr = headers(access_token)
+    search_url = f"https://{OSDU_BASE_URL}/api/search/v2/query"
+    # Search for exact record IDs
+    or_terms = " OR ".join(f'"{rid}"' for rid in record_ids[:50])
+    payload = {
+        "kind": "*:*:*:*",
+        "query": or_terms,
+        "limit": len(record_ids),
+        "returnedFields": ["id", "kind", "version", "modifyTime", "createTime"],
+    }
+    async with _http(timeout=20) as client:
+        r = await client.post(search_url, headers=hdr, json=payload)
+        if r.status_code != 200:
+            return []
+        return r.json().get("results") or []
+
