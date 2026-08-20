@@ -2,7 +2,7 @@
 
 This guide explains how seismic interpretation results are stored in OSDU + RDDMS: from picking horizons on a seismic cube, through time-domain surfaces, to depth-converted maps and derived properties.
 
-**Document structure:** Sections 1–2 set the stage (workflow, data stores). Sections 3–4 cover the two main structural interpretation objects — horizons and faults — in parallel. Sections 5+ cover properties, ingestion, retrieval, and operational topics.
+**Document structure:** Sections 1–2 set the stage (workflow, data stores). Sections 3–4 cover the two main structural interpretation objects  horizons and faults  in parallel. Sections 5+ cover properties, ingestion, retrieval, and operational topics.
 
 ---
 
@@ -120,7 +120,7 @@ LocalBoundaryFeature          ← "There exists a geological boundary here"
 
 ### When is this hierarchy just scaffolding?
 
-If you have one surface, one survey, no re-picks — the Feature and Interpretation layers carry no independent information. Create them with minimal fields for schema compliance, and put your real metadata on the Representation WPC.
+If you have one surface, one survey, no re-picks  the Feature and Interpretation layers carry no independent information. Create them with minimal fields for schema compliance, and put your real metadata on the Representation WPC.
 
 They become essential when the same geological entity has multiple representations (different surveys, time-lapse, re-interpretation). The Feature is the stable identity; the Interpretation captures one geological reading; the Representation holds one set of geometry.
 
@@ -180,7 +180,7 @@ Both are **representation-level** records pointing to the same `FaultInterpretat
 
 ### Why both exist
 
-- **`GenericRepresentation`** is what the RDDMS manifest builder produces automatically — it mirrors the RESQML object graph 1:1. It is the RDDMS data pointer.
+- **`GenericRepresentation`** is what the RDDMS manifest builder produces automatically  it mirrors the RESQML object graph 1:1. It is the RDDMS data pointer.
 - **`SeismicFault`** adds the seismic interpretation metadata that does not exist in RESQML: which volume was the fault picked on, what bin grid, what picking method. It is the catalog discovery record.
 
 In a well-managed system both should exist per fault: `GenericRepresentation` for RDDMS data access, `SeismicFault` for search and interpretation provenance.
@@ -213,15 +213,15 @@ flowchart LR
 |---|---|---|
 | Fault picked interactively on 3D seismic | **Yes** | Full seismic context available |
 | Fault sticks exported from Petrel/OpendTect | **Yes** | Can resolve survey + bin grid |
-| Fault extracted from geomodel (algorithmic) | No | Not a seismic pick — use `GenericRepresentation` only |
+| Fault extracted from geomodel (algorithmic) | No | Not a seismic pick  use `GenericRepresentation` only |
 | Fault polygons from FMU (structure_depth_fault_lines) | No | Depth-domain model output, not a seismic interpretation |
 
 ### Data management implications
 
 1. **Search**: Users can find all seismic-picked faults with a kind-level query (`work-product-component--SeismicFault`), without filtering generic representations.
 2. **Provenance**: The `SeismicTraceDataIDs` and `Interpreter` fields trace exactly which data and who produced the pick.
-3. **Re-interpretation**: When a new seismic volume arrives, create new `SeismicFault` records while keeping existing `FaultInterpretation` and `LocalBoundaryFeature` unchanged — the geologic identity persists across surveys.
-4. **Consistency with horizons**: The same pattern applies — `SeismicHorizon` is to `HorizonInterpretation` what `SeismicFault` is to `FaultInterpretation`.
+3. **Re-interpretation**: When a new seismic volume arrives, create new `SeismicFault` records while keeping existing `FaultInterpretation` and `LocalBoundaryFeature` unchanged  the geologic identity persists across surveys.
+4. **Consistency with horizons**: The same pattern applies  `SeismicHorizon` is to `HorizonInterpretation` what `SeismicFault` is to `FaultInterpretation`.
 
 ---
 
@@ -607,7 +607,7 @@ Each RDDMS object should have **both** a universal and a specialised catalog ent
 
 ---
 
-## Appendix F: Demo Guide — Seismic Interpretation Features
+## Appendix F: Demo Guide  Seismic Interpretation Features
 
 ### Browsing interpretation objects
 
@@ -669,5 +669,5 @@ Faults are referenced in the field development context via:
 | 2 | `/keys` → Relations on a fault UUID | See GridConnectionSet + grid links |
 | 3 | `/connectivity` → A-2 vs A-3, Valysar | Shows F2 as a baffle between segments |
 | 4 | `/search` → "Drogon DG1" BD | Risk record "FaultCompartment" references F2 |
-| 5 | `/keys` → Segment Overview button | Ranks segments by property quality — East Lowland underperforms |
+| 5 | `/keys` → Segment Overview button | Ranks segments by property quality  East Lowland underperforms |
 

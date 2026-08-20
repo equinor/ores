@@ -19,7 +19,7 @@ The key principle:
 > | "attribute map" | **property** | In OSDU, "attribute" means graphical display (color, line style). Use **property** for data values. |
 > | "map" (informal) | **Grid2dRepresentation** or **PointSetRepresentation** | The RESQML geometry that holds the 2D grid or scattered points in RDDMS. |
 > | "structure map" (informal) | **`StructureMap`** (OSDU WPC) | An OSDU catalog record (Work Product Component) that references a RDDMS representation via `DDMSDatasets`. It is *not* the grid itself. |
-> | "seismic horizon" (informal) | **`SeismicHorizon`** (OSDU WPC) | Same pattern — catalog record pointing to a time-domain grid representation. |
+> | "seismic horizon" (informal) | **`SeismicHorizon`** (OSDU WPC) | Same pattern  catalog record pointing to a time-domain grid representation. |
 > | "generic map" (informal) | **`GenericBinGrid`** + **`GenericProperty`** (OSDU WPCs) | Catalog records for non-structural grids and their property arrays. |
 >
 > This document uses:
@@ -113,7 +113,7 @@ flowchart TD
 **Ambiguous** - metadata conflicts (e.g. TVDSS domain but amplitude-like name/values):
 - map conservatively as `GenericProperty`
 - set domain to `mixed` or unresolved
-- flag QC warning — do not create `StructureMap` WPC without confirmation
+- flag QC warning  do not create `StructureMap` WPC without confirmation
 
 ---
 
@@ -352,7 +352,7 @@ RDDMS manifest export includes `*Property` objects by default (`DEFAULT_DATASPAC
 | Multiple surfaces sharing one geologic horizon | Yes - reuse the Interpretation | Shared `HorizonInterpretation`, multiple `Grid2dRepresentation`s |
 | Standalone property (no parent horizon) | **No** | `GenericBinGrid` + `GenericProperty` WPCs |
 | Structural Z surface with known geologic name | Yes | Full FIRP chain |
-| Ambiguous metadata | **No** — store conservatively | `GenericProperty` WPC + QC flag |
+| Ambiguous metadata | **No**  store conservatively | `GenericProperty` WPC + QC flag |
 | Name-decoded metadata, no explicit source link | **No** | Decoded fields → `ExtensionProperties` + `GenericProperty` WPC |
 
 ---
@@ -382,11 +382,11 @@ Example: `4D_JS_FulRes_21sp-20au_DiffTS_0535_maxp`
 
 | Field | Options | Conditional |
 |---|---|---|
-| `SeismicTraceContent` | Amplitude / Quadrature / Relative Acoustic Impedance / Timeshift / Timestrain / Extended Elastic Inversion / … | — |
+| `SeismicTraceContent` | Amplitude / Quadrature / Relative Acoustic Impedance / Timeshift / Timestrain / Extended Elastic Inversion / … |  |
 | `SeismicDifference` | Value / Raw difference / Timeshifted difference | Only if `MapType=4D` |
-| `SeismicCoverage` | Full / Masked / Padded | — |
+| `SeismicCoverage` | Full / Masked / Padded |  |
 | `DifferenceType` | Attribute of difference / Difference of attribute | Only if `MapType=4D` |
-| `SamplingMethod` | Trilinear / Nearest | — |
+| `SamplingMethod` | Trilinear / Nearest |  |
 | `HorizonOffsets` | e.g. `[-10, 10]` | Depends on `WindowMode` |
 
 ### A.3 ExtractionMethod Vocabulary
@@ -410,7 +410,7 @@ Example: `4D_JS_FulRes_21sp-20au_DiffTS_0535_maxp`
 |---|---|---|
 | `BetweenHorizons` | List of 2 horizon names | Offset per horizon |
 | `AroundHorizon` | 1 horizon name | 2 offsets (above/below) |
-| `Fixed` | 2 constant time/depth values | — |
+| `Fixed` | 2 constant time/depth values |  |
 
 ### A.5 Seismic Difference Token Decoding
 

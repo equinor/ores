@@ -1,6 +1,6 @@
 # OSDU as System of Record for Subsurface Decision Gates
 
-**ECIM 2026 — Conference Presentation (12 min)**
+**ECIM 2026  Conference Presentation (12 min)**
 
 ---
 
@@ -14,7 +14,7 @@
 
 **"OSDU as System of Record for Subsurface Decision Gates"**
 
-Equinor / ORES Team — ECIM 2026, Haugesund
+Equinor / ORES Team  ECIM 2026, Haugesund
 
 > **Comment**
 > - Introduce the question: can OSDU handle structured decision data, not just datasets?
@@ -22,7 +22,7 @@ Equinor / ORES Team — ECIM 2026, Haugesund
 
 ---
 
-## Slide 2: Motivation — The Decision Data Problem
+## Slide 2: Motivation  The Decision Data Problem
 
 ### Graphic
 
@@ -46,7 +46,7 @@ graph LR
 ### Text
 
 - A DG2 concept-select links to **volumes, risks, geomodels, forecasts, prior gates, and alternative concepts**
-- Teams need to trace **why** a decision was made — not just what was decided
+- Teams need to trace **why** a decision was made  not just what was decided
 - Cross-gate tracking (DG1→DG2→DG3→FID) requires **relationship continuity** across years
 - Regulatory and partner reviews demand **auditable evidence chains**
 
@@ -54,8 +54,8 @@ Can OSDU's existing schema and services support this without additional graph in
 
 > **Comment**
 > - Today this knowledge lives in slide decks, spreadsheets, and people's heads. Not queryable, not traceable, not auditable.
-> - What's needed: a typed relationship layer — named, directed links with lifecycle and provenance.
-> - The question isn't "should we build a graph database?" — it's "can we get enough structure from what OSDU already has?"
+> - What's needed: a typed relationship layer  named, directed links with lifecycle and provenance.
+> - The question isn't "should we build a graph database?"  it's "can we get enough structure from what OSDU already has?"
 
 ---
 
@@ -96,7 +96,7 @@ graph TB
 
 | Axis | Scale | Use Case | ORES Feature |
 |---|---|---|---|
-| **Time** | Per gate | Gate readiness — is the evidence complete? | Progress bar + milestone checklist |
+| **Time** | Per gate | Gate readiness  is the evidence complete? | Progress bar + milestone checklist |
 | **Time** | Cross-gate | Volume / risk / economics evolution DG0→FID | Cross-gate analysis + trend charts |
 | **Time** | Lifecycle | Risk escalation, mitigation, resolution | Risk evolution timeline |
 | **Space** | Cell / property | Where is the sweet spot? (multi-property AND) | Compound filter on grid arrays |
@@ -110,11 +110,11 @@ graph TB
 > - Use cases span two axes: through time (gate progression) and across space (cell → portfolio).
 > - The compound filter is the bridge: decision record identifies a risk, compound query locates the sweet spot.
 > - Portfolio queries are the long-term payoff: same schema across 50+ assets = queryable corpus.
-> - Every use case maps to an existing feature — not hypothetical.
+> - Every use case maps to an existing feature  not hypothetical.
 
 ---
 
-## Slide 4: Strategy — Reusing OSDU Schema Fields as Relationship Primitives
+## Slide 4: Strategy  Reusing OSDU Schema Fields as Relationship Primitives
 
 ### Graphic
 
@@ -156,12 +156,12 @@ No new `kind` definitions needed. Conventions on existing fields:
 > **Comment**
 > - The key insight: `Keys[ParameterKey="relationship"]` turns every `Parameters[]` entry into a typed, directed edge.
 > - Edge labels are defined from the source record's perspective: a BD is `evidencedBy` its volumes, `constrainedBy` its risks.
-> - This is not a graph database — no native traversal, no path queries — but it provides enough structure for application-layer graph rendering and relationship-aware search.
+> - This is not a graph database  no native traversal, no path queries  but it provides enough structure for application-layer graph rendering and relationship-aware search.
 > - All of this passes OSDU schema validation. No schema changes needed.
 
 ---
 
-## Slide 5: Drogon Example — DG1 → DG2 Decision Lifecycle
+## Slide 5: Drogon Example  DG1 → DG2 Decision Lifecycle
 
 ### Graphic
 
@@ -200,50 +200,50 @@ graph TD
 
 **The Story:** Drogon field, Valysar formation.
 DG1 approved Feb 2026. Between gates: porosity downgrade (0.18→0.14), new risks, 4D seismic confirms fault communication.
-DG2 approved May 2026 — full 7-segment subsea tieback.
+DG2 approved May 2026  full 7-segment subsea tieback.
 
 | Metric | DG1 | DG2 |
 |---|---|---|
 | P50 STOIIP (MSm³) | 312 | 287 (−8%) |
 | Risks | 2 | 4 (+2 new) |
 | Relationship edges | 5 | 13 |
-| Gate checklist items | — | 9 (8✓ + 1 outstanding) |
+| Gate checklist items |  | 9 (8✓ + 1 outstanding) |
 
 > **Comment**
 > - Walk through the graph: DG2 supersedes DG1, links volumes, geomodel, production forecast, two dev concepts, two risks.
 > - Edge labels read from BD's perspective: "this decision is evidencedBy the volumes", "constrainedBy the risk".
-> - Direction matches storage — Parameters[] on the BD record point to targets.
-> - 13 edges on one BD record — this is real complexity encoded in standard fields.
+> - Direction matches storage  Parameters[] on the BD record point to targets.
+> - 13 edges on one BD record  this is real complexity encoded in standard fields.
 
 ---
 
-## Slide 6: Demo — ORES Rendering
+## Slide 6: Demo  ORES Rendering
 
 ### Graphic
 
-`[PLACEHOLDER: ORES screenshot — gate readiness panel with progress bar + checklist]`
+`[PLACEHOLDER: ORES screenshot  gate readiness panel with progress bar + checklist]`
 
-`[PLACEHOLDER: ORES screenshot — Mermaid relationship graph for Drogon DG2]`
+`[PLACEHOLDER: ORES screenshot  Mermaid relationship graph for Drogon DG2]`
 
-`[PLACEHOLDER: ORES screenshot — risk evolution panel]`
+`[PLACEHOLDER: ORES screenshot  risk evolution panel]`
 
-`[PLACEHOLDER: ORES screenshot — volume comparison DG1 vs DG2]`
+`[PLACEHOLDER: ORES screenshot  volume comparison DG1 vs DG2]`
 
 ### Text
 
 Live demo on eqndev instance (or screenshots if connectivity issues).
 
 Four panels shown:
-1. **Gate readiness** — progress bar + checklist (8/9 complete)
-2. **Relationship graph** — Mermaid-rendered from Parameters[] edges
-3. **Risk evolution** — severity/probability changes across gates
-4. **Volume comparison** — P10/P50/P90 delta DG1→DG2
+1. **Gate readiness**  progress bar + checklist (8/9 complete)
+2. **Relationship graph**  Mermaid-rendered from Parameters[] edges
+3. **Risk evolution**  severity/probability changes across gates
+4. **Volume comparison**  P10/P50/P90 delta DG1→DG2
 
 > **Comment**
 > - This is running live against OSDU (equinorswedev.energy.azure.com).
-> - All data ingested via generic generators — no manual record construction.
+> - All data ingested via generic generators  no manual record construction.
 > - The graph is built at runtime: bd_enrichment.py follows edges, fetches targets in parallel, renders Mermaid.
-> - Same data is queryable on interop (admeinterop) — portable across instances.
+> - Same data is queryable on interop (admeinterop)  portable across instances.
 
 ---
 
@@ -290,15 +290,15 @@ graph TB
 
 ### Text
 
-- **Platform layer**: OSDU Storage + Search + RDDMS — stores records, returns query results
-- **Application layer**: ORES (Python FastAPI) — follows edges, builds graph, computes analytics
+- **Platform layer**: OSDU Storage + Search + RDDMS  stores records, returns query results
+- **Application layer**: ORES (Python FastAPI)  follows edges, builds graph, computes analytics
 - **Frontend**: Mermaid graphs, Chart.js, gate readiness panels
 
 Verified on 2 OSDU instances (eqndev + interop). Deployed on Radix.
 
 > **Comment**
 > - Key point: the platform stores data and answers queries. The application builds the knowledge graph.
-> - bd_enrichment.py does 7 parallel async fetches per BD view — CP, activities, risks, volumes, checklist, remarks, relationships.
+> - bd_enrichment.py does 7 parallel async fetches per BD view  CP, activities, risks, volumes, checklist, remarks, relationships.
 > - No graph database needed. The "graph" is computed on every page load from standard OSDU API calls.
 > - Trade-off: more REST calls vs. zero infrastructure cost.
 
@@ -341,12 +341,12 @@ quadrantChart
 > **Comment**
 > - Be honest about what OSDU can and can't do. This is a strength of the talk.
 > - Top-right quadrant (high impact, low capability) = where the platform needs investment.
-> - Every gap has a workaround today — but they don't scale to thousands of BDs.
+> - Every gap has a workaround today  but they don't scale to thousands of BDs.
 > - Key message: we're not claiming OSDU is a graph database. We're showing it's flexible enough for a useful subset.
 
 ---
 
-## Slide 9: Beyond Governance — Decision Science
+## Slide 9: Beyond Governance  Decision Science
 
 ### Graphic
 
@@ -383,13 +383,13 @@ graph LR
 | **Alternative evaluation** | Structured comparison of development concepts |
 | **Portfolio-level queries** | "All DG2 decisions with NPV > 300 MUSD and outstanding risks" |
 
-Further domains: FMU ensemble tracking, well decision trees, CCS monitoring lifecycle, IOR screening, asset handover — all using the same schema field patterns.
+Further domains: FMU ensemble tracking, well decision trees, CCS monitoring lifecycle, IOR screening, asset handover  all using the same schema field patterns.
 
 > **Comment**
 > - This is the real value proposition: moving from process compliance to analytical insight.
 > - Cross-gate volume tracking lets you calibrate your estimation bias across your entire portfolio.
-> - Risk evolution analysis reveals systematic patterns — which risk types always escalate?
-> - All of this requires typed, queryable evidence chains — exactly what we've built.
+> - Risk evolution analysis reveals systematic patterns  which risk types always escalate?
+> - All of this requires typed, queryable evidence chains  exactly what we've built.
 > - AI/ML angle: structured decision data as training corpus for decision-support models.
 
 ---
@@ -475,15 +475,15 @@ timeline
 - Generic generators for repeatable record creation
 
 **What's needed:**
-1. **Conventions** — Agreement on edge-type vocabulary (`ParameterKey` values)
-2. **Reference data** — MilestoneID entries per gate type
-3. **Application logic** — Enrichment code to follow links and render graphs
-4. **Platform** — Reverse-link indexing, graph traversal API, spatial/temporal query operators
+1. **Conventions**  Agreement on edge-type vocabulary (`ParameterKey` values)
+2. **Reference data**  MilestoneID entries per gate type
+3. **Application logic**  Enrichment code to follow links and render graphs
+4. **Platform**  Reverse-link indexing, graph traversal API, spatial/temporal query operators
 
 > **Comment**
 > - Emphasise: this is working today, on real OSDU instances, with real data.
 > - The A-tier items are days of work, not months.
-> - The platform asks are concrete and bounded — we're not asking for a graph database, just better indexing and a 2-hop traversal API.
+> - The platform asks are concrete and bounded  we're not asking for a graph database, just better indexing and a 2-hop traversal API.
 > - Call to action: standardise the edge-type vocabulary through OSDU Forum.
 
 ---
@@ -511,7 +511,7 @@ graph LR
 
 > **OSDU's schema model is flexible enough to encode typed decision-evidence relationships.**
 > The platform provides the storage and search foundation.
-> The knowledge graph — traversal, rendering, analysis — is built at the application layer.
+> The knowledge graph  traversal, rendering, analysis  is built at the application layer.
 
 Nine relationship types. One key convention (`ParameterKey="relationship"`).
 Full decision lifecycle coverage from DG1 through FID.
@@ -583,7 +583,7 @@ All edges are stored as `Parameters[]` on the source record. Labels are defined 
 }
 ```
 
-The `Keys[]` array adds metadata to any parameter link — transforming a simple reference into a typed, semantically rich edge.
+The `Keys[]` array adds metadata to any parameter link  transforming a simple reference into a typed, semantically rich edge.
 
 ## Appendix C: File References
 

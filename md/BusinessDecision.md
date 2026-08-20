@@ -1,4 +1,4 @@
-# OSDU BusinessDecision — Data Model & Implementation Guide
+# OSDU BusinessDecision  Data Model & Implementation Guide
 
 > **Scope:** Complete reference for modelling staged business decisions in OSDU using `osdu:wks:master-data--BusinessDecision:1.0.0`. Covers the data model, CVP gate lifecycle, relationship semantics, collaboration patterns, and implementation details. Field-agnostic.
 > For ORES tooling (search, analyse, addgate UI), see [BD Demo](/howto/bd-demo).
@@ -10,13 +10,13 @@
 
 ```mermaid
 graph LR
-    subgraph "Today — Fragmented"
+    subgraph "Today  Fragmented"
         PPT["Slide decks"]
         XLS["Spreadsheets"]
         HEAD["People's heads"]
         EMAIL["Email threads"]
     end
-    subgraph "Needed — Structured & Queryable"
+    subgraph "Needed  Structured & Queryable"
         BD["BusinessDecision"]
         BD -->|evidencedBy| VOL["Volumes"]
         BD -->|constrainedBy| RISK["Risks"]
@@ -27,16 +27,16 @@ graph LR
     XLS -.->|"replace with"| BD
 ```
 
-A `BusinessDecision` is an OSDU **master-data** record that captures a staged technical/business decision — not just *what* was decided, but *why*, *based on what evidence*, *constrained by which risks*, and *how it relates* to prior and subsequent decisions.
+A `BusinessDecision` is an OSDU **master-data** record that captures a staged technical/business decision  not just *what* was decided, but *why*, *based on what evidence*, *constrained by which risks*, and *how it relates* to prior and subsequent decisions.
 
-It inherits from `AbstractProjectActivity`, which provides the `Parameters[]` mechanism — the same typed input/output/context pattern used by `Activity` and other project entities. A decision gate is treated as a specialised activity with richer governance semantics.
+It inherits from `AbstractProjectActivity`, which provides the `Parameters[]` mechanism  the same typed input/output/context pattern used by `Activity` and other project entities. A decision gate is treated as a specialised activity with richer governance semantics.
 
 **Why does this matter?**
 
-- **Traceability** — link every decision to its evidence chain
-- **Auditability** — regulatory and partner reviews demand frozen, reproducible evidence packages
-- **Cross-gate analysis** — how do volumes, risks, economics evolve from DG0 through DG3?
-- **Decision quality** — move from "was the process followed?" to "was the decision good?"
+- **Traceability**  link every decision to its evidence chain
+- **Auditability**  regulatory and partner reviews demand frozen, reproducible evidence packages
+- **Cross-gate analysis**  how do volumes, risks, economics evolve from DG0 through DG3?
+- **Decision quality**  move from "was the process followed?" to "was the decision good?"
 
 ---
 
@@ -67,7 +67,7 @@ mindmap
       P&A Plan
 ```
 
-The BD schema is **domain-agnostic** — the same record structure models any staged decision:
+The BD schema is **domain-agnostic**  the same record structure models any staged decision:
 
 | Decision Type | Typical Gates | Key Evidence |
 |---|---|---|
@@ -110,11 +110,11 @@ graph LR
     style DG4 fill:#16a34a,color:#fff
 ```
 
-1. **DG0 — Business-Case Maturity:** Early concept framing. Opportunity recognised, licence strategy aligned. BD record created with project name, reservoir link, initial risk register.
-2. **DG1 — Concept Selection:** Shortlist viable development concepts. REV volumes, initial development concepts, geological risks. BD `supersedes` DG0. *(In MF-TEX workflows, DG1 may be omitted.)*
-3. **DG2 — Concept Maturity:** The selected concept is matured toward sanction. Multiple alternatives evaluated, one selected (`selects`), others rejected (`alternativeTo`). Evidence frozen in PersistedCollection. BD `supersedes` DG1.
-4. **DG3 — Project Sanction:** Investment decision (FID). Board-level approval (PDO). All evidence must be auditable. The DGSP is the frozen pre-read. BD `supersedes` DG2.
-5. **DG4 — Execution Completion:** Basis for operations. Confirms production readiness, commissioning complete, punch-list closed.
+1. **DG0  Business-Case Maturity:** Early concept framing. Opportunity recognised, licence strategy aligned. BD record created with project name, reservoir link, initial risk register.
+2. **DG1  Concept Selection:** Shortlist viable development concepts. REV volumes, initial development concepts, geological risks. BD `supersedes` DG0. *(In MF-TEX workflows, DG1 may be omitted.)*
+3. **DG2  Concept Maturity:** The selected concept is matured toward sanction. Multiple alternatives evaluated, one selected (`selects`), others rejected (`alternativeTo`). Evidence frozen in PersistedCollection. BD `supersedes` DG1.
+4. **DG3  Project Sanction:** Investment decision (FID). Board-level approval (PDO). All evidence must be auditable. The DGSP is the frozen pre-read. BD `supersedes` DG2.
+5. **DG4  Execution Completion:** Basis for operations. Confirms production readiness, commissioning complete, punch-list closed.
 
 **Between gates**, teams iterate on models, run simulations, update volumes, add/resolve risks. The `CollaborationProject` acts as the living workspace, while each BD record represents a **frozen decision point**.
 
@@ -122,14 +122,14 @@ graph LR
 
 | Term | Meaning |
 |------|---------|
-| **DGSP** | Decision Gate Support Package — frozen pre-read docs for each DG |
+| **DGSP** | Decision Gate Support Package  frozen pre-read docs for each DG |
 | **VPbo / APbo** | Business-opportunity milestones in MF-TEX flows |
 | **SDG / SDG3–4** | Technology/Delivery stage gates |
 | **MF-TEX** | Accelerated gate sequencing (DG1 may be omitted) |
 
 ---
 
-## 4. Relationship Types — The Edge Vocabulary
+## 4. Relationship Types  The Edge Vocabulary
 
 ```mermaid
 graph TD
@@ -170,7 +170,7 @@ Nine relationship types stored as `Parameters[].Keys[ParameterKey="relationship"
 
 ---
 
-## 5. Linking Patterns — Four Complementary Approaches
+## 5. Linking Patterns  Four Complementary Approaches
 
 ### A) Parameters[] (from AbstractProjectActivity)
 
@@ -178,7 +178,7 @@ Declare **inputs**, **outputs**, and **context** objects with rich metadata:
 
 ```json
 {
-  "Title": "Volumes — DG2 Statistics",
+  "Title": "Volumes  DG2 Statistics",
   "DataObjectParameter": "dev:wpc--ReservoirEstimatedVolumes:<uuid>:1",
   "Keys": [
     { "ParameterKey": "relationship", "ParameterValue": "evidencedBy" },
@@ -193,11 +193,11 @@ The `Keys[]` sub-array carries edge semantics. The `relationship` key names the 
 
 Built-in properties: `DecisionLevelID`, `ApprovalStatusID`, `RiskIDs`, `RiskAssessmentDocument`, `PriorActivityIDs`.
 
-### C) CollaborationProject — Cross-DG Namespace
+### C) CollaborationProject  Cross-DG Namespace
 
 A `master-data--CollaborationProject` provides a persistent identity across all gates. Its `TrustedCollectionID` points to a growing SoR collection.
 
-### D) PersistedCollection — Gate Evidence Package
+### D) PersistedCollection  Gate Evidence Package
 
 Bundle artifacts into a versioned, frozen evidence set for a specific gate.
 
@@ -210,11 +210,11 @@ Bundle artifacts into a versioned, frozen evidence set for a specific gate.
 | `PersistedCollection` | Gate-scoped evidence snapshot | Per gate (frozen) |
 | Explicit BD fields | Gate filters & governance | Per gate |
 
-**Recommendation:** Use all three layers — BD per gate (with `Parameters[]`), CP as cross-gate namespace, PersistedCollection per gate (DG2+) for frozen evidence.
+**Recommendation:** Use all three layers  BD per gate (with `Parameters[]`), CP as cross-gate namespace, PersistedCollection per gate (DG2+) for frozen evidence.
 
 ---
 
-## 6. Data Model — Record Structure
+## 6. Data Model  Record Structure
 
 ```mermaid
 graph TD
@@ -238,7 +238,7 @@ graph TD
 
 | Field | Purpose | Example |
 |---|---|---|
-| `Name` | Gate title | "Drogon DG2 — Concept Maturity" |
+| `Name` | Gate title | "Drogon DG2  Concept Maturity" |
 | `ProjectName` | Project context | "Drogon Field Development" |
 | `DecisionLevelID` | Reference to DecisionLevel | `…DecisionLevel:DG2:` |
 | `ApprovalStatusID` | Approval state | `…DecisionApprovalStatus:Approved:` |
@@ -271,7 +271,7 @@ graph TD
 
 ---
 
-## 7. CollaborationProject — Cross-Gate Namespace
+## 7. CollaborationProject  Cross-Gate Namespace
 
 ```mermaid
 graph TD
@@ -296,7 +296,7 @@ graph TD
     style BD2 fill:#2563eb,color:#fff
 ```
 
-A `CollaborationProject` is the persistent identity that outlives any single gate — think of it as the "project folder" while each BD is the "gate review minutes". It bridges the System of Engagement (iterative work) and System of Record (trusted data).
+A `CollaborationProject` is the persistent identity that outlives any single gate  think of it as the "project folder" while each BD is the "gate review minutes". It bridges the System of Engagement (iterative work) and System of Record (trusted data).
 
 | Field | Purpose | Lifecycle |
 |---|---|---|
@@ -315,9 +315,9 @@ A `CollaborationProject` is the persistent identity that outlives any single gat
 
 ---
 
-## 8. Evidence Packages — PersistedCollection
+## 8. Evidence Packages  PersistedCollection
 
-A `PersistedCollection` bundles all evidence artifacts for a single gate into a **frozen, versioned set** — it represents "everything the gate committee saw when they approved".
+A `PersistedCollection` bundles all evidence artifacts for a single gate into a **frozen, versioned set**  it represents "everything the gate committee saw when they approved".
 
 **Why freeze evidence?** Auditability, reproducibility, regulatory compliance, dispute resolution.
 
@@ -348,7 +348,7 @@ graph LR
     style BD fill:#2563eb,color:#fff
 ```
 
-`Activity` records are the provenance layer — who did what, when, with which inputs, producing which outputs.
+`Activity` records are the provenance layer  who did what, when, with which inputs, producing which outputs.
 
 | Direction | Mechanism | Semantics |
 |---|---|---|
@@ -425,7 +425,7 @@ Each `DevelopmentConcept` WPC carries facility description, well count, recovery
 
 ---
 
-## 12. Summary — How the Pieces Fit Together
+## 12. Summary  How the Pieces Fit Together
 
 ```mermaid
 graph TD
@@ -465,11 +465,11 @@ graph TD
     style RISK fill:#dc2626,color:#fff
 ```
 
-1. **One BD per gate** — identity, governance, risks, Parameters[] edges
-2. **One CP per asset/discipline** — persists across gates, bridges SoE and SoR
-3. **One PersistedCollection per gate** (DG2+) — frozen evidence snapshot
+1. **One BD per gate**  identity, governance, risks, Parameters[] edges
+2. **One CP per asset/discipline**  persists across gates, bridges SoE and SoR
+3. **One PersistedCollection per gate** (DG2+)  frozen evidence snapshot
 4. **Activity records** for provenance
-5. **9 edge types** — all stored as `Parameters[].Keys[ParameterKey="relationship"]`
+5. **9 edge types**  all stored as `Parameters[].Keys[ParameterKey="relationship"]`
 6. **Cross-gate analysis** by traversing the `supersedes` chain
 
 ---
@@ -533,7 +533,7 @@ graph TD
 
 ---
 
-## 15. Demo Guide — Ontology Panels in Practice
+## 15. Demo Guide  Ontology Panels in Practice
 
 The BD search view now renders six ontology-driven panels directly on each BD card. These demonstrate how the schema fields documented above translate into interactive features:
 
@@ -549,9 +549,9 @@ The BD search view now renders six ontology-driven panels directly on each BD ca
 ### How to demonstrate
 
 1. **Search** `/search` → query "Drogon" → find a BD with gate data
-2. **Expand panels** — each `<details>` section opens to show the rendered ontology feature
-3. **Cross-gate** — go to `/analyse`, select multiple gates → volume deltas + risk evolution + economics trends
-4. **Create** — go to `/add-dg` → "Field Dev – DG2" preset → shows how all these fields get populated at creation time
+2. **Expand panels**  each `<details>` section opens to show the rendered ontology feature
+3. **Cross-gate**  go to `/analyse`, select multiple gates → volume deltas + risk evolution + economics trends
+4. **Create**  go to `/add-dg` → "Field Dev – DG2" preset → shows how all these fields get populated at creation time
 
 ### Linking subsurface evidence
 
@@ -576,8 +576,8 @@ The BD `Parameters[]` mechanism connects decisions to subsurface data:
 
 ## 17. Related Guides
 
-- [BD Demo — ORES Tooling](/howto/bd-demo) — Search, Analyse, AddGate UI
-- [Drogon Data Model](/howto/drogon-data-model) — DG1 record inventory, pipeline, RESQML & ETP
-- [Volumes](/howto/volumes) — ReservoirEstimatedVolumes WPC
-- [Uncertainty](/howto/uncertainty) — Ensemble simulation in OSDU
-- [Risk](/howto/risk) — Risk master-data and mitigation documents
+- [BD Demo  ORES Tooling](/howto/bd-demo)  Search, Analyse, AddGate UI
+- [Drogon Data Model](/howto/drogon-data-model)  DG1 record inventory, pipeline, RESQML & ETP
+- [Volumes](/howto/volumes)  ReservoirEstimatedVolumes WPC
+- [Uncertainty](/howto/uncertainty)  Ensemble simulation in OSDU
+- [Risk](/howto/risk)  Risk master-data and mitigation documents

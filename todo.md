@@ -1,6 +1,6 @@
 # TODO - Ontology-Driven Improvements
 
-## Open — Tier B (ORES/RDDMS backend additions, M27 schemas sufficient)
+## Open  Tier B (ORES/RDDMS backend additions, M27 schemas sufficient)
 
 ### B1. RDDMS Graph Traversal Endpoint
 - [ ] New endpoint: given a BD SRN, walk Parameters[] → resolve ETPDataspace links → list RESQML objects in those dataspaces
@@ -17,7 +17,7 @@
 - **Effort**: ~4-5 days. RDDMS comparison logic + diff rendering
 
 ### B3. Relationship-Aware Search
-- [x] Compound cell-level AND filter (`compoundFilter`) — done for RDDMS property arrays
+- [x] Compound cell-level AND filter (`compoundFilter`)  done for RDDMS property arrays
 - [ ] Extend to OSDU side: "BD where Parameters[role=Output, kind=REV].P50 > X"
 - [ ] Requires post-search enrichment filtering (OSDU search can't query nested arrays)
 - [ ] Server-side: fetch candidates by kind → enrich → filter → return

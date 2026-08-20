@@ -1,6 +1,6 @@
 # WPC Ontology – OSDU M27 Patterns for Well Planning Decisions
 
-**Internal reference — SWIP Team (workshop / 1-hour deep dive)**
+**Internal reference  SWIP Team (workshop / 1-hour deep dive)**
 
 ---
 
@@ -26,7 +26,7 @@ graph LR
 
 ### Text
 
-This document defines the **generic OSDU M27 ontology patterns** used to model Well Planning Committee (WPC) decisions in the ORES platform. It is field-agnostic — specific datasets (Omega Sør, Drogon, etc.) are documented in their respective `Demo.md` files under `demo/eqn/<field>/`.
+This document defines the **generic OSDU M27 ontology patterns** used to model Well Planning Committee (WPC) decisions in the ORES platform. It is field-agnostic  specific datasets (Omega Sør, Drogon, etc.) are documented in their respective `Demo.md` files under `demo/eqn/<field>/`.
 
 > **Comment**
 > - This is the reference architecture doc, not a presentation script.
@@ -88,10 +88,10 @@ graph TD
 ```
 
 > **Comment**
-> - The BD is the hub — all edges radiate out via Parameters[].
+> - The BD is the hub  all edges radiate out via Parameters[].
 > - Evidence is nested: PersistedCollections group by discipline, then reference individual records.
 > - Risks are direct edges (constrainedBy), not nested inside collections.
-> - Alternatives use the Equinor extension (ext.equinor.Alternatives[]) — inline, not separate records.
+> - Alternatives use the Equinor extension (ext.equinor.Alternatives[])  inline, not separate records.
 > - Walk through each discipline branch: geomodel → RDDMS, drilling → trajectories, reseng → volumes + dev concept, master data → wells.
 
 ### 2.1 Evidence Package Structure
@@ -136,7 +136,7 @@ graph TD
 The WPC evidence is organised as a **nested hierarchy** of PersistedCollections by discipline. Items with >3 records are grouped into a sub-collection. The top-level evidence package references the sub-collections (not individual records).
 
 > **Comment**
-> - PersistedCollections are frozen snapshots — they capture the state of evidence at decision time.
+> - PersistedCollections are frozen snapshots  they capture the state of evidence at decision time.
 > - The nesting keeps the BD's Parameters[] list manageable (4–5 top-level refs instead of 50+).
 > - Collections can be compared across gates: "what changed in the geomodel evidence between DG0 and DG1?"
 
@@ -159,9 +159,9 @@ The WPC evidence is organised as a **nested hierarchy** of PersistedCollections 
 | `Activity` | Workflow provenance | ActivityTemplateID, Parameters[] (inputs/outputs), WorkflowStatus |
 
 > **Comment**
-> - All kinds are standard OSDU M27 — no custom schema definitions.
+> - All kinds are standard OSDU M27  no custom schema definitions.
 > - The only Equinor extension is `ext.equinor` on BD (Alternatives, economics) and Risk (status, residual fields).
-> - GeoLabelSet is the most underused M27 kind — it's perfect for per-zone reservoir property summaries.
+> - GeoLabelSet is the most underused M27 kind  it's perfect for per-zone reservoir property summaries.
 > - ColumnBasedTable is the Swiss Army knife: production, PVT, cost, core, design matrix, SCAL.
 
 ### 2.3 Relationship Edges (Parameters[])
@@ -206,10 +206,10 @@ All inter-record links use `Parameters[]` with `Keys[ParameterKey="relationship"
 
 > **Comment**
 > - Edge labels are always from the source record's perspective.
-> - `evidencedBy` = "this BD is evidenced by the target" — passive voice, BD is the subject.
-> - `informedBy` for inputs, `selects` for outputs — distinguishes direction of influence.
+> - `evidencedBy` = "this BD is evidenced by the target"  passive voice, BD is the subject.
+> - `informedBy` for inputs, `selects` for outputs  distinguishes direction of influence.
 > - `constrainedBy` vs `mitigates`: risks constrain the decision; activities mitigate risks.
-> - All 9 edge types use the same `Keys[ParameterKey="relationship"]` mechanism — vocabulary only.
+> - All 9 edge types use the same `Keys[ParameterKey="relationship"]` mechanism  vocabulary only.
 
 ### 2.4 Interpretation Chain (RDDMS → Catalog)
 
@@ -250,7 +250,7 @@ The RDDMS interpretation chain links OSDU catalog records to ETP dataspace objec
 
 > **Comment**
 > - This is the bridge between OSDU catalog (document store) and RDDMS (ETP binary data).
-> - The DDMSDatasets[] field contains the EML URI — that's the pointer into the dataspace.
+> - The DDMSDatasets[] field contains the EML URI  that's the pointer into the dataspace.
 > - In the Drogon demo, the geomodel evidence PersistedCollection holds ETPDataspace records that reference these chains.
 > - Seismic follows a parallel path through SeismicBinGrid → TraceData → VDS.
 
@@ -291,10 +291,10 @@ graph LR
 | `AssociatedGas` | `...PropertyType:AssociatedGas` | GSm3 | P50 |
 
 > **Comment**
-> - PropertyTypeIDs are standard OSDU reference data — not custom.
+> - PropertyTypeIDs are standard OSDU reference data  not custom.
 > - FacetID distinguishes percentiles: same PropertyType, different statistical representation.
 > - Column naming convention: `{Property}.{Percentile}` for multi-percentile tables, plain `{Property}` for single-case.
-> - UoM consistency matters — MSm³ for field-level summaries, Sm³ for zone-level breakdown.
+> - UoM consistency matters  MSm³ for field-level summaries, Sm³ for zone-level breakdown.
 
 ### 3.2 Reservoir Properties (GeoLabelSet)
 
@@ -310,9 +310,9 @@ graph LR
 | `NetPay` | `ReservoirPropertyType:NetPay` | m |
 
 > **Comment**
-> - GeoLabelSet gives one row per reservoir segment — each row is a zone with all petrophysical properties.
+> - GeoLabelSet gives one row per reservoir segment  each row is a zone with all petrophysical properties.
 > - Two permeability types: arithmetic (for flow capacity) and geometric (for upscaling).
-> - All fractions, not percentages — this is the OSDU convention.
+> - All fractions, not percentages  this is the OSDU convention.
 
 ### 3.3 PVT Properties (ColumnBasedTable)
 
@@ -331,7 +331,7 @@ graph LR
 
 > **Comment**
 > - PVT is typically one ColumnBasedTable per PVT region (often = per reservoir segment).
-> - Low/Base/High cases encoded as separate columns or separate records — convention varies by field.
+> - Low/Base/High cases encoded as separate columns or separate records  convention varies by field.
 > - PropertyTypeIDs follow the ReservoirPropertyType namespace, not a separate PVT namespace.
 
 ### 3.4 Economics (ProjectSpecifications)
@@ -366,9 +366,9 @@ graph LR
 | `Production_Mboe` | Mboe | 16.5 |
 
 > **Comment**
-> - ProjectSpecifications[] is the BD's inline economics — same structure for both the main decision and each Alternative.
+> - ProjectSpecifications[] is the BD's inline economics  same structure for both the main decision and each Alternative.
 > - These are headline KPIs shown on the BD card in ORES search results.
-> - NPV_10pct means 10% discount rate — Equinor standard.
+> - NPV_10pct means 10% discount rate  Equinor standard.
 > - Production_Mboe is total field life, not annual.
 
 ### 3.5 Risk Severity & Probability
@@ -457,12 +457,12 @@ mindmap
 
 ### Text
 
-A comprehensive WPC decision requires structured records across these domains. Each uses standard OSDU M27 kinds — no custom schema extensions needed beyond `ext.equinor`.
+A comprehensive WPC decision requires structured records across these domains. Each uses standard OSDU M27 kinds  no custom schema extensions needed beyond `ext.equinor`.
 
-> **Current scope (Aug 2026):** Field development WPC at **DG0/DG1**. Per Equinor's Decision Gate Process mapping, DG0–DG1 content types are: Wells, FluidContacts, Time/Depth Maps, Velocity Model, HC Volumes, Reservoir Properties (GeoLabelSet), Production Tables. The demo additionally covers PVT, Core Analysis, FMU/DesignMatrix, Well Design, and Risks — exceeding DG0/DG1 minimum requirements.
+> **Current scope (Aug 2026):** Field development WPC at **DG0/DG1**. Per Equinor's Decision Gate Process mapping, DG0–DG1 content types are: Wells, FluidContacts, Time/Depth Maps, Velocity Model, HC Volumes, Reservoir Properties (GeoLabelSet), Production Tables. The demo additionally covers PVT, Core Analysis, FMU/DesignMatrix, Well Design, and Risks  exceeding DG0/DG1 minimum requirements.
 
 > **Comment**
-> - The mindmap shows the full domain coverage — 7 categories, ~20 record kinds.
+> - The mindmap shows the full domain coverage  7 categories, ~20 record kinds.
 > - All of this is standard M27. The only custom part is the linking convention (ParameterKey="relationship").
 > - DG0/DG1 is the current scope; DG2/DG3/FID add economics depth, facility design, and regulatory requirements.
 > - Each domain section below details the exact record kinds and field conventions.
@@ -577,7 +577,7 @@ graph LR
 | Contingency chains | BD.Remarks[] + Risk.Description | Decision trees (Ba thresholds, OWC outcomes) |
 
 > **Comment**
-> - Risks are first-class records, not inline text — they have their own lifecycle and can be tracked across gates.
+> - Risks are first-class records, not inline text  they have their own lifecycle and can be tracked across gates.
 > - The 5×5 severity×probability matrix maps to reference data codes (S1–S5, P1–P5).
 > - Inherent vs residual: two snapshots on the same record, showing mitigation effectiveness.
 > - Contingency chains (e.g., "if Ba > 200 ppm, switch to alternative B") are encoded in Remarks[] with RemarkSource="Contingency".
@@ -613,9 +613,9 @@ graph TD
 | PVT for simulator | ColumnBasedTable | Pres, Tres, Pb, Bo, Rs, μ per case (low/base/high) |
 
 > **Comment**
-> - FMU ensemble runs are modelled as Activity records — each run is a first-class provenance event.
-> - ActivityTemplate defines the workflow type (e.g., "Eclipse simulation", "OPM Flow run") — shared across activities.
-> - Design matrix captures the uncertainty parameters used in the ensemble — min/base/max with weights.
+> - FMU ensemble runs are modelled as Activity records  each run is a first-class provenance event.
+> - ActivityTemplate defines the workflow type (e.g., "Eclipse simulation", "OPM Flow run")  shared across activities.
+> - Design matrix captures the uncertainty parameters used in the ensemble  min/base/max with weights.
 > - The Activity's Parameters[] edges link to both inputs (design matrix) and outputs (REV, production profiles).
 
 ---
@@ -673,7 +673,7 @@ graph LR
 | `_enrich_bd_collaboration()` | CollaborationProject → lifecycle + personnel | `rec.bd_collaboration` |
 
 > **Comment**
-> - All 8 enrichment functions run in parallel (asyncio.gather) — total latency ≈ slowest single call.
+> - All 8 enrichment functions run in parallel (asyncio.gather)  total latency ≈ slowest single call.
 > - Each function follows Parameters[] edges by type: volumes follows `evidencedBy` + artifact=REV, maps follows `evidencedBy` + artifact=ETPDataspace, etc.
 > - The template variable names (rec.bd_*) are what Jinja templates use to render panels.
 > - Adding a new domain: write a new `_enrich_bd_*()`, add it to the gather, add a template partial.
@@ -761,7 +761,7 @@ graph LR
 | Risks | Risk chips with severity evolution | Added/removed/mitigated/reduced |
 
 > **Comment**
-> - The analyse view is the key differentiator vs. raw OSDU search — it computes deltas across gates.
+> - The analyse view is the key differentiator vs. raw OSDU search  it computes deltas across gates.
 > - Each panel shows the same data type at each gate, plus the change from last gate.
 > - Risk evolution shows which risks were added, removed, escalated, or mitigated between gates.
 > - The STOIIP-by-segment panel catches zone-level changes that the total might hide.
@@ -813,7 +813,7 @@ gen_drilling_{field}.py          → manifest_drilling_{field}.json
 > **Comment**
 > - Each generator reads a JSON spec (or CSV/XLSX for tabular data) and produces OSDU-compliant records.
 > - The generic `gen_ontology.py` handles BD + CP + Activity; domain generators handle the rest.
-> - Manifests are intermediate JSON — they can be inspected before ingestion.
+> - Manifests are intermediate JSON  they can be inspected before ingestion.
 > - The pattern is intentionally simple: one script per domain, one manifest per domain, all idempotent (PUT overwrites).
 
 ### 6.2 Ingestion Pipeline
@@ -865,9 +865,9 @@ graph TD
 > **Comment**
 > - Two parallel paths: RDDMS for geomodel binary data, Storage API for structured records.
 > - The EPC→RDDMS path uses fesapi + pyetp for upload, then a local manifest builder creates catalog records.
-> - Custom manifests (step 3) are where all the ontology linking happens — BD gets Parameters[] edges to everything.
+> - Custom manifests (step 3) are where all the ontology linking happens  BD gets Parameters[] edges to everything.
 > - Seismic follows a third path through DSG VDS conversion → Seismic DDMS → catalog.
-> - All paths converge on the same Storage API — the BD doesn't care how its evidence got there.
+> - All paths converge on the same Storage API  the BD doesn't care how its evidence got there.
 
 ### 6.3 Adding a New Domain Record
 
@@ -903,16 +903,16 @@ To add a new domain (e.g., PVT, core data, SCAL):
 > **Comment**
 > - This is the cookbook for extending the ontology to a new data domain.
 > - Steps 1–4 are data engineering; steps 5–7 are application development.
-> - The key principle: every new domain gets a Parameters[] edge from the BD — that's what makes it discoverable.
-> - PropertyTypeIDs must be canonical OSDU reference data — don't invent custom ones unless no standard exists.
+> - The key principle: every new domain gets a Parameters[] edge from the BD  that's what makes it discoverable.
+> - PropertyTypeIDs must be canonical OSDU reference data  don't invent custom ones unless no standard exists.
 
 ---
 
 ## 7. References
 
-- [BusinessDecision.md](BusinessDecision.md) — BD schema & patterns
-- [StratColumn.md](StratColumn.md) — Stratigraphic column guide
-- [SeisInt.md](SeisInt.md) — Seismic interpretation data model
-- [Dev.md](Dev.md) — Ingestion patterns & developer guide
-- [PWS.md](PWS.md) — Project workspace lifecycle
+- [BusinessDecision.md](BusinessDecision.md)  BD schema & patterns
+- [StratColumn.md](StratColumn.md)  Stratigraphic column guide
+- [SeisInt.md](SeisInt.md)  Seismic interpretation data model
+- [Dev.md](Dev.md)  Ingestion patterns & developer guide
+- [PWS.md](PWS.md)  Project workspace lifecycle
 - OSDU Schema Docs: [community.opengroup.org/osdu/data/data-definitions](https://community.opengroup.org/osdu/data/data-definitions)

@@ -404,7 +404,7 @@ Use the resolve endpoint to check an alias: `GET /api/graphql/resolve-alias?term
 
 ORES supports high-level queries that combine **spatial topology** (well locations, faults, stratigraphic correlation), **reservoir properties** (NTG, permeability, porosity), **production data** (per-well rates and cumulative), and **business decision records** (risks, development concepts, activities) into a single assessment.
 
-These queries address common field development questions that cannot be answered by any single data source alone — they require traversing the RESQML object graph, evaluating array-level properties, and cross-referencing the OSDU catalog.
+These queries address common field development questions that cannot be answered by any single data source alone  they require traversing the RESQML object graph, evaluating array-level properties, and cross-referencing the OSDU catalog.
 
 ---
 
@@ -460,7 +460,7 @@ Content-Type: application/json
 
 Stratigraphic: ✓ Both wells penetrate Valysar Fm (shallow marine)
 Structural:    ⚠ Fault F2 between CentralHorst ↔ EastLowland (trans=0.15, baffle)
-Properties:    Corridor: porosity 0.215, perm 203 mD, NTG 0.55, Sw 0.37 — moderate quality
+Properties:    Corridor: porosity 0.215, perm 203 mD, NTG 0.55, Sw 0.37  moderate quality
 Production:    A-3 underperforms vs A-2: WCT 58% vs 32%, Cum.Oil 1.4 vs 2.6 MSm³
 BD Evidence:   Risk "FaultCompartment" mitigated for F1/F5/F6 but F2/F3 remain baffles
                Tracer from A-5: NOT detected in A-3 (confirms F2 barrier)
@@ -470,7 +470,7 @@ Recommendations:
   → Acquire 4D seismic to resolve connectivity uncertainty
   → Consider inter-well tracer test
   → Evaluate infill well in isolated segment
-  → Investigate poor producer — possible completion or sweep issue
+  → Investigate poor producer  possible completion or sweep issue
 ```
 
 #### Example 2: A-1 vs A-2 (same segment, well-connected)
@@ -479,17 +479,17 @@ Recommendations:
 ✓ CONNECTED  (confidence: high)
 
 Stratigraphic: ✓ Both wells penetrate Valysar Fm (shallow marine)
-Structural:    No bounding faults — same segment (CentralHorst)
-Properties:    Corridor: porosity 0.240, perm 320 mD, NTG 0.68, Sw 0.28 — excellent quality
-Production:    Similar performance — both rated "good"
+Structural:    No bounding faults  same segment (CentralHorst)
+Properties:    Corridor: porosity 0.240, perm 320 mD, NTG 0.68, Sw 0.28  excellent quality
+Production:    Similar performance  both rated "good"
 BD Evidence:   4D confirms communication, tracer detected A-5→A-1 (3 months)
 ```
 
 ---
 
-## Compound Filter — Multi-Property Cell-Level AND
+## Compound Filter  Multi-Property Cell-Level AND
 
-The `compoundFilter` extends `deepSearch` to apply **multiple property thresholds simultaneously at cell level**. Instead of asking "which grids have porosity > 0.25?" (single filter), you can ask "which cells have porosity > 0.25 AND permeability > 100 AND Sw < 0.4?" — only cells satisfying ALL conditions count.
+The `compoundFilter` extends `deepSearch` to apply **multiple property thresholds simultaneously at cell level**. Instead of asking "which grids have porosity > 0.25?" (single filter), you can ask "which cells have porosity > 0.25 AND permeability > 100 AND Sw < 0.4?"  only cells satisfying ALL conditions count.
 
 ### How it works
 
@@ -531,9 +531,9 @@ The `compoundFilter` extends `deepSearch` to apply **multiple property threshold
 |-------|---------|
 | `compoundMatch.count` | Number of cells passing ALL conditions simultaneously |
 | `compoundMatch.total` | Total active cells in the grid |
-| `compoundMatch.fraction` | `count / total` — the "sweet spot" fraction |
+| `compoundMatch.fraction` | `count / total`  the "sweet spot" fraction |
 
-A grid with `fraction: 0.12` means 12% of active cells have good porosity AND good permeability AND low water saturation — potential infill targets.
+A grid with `fraction: 0.12` means 12% of active cells have good porosity AND good permeability AND low water saturation  potential infill targets.
 
 ### Demo: Bypassed Oil (compound)
 
@@ -559,17 +559,17 @@ A grid with `fraction: 0.12` means 12% of active cells have good porosity AND go
 
 ---
 
-## Easy Mode — Field Development Buttons
+## Easy Mode  Field Development Buttons
 
 The `/keys` Easy Mode tab includes **5 one-click field development buttons** that run full GraphQL preset queries without leaving Easy Mode:
 
 | Button | What it runs | Key output |
 |--------|-------------|------------|
-| **Markers** | `markers_by_horizon` — lists wellbore markers grouped by horizon name | Horizon picks per well, depths, formation tops |
-| **Bypassed Oil** | `field_bypassed_oil` — compound filter (PORO > 0.2 AND PERM > 50 AND Sw < 0.5) | Sweet-spot cell fraction per grid |
-| **Water Breakthrough** | `field_water_breakthrough` — 3 sub-queries (high-Sw zones, high-perm streaks, production anomalies) | Multi-alias result with explanation per sub-query |
-| **Completion Pay** | `field_completion_ntg` — 3 sub-queries (NTG, Kh product, Sw above OWC) | Best interval identification per well |
-| **Segment Overview** | `field_segment_ranking` — 4 sub-queries ranking segments by property quality | Segment-by-segment comparison table |
+| **Markers** | `markers_by_horizon`  lists wellbore markers grouped by horizon name | Horizon picks per well, depths, formation tops |
+| **Bypassed Oil** | `field_bypassed_oil`  compound filter (PORO > 0.2 AND PERM > 50 AND Sw < 0.5) | Sweet-spot cell fraction per grid |
+| **Water Breakthrough** | `field_water_breakthrough`  3 sub-queries (high-Sw zones, high-perm streaks, production anomalies) | Multi-alias result with explanation per sub-query |
+| **Completion Pay** | `field_completion_ntg`  3 sub-queries (NTG, Kh product, Sw above OWC) | Best interval identification per well |
+| **Segment Overview** | `field_segment_ranking`  4 sub-queries ranking segments by property quality | Segment-by-segment comparison table |
 
 ### How to use
 
@@ -822,9 +822,9 @@ Fault transmissibility multipliers are available as catalog records:
 | F6 | CentralRamp ↔ CentralHorst | 0.95 | Open |
 
 A **Connectivity Matrix** summary record aggregates all fault properties:
-- 2 open faults (F1, F6) — confirmed by 4D and tracer
-- 2 moderate faults (F4, F5) — partially confirmed
-- 2 baffles (F2, F3) — isolate East Lowland segment
+- 2 open faults (F1, F6)  confirmed by 4D and tracer
+- 2 moderate faults (F4, F5)  partially confirmed
+- 2 baffles (F2, F3)  isolate East Lowland segment
 
 ### Ingestion options
 
@@ -1262,9 +1262,9 @@ The biggest win is in object listing (N=50+). Single-object graph is similar in 
 
 The Reservoir DDMS etp-client (v1.3+) exposes a **native GraphQL endpoint** at `/graphql`. This is a direct NestJS/Apollo Server implementation that operates on the ETP protocol with:
 
-- **Single ETP session per request** — no N+1 WebSocket connections
-- **DataLoader batching** — all field resolves in the same tick coalesced
-- **Lazy field resolution** — `content`, `arrays`, `targets`, `sources` only fetched when selected
+- **Single ETP session per request**  no N+1 WebSocket connections
+- **DataLoader batching**  all field resolves in the same tick coalesced
+- **Lazy field resolution**  `content`, `arrays`, `targets`, `sources` only fetched when selected
 
 ### Endpoint URLs
 
@@ -1280,7 +1280,7 @@ ORES automatically probes the native GraphQL endpoint on startup. If available:
 - **Batch graph search** replaces N individual REST requests with one GraphQL `graphSearch` query
 - **Dataspaces listing** goes through GQL when PG is unavailable
 
-If the endpoint is not available (older etp-client, or ADME without the module), ORES **falls back transparently to REST** — no user action needed.
+If the endpoint is not available (older etp-client, or ADME without the module), ORES **falls back transparently to REST**  no user action needed.
 
 ### Native GraphQL Schema
 

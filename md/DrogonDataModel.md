@@ -267,7 +267,7 @@ flowchart LR
 | 5 | `gen_risk_drogon.py` | Risk manifest |
 | 5b | `gen_activity_drogon.py` | ActivityTemplate + Activity |
 | 6 | `gen_businessdecision_drogon.py` | BusinessDecision |
-| 7 | `manifest2records_drogon.py` | `records/` — 17 JSON files |
+| 7 | `manifest2records_drogon.py` | `records/`  17 JSON files |
 | 8 | `ingest_records_batch.py` | Batch PUT to OSDU Storage |
 | 8b | `gen_resqml.py` + `ingest_rddms.sh` | RESQML EPC → RDDMS via ETP |
 
@@ -335,7 +335,7 @@ references pointing to the `Grid2dRepresentation` UUIDs:
 
 The RESQML UUIDs (`b727ee57…` template, `aea6e528…` activity) and the OSDU
 WPC IDs (`aa2791c8…` template, `ead6e342…` activity) are generated from the
-same namespace seeds — ensuring cross-system traceability between OSDU Storage
+same namespace seeds  ensuring cross-system traceability between OSDU Storage
 and Reservoir DDMS.
 
 > **Reference:** The source EPC files are maintained in the
@@ -394,7 +394,7 @@ The UI also supports creating **ActivityTemplate** and **Activity** records (Act
 
 ---
 
-## Demo Walkthrough — Field Development Features
+## Demo Walkthrough  Field Development Features
 
 The Drogon dataset now includes **13 RDDMS catalog records** (IjkGrid, WellboreFrame, Trajectory, Fault, StructuralOrganization, GridConnectionSet, OrganizationFeature, WellboreMarkerFrame) enabling end-to-end field development demos.
 
@@ -413,7 +413,7 @@ The Drogon dataset now includes **13 RDDMS catalog records** (IjkGrid, WellboreF
 
 ### Key talking points
 
-- **Compound filter** answers "where is the sweet spot?" — not just single-property screening
+- **Compound filter** answers "where is the sweet spot?"  not just single-property screening
 - **Multi-alias presets** combine 3–4 sub-queries into one assessment (water breakthrough = high-Sw zones + high-perm streaks + production anomaly)
 - **Subsurface ↔ decision link**: the BD record's `Parameters[]` reference the Activity that produced the geomodel; the same geomodel objects are queryable via compound filter
 - **No code needed**: Easy Mode field dev buttons run production GraphQL presets behind the scenes
