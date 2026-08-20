@@ -40,18 +40,21 @@ _HOWTO_SECTIONS: list[dict] = [
                 "file": "Readme.md",
                 "title": "ORES Overview",
                 "desc": "Capabilities, use cases, pages & technical detail",
-            },
-            {
-                "slug": "dev-guide",
-                "file": "Dev.md",
-                "title": "Developer Guide",
-                "desc": "Environment setup, ingestion, demo pipelines, deployment & testing",
+                "children": [
+                    {"slug": "dev-guide", "file": "Dev.md", "title": "Developer Guide", "desc": "Environment setup, ingestion, demo pipelines, deployment & testing"},
+                ],
             },
             {
                 "slug": "query-guide",
                 "file": "Query.md",
                 "title": "Querying Data",
                 "desc": "REST, ETP, GraphQL & OSDU Search – all query paths explained",
+            },
+            {
+                "slug": "strategy",
+                "file": "Strategy.md",
+                "title": "Reservoir DDMS Project Collaboration and Governance",
+                "desc": "A sketch for a strategy",
             },
         ],
     },
@@ -84,12 +87,9 @@ _HOWTO_SECTIONS: list[dict] = [
                 "file": "StratColumn.md",
                 "title": "Stratigraphy",
                 "desc": "Data model, tooling & workflow",
-            },
-            {
-                "slug": "markers",
-                "file": "Markers.md",
-                "title": "Markers",
-                "desc": "WellboreMarkerFrame data model & OSDU mapping",
+                "children": [
+                    {"slug": "markers", "file": "Markers.md", "title": "Markers", "desc": "WellboreMarkerFrame data model & OSDU mapping"},
+                ],
             },
         ],
     },
@@ -115,24 +115,11 @@ _HOWTO_SECTIONS: list[dict] = [
                 "title": "Reservoir DDMS Home ↗",
                 "desc": "Official OSDU Reservoir DDMS documentation – data model, ETP protocol, deployment & API reference",
             },
-
-        ],
-    },
-    # ── Reference ─────────────────────────────────────────────────────
-    {
-        "title": "Reference",
-        "items": [
             {
                 "slug": "crs-guide",
                 "file": "CrsGuide.md",
                 "title": "CRS Guide",
                 "desc": "RESQML ⇄ OSDU coordinate reference systems",
-            },
-            {
-                "slug": "strategy",
-                "file": "Strategy.md",
-                "title": "Reservoir DDMS Project Collaboration and Governance",
-                "desc": "A sketch for a strategy",
             },
         ],
     },
