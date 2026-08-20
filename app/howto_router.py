@@ -91,6 +91,18 @@ _HOWTO_SECTIONS: list[dict] = [
                     {"slug": "markers", "file": "Markers.md", "title": "Markers", "desc": "WellboreMarkerFrame data model & OSDU mapping"},
                 ],
             },
+            {
+                "slug": "properties",
+                "file": "Properties.md",
+                "title": "RESQML & OSDU Properties",
+                "desc": "Property kinds, OSDU PropertyTypes, facets, groups & alias resolution",
+            },
+            {
+                "slug": "_ext_resqml_spec",
+                "external_url": "https://www.energistics.org/resqml-data-standards/",
+                "title": "RESQML Data Standards ↗",
+                "desc": "Energistics RESQML specification — property kinds, object types & data exchange",
+            },
         ],
     },
     # ── Infrastructure ─────────────────────────────────────────────

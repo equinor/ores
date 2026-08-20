@@ -90,12 +90,16 @@ async function testService() {
   try {
     const r = await fetch('/api/notifications/test');
     const d = await r.json();
-    if (d.status === 'ok' || r.ok) {
-      el.className = 'notify-status status-ok'; el.textContent = 'Connected';
-      det.textContent = JSON.stringify(d, null, 2);
+    if (d.status === 'error' || (!r.ok && d.status !== 'ok')) {
+      const code = d.code || r.status;
+      el.className = 'notify-status status-err';
+      el.textContent = code === 404 ? 'Not Available' : 'Error ' + code;
+      det.textContent = code === 404
+        ? 'OSDU Notification Service is not deployed on this instance.'
+        : (d.body || d.error || JSON.stringify(d));
     } else {
-      el.className = 'notify-status status-err'; el.textContent = 'Error ' + (d.code || r.status);
-      det.textContent = d.body || d.error || JSON.stringify(d);
+      el.className = 'notify-status status-ok'; el.textContent = 'Connected';
+      det.textContent = '';
     }
   } catch(e) {
     el.className = 'notify-status status-err'; el.textContent = 'Unreachable';
@@ -109,7 +113,12 @@ async function loadSubs() {
     const r = await fetch('/api/notifications/subscriptions');
     const d = await r.json();
     if (!d.ok || !d.subscriptions || d.subscriptions.length === 0) {
-      el.innerHTML = '<span class="muted">No subscriptions found' + (d.error ? ' — ' + d.error : '') + '</span>';
+      const msg = d.error || '';
+      if (msg.includes('404') || msg.includes('Not Found')) {
+        el.innerHTML = '<span class="muted">Notification service not available on this instance</span>';
+      } else {
+        el.innerHTML = '<span class="muted">No subscriptions found' + (msg ? ' — ' + msg : '') + '</span>';
+      }
       return;
     }
     el.innerHTML = d.subscriptions.map(s => {
