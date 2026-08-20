@@ -1,5 +1,5 @@
 """
-weco.ai.uncertainty — Correlation uncertainty quantification
+weco.ai.uncertainty - Correlation uncertainty quantification
 =============================================================
 
 Estimate confidence / uncertainty for every correlation line by
@@ -242,16 +242,16 @@ class CorrelationUncertainty:
         n_paths : int
             Number of paths to include in the ensemble.
         temperature : float
-            Boltzmann temperature — lower = sharper distribution around
+            Boltzmann temperature - lower = sharper distribution around
             the best solution; higher = more uniform sampling.
 
         Returns
         -------
         dict
-            ``"weights"`` — Boltzmann weights for each path (sum to 1).
-            ``"costs"`` — Cost of each path.
-            ``"entropy"`` — Shannon entropy of the distribution (bits).
-            ``"effective_n"`` — Effective sample size ``1/Σ(w²)``.
+            ``"weights"`` - Boltzmann weights for each path (sum to 1).
+            ``"costs"`` - Cost of each path.
+            ``"entropy"`` - Shannon entropy of the distribution (bits).
+            ``"effective_n"`` - Effective sample size ``1/Σ(w²)``.
         """
         n = min(n_paths, res_file.nbr_cor())
         if n <= 0:

@@ -1,4 +1,4 @@
-# §5.2 — Docker image build and publish
+# §5.2 - Docker image build and publish
 # PRs: build only (validate Dockerfile). Pushes/releases: build + push to GHCR.
 name: Docker Publish
 
@@ -35,11 +35,11 @@ jobs:
 
       - uses: docker/setup-buildx-action@v3
 
-      - name: Preflight — verify registry credentials available
+      - name: Preflight - verify registry credentials available
         if: github.event_name != 'pull_request'
         run: |
           if [[ -z "${{ secrets.GITHUB_TOKEN }}" ]]; then
-            echo "::error::GITHUB_TOKEN secret is not available — cannot push to registry"
+            echo "::error::GITHUB_TOKEN secret is not available - cannot push to registry"
             exit 1
           fi
 

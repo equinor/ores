@@ -1,5 +1,5 @@
 """
-weco.facies_dict — Facies Dictionary for Zone Colours and Labels
+weco.facies_dict - Facies Dictionary for Zone Colours and Labels
 =================================================================
 
 Maps integer zone IDs (from Well.region) to human-readable names, colours,
@@ -280,14 +280,14 @@ class FaciesDictionary:
         fd = cls(region_name=region_name)
 
         if best_coverage >= 0.5 and best_table:
-            # Good enough match — apply the code table
+            # Good enough match - apply the code table
             table = _LITHO_CODE_TABLES[best_table]
             for zid in sorted(zone_ids):
                 litho = table.get(zid, "")
                 name = litho.capitalize() if litho else f"Zone {zid}"
                 fd.add(zid, name=name, lithology=litho)
         else:
-            # No good match — fall back to default colours
+            # No good match - fall back to default colours
             for zid in sorted(zone_ids):
                 fd.add(zid)
 

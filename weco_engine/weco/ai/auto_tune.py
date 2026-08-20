@@ -1,5 +1,5 @@
 """
-weco.ai.auto_tune — Automatic parameter tuning for WeCo
+weco.ai.auto_tune - Automatic parameter tuning for WeCo
 =========================================================
 
 Optimise WeCo correlation parameters against a reference correlation
@@ -19,7 +19,7 @@ Typical usage::
 
 Reference
 ---------
-Baville (2022) §4.5.3 — the sensitivity of correlation results to
+Baville (2022) §4.5.3 - the sensitivity of correlation results to
 parameter choice motivates systematic optimisation.
 """
 
@@ -273,9 +273,9 @@ class AutoTuner:
         max_iter : int
             Maximum number of iterations / generations.
         method : str
-            ``"de"`` — differential evolution (robust, population-based).
-            ``"nelder"`` — Nelder-Mead simplex (fast, local).
-            ``"bayes"`` — Bayesian optimisation (if scikit-optimize available).
+            ``"de"`` - differential evolution (robust, population-based).
+            ``"nelder"`` - Nelder-Mead simplex (fast, local).
+            ``"bayes"`` - Bayesian optimisation (if scikit-optimize available).
         seed : int
             Random seed.
         **kwargs
@@ -332,7 +332,7 @@ class AutoTuner:
         except ImportError:
             import warnings
             warnings.warn(
-                "scikit-optimize not installed — falling back to "
+                "scikit-optimize not installed - falling back to "
                 "differential evolution.  Install with: pip install scikit-optimize",
                 stacklevel=2,
             )

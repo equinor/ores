@@ -1,5 +1,5 @@
 """
-Tests for weco.rddms — Universal well-data bridge
+Tests for weco.rddms - Universal well-data bridge
 ===================================================
 
 Tests the core conversion layer (§2), format round-trips (§7, §8),

@@ -15,7 +15,7 @@ DS_NAME = 'Drogon'
 headers = {'Content-Type': 'application/json'}
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# GraphQL Mode (JSON tab) presets — from GQL_PRESETS in keys.js
+# GraphQL Mode (JSON tab) presets - from GQL_PRESETS in keys.js
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 gql_presets = {
     # Browse & Explore
@@ -24,10 +24,10 @@ gql_presets = {
     'types': f'{{ resourceTypes(dataspace: "{DS}") {{ name count }} }}',
     'objects_grid': f'{{ resqmlObjects(dataspace: "{DS}" typeName: "resqml20.obj_PointSetRepresentation" limit: 5) {{ uuid title typeName }} }}',
 
-    # Relations (requires real UUIDs — resolved dynamically below)
+    # Relations (requires real UUIDs - resolved dynamically below)
     'rel_grid_targets': None,
 
-    # Deep Search — IjkGrid property filter + array threshold
+    # Deep Search - IjkGrid property filter + array threshold
     'deep_poro': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ kind: "porosity" arrayFilter: {{ operator: GT, threshold: 0.20 }} }} limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
     'deep_all_props': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} }} }} }} }}',
 
@@ -50,14 +50,14 @@ gql_presets = {
     'xref_well_grid_props': f'{{ wells: deepSearch({DS_ARG} typeName: "resqml20.obj_WellboreTrajectoryRepresentation" includeRelations: true limit: 10) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title relations {{ uuid name typeName direction }} }} }} grids: deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" includeRelations: true includeStatistics: true propertyFilter: {{ kind: "porosity" }} limit: 5) {{ totalMatched objects {{ uuid title relations {{ uuid name typeName direction }} properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} }} }} }} }}',
     'xref_orphan_rddms': f'{{ federatedSearch(text: "{DS_NAME}" kind: "osdu:wks:work-product-component--*:*" dataspaces: {DS_LIST} searchCatalog: true searchRddms: true limit: 20) {{ totalCatalog totalLocalRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms osduId }} }} }}',
 
-    # Native RDDMS GraphQL (M27+ — uses REST fallback on ADME interop)
+    # Native RDDMS GraphQL (M27+ - uses REST fallback on ADME interop)
     'native_graph_traverse': f'{{ nativeGraphSearch(dataspace: "{DS}" typeName: "resqml20.obj_IjkGridRepresentation" depth: 1 limit: 2) {{ backend resources {{ uri name dataObjectType }} edges {{ sourceUri targetUri }} }} }}',
     'native_object_content': f'{{ nativeObjectContent(dataspace: "{DS}" typeName: "resqml20.obj_ContinuousProperty" limit: 1) {{ uri name dataObjectType content }} }}',
     'native_array_metadata': f'{{ nativeArrayMetadata(dataspace: "{DS}" typeName: "resqml20.obj_ContinuousProperty" limit: 2) {{ uri name arrays {{ pathInResource dimensions }} }} }}',
 }
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-# Easy Mode presets — simulates the template builder
+# Easy Mode presets - simulates the template builder
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 easy_presets = {
     # deep_search (no filter)
@@ -72,7 +72,7 @@ easy_presets = {
     'ez_deep_array_filter': f'{{ deepSearch({DS_ARG} typeName: "resqml20.obj_IjkGridRepresentation" propertyFilter: {{ titleContains: "PHIT" arrayFilter: {{ operator: GT, threshold: 0.2 }} }} includeRelations: false includeStatistics: true includeSampleValues: false limit: 5) {{ backend totalScanned totalMatched queryDescription objects {{ uuid title typeName properties {{ title kind uom statistics {{ count minValue maxValue mean stdDev }} matchingCells {{ count total fraction }} }} }} }} }}',
     # browse
     'ez_browse': f'{{ resqmlObjects(dataspace: "{DS}" typeName: "resqml20.obj_IjkGridRepresentation" limit: 10) {{ uuid title typeName }} }}',
-    # relations (requires a real UUID — resolved dynamically below)
+    # relations (requires a real UUID - resolved dynamically below)
     'ez_relations': None,  # will be filled after browse
     # federated (no filter)
     'ez_federated': f'{{ federatedSearch(text: "*" dataspaces: {DS_LIST} typeName: "resqml20.obj_HorizonInterpretation" searchCatalog: true searchRddms: true searchRemoteRddms: true includeRelations: true includeProperties: false includeStatistics: false limit: 5) {{ totalCatalog totalLocalRddms totalRemoteRddms totalMerged sources hits {{ uuid title typeName dataspace foundInCatalog foundInLocalRddms foundInRemoteRddms relations {{ uuid name typeName direction }} }} }} }}',
@@ -147,7 +147,7 @@ def run_tests(label, presets):
                 err += 1
             elif not has_results(data['data']):
                 summary = summarize(data['data'])
-                print(f'  NIL    {name}: query OK but 0 results — {summary}')
+                print(f'  NIL    {name}: query OK but 0 results - {summary}')
                 nil_results += 1
             else:
                 summary = summarize(data['data'])

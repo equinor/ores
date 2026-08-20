@@ -19,7 +19,7 @@ from weco.engine import Project, CCFPart, WellList as EngineWellList
 from typing import Union
 from weco.engine_data import WellList, well_list_python2engine, cor_graph2res_file, ResFile
 
-# Default temporary output directory — avoids polluting the working directory.
+# Default temporary output directory - avoids polluting the working directory.
 _TMP_DIR = _os.path.join(_tempfile.gettempdir(), "weco")
 _os.makedirs(_TMP_DIR, exist_ok=True)
 
@@ -51,7 +51,7 @@ class ProjectExt(Project):
     def __init__(self):
 
         super().__init__()
-        # Reset all static options to defaults — prevents state leaking between
+        # Reset all static options to defaults - prevents state leaking between
         # successive ProjectExt instances in the same process.
         self.reset_options()
         # Redirect engine file outputs to tmp/ so they don't pollute CWD.
@@ -102,7 +102,7 @@ class ProjectExt(Project):
         try:
             cg = self.result()
         except (RuntimeError, SystemError):
-            raise RuntimeError("No correlation result available — did run() succeed?")
+            raise RuntimeError("No correlation result available - did run() succeed?")
         return cor_graph2res_file(cg, build_list, reorder)
 
 
@@ -181,7 +181,7 @@ class CCFPartExt(CCFPart):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §11.3.4 — WellScheduleExt: declarative merger order specification
+# §11.3.4 - WellScheduleExt: declarative merger order specification
 # ═══════════════════════════════════════════════════════════════════════════
 
 class WellScheduleExt:

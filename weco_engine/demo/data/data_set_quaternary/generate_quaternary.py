@@ -534,7 +534,7 @@ def main(seed=2026, n_grid=10, output_dir=None):
     return wells
 
 
-# §14.4 — Explicit 3-aquifer zonation and pump-test constraints
+# §14.4 - Explicit 3-aquifer zonation and pump-test constraints
 AQUIFER_ZONES = {
     1: {"name": "Upper_Sand", "unit": 1, "kh_range": (5.0, 50.0)},
     2: {"name": "Middle_Gravel", "unit": 3, "kh_range": (50.0, 500.0)},

@@ -879,7 +879,7 @@ def _dip_to_normal(
     ``dip_deg`` is the dip angle measured from horizontal (0 = flat-lying bed)
     and ``az_deg`` the dip-direction azimuth measured clockwise from North.
     Returns the bedding-plane normal in the RESQML ``(X=East, Y=North, Z)``
-    frame.  A flat-lying bed (dip 0 or missing values) yields ``(0, 0, 1)`` —
+    frame.  A flat-lying bed (dip 0 or missing values) yields ``(0, 0, 1)`` -
     a horizontal disk perpendicular to the depth axis.  The sign of the normal
     is irrelevant for an (orientation-only) disk.
     """

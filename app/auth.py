@@ -256,7 +256,7 @@ async def auth_callback(request: Request):
     elif oid and at:
         log.info("PKCE login OK: oid=%s… inst=%s (AT only)", oid[:8], inst_name)
     else:
-        log.warning("PKCE login: no oid — session will not authenticate")
+        log.warning("PKCE login: no oid - session will not authenticate")
     response = RedirectResponse("/")
     response.set_cookie("ores_user", "1", max_age=30 * 24 * 3600,
                         samesite="lax", httponly=False)
@@ -535,7 +535,7 @@ async def _smda_token_from_dedicated_rt() -> Optional[Dict[str, Any]]:
     as a Radix secret.  It uses the Azure CLI public client_id (no secret)
     because the ores-dev app lacks consent for the SMDA API.
 
-    The RT auto-rotates (new one returned in response) — we update the
+    The RT auto-rotates (new one returned in response) - we update the
     module-level variable so subsequent calls use the fresh RT.
     """
     global SMDA_REFRESH_TOKEN

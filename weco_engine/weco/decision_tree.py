@@ -1,5 +1,5 @@
 """
-weco.decision_tree — Correlation Workflow Decision Tree
+weco.decision_tree - Correlation Workflow Decision Tree
 ========================================================
 
 Guides the user through parameter selection based on:
@@ -352,7 +352,7 @@ def recommend_workflow(wl: WellList) -> WorkflowRecommendation:
             f"and data quality (xcorr={quality_map.get(primary, DataQuality(name=primary)).cross_corr:.2f})."
         )
     else:
-        rec.warnings.append("No suitable primary channel found — check data quality.")
+        rec.warnings.append("No suitable primary channel found - check data quality.")
 
     # Secondary channels
     for dq in rec.channel_quality:
@@ -376,7 +376,7 @@ def recommend_workflow(wl: WellList) -> WorkflowRecommendation:
         rec.region_constraints.extend(biozone_like)
         rec.reasoning["constraints"] = (
             f"Biozone regions ({biozone_like}) provide hard chronostratigraphic "
-            "boundaries — horizons cannot cross them."
+            "boundaries - horizons cannot cross them."
         )
     if sequence_like:
         rec.region_constraints.extend(sequence_like)
@@ -386,7 +386,7 @@ def recommend_workflow(wl: WellList) -> WorkflowRecommendation:
         dq = quality_map[primary]
         if dq.cross_corr < 0.1 and not dq.is_discrete:
             rec.warnings.append(
-                f"Low cross-correlation ({dq.cross_corr:.2f}) for '{primary}' — "
+                f"Low cross-correlation ({dq.cross_corr:.2f}) for '{primary}' - "
                 "risk of correlating noise. Consider using region constraints "
                 "or switching to facies data."
             )
@@ -397,7 +397,7 @@ def recommend_workflow(wl: WellList) -> WorkflowRecommendation:
             )
         elif dq.cross_corr > 0.7:
             rec.reasoning["noise_risk"] = (
-                f"High cross-correlation ({dq.cross_corr:.2f}) — wells are very "
+                f"High cross-correlation ({dq.cross_corr:.2f}) - wells are very "
                 "similar. Low risk of noise correlation."
             )
 
@@ -419,7 +419,7 @@ def recommend_workflow(wl: WellList) -> WorkflowRecommendation:
     if env in ("continental_quaternary", "fluvial_deltaic"):
         rec.options["min_dist"] = 0.1
         rec.reasoning["diversity"] = (
-            "High lateral variability expected — min_dist>0 ensures "
+            "High lateral variability expected - min_dist>0 ensures "
             "alternative correlation scenarios are preserved."
         )
     elif env in ("paralic_estuarine",):
@@ -430,7 +430,7 @@ def recommend_workflow(wl: WellList) -> WorkflowRecommendation:
     if has_xy and n_wells > 3:
         rec.options["order"] = "position"
         rec.reasoning["order"] = (
-            "Wells have XY coordinates — position-based order correlates "
+            "Wells have XY coordinates - position-based order correlates "
             "nearby wells first for better spatial coherence."
         )
     elif n_wells > 6:
@@ -622,7 +622,7 @@ _ENV_PREPROCESSING: Dict[str, Dict[str, Any]] = {
         "uncertainty_max_std": 4.0,
         "expected_n_scenarios": 3,
         "reasoning": {
-            "ai_facies": "Shallow marine requires facies for distality cost function — "
+            "ai_facies": "Shallow marine requires facies for distality cost function - "
                          "AI prediction enables Walther's Law constraint",
             "stacking_pattern": "Coarsening-up / fining-up cycles are diagnostic "
                                 "of parasequences in wave-dominated shoreface",
@@ -665,14 +665,14 @@ _ENV_PREPROCESSING: Dict[str, Dict[str, Any]] = {
         "uncertainty_max_std": 8.0,
         "expected_n_scenarios": 5,
         "reasoning": {
-            "stacking_pattern": "Fluvial systems lack systematic CU/FU — "
+            "stacking_pattern": "Fluvial systems lack systematic CU/FU - "
                                 "stacking pattern adds noise rather than signal",
             "smooth": "Thin bed effects in fluvial need smoothing to see "
                       "overall sand/shale architecture",
             "electrofacies": "Channel / floodplain / crevasse splay discrimination "
                              "helps constrain lateral correlation",
             "ai_facies": "Without facies, the engine correlates on GR shape "
-                         "alone — fluvial channels are laterally variable",
+                         "alone - fluvial channels are laterally variable",
         },
     },
     "coal_basin": {
@@ -688,11 +688,11 @@ _ENV_PREPROCESSING: Dict[str, Dict[str, Any]] = {
         "uncertainty_max_std": 2.0,
         "expected_n_scenarios": 2,
         "reasoning": {
-            "vshale": "Coal density dominates GR — Vshale is meaningless "
+            "vshale": "Coal density dominates GR - Vshale is meaningless "
                       "in coal-bearing intervals",
             "stacking_pattern": "Cyclothems are defined by coal-shale-sand "
                                 "alternation, not gradational GR trends",
-            "log_qc": "Washouts common in coal seams — caliper QC critical",
+            "log_qc": "Washouts common in coal seams - caliper QC critical",
         },
     },
     "carbonate": {
@@ -708,7 +708,7 @@ _ENV_PREPROCESSING: Dict[str, Dict[str, Any]] = {
         "uncertainty_max_std": 5.0,
         "expected_n_scenarios": 4,
         "reasoning": {
-            "vshale": "GR is unreliable in carbonates (no clay baseline) — "
+            "vshale": "GR is unreliable in carbonates (no clay baseline) - "
                       "porosity and PE discriminate facies better",
             "electrofacies": "Multiple log response needed to separate "
                              "wackestone/packstone/grainstone/boundstone",
@@ -732,9 +732,9 @@ _ENV_PREPROCESSING: Dict[str, Dict[str, Any]] = {
         "expected_n_scenarios": 8,
         "reasoning": {
             "smooth": "Quaternary logs are noisy (short intervals, mixed "
-                      "till/gravel/sand) — smoothing reveals layers",
+                      "till/gravel/sand) - smoothing reveals layers",
             "stacking_pattern": "No systematic coarsening/fining in "
-                                "glacial deposits — irrelevant transform",
+                                "glacial deposits - irrelevant transform",
             "electrofacies": "Simple lithology grouping (clay/silt/sand/gravel) "
                              "from combined GR+resistivity",
         },
@@ -819,7 +819,7 @@ def recommend_preprocessing(
     if any(r in region_upper for r in ("FACIES", "LITH", "LITHO", "LITH_FACIES")):
         rec.ai_facies = False
         rec.reasoning["ai_facies"] = (
-            "Existing facies region detected — no prediction needed"
+            "Existing facies region detected - no prediction needed"
         )
 
     # If no GR, disable GR-based transforms
@@ -835,7 +835,7 @@ def recommend_preprocessing(
         rec.reasoning["biozone"] = "Biozone region already present in data"
     else:
         rec.reasoning["biozone"] = (
-            "No biozone region — consider adding if chronostratigraphic "
+            "No biozone region - consider adding if chronostratigraphic "
             "control is available (first/last occurrence picks)"
         )
 
@@ -843,7 +843,7 @@ def recommend_preprocessing(
     if "CAL" in data_upper or "CALI" in data_upper:
         rec.log_qc = True
         rec.reasoning["log_qc"] = (
-            "Caliper log available — washout detection enabled"
+            "Caliper log available - washout detection enabled"
         )
 
     # Determine which logs to use for AI facies prediction

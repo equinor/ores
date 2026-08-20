@@ -4,7 +4,7 @@
   "field": "Gudrun-Sigrun",
   "basin": "Viking Graben",
   "country": "Norway",
-  "source": "eqndev SMDA catalog — GUDRUN + EQUINOR NCS BIOZONATION GTS2020",
+  "source": "eqndev SMDA catalog - GUDRUN + EQUINOR NCS BIOZONATION GTS2020",
   "biozonation_scheme": "EQUINOR NCS BIOZONATION GTS2020",
   "ranks": [
     {
@@ -133,7 +133,7 @@
           "demo_zone_id": 3,
           "parent_name": "Heather Formation",
           "color_html": "#DDA0DD",
-          "note": "Callovian — top of logged section in distal wells only"
+          "note": "Callovian - top of logged section in distal wells only"
         },
         {
           "name": "NSP 38.1",
@@ -261,14 +261,14 @@
           "top_age_ma": 161.53,
           "base_age_ma": 165.29,
           "color_html": "#6495ED",
-          "note": "Main Hugin reservoir — Upper + Middle Hugin (zones 38.1–38.4)"
+          "note": "Main Hugin reservoir - Upper + Middle Hugin (zones 38.1–38.4)"
         },
         {
           "name": "SQ1 (LST-TST)",
           "top_age_ma": 165.29,
           "base_age_ma": 170.9,
           "color_html": "#4169E1",
-          "note": "Lower Hugin + Sleipner — transgressive (zones 39.1–40)"
+          "note": "Lower Hugin + Sleipner - transgressive (zones 39.1–40)"
         }
       ]
     }
@@ -302,7 +302,7 @@
     "demo_biozone": {
       "description": "Simplified biozone codes in demo/data_set_sigrun/wells.txt",
       "mapping": {
-        "3": "NSP 37.7 (Callovian, Heather Fm top — distal wells only)",
+        "3": "NSP 37.7 (Callovian, Heather Fm top - distal wells only)",
         "4": "NSP 38.1–38.4 (Bathonian, Hugin Fm main reservoir)",
         "5": "NSP 39.1–39.3 (Bajocian, Lower Hugin / Sleipner)"
       }

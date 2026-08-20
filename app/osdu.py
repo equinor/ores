@@ -474,8 +474,8 @@ async def list_targets(access_token: str, ds_enc: str, typ: str, uuid: str) -> l
 # Feature gate: set RDDMS_DISCOVERY=1 to force-enable, or =0 to force-disable.
 # When unset (default), auto-detects at runtime by probing /health/info version.
 # Requires open-etp-client >= 1.3.0 (MR 271) which adds:
-#   POST /query/graph/search   — batch graph traversal
-#   GET  /dataspaces/{id}/deleted — list deleted resources
+#   POST /query/graph/search   - batch graph traversal
+#   GET  /dataspaces/{id}/deleted - list deleted resources
 _RDDMS_DISCOVERY_ENV: str = os.getenv("RDDMS_DISCOVERY", "").strip().lower()
 RDDMS_DISCOVERY_ENABLED: bool = _RDDMS_DISCOVERY_ENV in ("1", "true", "yes")
 
@@ -549,7 +549,7 @@ async def graph_search(
     include_secondary_targets: bool = False,
     include_secondary_sources: bool = False,
 ) -> dict[str, Any]:
-    """POST /query/graph/search — batch graph across multiple URIs.
+    """POST /query/graph/search - batch graph across multiple URIs.
 
     Requires open-etp-client with MR 271 (POST /query/graph/search).
     Returns ``{"resources": [...], "links": [...]}``.
@@ -578,7 +578,7 @@ async def list_deleted_resources(
     data_object_types: str = "",
     since: str = "",
 ) -> list[dict]:
-    """GET /dataspaces/{dataspaceId}/deleted — list deleted resources.
+    """GET /dataspaces/{dataspaceId}/deleted - list deleted resources.
 
     Requires open-etp-client with MR 271 (GET /dataspaces/{id}/deleted).
     """
@@ -605,7 +605,7 @@ async def list_resources_deep(
     data_object_types: str = "",
     limit: int = 200,
 ) -> list[dict[str, Any]]:
-    """GET /dataspaces/{id}/resources/{type}?depth=N — list with recursive depth.
+    """GET /dataspaces/{id}/resources/{type}?depth=N - list with recursive depth.
 
     Falls back to depth=1 on older etp-client versions that don't accept it.
     """
@@ -735,7 +735,7 @@ def _notification_url(path: str = "") -> str:
 
 
 async def notification_test(access_token: str) -> dict[str, Any]:
-    """GET /api/notification/v1/test  — connectivity probe."""
+    """GET /api/notification/v1/test  - connectivity probe."""
     hdr = headers(access_token)
     async with _http(timeout=10) as client:
         r = await client.get(_notification_url("/test"), headers=hdr)
@@ -751,7 +751,7 @@ async def notification_list_subscriptions(
     access_token: str,
     notification_id: str = "",
 ) -> list[dict[str, Any]]:
-    """GET /api/notification/v1/push/subscriptions — list push subscriptions.
+    """GET /api/notification/v1/push/subscriptions - list push subscriptions.
 
     If *notification_id* is given, fetch just that single subscription.
     """
@@ -779,7 +779,7 @@ async def notification_create_subscription(
     push_endpoint: str,
     description: str = "",
 ) -> dict[str, Any]:
-    """POST /api/notification/v1/push/subscriptions — create push subscription.
+    """POST /api/notification/v1/push/subscriptions - create push subscription.
 
     Args:
         name: subscription name (e.g. "bd-changes")
@@ -825,7 +825,7 @@ async def notification_record_changed(
     """Query the OSDU Register service for change events affecting given record IDs.
 
     Uses the OSDU Search API to find records by ID and check their
-    ``modifyTime`` / ``createTime`` metadata — this is the lightweight
+    ``modifyTime`` / ``createTime`` metadata - this is the lightweight
     polling approach when push subscriptions aren't configured.
     """
     if not record_ids:

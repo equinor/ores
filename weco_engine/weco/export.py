@@ -162,7 +162,7 @@ def res_to_horizon_picks(
     n_wells = data.res_file.nbr_well()
     depths = data.get_zdatas(depth_prop)
 
-    # Identify *transitions* — steps where at least one well advances.
+    # Identify *transitions* - steps where at least one well advances.
     # We skip the first node (all-zero start) and deduplicate static lines.
     horizons = []
     prev = path[0]
@@ -642,7 +642,7 @@ def export_n_best_ensemble(
 
 
 # ---------------------------------------------------------------------------
-# Correlation polylines — GOCAD .pl export (§15.4)
+# Correlation polylines - GOCAD .pl export (§15.4)
 # ---------------------------------------------------------------------------
 
 def export_correlation_polylines(
@@ -712,7 +712,7 @@ def export_correlation_polylines(
 
 
 # ---------------------------------------------------------------------------
-# Correlation surfaces — GOCAD .ts export (§15.5)
+# Correlation surfaces - GOCAD .ts export (§15.5)
 # ---------------------------------------------------------------------------
 
 def export_correlation_surfaces(
@@ -808,7 +808,7 @@ def export_correlation_surfaces(
 
 
 # ---------------------------------------------------------------------------
-# Seam table export — coal-specific (§15.13)
+# Seam table export - coal-specific (§15.13)
 # ---------------------------------------------------------------------------
 
 def export_seam_table(
@@ -907,7 +907,7 @@ def export_seam_table(
 
 
 # ---------------------------------------------------------------------------
-# MODFLOW layers export — hydrogeology (§15.14)
+# MODFLOW layers export - hydrogeology (§15.14)
 # ---------------------------------------------------------------------------
 
 def export_modflow_layers(
@@ -923,7 +923,7 @@ def export_modflow_layers(
     """Export aquifer zone geometry for FloPy / MODFLOW.
 
     Produces a CSV with columns: well, layer, top_elevation, bot_elevation,
-    thickness, x, y — suitable for FloPy's ``flopy.modflow.ModflowDis``.
+    thickness, x, y - suitable for FloPy's ``flopy.modflow.ModflowDis``.
 
     Parameters
     ----------
@@ -1117,7 +1117,7 @@ def _write_gocad_logs(well, names, path):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §15.10 — export_rms_package extend: blocked well log + IRAP surfaces
+# §15.10 - export_rms_package extend: blocked well log + IRAP surfaces
 # ═══════════════════════════════════════════════════════════════════════════
 
 

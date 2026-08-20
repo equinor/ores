@@ -266,7 +266,7 @@ class TestDepositionalEnvironment:
 
     def test_suggest_options_log_substitution(self):
         from weco.depenv import suggest_options
-        # Only GR and DT available — should substitute RHOB
+        # Only GR and DT available - should substitute RHOB
         opts = suggest_options("shallow_marine", data_names=["GR", "DT"])
         assert opts.get("var_data") == "GR"
 
@@ -320,7 +320,7 @@ class TestOsduAuth:
         monkeypatch.delenv("OSDU_TOKEN", raising=False)
         monkeypatch.delenv("OSDU_TOKEN_URL", raising=False)
         monkeypatch.delenv("OSDU_CLIENT_ID", raising=False)
-        # Azure CLI might also fail — patch subprocess
+        # Azure CLI might also fail - patch subprocess
         import subprocess as sp
         monkeypatch.setattr(
             sp, "run",

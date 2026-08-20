@@ -106,7 +106,7 @@ def generate(
         col_vals.setdefault(f"{prop}.P50", []).append(lb["P50"])
         col_vals.setdefault(f"{prop}.P10", []).append(lb["P10"])
 
-    # Add a TOTAL row (always — enrichment expects it for headline volumes)
+    # Add a TOTAL row (always - enrichment expects it for headline volumes)
     if len(labels) >= 1:
         col_vals["SegmentID"].append("TOTAL")
         for k in list(col_vals.keys()):

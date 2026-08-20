@@ -1,5 +1,5 @@
 """
-weco.preprocessing — Data conditioning transforms for well correlation
+weco.preprocessing - Data conditioning transforms for well correlation
 ======================================================================
 
 Pre-engine transforms that derive geologically meaningful data channels
@@ -269,7 +269,7 @@ def normalise_log(
     Normalise a log across all wells to a common scale.
 
     This is critical when wells were logged with different tools or mud
-    systems — raw GR or resistivity values are not directly comparable.
+    systems - raw GR or resistivity values are not directly comparable.
 
     Parameters
     ----------
@@ -278,9 +278,9 @@ def normalise_log(
     output_name : str, optional
         If None, overwrites the original channel.
     method : str
-        ``"percentile"``  — map P5..P95 to target_range (robust to outliers).
-        ``"zscore"``      — mean=0, std=1  (ignore target_range).
-        ``"minmax"``      — map global min..max to target_range.
+        ``"percentile"``  - map P5..P95 to target_range (robust to outliers).
+        ``"zscore"``      - mean=0, std=1  (ignore target_range).
+        ``"minmax"``      - map global min..max to target_range.
     """
     wells = [w for w in well_list.wells if log_name in w.data]
     if not wells:
@@ -328,7 +328,7 @@ def compute_electrofacies(
     Cluster multi-log responses into discrete electrofacies using K-Means.
 
     Electrofacies can then be used as the ``dist_facies`` region for the
-    distality cost function — even when geologist-interpreted facies are
+    distality cost function - even when geologist-interpreted facies are
     unavailable.
 
     Parameters
@@ -398,7 +398,7 @@ def compute_electrofacies(
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §11.2.4 — Auto-Suggest Facies Groups
+# §11.2.4 - Auto-Suggest Facies Groups
 # ═══════════════════════════════════════════════════════════════════════════
 
 
@@ -639,13 +639,13 @@ def project_facies_map(
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Facies clustering — lateral equivalence groups (§13.2)
+#  Facies clustering - lateral equivalence groups (§13.2)
 # ═══════════════════════════════════════════════════════════════════════════
 
 def parse_facies_groups(spec: str) -> dict:
     """Parse a semicolon-separated facies group specification.
 
-    Format: ``"1,2,3;4,5;6,7,8"`` — each semicolon-delimited group
+    Format: ``"1,2,3;4,5;6,7,8"`` - each semicolon-delimited group
     contains comma-separated facies IDs that are considered laterally
     equivalent.
 
@@ -702,7 +702,7 @@ def remap_facies_groups(
 
     Reference
     ---------
-    Baville (2022) §3.4.5, §6.3.3 — facies associations A, B, C.
+    Baville (2022) §3.4.5, §6.3.3 - facies associations A, B, C.
     """
     if isinstance(groups, str):
         if not groups.strip():
@@ -990,7 +990,7 @@ def extract_seismic_attributes(
     try:
         import segyio
     except ImportError:
-        print("*WARN* segyio not installed — skipping seismic extraction")
+        print("*WARN* segyio not installed - skipping seismic extraction")
         return False
 
     if attributes is None:
@@ -1166,7 +1166,7 @@ def compute_facies_transition_matrix(
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §11.0.2 — PVT Region Reader
+# §11.0.2 - PVT Region Reader
 # ═══════════════════════════════════════════════════════════════════════════
 
 
@@ -1240,7 +1240,7 @@ def read_pvt_regions(
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §11.0.5 — Autoencoder Feature Extraction (PyTorch)
+# §11.0.5 - Autoencoder Feature Extraction (PyTorch)
 # ═══════════════════════════════════════════════════════════════════════════
 
 
@@ -1381,7 +1381,7 @@ def autoencoder_features(
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §11.12.3 — Structural domain regions
+# §11.12.3 - Structural domain regions
 # ═══════════════════════════════════════════════════════════════════════════
 
 def assign_structural_domains(well_list, domain_map, region_name="structural_domain"):

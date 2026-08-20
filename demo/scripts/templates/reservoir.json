@@ -8,7 +8,7 @@
     "OperatorID": ""
   },
   "_meta": {
-    "description": "Reservoir — master data record for a field or reservoir unit. Shared across all decision gates.",
+    "description": "Reservoir - master data record for a field or reservoir unit. Shared across all decision gates.",
     "required_fields": ["Name"]
   }
 }

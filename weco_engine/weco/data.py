@@ -258,7 +258,7 @@ class Well:
         for name in list(self.data.keys()):
             vals = self.data[name]
             self.data[name] = tuple(vals[i] for i in indices)
-        # Resample regions — rebuild from the new sample grid
+        # Resample regions - rebuild from the new sample grid
         for name in list(self.region.keys()):
             # Expand region to per-sample ID array, then re-compress
             full = [0] * self.size
@@ -601,8 +601,8 @@ class ResFile:
         """Return a lightweight correlation-path view for path *n*.
 
         The returned object has:
-        - ``.cost`` — total path cost
-        - ``.get_well_markers(wi)`` — list of marker indices for well *wi*
+        - ``.cost`` - total path cost
+        - ``.get_well_markers(wi)`` - list of marker indices for well *wi*
 
         This adapter bridges the engine's ``ResFile`` to the interface
         expected by :mod:`weco.ai.quality`, :mod:`weco.ai.uncertainty`,

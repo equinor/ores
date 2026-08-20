@@ -40,7 +40,7 @@ TYPE_RENAMES = {
     "WellboreMarkerFrameRepresentation": "WellboreFrameRepresentation",
 }
 
-# Types removed in RESQML 2.2 — exclude from output EPC
+# Types removed in RESQML 2.2 - exclude from output EPC
 EXCLUDED_TYPES = {
     "MdDatum",
     "DeviationSurveyRepresentation",
@@ -107,7 +107,7 @@ def _content_type_to_qualified_type(content_type: str) -> str:
 def _convert_dor(dor_xml: str) -> str:
     """Convert all DataObjectReferences: ContentType/UUID -> QualifiedType/Uuid.
 
-    Includes HdfProxy DORs — v2.2 requires QualifiedType/Uuid everywhere.
+    Includes HdfProxy DORs - v2.2 requires QualifiedType/Uuid everywhere.
     """
 
     # ContentType -> QualifiedType
@@ -704,7 +704,7 @@ def main():
 
                 elif old_name == "[Content_Types].xml":
                     ct_xml = content_bytes.decode("utf-8")
-                    # Rename obj_ in PartNames — but keep EpcExternalPartReference as-is
+                    # Rename obj_ in PartNames - but keep EpcExternalPartReference as-is
                     ct_xml = re.sub(
                         r'obj_(\w+?)_',
                         lambda m2: (f'obj_{m2.group(1)}_' if m2.group(1) == 'EpcExternalPartReference'
@@ -716,7 +716,7 @@ def main():
                     ct_xml = ct_xml.replace(
                         "version=2.2;type=obj_EpcExternalPartReference",
                         "version=2.0;type=obj_EpcExternalPartReference")
-                    # Strip obj_ from ContentType values — except EpcExternalPartReference
+                    # Strip obj_ from ContentType values - except EpcExternalPartReference
                     ct_xml = re.sub(
                         r'type=obj_(\w+)',
                         lambda m2: (f'type=obj_{m2.group(1)}' if m2.group(1) == 'EpcExternalPartReference'
@@ -745,7 +745,7 @@ def main():
                     if rels_uuid_m and rels_uuid_m.group(1) in EXCLUDED_UUIDS:
                         continue
                     rels_xml = content_bytes.decode("utf-8")
-                    # Rename obj_ targets — but keep EpcExternalPartReference as-is
+                    # Rename obj_ targets - but keep EpcExternalPartReference as-is
                     rels_xml = re.sub(
                         r'obj_(\w+?)_',
                         lambda m2: (f'obj_{m2.group(1)}_' if m2.group(1) == 'EpcExternalPartReference'

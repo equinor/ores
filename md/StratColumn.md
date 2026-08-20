@@ -133,7 +133,7 @@ Volumes (rock bodies):
 > **They become essential when** the same geological entity is represented more than once: different surveys, different interpreters, time-lapse, or re-interpretation. The Feature is the stable identity; the Interpretation captures one team's geological reading; the Representation holds one set of geometry. Without that separation you lose the ability to compare vintages or trace re-interpretation history.
 
 > [!NOTE]
-> This is a **normalized vs. denormalized** data-model trade-off. A denormalized model (all metadata on the representation) is simpler for single-vintage workflows — one record, no joins. A normalized model (Feature → Interpretation → Representation) avoids duplication and keeps identity stable when you have multiple representations. The cost is extra objects that feel redundant at first. The payoff comes at rename (update one record, not N), at re-interpretation (new interpretation, same feature), and at cross-domain linking (strat column → horizon needs a stable target that isn't tied to one survey).
+> This is a **normalized vs. denormalized** data-model trade-off. A denormalized model (all metadata on the representation) is simpler for single-vintage workflows - one record, no joins. A normalized model (Feature → Interpretation → Representation) avoids duplication and keeps identity stable when you have multiple representations. The cost is extra objects that feel redundant at first. The payoff comes at rename (update one record, not N), at re-interpretation (new interpretation, same feature), and at cross-domain linking (strat column → horizon needs a stable target that isn't tied to one survey).
 
 ### Strat columns vs. seismic interpretation  different entry points
 

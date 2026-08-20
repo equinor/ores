@@ -1,4 +1,4 @@
-# Config: DISTALITY — GR+RHOB+DT with distality cost
+# Config: DISTALITY - GR+RHOB+DT with distality cost
 # Uses FACIES region for lateral equivalence (dist-facies)
 # Transport direction: along Y (dip direction)
 #

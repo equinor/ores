@@ -1,5 +1,5 @@
 """
-weco.seistiles_constraint — Seismic Tiles correlation constraint
+weco.seistiles_constraint - Seismic Tiles correlation constraint
 =================================================================
 
 Honour piecewise-planar seismic reflectors ("Seismic Tiles") during
@@ -15,10 +15,10 @@ Algorithm
 For each candidate marker tie ``(i_a, i_b)`` connecting well A
 (depth ``z_a``) to well B (depth ``z_b``):
 
-1. **Tile lookup** — find the tile closest to each well at the
+1. **Tile lookup** - find the tile closest to each well at the
    marker depth (spatial + depth nearest-neighbour).
 
-2. **Dip consistency** — the expected depth shift between wells
+2. **Dip consistency** - the expected depth shift between wells
    is derived from the tile's dip (``θ``) and the azimuth (``φ``):
 
    .. math::
@@ -35,7 +35,7 @@ For each candidate marker tie ``(i_a, i_b)`` connecting well A
 
        c_{dip} = w_{dip} \\left(\\frac{Δz_{actual} - Δz_{expected}}{σ_{dip}}\\right)^2
 
-3. **Azimuth consistency** — if tiles at both wells have
+3. **Azimuth consistency** - if tiles at both wells have
    azimuth data, a penalty for angular mismatch is added:
 
    .. math::
@@ -44,7 +44,7 @@ For each candidate marker tie ``(i_a, i_b)`` connecting well A
 
    where ``Δφ`` is the angular difference (wrapping around 360°).
 
-4. **Amplitude similarity** (optional) — penalises ties where
+4. **Amplitude similarity** (optional) - penalises ties where
    the tile amplitudes differ significantly:
 
    .. math::
@@ -84,9 +84,9 @@ Usage
 
 See Also
 --------
-* ``weco.seismic_constraint`` — simpler horizon-pick based penalty.
-* ``src/ccf_distal.cpp`` — C++ distality/facies cost (similar principle).
-* Skjæveland & Torset (2023), *Geophysics* 88(3) — SeisTiles format spec.
+* ``weco.seismic_constraint`` - simpler horizon-pick based penalty.
+* ``src/ccf_distal.cpp`` - C++ distality/facies cost (similar principle).
+* Skjæveland & Torset (2023), *Geophysics* 88(3) - SeisTiles format spec.
 * https://www.seistiles.com/
 
 Reference

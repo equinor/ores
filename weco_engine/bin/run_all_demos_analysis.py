@@ -35,14 +35,14 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "demo" / "data"
 
 
 # ============================================================================
-# DEMO CATALOGUE (from api.py — ground truth working parameters)
+# DEMO CATALOGUE (from api.py - ground truth working parameters)
 # ============================================================================
 
 DEMO_CATALOGUE = {
     "distality": {
         "wells": "data_set_distality/wells.txt",
         "geology": "concept",
-        "description": "2 wells — distality cost (Walther's Law)",
+        "description": "2 wells - distality cost (Walther's Law)",
         "opts": {"dist-distal": "DISTAL", "dist-facies": "FACIES_1",
                  "dist-scaling": "1.0", "order": "distality",
                  "max-cor": "50", "nbr-cor": "30", "out-nbr-cor": "10",
@@ -51,7 +51,7 @@ DEMO_CATALOGUE = {
     "biozone_distality": {
         "wells": "data_set_biozone_distality/wells.txt",
         "geology": "concept",
-        "description": "2 wells — biozone no-crossing + distality",
+        "description": "2 wells - biozone no-crossing + distality",
         "opts": {"dist-distal": "DISTAL", "dist-facies": "FACIES_1",
                  "no-crossing": "BIOZONES", "order": "distality",
                  "max-cor": "50", "nbr-cor": "30", "out-nbr-cor": "10",
@@ -60,7 +60,7 @@ DEMO_CATALOGUE = {
     "coal": {
         "wells": "data_set_coal/wells_10.txt",
         "geology": "coal",
-        "description": "10 coal boreholes — gap cost + multi-log (DEN+GR+SON)",
+        "description": "10 coal boreholes - gap cost + multi-log (DEN+GR+SON)",
         "opts": {"var-data": "DEN", "var-weight": "0.5",
                  "var-data2": "GR", "var-weight2": "0.3",
                  "var-data3": "SON", "var-weight3": "0.2",
@@ -71,7 +71,7 @@ DEMO_CATALOGUE = {
     "quaternary": {
         "wells": "data_set_quaternary/wells_20.txt",
         "geology": "quaternary",
-        "description": "20 Quaternary wells — gap cost + GR+RT",
+        "description": "20 Quaternary wells - gap cost + GR+RT",
         "opts": {"var-data": "GR", "var-weight": "0.7",
                  "var-data2": "RT", "var-weight2": "0.3",
                  "max-cor": "20", "nbr-cor": "10", "out-nbr-cor": "10",
@@ -81,7 +81,7 @@ DEMO_CATALOGUE = {
     "shallow_marine": {
         "wells": "data_set_shallow_marine/wells.txt",
         "geology": "shallow_marine",
-        "description": "10 wells — 3-log shoreface (GR+RHOB+DT)",
+        "description": "10 wells - 3-log shoreface (GR+RHOB+DT)",
         "opts": {"var-data": "GR", "var-weight": "0.5",
                  "var-data2": "RHOB", "var-weight2": "0.3",
                  "var-data3": "DT", "var-weight3": "0.2",
@@ -93,7 +93,7 @@ DEMO_CATALOGUE = {
     "bryson": {
         "wells": "data_set_bryson/wells.txt",
         "geology": "fluvial",
-        "description": "7 Appalachian wells — categorical FACIES + ZONE no-crossing",
+        "description": "7 Appalachian wells - categorical FACIES + ZONE no-crossing",
         "opts": {"var-data": "FACIES", "no-crossing": "ZONE",
                  "max-cor": "50", "nbr-cor": "30", "out-nbr-cor": "10",
                  "min-dist": "0.5", "out-min-dist": "0.25"},
@@ -101,7 +101,7 @@ DEMO_CATALOGUE = {
     "bryson_distality": {
         "wells": "data_set_bryson/wells.txt",
         "geology": "fluvial",
-        "description": "7 Appalachian wells — distality ordering + ZONE no-crossing",
+        "description": "7 Appalachian wells - distality ordering + ZONE no-crossing",
         "opts": {"var-data": "DISTALITY", "order": "distality",
                  "no-crossing": "ZONE",
                  "max-cor": "80", "nbr-cor": "50", "out-nbr-cor": "10",
@@ -110,7 +110,7 @@ DEMO_CATALOGUE = {
     "fluvial": {
         "wells": "data_set_fluvial/wells.txt",
         "geology": "fluvial",
-        "description": "12 wells — discontinuous channel sandbodies",
+        "description": "12 wells - discontinuous channel sandbodies",
         "opts": {"var-data": "GR", "var-weight": "1.0",
                  "max-cor": "50", "nbr-cor": "20", "out-nbr-cor": "5",
                  "min-dist": "0.5", "out-min-dist": "0.2",
@@ -119,7 +119,7 @@ DEMO_CATALOGUE = {
     "delta": {
         "wells": "data_set_delta/wells.txt",
         "geology": "deltaic",
-        "description": "8 wells — prograding delta (GR+DEN)",
+        "description": "8 wells - prograding delta (GR+DEN)",
         "opts": {"var-data": "GR", "var-weight": "0.6",
                  "var-data2": "DEN", "var-weight2": "0.4",
                  "no-crossing": "SEQSTRAT",
@@ -130,7 +130,7 @@ DEMO_CATALOGUE = {
     "sigrun": {
         "wells": "data_set_sigrun/wells.txt",
         "geology": "shallow_marine",
-        "description": "2 North Sea wells — GR+NPHI",
+        "description": "2 North Sea wells - GR+NPHI",
         "opts": {"var-data": "GR", "var-weight": "0.6",
                  "var-data2": "NPHI", "var-weight2": "0.4",
                  "max-cor": "50", "nbr-cor": "30", "out-nbr-cor": "10",
@@ -139,7 +139,7 @@ DEMO_CATALOGUE = {
     "troll": {
         "wells": "data_set_troll/wells.txt",
         "geology": "shallow_marine",
-        "description": "5 Troll wells — categorical FACIES only",
+        "description": "5 Troll wells - categorical FACIES only",
         "opts": {"var-data": "FACIES",
                  "max-cor": "50", "nbr-cor": "30", "out-nbr-cor": "10",
                  "min-dist": "0.5", "out-min-dist": "0.25"},
@@ -147,7 +147,7 @@ DEMO_CATALOGUE = {
     "troll_distality": {
         "wells": "data_set_troll/wells.txt",
         "geology": "shallow_marine",
-        "description": "23 Troll wells — distality ordering + biozone",
+        "description": "23 Troll wells - distality ordering + biozone",
         "opts": {"var-data": "DISTALITY", "order": "distality",
                  "no-crossing": "BIOZONE",
                  "max-cor": "50", "nbr-cor": "30", "out-nbr-cor": "15",
@@ -156,7 +156,7 @@ DEMO_CATALOGUE = {
     "hugin_tidal": {
         "wells": "data_set_hugin_tidal/facies.wells.txt",
         "geology": "shallow_marine",
-        "description": "2 real North Sea wells — tidal distality",
+        "description": "2 real North Sea wells - tidal distality",
         "opts": {"dist-distal": "DISTALITY", "dist-facies": "FACIES_1",
                  "dist-scaling": "1.0", "order": "distality",
                  "max-cor": "50", "nbr-cor": "30", "out-nbr-cor": "10",

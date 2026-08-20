@@ -7,7 +7,7 @@ Supports multiple configuration sources (in priority order):
   3. JSON config file (~/.osdu/config.json or specified path)
   4. k8s/secret.yaml + k8s/configmap.yaml (ores repo fallback)
 
-Perspective: fully independent of ORES — can be used standalone.
+Perspective: fully independent of ORES - can be used standalone.
 """
 from __future__ import annotations
 

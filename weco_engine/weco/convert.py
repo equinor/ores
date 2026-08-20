@@ -1,5 +1,5 @@
 """
-WeCoConvert — CLI for converting well-data between formats.
+WeCoConvert - CLI for converting well-data between formats.
 
 Usage::
 

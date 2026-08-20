@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-demo/ontology/ingest.py — Generate ontology records from specs and ingest to OSDU.
+demo/ontology/ingest.py - Generate ontology records from specs and ingest to OSDU.
 
 Specs live alongside their project data:
   demo/drogon_dg0/spec.json
@@ -38,7 +38,7 @@ from scripts.generators._common import load_json, default_acl, default_legal  # 
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Spec groups — paths relative to demo/
+# Spec groups - paths relative to demo/
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # Interop target: public demo (Drogon only)
@@ -91,7 +91,7 @@ def ingest_records(
 ) -> tuple:
     """PUT records to Storage API. Returns (created, skipped, errors)."""
     if dry_run:
-        print(f"  [{label}] DRY RUN — {len(records)} records would be ingested")
+        print(f"  [{label}] DRY RUN - {len(records)} records would be ingested")
         return len(records), 0, []
 
     headers = {

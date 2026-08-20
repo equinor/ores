@@ -13,7 +13,7 @@
 
   // Map of replaceable linked-record fields for custom record override
   var REPLACEABLE_FIELDS = {
-    '': '(none — additional record)',
+    '': '(none - additional record)',
     'link-rev-stats': 'In-place vol. stats',
     'link-rev-raw': 'In-place vol. raw',
     'link-production-profile': 'Production profile',

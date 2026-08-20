@@ -1,4 +1,4 @@
-# Config: BRYSON — Facies variance constrained by sequence stratigraphy
+# Config: BRYSON - Facies variance constrained by sequence stratigraphy
 # Uses SEQSTRAT boundaries (4th/5th order) as same-region constraints
 # ZONE as no-crossing (keeps correlation within reservoir units)
 #

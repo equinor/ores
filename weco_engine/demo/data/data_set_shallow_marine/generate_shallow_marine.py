@@ -20,11 +20,11 @@ Facies (8):
   7=Tidal channel      8=Transgressive lag
 
 Logs:
-  GR   — Natural gamma ray (API)     → lithology proxy
-  RT   — Resistivity (Ohm-m)         → permeability indicator
-  RHOB — Bulk density (g/cc)         → porosity proxy
-  NPHI — Neutron porosity (v/v)      → porosity proxy
-  DT   — Sonic transit time (µs/ft)  → compaction indicator
+  GR   - Natural gamma ray (API)     → lithology proxy
+  RT   - Resistivity (Ohm-m)         → permeability indicator
+  RHOB - Bulk density (g/cc)         → porosity proxy
+  NPHI - Neutron porosity (v/v)      → porosity proxy
+  DT   - Sonic transit time (µs/ft)  → compaction indicator
 
 Geometry:
   Wells are spaced along dip (Y axis). Beds thicken downdip due to
@@ -32,7 +32,7 @@ Geometry:
   per well, defining the ground-truth correlation.
 
 Biozones:
-  BZ1 (base PS2), BZ2 (base PS4) — two biostratigraphic markers that
+  BZ1 (base PS2), BZ2 (base PS4) - two biostratigraphic markers that
   can be used as no_crossing constraints.
 
 Reference:
@@ -49,7 +49,7 @@ import numpy as np
 # ---------------------------------------------------------------------------
 # Facies definitions: ID -> (name, GR, GR_std, RT, RT_std, RHOB, RHOB_std,
 #                            NPHI, NPHI_std, DT, DT_std)
-# Note: Adjacent facies have OVERLAPPING log responses — this is geologically
+# Note: Adjacent facies have OVERLAPPING log responses - this is geologically
 # realistic and creates genuine ambiguity for the correlation engine.
 # Upper/lower shoreface GR overlap (40-65 vs 50-80), offshore/bay overlap, etc.
 # ---------------------------------------------------------------------------
@@ -73,10 +73,10 @@ FACIES_GROUPS = "1,6;2,8;3,7;4,5"
 # facies_profile = list of (facies_id, fraction) from base to top
 # thickening_rate = fractional increase per well step downdip
 #
-# Design: PS1/PS3/PS5/PS7 are SIMILAR shoreface progradations — this creates
+# Design: PS1/PS3/PS5/PS7 are SIMILAR shoreface progradations - this creates
 # the key correlation ambiguity: "which shoreface ties to which?"
-# PS2/PS6 are bay-fill (muddy) — similar signature, different age.
-# PS4 is a thin transgressive lag — easy to miss or miscorrelate.
+# PS2/PS6 are bay-fill (muddy) - similar signature, different age.
+# PS4 is a thin transgressive lag - easy to miss or miscorrelate.
 # The REPEATED similar pattern forces the engine to explore multiple
 # valid scenarios with different reservoir connectivity implications.
 # ---------------------------------------------------------------------------
@@ -133,7 +133,7 @@ def _interp_profile(proximal, distal, t):
     """Interpolate facies profile between proximal (t=0) and distal (t=1).
 
     Each layer blends the proximal and distal facies fractions, and
-    selects the facies ID probabilistically based on t — producing
+    selects the facies ID probabilistically based on t - producing
     a gradual lateral facies change instead of an abrupt switch.
     """
     result = []
@@ -174,7 +174,7 @@ def _log_from_facies(rng, facies_seq, log_idx, trend_sign=0.0):
         same facies (>0 = upward-increasing, <0 = upward-decreasing).
 
     Noise is deliberately high to create log-response ambiguity between
-    adjacent facies — realistic for subsurface data where measurement
+    adjacent facies - realistic for subsurface data where measurement
     uncertainty + diagenesis + cementation create overlap.
     """
     n = len(facies_seq)
@@ -194,7 +194,7 @@ def _log_from_facies(rng, facies_seq, log_idx, trend_sign=0.0):
             # Vertical trend: linear gradient from -0.5σ to +0.5σ
             frac = k / max(run_len - 1, 1)  # 0→1 from base to top
             trend = trend_sign * std * 0.5 * (frac - 0.5)
-            # Higher noise: full σ (not 0.7σ) — creates genuine ambiguity
+            # Higher noise: full σ (not 0.7σ) - creates genuine ambiguity
             values.append(float(rng.normal(mean + trend, std)))
     return values
 
@@ -460,7 +460,7 @@ def main(seed=2026, n_wells=10, output_dir=None):
     # Option configurations
     configs = {
         "options.txt": (
-            ["Config: DEFAULT — GR+RHOB+DT variance for shoreface correlation",
+            ["Config: DEFAULT - GR+RHOB+DT variance for shoreface correlation",
              "Shallow marine: use GR (lithology) + RHOB (porosity) + DT (compaction)",
              "Hugin Formation analogue, 5 parasequences"],
             {"cost-function": "composite",
@@ -472,7 +472,7 @@ def main(seed=2026, n_wells=10, output_dir=None):
              "out-file": "result.txt"}
         ),
         "options_distality.txt": (
-            ["Config: DISTALITY — GR+RHOB+DT with distality cost",
+            ["Config: DISTALITY - GR+RHOB+DT with distality cost",
              "Uses FACIES region for lateral equivalence (dist-facies)",
              "Transport direction: along Y (dip direction)"],
             {"cost-function": "composite",
@@ -485,7 +485,7 @@ def main(seed=2026, n_wells=10, output_dir=None):
              "out-file": "result_distality.txt"}
         ),
         "options_with_biozones.txt": (
-            ["Config: BIOZONES — GR+RHOB+DT constrained by biozone markers",
+            ["Config: BIOZONES - GR+RHOB+DT constrained by biozone markers",
              "no-crossing=BIOZONE prevents correlation across biozones",
              "Two biozones: BZ1 (base PS2) and BZ2 (base PS4)"],
             {"cost-function": "composite",

@@ -229,7 +229,7 @@ def parse_format_b(ws, sheet_name):
         if md is None:
             continue
         
-        # Dep env (col 2) — could be Facies3 code or name string
+        # Dep env (col 2) - could be Facies3 code or name string
         facies10 = None
         facies3 = None
         if row[2] is not None:
@@ -245,7 +245,7 @@ def parse_format_b(ws, sheet_name):
                         facies10 = val
                         break
                 if facies10 is None and dep_str:
-                    # Unknown name — try to infer from context
+                    # Unknown name - try to infer from context
                     if '1' in dep_str:
                         facies3 = 1
                     elif '3' in dep_str and 'mudstone' not in dep_str.lower():
@@ -549,7 +549,7 @@ def write_options(dirpath):
     
     # Option 1: Distal CCF (main approach for deltaic/shoreface)
     with open(os.path.join(dirpath, 'options_distal.txt'), 'w') as f:
-        f.write("""# Config: TROLL — Distal CCF for Sognefjord Fm. deltaic sequences
+        f.write("""# Config: TROLL - Distal CCF for Sognefjord Fm. deltaic sequences
 # Primary: facies-based distality comparison (Walther's Law)
 # No-crossing: BIOZONE (chronostratigraphic constraint)
 # Wells represent proximal (distributary) to distal (prodelta/shelf) transect
@@ -570,7 +570,7 @@ out-file=result_distal.txt
     
     # Option 2: Variance + same-region (sequence constrained)
     with open(os.path.join(dirpath, 'options_sequence.txt'), 'w') as f:
-        f.write("""# Config: TROLL — Variance CCF constrained by sequence boundaries
+        f.write("""# Config: TROLL - Variance CCF constrained by sequence boundaries
 # Uses FACIES as correlation log with SEQUENCE as same-region constraint
 # BIOZONE as no-crossing (hard chronostratigraphic tie)
 #
@@ -589,7 +589,7 @@ out-file=result_sequence.txt
     
     # Option 3: Basic variance (unconstrained for comparison)
     with open(os.path.join(dirpath, 'options_basic.txt'), 'w') as f:
-        f.write("""# Config: TROLL — Basic variance CCF (unconstrained)
+        f.write("""# Config: TROLL - Basic variance CCF (unconstrained)
 # Correlates FACIES without chronostratigraphic constraints
 # Useful to show how unconstrained correlation can miscorrelate
 #
@@ -639,7 +639,7 @@ Extracted from core-based sedimentological interpretation spreadsheet.
 | 10 | Shelf / Offshore | 1 (distal) |
 
 ## Correlation Strategy
-1. **options_distal.txt**: Distal CCF — uses facies + distality (Walther's Law)
+1. **options_distal.txt**: Distal CCF - uses facies + distality (Walther's Law)
 2. **options_sequence.txt**: Variance + same-region (SEQUENCE boundaries)
 3. **options_basic.txt**: Unconstrained variance (baseline comparison)
 

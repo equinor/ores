@@ -427,7 +427,7 @@ async def analyse_compare(
         pass
 
     # 2. Fetch ALL BDs and filter in-memory by reservoir reference.
-    # This is the most reliable approach for small partitions — avoids OSDU
+    # This is the most reliable approach for small partitions - avoids OSDU
     # search index gaps where nested fields (ReservoirIDs,
     # Parameters[].DataObjectParameter) may not be fully indexed.
     bd_kind = "osdu:wks:master-data--BusinessDecision:*"

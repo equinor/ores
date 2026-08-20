@@ -1,4 +1,4 @@
-# Config: BIOZONES — GR+RHOB+DT constrained by biozone markers
+# Config: BIOZONES - GR+RHOB+DT constrained by biozone markers
 # no-crossing=BIOZONE prevents correlation across biozones
 # Two biozones: BZ1 (base PS2) and BZ2 (base PS4)
 #

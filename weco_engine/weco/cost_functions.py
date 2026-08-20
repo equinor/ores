@@ -1,5 +1,5 @@
 """
-weco.cost_functions — Reusable Python cost function plugins for WeCo
+weco.cost_functions - Reusable Python cost function plugins for WeCo
 =====================================================================
 
 Ready-to-use :class:`~weco.ext.CCFPartExt` subclasses that add
@@ -8,11 +8,11 @@ provide.
 
 Modules in this file:
 
-* :class:`BiozonAgeCost` — penalise correlating across biozone
+* :class:`BiozonAgeCost` - penalise correlating across biozone
   boundaries proportionally to the age difference (§11.8).
-* :class:`FaciesGroupCost` — penalise correlating markers from
+* :class:`FaciesGroupCost` - penalise correlating markers from
   different lateral-equivalence facies groups (§13.2).
-* :class:`TransportDirectionCost` — penalise correlations that are
+* :class:`TransportDirectionCost` - penalise correlations that are
   inconsistent with the assumed sediment transport direction (§13.9).
 
 Usage::
@@ -96,7 +96,7 @@ class BiozonAgeCost(CCFPartExt):
         return True
 
     def init(self):
-        """Called once per merge — bind region helper."""
+        """Called once per merge - bind region helper."""
         self._zone = self.region_helper(self.REGION_NAME)
 
         if self.ZONE_AGES:
@@ -550,7 +550,7 @@ class WeightedCombinationCost(CCFPartExt):
     COMBINATION         "weighted_average"  "sum", "weighted_average", "product"
     ==================  ==================  ===================================
 
-    Reference: Baville (2022) §6.3.5 (p. 156) — normalised multi-criteria
+    Reference: Baville (2022) §6.3.5 (p. 156) - normalised multi-criteria
     """
 
     COST_PARTS: List[Tuple[type, float]] = []
@@ -593,13 +593,13 @@ class WeightedCombinationCost(CCFPartExt):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §11.12 — Asymmetric B3D Cost (different updip vs downdip scaling)
+# §11.12 - Asymmetric B3D Cost (different updip vs downdip scaling)
 # ═══════════════════════════════════════════════════════════════════════════
 
 
 class AsymmetricB3DCost(CCFPartExt):
     """
-    §11.12.2 — Asymmetric B3D that applies different scaling
+    §11.12.2 - Asymmetric B3D that applies different scaling
     factors for updip vs downdip transitions.
 
     Attributes
@@ -609,9 +609,9 @@ class AsymmetricB3DCost(CCFPartExt):
     DOWNDIP_SCALE : float
         Scaling factor for downdip (thickening) direction. Default 1.5.
     NORMALIZE : bool
-        §11.4.1 — Normalize by characteristic area A₀ if True.
+        §11.4.1 - Normalize by characteristic area A₀ if True.
     A0 : float
-        §11.4.1 — Characteristic area for normalization.
+        §11.4.1 - Characteristic area for normalization.
     """
 
     UPDIP_SCALE: float = 1.0
@@ -667,13 +667,13 @@ class AsymmetricB3DCost(CCFPartExt):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §11.13 — Production Data Cost (pressure communication = same zone)
+# §11.13 - Production Data Cost (pressure communication = same zone)
 # ═══════════════════════════════════════════════════════════════════════════
 
 
 class ProductionDataCost(CCFPartExt):
     """
-    §11.13.1 — Penalise correlations that separate wells known to be in
+    §11.13.1 - Penalise correlations that separate wells known to be in
     pressure communication (same reservoir zone).
 
     Attributes
@@ -702,13 +702,13 @@ class ProductionDataCost(CCFPartExt):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §11.13.2 — Tracer Breakthrough Hard Constraint (stub)
+# §11.13.2 - Tracer Breakthrough Hard Constraint (stub)
 # ═══════════════════════════════════════════════════════════════════════════
 
 
 class TracerConstraintCost(CCFPartExt):
     """
-    §11.13.2 — Tracer breakthrough data as hard correlation constraint.
+    §11.13.2 - Tracer breakthrough data as hard correlation constraint.
 
     If a tracer test shows that well A zone X connects to well B zone Y,
     this cost function returns infinite cost for correlations violating
@@ -717,7 +717,7 @@ class TracerConstraintCost(CCFPartExt):
     Attributes
     ----------
     CONSTRAINTS : list of (int, int, int, int)
-        (well_a, zone_a, well_b, zone_b) — hard connectivity constraints.
+        (well_a, zone_a, well_b, zone_b) - hard connectivity constraints.
     """
 
     CONSTRAINTS: List[Tuple[int, int, int, int]] = []
@@ -735,13 +735,13 @@ class TracerConstraintCost(CCFPartExt):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §11.13.3 — Rate / Decline Similarity Cost
+# §11.13.3 - Rate / Decline Similarity Cost
 # ═══════════════════════════════════════════════════════════════════════════
 
 
 class RateDeclineCost(CCFPartExt):
     """
-    §11.13.3 — Penalise correlating markers whose production rate
+    §11.13.3 - Penalise correlating markers whose production rate
     or decline curves are dissimilar.
 
     Requires a ``rate`` (or custom-named) data channel on each well

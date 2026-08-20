@@ -1,4 +1,4 @@
-# Config: TROLL — Variance CCF constrained by sequence boundaries
+# Config: TROLL - Variance CCF constrained by sequence boundaries
 # Uses FACIES as correlation log with SEQUENCE as same-region constraint
 # BIOZONE as no-crossing (hard chronostratigraphic tie)
 #

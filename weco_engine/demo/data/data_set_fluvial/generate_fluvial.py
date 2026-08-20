@@ -45,7 +45,7 @@ def main(
     # Facies: 0=floodplain, 1=crevasse_splay, 2=channel_fill,
     #         3=channel_lag, 4=levee, 5=oxbow_lake
     # GR values with OVERLAP: channel fill (30±15) overlaps with levee (85±20)
-    # and crevasse splay (70±18) — realistic subsurface ambiguity
+    # and crevasse splay (70±18) - realistic subsurface ambiguity
     FACIES_GR = {0: 118.0, 1: 70.0, 2: 32.0, 3: 18.0, 4: 85.0, 5: 108.0}
     FACIES_GR_STD = {0: 12.0, 1: 18.0, 2: 15.0, 3: 8.0, 4: 20.0, 5: 14.0}
 
@@ -107,7 +107,7 @@ def main(
                     break
 
             facies_list.append(facies)
-            # Higher noise per facies — creates genuine log ambiguity
+            # Higher noise per facies - creates genuine log ambiguity
             gr_val = FACIES_GR[facies] + np_rng.normal(0, FACIES_GR_STD[facies])
             gr.append(gr_val)
 

@@ -83,7 +83,7 @@
 <div class="conn-container">
   <div class="conn-header">
     <h2>Connectivity Explorer</h2>
-    <p>Assess reservoir connectivity between wells — combining stratigraphy, faults, properties, production, and business decision evidence.</p>
+    <p>Assess reservoir connectivity between wells - combining stratigraphy, faults, properties, production, and business decision evidence.</p>
   </div>
 
   <!-- Query Form -->
@@ -150,7 +150,7 @@
 
     <!-- Faults -->
     <div class="conn-section" id="sect-faults">
-      <h4>Structural Assessment — Faults Between Wells</h4>
+      <h4>Structural Assessment - Faults Between Wells</h4>
       <div id="fault-summary"></div>
       <div id="fault-cards"></div>
     </div>
@@ -309,7 +309,7 @@ function renderResults(r) {
     return `<div class="fault-card">
       <div class="fault-trans ${cls}">${f.transmissibility.toFixed(2)}</div>
       <div class="fault-detail">
-        <div class="fault-name">${f.fault_name} — ${f.seal_quality}</div>
+        <div class="fault-name">${f.fault_name} - ${f.seal_quality}</div>
         <div class="fault-desc">${f.description}</div>
         <div class="fault-segments">${f.segments_connected.join(' ↔ ')}</div>
       </div>
@@ -323,10 +323,10 @@ function renderResults(r) {
     const pc = r.property_corridor;
     $('prop-content').innerHTML = `
       <div class="prop-grid">
-        <div class="prop-cell"><div class="prop-value">${pc.mean_porosity?.toFixed(3) || '—'}</div><div class="prop-label">Porosity</div></div>
-        <div class="prop-cell"><div class="prop-value">${pc.mean_permeability?.toFixed(0) || '—'}</div><div class="prop-label">Perm (mD)</div></div>
-        <div class="prop-cell"><div class="prop-value">${pc.mean_ntg?.toFixed(3) || '—'}</div><div class="prop-label">NTG</div></div>
-        <div class="prop-cell"><div class="prop-value">${pc.mean_sw?.toFixed(3) || '—'}</div><div class="prop-label">Sw</div></div>
+        <div class="prop-cell"><div class="prop-value">${pc.mean_porosity?.toFixed(3) || '-'}</div><div class="prop-label">Porosity</div></div>
+        <div class="prop-cell"><div class="prop-value">${pc.mean_permeability?.toFixed(0) || '-'}</div><div class="prop-label">Perm (mD)</div></div>
+        <div class="prop-cell"><div class="prop-value">${pc.mean_ntg?.toFixed(3) || '-'}</div><div class="prop-label">NTG</div></div>
+        <div class="prop-cell"><div class="prop-value">${pc.mean_sw?.toFixed(3) || '-'}</div><div class="prop-label">Sw</div></div>
       </div>
       <div class="prop-quality ${pc.quality_assessment.split(' ')[0]}">Corridor quality: ${pc.quality_assessment}</div>
     `;
@@ -339,9 +339,9 @@ function renderResults(r) {
   if (r.production.length > 0) {
     let rows = r.production.map(p => `<tr>
       <td>${p.well}</td><td>${p.segment}</td>
-      <td>${p.peak_oil_rate?.toFixed(0) || '—'}</td>
-      <td>${p.current_water_cut != null ? (p.current_water_cut * 100).toFixed(0) + '%' : '—'}</td>
-      <td>${p.cumulative_oil ? (p.cumulative_oil / 1e6).toFixed(2) + ' MSm³' : '—'}</td>
+      <td>${p.peak_oil_rate?.toFixed(0) || '-'}</td>
+      <td>${p.current_water_cut != null ? (p.current_water_cut * 100).toFixed(0) + '%' : '-'}</td>
+      <td>${p.cumulative_oil ? (p.cumulative_oil / 1e6).toFixed(2) + ' MSm³' : '-'}</td>
       <td class="rating-${p.performance_rating}">${p.performance_rating}</td>
     </tr>`).join('');
     $('prod-table').innerHTML = `<table class="prod-table">

@@ -812,7 +812,7 @@ async def dataspaces_manifest_build_uris(
         primary_uri = list(uris)[0]
         refs_done = False
 
-        # Try batch graph_search (M27+) — one call gets all refs at depth 2
+        # Try batch graph_search (M27+) - one call gets all refs at depth 2
         if await osdu.rddms_supports_discovery(at):
             try:
                 graph = await osdu.graph_search(
@@ -1906,7 +1906,7 @@ async def keys_object_graph(
             log.debug("graph: PG relations failed: %s", e)
 
         if not pg_graph_done:
-            # Try batch graph_search (M27+) — single call replaces 2 REST calls
+            # Try batch graph_search (M27+) - single call replaces 2 REST calls
             graph_search_done = False
             if await osdu.rddms_supports_discovery(at):
                 try:

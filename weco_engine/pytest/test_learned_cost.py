@@ -1,5 +1,5 @@
 """
-Tests for weco.ai.learned_cost — Machine-learning cost function.
+Tests for weco.ai.learned_cost - Machine-learning cost function.
 ================================================================
 
 Tests training, prediction, and save/load cycle using synthetic data.

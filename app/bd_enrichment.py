@@ -635,7 +635,7 @@ def _parse_cbt_production(d: Dict[str, Any], target_id: str = "") -> Dict[str, A
     # Build ordered column name list: KeyColumns first, then Columns
     all_col_defs = key_cols + val_cols
 
-    # Extract values — handle both positional-array and dict formats
+    # Extract values - handle both positional-array and dict formats
     col_data: Dict[str, list] = {}
     if isinstance(col_values, dict):
         # Dict format: {"Year": [...], "OilRate_Sm3d": [...], ...}
@@ -936,10 +936,10 @@ async def _enrich_bd_collaboration(
             continue
         mid = st.get("MilestoneID") or ""
         if "-" in mid and not mid.startswith("DG"):
-            # e.g. "DG2-Volumes" — this is a checklist item
+            # e.g. "DG2-Volumes" - this is a checklist item
             checklist.append(st)
         elif "-" in mid:
-            # e.g. "DG2-Volumes" with "DG" prefix — also checklist
+            # e.g. "DG2-Volumes" with "DG" prefix - also checklist
             checklist.append(st)
         else:
             schedule.append(st)

@@ -70,7 +70,7 @@ WeCoStudio = 'weco.studio:main'
 [tool.pytest.ini_options]
 testpaths = ["pytest"]
 
-# §8.5 — Pre-built wheels via cibuildwheel
+# §8.5 - Pre-built wheels via cibuildwheel
 [tool.cibuildwheel]
 build = "cp312-*"
 skip = "*-musllinux_*"

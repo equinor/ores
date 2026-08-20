@@ -37,7 +37,7 @@ def main(
     # Facies: 0=prodelta_shale, 1=distal_delta_front, 2=proximal_delta_front,
     #         3=distributary_mouth_bar, 4=distributary_channel, 5=interdistributary_bay,
     #         6=marsh, 7=delta_plain
-    # Log responses: adjacent facies OVERLAP significantly — this is realistic
+    # Log responses: adjacent facies OVERLAP significantly - this is realistic
     # for deltaic settings where gradational contacts dominate and diagenesis
     # creates additional log variability.
     FACIES = {
@@ -51,7 +51,7 @@ def main(
         7: {"GR": 90,  "GR_std": 18, "DEN": 2.43, "DEN_std": 0.05, "NPHI": 0.27, "NPHI_std": 0.04},
     }
 
-    # Variable parasequence thickness per well — creates "which clinoform
+    # Variable parasequence thickness per well - creates "which clinoform
     # ties to which?" ambiguity. Adjacent parasequences look similar in log
     # response (all coarsening-upward) and with variable thickness, the
     # engine must decide if thin sections represent condensation/erosion
@@ -174,12 +174,12 @@ def main(
                 f.write(f"{rid} {rstart} {rlen}\n")
         f.write("END\n")
 
-    # Options file — use no_crossing to force boundaries at sequence boundaries
+    # Options file - use no_crossing to force boundaries at sequence boundaries
     opts_path = os.path.join(output_dir, "options.txt")
     with open(opts_path, "w") as f:
         f.write("# Prograding delta correlation options\n")
         f.write("# no-crossing SEQSTRAT ensures key parasequence boundaries\n")
-        f.write("# are honoured — the most geologically important surfaces.\n")
+        f.write("# are honoured - the most geologically important surfaces.\n")
         f.write("cost-function=composite\n")
         f.write("var-data=GR\n")
         f.write("var-weight=0.6\n")

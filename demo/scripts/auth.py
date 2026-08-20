@@ -37,7 +37,7 @@ from typing import Any, Dict, List, Optional, Tuple
 try:
     import httpx
 except ImportError:
-    sys.exit("Missing httpx — pip install httpx")
+    sys.exit("Missing httpx - pip install httpx")
 
 from .config import OsduInstance, load_config, _parse_k8s_yaml
 

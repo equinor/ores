@@ -1,5 +1,5 @@
 """
-Tests for weco.geomodel_feedback — 3D structural model feedback loop.
+Tests for weco.geomodel_feedback - 3D structural model feedback loop.
 =====================================================================
 
 Tests residual computation, feedback weight generation, and iterative

@@ -1,15 +1,15 @@
 """
-weco.workflow — End-to-end correlation workflow for geomodelling
+weco.workflow - End-to-end correlation workflow for geomodelling
 ================================================================
 
 A high-level orchestrator that connects every step of the WeCo pipeline:
 
-1. **Import** — LAS / RESQML / WeCo / CSV  (continuous + discrete logs)
-2. **Condition** — Vshale, normalisation, electrofacies, biozones
-3. **Configure** — cost function, gap penalty, well order, constraints
-4. **Correlate** — run the WeCo engine (n-best graph-DTW)
-5. **Validate** — quality scoring, sensitivity, reference comparison
-6. **Export** — RMS-ready well picks, zonation logs, summary report
+1. **Import** - LAS / RESQML / WeCo / CSV  (continuous + discrete logs)
+2. **Condition** - Vshale, normalisation, electrofacies, biozones
+3. **Configure** - cost function, gap penalty, well order, constraints
+4. **Correlate** - run the WeCo engine (n-best graph-DTW)
+5. **Validate** - quality scoring, sensitivity, reference comparison
+6. **Export** - RMS-ready well picks, zonation logs, summary report
 
 Designed for the key use case:
 
@@ -20,7 +20,7 @@ Designed for the key use case:
 The workflow tracks provenance (every parameter, every step) and
 produces a self-documenting output package.
 
-Usage — quick start::
+Usage - quick start::
 
     from weco.workflow import CorrelationWorkflow
 
@@ -31,7 +31,7 @@ Usage — quick start::
     wf.run()
     wf.export_rms("tmp/rms_package/")
 
-Usage — full control::
+Usage - full control::
 
     wf = CorrelationWorkflow("Study_1")
     wf.import_las(["W1.las", "W2.las", "W3.las"],
@@ -807,17 +807,17 @@ class CorrelationWorkflow:
         max_cor: Optional[int] = None,
         same_region: Optional[str] = None,
         no_crossing: Optional[str] = None,
-        # §6 — Performance options (forwarded to C++ engine if supported)
+        # §6 - Performance options (forwarded to C++ engine if supported)
         sakoe_chiba_band: Optional[int] = None,
         beam_width: Optional[int] = None,
         threads: Optional[int] = None,
-        # §11 — Algorithm options
+        # §11 - Algorithm options
         cost_combination: Optional[str] = None,
         gap_cost_mode: Optional[str] = None,
         b3d_normalize: Optional[bool] = None,
         well_order: Optional[str] = None,
         dist_facies_groups: Optional[str] = None,
-        # §12 — Hierarchical options
+        # §12 - Hierarchical options
         var_window_size: Optional[int] = None,
         min_bed_thickness: Optional[float] = None,
         cost_floor: Optional[float] = None,
@@ -873,7 +873,7 @@ class CorrelationWorkflow:
                         self.options[k.replace("_", "-")] = str(v)
                     self._record("depenv_preset", environment=env_key)
             except ImportError:
-                logger.warning("weco.depenv not available — skipping depenv preset")
+                logger.warning("weco.depenv not available - skipping depenv preset")
 
         # Start from preset if specified (overrides depenv)
         if preset:
@@ -907,7 +907,7 @@ class CorrelationWorkflow:
         if no_crossing is not None:
             self.options["no-crossing"] = no_crossing
 
-        # §6 — Performance options
+        # §6 - Performance options
         if sakoe_chiba_band is not None:
             self.options["sakoe-chiba-band"] = str(sakoe_chiba_band)
         if beam_width is not None:
@@ -915,7 +915,7 @@ class CorrelationWorkflow:
         if threads is not None:
             self.options["thread"] = str(threads)
 
-        # §11 — Algorithm options
+        # §11 - Algorithm options
         if cost_combination is not None:
             self.options["cost-combination"] = cost_combination
         if gap_cost_mode is not None:
@@ -927,7 +927,7 @@ class CorrelationWorkflow:
         if dist_facies_groups is not None:
             self.options["dist-facies-groups"] = dist_facies_groups
 
-        # §12 — Hierarchical options
+        # §12 - Hierarchical options
         if var_window_size is not None:
             self.options["var-window-size"] = str(var_window_size)
         if min_bed_thickness is not None:
@@ -1716,7 +1716,7 @@ class CorrelationWorkflow:
         """Save a full provenance report as JSON.
 
         The report contains every step, parameter, and timing
-        information — producing a fully reproducible record.
+        information - producing a fully reproducible record.
 
         Parameters
         ----------
@@ -1895,7 +1895,7 @@ def quick_correlate(
 
 
 # ---------------------------------------------------------------------------
-# §11.9.4 — Transport Direction Sweep
+# §11.9.4 - Transport Direction Sweep
 # ---------------------------------------------------------------------------
 
 def sweep_transport_direction(
@@ -1952,7 +1952,7 @@ def sweep_transport_direction(
 
 
 # ---------------------------------------------------------------------------
-# §11.10.3-11.10.4 — Posterior Analysis Utilities
+# §11.10.3-11.10.4 - Posterior Analysis Utilities
 # ---------------------------------------------------------------------------
 
 def layer_geometry_check(
@@ -1961,7 +1961,7 @@ def layer_geometry_check(
     cor_num: int = 0,
 ) -> dict:
     """
-    §11.10.3 — Check layer geometry consistency (thickness variation).
+    §11.10.3 - Check layer geometry consistency (thickness variation).
 
     Returns
     -------
@@ -2022,7 +2022,7 @@ def connectivity_analysis(
     cor_num: int = 0,
 ) -> dict:
     """
-    §11.10.4 — Connectivity analysis: count connected components per layer.
+    §11.10.4 - Connectivity analysis: count connected components per layer.
 
     Returns
     -------

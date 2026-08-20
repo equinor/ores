@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-ingest_weco_demos.py — Ingest all WeCo demo datasets into RDDMS.
+ingest_weco_demos.py - Ingest all WeCo demo datasets into RDDMS.
 
 Creates dataspace `maap/weco` and populates it with:
   - WellboreTrajectoryRepresentation (geometry: XY + MD)
@@ -546,7 +546,7 @@ def build_strat_column(col_uuid: str, col_name: str,
     horizons : list of dicts, optional
         Each horizon: {"name": str, "feature_name": str (optional)}
 
-    Returns (json_objects, [])  — no arrays needed.
+    Returns (json_objects, [])  - no arrays needed.
     """
     json_objs = []
     hz_uuids = {}  # name → (hz_uuid, feat_uuid)
@@ -702,7 +702,7 @@ async def ingest_dataset(client: RDDMSClient, ds_path: str,
 
     wl = WellList(str(wells_path))
     n_wells = wl.nbr_wells()
-    print(f"\n  [{ds_key}] {ds_info['title']} — {n_wells} wells")
+    print(f"\n  [{ds_key}] {ds_info['title']} - {n_wells} wells")
 
     if dry_run:
         for i in range(n_wells):

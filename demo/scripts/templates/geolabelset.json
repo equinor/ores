@@ -6,7 +6,7 @@
     "Segments": []
   },
   "_meta": {
-    "description": "GeoLabelSet — segment-level KPIs summarizing reservoir properties and volumes per fault block.",
+    "description": "GeoLabelSet - segment-level KPIs summarizing reservoir properties and volumes per fault block.",
     "required_fields": ["Name", "ReservoirID"],
     "segment_entry": {
       "SegmentID": "{partition}:master-data--ReservoirSegment:{id}:{version}",

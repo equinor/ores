@@ -28,7 +28,7 @@
   <rect width="512" height="512" rx="56" ry="56" fill="url(#bg)" stroke="#b0bec5" stroke-width="4"/>
 
   <!-- ═══════════════════════════════════════════════════════
-       3D RESERVOIR BLOCK — shifted up 40px, no top face
+       3D RESERVOIR BLOCK - shifted up 40px, no top face
        Two back walls + front face + right face
        ═══════════════════════════════════════════════════════ -->
 
@@ -40,11 +40,11 @@
   <polygon points="310,20 490,120 490,300 310,200"
            fill="#6d4c41" opacity="0.25"/>
 
-  <!-- ── FRONT FACE — property gradient (porosity/perm) ── -->
+  <!-- ── FRONT FACE - property gradient (porosity/perm) ── -->
   <polygon points="100,140 310,40 310,300 100,400"
            fill="url(#prop)" opacity="0.95"/>
 
-  <!-- Grid lines on front face — structured grid cells -->
+  <!-- Grid lines on front face - structured grid cells -->
   <g stroke="#1a3a5c" stroke-width="1.5" opacity="0.25">
     <!-- Horizontal layers (horizons) -->
     <line x1="100" y1="205" x2="310" y2="105"/>
@@ -56,11 +56,11 @@
     <line x1="257" y1="62" x2="257" y2="322"/>
   </g>
 
-  <!-- ── RIGHT FACE — side view, darker ── -->
+  <!-- ── RIGHT FACE - side view, darker ── -->
   <polygon points="310,40 490,140 490,320 310,300"
            fill="url(#rightFace)" opacity="0.7"/>
 
-  <!-- Grid on right face — layers visible on side -->
+  <!-- Grid on right face - layers visible on side -->
   <g stroke="#1a3a5c" stroke-width="1.5" opacity="0.2">
     <line x1="310" y1="105" x2="490" y2="205"/>
     <line x1="310" y1="170" x2="490" y2="270"/>
@@ -73,7 +73,7 @@
   <polygon points="100,400 310,300 490,320 280,420"
            fill="none" stroke="#5d4037" stroke-width="2" opacity="0.3"/>
 
-  <!-- ═══ FAULT — red plane cutting through block ═══ -->
+  <!-- ═══ FAULT - red plane cutting through block ═══ -->
   <polygon points="340,32 220,385 260,405 380,52"
            fill="#d32f2f" opacity="0.25"/>
   <line x1="340" y1="32" x2="220" y2="385"
@@ -81,11 +81,11 @@
   <line x1="380" y1="52" x2="260" y2="405"
         stroke="#d32f2f" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
 
-  <!-- ═══ WELL TRAJECTORY — deviated well path through block ═══ -->
+  <!-- ═══ WELL TRAJECTORY - deviated well path through block ═══ -->
   <path d="M160 16 L160 80 Q160 140 178 195 Q196 250 206 310 L212 390"
         fill="none" stroke="url(#wellG)" stroke-width="8"
         stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Well markers (formation tops — where well crosses horizons) -->
+  <!-- Well markers (formation tops - where well crosses horizons) -->
   <g fill="#ffffff" stroke="#0277bd" stroke-width="3">
     <circle cx="160" cy="80" r="7"/>
     <circle cx="173" cy="170" r="7"/>

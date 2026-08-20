@@ -1,5 +1,5 @@
 """
-weco.roundtrip — Round-trip validation framework
+weco.roundtrip - Round-trip validation framework
 =================================================
 
 Build synthetic well data with known truth, run the WeCo engine,
@@ -86,7 +86,7 @@ def generate_parallel(
         signal = [v + np_rng.normal(0, noise) for v in base_signal] if noise > 0 else list(base_signal)
         w.add_data("GR", signal)
 
-    # Truth: diagonal — sample i in every well
+    # Truth: diagonal - sample i in every well
     truth = [tuple(i for _ in range(n_wells)) for i in range(n_markers)]
 
     return TruthModel(
@@ -181,7 +181,7 @@ def generate_clinoform(
 def inject_noise(model: TruthModel, noise_level: float, seed: int = 0) -> TruthModel:
     """Return a copy of *model* with Gaussian noise added to all data channels.
 
-    The truth path is unchanged — this tests how robust the engine is
+    The truth path is unchanged - this tests how robust the engine is
     to noisy input.
     """
     np_rng = np.random.default_rng(seed)
@@ -232,7 +232,7 @@ def roundtrip_test(
     -------
     dict
         ``truth_rank``: 0-based rank of truth among n-best (or -1 if not found).
-        ``top1_match``: bool — does the best path match truth exactly?
+        ``top1_match``: bool - does the best path match truth exactly?
         ``marker_mae``: mean absolute marker offset between best path and truth.
         ``recall_at_k``: fraction of truth horizons present in top-k results.
         ``best_cost``: cost of the best correlation.
@@ -548,7 +548,7 @@ def generate_shallow_marine(
     foreshore, bay fill, lagoonal, tidal channel, floodplain.
     Clinoform geometry with lateral facies changes.
 
-    Reference: Baville (2022) Fig 6.2 — Hugin Formation.
+    Reference: Baville (2022) Fig 6.2 - Hugin Formation.
     """
     rng = random.Random(seed)
     np_rng = np.random.default_rng(seed)
@@ -661,7 +661,7 @@ def generate_fluvial(
     noise: float = 0.0,
     seed: int = 42,
 ) -> TruthModel:
-    """Fluvial channel belt — laterally discontinuous sandbodies.
+    """Fluvial channel belt - laterally discontinuous sandbodies.
 
     Channels are randomly positioned and have limited lateral extent.
     This makes correlation inherently difficult: not all horizons

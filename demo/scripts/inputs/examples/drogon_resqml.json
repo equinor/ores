@@ -1,7 +1,7 @@
 {
   "project": "Drogon RESQML",
   "gate": "Geomodel",
-  "description": "Drogon RESQML geomodel — ETP dataspace records for RDDMS catalogue. RESQML 2.0.1 and 2.2 representations.",
+  "description": "Drogon RESQML geomodel - ETP dataspace records for RDDMS catalogue. RESQML 2.0.1 and 2.2 representations.",
   "records": [
     {
       "type": "reservoir",

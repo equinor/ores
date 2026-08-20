@@ -1,5 +1,5 @@
 """
-weco.rddms_interface — RDDMS / OSDU REST interface for WeCo I/O
+weco.rddms_interface - RDDMS / OSDU REST interface for WeCo I/O
 ================================================================
 
 High-level async interface that connects WeCo's correlation engine

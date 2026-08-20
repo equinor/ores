@@ -1,5 +1,5 @@
 {# ──────────────────────────────────────────────────────────────────────────────
-   Facility & Well Plan card — from DevelopmentConcept (injected into ext.equinor).
+   Facility & Well Plan card - from DevelopmentConcept (injected into ext.equinor).
    Generic: works for FPSO, subsea tieback, platform, etc.
    Expects: rec, rec_index, ext_eq (dict with DevelopmentConcept key)
    ────────────────────────────────────────────────────────────────────────────── #}
@@ -91,7 +91,7 @@
                 {% for wt in wp.get('WellTypes') or [] %}
                 <div style="margin-bottom:.5rem;padding:.4rem .6rem;background:#f7fafc;border-radius:4px;">
                   <strong>{{ wt.get('Type','') }} × {{ wt.get('Count',0) }}</strong>
-                  {% if wt.get('Names') %} — {{ wt.Names | join(', ') }}{% endif %}
+                  {% if wt.get('Names') %} - {{ wt.Names | join(', ') }}{% endif %}
                   {% if wt.get('TargetZones') %}<br><span class="muted">Targets: {{ wt.TargetZones | join(', ') }}</span>{% endif %}
                   {% if wt.get('CompletionDirection') %}<br><span class="muted">Completion: {{ wt.CompletionDirection }}</span>{% endif %}
                 </div>

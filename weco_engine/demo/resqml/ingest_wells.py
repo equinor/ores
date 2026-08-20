@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-ingest_wells.py — Ingest WeCo demo wells into RDDMS via ORES k8s auth
+ingest_wells.py - Ingest WeCo demo wells into RDDMS via ORES k8s auth
 ======================================================================
 
 Uses the ORES instance/auth infrastructure (k8s/configmap.yaml + secret.yaml)
 to authenticate and push RESQML payloads to Reservoir-DDMS v2 instances.
 
 Target instances (from ORES k8s config):
-  - eqndev   — SWE dev (per_user_pkce or client_credentials)
-  - interop  — ADME Interop (client_credentials)
-  - preship  — Microsoft pre-ship M26
+  - eqndev   - SWE dev (per_user_pkce or client_credentials)
+  - interop  - ADME Interop (client_credentials)
+  - preship  - Microsoft pre-ship M26
 
 The correct RDDMS v2 transactional API is:
   POST /api/reservoir-ddms/v2/dataspaces/{ds}/transactions       → begin
@@ -194,7 +194,7 @@ class RddmsV2Client:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Token acquisition (from ORES instances — async bridge)
+#  Token acquisition (from ORES instances - async bridge)
 # ═══════════════════════════════════════════════════════════════════════════
 
 def _get_token_for_instance(inst) -> str:
@@ -206,13 +206,13 @@ def _get_token_for_instance(inst) -> str:
         if token:
             return token
 
-    # For per_user_pkce — need an existing token from env or az cli
+    # For per_user_pkce - need an existing token from env or az cli
     if inst.auth_mode == "per_user_pkce":
         import subprocess
         try:
             # OSDU/ADME first-party app resource ID
             resource = inst.client_id or "bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc"
-            # scope may have /.default suffix — strip for az cli resource
+            # scope may have /.default suffix - strip for az cli resource
             if inst.scope:
                 resource = inst.scope.split()[0].replace("/.default", "")
             result = subprocess.run(
@@ -276,7 +276,7 @@ def ingest_dataset(client: RddmsV2Client, dataset_name: str,
 
     summary = {"dataset": dataset_name}
 
-    # Phase 1: wells (trajectories + frames) — must commit before properties
+    # Phase 1: wells (trajectories + frames) - must commit before properties
     phase1 = ["wells"]
     # Phase 2: properties (reference frames from phase 1)
     phase2 = ["logs", "regions", "markers"]

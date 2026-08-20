@@ -24,7 +24,7 @@
     }
   },
   "_meta": {
-    "description": "Business Decision record — captures a decision gate approval with linked evidence (risks, volumes, activities, documents).",
+    "description": "Business Decision record - captures a decision gate approval with linked evidence (risks, volumes, activities, documents).",
     "required_fields": ["Name", "DecisionLevelID"],
     "reference_data": {
       "DecisionLevelID": "{partition}:reference-data--DecisionLevel:{DG0|DG1|DG2|DG3|DG4|WPC}:",

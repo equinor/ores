@@ -1,5 +1,5 @@
 """
-weco.seismic_constraint — Seismic-guided correlation (§6.4)
+weco.seismic_constraint - Seismic-guided correlation (§6.4)
 ============================================================
 
 Tie DTW correlation to seismic horizon interpretations.  Adds a cost

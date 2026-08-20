@@ -1,5 +1,5 @@
 """
-weco.ai.learned_cost — Machine-learning cost function (§6.2)
+weco.ai.learned_cost - Machine-learning cost function (§6.2)
 =============================================================
 
 Train a cost function from expert-labelled correlation panels.
@@ -73,7 +73,7 @@ class LearnedCostModel:
 
         log_diff = abs(va - vb)
         depth_ratio = (marker_a + 1) / max(marker_b + 1, 1)
-        thickness_ratio = 1.0  # placeholder — needs interval context
+        thickness_ratio = 1.0  # placeholder - needs interval context
 
         # Log gradient (finite difference)
         grad_a = 0.0

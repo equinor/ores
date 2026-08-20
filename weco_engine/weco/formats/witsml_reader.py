@@ -1,5 +1,5 @@
 """
-weco.formats.witsml_reader — WITSML reader stub
+weco.formats.witsml_reader - WITSML reader stub
 =================================================
 
 Read WITSML (Wellsite Information Transfer Standard Markup Language)
@@ -8,7 +8,7 @@ well data transfer.
 
 This is a minimal parser for WITSML v1.4.1 log objects.
 
-Todo §4.11 — WITSML reader (P3)
+Todo §4.11 - WITSML reader (P3)
 """
 
 from __future__ import annotations

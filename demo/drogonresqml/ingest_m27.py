@@ -69,9 +69,9 @@ def purge_dataspace(token: str, cfg: InstanceConfig) -> bool:
         if r.status_code == 404:
             print(f"  ✓ Dataspace {cfg.dataspace} did not exist (404)")
             return True
-        print(f"  ⚠ REST delete {r.status_code}: {r.text[:200]} — trying ETP...")
+        print(f"  ⚠ REST delete {r.status_code}: {r.text[:200]} - trying ETP...")
     except Exception as e:
-        print(f"  ⚠ REST delete error ({e}) — trying ETP...")
+        print(f"  ⚠ REST delete error ({e}) - trying ETP...")
 
     tok_file = SCRIPT_DIR / ".etp_token"
     tok_file.write_text(token)
@@ -203,7 +203,7 @@ def main():
             purge_dataspace(token, cfg)
         create_dataspace(token, cfg)
         if not import_epc(token, cfg):
-            print("  ⚠ EPC import failed — continuing to catalog push")
+            print("  ⚠ EPC import failed - continuing to catalog push")
         verify_import(token, cfg)
 
     # ── Patch manifest ──

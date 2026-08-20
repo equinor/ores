@@ -385,7 +385,7 @@ def build_manifest(objects: dict) -> dict:
         # Shared BinGrid reference (all surfaces use the same XY lattice)
         if bingrid_id:
             rec["data"]["BinGridID"] = bingrid_id
-        # Inline grid geometry (convenience — authoritative source is BinGrid)
+        # Inline grid geometry (convenience - authoritative source is BinGrid)
         if obj.get("fast_axis") and obj.get("slow_axis"):
             rec["data"]["NodeCountOnIAxis"] = obj["fast_axis"]
             rec["data"]["NodeCountOnJAxis"] = obj["slow_axis"]

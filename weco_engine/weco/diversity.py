@@ -1,17 +1,17 @@
 """
-weco.diversity — Topology-aware scenario diversity & log screening
+weco.diversity - Topology-aware scenario diversity & log screening
 ==================================================================
 
 Improvements based on demo results analysis (doc/demo_results_analysis.md):
 
-1. **Log Relevance Screening** — auto-detect which logs carry correlation
+1. **Log Relevance Screening** - auto-detect which logs carry correlation
    signal vs noise before running the engine.
-2. **Topology-Aware Diversity Filtering** — post-process k-best results to
+2. **Topology-Aware Diversity Filtering** - post-process k-best results to
    retain only architecturally distinct scenarios (different horizon counts,
    connectivity graphs, zone volumes).
-3. **Architecture-Based Enumeration** — generate scenarios with varying gap
+3. **Architecture-Based Enumeration** - generate scenarios with varying gap
    costs to enforce different horizon counts.
-4. **Cross-Validation** — hold-out-one-well validation for robustness.
+4. **Cross-Validation** - hold-out-one-well validation for robustness.
 
 Usage::
 
@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §1 — Log Relevance Screening
+# §1 - Log Relevance Screening
 # ═══════════════════════════════════════════════════════════════════════════
 
 def screen_logs(
@@ -57,9 +57,9 @@ def screen_logs(
     candidate_logs : list of str, optional
         Log names to screen. If None, auto-detects all numeric channels.
     method : str
-        ``"variance_ratio"`` — ratio of inter-interval to intra-interval variance.
-        ``"autocorrelation"`` — lag-1 autocorrelation (signal vs noise).
-        ``"cross_well"`` — cross-well correlation coefficient.
+        ``"variance_ratio"`` - ratio of inter-interval to intra-interval variance.
+        ``"autocorrelation"`` - lag-1 autocorrelation (signal vs noise).
+        ``"cross_well"`` - cross-well correlation coefficient.
     min_score : float
         Minimum score to consider a log relevant (0–1 scale).
 
@@ -173,7 +173,7 @@ def _score_variance_ratio(wells_data: List[np.ndarray]) -> Tuple[float, str]:
 
 
 def _score_autocorrelation(wells_data: List[np.ndarray]) -> Tuple[float, str]:
-    """Lag-1 autocorrelation — signal has high AC, noise has low AC."""
+    """Lag-1 autocorrelation - signal has high AC, noise has low AC."""
     acs = []
     for arr in wells_data:
         valid = arr[~np.isnan(arr)]
@@ -198,7 +198,7 @@ def _score_autocorrelation(wells_data: List[np.ndarray]) -> Tuple[float, str]:
 
 
 def _score_cross_well(wells_data: List[np.ndarray]) -> Tuple[float, str]:
-    """Cross-well correlation — good logs show consistent patterns."""
+    """Cross-well correlation - good logs show consistent patterns."""
     if len(wells_data) < 2:
         return 0.0, "need_2_wells"
 
@@ -232,7 +232,7 @@ def _score_cross_well(wells_data: List[np.ndarray]) -> Tuple[float, str]:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §2 — Topology-Aware Diversity Filtering
+# §2 - Topology-Aware Diversity Filtering
 # ═══════════════════════════════════════════════════════════════════════════
 
 def filter_diverse_scenarios(
@@ -426,7 +426,7 @@ def _build_topology_vectors(scenarios: List[Dict], metrics: List[str]) -> List[n
         if "zone_cv" in metrics:
             vec.append(s["zone_cv"])
         if "connectivity" in metrics:
-            # Use hash as a categorical — convert to numeric distance
+            # Use hash as a categorical - convert to numeric distance
             vec.append(float(hash(s["connectivity_hash"]) % 10000) / 10000.0)
         raw.append(np.array(vec, dtype=np.float64))
 
@@ -445,7 +445,7 @@ def _build_topology_vectors(scenarios: List[Dict], metrics: List[str]) -> List[n
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §3 — Architecture-Based Enumeration
+# §3 - Architecture-Based Enumeration
 # ═══════════════════════════════════════════════════════════════════════════
 
 def enumerate_architectures(
@@ -458,7 +458,7 @@ def enumerate_architectures(
 
     Instead of relying on k-best (which produces near-identical paths),
     this runs the engine multiple times with different gap costs, forcing
-    different numbers of horizons/gaps — genuinely different geological models.
+    different numbers of horizons/gaps - genuinely different geological models.
 
     Parameters
     ----------
@@ -534,7 +534,7 @@ def enumerate_architectures(
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §4 — Cross-Validation
+# §4 - Cross-Validation
 # ═══════════════════════════════════════════════════════════════════════════
 
 def cross_validate(
@@ -653,7 +653,7 @@ def cross_validate(
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §5 — Integrated Diversity Analysis
+# §5 - Integrated Diversity Analysis
 # ═══════════════════════════════════════════════════════════════════════════
 
 def analyse_scenario_diversity(
@@ -763,14 +763,14 @@ def _diagnose(report: Dict) -> str:
 
     if spread < 0.01 and n_diverse <= 1:
         return ("DATA_CONCLUSIVE: Cost spread <0.01% and only 1 distinct topology. "
-                "The data strongly constrains the solution — no real uncertainty.")
+                "The data strongly constrains the solution - no real uncertainty.")
     elif spread < 0.1 and not topo.get("architecturally_distinct", False):
         return ("ALGORITHM_LIMITED: Multiple scenarios returned but all share the same "
                 "architecture. The k-best paths differ only in local edge swaps, "
                 "not in geological structure.")
     elif spread > 1.0 and n_diverse > 3:
         return ("UNCERTAIN: Significant cost spread with multiple distinct architectures. "
-                "Real geological uncertainty exists — scenarios represent alternative models.")
+                "Real geological uncertainty exists - scenarios represent alternative models.")
     elif topo.get("architecturally_distinct", False):
         return ("PARTIALLY_UNCERTAIN: Some architectural diversity exists despite "
                 "low cost spread. Gap cost and constraints control the diversity.")
@@ -798,7 +798,7 @@ def _recommend(report: Dict) -> List[str]:
         irrelevant = [l for l in logs if not l["relevant"]]
         if irrelevant:
             names = [l["log"] for l in irrelevant[:3]]
-            recs.append(f"Logs {names} have low relevance scores — consider removing "
+            recs.append(f"Logs {names} have low relevance scores - consider removing "
                         "them from the cost function to avoid noise.")
 
         relevant = [l for l in logs if l["relevant"]]
@@ -808,10 +808,10 @@ def _recommend(report: Dict) -> List[str]:
 
     cv = report.get("cross_validation")
     if cv and cv.get("data_conclusive"):
-        recs.append("Cross-validation confirms data is conclusive — all wells "
+        recs.append("Cross-validation confirms data is conclusive - all wells "
                     "are consistent. Uncertainty is low.")
     elif cv and cv.get("sensitive_wells"):
-        recs.append(f"Wells {cv['sensitive_wells']} are sensitive to removal — "
+        recs.append(f"Wells {cv['sensitive_wells']} are sensitive to removal - "
                     "they control the correlation. Consider additional data near them.")
 
     return recs

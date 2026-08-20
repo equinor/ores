@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-generate_payloads.py — Generate RESQML JSON payloads for RDDMS ingestion
+generate_payloads.py - Generate RESQML JSON payloads for RDDMS ingestion
 =========================================================================
 
 Reads WeCo demo datasets (shallow marine, coal, quaternary) and produces
@@ -62,7 +62,7 @@ def build_wellbore_trajectory(well, dataset_name: str) -> dict:
     depth = well.data.get("DEPTH") or well.data.get("Depth") or []
     n = len(depth)
 
-    # Get XYZ — use header coords if no per-point data
+    # Get XYZ - use header coords if no per-point data
     xs = well.data.get("X") or well.data.get("x") or [well.x] * n
     ys = well.data.get("Y") or well.data.get("y") or [well.y] * n
 
@@ -358,7 +358,7 @@ def process_dataset(dataset_name: str, output_dir: Path) -> dict:
         trajectories.append(traj)
         traj_uuid = traj["Uuid"]
 
-        # Build sample grid (frame) — needed for log properties
+        # Build sample grid (frame) - needed for log properties
         depth = w.data.get("DEPTH") or w.data.get("Depth") or []
         md_values = [float(v) for v in depth]
         frame = build_wellbore_frame(w, traj_uuid, md_values)
@@ -370,7 +370,7 @@ def process_dataset(dataset_name: str, output_dir: Path) -> dict:
             if dname.upper() in skip_channels or dname.startswith("_"):
                 continue
             if dname in w.region:
-                continue  # discrete — handled below
+                continue  # discrete - handled below
             values = [float(v) for v in dvals]
             if values:
                 prop = build_continuous_property(w, dname, values, frame_uuid)

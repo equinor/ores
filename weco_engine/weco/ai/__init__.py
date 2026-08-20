@@ -1,12 +1,12 @@
 """
-weco.ai — AI-enhanced preprocessing and postprocessing for WeCo
+weco.ai - AI-enhanced preprocessing and postprocessing for WeCo
 ================================================================
 
 This package provides machine-learning methods that wrap around the
 deterministic WeCo correlation engine:
 
-* **Preprocessing** — prepare better inputs (log QC, facies prediction)
-* **Postprocessing** — interpret and validate outputs (uncertainty, quality)
+* **Preprocessing** - prepare better inputs (log QC, facies prediction)
+* **Postprocessing** - interpret and validate outputs (uncertainty, quality)
 
 The core engine remains unchanged; AI methods are strictly supplementary.
 

@@ -7,7 +7,7 @@ as FileCollection records, then creates SeismicTraceData WPC records with
 proper Datasets + Artefacts references.
 
 Supports two modes:
-  1. Auto-scan:   point at a .sgy or VDS file — metadata extracted automatically.
+  1. Auto-scan:   point at a .sgy or VDS file - metadata extracted automatically.
   2. JSON config: provide a config file with full control over all parameters.
 
 Usage (CLI)
@@ -278,7 +278,7 @@ def scan_vds(vds_path: str | Path) -> dict:
     """
     Scan a local VDS directory and return extracted metadata.
 
-    Returns same keys as scan_segy (subset — no coordinate info).
+    Returns same keys as scan_segy (subset - no coordinate info).
     """
     try:
         import openvds
@@ -937,7 +937,7 @@ def main():
     ap.add_argument("--upload-segy", action="store_true",
                     help="Also upload SEG-Y dataset records")
     ap.add_argument("--dry-run", action="store_true",
-                    help="Print records — no remote calls")
+                    help="Print records - no remote calls")
     ap.add_argument("--src-dir", type=Path, default=None,
                     help="Override src_dir from config (directory with .sgy files)")
     ap.add_argument("--vds-dir", type=Path, default=None,

@@ -1,5 +1,5 @@
 """
-test_flow_interface.py — Integration tests for FloPy/MODFLOW interface (§2.1)
+test_flow_interface.py - Integration tests for FloPy/MODFLOW interface (§2.1)
 ===============================================================================
 
 Tests :class:`weco.flow_interface.CorrelationToModflow` with mock data.

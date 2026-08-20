@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-demo_seistiles.py — End-to-end demo of Seismic Tiles constraint
+demo_seistiles.py - End-to-end demo of Seismic Tiles constraint
 ================================================================
 
 Generates synthetic wells and seismic tiles, runs WeCo correlation
@@ -187,7 +187,7 @@ def run_demo(output_dir: str = "tmp/seistiles_demo") -> dict:
     os.makedirs(output_dir, exist_ok=True)
 
     print("=" * 60)
-    print("  WeCo Seismic Tiles Constraint — Demo")
+    print("  WeCo Seismic Tiles Constraint - Demo")
     print("=" * 60)
 
     # --- Generate synthetic data ---
@@ -295,7 +295,7 @@ def run_demo(output_dir: str = "tmp/seistiles_demo") -> dict:
     # Save summary
     summary_path = os.path.join(output_dir, "summary.txt")
     with open(summary_path, "w") as f:
-        f.write("SeisTiles Constraint Demo — Summary\n")
+        f.write("SeisTiles Constraint Demo - Summary\n")
         f.write("=" * 40 + "\n\n")
         for k, v in summary.items():
             f.write(f"{k}: {v}\n")

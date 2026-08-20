@@ -1,5 +1,5 @@
 """
-Tests for weco.preprocessing — Data conditioning transforms
+Tests for weco.preprocessing - Data conditioning transforms
 ============================================================
 
 Tests all public functions in weco.preprocessing that were previously

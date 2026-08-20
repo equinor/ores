@@ -1,7 +1,7 @@
 {
   "project": "Gullfaks Faults",
   "gate": "Reference",
-  "description": "Gullfaks field fault framework — boundary features and fault interpretations for compartmentalisation analysis.",
+  "description": "Gullfaks field fault framework - boundary features and fault interpretations for compartmentalisation analysis.",
   "records": [
     {
       "type": "reservoir",
@@ -21,7 +21,7 @@
         "Name": "Gullfaks - Fault Framework",
         "Description": "Systematic fault registry with geometry and transmissibility for compartmentalisation analysis",
         "Hierarchy": [
-          {"Name": "Major Faults", "Description": "H1_H2, G3_G4, G1_G2 — field-bounding faults"},
+          {"Name": "Major Faults", "Description": "H1_H2, G3_G4, G1_G2 - field-bounding faults"},
           {"Name": "Internal Faults", "Description": "Intra-block faults controlling segment connectivity"},
           {"Name": "Fault Interpretations", "Description": "Geometry, throw, and transmissibility per fault"}
         ]

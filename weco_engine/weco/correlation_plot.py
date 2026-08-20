@@ -66,7 +66,7 @@ from .data import WellList, ResFile, CostMatrix
 #  Geological colour palettes
 # ═══════════════════════════════════════════════════════════════════════════
 
-#: Lithology / facies palette — covers common sedimentary and periglacial types
+#: Lithology / facies palette - covers common sedimentary and periglacial types
 #: Index 0 = background (no region / ID 0), indices 1..20 are distinct colours
 LITHO_PALETTE = [
     "#ffffff",   # 0  background / undefined
@@ -190,7 +190,7 @@ def _classify_logs(data_names: list[str]) -> tuple[list[str], list[str]]:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  CorrelationPlotWidget — the matplotlib canvas + drawing logic
+#  CorrelationPlotWidget - the matplotlib canvas + drawing logic
 # ═══════════════════════════════════════════════════════════════════════════
 
 class CorrelationPlotWidget(FigureCanvasQTAgg):
@@ -247,12 +247,12 @@ class CorrelationPlotWidget(FigureCanvasQTAgg):
     def set_wells(self, wl: Optional[WellList]):
         self._wells = wl
         self._well_order = None
-        self._well_axes.clear()  # reset saved zoom — data changed
+        self._well_axes.clear()  # reset saved zoom - data changed
         self._auto_configure()
 
     def set_result(self, rf: Optional[ResFile], cor_index: int = 0):
         if rf is not self._res:
-            self._well_axes.clear()  # reset saved zoom — result identity changed
+            self._well_axes.clear()  # reset saved zoom - result identity changed
         self._res = rf
         self._cor_index = cor_index
 
@@ -547,7 +547,7 @@ class CorrelationPlotWidget(FigureCanvasQTAgg):
         ax.spines["bottom"].set_visible(False)
 
         if region_name not in well.region:
-            ax.text(0.5, 0.5, "—", transform=ax.transAxes,
+            ax.text(0.5, 0.5, "-", transform=ax.transAxes,
                     ha="center", va="center", fontsize=7, color="#aaa")
             return
 
@@ -828,10 +828,10 @@ class CorrelationPlotWidget(FigureCanvasQTAgg):
             line_alpha = None
 
         # Colours for stable vs variable lines
-        STABLE_COLOR = "#1a9641"   # green — persists in all realisations
+        STABLE_COLOR = "#1a9641"   # green - persists in all realisations
         STABLE_ALPHA = 0.8
         STABLE_LW = 1.2
-        VARIABLE_COLOR = "#d7191c"  # red — changes between realisations
+        VARIABLE_COLOR = "#d7191c"  # red - changes between realisations
         VARIABLE_ALPHA = 0.5
         VARIABLE_LW = 0.5
 
@@ -1009,7 +1009,7 @@ class CorrelationPlotWidget(FigureCanvasQTAgg):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  CorrelationPlotWindow — the full standalone / embeddable window
+#  CorrelationPlotWindow - the full standalone / embeddable window
 # ═══════════════════════════════════════════════════════════════════════════
 
 class CorrelationPlotWindow(QMainWindow):
@@ -1067,7 +1067,7 @@ class CorrelationPlotWindow(QMainWindow):
         self._cor_spin.setRange(0, 0)
         self._cor_spin.valueChanged.connect(self._on_cor_change)
         cor_lo.addRow("Cor #:", self._cor_spin)
-        self._cost_label = QLabel("—")
+        self._cost_label = QLabel("-")
         self._cost_label.setFont(QFont("Monospace", 9))
         cor_lo.addRow("Cost:", self._cost_label)
         self._max_lines_spin = QSpinBox()

@@ -198,7 +198,7 @@ DATASETS = {
     "8_shallow_marine": {
         "title": "Shallow Marine Shoreface – GR+RHOB+DT (Upper Jurassic, North Sea)",
         "description": (
-            "Geological setting: Hugin Formation analogue — wave-dominated shoreface.\n"
+            "Geological setting: Hugin Formation analogue - wave-dominated shoreface.\n"
             "10 wells along depositional dip with clinoform geometry.\n"
             "5 parasequences (PS1–PS5): lower shoreface → upper shoreface → foreshore,\n"
             "bounded by flooding surfaces (maximum flooding = GR spikes).\n"
@@ -257,8 +257,8 @@ DATASETS = {
             "distributary mouth bar, distributary channel, interdistributary bay,\n"
             "marsh, delta plain. Beds thicken/coarsen landward (progradation).\n"
             "Gaps indicate condensation in distal positions (Wheeler wedge).\n"
-            "no_crossing=SEQSTRAT locks parasequence boundaries — the most\n"
-            "geologically important surfaces — preventing top-only correlation."
+            "no_crossing=SEQSTRAT locks parasequence boundaries - the most\n"
+            "geologically important surfaces - preventing top-only correlation."
         ),
         "wells": DATA_DIR / "data_set_delta" / "wells.txt",
         "runs": [
@@ -318,7 +318,7 @@ DATASETS = {
         "description": (
             "Geological setting: Troll field, Northern North Sea (Sognefjord Formation).\n"
             "5 wells with categorical facies and distality (Walther's Law).\n"
-            "No continuous logs — correlation driven by facies similarity\n"
+            "No continuous logs - correlation driven by facies similarity\n"
             "and distality ordering (facies belts shift predictably).\n"
             "Thick sand reservoir with lateral facies transitions."
         ),
@@ -489,7 +489,7 @@ def run_dataset(ds_key: str, ds: dict, output_dir: Path):
 
     wells_path = str(ds["wells"])
     well_list = WellList(wells_path)
-    print(f"  Wells: {well_list.nbr_wells()} — "
+    print(f"  Wells: {well_list.nbr_wells()} - "
           f"{', '.join(w.name for w in well_list.wells)}")
     if well_list.wells:
         w0 = well_list.wells[0]
@@ -520,7 +520,7 @@ def run_dataset(ds_key: str, ds: dict, output_dir: Path):
             if k != "out_file":
                 print(f"     {k} = {v}")
 
-        # Run correlation — reset ALL region/data options to avoid global leakage
+        # Run correlation - reset ALL region/data options to avoid global leakage
         project = ProjectExt()
         # Explicitly clear all region/data options that may persist from prior runs
         _reset_opts = {
@@ -578,7 +578,7 @@ def run_dataset(ds_key: str, ds: dict, output_dir: Path):
     # Summary comparison plot
     if len(run_results) > 1:
         plot_cost_comparison(
-            run_results, f"{ds['title']} — Cost Comparison",
+            run_results, f"{ds['title']} - Cost Comparison",
             ds_output / "cost_comparison.png"
         )
 

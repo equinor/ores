@@ -5,13 +5,13 @@ to fix names, descriptions, and add spatial metadata.
 
 Issues in raw RDDMS manifest:
   1. StructureMap/GenericRepresentation Name = workflow step (DS_extract_geogrid)
-     instead of meaningful name (TopTherys — depth surface extract from geogrid)
+     instead of meaningful name (TopTherys - depth surface extract from geogrid)
   2. No SpatialArea (WGS84 bounding box) on any record
   3. No BinWidth on Grid2d-backed StructureMaps
   4. No Description on most records
 
 Fixes applied:
-  - Name = "{InterpretationName} — {original_title}" (e.g. "TopTherys — DS_extract_geogrid")
+  - Name = "{InterpretationName} - {original_title}" (e.g. "TopTherys - DS_extract_geogrid")
   - SpatialArea = Drogon project WGS84 bounding box
   - BinWidth = 25m (from fmu-dataio sidecar metadata)
   - Description = human-readable description based on workflow step category
@@ -110,7 +110,7 @@ def curate_name(data: dict, kind: str) -> str:
     if original_name.startswith(interp_name):
         return original_name
 
-    # Build curated name: "TopTherys — DS_extract_geogrid"
+    # Build curated name: "TopTherys - DS_extract_geogrid"
     return f"{interp_name} \u2014 {original_name}"
 
 

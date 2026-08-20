@@ -6,7 +6,7 @@
     "Hierarchy": []
   },
   "_meta": {
-    "description": "PersistedCollection — a named bundle of related records (evidence packages, decision gate collections). Supports hierarchical nesting.",
+    "description": "PersistedCollection - a named bundle of related records (evidence packages, decision gate collections). Supports hierarchical nesting.",
     "required_fields": ["Name"],
     "member_id_format": "{partition}:{category}--{Entity}:{id}:{version}",
     "hierarchy_entry": {

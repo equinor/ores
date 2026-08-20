@@ -125,7 +125,7 @@ If you have one surface, one survey, no re-picks  the Feature and Interpretation
 They become essential when the same geological entity has multiple representations (different surveys, time-lapse, re-interpretation). The Feature is the stable identity; the Interpretation captures one geological reading; the Representation holds one set of geometry.
 
 > [!NOTE]
-> This is a classic **normalized vs. denormalized** trade-off. Putting name, age, and conformability directly on every SeismicHorizon/StructureMap (denormalized) works for single-survey workflows but breaks at rename (update N records), multi-vintage comparison (no shared identity), and cross-domain references (strat column needs a stable horizon target, not a survey-specific WPC). The Feature/Interpretation layers are the normalized join — extra objects now, fewer consistency problems later.
+> This is a classic **normalized vs. denormalized** trade-off. Putting name, age, and conformability directly on every SeismicHorizon/StructureMap (denormalized) works for single-survey workflows but breaks at rename (update N records), multi-vintage comparison (no shared identity), and cross-domain references (strat column needs a stable horizon target, not a survey-specific WPC). The Feature/Interpretation layers are the normalized join - extra objects now, fewer consistency problems later.
 
 > **Strat columns use a different entry point.** A stratigraphic column is built from `StratigraphicUnitInterpretation` (rock body volumes via `RockVolumeFeature`), NOT from `LocalBoundaryFeature`. Horizons appear only as optional boundary markers on individual units. See [StratColumn.md](StratColumn.md) §5b for the full comparison.
 

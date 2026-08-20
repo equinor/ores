@@ -1,5 +1,5 @@
 """
-Tests for weco.validate — Reference comparison + quality scoring
+Tests for weco.validate - Reference comparison + quality scoring
 ================================================================
 
 Tests load_reference_csv, load_reference_from_resfile, compare_correlations,

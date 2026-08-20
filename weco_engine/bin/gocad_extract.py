@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-§5.3 — gopy_extract.py (Python 3 version).
+§5.3 - gopy_extract.py (Python 3 version).
 
 Extract well data from GOCAD objects (.wl, .vs, .ts) into WeCo format.
 This replaces the legacy Python 2 ``gopy_extract.py``.

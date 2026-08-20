@@ -1,4 +1,4 @@
-/* search.js — extracted from search.html */
+/* search.js - extracted from search.html */
 
 /* ── Inline results: BD map, DDMS map, volume histograms ── */
     /* ── Shared HTML escape helper ── */

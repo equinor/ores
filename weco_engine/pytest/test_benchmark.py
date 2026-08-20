@@ -1,7 +1,7 @@
 """Performance benchmark for /auto pipeline (R1).
 
 Run with: pytest pytest/test_benchmark.py -v --tb=short
-Prints timing per demo dataset. Not meant to fail — just records times.
+Prints timing per demo dataset. Not meant to fail - just records times.
 """
 
 import time

@@ -31,7 +31,7 @@ spec:
       monitoringConfig:
         portName: http
 
-      # Resource limits — bumped for in-process WeCo C++ correlation engine
+      # Resource limits - bumped for in-process WeCo C++ correlation engine
       resources:
         requests:
           cpu: "250m"

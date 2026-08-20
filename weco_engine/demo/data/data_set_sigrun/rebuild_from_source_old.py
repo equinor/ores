@@ -8,13 +8,13 @@ Source: tmp/data/sigrun/sigrun_wells/ (7 LAS files from RMS)
         tmp/data/sigrun/LogatMarker.txt (biozone at marker)
 
 Hugin Formation, Upper Jurassic, Sigrun field (block 15/3, North Sea).
-Tide-dominated shallow marine to offshore — classic parasequence correlation.
+Tide-dominated shallow marine to offshore - classic parasequence correlation.
 
 Wells with full facies interpretation: 15_3-4, 15_3-5
 Wells with GR only: 15_3-7, 15_3-9_T2, 15_3-3, 15_3-1_S, 15_3-8
 
 All wells have Hugin formation flooding surface picks (Hugin_FS_f through _m).
-These picks ARE the correlation truth — isochronous surfaces.
+These picks ARE the correlation truth - isochronous surfaces.
 """
 
 import sys
@@ -216,7 +216,7 @@ def extract_hugin_interval(las_data, picks_for_well):
             except (ValueError, IndexError):
                 pass
         
-        # Facies — in 15_3-4/15_3-5, the "GENETIC FACIES" column (with space)
+        # Facies - in 15_3-4/15_3-5, the "GENETIC FACIES" column (with space)
         # gets parsed at zonelog_idx position. It contains values like "F-TIDAL".
         # The actual ZONELOG is one column later.
         facies = None
@@ -516,7 +516,7 @@ def write_options(dirpath):
     
     # Option 1: GR variance with sequence no-crossing
     with open(os.path.join(dirpath, 'options_gr.txt'), 'w') as f:
-        f.write("""# Config: SIGRUN — GR log correlation with flooding surface constraints
+        f.write("""# Config: SIGRUN - GR log correlation with flooding surface constraints
 # Hugin Formation (Upper Jurassic): tide-dominated shallow marine
 # GR is the primary correlation log (shale/sand discrimination)
 # SEQUENCE no-crossing locks known flooding surfaces
@@ -536,7 +536,7 @@ out-file=result_gr.txt
     
     # Option 2: GR + NPHI composite
     with open(os.path.join(dirpath, 'options_composite.txt'), 'w') as f:
-        f.write("""# Config: SIGRUN — GR+NPHI composite correlation
+        f.write("""# Config: SIGRUN - GR+NPHI composite correlation
 # GR (lithology) + NPHI (porosity) for better discrimination
 # SEQUENCE provides chronostratigraphic no-crossing constraint
 #
@@ -557,8 +557,8 @@ out-file=result_composite.txt
     
     # Option 3: Unconstrained for uncertainty assessment
     with open(os.path.join(dirpath, 'options_unconstrained.txt'), 'w') as f:
-        f.write("""# Config: SIGRUN — Unconstrained GR correlation
-# No chronostratigraphic constraints — shows full uncertainty envelope
+        f.write("""# Config: SIGRUN - Unconstrained GR correlation
+# No chronostratigraphic constraints - shows full uncertainty envelope
 # Compare with constrained versions to assess biozone impact
 #
 cost-function=var
@@ -588,8 +588,8 @@ Extracted from RMS LAS v3 exports + well picks.
 ## Data Channels
 - **MD**: Measured depth (m)
 - **GR**: Gamma ray log (LFP_GR, API units)
-- **NPHI**: Total porosity (LFP_PHIT, v/v) — only in 15_3-4, 15_3-5
-- **FACIES**: Genetic facies code (1-8) — only in 15_3-4, 15_3-5
+- **NPHI**: Total porosity (LFP_PHIT, v/v) - only in 15_3-4, 15_3-5
+- **FACIES**: Genetic facies code (1-8) - only in 15_3-4, 15_3-5
 - **SEQUENCE**: Parasequence bounded by Hugin flooding surfaces (1-10)
 - **BIOZONE**: Biozone assignment at marker depths
 

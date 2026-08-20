@@ -4,7 +4,7 @@ Rebuild the Bryson Canyon dataset from the original IC Discrete Export files.
 ============================================================================
 
 Source: tmp/data/bryson/Bryson Canyon B*.dat (IC Discrete Export format)
-Book Cliffs, Neslen Formation (Upper Cretaceous), Utah — coastal plain deposits.
+Book Cliffs, Neslen Formation (Upper Cretaceous), Utah - coastal plain deposits.
 
 Data tables in source:
   - Depositional Facies (named: Coal, Marsh, Wave influenced bayfill, etc.)
@@ -393,7 +393,7 @@ def write_options(dirpath):
     
     # Option 1: Distal CCF with zone constraints
     with open(os.path.join(dirpath, 'options_distal.txt'), 'w') as f:
-        f.write("""# Config: BRYSON — Distal CCF for coastal plain correlation
+        f.write("""# Config: BRYSON - Distal CCF for coastal plain correlation
 # Neslen Formation (Cretaceous): coal-bearing coastal plain to estuarine
 # FACIES encodes depositional environment; DISTALITY derived from it
 # ZONE (reservoir zonation) provides no-crossing constraint
@@ -414,7 +414,7 @@ out-file=result_distal.txt
     
     # Option 2: Variance on facies with sequence constraint
     with open(os.path.join(dirpath, 'options_seqstrat.txt'), 'w') as f:
-        f.write("""# Config: BRYSON — Facies variance constrained by sequence stratigraphy
+        f.write("""# Config: BRYSON - Facies variance constrained by sequence stratigraphy
 # Uses SEQSTRAT boundaries (4th/5th order) as same-region constraints
 # ZONE as no-crossing (keeps correlation within reservoir units)
 #
@@ -433,8 +433,8 @@ out-file=result_seqstrat.txt
     
     # Option 3: Unconstrained
     with open(os.path.join(dirpath, 'options_basic.txt'), 'w') as f:
-        f.write("""# Config: BRYSON — Basic facies variance (unconstrained)
-# No stratigraphic constraints — shows correlation ambiguity
+        f.write("""# Config: BRYSON - Basic facies variance (unconstrained)
+# No stratigraphic constraints - shows correlation ambiguity
 # Coal seams create strong markers but lateral facies changes cause ambiguity
 #
 cost-function=var
@@ -456,7 +456,7 @@ def write_readme(dirpath, wells):
 
 ## Source
 Neslen Formation (Upper Cretaceous), Bryson Canyon, Book Cliffs, Utah.
-Coastal plain to estuarine deposits — coal-bearing sequences.
+Coastal plain to estuarine deposits - coal-bearing sequences.
 Exported from IC (Integrated Correlation) software as discrete facies logs.
 
 ## Wells: {len(wells)}
@@ -495,7 +495,7 @@ Exported from IC (Integrated Correlation) software as discrete facies logs.
 | 9 | Corcoran-SB | 4th |
 
 ## Correlation Strategy
-1. **options_distal.txt**: Distal CCF — facies + distality (Walther's Law)
+1. **options_distal.txt**: Distal CCF - facies + distality (Walther's Law)
 2. **options_seqstrat.txt**: Variance + SEQSTRAT same-region constraint
 3. **options_basic.txt**: Unconstrained (shows ambiguity from coal seam repetition)
 

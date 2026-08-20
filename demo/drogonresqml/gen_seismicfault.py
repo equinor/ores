@@ -6,7 +6,7 @@ Creates one SeismicFault record per fault (F1-F6), each linking to the existing
 FaultInterpretation and the seismic geometry context (BinGrid, SeismicTraceData).
 
 The SeismicFault record is a REPRESENTATION (inherits AbstractRepresentation),
-acting as the seismic-domain view of a fault — analogous to SeismicHorizon for
+acting as the seismic-domain view of a fault - analogous to SeismicHorizon for
 horizons. The GenericRepresentation records remain as the RESQML-native pointers;
 SeismicFault adds the seismic interpretation context.
 

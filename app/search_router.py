@@ -1584,7 +1584,7 @@ async def api_refdata_kinds(request: Request):
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Provenance DAG — walk BD chains via Parameters, ancestry & project search
+# Provenance DAG - walk BD chains via Parameters, ancestry & project search
 # ──────────────────────────────────────────────────────────────────────────────
 
 _BD_RETURNED_FIELDS = [
@@ -1648,7 +1648,7 @@ async def provenance_dag(request: Request, record_id: str):
         if prior and _is_bd(prior):
             links.append((rid, prior, "supersedes"))
 
-        # 2. Parameters[] — any DataObjectParameter referencing a BD
+        # 2. Parameters[] - any DataObjectParameter referencing a BD
         for param in data.get("Parameters") or []:
             obj = param.get("DataObjectParameter", "")
             if not obj or not _is_bd(obj) or obj == rid:
@@ -1669,7 +1669,7 @@ async def provenance_dag(request: Request, record_id: str):
                     label = param.get("Title") or "linked"
             links.append((rid, obj, label))
 
-        # 3. ancestry.parents / ancestry.children — BD-to-BD only
+        # 3. ancestry.parents / ancestry.children - BD-to-BD only
         ancestry = rec.get("ancestry", {}) or data.get("ancestry", {}) or {}
         for parent_id in ancestry.get("parents") or []:
             if _is_bd(parent_id) and parent_id != rid:

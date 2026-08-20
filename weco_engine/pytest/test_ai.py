@@ -1,5 +1,5 @@
 """
-Tests for weco.ai — AI-enhanced preprocessing and postprocessing
+Tests for weco.ai - AI-enhanced preprocessing and postprocessing
 =================================================================
 
 Covers:
@@ -455,7 +455,7 @@ class TestAnomalyDetector:
 
 
 # ===================================================================
-# LogQC (existing module — verify integration)
+# LogQC (existing module - verify integration)
 # ===================================================================
 
 class TestLogQC:
@@ -501,7 +501,7 @@ class TestLogQC:
 
 
 # ===================================================================
-# CorrelationQuality (existing module — verify)
+# CorrelationQuality (existing module - verify)
 # ===================================================================
 
 class TestCorrelationQuality:
@@ -518,7 +518,7 @@ class TestCorrelationQuality:
 
 
 # ===================================================================
-# CorrelationUncertainty (existing module — verify)
+# CorrelationUncertainty (existing module - verify)
 # ===================================================================
 
 class TestCorrelationUncertainty:

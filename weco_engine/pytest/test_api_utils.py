@@ -1,4 +1,4 @@
-"""Tests for weco.api utility functions — scenario labelling, facies independence, Wheeler analysis."""
+"""Tests for weco.api utility functions - scenario labelling, facies independence, Wheeler analysis."""
 
 import pytest
 import numpy as np

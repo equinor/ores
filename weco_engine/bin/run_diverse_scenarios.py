@@ -51,7 +51,7 @@ WELL_COLORS = plt.cm.tab10.colors
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Synthetic Data Generators — designed for AMBIGUITY
+#  Synthetic Data Generators - designed for AMBIGUITY
 # ═══════════════════════════════════════════════════════════════════════════
 
 def _gen_aquifer_connectivity(seed=100):
@@ -76,17 +76,17 @@ def _gen_aquifer_connectivity(seed=100):
         # (base_depth, thickness, gr_sand, gr_till)
         (10, 7, 25, 115),    # L1: thick, most wells have it
         (25, 5, 30, 110),    # L2: intermediate
-        (38, 4, 28, 112),    # L3: thin, patchy — KEY AMBIGUITY
-        (52, 3, 32, 108),    # L4: very patchy — KEY AMBIGUITY
+        (38, 4, 28, 112),    # L3: thin, patchy - KEY AMBIGUITY
+        (52, 3, 32, 108),    # L4: very patchy - KEY AMBIGUITY
         (65, 8, 22, 118),    # L5: thick basal, most wells have it
     ]
     # Connectivity matrix: which wells have which layers (pre-decided)
-    # This creates the geological ambiguity — layers 2,3 are partially connected
+    # This creates the geological ambiguity - layers 2,3 are partially connected
     layer_presence = [
         [True, True, True, True, True, True],     # L1: all wells
         [True, True, True, False, False, True],    # L2: left+right, gap in middle
         [False, True, True, True, False, False],   # L3: only middle wells
-        [True, False, False, False, True, True],   # L4: only edges — disconnected!
+        [True, False, False, False, True, True],   # L4: only edges - disconnected!
         [True, True, True, True, True, True],      # L5: all wells
     ]
 
@@ -147,7 +147,7 @@ def _gen_channel_stacking(seed=200):
     - Channels occur at nearly the same depth in adjacent wells
     - Some are the SAME channel body (laterally connected)
     - Others are SEPARATE avulsion events at similar depth (disconnected)
-    - Log response is identical — only lateral extent distinguishes them
+    - Log response is identical - only lateral extent distinguishes them
     - Two interpretations:
       A) Connected sand fairway (low gap cost, wide band)
       B) Separate channel events stacked by coincidence (high gap cost)
@@ -162,13 +162,13 @@ def _gen_channel_stacking(seed=200):
     channels = [
         (12, {0, 1, 2, 3, 4}, 28),      # Wide connected belt
         (25, {0, 1, 2}, 32),             # Left-side only
-        (27, {3, 4}, 30),                # Right-side only — SAME depth!
+        (27, {3, 4}, 30),                # Right-side only - SAME depth!
         (40, {1, 2, 3}, 26),             # Middle cluster
         (42, {0}, 34),                   # Isolated at similar depth to above
-        (41, {4}, 31),                   # Another isolate — connected or not?
+        (41, {4}, 31),                   # Another isolate - connected or not?
         (58, {0, 1, 2, 3, 4}, 25),       # Another wide belt
-        (70, {0, 1}, 33),                # Partial — left
-        (71, {2, 3, 4}, 29),             # Partial — right (same event or not?)
+        (70, {0, 1}, 33),                # Partial - left
+        (71, {2, 3, 4}, 29),             # Partial - right (same event or not?)
     ]
 
     for j in range(n_wells):
@@ -401,17 +401,17 @@ def _gen_fault_block_offset(seed=500):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Scenario Definitions — each explores a different source of ambiguity
+#  Scenario Definitions - each explores a different source of ambiguity
 # ═══════════════════════════════════════════════════════════════════════════
 
 SCENARIOS = {
     "1_aquifer_connectivity": {
-        "title": "Aquifer Connectivity — Connected sheet vs isolated lenses",
+        "title": "Aquifer Connectivity - Connected sheet vs isolated lenses",
         "generator": _gen_aquifer_connectivity,
         "description": (
             "Glacial aquifers: sand layers at similar depths may be ONE\n"
             "connected aquifer or SEPARATE lenses. Critical for groundwater\n"
-            "flow modelling — connected = large resource, isolated = compartments."
+            "flow modelling - connected = large resource, isolated = compartments."
         ),
         "param_sets": [
             {"name": "connected_sheet",
@@ -445,7 +445,7 @@ SCENARIOS = {
     },
 
     "2_channel_stacking": {
-        "title": "Channel Belt Stacking — Amalgamated vs separate events",
+        "title": "Channel Belt Stacking - Amalgamated vs separate events",
         "generator": _gen_channel_stacking,
         "description": (
             "Fluvial channels at the same depth in adjacent wells: same\n"
@@ -481,7 +481,7 @@ SCENARIOS = {
     },
 
     "3_parasequence_wedge": {
-        "title": "Parasequence Geometry — Layer-cake vs clinoform wedge",
+        "title": "Parasequence Geometry - Layer-cake vs clinoform wedge",
         "generator": _gen_parasequence_ambiguity,
         "description": (
             "Prograding shoreface: coarsening-up cycles repeat and look\n"
@@ -516,7 +516,7 @@ SCENARIOS = {
     },
 
     "4_carbonate_cycles": {
-        "title": "Carbonate Cycles — Cycle counting vs log character",
+        "title": "Carbonate Cycles - Cycle counting vs log character",
         "generator": _gen_carbonate_cycles,
         "description": (
             "Repeated shallowing-up cycles on a carbonate platform. All\n"
@@ -552,7 +552,7 @@ SCENARIOS = {
     },
 
     "5_fault_juxtaposition": {
-        "title": "Fault Block — Which layers juxtapose across the fault?",
+        "title": "Fault Block - Which layers juxtapose across the fault?",
         "generator": _gen_fault_block_offset,
         "description": (
             "Normal fault: hanging wall expanded (growth strata), footwall\n"
@@ -562,7 +562,7 @@ SCENARIOS = {
         ),
         "param_sets": [
             {"name": "continuous_across",
-             "desc": "Ignore offset — correlate all as one domain",
+             "desc": "Ignore offset - correlate all as one domain",
              "opts": {"var_data": "GR", "var_weight": 1.0,
                       "const_gap_cost": 4.0, "band_width": 40}},
             {"name": "honour_offset",
@@ -639,7 +639,7 @@ def run_single(well_list, opts, out_file):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Plotting — side-by-side well logs with correlation lines
+#  Plotting - side-by-side well logs with correlation lines
 # ═══════════════════════════════════════════════════════════════════════════
 
 def plot_realization(well_list, res_file, cor_index, title, subtitle, out_path,
@@ -687,7 +687,7 @@ def plot_realization(well_list, res_file, cor_index, title, subtitle, out_path,
         ax.grid(True, alpha=0.2)
         ax.tick_params(labelsize=7)
 
-    # Draw correlation lines — subsample for clarity
+    # Draw correlation lines - subsample for clarity
     path = res_file.get_result_full_path(cor_index)
     cost = res_file.get_result_cost(cor_index)
 
@@ -730,7 +730,7 @@ def plot_summary_grid(results_dict, scenario_title, out_path):
     if n_sets == 1:
         axes = [axes]
 
-    fig.suptitle(f"{scenario_title} — Cost Comparison", fontsize=12, fontweight="bold")
+    fig.suptitle(f"{scenario_title} - Cost Comparison", fontsize=12, fontweight="bold")
 
     names = list(results_dict.keys())
     costs_all = []
@@ -802,7 +802,7 @@ def run_scenario(key, scenario, output_dir, n_top=5):
         res_file = run_single(well_list, opts, res_path)
 
         if res_file is None:
-            print(f"    FAILED — no results")
+            print(f"    FAILED - no results")
             continue
 
         n_results = res_file.get_nbr_results()
@@ -846,7 +846,7 @@ def run_scenario(key, scenario, output_dir, n_top=5):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="WeCo Diverse Scenario Runner — ambiguous geology, multiple interpretations")
+        description="WeCo Diverse Scenario Runner - ambiguous geology, multiple interpretations")
     parser.add_argument("--scenario", "-s", type=str, default=None,
                         help="Run only a specific scenario (number or key)")
     parser.add_argument("--list", "-l", action="store_true",
@@ -892,7 +892,7 @@ def main():
         all_results[key] = run_scenario(key, sc, output_dir, n_top=args.top)
 
     print(f"\n{'═'*72}")
-    print(f"  DONE — all scenarios complete")
+    print(f"  DONE - all scenarios complete")
     print(f"  Output directory: {output_dir}")
     print(f"{'═'*72}")
 

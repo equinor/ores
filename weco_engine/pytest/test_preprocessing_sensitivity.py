@@ -3,9 +3,9 @@ Tests for weco.preprocessing facies clustering and weco.sensitivity well order.
 ==============================================================================
 
 Covers:
-- parse_facies_groups() — string spec → mapping dict (§13.2)
-- remap_facies_groups() — well region remapping + merging (§13.2)
-- configure_well_order() — engine order key + Python-side strategies (§13.3)
+- parse_facies_groups() - string spec → mapping dict (§13.2)
+- remap_facies_groups() - well region remapping + merging (§13.2)
+- configure_well_order() - engine order key + Python-side strategies (§13.3)
 - ALL_ORDER_KEYS / BUILTIN_ORDER_KEYS / EXTENDED_ORDER_KEYS constants
 """
 
@@ -61,7 +61,7 @@ def _make_well_list(n=4, size=20):
 
 
 # ===================================================================
-# §13.2 — Facies clustering (parse_facies_groups)
+# §13.2 - Facies clustering (parse_facies_groups)
 # ===================================================================
 
 class TestParseFaciesGroups:
@@ -103,7 +103,7 @@ class TestParseFaciesGroups:
 
 
 # ===================================================================
-# §13.2 — Facies clustering (remap_facies_groups)
+# §13.2 - Facies clustering (remap_facies_groups)
 # ===================================================================
 
 class TestRemapFaciesGroups:
@@ -125,7 +125,7 @@ class TestRemapFaciesGroups:
         w.size = 6
         w.x = w.y = w.z = 0.0
         w.h = 60.0
-        # Facies: 1,2,1,3,3,2 — groups: {1:1, 2:1, 3:2}
+        # Facies: 1,2,1,3,3,2 - groups: {1:1, 2:1, 3:2}
         w.data["F"] = [1.0, 2.0, 1.0, 3.0, 3.0, 2.0]
         w.add_region_from_data("F")
 
@@ -186,7 +186,7 @@ class TestRemapFaciesGroups:
         assert ok is True
         regions = w.region["FG"]
         # 1→1, 99→99 (unmapped), 2→1
-        # After mapping: (1,0,1),(99,1,1),(1,2,1) — no merge across 99
+        # After mapping: (1,0,1),(99,1,1),(1,2,1) - no merge across 99
         assert len(regions) == 3
         assert regions[1][0] == 99
 
@@ -212,7 +212,7 @@ class TestRemapFaciesGroups:
 
 
 # ===================================================================
-# §13.3 — Well order control (configure_well_order)
+# §13.3 - Well order control (configure_well_order)
 # ===================================================================
 
 class TestWellOrderConstants:

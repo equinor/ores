@@ -1,5 +1,5 @@
 """
-weco.distality — Sediment transport direction and distality computation
+weco.distality - Sediment transport direction and distality computation
 ========================================================================
 
 Compute per-well distality values from well coordinates and an assumed

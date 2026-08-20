@@ -13,21 +13,21 @@ sequence) cyclicity.
 
 Facies (proximal → distal):
 
-  1. Supratidal — anhydrite/sabkha (GR high, DEN high, SON low)
-  2. Intertidal — microbial laminite / fenestral mudstone (GR med)
-  3. Lagoon — wackestone/packstone (GR low-med, DEN 2.5-2.65)
-  4. Shoal — oolitic/bioclastic grainstone (GR very low, DEN 2.6, high poro)
-  5. Fore-reef — rudstone/breccia (GR low, DEN variable, SON variable)
-  6. Slope — argillaceous mudstone (GR high, DEN 2.55)
-  7. Basin — pelagic lime-mudstone/marl (GR med-high, DEN 2.4)
+  1. Supratidal - anhydrite/sabkha (GR high, DEN high, SON low)
+  2. Intertidal - microbial laminite / fenestral mudstone (GR med)
+  3. Lagoon - wackestone/packstone (GR low-med, DEN 2.5-2.65)
+  4. Shoal - oolitic/bioclastic grainstone (GR very low, DEN 2.6, high poro)
+  5. Fore-reef - rudstone/breccia (GR low, DEN variable, SON variable)
+  6. Slope - argillaceous mudstone (GR high, DEN 2.55)
+  7. Basin - pelagic lime-mudstone/marl (GR med-high, DEN 2.4)
 
 Logs:
-  GR   — Natural gamma (API): grainstone=10, mudstone=30, marl=60, shale=100
-  DEN  — Bulk density (g/cc): grainstone=2.3-2.5 (porous), mud=2.65, anhy=2.95
-  SON  — Sonic (µs/ft): grainstone=55-70, mudstone=50, anhydrite=50
-  NEU  — Neutron porosity (%): grainstone=15-25, mudstone=5, anhydrite=0
-  RT   — Resistivity (Ohm-m): tight carbonates 200+, porous 20-50
-  PEF  — Photoelectric factor: limestone=5.1, dolomite=3.1, anhydrite=5.1
+  GR   - Natural gamma (API): grainstone=10, mudstone=30, marl=60, shale=100
+  DEN  - Bulk density (g/cc): grainstone=2.3-2.5 (porous), mud=2.65, anhy=2.95
+  SON  - Sonic (µs/ft): grainstone=55-70, mudstone=50, anhydrite=50
+  NEU  - Neutron porosity (%): grainstone=15-25, mudstone=5, anhydrite=0
+  RT   - Resistivity (Ohm-m): tight carbonates 200+, porous 20-50
+  PEF  - Photoelectric factor: limestone=5.1, dolomite=3.1, anhydrite=5.1
 
 Reference:
   - Schlager (2005) Carbonate Sedimentology and Sequence Stratigraphy

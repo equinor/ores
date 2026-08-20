@@ -1005,7 +1005,7 @@ async def load_prior_bd(request: Request, id: str = Query(...)):
 
     Returns economics (types/units, values cleared for re-assessment),
     alternatives, linked record IDs, project name, and reservoir ID.
-    All returned data is meant for pre-filling — the user can override everything.
+    All returned data is meant for pre-filling - the user can override everything.
     """
     at = _access_token(request)
     storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records/{id}"

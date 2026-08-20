@@ -16,12 +16,12 @@ Problem (verified against drogon.epc and seen in the maap/drogon catalog UI):
 
 Fix:
   1. Prefix each representation's Citation.Title with the represented feature
-     name, e.g.  'TopVolantis — Depth Surface - Interpreted'.
+     name, e.g.  'TopVolantis - Depth Surface - Interpreted'.
   2. Drop the 'Depth Surface - Velocity Model' Grid2d parts (derived artefacts),
      leaving each horizon a small set: interpreted depth + time surface + points.
 
 Operates in place on drogon.epc (original backed up as drogon.epc.orig2).
-Idempotent: titles already carrying the ' — ' feature prefix are left untouched.
+Idempotent: titles already carrying the ' - ' feature prefix are left untouched.
 HDF5 arrays of pruned parts are left as harmless orphans in drogon.h5.
 
 Usage:

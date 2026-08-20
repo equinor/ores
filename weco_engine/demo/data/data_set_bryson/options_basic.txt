@@ -1,5 +1,5 @@
-# Config: BRYSON — Basic facies variance (unconstrained)
-# No stratigraphic constraints — shows correlation ambiguity
+# Config: BRYSON - Basic facies variance (unconstrained)
+# No stratigraphic constraints - shows correlation ambiguity
 # Coal seams create strong markers but lateral facies changes cause ambiguity
 #
 cost-function=var

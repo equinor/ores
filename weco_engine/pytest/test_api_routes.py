@@ -50,7 +50,7 @@ pytestmark = pytest.mark.forked
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# Synthetic well builders — geologically motivated
+# Synthetic well builders - geologically motivated
 # ═══════════════════════════════════════════════════════════════════════════
 
 def _gr_fining_up(n: int, gr_min=20.0, gr_max=130.0, noise=5.0,
@@ -72,7 +72,7 @@ def _gr_coarsening_up(n: int, gr_min=25.0, gr_max=120.0, noise=5.0,
 
 def _gr_aggradational(n: int, gr_mean=70.0, noise=8.0,
                       seed=42) -> List[float]:
-    """Aggradational / uniform shelf — flat GR with noise."""
+    """Aggradational / uniform shelf - flat GR with noise."""
     rng = np.random.RandomState(seed)
     return (gr_mean + rng.normal(0, noise, n)).clip(0).tolist()
 
@@ -148,7 +148,7 @@ def _write_tempfile(wl: WellList, tmp_dir: str, name="wells.txt") -> str:
 
 @pytest.fixture
 def client():
-    """FastAPI test client — runs requests in-process, no socket."""
+    """FastAPI test client - runs requests in-process, no socket."""
     return TestClient(app)
 
 
@@ -161,7 +161,7 @@ def tmp_dir():
 # --- Small identical-well pair (perfect correlation expected) ---
 @pytest.fixture
 def identical_pair(tmp_dir):
-    """Two wells with exactly the same GR — correlation cost should be 0."""
+    """Two wells with exactly the same GR - correlation cost should be 0."""
     wl = WellList()
     wl.add_well(_make_well("Well_A", 40, _gr_fining_up, seed=10, x=0, y=0,
                             add_sonic=True))
@@ -185,7 +185,7 @@ def finingup_pair(tmp_dir):
 # --- Dissimilar wells (fining up vs coarsening up) ---
 @pytest.fixture
 def dissimilar_pair(tmp_dir):
-    """One fining-up, one coarsening-up — should give higher cost."""
+    """One fining-up, one coarsening-up - should give higher cost."""
     wl = WellList()
     wl.add_well(_make_well("FU", 40, _gr_fining_up, seed=5, x=0, y=0,
                             add_sonic=True))
@@ -198,7 +198,7 @@ def dissimilar_pair(tmp_dir):
 @pytest.fixture
 def transect_4wells(tmp_dir):
     """Proximal→distal transect: channel, shelf, slope, basin.
-    Sizes vary — thicker proximal, thinner distal."""
+    Sizes vary - thicker proximal, thinner distal."""
     wl = WellList()
     wl.add_well(_make_well("Proximal",  60, _gr_fining_up,      seed=10,
                             x=0, y=0, add_sonic=True, biozones=3))
@@ -226,7 +226,7 @@ def twolog_pair(tmp_dir):
 # --- Asymmetric pair (thicker vs thinner well) ---
 @pytest.fixture
 def asymmetric_pair(tmp_dir):
-    """One thicker (60 markers), one thinner (35 markers) — tests gap handling."""
+    """One thicker (60 markers), one thinner (35 markers) - tests gap handling."""
     wl = WellList()
     wl.add_well(_make_well("Thick", 60, _gr_fining_up, seed=30, x=0, y=0,
                             add_sonic=True))
@@ -238,7 +238,7 @@ def asymmetric_pair(tmp_dir):
 # --- Wells with biozones (for no-crossing tests) ---
 @pytest.fixture
 def biozone_pair(tmp_dir):
-    """Two wells with 4 biozones each — for no-crossing constraint."""
+    """Two wells with 4 biozones each - for no-crossing constraint."""
     wl = WellList()
     wl.add_well(_make_well("BZ_A", 60, _gr_fining_up, seed=40,
                             add_sonic=True, biozones=4))
@@ -250,7 +250,7 @@ def biozone_pair(tmp_dir):
 # --- Tiny wells (minimum viable size) ---
 @pytest.fixture
 def tiny_pair(tmp_dir):
-    """Wells with only 5 markers each — boundary condition."""
+    """Wells with only 5 markers each - boundary condition."""
     wl = WellList()
     wl.add_well(_make_well("Tiny_A", 5, _gr_aggradational, seed=50,
                             add_sonic=True))
@@ -268,14 +268,14 @@ def _assert_monotonic_lines(lines: list, n_wells: int):
 
     This embodies the fundamental stratigraphic principle that deeper
     markers in one well cannot correlate with shallower markers in
-    another — time surfaces do not cross.
+    another - time surfaces do not cross.
     """
     for w in range(n_wells):
         indices = [line["markers"][w] for line in lines]
         for i in range(1, len(indices)):
             assert indices[i] >= indices[i - 1], (
                 f"Well {w}: line {i} marker {indices[i]} < previous "
-                f"{indices[i - 1]} — breaks stratigraphic monotonicity"
+                f"{indices[i - 1]} - breaks stratigraphic monotonicity"
             )
 
 
@@ -362,7 +362,7 @@ class TestHealth:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# POST /run — core correlation endpoint
+# POST /run - core correlation endpoint
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestRunCorrelation:
@@ -438,7 +438,7 @@ class TestRunCorrelation:
         body_dis = client.post("/run", json={"well_file": dissimilar_pair}).json()
         cost_sim = body_sim["results"][0]["cost"]
         cost_dis = body_dis["results"][0]["cost"]
-        # The dissimilar pair should have equal or higher cost — the sign
+        # The dissimilar pair should have equal or higher cost - the sign
         # of good geological discrimination.
         assert cost_dis >= cost_sim, (
             f"Dissimilar pair cost ({cost_dis:.4f}) should be ≥ similar "
@@ -471,7 +471,7 @@ class TestRunCorrelation:
             _assert_markers_in_bounds(r["lines"], sizes)
 
     def test_transect_with_position_ordering(self, client, transect_4wells):
-        """Use position ordering — geographically sensible for a transect."""
+        """Use position ordering - geographically sensible for a transect."""
         body = client.post("/run", json={
             "well_file": transect_4wells,
             "options": {"order": "position"},
@@ -568,7 +568,7 @@ class TestRunCorrelation:
         _full_geological_check(body_free, [60, 60])
         _full_geological_check(body_constrained, [60, 60])
         # The constrained cost may be ≥ the free cost (suboptimality
-        # is expected — the constraint prunes some paths)
+        # is expected - the constraint prunes some paths)
         assert body_constrained["results"][0]["cost"] >= \
                body_free["results"][0]["cost"] - 1e-6
 
@@ -612,7 +612,7 @@ class TestRunCorrelation:
         for i in range(1, len(costs)):
             assert costs[i] >= costs[i - 1] - 1e-9, (
                 f"Result {i} cost {costs[i]:.6f} < result {i-1} cost "
-                f"{costs[i-1]:.6f} — not sorted"
+                f"{costs[i-1]:.6f} - not sorted"
             )
 
     # ------ Ordering strategies ------
@@ -651,7 +651,7 @@ class TestRunCorrelation:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# POST /run/upload — file-upload variant
+# POST /run/upload - file-upload variant
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestRunUpload:
@@ -720,7 +720,7 @@ class TestRunUpload:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# POST /info — well-list metadata
+# POST /info - well-list metadata
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestInfo:
@@ -771,7 +771,7 @@ class TestInfo:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# POST /validate-options — parameter validation
+# POST /validate-options - parameter validation
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestValidateOptions:
@@ -833,7 +833,7 @@ class TestValidateOptions:
         assert len(body["errors"]) >= 1
 
     def test_empty_options_valid(self, client):
-        """An empty dict means no options to set — should be valid."""
+        """An empty dict means no options to set - should be valid."""
         body = client.post("/validate-options", json={}).json()
         assert body["valid"] is True
 
@@ -939,7 +939,7 @@ class TestGeologicalInvariants:
         cost_3 = body_3["results"][0]["cost"]
         _full_geological_check(body_3, [40, 40, 40])
         # The 3-well cost may be slightly higher due to more merges,
-        # but shouldn't explode — use a generous margin
+        # but shouldn't explode - use a generous margin
         assert cost_3 < cost_2 * 10 + 1.0
 
     def test_max_cor_bounds_tie_count(self, client, finingup_pair):
@@ -962,7 +962,7 @@ class TestGeologicalInvariants:
 
     def test_aggradational_flat_cost(self, client, tmp_dir):
         """Two aggradational (flat / uniform) wells should be easy to
-        correlate with low cost — there's no strong signal, so the DTW
+        correlate with low cost - there's no strong signal, so the DTW
         path through uniform values costs almost nothing."""
         wl = WellList()
         wl.add_well(_make_well("Agg_A", 40, _gr_aggradational, seed=90, add_sonic=True))
@@ -1003,7 +1003,7 @@ class TestEdgeCases:
         assert body["well_names"] == ["Solo"]
 
     def test_very_large_n_best(self, client, identical_pair):
-        """Request n_best=1000 — should return whatever is available."""
+        """Request n_best=1000 - should return whatever is available."""
         body = client.post("/run", json={
             "well_file": identical_pair,
             "n_best": 1000,
@@ -1013,7 +1013,7 @@ class TestEdgeCases:
         _assert_valid_costs(body["results"])
 
     def test_var_weight_zero_still_valid(self, client, finingup_pair):
-        """Setting var-weight to 0 disables shape contribution — should
+        """Setting var-weight to 0 disables shape contribution - should
         still produce valid monotonic results."""
         body = client.post("/run", json={
             "well_file": finingup_pair,
@@ -1033,7 +1033,7 @@ class TestEdgeCases:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# POST /suggest-defaults — parameter suggestion
+# POST /suggest-defaults - parameter suggestion
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestSuggestDefaults:
@@ -1104,7 +1104,7 @@ class TestSuggestDefaults:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# GET /demos — list built-in demos
+# GET /demos - list built-in demos
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestDemos:
@@ -1142,11 +1142,11 @@ class TestDemos:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# POST /run/demo — run a built-in demo
+# POST /run/demo - run a built-in demo
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestRunDemo:
-    """Run demo datasets via API — tests may be slow (engine calls)."""
+    """Run demo datasets via API - tests may be slow (engine calls)."""
 
     def _get_first_demo_id(self, client):
         demos = client.get("/demos").json()["demos"]
@@ -1181,7 +1181,7 @@ class TestRunDemo:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# GET /options/help — parameter help
+# GET /options/help - parameter help
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestOptionsHelp:

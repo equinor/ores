@@ -16,9 +16,9 @@ Source data (tmp/sigrun/sigrun_wells/*.rmswell):
   3-9_T2:       + PHIT, ZONELOG
 
 Additional sources:
-  pickst.txt                          — flooding surface picks (MD)
-  Biozones_and_bioconfidence_edt.xlsx — biozone intervals per well
-  depofacies.xlsx                     — facies IDs for wells 3-4, 3-5
+  pickst.txt                          - flooding surface picks (MD)
+  Biozones_and_bioconfidence_edt.xlsx - biozone intervals per well
+  depofacies.xlsx                     - facies IDs for wells 3-4, 3-5
 
 Output wells (6):
   15/3-4, 15/3-5, 15/3-9 T2, 15/3-3, 15/3-7, 15/3-1 S
@@ -56,10 +56,10 @@ WELL_DISTALITY = {
 # ── Facies consolidation: GENETIC FACIES code → group ID ──
 # Three consolidation levels tested; Level B (5-class) is default.
 
-# Level A — 8 classes (finest, from RMS, per-well specific codes)
-# Stored as-is from rmswell (different numbering per well — normalized below)
+# Level A - 8 classes (finest, from RMS, per-well specific codes)
+# Stored as-is from rmswell (different numbering per well - normalized below)
 
-# Level B — 5 classes (depositional environment)
+# Level B - 5 classes (depositional environment)
 FACIES_B = {
     # 15/3-4 GENETIC FACIES codes
     'F-TIDAL CHANNEL': 1, 'F-TIDAL CHAN AMALG': 1, 'F-TIDAL BAR': 1,
@@ -83,7 +83,7 @@ FACIES_B_NAMES = {
     5: 'Continental',
 }
 
-# Level C — 3 classes (log-response based, least interpretive)
+# Level C - 3 classes (log-response based, least interpretive)
 FACIES_C = {
     'F-TIDAL CHANNEL': 1, 'F-TIDAL CHAN AMALG': 1, 'F-TIDAL BAR': 1,
     'F-BEACH DUNE': 1, 'F-CREVASSE CHANNEL': 1, 'F-CREVASSE SPLAY': 1,
@@ -94,7 +94,7 @@ FACIES_C = {
 }
 FACIES_C_NAMES = {1: 'Sand', 2: 'Mixed', 3: 'Shale'}
 
-# ── Biozone major groups (5) — objective chronostrat ──
+# ── Biozone major groups (5) - objective chronostrat ──
 # Zone 35.x→1 (Oxfordian), 36.x→2 (EKimm), 37.x→3 (LKimm), 38.x→4 (EVol), 39.x→5 (LVol)
 
 def biozone_major(zone_str):
@@ -581,7 +581,7 @@ def write_wells_txt(wells, filepath):
             for v in w['facies_c']:
                 f.write(f"{float(v):.1f}\n")
 
-            # ZONELOG_REF — validation only (existing interpretation)
+            # ZONELOG_REF - validation only (existing interpretation)
             f.write(f"ZONELOG_REF {n}\n")
             for v in w['zonelog_ref']:
                 f.write(f"{float(v):.1f}\n")
@@ -618,9 +618,9 @@ def write_options(dirpath):
     """Write option files for plausible correlation scenarios."""
 
     scenarios = {
-        # 1. Pure GR — baseline uncertainty envelope
+        # 1. Pure GR - baseline uncertainty envelope
         'options_1_gr_baseline.txt': """\
-# Scenario 1: GR baseline — no constraints
+# Scenario 1: GR baseline - no constraints
 # Shows full uncertainty envelope. Reference for how much
 # constraints reduce vs. over-constrain.
 cost-function=composite
@@ -668,7 +668,7 @@ out-nbr-cor=15
 min-dist=0.2
 out-min-dist=0.05
 """,
-        # 4. GR + 3-class facies (coarsest — log-response based)
+        # 4. GR + 3-class facies (coarsest - log-response based)
         'options_4_gr_facies3.txt': """\
 # Scenario 4: GR + 3-class facies (Sand/Mixed/Shale)
 # Most conservative facies scheme. Less interpretive → less noise.
@@ -826,7 +826,7 @@ def main():
         las_file = os.path.join(rmswell_dir, f'{wn}.las')
 
         if not os.path.exists(rmswell_file):
-            print(f"  {wn}: rmswell NOT FOUND — skipping")
+            print(f"  {wn}: rmswell NOT FOUND - skipping")
             continue
 
         rmswell = parse_rmswell(rmswell_file)
@@ -842,10 +842,10 @@ def main():
             rmswell, well_picks, md_tvd_table)
 
         if not extracted or len(extracted) < 20:
-            print(f"  {wn}: only {len(extracted) if extracted else 0} samples — skipping")
+            print(f"  {wn}: only {len(extracted) if extracted else 0} samples - skipping")
             continue
 
-        # Resample to ~1.5m — sufficient for stratigraphic correlation
+        # Resample to ~1.5m - sufficient for stratigraphic correlation
         # (finer resolution adds noise without improving correlation quality)
         resampled = [extracted[0]]
         for s in extracted[1:]:
@@ -904,17 +904,17 @@ def main():
 
     # Summary
     print(f"\n{'='*60}")
-    print("SIGRUN DEMO — SCENARIO DESIGN")
+    print("SIGRUN DEMO - SCENARIO DESIGN")
     print(f"{'='*60}")
     print("""
 Scenarios test which constraints add SIGNAL vs NOISE:
 
-  1. GR baseline         — full uncertainty envelope (reference)
-  2. GR + biozone        — objective chronostrat (should help)
-  3. GR + facies (5-cl)  — depositional environment (test)
-  4. GR + facies (3-cl)  — sand/mixed/shale (conservative test)
-  5. GR+NPHI + biozone   — multi-signal + chronostrat
-  6. Full combined       — everything (risk: over-interpretation)
+  1. GR baseline         - full uncertainty envelope (reference)
+  2. GR + biozone        - objective chronostrat (should help)
+  3. GR + facies (5-cl)  - depositional environment (test)
+  4. GR + facies (3-cl)  - sand/mixed/shale (conservative test)
+  5. GR+NPHI + biozone   - multi-signal + chronostrat
+  6. Full combined       - everything (risk: over-interpretation)
 
 Evaluation: compare each vs. ZONELOG_REF (existing interpretation).
 If more constrained → LESS plausible → that constraint = noise.

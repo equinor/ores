@@ -1,4 +1,4 @@
-# Scenario 1: GR baseline — no constraints
+# Scenario 1: GR baseline - no constraints
 # Shows full uncertainty envelope. Reference for how much
 # constraints reduce vs. over-constrain.
 cost-function=composite

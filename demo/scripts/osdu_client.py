@@ -7,7 +7,7 @@ Handles:
   - Search API (query records)
   - Batch operations with retry logic
 
-Fully independent of ORES — works with any OSDU instance.
+Fully independent of ORES - works with any OSDU instance.
 """
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ from typing import Any, Dict, List, Optional, Tuple
 try:
     import httpx
 except ImportError:
-    sys.exit("Missing httpx — pip install httpx")
+    sys.exit("Missing httpx - pip install httpx")
 
 from .config import OsduInstance
 
@@ -47,7 +47,7 @@ class OsduClient:
     def from_instance_name(cls, name: str = "eqndev", *, token: Optional[str] = None) -> "OsduClient":
         """Create client by resolving instance name via auth module.
 
-        This is the recommended constructor — handles full config resolution
+        This is the recommended constructor - handles full config resolution
         and token management automatically.
         """
         from .auth import resolve_instance, get_token
@@ -165,7 +165,7 @@ class OsduClient:
                     all_errors.extend(resp_data["errors"])
             except RuntimeError as batch_err:
                 if "403" in str(batch_err) and len(batch) > 1:
-                    # Batch rejected — retry each record individually
+                    # Batch rejected - retry each record individually
                     print(f"  ⚠ Batch {i//BATCH_SIZE + 1} rejected (403), "
                           f"retrying {len(batch)} records individually…")
                     for rec in batch:

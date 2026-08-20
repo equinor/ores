@@ -323,7 +323,7 @@
         <select id="p-same-region" title="Correlated points must be in same region label"><option value="">-- none --</option></select>
 
         <div class="row-section adv" style="display:none;">Distality</div>
-        <label for="p-dist-distal" class="adv" style="display:none;" title="Region containing distality labels (e.g. DISTAL). Used by Walther's Law cost — penalises correlating unlike facies belts.">Distality Region</label>
+        <label for="p-dist-distal" class="adv" style="display:none;" title="Region containing distality labels (e.g. DISTAL). Used by Walther's Law cost - penalises correlating unlike facies belts.">Distality Region</label>
         <select id="p-dist-distal" class="adv" style="display:none;" title="Region with distality labels for Walther's Law cost"><option value="">-- none --</option></select>
         <label for="p-dist-facies" class="adv" style="display:none;" title="Region containing facies for distality cost. Facies identity determines the cost penalty across wells.">Facies Region</label>
         <select id="p-dist-facies" class="adv" style="display:none;" title="Region with facies labels for distality cost"><option value="">-- none --</option></select>
@@ -381,18 +381,18 @@
         </div>
       </div>
       <div id="resample-warning" class="wc-status warn" style="display:none;">
-        &#9888; Fine-scale data detected (&gt;300 samples or &lt;0.5m spacing). Consider resampling for performance — correlation cost is O(n&sup2;).
+        &#9888; Fine-scale data detected (&gt;300 samples or &lt;0.5m spacing). Consider resampling for performance - correlation cost is O(n&sup2;).
         <button class="btn btn-sm btn-outline" id="btn-resample" style="margin-left:.5rem;">Resample (1m)</button>
       </div>
       <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:.3rem .8rem; font-size:12.5px;" id="preprocess-checks">
         <label title="Normalise log curves to [0,1] range. Removes absolute magnitude differences between wells."><input type="checkbox" id="pp-normalise" /> Normalise</label>
-        <label title="Compute V-Shale (gamma-ray index). Converts GR to clay volume — useful for clastic sections."><input type="checkbox" id="pp-vshale" /> V-Shale</label>
+        <label title="Compute V-Shale (gamma-ray index). Converts GR to clay volume - useful for clastic sections."><input type="checkbox" id="pp-vshale" /> V-Shale</label>
         <label title="Compute stacking pattern (GR derivative). Detects fining-up / coarsening-up trends."><input type="checkbox" id="pp-stacking" /> Stacking Pattern</label>
         <label title="K-Means electrofacies clustering. Groups log responses into discrete facies classes."><input type="checkbox" id="pp-electrofacies" /> Electrofacies</label>
         <label title="Moving-average smoothing. Reduces noise while preserving trends."><input type="checkbox" id="pp-smooth" /> Smooth</label>
         <label title="Log quality control: detect washouts, bad hole, spike removal."><input type="checkbox" id="pp-logqc" /> Log QC</label>
         <label title="AI facies prediction using gradient-boosted machine learning on multi-log input."><input type="checkbox" id="pp-ai-facies" /> AI Facies (GBM)</label>
-        <label title="Statistical anomaly detection — flags outlier intervals."><input type="checkbox" id="pp-anomaly" /> Anomaly Detection</label>
+        <label title="Statistical anomaly detection - flags outlier intervals."><input type="checkbox" id="pp-anomaly" /> Anomaly Detection</label>
       </div>
       <div class="adv" style="display:none; margin-top:.4rem; font-size:12px; color:#605e5c;">
         <span>Smooth window: <input id="pp-smooth-window" type="number" value="5" min="1" max="50" style="width:50px; font-size:12px;" /></span>
@@ -423,7 +423,7 @@
         <span id="run-spinner" style="display:none; font-size:13px;">&#9203; Running...</span>
       </div>
       <div id="quick-run-info" style="display:none; margin-top:.4rem; font-size:12px; color:#605e5c; background:#f3f2f1; border-radius:4px; padding:6px 10px;">
-        <strong>Quick Run</strong> auto-detects parameters, runs correlation, and selects diverse results — no configuration needed.
+        <strong>Quick Run</strong> auto-detects parameters, runs correlation, and selects diverse results - no configuration needed.
       </div>
       <div class="progress-bar" id="run-progress" style="display:none;"><div class="fill"></div></div>
       <div id="run-error" class="wc-status"></div>

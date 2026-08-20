@@ -6,7 +6,7 @@
     "Parameters": []
   },
   "_meta": {
-    "description": "Activity record — represents an executed workflow (FMU run, study, analysis) linked to an ActivityTemplate.",
+    "description": "Activity record - represents an executed workflow (FMU run, study, analysis) linked to an ActivityTemplate.",
     "required_fields": ["Name"],
     "parameter_template": {
       "Title": "Parameter name (matches ActivityTemplate.ParameterTemplates[].Title)",

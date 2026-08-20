@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-record_demo.py — Automated video walkthrough of WeCo Studio (§3.1)
+record_demo.py - Automated video walkthrough of WeCo Studio (§3.1)
 ====================================================================
 
 Drives WeCo Studio programmatically and captures the screen using

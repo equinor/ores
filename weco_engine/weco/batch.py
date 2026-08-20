@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-weco_batch — Run WeCo correlation workflows from a JSON config file.
+weco_batch - Run WeCo correlation workflows from a JSON config file.
 =====================================================================
 
 Usage::
@@ -80,7 +80,7 @@ def _resolve_options(cfg: dict) -> dict:
             preset = DEPENV_PRESETS.get(preset_key, {})
             opts.update(preset.get("recommended_opts", {}))
         except ImportError:
-            logger.warning(f"Cannot load preset {preset_key} — depenv not available")
+            logger.warning(f"Cannot load preset {preset_key} - depenv not available")
 
     # Explicit options override preset
     opts.update(cfg.get("options", {}))
@@ -251,7 +251,7 @@ def main():
 
     # Print summary
     print("\n" + "=" * 60)
-    print("WeCo Batch — Summary")
+    print("WeCo Batch - Summary")
     print("=" * 60)
     for r in results:
         if "error" in r:

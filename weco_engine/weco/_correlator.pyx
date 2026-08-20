@@ -1,6 +1,6 @@
 # cython: boundscheck=False, wraparound=False, cdivision=True
 """
-weco._correlator — Cython fallback DTW correlator (§7.2)
+weco._correlator - Cython fallback DTW correlator (§7.2)
 =========================================================
 
 A Cython implementation of the n-best graph-DTW correlator for use

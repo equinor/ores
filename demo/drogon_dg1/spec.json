@@ -2,7 +2,7 @@
   "generator": "ontology",
   "project": "Drogon",
   "gate": "DG1",
-  "description": "Drogon DG1 Concept Selection — baseline BD with relationship keys, typed remarks, and economics",
+  "description": "Drogon DG1 Concept Selection - baseline BD with relationship keys, typed remarks, and economics",
 
   "business_decision": {
     "id": "dev:master-data--BusinessDecision:Drogon-DG1-Identify:1",
@@ -124,15 +124,15 @@
 
     "remarks": [
       {"source": "DG1-Recommendation", "text": "Upgrade FMU to Level 3 (include structural uncertainty) before DG2."},
-      {"source": "DG1-Recommendation", "text": "Acquire additional core data in floodplain facies — porosity model poorly constrained."},
+      {"source": "DG1-Recommendation", "text": "Acquire additional core data in floodplain facies - porosity model poorly constrained."},
       {"source": "DG1-Recommendation", "text": "Reprocess 2019 4D seismic to confirm fault communication across NE boundary."},
-      {"source": "DG1-Recommendation", "text": "Review OWC in SouthWing segment — possible tilt from regional aquifer."},
+      {"source": "DG1-Recommendation", "text": "Review OWC in SouthWing segment - possible tilt from regional aquifer."},
       {"source": "DG1-Recommendation", "text": "Run flow simulation (OPM) for 20-year production forecast with WAG sensitivity."},
       {"source": "DG1-Recommendation", "text": "Evaluate infill well potential for future phases."}
     ],
 
     "activity_states": [
-      {"milestone_id": "DG1", "date": "2026-02-28T00:00:00Z", "status": "Completed", "remark": "DG1 Concept Selection — Approved"},
+      {"milestone_id": "DG1", "date": "2026-02-28T00:00:00Z", "status": "Completed", "remark": "DG1 Concept Selection - Approved"},
       {"milestone_id": "DG2", "date": "2026-05-15T00:00:00Z", "status": "Planned", "remark": "DG2 Concept Maturity"},
       {"milestone_id": "DG3", "date": "2027-01-01T00:00:00Z", "status": "Planned", "remark": "DG3 Project Sanction"},
       {"milestone_id": "DG4", "date": "2027-07-01T00:00:00Z", "status": "Planned", "remark": "DG4 Execution Completion"}

@@ -1,5 +1,5 @@
 """
-Tests for weco.export — Zonation, horizon picks, CSV/JSON/LAS export
+Tests for weco.export - Zonation, horizon picks, CSV/JSON/LAS export
 ====================================================================
 
 Tests res_to_zonation_log, res_to_horizon_picks,
@@ -327,7 +327,7 @@ class TestCorrelationSummary:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §15.18 — Round-trip tests for new export formats
+# §15.18 - Round-trip tests for new export formats
 # ═══════════════════════════════════════════════════════════════════════════
 
 

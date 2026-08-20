@@ -34,7 +34,7 @@
     "Contributors": [
       {"Name": "Abraham G. Werner", "Organisation": "Drogon Geomodelling"},
       {"Name": "Alexander von Humboldt", "Organisation": "ST MSU Subsurface QA"},
-      {"Name": "Mary Anning", "Organisation": "Drogon Facilities — flow assurance & subsea"}
+      {"Name": "Mary Anning", "Organisation": "Drogon Facilities - flow assurance & subsea"}
     ],
 
     "risk_ids": [
@@ -86,7 +86,7 @@
         "selection": "OPM Flow: 7P/3I, WAG year 5. Peak 45 kbbl/d year 3."
       },
       {
-        "title": "Development Concept — Full 7-segment (SELECTED)",
+        "title": "Development Concept - Full 7-segment (SELECTED)",
         "target_id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2:1",
         "type": "selects",
         "artifact": "DevelopmentConcept",
@@ -94,7 +94,7 @@
         "selection": "Subsea tieback to FPSO, 12 km, 2 manifolds. APPROVED."
       },
       {
-        "title": "Development Concept — Reduced scope (REJECTED)",
+        "title": "Development Concept - Reduced scope (REJECTED)",
         "target_id": "dev:work-product-component--DevelopmentConcept:Drogon-DG2-Reduced:1",
         "type": "alternativeTo",
         "artifact": "DevelopmentConcept",
@@ -170,11 +170,11 @@
     ],
 
     "remarks": [
-      {"source": "DG1-Recommendation", "text": "Upgrade FMU to Level 3 (structural uncertainty). STATUS: Done — included in DG2 volumes."},
-      {"source": "DG1-Recommendation", "text": "Acquire core data in floodplain facies. STATUS: Done — porosity revised 0.18→0.14."},
-      {"source": "DG1-Recommendation", "text": "Reprocess 4D seismic for fault communication. STATUS: Done — fault risk mitigated."},
-      {"source": "DG1-Recommendation", "text": "Review OWC in SouthWing. STATUS: Partial — tilt confirmed, OWC adjusted -5m."},
-      {"source": "DG1-Recommendation", "text": "Run OPM production forecast. STATUS: Done — 20-year profile delivered."},
+      {"source": "DG1-Recommendation", "text": "Upgrade FMU to Level 3 (structural uncertainty). STATUS: Done - included in DG2 volumes."},
+      {"source": "DG1-Recommendation", "text": "Acquire core data in floodplain facies. STATUS: Done - porosity revised 0.18→0.14."},
+      {"source": "DG1-Recommendation", "text": "Reprocess 4D seismic for fault communication. STATUS: Done - fault risk mitigated."},
+      {"source": "DG1-Recommendation", "text": "Review OWC in SouthWing. STATUS: Partial - tilt confirmed, OWC adjusted -5m."},
+      {"source": "DG1-Recommendation", "text": "Run OPM production forecast. STATUS: Done - 20-year profile delivered."},
       {"source": "DG1-Recommendation", "text": "Evaluate infill potential. STATUS: Deferred to DG3 (NorthHorst upside)."},
       {"source": "DG2-Review-Comment", "text": "Porosity downgrade adequately reflected in revised volumes. No further action."},
       {"source": "DG2-Review-Comment", "text": "WAG from year 5 adds complexity. Fallback: continuous water injection if underperforming."},
@@ -182,15 +182,15 @@
       {"source": "DG2-Condition", "text": "Confirm FPSO water injection capacity (35,000 bbl/d) with facilities before FEED."},
       {"source": "DG2-Dissent", "text": "Reservoir engineering lead recommends 2-segment phased approach due to porosity risk. Overruled by economics."},
       {"source": "DG3-Recommendation", "text": "Include dynamic uncertainty (history match) in DG3 forecast."},
-      {"source": "DG3-Recommendation", "text": "Evaluate NorthHorst infill well potential — upside not in base case."},
+      {"source": "DG3-Recommendation", "text": "Evaluate NorthHorst infill well potential - upside not in base case."},
       {"source": "Audit-Note", "text": "Volumes revised 2026-02-12 (Activity:Drogon-DG2-VolumeUpdate). P50 STOIIP 312→287 MSm³."},
       {"source": "Audit-Note", "text": "Risk Drogon-FaultCompartment mitigated 2026-04-15 (4D seismic). High→Low."},
       {"source": "Audit-Note", "text": "Risks Drogon-WaterBreakthrough and Drogon-SubseaTiebackDistance added 2026-03-20."}
     ],
 
     "activity_states": [
-      {"milestone_id": "DG1", "date": "2026-02-28T00:00:00Z", "status": "Completed", "remark": "DG1 Concept Selection — Approved"},
-      {"milestone_id": "DG2", "date": "2026-05-15T00:00:00Z", "status": "Completed", "remark": "DG2 Concept Maturity — full 7-segment"},
+      {"milestone_id": "DG1", "date": "2026-02-28T00:00:00Z", "status": "Completed", "remark": "DG1 Concept Selection - Approved"},
+      {"milestone_id": "DG2", "date": "2026-05-15T00:00:00Z", "status": "Completed", "remark": "DG2 Concept Maturity - full 7-segment"},
       {"milestone_id": "DG3", "date": "2027-01-01T00:00:00Z", "status": "Planned", "remark": "DG3 Project Sanction"},
       {"milestone_id": "DG4", "date": "2027-07-01T00:00:00Z", "status": "Planned", "remark": "DG4 Execution Completion"}
     ]
@@ -230,7 +230,7 @@
       {"milestone_id": "DG2-GeoModel", "status": "Completed", "date": "2026-03-15T00:00:00Z", "remark": "Structural uncertainty + revised porosity model"},
       {"milestone_id": "DG2-WellPlan", "status": "Completed", "date": "2026-04-25T00:00:00Z", "remark": "7P + 3I + 2WAG. Subsea template layout."},
       {"milestone_id": "DG2-Documents", "status": "Completed", "date": "2026-05-01T00:00:00Z", "remark": "SRA, CRA, PDO draft, PTR delivered"},
-      {"milestone_id": "DG2-CoreData", "status": "Outstanding", "date": "2027-01-01T00:00:00Z", "remark": "CentralFlanks core — condition for DG3"}
+      {"milestone_id": "DG2-CoreData", "status": "Outstanding", "date": "2027-01-01T00:00:00Z", "remark": "CentralFlanks core - condition for DG3"}
     ],
 
     "relationships": [
@@ -247,7 +247,7 @@
     {
       "template_name": "Volume Update Action",
       "template_description": "Update volume estimates linked to a decision gate. Creates audit trail.",
-      "name": "Volume update — porosity revision (Feb 2026)",
+      "name": "Volume update - porosity revision (Feb 2026)",
       "description": "P50 STOIIP revised 312→287 MSm³ (-8%) following core-based porosity downgrade.",
       "start": "2026-02-12T14:00:00Z",
       "end": "2026-02-12T16:00:00Z",

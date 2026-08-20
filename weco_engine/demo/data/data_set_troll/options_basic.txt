@@ -1,4 +1,4 @@
-# Config: TROLL — Basic variance CCF (unconstrained)
+# Config: TROLL - Basic variance CCF (unconstrained)
 # Correlates FACIES without chronostratigraphic constraints
 # Useful to show how unconstrained correlation can miscorrelate
 #

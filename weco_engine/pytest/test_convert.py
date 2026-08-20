@@ -1,5 +1,5 @@
 """
-Tests for weco.convert — WeCoConvert CLI
+Tests for weco.convert - WeCoConvert CLI
 =========================================
 
 Tests the main() CLI entry point for format conversion with

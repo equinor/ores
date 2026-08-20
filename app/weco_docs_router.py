@@ -83,7 +83,7 @@ _WECO_DOC_SECTIONS: list[dict] = [
                 "slug": "hierarchical",
                 "file": "hierarchical_tutorial.md",
                 "title": "Hierarchical Correlation",
-                "desc": "Sequence stratigraphy meets Graph-DTW — multi-scale correlation",
+                "desc": "Sequence stratigraphy meets Graph-DTW - multi-scale correlation",
             },
             {
                 "slug": "biostratigraphy",
@@ -101,7 +101,7 @@ _WECO_DOC_SECTIONS: list[dict] = [
                 "slug": "seistiles",
                 "file": "seistiles_constraint.md",
                 "title": "Seismic Constraint",
-                "desc": "Constrain correlation with seismic tiles — algorithm and usage",
+                "desc": "Constrain correlation with seismic tiles - algorithm and usage",
             },
         ],
     },
@@ -125,7 +125,7 @@ _WECO_DOC_SECTIONS: list[dict] = [
                 "slug": "ores-integration",
                 "file": "ores_integration.md",
                 "title": "ORES Integration",
-                "desc": "How WeCo integrates with ORES — in-process API and job routing",
+                "desc": "How WeCo integrates with ORES - in-process API and job routing",
             },
             {
                 "slug": "rddms-stratcolumn",

@@ -1,5 +1,5 @@
 """
-weco.geomodel_feedback — 3D structural model feedback loop (§6.3)
+weco.geomodel_feedback - 3D structural model feedback loop (§6.3)
 ==================================================================
 
 Use geomodel thickness maps to update correlation priors.  After an
@@ -48,12 +48,12 @@ class GeomodelFeedback:
         Parameters
         ----------
         thickness_maps : dict
-            ``{layer_name: ndarray}`` — modelled thickness at each grid cell.
+            ``{layer_name: ndarray}`` - modelled thickness at each grid cell.
             Shape ``(ny, nx)`` with geographic coordinates.
         well_positions : dict
-            ``{well_name: (x, y)}`` — well head positions.
+            ``{well_name: (x, y)}`` - well head positions.
         observed_thicknesses : dict
-            ``{well_name: {layer_name: thickness}}`` — measured thicknesses.
+            ``{well_name: {layer_name: thickness}}`` - measured thicknesses.
         """
         self.thickness_maps = thickness_maps
         self.well_positions = well_positions

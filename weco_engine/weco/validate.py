@@ -293,7 +293,7 @@ def compare_correlations(
 
 
 # ---------------------------------------------------------------------------
-# Quality scoring (from thesis §6.3.4 — minor cost changes → big effects)
+# Quality scoring (from thesis §6.3.4 - minor cost changes → big effects)
 # ---------------------------------------------------------------------------
 
 def score_correlation_quality(
@@ -337,7 +337,7 @@ def score_correlation_quality(
     n_wells = data.res_file.nbr_well()
     cost = data.res_file.get_result_cost(cor_num)
 
-    # 1. Cost score — normalised against worst path
+    # 1. Cost score - normalised against worst path
     if n > 1:
         worst_cost = data.res_file.get_result_cost(n - 1)
         cost_score = 1.0 - (cost / (worst_cost + 1e-10))
@@ -346,7 +346,7 @@ def score_correlation_quality(
 
     cost_score = max(0.0, min(1.0, cost_score))
 
-    # 2. Gap score — fewer gaps is better
+    # 2. Gap score - fewer gaps is better
     n_steps = 0
     n_gaps = 0
     prev = path[0]
@@ -361,7 +361,7 @@ def score_correlation_quality(
     gap_score = 1.0 - (n_gaps / max(n_steps, 1))
     gap_score = max(0.0, min(1.0, gap_score))
 
-    # 3. Consistency score — check monotonicity per well
+    # 3. Consistency score - check monotonicity per well
     n_violations = 0
     for wi in range(n_wells):
         prev_m = path[0][wi]

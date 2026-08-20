@@ -1374,9 +1374,9 @@ template <class COSTFUNC> void Correlator::run_wavefront(
 		CorGraph::NodeId n1_start = (diag < size2) ? 0 : (diag - size2 + 1);
 		CorGraph::NodeId n1_end = std::min(diag, size1 - 1);
 
-		// §6.7: Anti-diagonal cells are independent — parallelise with OpenMP
+		// §6.7: Anti-diagonal cells are independent - parallelise with OpenMP
 		// Note: sparse path buffer (unordered_map) is not thread-safe for concurrent
-		// operator[] — disable parallelism in sparse mode.
+		// operator[] - disable parallelism in sparse mode.
 		#pragma omp parallel for schedule(dynamic) if (!use_sparse_ && n1_end - n1_start > 16)
 		for (CorGraph::NodeId node1 = n1_start; node1 <= n1_end; node1++) {
 			CorGraph::NodeId node2 = diag - node1;

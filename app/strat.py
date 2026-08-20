@@ -993,7 +993,7 @@ async def _smda_auth(request: Request) -> dict:
 
     Strategy:
       1. Try dedicated SMDA-audience token (az CLI / session RT exchange / client_credentials).
-      2. Fall back to the user's current OSDU access token — the Equinor APIM
+      2. Fall back to the user's current OSDU access token - the Equinor APIM
          gateway accepts any valid Azure AD token from the same tenant when
          combined with a valid subscription key.
     """
@@ -2076,7 +2076,7 @@ async def _push_resqml_to_rddms(
     # Push objects in multiple sequential transactions so that referenced
     # objects are fully committed before objects that reference them.
     # The RDDMS validates all DataObjectReferences at commit time and only
-    # resolves against objects already committed in the dataspace — not
+    # resolves against objects already committed in the dataspace - not
     # against other objects in the same uncommitted transaction.
     #
     # Phase 1: features (no outgoing references)

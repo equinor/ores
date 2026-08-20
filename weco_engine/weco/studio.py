@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WeCo Studio — Professional Well Correlation Workbench
+WeCo Studio - Professional Well Correlation Workbench
 =====================================================
 A workflow-oriented PyQt6 GUI for:
   • Loading / inspecting well data  (any format)
@@ -19,11 +19,11 @@ Usage:
 Architecture:
     Sidebar (QListWidget)  ←→  Stacked pages (QStackedWidget)
       0  Welcome / Demo Picker
-      1  Data — load & inspect wells
-      2  Parameters — grouped cost-function config
-      3  Run — execute engine (threaded)
-      4  Results — correlation viewer
-      5  Help — parameter referece
+      1  Data - load & inspect wells
+      2  Parameters - grouped cost-function config
+      3  Run - execute engine (threaded)
+      4  Results - correlation viewer
+      5  Help - parameter referece
 """
 
 import sys
@@ -94,10 +94,10 @@ WELL_COLORS = [
     "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
 ]
 
-from weco.ext import RESET_OPTS  # noqa: E402  — single source for engine resets
+from weco.ext import RESET_OPTS  # noqa: E402  - single source for engine resets
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  .weco.env loader — populate os.environ from project secrets file
+#  .weco.env loader - populate os.environ from project secrets file
 # ═══════════════════════════════════════════════════════════════════════════
 
 def _load_weco_env():
@@ -164,7 +164,7 @@ OPTION_PRESETS = {
 
 DEMOS = [
     # ══════════════════════════════════════════════════════════════════════
-    #  Concept Demos — teaching specific constraints (2-3 wells, instant)
+    #  Concept Demos - teaching specific constraints (2-3 wells, instant)
     # ══════════════════════════════════════════════════════════════════════
     {
         "id": "variance_weights",
@@ -244,7 +244,7 @@ DEMOS = [
         "wells": "data_set_biozone_distality/wells.txt",
         "description": (
             "2 wells combining no-crossing (BIOZONES) with\n"
-            "distality. Biozone datums cannot swap order —\n"
+            "distality. Biozone datums cannot swap order -\n"
             "demonstrates hard stratigraphic anchoring."
         ),
         "opts": {
@@ -258,7 +258,7 @@ DEMOS = [
     },
     {
         "id": "hugin_tidal",
-        "title": "Hugin Fm — Tidal Distality (Real Wells)",
+        "title": "Hugin Fm - Tidal Distality (Real Wells)",
         "group": "Advanced",
         "wells": "data_set_hugin_tidal/facies.wells.txt",
         "geology": "shallow_marine",
@@ -317,13 +317,13 @@ DEMOS = [
     },
 
     # ══════════════════════════════════════════════════════════════════════
-    #  Domain Demos — real geological settings (consistent with api.py)
+    #  Domain Demos - real geological settings (consistent with api.py)
     # ══════════════════════════════════════════════════════════════════════
 
     # ── Coal Basin (10 wells) ───────────────────────────────────────────
     {
         "id": "coal",
-        "title": "Coal — DEN+GR+SON Multi-Log",
+        "title": "Coal - DEN+GR+SON Multi-Log",
         "group": "Coal Basin",
         "wells": "data_set_coal/wells_10.txt",
         "geology": "coal",
@@ -358,7 +358,7 @@ DEMOS = [
     },
     {
         "id": "coal-full",
-        "title": "Coal — 5-Log Full Suite",
+        "title": "Coal - 5-Log Full Suite",
         "group": "Coal Basin",
         "wells": "data_set_coal/wells_10.txt",
         "geology": "coal",
@@ -369,7 +369,7 @@ DEMOS = [
         ),
         "geology_doc": (
             "<b>Log Weights Rationale:</b><br>"
-            "• DEN (35%): Best coal indicator — 1.3 vs 2.5 g/cc<br>"
+            "• DEN (35%): Best coal indicator - 1.3 vs 2.5 g/cc<br>"
             "• GR (25%): Coal has very low radioactivity (20 API)<br>"
             "• SON (15%): Coal is slow (120 µs/ft) vs sand (60)<br>"
             "• RT (15%): Coal is extremely resistive (500+ Ω·m)<br>"
@@ -394,7 +394,7 @@ DEMOS = [
     },
     {
         "id": "coal-seam",
-        "title": "Coal — Seam-Constrained",
+        "title": "Coal - Seam-Constrained",
         "group": "Coal Basin",
         "wells": "data_set_coal/wells_10.txt",
         "geology": "coal",
@@ -408,7 +408,7 @@ DEMOS = [
             "coal, and non-coal only with non-coal. This is the strongest "
             "constraint for mine planning when seam identification is "
             "reliable.<br><br>"
-            "<b>Gap Cost = 4.0:</b> Very high — strongly penalises uncorrelated "
+            "<b>Gap Cost = 4.0:</b> Very high - strongly penalises uncorrelated "
             "seams."
         ),
         "opts": {
@@ -429,7 +429,7 @@ DEMOS = [
     # ── Quaternary Hydrogeology (20 wells) ──────────────────────────────
     {
         "id": "quaternary",
-        "title": "Quaternary — GR+RT Multi-Log",
+        "title": "Quaternary - GR+RT Multi-Log",
         "group": "Quaternary Hydrogeology",
         "wells": "data_set_quaternary/wells_20.txt",
         "geology": "quaternary",
@@ -462,7 +462,7 @@ DEMOS = [
     },
     {
         "id": "quat-hydro",
-        "title": "Quaternary — 3-Log Hydrogeological",
+        "title": "Quaternary - 3-Log Hydrogeological",
         "group": "Quaternary Hydrogeology",
         "wells": "data_set_quaternary/wells_20.txt",
         "geology": "quaternary",
@@ -474,7 +474,7 @@ DEMOS = [
         "geology_doc": (
             "<b>Why three logs?</b> GR separates lithology, RT maps "
             "permeability, SPT identifies compact till vs loose sand.<br><br>"
-            "<b>Gap Cost = 2.0:</b> Moderate — allows hiatuses where Eemian "
+            "<b>Gap Cost = 2.0:</b> Moderate - allows hiatuses where Eemian "
             "interglacial is missing (~30% of wells)."
         ),
         "opts": {
@@ -493,7 +493,7 @@ DEMOS = [
     # ── Shallow Marine (10 wells, Hugin Fm analogue) ────────────────────
     {
         "id": "shallow_marine",
-        "title": "Shallow Marine — GR+RHOB+DT + Biozone",
+        "title": "Shallow Marine - GR+RHOB+DT + Biozone",
         "group": "Shallow Marine",
         "wells": "data_set_shallow_marine/wells.txt",
         "geology": "shallow_marine",
@@ -530,7 +530,7 @@ DEMOS = [
     },
     {
         "id": "sm-distality",
-        "title": "Shallow Marine — Distality Cost",
+        "title": "Shallow Marine - Distality Cost",
         "group": "Shallow Marine",
         "wells": "data_set_shallow_marine/wells.txt",
         "geology": "shallow_marine",
@@ -566,7 +566,7 @@ DEMOS = [
     # ── Delta Front (8 wells) ───────────────────────────────────────────
     {
         "id": "delta",
-        "title": "Delta — Sequence Boundaries + GR+DEN",
+        "title": "Delta - Sequence Boundaries + GR+DEN",
         "group": "Delta Front",
         "wells": "data_set_delta/wells.txt",
         "geology": "delta",
@@ -592,7 +592,7 @@ DEMOS = [
     # ── Fluvial Channel Belt (12 wells) ─────────────────────────────────
     {
         "id": "fluvial",
-        "title": "Fluvial — Channel Belt (Gap Cost)",
+        "title": "Fluvial - Channel Belt (Gap Cost)",
         "group": "Fluvial",
         "wells": "data_set_fluvial/wells.txt",
         "geology": "fluvial",
@@ -616,7 +616,7 @@ DEMOS = [
     # ── Bryson Canyon (7 wells, Cretaceous) ─────────────────────────────
     {
         "id": "bryson",
-        "title": "Bryson — Facies + Zone Constraint",
+        "title": "Bryson - Facies + Zone Constraint",
         "group": "Clastic Sequences",
         "wells": "data_set_bryson/wells.txt",
         "geology": "coastal_plain",
@@ -634,7 +634,7 @@ DEMOS = [
     },
     {
         "id": "bryson-distality",
-        "title": "Bryson — Distality Ordering",
+        "title": "Bryson - Distality Ordering",
         "group": "Clastic Sequences",
         "wells": "data_set_bryson/wells.txt",
         "geology": "coastal_plain",
@@ -647,7 +647,7 @@ DEMOS = [
             "<b>Distality ordering:</b> Wells sorted proximal→distal so "
             "correlations respect depositional dip direction.<br><br>"
             "<b>ZONE constraint:</b> Prevents correlations crossing "
-            "established zone boundaries — anchors within packages."
+            "established zone boundaries - anchors within packages."
         ),
         "opts": {
             "var_data": "DISTALITY", "order": "distality",
@@ -661,7 +661,7 @@ DEMOS = [
     # ── Sigrun Field (6 wells, Upper Jurassic) ──────────────────────────
     {
         "id": "sigrun",
-        "title": "Sigrun — GR+NPHI Multi-Log",
+        "title": "Sigrun - GR+NPHI Multi-Log",
         "group": "North Sea",
         "wells": "data_set_sigrun/wells.txt",
         "geology": "shallow_marine",
@@ -681,7 +681,7 @@ DEMOS = [
     },
     {
         "id": "sigrun-sequence",
-        "title": "Sigrun — GR + Flooding Surfaces",
+        "title": "Sigrun - GR + Flooding Surfaces",
         "group": "North Sea",
         "wells": "data_set_sigrun/wells.txt",
         "geology": "shallow_marine",
@@ -701,7 +701,7 @@ DEMOS = [
     },
     {
         "id": "sigrun-facies",
-        "title": "Sigrun — GR + Distality (FACIES)",
+        "title": "Sigrun - GR + Distality (FACIES)",
         "group": "North Sea",
         "wells": "data_set_sigrun/wells.txt",
         "geology": "shallow_marine",
@@ -723,13 +723,13 @@ DEMOS = [
     # ── Troll Field (23 wells, Upper Jurassic) ──────────────────────────
     {
         "id": "troll",
-        "title": "Troll — Categorical Facies",
+        "title": "Troll - Categorical Facies",
         "group": "North Sea",
         "wells": "data_set_troll/wells.txt",
         "geology": "shallow_marine",
         "description": (
             "23 Troll field wells with categorical FACIES.\n"
-            "No continuous logs — correlation driven purely\n"
+            "No continuous logs - correlation driven purely\n"
             "by facies similarity. Shows genuine ambiguity."
         ),
         "opts": {
@@ -741,7 +741,7 @@ DEMOS = [
     },
     {
         "id": "troll-biozone",
-        "title": "Troll — Biozone Constrained",
+        "title": "Troll - Biozone Constrained",
         "group": "North Sea",
         "wells": "data_set_troll/wells.txt",
         "geology": "shallow_marine",
@@ -759,7 +759,7 @@ DEMOS = [
     },
     {
         "id": "troll-distality",
-        "title": "Troll — Distality Ordered + Biozone",
+        "title": "Troll - Distality Ordered + Biozone",
         "group": "North Sea",
         "wells": "data_set_troll/wells.txt",
         "geology": "shallow_marine",
@@ -788,7 +788,7 @@ DEMOS = [
     # ── Carbonate Platform (20 wells) ───────────────────────────────────
     {
         "id": "carbonate",
-        "title": "Carbonate — GR+DEN+RT Multi-Log",
+        "title": "Carbonate - GR+DEN+RT Multi-Log",
         "group": "Carbonates",
         "wells": "data_set_carbonate/wells.txt",
         "geology": "carbonate",
@@ -812,7 +812,7 @@ DEMOS = [
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Geological Environment Presets — "best guess defaults"
+#  Geological Environment Presets - "best guess defaults"
 # ═══════════════════════════════════════════════════════════════════════════
 #
 #  Each preset describes a geological setting and provides recommended
@@ -833,7 +833,7 @@ GEO_PRESETS = {
             "• Till/clay produce high GR; sand/gravel produce low GR\n"
             "• RT separates permeable (aquifer) from impermeable (aquitard)\n"
             "• SPT/MS can improve discrimination in till-dominated settings\n"
-            "• Eemian interglacial may be missing — allow moderate gap cost\n"
+            "• Eemian interglacial may be missing - allow moderate gap cost\n"
             "• Buried valleys create locally thick gravel fills\n"
             "• Periglacial features (Eiskeil, cryoturbation) add complexity"
         ),
@@ -877,7 +877,7 @@ GEO_PRESETS = {
             "• Sonic slowness is very high in coal (120 µs/ft)\n"
             "• Tonstein (volcanic ash) = perfect isochronous marker\n"
             "• Marine bands = basin-wide correlation horizons\n"
-            "• Seam splitting is common — thick seams bifurcate laterally\n"
+            "• Seam splitting is common - thick seams bifurcate laterally\n"
             "• Channel washouts locally remove seams entirely"
         ),
         "recommended_opts": {
@@ -901,7 +901,7 @@ GEO_PRESETS = {
         "correlation_hint": (
             "Start with DEN as the primary log (highest weight). Add GR and "
             "RT/SON if DEN alone is ambiguous. Use high gap cost (3-5) to "
-            "penalise uncorrelated seams — coal should always find a match."
+            "penalise uncorrelated seams - coal should always find a match."
         ),
         "osdu_depenv": "coal",
     },
@@ -920,7 +920,7 @@ GEO_PRESETS = {
             "• Lateral facies change: shoreface (proximal) ↔ offshore (distal)\n"
             "• Clinoform geometry: beds thicken downdip\n"
             "• Biozones are the most reliable correlation markers\n"
-            "• Bay-fill mud looks like offshore mud on GR — use RHOB/NPHI\n"
+            "• Bay-fill mud looks like offshore mud on GR - use RHOB/NPHI\n"
             "• Transgressive lags are thin but distinctive (high RT, low NPHI)"
         ),
         "recommended_opts": {
@@ -934,7 +934,7 @@ GEO_PRESETS = {
         },
         "constraints_hint": (
             "If biozones are available, use no-crossing=BIOZONE to lock "
-            "parasequence boundaries — this is the most effective constraint. "
+            "parasequence boundaries - this is the most effective constraint. "
             "If facies are interpreted, use dist-facies for distality cost "
             "to account for lateral equivalence (offshore mud ↔ bay-fill mud)."
         ),
@@ -958,7 +958,7 @@ GEO_PRESETS = {
         ),
         "geology_notes": (
             "• Sand vs shale is the primary contrast (GR is key)\n"
-            "• Distality matters — proximal channels vs distal lobes\n"
+            "• Distality matters - proximal channels vs distal lobes\n"
             "• Thickness variations are large and systematic\n"
             "• Condensed sections/hemipelagic drapes = good markers\n"
             "• Use distality cost if paleogeography is known"
@@ -980,7 +980,7 @@ GEO_PRESETS = {
         "correlation_hint": (
             "GR should dominate (sand/shale contrast). Low gap cost allows "
             "condensation/erosion (common in deep water). If channels are "
-            "present, expect lateral thickness changes — distality helps."
+            "present, expect lateral thickness changes - distality helps."
         ),
         "osdu_depenv": "deep_marine",
     },
@@ -1039,7 +1039,7 @@ GEO_PRESETS = {
             "• Overbank fines (clay/silt) are more continuous markers\n"
             "• Stacking patterns (fining-up, coarsening-up) are diagnostic\n"
             "• Coal/peat beds and paleosols make good correlation markers\n"
-            "• Lateral facies changes are rapid — position ordering helps"
+            "• Lateral facies changes are rapid - position ordering helps"
         ),
         "recommended_opts": {
             "cost_function": "composite",
@@ -1052,7 +1052,7 @@ GEO_PRESETS = {
         "constraints_hint": (
             "If flood plain / lacustrine markers are recognised, use "
             "no-crossing to lock those horizons. Channel sands may not "
-            "correlate — allow the engine to skip them (moderate gap cost)."
+            "correlate - allow the engine to skip them (moderate gap cost)."
         ),
         "correlation_hint": (
             "GR is the primary discriminator (sand vs clay). RT adds "
@@ -1106,7 +1106,7 @@ PARAM_HELP = {
         "category": "Global",
         "tier": "fundamental",
         "scenario_test": True,
-        "scenario_hint": "Try 'pyramidal' vs 'position' vs 'distality' — order significantly affects results",
+        "scenario_hint": "Try 'pyramidal' vs 'position' vs 'distality' - order significantly affects results",
     },
     "thread": {
         "label": "Threads",
@@ -1248,11 +1248,11 @@ PARAM_HELP = {
         "values": ["", "topology", "architecture"],
         "help": (
             "Post-processing diversity strategy for output scenarios.\n\n"
-            "  (empty) — Default cost-based k-best (may give near-identical scenarios).\n"
-            "  topology — Filter results by topology distance (horizon count,\n"
+            "  (empty) - Default cost-based k-best (may give near-identical scenarios).\n"
+            "  topology - Filter results by topology distance (horizon count,\n"
             "             connectivity, gap fraction). Retains only architecturally\n"
             "             distinct scenarios.\n"
-            "  architecture — Run multiple gap-cost values to force genuinely\n"
+            "  architecture - Run multiple gap-cost values to force genuinely\n"
             "                 different geological models with different horizon counts.\n\n"
             "Recommended: 'topology' for fast post-filtering, 'architecture' for\n"
             "maximum diversity at the cost of longer runtime."
@@ -1268,10 +1268,10 @@ PARAM_HELP = {
         "values": ["", "auto", "report"],
         "help": (
             "Automatic log relevance screening before running correlation.\n\n"
-            "  (empty) — No screening (use all specified logs).\n"
-            "  auto — Automatically remove logs with low relevance scores\n"
+            "  (empty) - No screening (use all specified logs).\n"
+            "  auto - Automatically remove logs with low relevance scores\n"
             "         (flat, noisy, or scale-mismatched logs).\n"
-            "  report — Screen logs and report scores but don't modify options.\n\n"
+            "  report - Screen logs and report scores but don't modify options.\n\n"
             "This prevents costly errors like using GR for coal correlation\n"
             "(where DEN is the correct choice) or combining logs with\n"
             "incompatible scales (GR in API units + NPHI in fractions)."
@@ -1285,10 +1285,10 @@ PARAM_HELP = {
         "values": ["", "percentile", "zscore", "minmax"],
         "help": (
             "Cross-well log normalisation before correlation.\n\n"
-            "  (empty) — No normalisation (use raw values).\n"
-            "  percentile — Map P5–P95 to [0,1]. Robust to outliers.\n"
-            "  zscore — Mean=0, Std=1. Good for combining multiple logs.\n"
-            "  minmax — Global min–max to [0,1].\n\n"
+            "  (empty) - No normalisation (use raw values).\n"
+            "  percentile - Map P5–P95 to [0,1]. Robust to outliers.\n"
+            "  zscore - Mean=0, Std=1. Good for combining multiple logs.\n"
+            "  minmax - Global min–max to [0,1].\n\n"
             "Critical when combining logs with different scales:\n"
             "GR (0–150 API) + NPHI (0–0.5 fraction) → without normalisation\n"
             "the GR dominates purely due to scale, not geological relevance."
@@ -1452,7 +1452,7 @@ PARAM_HELP = {
         "category": "Constraints",
         "tier": "recommended",
         "scenario_test": True,
-        "scenario_hint": "Compare no_crossing (hard) vs same_region (soft) — which fits your confidence?",
+        "scenario_hint": "Compare no_crossing (hard) vs same_region (soft) - which fits your confidence?",
     },
     "same_region2": {
         "label": "Same-Region 2",
@@ -1560,7 +1560,7 @@ PARAM_HELP = {
         "category": "Gap",
         "tier": "fundamental",
         "scenario_test": True,
-        "scenario_hint": "KEY PARAMETER: try 0.0, 0.5, 1.0 — controls hiatus vs layer-cake behaviour",
+        "scenario_hint": "KEY PARAMETER: try 0.0, 0.5, 1.0 - controls hiatus vs layer-cake behaviour",
     },
     "const_gap_cost_start": {
         "label": "Gap Cost (start)",
@@ -1820,9 +1820,9 @@ PARAM_CATEGORIES = [
 
 # ── Parameter Tier System ───────────────────────────────────────────────
 # Tiers control default visibility in the GUI:
-#   fundamental — must be set by the user; always visible
-#   recommended — important for good results; visible in "Essential" mode
-#   advanced    — safe to auto-set; hidden in "Essential" mode
+#   fundamental - must be set by the user; always visible
+#   recommended - important for good results; visible in "Essential" mode
+#   advanced    - safe to auto-set; hidden in "Essential" mode
 TIER_FUNDAMENTAL = "fundamental"
 TIER_RECOMMENDED = "recommended"
 TIER_ADVANCED = "advanced"
@@ -1912,7 +1912,7 @@ def estimate_auto_params(well_list=None):
                 break
 
     except Exception:
-        pass  # Graceful degradation — return static defaults
+        pass  # Graceful degradation - return static defaults
 
     return estimates
 
@@ -2292,7 +2292,7 @@ class ParamWidget:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Page 0 — Welcome / Demo Picker
+#  Page 0 - Welcome / Demo Picker
 # ═══════════════════════════════════════════════════════════════════════════
 
 class WelcomePage(QWidget):
@@ -2427,7 +2427,7 @@ class WelcomePage(QWidget):
         right_lo.addWidget(start_box, 2)
 
         # Geology Presets box
-        preset_box = QGroupBox("Geology Presets — Best-Guess Defaults")
+        preset_box = QGroupBox("Geology Presets - Best-Guess Defaults")
         preset_lo = QVBoxLayout(preset_box)
         preset_lo.addWidget(QLabel(
             "Select your geological environment to load\n"
@@ -2547,7 +2547,7 @@ class WelcomePage(QWidget):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §11.2.3 — Facies Group Editor Dialog
+# §11.2.3 - Facies Group Editor Dialog
 # ═══════════════════════════════════════════════════════════════════════════
 
 class FaciesGroupEditorDialog(QDialog):
@@ -2667,7 +2667,7 @@ class FaciesGroupEditorDialog(QDialog):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# §11.7.3 — Erosion Surface Picker Dialog
+# §11.7.3 - Erosion Surface Picker Dialog
 # ═══════════════════════════════════════════════════════════════════════════
 
 class ErosionSurfacePickerDialog(QDialog):
@@ -2771,7 +2771,7 @@ class ErosionSurfacePickerDialog(QDialog):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Page 1 — Data Inspector
+#  Page 1 - Data Inspector
 # ═══════════════════════════════════════════════════════════════════════════
 
 class DataPage(QWidget):
@@ -2803,7 +2803,7 @@ class DataPage(QWidget):
         btn_qcview.setToolTip("Open wells in the professional correlation viewer for QC")
         btn_qcview.clicked.connect(self._view_wells)
         fbar.addWidget(btn_qcview)
-        # §11.7.3 — Erosion surface picker
+        # §11.7.3 - Erosion surface picker
         btn_erosion = QPushButton("Pick Erosion Surfaces…")
         btn_erosion.setToolTip(
             "Open interactive well-log viewer to manually place\n"
@@ -3499,7 +3499,7 @@ class DataPage(QWidget):
                 parent = parent.parent()
 
     def _browse(self):
-        # §4.12 — Format filter in open dialog with format combo
+        # §4.12 - Format filter in open dialog with format combo
         path, selected_filter = QFileDialog.getOpenFileName(
             self, "Open Well File", str(DATA_DIR),
             "All supported formats (*.wells.txt *.txt *.las *.epc *.csv *.wl *.las3 *.dlis *.xml);;"
@@ -3536,7 +3536,7 @@ class DataPage(QWidget):
         self._qc_window.show()
 
     def _pick_erosion_surfaces(self):
-        """§11.7.3 — Open erosion surface picker dialog."""
+        """§11.7.3 - Open erosion surface picker dialog."""
         if not self._well_list:
             QMessageBox.information(self, "WeCo", "Load wells first.")
             return
@@ -3584,7 +3584,7 @@ class DataPage(QWidget):
                        rec.stacking_pattern, rec.electrofacies, rec.smooth,
                        rec.log_qc, rec.ai_facies])
         self._cond_status.setText(
-            f"AI: {env_label} — {n_steps} steps enabled"
+            f"AI: {env_label} - {n_steps} steps enabled"
         )
 
         # Show detailed reasoning in a message box
@@ -3789,7 +3789,7 @@ class DataPage(QWidget):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Page 2 — Parameter Editor  (grouped, with contextual help)
+#  Page 2 - Parameter Editor  (grouped, with contextual help)
 # ═══════════════════════════════════════════════════════════════════════════
 
 class ParamsPage(QWidget):
@@ -3893,7 +3893,7 @@ class ParamsPage(QWidget):
         btn_redo.clicked.connect(self._redo)
         btn_lo.addWidget(btn_redo)
 
-        # §11.0.6 — Auto-tune wizard button
+        # §11.0.6 - Auto-tune wizard button
         btn_autotune = QPushButton("Auto-Tune…")
         btn_autotune.setToolTip(
             "Automatically tune parameters by running quick correlations "
@@ -3902,7 +3902,7 @@ class ParamsPage(QWidget):
         btn_autotune.clicked.connect(self._auto_tune)
         btn_lo.addWidget(btn_autotune)
 
-        # §12.5 — Hierarchical Mode toggle
+        # §12.5 - Hierarchical Mode toggle
         hier_lo = QHBoxLayout()
         lo.addLayout(hier_lo)
         hier_lo.addWidget(QLabel("Hierarchical Mode:"))
@@ -3917,7 +3917,7 @@ class ParamsPage(QWidget):
         hier_lo.addWidget(self._hier_combo)
         hier_lo.addStretch()
 
-        # §11.9.3 — Transport direction compass widget
+        # §11.9.3 - Transport direction compass widget
         compass_lo = QHBoxLayout()
         lo.addLayout(compass_lo)
         compass_lo.addWidget(QLabel("Transport Direction:"))
@@ -3938,7 +3938,7 @@ class ParamsPage(QWidget):
         compass_lo.addWidget(btn_auto_azimuth)
         compass_lo.addStretch()
 
-        # §11.2.3 — Facies group editor button
+        # §11.2.3 - Facies group editor button
         facies_lo = QHBoxLayout()
         lo.addLayout(facies_lo)
         facies_lo.addWidget(QLabel("Facies Groups:"))
@@ -4239,7 +4239,7 @@ class ParamsPage(QWidget):
                     pw.set_value(pdef["default"])
 
     def _auto_tune(self):
-        """§11.0.6 — Auto-tune wizard: run quick correlations with parameter variations."""
+        """§11.0.6 - Auto-tune wizard: run quick correlations with parameter variations."""
         QMessageBox.information(
             self,
             "Auto-Tune Wizard",
@@ -4259,7 +4259,7 @@ class ParamsPage(QWidget):
         self._autotune_requested = True
 
     def _auto_azimuth(self):
-        """§11.9.3 — Estimate transport direction from facies gradients."""
+        """§11.9.3 - Estimate transport direction from facies gradients."""
         QMessageBox.information(
             self,
             "Auto-detect Transport Direction",
@@ -4269,27 +4269,27 @@ class ParamsPage(QWidget):
         )
 
     def _open_facies_group_editor(self):
-        """§11.2.3 — Open a drag-and-drop facies group editor dialog."""
+        """§11.2.3 - Open a drag-and-drop facies group editor dialog."""
         dlg = FaciesGroupEditorDialog(self._facies_groups_edit.text(), self)
         if dlg.exec():
             self._facies_groups_edit.setText(dlg.get_groups_string())
 
     def get_hierarchical_mode(self):
-        """§12.5 — Return the selected hierarchical mode."""
+        """§12.5 - Return the selected hierarchical mode."""
         return self._hier_combo.currentText().lower()
 
     def get_azimuth(self):
-        """§11.9.3 — Return the selected transport azimuth."""
+        """§11.9.3 - Return the selected transport azimuth."""
         return self._azimuth_spin.value()
 
     def get_facies_groups(self):
-        """§11.2.3 — Return the facies groups string."""
+        """§11.2.3 - Return the facies groups string."""
         return self._facies_groups_edit.text().strip()
 
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Page 3 — Run Engine
+#  Page 3 - Run Engine
 # ═══════════════════════════════════════════════════════════════════════════
 
 class RunPage(QWidget):
@@ -4349,7 +4349,7 @@ class RunPage(QWidget):
         self.btn_cancel.clicked.connect(self._cancel_run)
         btn_lo.addWidget(self.btn_cancel)
 
-        # Quick Run — zero-config intelligent correlation
+        # Quick Run - zero-config intelligent correlation
         self.btn_quick_run = QPushButton("  ⚡ Quick Run  ")
         self.btn_quick_run.setToolTip(
             "Zero-configuration intelligent correlation:\n"
@@ -4367,7 +4367,7 @@ class RunPage(QWidget):
         )
         btn_lo.addWidget(self.btn_quick_run)
 
-        # §11.3.3 — Well Order Sensitivity button
+        # §11.3.3 - Well Order Sensitivity button
         self.btn_sensitivity = QPushButton("  Well Order Sensitivity  ")
         self.btn_sensitivity.setToolTip(
             "Run correlation with multiple well orderings to assess sensitivity.\n"
@@ -4381,7 +4381,7 @@ class RunPage(QWidget):
         self.btn_sensitivity.clicked.connect(self._run_sensitivity)
         btn_lo.addWidget(self.btn_sensitivity)
 
-        # Fine-Tune button — differential evolution parameter optimisation
+        # Fine-Tune button - differential evolution parameter optimisation
         self.btn_fine_tune = QPushButton("  🔧 Fine-Tune  ")
         self.btn_fine_tune.setToolTip(
             "Optimise correlation parameters using differential evolution.\n"
@@ -4399,15 +4399,15 @@ class RunPage(QWidget):
         self._worker = None
 
     def _run_sensitivity(self):
-        """§11.3.3 — Run well-order sensitivity analysis."""
+        """§11.3.3 - Run well-order sensitivity analysis."""
         QMessageBox.information(
             self,
             "Well Order Sensitivity",
             "This will run the correlation with two different well orderings\n"
             "(proximal-first and distal-first) and compare the results.\n\n"
             "The sensitivity module (weco.sensitivity) provides:\n"
-            "• configure_well_order() — set up ordering strategies\n"
-            "• EXTENDED_ORDER_KEYS — all available orderings\n\n"
+            "• configure_well_order() - set up ordering strategies\n"
+            "• EXTENDED_ORDER_KEYS - all available orderings\n\n"
             "Results comparison will be displayed after both runs complete.",
         )
         self._sensitivity_requested = True
@@ -4444,20 +4444,20 @@ class RunPage(QWidget):
             cost = res_file.get_result_cost(0)
             n = res_file.get_nbr_results()
             self.status_label.setText(
-                f"Done in {elapsed:.2f}s — {n} correlations, best cost: {cost:.4f}")
+                f"Done in {elapsed:.2f}s - {n} correlations, best cost: {cost:.4f}")
             self.log.appendPlainText(
                 f"\n{'─'*40}\n"
                 f"Finished in {elapsed:.2f}s\n"
                 f"{n} correlations found, best cost = {cost:.4f}")
         else:
-            self.status_label.setText(f"Finished in {elapsed:.2f}s — no results")
+            self.status_label.setText(f"Finished in {elapsed:.2f}s - no results")
             self.log.appendPlainText(f"\nNo correlations found ({elapsed:.2f}s)")
         self.run_finished.emit(res_file, well_list)
         self._worker = None
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Page 4 — Results Viewer
+#  Page 4 - Results Viewer
 # ═══════════════════════════════════════════════════════════════════════════
 
 class ResultsPage(QWidget):
@@ -4525,7 +4525,7 @@ class ResultsPage(QWidget):
         btn_diversity.clicked.connect(self._diversity_analysis)
         btn_row.addWidget(btn_diversity)
 
-        # §15.16 — Export Wizard
+        # §15.16 - Export Wizard
         btn_export_wizard = QPushButton("Export Wizard…")
         btn_export_wizard.setToolTip("Select artifacts, format, and destination")
         btn_export_wizard.clicked.connect(self._export_wizard)
@@ -4537,7 +4537,7 @@ class ResultsPage(QWidget):
         btn_popout.clicked.connect(self._popup_viewer)
         btn_row.addWidget(btn_popout)
 
-        # §12.6 — Systems tract overlay toggle
+        # §12.6 - Systems tract overlay toggle
         self._tract_overlay_cb = QCheckBox("Systems Tract Overlay")
         self._tract_overlay_cb.setToolTip(
             "Overlay coloured bands showing HST/TST/LST regions\n"
@@ -4605,7 +4605,7 @@ class ResultsPage(QWidget):
         bottom_lo.setContentsMargins(0, 4, 0, 0)
         bottom_lo.setSpacing(4)
 
-        # Summary table (hidden — shown via popup button)
+        # Summary table (hidden - shown via popup button)
         self.summary_table = QTableWidget()
         self.summary_table.setMaximumHeight(160)
         self.summary_table.setAlternatingRowColors(True)
@@ -4669,7 +4669,7 @@ class ResultsPage(QWidget):
         well_grp_lo.addLayout(well_btn_lo)
         bottom_lo.addWidget(well_group)
 
-        # §11.11.4 — Side-by-side comparison tab
+        # §11.11.4 - Side-by-side comparison tab
         sidebyside = QWidget()
         sbs_lo = QHBoxLayout(sidebyside)
         self._sbs_left = QLabel("Load a reference correlation\nto compare side-by-side.")
@@ -4782,7 +4782,7 @@ class ResultsPage(QWidget):
             self.summary_table.setItem(i, 0, QTableWidgetItem(str(i)))
             self.summary_table.setItem(i, 1, QTableWidgetItem(f"{cost:.6f}"))
             self.summary_table.setItem(i, 2, QTableWidgetItem(str(len(path))))
-            self.summary_table.setItem(i, 3, QTableWidgetItem("—"))
+            self.summary_table.setItem(i, 3, QTableWidgetItem("-"))
         self.summary_table.resizeColumnsToContents()
 
         # Feed professional CorrelationPlotWindow
@@ -4825,7 +4825,7 @@ class ResultsPage(QWidget):
         worker.start()
 
     def _on_plot_ready(self, png_bytes, cor_idx):
-        """Slot: background plot render finished — display the pixmap."""
+        """Slot: background plot render finished - display the pixmap."""
         self._png_bytes = png_bytes
         pm = QPixmap()
         pm.loadFromData(png_bytes)
@@ -4846,7 +4846,7 @@ class ResultsPage(QWidget):
                 self._corplot.set_result(self._res_file, idx)
             except Exception:
                 pass
-        # Update Wheeler diagram (lightweight — keep on main thread)
+        # Update Wheeler diagram (lightweight - keep on main thread)
         self._render_wheeler(idx)
 
     def _on_view_tab_changed(self, _tab_idx):
@@ -4904,11 +4904,11 @@ class ResultsPage(QWidget):
                 base_idx = deduped[si + 1][wi]
                 thickness = base_idx - top_idx
                 if thickness > 0:
-                    # Present — filled bar
+                    # Present - filled bar
                     ax.barh(wi, 1, left=si, height=0.8,
                             color=colors[wi % len(colors)], alpha=0.75, edgecolor='none')
                 else:
-                    # Gap — hatched
+                    # Gap - hatched
                     ax.barh(wi, 1, left=si, height=0.8,
                             color='#f8f8f8', alpha=1.0, edgecolor='#ccc',
                             linewidth=0.3, hatch='///')
@@ -4916,7 +4916,7 @@ class ResultsPage(QWidget):
         ax.set_yticks(range(n_wells))
         ax.set_yticklabels(well_names, fontsize=8)
         ax.set_xlabel("Correlation step (relative time →)", fontsize=9)
-        ax.set_title(f"Wheeler Diagram — Correlation #{cor_idx}  "
+        ax.set_title(f"Wheeler Diagram - Correlation #{cor_idx}  "
                      f"({n_steps - 1} intervals, {n_wells} wells)", fontsize=10)
         ax.set_xlim(-0.5, n_steps - 0.5)
         ax.set_ylim(-0.5, n_wells - 0.5)
@@ -4983,7 +4983,7 @@ class ResultsPage(QWidget):
             table.setItem(i, 0, QTableWidgetItem(str(i)))
             table.setItem(i, 1, QTableWidgetItem(f"{cost:.6f}"))
             table.setItem(i, 2, QTableWidgetItem(str(len(path))))
-            table.setItem(i, 3, QTableWidgetItem("—"))
+            table.setItem(i, 3, QTableWidgetItem("-"))
         table.resizeColumnsToContents()
         lo.addWidget(table)
 
@@ -4991,7 +4991,7 @@ class ResultsPage(QWidget):
         cur_idx = self.cor_spin.value()
         path = self._res_file.get_result_full_path(cur_idx)
         if path and n_wells > 0:
-            lo.addWidget(QLabel(f"<b>Correlation #{cur_idx} — line details:</b>"))
+            lo.addWidget(QLabel(f"<b>Correlation #{cur_idx} - line details:</b>"))
             detail_table = QTableWidget()
             detail_table.setAlternatingRowColors(True)
             detail_table.setColumnCount(n_wells + 1)
@@ -5165,7 +5165,7 @@ class ResultsPage(QWidget):
         return names
 
     def _toggle_tract_overlay(self, state):
-        """§12.6 — Toggle systems tract coloured band overlay."""
+        """§12.6 - Toggle systems tract coloured band overlay."""
         self._show_tract_overlay = bool(state)
         if hasattr(self, '_res_file') and self._res_file is not None:
             self._render(self.cor_spin.value())
@@ -5356,7 +5356,7 @@ class ResultsPage(QWidget):
         post_rec = recommend_postprocessing(self._well_list, environment=env)
 
         report_lines = [
-            f"AI Auto-Analysis — {env.replace('_', ' ').title()} "
+            f"AI Auto-Analysis - {env.replace('_', ' ').title()} "
             f"(confidence: {conf:.0%})",
             f"Quality threshold: {post_rec['quality_threshold']:.2f}",
             f"Uncertainty max std: {post_rec['uncertainty_max_std']:.1f} m",
@@ -5473,7 +5473,7 @@ class ResultsPage(QWidget):
         self._history_table.setRowCount(0)
 
     def _export_wizard(self):
-        """§15.16 — Export Wizard dialog: select artifacts, format, destination."""
+        """§15.16 - Export Wizard dialog: select artifacts, format, destination."""
         if self._res_file is None or self._well_list is None:
             QMessageBox.information(self, "WeCo", "Run a correlation first.")
             return
@@ -5555,7 +5555,7 @@ class ResultsPage(QWidget):
                     r = export_zonation_csv(self._res_file, self._well_list, p, cor_num=cor_num)
                     exported.extend(r if isinstance(r, list) else [r])
                 if checks["Zonation logs (LAS)"].isChecked():
-                    zon = {}  # placeholder — would need actual zonation
+                    zon = {}  # placeholder - would need actual zonation
                     p = os.path.join(out_dir, "zonation_las")
                     os.makedirs(p, exist_ok=True)
                 if checks["Correlation surfaces (GOCAD .ts)"].isChecked():
@@ -5600,7 +5600,7 @@ class ResultsPage(QWidget):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Page 5 — Documentation Center  (replaces old HelpPage)
+#  Page 5 - Documentation Center  (replaces old HelpPage)
 # ═══════════════════════════════════════════════════════════════════════════
 
 _WORKFLOW_HTML = """
@@ -5955,7 +5955,7 @@ def _build_geology_docs_html():
       <td>Are there known stratigraphic surfaces?</td>
       <td>no_crossing</td>
       <td>Use no-crossing with a region encoding those surfaces. This is the
-          strongest constraint — prevents correlations from violating known boundaries.</td>
+          strongest constraint - prevents correlations from violating known boundaries.</td>
     </tr>
     <tr>
       <td>Should similar facies match?</td>
@@ -5975,7 +5975,7 @@ def _build_geology_docs_html():
       <td>band_width</td>
       <td>10: Thin markers in long wells (coal). Tight = fast.<br>
           20–40: Marine parasequences, moderate thickness change.<br>
-          60+: Fluvial / highly discontinuous — channels jump depths.</td>
+          60+: Fluvial / highly discontinuous - channels jump depths.</td>
     </tr>
     <tr>
       <td>Does thickness vary systematically?</td>
@@ -6092,7 +6092,7 @@ class DocsPage(QWidget):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  §3.44 — Plugin Manager Page
+#  §3.44 - Plugin Manager Page
 # ═══════════════════════════════════════════════════════════════════════════
 
 class PluginPage(QWidget):
@@ -6196,7 +6196,7 @@ class PluginPage(QWidget):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  Main Window — Sidebar + Stacked Pages
+#  Main Window - Sidebar + Stacked Pages
 # ═══════════════════════════════════════════════════════════════════════════
 
 PAGE_NAMES = ["Welcome", "Data", "Parameters", "Run", "Results", "Docs", "Plugins"]
@@ -6313,7 +6313,7 @@ class WeCoStudio(QMainWindow):
         self.setWindowTitle(f"WeCo Studio  v{VERSION}")
         self.setMinimumSize(1000, 650)
         self.resize(1280, 820)
-        self.setAcceptDrops(True)  # §3.43 — drag-and-drop support
+        self.setAcceptDrops(True)  # §3.43 - drag-and-drop support
 
         self._current_demo = None
         self._dark_mode = self._detect_os_dark_mode()
@@ -6330,7 +6330,7 @@ class WeCoStudio(QMainWindow):
     def closeEvent(self, event):
         """Ensure all background threads are stopped before exit."""
         workers = []
-        # RunPage engine worker — abort the C++ engine first
+        # RunPage engine worker - abort the C++ engine first
         if hasattr(self, 'page_run'):
             w = getattr(self.page_run, '_worker', None)
             if w is not None and w.isRunning():
@@ -6567,7 +6567,7 @@ class WeCoStudio(QMainWindow):
     def _finish_all_demos(self):
         self._all_demos_running = False
         n = len(self._demo_results)
-        summary_lines = [f"# WeCo Demo Results — {n} demos\n"]
+        summary_lines = [f"# WeCo Demo Results - {n} demos\n"]
         for title, cost, elapsed, n_cor in self._demo_results:
             summary_lines.append(
                 f"- **{title}**: cost={cost:.4f}, {n_cor} correlations, {elapsed:.2f}s")
@@ -6577,7 +6577,7 @@ class WeCoStudio(QMainWindow):
 
         self._go_page(4)  # Results page
         self.statusBar().showMessage(
-            f"All {n} demos complete — results in tmp/demo_results/")
+            f"All {n} demos complete - results in tmp/demo_results/")
         QMessageBox.information(
             self, "All Demos Complete",
             f"Ran {n} demos successfully.\n\n"
@@ -6598,12 +6598,12 @@ class WeCoStudio(QMainWindow):
         )
         self._go_page(2)  # Navigate to Parameters
         self.statusBar().showMessage(
-            f"Preset applied: {preset['label']} — adjust parameters for your data")
+            f"Preset applied: {preset['label']} - adjust parameters for your data")
 
     # ─── Resolution Check ─────────────────────────────────────────────
 
     _FINE_SCALE_MAX_SAMPLES = 300  # warn if largest well exceeds this
-    _FINE_SCALE_MIN_SPACING = 0.5  # metres — spacing below this is "fine"
+    _FINE_SCALE_MIN_SPACING = 0.5  # metres - spacing below this is "fine"
 
     def _check_resolution(self, wl):
         """Detect fine-scaled data and offer to resample for performance."""
@@ -6624,7 +6624,7 @@ class WeCoStudio(QMainWindow):
         if avg_spacing >= self._FINE_SCALE_MIN_SPACING:
             return
 
-        # Fine-scaled data detected — calculate recommended step
+        # Fine-scaled data detected - calculate recommended step
         target_spacing = 1.0  # metres
         step = max(2, round(target_spacing / avg_spacing))
         new_max = max_size // step + 1
@@ -6684,7 +6684,7 @@ class WeCoStudio(QMainWindow):
             hint = ", ".join(hint_parts)
             if hint:
                 self.statusBar().showMessage(
-                    f"Loaded {wl.nbr_wells()} wells — auto-selected: {hint}")
+                    f"Loaded {wl.nbr_wells()} wells - auto-selected: {hint}")
             else:
                 self.statusBar().showMessage(
                     f"Loaded {wl.nbr_wells()} wells from {os.path.basename(path)}")
@@ -7005,7 +7005,7 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName("WeCo Studio")
     app.setStyle("Fusion")
-    # Explicitly set a known-good font — system may default to math symbol
+    # Explicitly set a known-good font - system may default to math symbol
     # fonts (cmr10, cmsy10) if fontconfig order is wrong.
     _app_font = QFont("DejaVu Sans", 10)
     _app_font.setStyleHint(QFont.StyleHint.SansSerif)

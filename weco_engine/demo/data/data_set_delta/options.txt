@@ -1,6 +1,6 @@
 # Prograding delta correlation options
 # no-crossing SEQSTRAT ensures key parasequence boundaries
-# are honoured — the most geologically important surfaces.
+# are honoured - the most geologically important surfaces.
 cost-function=composite
 var-data=GR
 var-weight=0.6

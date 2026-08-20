@@ -177,7 +177,7 @@ def generate_cyclothem(rng, seam_idx, x, y, depth_factor):
             layers.append((7, max(0.1, rng.normal(0.3, 0.1))))
             layers.append((1, max(0.1, rng.normal(0.3, 0.1))))
     else:
-        # Seam absent — washout: sandstone replaces coal
+        # Seam absent - washout: sandstone replaces coal
         if in_channel_belt(x, y, seam_idx):
             layers.append((4, max(1.0, rng.normal(3.0, 1.0))))
         else:
@@ -343,7 +343,7 @@ def write_truth_model(wells, filepath):
     """Export ground-truth correlation for coal seams.
 
     The truth model defines which seam boundaries are isochronous surfaces.
-    Each seam top/base is a correlation horizon — if present in a well,
+    Each seam top/base is a correlation horizon - if present in a well,
     it should correlate with the same seam in adjacent wells.
 
     Key ambiguity: thin seams (Floez_9, Floez_10) are frequently absent.
@@ -530,7 +530,7 @@ def main(seed=2026, n_wells=30, output_dir=None):
     return wells
 
 
-# §14.5 — Seam splitting + marine band no_crossing regions
+# §14.5 - Seam splitting + marine band no_crossing regions
 
 def add_seam_splits(wells, split_probability=0.3, rng=None):
     """

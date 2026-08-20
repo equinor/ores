@@ -1,5 +1,5 @@
 """
-weco.osdu_properties — OSDU Canonical Property Names and Units
+weco.osdu_properties - OSDU Canonical Property Names and Units
 ===============================================================
 
 Maps well-log mnemonics used internally by WeCo (GR, DEN, DT, etc.) to

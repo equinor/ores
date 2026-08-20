@@ -3,7 +3,7 @@
 Generate revised synthetic demo datasets with genuine correlation ambiguity.
 
 Each dataset is designed so that multiple geologically plausible correlation
-patterns exist — the DTW engine should find 30-60% stable lines across
+patterns exist - the DTW engine should find 30-60% stable lines across
 the n-best solutions.
 
 Geological basis:
@@ -15,7 +15,7 @@ Geological basis:
     Repeating parasequences (coarsening-upward), similar flooding surfaces,
     lateral facies variation along depositional dip.
 
-  - Coal: Neslen Fm type (Cole 2008) — repeating coal-shale-sand cycles where
+  - Coal: Neslen Fm type (Cole 2008) - repeating coal-shale-sand cycles where
     seams split and merge laterally; similar log signatures at multiple levels.
 
   - Quaternary: Glacial-interglacial cycles with similar conductivity patterns,
@@ -146,8 +146,8 @@ def generate_fluvial(n_wells=5, seed=2024):
 
     Key to ambiguity: ALL channels have identical GR signatures (same
     base_gr=120, top_gr=30, same thickness range). Only noise differs.
-    Channels are laterally discontinuous — Well A sees channels at
-    positions 1,3,5 while Well B sees channels at 2,3,4 — but they all
+    Channels are laterally discontinuous - Well A sees channels at
+    positions 1,3,5 while Well B sees channels at 2,3,4 - but they all
     look the same on the log. The DTW can match channel 1 in Well A
     with either channel 2 or 3 in Well B.
 
@@ -156,7 +156,7 @@ def generate_fluvial(n_wells=5, seed=2024):
     rng = np.random.default_rng(seed)
     wells = []
 
-    # 8 channel events — ALL identical GR signature!
+    # 8 channel events - ALL identical GR signature!
     n_channels = 8
     # Each channel has same signature but different lateral extent
     # Presence probability varies per channel to create correlation ambiguity
@@ -172,7 +172,7 @@ def generate_fluvial(n_wells=5, seed=2024):
     ]
 
     # Uniform overbank
-    overbank_thick = 4  # short, uniform — no distinguishing features
+    overbank_thick = 4  # short, uniform - no distinguishing features
 
     for wi in range(n_wells):
         gr_signal = []
@@ -263,7 +263,7 @@ def generate_shallow_marine(n_wells=6, seed=2025):
                 facies_regions.append((2, pos, fs_thick))
                 pos += fs_thick
 
-                # Coarsening-upward parasequence — ALL IDENTICAL signature
+                # Coarsening-upward parasequence - ALL IDENTICAL signature
                 cu_thick = 7
                 gr_signal.extend(coarsening_upward_cycle(cu_thick, 110, 28, noise=7, rng=rng))
                 facies_regions.append((1, pos, cu_thick))
@@ -309,7 +309,7 @@ def generate_coal(n_wells=6, seed=2026):
     Coal measures: repeating coal-shale cycles.
 
     Key to ambiguity: ALL coal seams have identical GR/DEN signature
-    (low GR spike). Seams split and merge laterally — one thick seam
+    (low GR spike). Seams split and merge laterally - one thick seam
     in Well A can be two thin seams in Well B. Interseam sediments
     are uniform shale with identical log character. Which seam is which?
 
@@ -318,7 +318,7 @@ def generate_coal(n_wells=6, seed=2026):
     rng = np.random.default_rng(seed)
     wells = []
 
-    # 6 "seam events" — but wells see different numbers of seams
+    # 6 "seam events" - but wells see different numbers of seams
     # due to splitting/merging
     n_seam_events = 6
 
@@ -334,7 +334,7 @@ def generate_coal(n_wells=6, seed=2026):
         [(3, 6), (3, 6), (0, 3), (3, 6), (3, 6), (3, 6)],
         # W3: events 0+1 merge, 3+4+5 merge → 3 seams
         [(7, 0), (0, 6), (3, 6), (10, 0), (0, 0), (0, 6)],
-        # W4: sees all 6 as thin (like W0 — creates inter-well ambiguity)
+        # W4: sees all 6 as thin (like W0 - creates inter-well ambiguity)
         [(3, 6), (3, 6), (3, 6), (3, 6), (3, 6), (3, 6)],
         # W5: events 2+3 merge → 5 seams
         [(3, 6), (3, 6), (7, 0), (0, 6), (3, 6), (3, 6)],
@@ -401,7 +401,7 @@ def generate_quaternary(n_wells=6, seed=2027):
 
     Key to ambiguity: ALL cycles have identical till→sand→clay signature.
     Different wells preserve different numbers of cycles due to glacial
-    erosion at the top. Well with 3 cycles and well with 5 cycles —
+    erosion at the top. Well with 3 cycles and well with 5 cycles -
     which 3 in the first well correspond to which 3 in the second?
 
     Based on: Standard glacial stratigraphy
@@ -409,7 +409,7 @@ def generate_quaternary(n_wells=6, seed=2027):
     rng = np.random.default_rng(seed)
     wells = []
 
-    # 6 identical glacial cycles — preserved differently per well
+    # 6 identical glacial cycles - preserved differently per well
     n_max_cycles = 6
 
     # Which cycles are present per well (glacial erosion removes from top)
@@ -439,7 +439,7 @@ def generate_quaternary(n_wells=6, seed=2027):
             facies_regions.append((1, pos, till_thick))
             pos += till_thick
 
-            # Outwash sand (fining up) — identical signature
+            # Outwash sand (fining up) - identical signature
             sand_thick = 6
             gr_signal.extend(fining_upward_cycle(sand_thick, 55, 30, noise=6, rng=rng))
             facies_regions.append((2, pos, sand_thick))
@@ -488,7 +488,7 @@ def generate_delta(n_wells=6, seed=2028):
 
     Key to ambiguity: Lobes switch laterally. Each lobe has IDENTICAL
     CU GR signature (prodelta→delta front). But lobes alternate
-    left/right position — so Well A sees lobes 0,2,4 while Well B
+    left/right position - so Well A sees lobes 0,2,4 while Well B
     sees lobes 1,3,5. All look the same! Which lobe in A matches
     which in B?
 
@@ -523,7 +523,7 @@ def generate_delta(n_wells=6, seed=2028):
                 facies_regions.append((3, pos, ts_thick))
                 pos += ts_thick
 
-                # Delta front CU — ALL IDENTICAL signature
+                # Delta front CU - ALL IDENTICAL signature
                 df_thick = 8
                 gr_signal.extend(coarsening_upward_cycle(df_thick, 108, 25, noise=7, rng=rng))
                 facies_regions.append((1, pos, df_thick))

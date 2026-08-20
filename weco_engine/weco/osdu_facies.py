@@ -1,5 +1,5 @@
 """
-weco.osdu_facies — OSDU-Standard Depositional and Lithofacies Schemes
+weco.osdu_facies - OSDU-Standard Depositional and Lithofacies Schemes
 ======================================================================
 
 Defines facies classification schemes following OSDU reference vocabularies:

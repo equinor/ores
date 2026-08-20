@@ -516,7 +516,7 @@ function renderResultCards(data) {
 
 // ── Compound query renderer (multi-alias deepSearch results) ───────────
 // Field dev presets return multiple named aliases (e.g. lowSw, goodPerm).
-// Each alias is a deepSearch result — render them as separate sections.
+// Each alias is a deepSearch result - render them as separate sections.
 function renderCompoundResults(data, explanation) {
   const container = $('ez-results');
   if (!data || !data.data) {
@@ -804,7 +804,7 @@ function validateEasyQuery() {
 
     // Warn: array filter without property kind
     if (op && thresholdStr && !$('ez-prop').value.trim()) {
-      errors.push('Warning: array filter without a property kind will scan ALL properties on each object — this may be slow. Consider specifying a property (e.g. porosity, perm).');
+      errors.push('Warning: array filter without a property kind will scan ALL properties on each object - this may be slow. Consider specifying a property (e.g. porosity, perm).');
     }
   }
 
@@ -819,7 +819,7 @@ $('ez-run').addEventListener('click', async () => {
     if (!uuid || uuid === 'PASTE-UUID-HERE') {
       $('ez-status').textContent = 'Please enter a UUID. Run "Browse Objects" first to find one.';
       $('ez-results').innerHTML = `<div style="padding:12px;background:#fff3cd;border:1px solid #ffc107;border-radius:4px;font-size:13px;">
-        <strong>UUID required</strong> — Switch to <em>Browse Objects</em> to list objects of this type, then copy a UUID and paste it into the UUID field above.
+        <strong>UUID required</strong> - Switch to <em>Browse Objects</em> to list objects of this type, then copy a UUID and paste it into the UUID field above.
       </div>`;
       return;
     }
@@ -916,7 +916,7 @@ if (ezExMarkers) {
   ezExMarkers.addEventListener('click', () => runFieldDevPreset('markers_by_horizon'));
 }
 
-// Easy-mode field dev examples — run the full compound preset, stay in Easy Mode
+// Easy-mode field dev examples - run the full compound preset, stay in Easy Mode
 const _ezFieldDevExamples = [
   { id: 'ez-ex-bypassed', preset: 'field_bypassed_oil' },
   { id: 'ez-ex-highperm', preset: 'field_water_breakthrough' },
@@ -2862,7 +2862,7 @@ const GQL_PRESETS = {
 }`,
 
   // ─── Surfaces & Arrays ─────────────────────────────────────────────
-  deep_grid2d_arrays: `# Grid2D surfaces — full statistics + sample values for preview
+  deep_grid2d_arrays: `# Grid2D surfaces - full statistics + sample values for preview
 # Only possible through RDDMS (HDF5 access), never in catalog search.
 {
   deepSearch(
@@ -2970,7 +2970,7 @@ const GQL_PRESETS = {
 }`,
   // ─── Cross-System (impossible with just OSDU catalog search) ────────────
   xref_orphan_rddms: `# RDDMS orphans (not in catalog) vs catalog ghosts (not in RDDMS)
-# Impossible with single-system search — requires comparing both
+# Impossible with single-system search - requires comparing both
 {
   federatedSearch(
     text: "$DS_NAME"
@@ -3103,11 +3103,11 @@ const GQL_PRESETS = {
 
   // ─── Numerical Properties (3D grid cell values) ───────────────────────
   markers_by_horizon: `# Wellbore markers grouped by the horizon/feature they pick
-# Each marker frame ties a well to a stratigraphic surface — the
+# Each marker frame ties a well to a stratigraphic surface - the
 # relations show which GeneticBoundaryFeature (horizon) is picked.
 # Results are renderable in 3D as bedding-disk markers along trajectories.
 #
-# HOW TO READ: Each object is a WellboreMarkerFrameRepresentation — one
+# HOW TO READ: Each object is a WellboreMarkerFrameRepresentation - one
 # per well. Its relations list the horizons (GeneticBoundaryFeature) that
 # the well penetrates. Compare relations across wells to see which
 # horizons are picked consistently and which are missing (eroded/faulted out).
@@ -3168,7 +3168,7 @@ const GQL_PRESETS = {
 
   native_graph_traverse: `# NATIVE GQL (M27+): Full graph traversal with edges
 # Unlike objectRelations (flat list), this returns a true graph structure
-# with directed edges — enabling visualization of RESQML topology.
+# with directed edges - enabling visualization of RESQML topology.
 # The depth parameter controls how many hops to traverse.
 #
 # Requires: local etp-client with /graphql endpoint (M27 release)
@@ -3214,7 +3214,7 @@ const GQL_PRESETS = {
 
   native_array_metadata: `# NATIVE GQL (M27+): Array dimensions & types without downloading data
 # Shows what arrays exist inside a resource (grid geometry, property values)
-# with their shape, logical type, and last-write timestamp — without
+# with their shape, logical type, and last-write timestamp - without
 # actually downloading the (potentially GB-sized) array payload.
 #
 # Requires: local etp-client with /graphql endpoint (M27 release)
@@ -3239,17 +3239,17 @@ const GQL_PRESETS = {
   // These presets combine spatial topology, properties, and production
   // to answer real subsurface questions for field development workflows.
 
-  field_bypassed_oil: `# FIELD DEV: Bypassed oil screening — compound cell intersection
+  field_bypassed_oil: `# FIELD DEV: Bypassed oil screening - compound cell intersection
 # Finds grid cells where BOTH conditions are true simultaneously:
-#   Sw < 0.4  (oil still in place — not swept)
+#   Sw < 0.4  (oil still in place - not swept)
 #   KLOGH > 100 mD  (permeable enough to produce)
 #
 # The compoundFilter ANDs the criteria at cell level and returns
-# the intersection count — the actual bypassed oil cell set.
+# the intersection count - the actual bypassed oil cell set.
 # Individual property stats are also shown for context.
 #
 # HOW TO READ: Each object is an IjkGrid (the 3D geocellular model).
-# compoundMatch shows how many cells pass ALL filters simultaneously —
+# compoundMatch shows how many cells pass ALL filters simultaneously -
 # these are the bypassed-oil sweet spots. The fraction tells you what
 # share of the reservoir is prospective. Each property under the grid
 # shows its full statistics so you can gauge the overall distribution.
@@ -3279,7 +3279,7 @@ const GQL_PRESETS = {
   }
 }`,
 
-  field_water_breakthrough: `# FIELD DEV: Water breakthrough diagnosis — per-well log overview
+  field_water_breakthrough: `# FIELD DEV: Water breakthrough diagnosis - per-well log overview
 # Shows ALL log properties on each wellbore frame so you can see
 # KLOGH, Sw, PHIT, VSH together for each well.
 #
@@ -3287,11 +3287,11 @@ const GQL_PRESETS = {
 # Wells where high-perm cells overlap with high Sw = water breakthrough.
 # Relations identify which wellbore each log frame belongs to.
 #
-# Fault connections show inter-segment transmissibility —
+# Fault connections show inter-segment transmissibility -
 # a high-perm well near a conductive fault is the likely breakthrough path.
 #
 # HOW TO READ: allWellLogs lists every well's log frame with all its
-# properties — compare mean Sw across wells to spot which are watering out.
+# properties - compare mean Sw across wells to spot which are watering out.
 # highPermStreaks shows only frames where KLOGH > 500 mD; matchingCells
 # tells you what fraction of each well's log is high-perm streak.
 # faultConnections lists inter-segment links; their transmissibility
@@ -3356,14 +3356,14 @@ const GQL_PRESETS = {
 # segments. Combines fault geometry with well trajectory topology.
 #
 # Expected result: A-1/A-2 (same segment) get pressure support.
-# A-3 (EastLowland, across F2 baffle) does NOT — pressure declining.
+# A-3 (EastLowland, across F2 baffle) does NOT - pressure declining.
 #
 # HOW TO READ: Each fault object's relations show the horizons it cuts.
 # structuralOrg ties faults into named segments. wells lists trajectories
 # whose relations reveal which grid/segment each well penetrates.
 # Cross-reference: if two wells share relations to the same segment but
 # a fault with "baffle" or "seal" character sits between, injection
-# support is limited — that's your pressure-decline explanation.
+# support is limited - that's your pressure-decline explanation.
 {
   faults: deepSearch(
     $DS_ARG
@@ -3403,7 +3403,7 @@ const GQL_PRESETS = {
   }
 }`,
 
-  field_completion_ntg: `# FIELD DEV: Completion optimization — best pay intervals per well
+  field_completion_ntg: `# FIELD DEV: Completion optimization - best pay intervals per well
 # Finds well log intervals with good porosity and permeability
 # (the "pay zone") for completion/perforation design.
 #
@@ -3413,7 +3413,7 @@ const GQL_PRESETS = {
 # Relations show which wellbore each log belongs to.
 #
 # HOW TO READ: Each sub-query returns the same well log frames filtered
-# differently. matchingCells.fraction is the key metric — it tells you
+# differently. matchingCells.fraction is the key metric - it tells you
 # what share of each well's log passes the threshold. A well that scores
 # high on all three (good PHIT, good KLOGH, low Sw) is the best
 # completion candidate. Compare fractions across wells to rank them.
@@ -3486,17 +3486,17 @@ const GQL_PRESETS = {
 
   field_segment_ranking: `# FIELD DEV: Segment overview for infill targeting
 # Shows fault-bounded segments and what's in each one:
-#   1. Faults — segment boundaries with names (F1–F6)
-#   2. Structural organization — how faults group into segments
-#   3. Grid connections — inter-segment links across faults
-#   4. Wells — trajectory relations show which segment each well sits in
+#   1. Faults - segment boundaries with names (F1–F6)
+#   2. Structural organization - how faults group into segments
+#   3. Grid connections - inter-segment links across faults
+#   4. Wells - trajectory relations show which segment each well sits in
 #
 # Cross-reference fault names with well relations to see
 # which segments are drained vs. undrained for infill candidates.
 #
 # HOW TO READ: faults lists each named fault (F1–F6) with its horizon
 # relations. structuralOrg shows how faults and horizons are grouped into
-# segments. gridConnections lists cross-fault cell links — their property
+# segments. gridConnections lists cross-fault cell links - their property
 # statistics (transmissibility) tell you if segments communicate.
 # wells shows each trajectory and its relations to grids/wellbores.
 # A segment with no wells but connected to a producing segment via

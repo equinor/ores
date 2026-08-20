@@ -1,5 +1,5 @@
 """
-weco.api — REST API for headless WeCo correlation
+weco.api - REST API for headless WeCo correlation
 ===================================================
 
 A lightweight FastAPI application that exposes WeCo's correlation engine
@@ -41,7 +41,7 @@ from pydantic import BaseModel, Field
 
 app = FastAPI(
     title="WeCo API",
-    description="Multi-well stratigraphic correlation engine — REST interface",
+    description="Multi-well stratigraphic correlation engine - REST interface",
     version="0.9.31",
 )
 
@@ -52,7 +52,7 @@ async def _unhandled_exception_handler(request: Request, exc: Exception):
 
     Without this, uncaught exceptions (e.g. C++ SIGSEGV survivors, import
     errors, attribute errors on None) would return raw 500 text that the
-    frontend JS cannot parse — leading to the 'Cannot read properties of
+    frontend JS cannot parse - leading to the 'Cannot read properties of
     undefined' cascade.
     """
     return JSONResponse(
@@ -260,7 +260,7 @@ def _validate_well_list(well_list) -> None:
     """Pre-flight checks that prevent C++ engine crashes (SIGSEGV).
 
     The C++ engine uses global static options and does NOT abort gracefully
-    when it encounters missing data or region names — it prints an error
+    when it encounters missing data or region names - it prints an error
     message then segfaults.  We catch these cases in Python first.
     """
     from weco.data import WellList as PyWellList
@@ -327,7 +327,7 @@ def _validate_options_against_wells(options: dict, well_list) -> None:
         raise HTTPException(status_code=400, detail="; ".join(errors))
 
 
-# Canonical option-reset dict — ensures no state leaks between runs.
+# Canonical option-reset dict - ensures no state leaks between runs.
 from weco.ext import RESET_OPTS as _RESET_OPTS
 
 # Reference to the currently running ProjectExt (for cancel support).
@@ -961,7 +961,7 @@ def validate_options(options: Dict[str, Any]):
 # ═══════════════════════════════════════════════════════════════════════════
 
 # Log names ranked by geological discriminating power (best first).
-# NEVER include depth/coordinate names — they are monotonic and break DTW.
+# NEVER include depth/coordinate names - they are monotonic and break DTW.
 _LOG_PRIORITY = [
     "GR", "Gamma", "gamma", "SP",
     "DEN", "RHOB", "DPHI",
@@ -1057,7 +1057,7 @@ def _check_facies_independence(wl, facies_region: str, var_data: str) -> bool:
             if cv < 0.25:
                 return False
 
-    # Default: assume independent (conservative — don't suppress user's data)
+    # Default: assume independent (conservative - don't suppress user's data)
     return True
 
 
@@ -1112,7 +1112,7 @@ def _suggest_defaults_for_wells(wl) -> tuple:
             reasoning["no-crossing"] = f"Region '{pat}' provides stratigraphic ordering"
             break
 
-    # NOTE: same-region is NOT auto-applied — it is too restrictive and
+    # NOTE: same-region is NOT auto-applied - it is too restrictive and
     # causes "no correlation possible" when facies zones don't align.
     # Users can enable it manually if their data supports it.
 
@@ -1148,7 +1148,7 @@ def _suggest_defaults_for_wells(wl) -> tuple:
             options["dist-scaling"] = 1.0
             options["cost-function"] = "composite"
             options.setdefault("order", "distality")
-            # Remove no-crossing — incompatible with distality ordering
+            # Remove no-crossing - incompatible with distality ordering
             options.pop("no-crossing", None)
             reasoning.pop("no-crossing", None)
             reasoning["dist-distal"] = f"DISTAL region '{distal_match}' detected → distality cost enabled"
@@ -1158,7 +1158,7 @@ def _suggest_defaults_for_wells(wl) -> tuple:
         else:
             reasoning["dist-facies-skipped"] = (
                 f"FACIES region '{facies_match}' appears derived from var-data "
-                f"'{options.get('var-data', '?')}' — skipping to avoid circular constraint"
+                f"'{options.get('var-data', '?')}' - skipping to avoid circular constraint"
             )
 
     # --- Well-count and well-length adaptive settings ---
@@ -1244,7 +1244,7 @@ def _suggest_defaults_for_wells(wl) -> tuple:
     )
     if has_coords and n_wells >= 4:
         options["order"] = "position"
-        reasoning["order"] = "Wells have coordinates — positional ordering"
+        reasoning["order"] = "Wells have coordinates - positional ordering"
 
     return options, reasoning
 
@@ -1454,7 +1454,7 @@ def auto_correlate(req: AutoRequest):
         best_rf = rf
         best_data = data
 
-        # Quality gate (optional — requires sklearn)
+        # Quality gate (optional - requires sklearn)
         quality = 0.0
         try:
             from weco.ai.quality import CorrelationQuality
@@ -1534,7 +1534,7 @@ def list_demos():
     if data_dir is None:
         return DemoListResponse(demos=[])
     demos = []
-    # Built-in demo catalogue — each entry has geology-specific opts that
+    # Built-in demo catalogue - each entry has geology-specific opts that
     # are proven to produce meaningful correlations for that dataset.
     _DEMO_CATALOGUE = [
         # ── Concept (teaching specific constraints) ─────────────────
@@ -1550,7 +1550,7 @@ def list_demos():
         {"id": "biozone_distality", "title": "Biozone No-Crossing + Distality",
          "group": "Concept", "wells": "data_set_biozone_distality/wells.txt",
          "description": "2 wells combining no-crossing constraint (BIOZONES) "
-                        "with distality. Biozone datums cannot swap order — "
+                        "with distality. Biozone datums cannot swap order - "
                         "demonstrates hard stratigraphic anchoring.",
          "opts": {"dist-distal": "DISTAL", "dist-facies": "FACIES_1",
                   "no-crossing": "BIOZONES", "order": "distality",
@@ -1590,7 +1590,7 @@ def list_demos():
          "description": "10 wells with repeated shoreface parasequences + erosion. "
                         "3-log multi-variance (GR 50% + RHOB 30% + DT 20%) "
                         "+ gap cost (2.0). BIOZONE no-crossing locks key flooding "
-                        "surfaces — the most important sequence boundaries.",
+                        "surfaces - the most important sequence boundaries.",
          "opts": {"var-data": "GR", "var-weight": 0.5,
                   "var-data2": "RHOB", "var-weight2": 0.3,
                   "var-data3": "DT", "var-weight3": 0.2,
@@ -1636,7 +1636,7 @@ def list_demos():
          "geology": "deltaic",
          "description": "8 wells through a prograding delta with variable "
                         "thickness parasequences. GR (60%) + DEN (40%) multi-log. "
-                        "SEQSTRAT no-crossing locks parasequence boundaries — the "
+                        "SEQSTRAT no-crossing locks parasequence boundaries - the "
                         "highest-order surfaces that must be honoured first.",
          "opts": {"var-data": "GR", "var-weight": 0.6,
                   "var-data2": "DEN", "var-weight2": 0.4,
@@ -1659,7 +1659,7 @@ def list_demos():
          "group": "Domain", "wells": "data_set_troll/wells.txt",
          "geology": "shallow_marine",
          "description": "5 Troll field wells with categorical FACIES only. "
-                        "No continuous logs — correlation driven purely by facies "
+                        "No continuous logs - correlation driven purely by facies "
                         "similarity. Demonstrates ambiguity: same facies at multiple "
                         "depths creates genuine correlation uncertainty.",
          "opts": {"var-data": "FACIES",
@@ -1682,7 +1682,7 @@ def list_demos():
          "geology": "shallow_marine",
          "description": "2 real North Sea wells (Hugin Fm, Gudrun–Sigrun area). "
                         "Tide-dominated shallow marine with interpreted facies. "
-                        "Demonstrates distality cost on real subsurface data — "
+                        "Demonstrates distality cost on real subsurface data - "
                         "Walther's Law constrains lateral facies ordering.",
          "opts": {"dist-distal": "DISTALITY", "dist-facies": "FACIES_1",
                   "dist-scaling": 1.0, "order": "distality",
@@ -2051,7 +2051,7 @@ def docs_formats():
         },
         "result_file": {
             "extension": ".txt (out.txt)",
-            "description": "WeCo DAG result file — directed acyclic graph of correlation nodes",
+            "description": "WeCo DAG result file - directed acyclic graph of correlation nodes",
             "spec": (
                 "WellIds: 0 1 2            # Well indices in merge order\n"
                 "Node 0 (0 0 0)            # Node: matched positions per well\n"
@@ -2152,7 +2152,7 @@ def docs_batch_schema():
                 "type": ["string", "null"],
                 "enum": ["shallow_marine", "fluvial", "carbonate", "deep_marine",
                          "coal", "quaternary", "delta", None],
-                "description": "Geological preset — sets default options per environment",
+                "description": "Geological preset - sets default options per environment",
             },
             "options": {
                 "type": "object",
@@ -2202,7 +2202,7 @@ def docs_batch_schema():
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  POST /run/seistiles — correlation with Seismic Tiles constraint
+#  POST /run/seistiles - correlation with Seismic Tiles constraint
 # ═══════════════════════════════════════════════════════════════════════════
 
 class SeisTilesRunRequest(BaseModel):
@@ -2260,7 +2260,7 @@ def run_with_seistiles(req: SeisTilesRunRequest):
     with tile dip, azimuth, and amplitude.  The penalty is computed
     per-well-pair and added to the DTW cost before the graph search.
 
-    **Algorithm** — for each candidate tie (i_a, i_b):
+    **Algorithm** - for each candidate tie (i_a, i_b):
 
     * **Dip**: expected Δz from tile dip/azimuth vs actual Δz
     * **Azimuth**: angular difference between tiles at both wells
@@ -2820,7 +2820,7 @@ class DepenvSuggestRequest(BaseModel):
         None, description="Available log names for log substitution.",
     )
     strat_column_json: Optional[str] = Field(
-        None, description="Path to StratColumn JSON — auto-detect env.",
+        None, description="Path to StratColumn JSON - auto-detect env.",
     )
 
 
@@ -3144,7 +3144,7 @@ class ApplyPresetRequest(BaseModel):
     preset_key: str = Field(..., description="Preset key (e.g. 'shallow_marine').")
     data_names: List[str] = Field(
         default_factory=list,
-        description="Available log mnemonics — preset will substitute if needed.",
+        description="Available log mnemonics - preset will substitute if needed.",
     )
 
 
@@ -3545,7 +3545,7 @@ def rddms_export_results(req: RddmsExportResultsRequest):
 
     Writes:
     - WellboreMarkerFrameRepresentation per well (horizon picks as markers)
-    - DiscreteProperty per well (zonation log — zone index per depth)
+    - DiscreteProperty per well (zonation log - zone index per depth)
     - StratigraphicColumn referencing the marker horizons
 
     This allows the results to be visualized in any RDDMS-compatible viewer
@@ -3832,13 +3832,13 @@ def validate_quality(req: QualityRequest):
 
         # Interpretation
         if overall >= 0.8:
-            interp = "Excellent — high confidence correlation"
+            interp = "Excellent - high confidence correlation"
         elif overall >= 0.6:
-            interp = "Good — reasonable correlation with minor uncertainty"
+            interp = "Good - reasonable correlation with minor uncertainty"
         elif overall >= 0.4:
-            interp = "Fair — some wells may be miscorrelated"
+            interp = "Fair - some wells may be miscorrelated"
         else:
-            interp = "Poor — review parameters and constraints"
+            interp = "Poor - review parameters and constraints"
 
         return QualityResponse(
             result_index=req.cor_num,
@@ -3945,13 +3945,13 @@ def validate_sensitivity(req: SensitivityRequest):
         worst_order = req.orders[-1]
 
     if robustness >= 0.95:
-        rec = "Very robust — order choice has minimal impact"
+        rec = "Very robust - order choice has minimal impact"
     elif robustness >= 0.8:
-        rec = f"Robust — slight preference for '{best_order}'"
+        rec = f"Robust - slight preference for '{best_order}'"
     elif robustness >= 0.5:
-        rec = f"Moderately sensitive — recommend '{best_order}' order"
+        rec = f"Moderately sensitive - recommend '{best_order}' order"
     else:
-        rec = f"Highly sensitive to order — use '{best_order}', consider constraints"
+        rec = f"Highly sensitive to order - use '{best_order}', consider constraints"
 
     return SensitivityResponse(
         orders_tested=req.orders,
@@ -4044,11 +4044,11 @@ def validate_anomaly(req: AnomalyRequest):
         frac = n_anomalies / max(n_lines, 1)
 
         if n_anomalies == 0:
-            summary = "No anomalous lines detected — correlation appears consistent."
+            summary = "No anomalous lines detected - correlation appears consistent."
         elif frac < 0.15:
-            summary = f"{n_anomalies} suspicious line(s) — minor issues, review flagged pairs."
+            summary = f"{n_anomalies} suspicious line(s) - minor issues, review flagged pairs."
         else:
-            summary = f"{n_anomalies} anomalies ({frac:.0%}) — consider revising parameters."
+            summary = f"{n_anomalies} anomalies ({frac:.0%}) - consider revising parameters."
 
         return AnomalyResponse(
             result_index=req.cor_num,
@@ -4157,11 +4157,11 @@ def validate_uncertainty(req: UncertaintyRequest):
         low_frac = total_low / max(total_markers, 1)
 
         if high_frac >= 0.7:
-            interp = "High confidence — ensemble shows consistent tie positions."
+            interp = "High confidence - ensemble shows consistent tie positions."
         elif low_frac >= 0.3:
-            interp = "Significant uncertainty — consider additional constraints or data."
+            interp = "Significant uncertainty - consider additional constraints or data."
         else:
-            interp = "Moderate uncertainty — most markers are stable across realisations."
+            interp = "Moderate uncertainty - most markers are stable across realisations."
 
         return UncertaintyResponse(
             n_paths_used=min(n_paths, n_results),

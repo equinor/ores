@@ -6,7 +6,7 @@
     "ConnectionString": ""
   },
   "_meta": {
-    "description": "ETPDataspace — reference to an ETP/RDDMS dataspace containing RESQML objects (grids, surfaces, wells, etc.).",
+    "description": "ETPDataspace - reference to an ETP/RDDMS dataspace containing RESQML objects (grids, surfaces, wells, etc.).",
     "required_fields": ["Name", "DataspaceName"],
     "dataspace_format": "eml:///dataspace('{name}')",
     "examples": {

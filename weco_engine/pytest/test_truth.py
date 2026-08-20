@@ -1,4 +1,4 @@
-"""Round-trip truth tests — verify the engine recovers known stratigraphy.
+"""Round-trip truth tests - verify the engine recovers known stratigraphy.
 
 These tests create synthetic well data with *known* horizon positions, run the
 WeCo correlation engine, and verify that the top-ranked correlation either
@@ -6,14 +6,14 @@ reproduces the truth exactly or passes within a tolerance.
 
 Test categories
 ---------------
-1. **Identical wells** — all wells share the same data.  The engine must
+1. **Identical wells** - all wells share the same data.  The engine must
    produce a perfect 1-to-1 diagonal correlation.
-2. **Eroded wells** — identical underlying signal, but wells are truncated
+2. **Eroded wells** - identical underlying signal, but wells are truncated
    at top/bottom.  The engine should still align the shared section.
-3. **Realistic generators** — use the Quaternary and Coal generators to
+3. **Realistic generators** - use the Quaternary and Coal generators to
    produce rich geological data with deterministic seeds, run the engine,
    and check that the best correlation visits known unit boundaries.
-4. **Noise tolerance** — add increasing noise and verify graceful
+4. **Noise tolerance** - add increasing noise and verify graceful
    degradation.
 """
 
@@ -118,7 +118,7 @@ def _best_path(res):
 # ===================================================================
 
 class TestIdenticalWells:
-    """All wells share the same signal — engine must produce a 1-to-1 match."""
+    """All wells share the same signal - engine must produce a 1-to-1 match."""
 
     def test_3_wells_diagonal(self):
         """3 identical wells → near-perfect diagonal (sample i maps to ~i)."""
@@ -142,7 +142,7 @@ class TestIdenticalWells:
             assert max(node) - min(node) <= 1, f"Not near-diagonal: {node}"
 
     def test_full_coverage(self):
-        """3 identical wells, 30 samples — most samples must appear."""
+        """3 identical wells, 30 samples - most samples must appear."""
         wl = _build_identical_wells(3, 30, wave_length=6)
         res = _run_engine(wl, **{
             "var-data": "signal", "var-weight": "1.0",
@@ -165,7 +165,7 @@ class TestErodedWells:
         """Create 3 wells: full, top-10 eroded, bottom-10 eroded.
 
         Uses a chirp signal (increasing frequency) so the alignment has a
-        unique solution — unlike a pure sine which repeats every period.
+        unique solution - unlike a pure sine which repeats every period.
         """
         # Chirp: frequency increases with sample index → no repeated pattern
         signal = [math.sin(2 * math.pi * (i + i * i / (2.0 * full_size))
@@ -189,7 +189,7 @@ class TestErodedWells:
     def test_eroded_alignment(self):
         """Eroded wells should produce a monotonic, low-cost alignment.
 
-        The engine is a signal-shape DTW correlator — it doesn't use absolute
+        The engine is a signal-shape DTW correlator - it doesn't use absolute
         depth constraints.  W2 (bottom-eroded) shares its start with W0 and
         should align near-perfectly.  W1 (top-eroded) may be shifted because
         the DTW is free to start both wells simultaneously.
@@ -219,7 +219,7 @@ class TestErodedWells:
 # ===================================================================
 
 class TestShiftedWells:
-    """Wells with the same signal but vertically shifted — horizon should be found."""
+    """Wells with the same signal but vertically shifted - horizon should be found."""
 
     def test_small_shift(self):
         """Small vertical shifts (±3 samples) → midpoint recovered."""
@@ -377,7 +377,7 @@ class TestQuaternaryTruth:
 
     def test_horizon_monotonicity(self):
         """Best correlation path should be monotonically increasing per well.
-        This is a fundamental DAG-DTW property — the path can only advance
+        This is a fundamental DAG-DTW property - the path can only advance
         forward in each well."""
         wells = self._generate_small()
         wells_path = os.path.join(self.tmp, "wells.txt")
@@ -592,14 +592,14 @@ class TestExistingDatasets:
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# §13.9 — Systematic truth-recovery tests for all generators
+# §13.9 - Systematic truth-recovery tests for all generators
 # ═══════════════════════════════════════════════════════════════════════
 
 class TestRoundtripGenerators:
     """Systematic truth-recovery tests using roundtrip.py generators."""
 
     def test_parallel_basic(self):
-        """Parallel layers with no noise — should be trivially correct."""
+        """Parallel layers with no noise - should be trivially correct."""
         from weco.roundtrip import generate_parallel, roundtrip_test
         model = generate_parallel(n_wells=3, n_markers=20, seed=42)
         result = roundtrip_test(model, k=5)
@@ -607,39 +607,39 @@ class TestRoundtripGenerators:
         assert result["marker_mae"] < 3.0, f"MAE too high: {result['marker_mae']}"
 
     def test_parallel_noisy(self):
-        """Parallel layers with noise — truth should still be in top-5."""
+        """Parallel layers with noise - truth should still be in top-5."""
         from weco.roundtrip import generate_parallel, roundtrip_test
         model = generate_parallel(n_wells=3, n_markers=20, noise=0.1, seed=42)
         result = roundtrip_test(model, k=10)
         assert result["truth_rank"] >= 0
 
     def test_clinoform_basic(self):
-        """Clinoform wedge — tests gap cost sensitivity."""
+        """Clinoform wedge - tests gap cost sensitivity."""
         from weco.roundtrip import generate_clinoform, roundtrip_test
         model = generate_clinoform(n_wells=3, n_markers=30, max_shift=3, seed=42)
         result = roundtrip_test(model, k=10)
         assert result["truth_rank"] >= 0
 
     def test_prograding_delta(self):
-        """Prograding delta — tests lateral facies change."""
+        """Prograding delta - tests lateral facies change."""
         from weco.roundtrip import generate_prograding_delta, roundtrip_test
         model = generate_prograding_delta(n_wells=3, n_markers=30, seed=42)
         result = roundtrip_test(model, k=10)
         assert result["truth_rank"] >= 0
 
     def test_shallow_marine(self):
-        """Shallow marine bay fill — tests distality."""
+        """Shallow marine bay fill - tests distality."""
         from weco.roundtrip import generate_shallow_marine, roundtrip_test
         model = generate_shallow_marine(n_wells=3, n_markers=40, seed=42)
         result = roundtrip_test(model, k=10)
         assert result["truth_rank"] >= 0
 
     def test_fluvial(self):
-        """Fluvial channels — hardest scenario, laterally discontinuous."""
+        """Fluvial channels - hardest scenario, laterally discontinuous."""
         from weco.roundtrip import generate_fluvial, roundtrip_test
         model = generate_fluvial(n_wells=3, n_markers=30, seed=42)
         result = roundtrip_test(model, k=10)
-        # Fluvial is hard — just verify engine runs and produces results
+        # Fluvial is hard - just verify engine runs and produces results
         assert result.get("error") is None
 
     def test_noise_injection(self):
@@ -677,7 +677,7 @@ class TestRoundtripGenerators:
 
 
 # ===================================================================
-# §11.4.2 — Distality + normalised B3D combined test
+# §11.4.2 - Distality + normalised B3D combined test
 # ===================================================================
 
 class TestDistalityB3D:
@@ -706,7 +706,7 @@ class TestDistalityB3D:
 
 
 # ===================================================================
-# §11.5.3 — Validate thickness on synthetic
+# §11.5.3 - Validate thickness on synthetic
 # ===================================================================
 
 class TestThicknessValidation:
@@ -738,7 +738,7 @@ class TestThicknessValidation:
 
 
 # ===================================================================
-# §12.8 — Noise suppression validation (hierarchical mode)
+# §12.8 - Noise suppression validation (hierarchical mode)
 # ===================================================================
 
 class TestNoiseValidation:
@@ -761,7 +761,7 @@ class TestNoiseValidation:
 
         # At moderate noise (10%), should still find truth
         if results[0.1].get("truth_rank", -1) < 0:
-            pytest.skip("Engine sensitive to 10% noise — acceptable")
+            pytest.skip("Engine sensitive to 10% noise - acceptable")
 
     def test_noise_with_band_constraint(self):
         """Verify band constraint helps suppress noise."""

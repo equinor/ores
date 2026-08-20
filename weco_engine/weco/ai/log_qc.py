@@ -1,5 +1,5 @@
 """
-weco.ai.log_qc — AI-powered log quality control
+weco.ai.log_qc - AI-powered log quality control
 =================================================
 
 Detect bad-hole intervals, impute missing data, and normalise logs
@@ -47,7 +47,7 @@ class LogQC:
         """
         Flag intervals where borehole is washed out (caliper >> bit size).
 
-        Washed-out zones produce unreliable log readings — GR reads low,
+        Washed-out zones produce unreliable log readings - GR reads low,
         density reads low, neutron reads high.
 
         Parameters
@@ -70,7 +70,7 @@ class LogQC:
             True where washout is detected.
         """
         if caliper_name not in well.data:
-            # No caliper — assume everything is OK
+            # No caliper - assume everything is OK
             weight = np.ones(well.size)
             well.add_data(output_name, weight.tolist())
             return np.zeros(well.size, dtype=bool)
@@ -115,9 +115,9 @@ class LogQC:
         predictor_logs : list of str
             Available logs used as feature columns.
         method : str
-            ``"rf"`` — Random Forest (default, robust).
-            ``"knn"`` — K-nearest neighbours.
-            ``"mean"`` — Simple column mean (no ML, always available).
+            ``"rf"`` - Random Forest (default, robust).
+            ``"knn"`` - K-nearest neighbours.
+            ``"mean"`` - Simple column mean (no ML, always available).
         nan_sentinel : float
             Value treated as missing (LAS convention).
         n_estimators : int
@@ -148,7 +148,7 @@ class LogQC:
         valid = ~mask & ~np.any(np.isnan(X) | np.isclose(X, nan_sentinel), axis=1)
 
         if valid.sum() < 10:
-            # Too few training samples — fallback to mean
+            # Too few training samples - fallback to mean
             y[mask] = np.nanmean(y[~mask])
             well.add_data(target_log, y.tolist())
             return int(mask.sum())
@@ -210,9 +210,9 @@ class LogQC:
         output_name : str, optional
             Output channel.  None → overwrite original.
         method : str
-            ``"histogram"`` — match to reference well P10/P50/P90.
-            ``"percentile"`` — robust P5-P95 to [0,1].
-            ``"zscore"`` — mean=0, std=1.
+            ``"histogram"`` - match to reference well P10/P50/P90.
+            ``"percentile"`` - robust P5-P95 to [0,1].
+            ``"zscore"`` - mean=0, std=1.
         reference_well : str, optional
             Well name used as the reference for histogram matching.
             If None, uses the well with the most data points.

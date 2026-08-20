@@ -1,5 +1,5 @@
 /*
- * ccf_thickness.cpp — Thickness ratio cost function (§4.3, Baville §6.3.2)
+ * ccf_thickness.cpp - Thickness ratio cost function (§4.3, Baville §6.3.2)
  *
  * Penalises geologically implausible thickness ratios between wells.
  * C++ port of weco.cost_functions.ThicknessRatioCost.

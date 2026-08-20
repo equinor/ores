@@ -6,7 +6,7 @@
     "Milestones": []
   },
   "_meta": {
-    "description": "ActivityStateTemplate — defines the milestone sequence for a project type lifecycle (FieldDevelopment, CCS, ExplorationWell, etc.).",
+    "description": "ActivityStateTemplate - defines the milestone sequence for a project type lifecycle (FieldDevelopment, CCS, ExplorationWell, etc.).",
     "required_fields": ["Name", "ProjectTypeID", "Milestones"],
     "milestone_entry": {
       "Sequence": 1,

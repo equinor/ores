@@ -1,5 +1,5 @@
 """
-Tests for weco.utils — MeanAccumulator + MinMax
+Tests for weco.utils - MeanAccumulator + MinMax
 """
 
 import pytest
@@ -141,6 +141,6 @@ class TestMinMax:
         mm = MinMax()
         mm(5)   # sets both min and max
         mm(10)  # updates max
-        mm(1)   # updates min — this was the bug (self._mix typo)
+        mm(1)   # updates min - this was the bug (self._mix typo)
         assert mm.min() == 1
         assert mm.max() == 10

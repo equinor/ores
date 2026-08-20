@@ -1,4 +1,4 @@
-"""Tests for weco.facies_dict — FaciesDictionary and lithology detection."""
+"""Tests for weco.facies_dict - FaciesDictionary and lithology detection."""
 
 import pytest
 from weco.facies_dict import (

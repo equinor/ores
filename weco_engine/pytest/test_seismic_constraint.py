@@ -1,5 +1,5 @@
 """
-Tests for weco.seismic_constraint — Seismic-guided correlation.
+Tests for weco.seismic_constraint - Seismic-guided correlation.
 ================================================================
 
 Tests SeismicHorizonPicks loading and SeismicConstraint cost penalty
@@ -94,7 +94,7 @@ class TestSeismicHorizonPicks:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# SeismicConstraint — Penalty computation
+# SeismicConstraint - Penalty computation
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestSeismicConstraint:

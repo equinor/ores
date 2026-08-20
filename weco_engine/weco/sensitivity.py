@@ -123,7 +123,7 @@ def configure_well_order(proj: ProjectExt, order: str, seed: int = 42) -> None:
 
     Reference
     ---------
-    Baville (2022) §3.4.1 — well order sensitivity.
+    Baville (2022) §3.4.1 - well order sensitivity.
     """
     order = order.lower().strip()
 
@@ -350,7 +350,7 @@ def quick_order_check(
 ) -> dict:
     """Run a quick forward-vs-reverse order check (fastest sensitivity test).
 
-    Reference: Baville (2022) Figures 3.6-3.8 — forward vs reverse
+    Reference: Baville (2022) Figures 3.6-3.8 - forward vs reverse
     well ordering comparison.
 
     Parameters

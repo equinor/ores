@@ -27,7 +27,7 @@
     }
   },
   "_meta": {
-    "description": "DevelopmentConcept — subsea/platform/FPSO facility concept, well plan, and production strategy for a field development.",
+    "description": "DevelopmentConcept - subsea/platform/FPSO facility concept, well plan, and production strategy for a field development.",
     "required_fields": ["Name", "DecisionGate"],
     "facility_types": ["SubseaTieback", "StandaloneFPSO", "FixedPlatform", "TLP", "Spar", "Semisubmersible", "JackUp", "Onshore"],
     "artificial_lift_options": ["GasLift", "ESP", "SRP", "PCP", "JetPump", "None"]

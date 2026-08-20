@@ -38,7 +38,7 @@ _HOWTO_SECTIONS: list[dict] = [
             {
                 "slug": "ores-overview",
                 "file": "Readme.md",
-                "title": "ORES Overview",
+                "title": "Overview",
                 "desc": "Capabilities, use cases, pages & technical detail",
                 "children": [
                     {"slug": "dev-guide", "file": "Dev.md", "title": "Developer Guide", "desc": "Environment setup, ingestion, demo pipelines, deployment & testing"},
@@ -48,13 +48,13 @@ _HOWTO_SECTIONS: list[dict] = [
                 "slug": "query-guide",
                 "file": "Query.md",
                 "title": "Querying Data",
-                "desc": "REST, ETP, GraphQL & OSDU Search – all query paths explained",
+                "desc": "REST, ETP, GraphQL & OSDU Search - all query paths explained",
             },
             {
                 "slug": "strategy",
                 "file": "Strategy.md",
                 "title": "Reservoir DDMS Project Collaboration and Governance",
-                "desc": "A sketch for a strategy",
+                "desc": "A strategy",
             },
         ],
     },
@@ -66,7 +66,7 @@ _HOWTO_SECTIONS: list[dict] = [
                 "slug": "business-decision",
                 "file": "BusinessDecision.md",
                 "title": "Business Decision",
-                "desc": "Model DG1–DG4 decisions as BusinessDecision records",
+                "desc": "Model field development or well decisions",
                 "children": [
                     {"slug": "bd-demo",      "file": "BdDemo.md",       "title": "BD Guide",        "desc": "Data model, lifecycle, relationships & ORES tooling"},
                     {"slug": "drogon-data-model", "file": "DrogonDataModel.md", "title": "Drogon Data Model", "desc": "DG1 record inventory, pipeline, RESQML & ETP ingestion"},
@@ -80,7 +80,7 @@ _HOWTO_SECTIONS: list[dict] = [
                 "slug": "seismic-interp",
                 "file": "SeisInt.md",
                 "title": "Seismic Interpretation",
-                "desc": "M27 data model, RDDMS patterns & Drogon demo",
+                "desc": "Data model, RDDMS patterns & Drogon demo",
             },
             {
                 "slug": "strat-column",
@@ -125,7 +125,7 @@ _HOWTO_SECTIONS: list[dict] = [
                 "slug": "_ext_rddms_home",
                 "external_url": "https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/home/-/blob/main/README.md",
                 "title": "Reservoir DDMS Home ↗",
-                "desc": "Official OSDU Reservoir DDMS documentation – data model, ETP protocol, deployment & API reference",
+                "desc": "Official OSDU Reservoir DDMS documentation - data model, ETP protocol, deployment & API reference",
             },
         ],
     },

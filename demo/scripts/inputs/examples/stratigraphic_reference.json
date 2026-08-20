@@ -1,7 +1,7 @@
 {
   "project": "Stratigraphic Framework",
   "gate": "Reference",
-  "description": "ICS2017 chronostratigraphic reference framework — standard stratigraphic column for seismic/well correlation across projects.",
+  "description": "ICS2017 chronostratigraphic reference framework - standard stratigraphic column for seismic/well correlation across projects.",
   "records": [
     {
       "type": "activity_template",

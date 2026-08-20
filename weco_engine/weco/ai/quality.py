@@ -1,5 +1,5 @@
 """
-weco.ai.quality — Correlation quality scoring
+weco.ai.quality - Correlation quality scoring
 ===============================================
 
 Assign a composite quality score to each correlation line based on
@@ -27,11 +27,11 @@ class CorrelationQuality:
 
     Criteria
     --------
-    1. **Cost** — Lower total cost → higher quality (from engine).
-    2. **Gap fraction** — Fewer gaps in the correlation → higher quality.
-    3. **Log similarity** — High similarity at tied markers → higher quality.
-    4. **Marker density** — More tied markers → higher quality.
-    5. **Geometric plausibility** — Sub-horizontal correlation lines → higher.
+    1. **Cost** - Lower total cost → higher quality (from engine).
+    2. **Gap fraction** - Fewer gaps in the correlation → higher quality.
+    3. **Log similarity** - High similarity at tied markers → higher quality.
+    4. **Marker density** - More tied markers → higher quality.
+    5. **Geometric plausibility** - Sub-horizontal correlation lines → higher.
     """
 
     def __init__(

@@ -1,5 +1,5 @@
 """
-weco.osdu_auth — OSDU / RDDMS authentication helper
+weco.osdu_auth - OSDU / RDDMS authentication helper
 =====================================================
 
 Provides ``get_token()`` for acquiring an access token from an OSDU
@@ -45,7 +45,7 @@ def get_token(
 
     Parameters are resolved from environment variables if not provided:
 
-    * ``OSDU_TOKEN`` — static bearer token (skips grant flow)
+    * ``OSDU_TOKEN`` - static bearer token (skips grant flow)
     * ``OSDU_TOKEN_URL`` / ``OSDU_CLIENT_ID`` / ``OSDU_CLIENT_SECRET``
     * ``OSDU_REFRESH_TOKEN``
     * ``OSDU_SCOPE``
@@ -75,7 +75,7 @@ def get_token(
         try:
             import httpx
         except ImportError:
-            raise ImportError("httpx is required for OSDU auth — pip install httpx")
+            raise ImportError("httpx is required for OSDU auth - pip install httpx")
 
         data: Dict[str, str] = {"client_id": cid}
         if scp:

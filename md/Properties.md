@@ -1,6 +1,6 @@
 # RESQML & OSDU Property Model
 
-> Properties describe physical or categorical quantities attached to geological objects — grids, surfaces, wellbores. This guide covers how RESQML models properties, how OSDU references them, and how ORES resolves and displays them.
+> Properties describe physical or categorical quantities attached to geological objects - grids, surfaces, wellbores. This guide covers how RESQML models properties, how OSDU references them, and how ORES resolves and displays them.
 >
 > **See also**: [RESQML Technical Reference (Energistics)](https://www.energistics.org/resqml-data-standards/) · [OSDU Property & Facet Schemas](https://community.opengroup.org/osdu/data/data-definitions/) · [Reservoir DDMS Home](https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/home/-/blob/main/README.md)
 
@@ -8,7 +8,7 @@
 
 ## 1) Property Object Types
 
-RESQML defines properties as objects that attach to a **supporting representation** (grid, surface, wellbore frame). Each property object carries values — one per cell, node, or sample — plus metadata about what it represents.
+RESQML defines properties as objects that attach to a **supporting representation** (grid, surface, wellbore frame). Each property object carries values - one per cell, node, or sample - plus metadata about what it represents.
 
 | RESQML type | Value domain | Typical use |
 |---|---|---|
@@ -39,14 +39,14 @@ RESQML defines properties as objects that attach to a **supporting representatio
 ```
 
 Key fields:
-- **SupportingRepresentation** — the grid/surface this property lives on
-- **IndexableElement** — `cells`, `nodes`, `columns`, `faces`, etc.
-- **PropertyKind** — what physical quantity (see §2)
-- **UOM** — unit of measure
+- **SupportingRepresentation** - the grid/surface this property lives on
+- **IndexableElement** - `cells`, `nodes`, `columns`, `faces`, etc.
+- **PropertyKind** - what physical quantity (see §2)
+- **UOM** - unit of measure
 
 ---
 
-## 2) Property Kinds — Standard vs Local
+## 2) Property Kinds - Standard vs Local
 
 ### StandardPropertyKind
 
@@ -77,7 +77,7 @@ User types "PHIT" → alias lookup → canonical "porosity"
 
 ### LocalPropertyKind
 
-When a property doesn't fit any standard kind, RESQML allows **local property kinds** — project-defined with a title and parent kind:
+When a property doesn't fit any standard kind, RESQML allows **local property kinds** - project-defined with a title and parent kind:
 
 ```json
 {
@@ -146,7 +146,7 @@ For fluid property tables (`ColumnBasedTable`):
 
 ---
 
-## 4) Facets — Qualifying Properties
+## 4) Facets - Qualifying Properties
 
 Facets add a second dimension to property identity. The same PropertyType can appear multiple times, distinguished by facets:
 
@@ -207,8 +207,8 @@ In RESQML, properties are organized into **PropertySet** objects that group rela
 
 In ORES, the GraphQL UI groups properties by RESQML type for navigation:
 
-- **Continuous Logs / Properties** — `ContinuousProperty` objects
-- **Discrete / Facies** — `DiscreteProperty` objects
+- **Continuous Logs / Properties** - `ContinuousProperty` objects
+- **Discrete / Facies** - `DiscreteProperty` objects
 
 RDDMS `deepSearch` can filter by property kind:
 ```graphql
@@ -258,7 +258,7 @@ OSDU enrichment          PropertyTypeID lookup → "Porosity" display label
 
 ## 7) Design Considerations
 
-### Continuous vs Discrete — choose correctly
+### Continuous vs Discrete - choose correctly
 
 | | Continuous | Discrete |
 |---|---|---|

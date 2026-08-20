@@ -111,7 +111,7 @@ class ConnectivityResult(BaseModel):
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Live data queries — fetch from RDDMS (via internal GraphQL) + OSDU catalog
+# Live data queries - fetch from RDDMS (via internal GraphQL) + OSDU catalog
 # ──────────────────────────────────────────────────────────────────────────────
 
 async def _run_deep_search(token: str, dataspace: str, type_name: str = None,
@@ -135,7 +135,7 @@ async def _run_deep_search(token: str, dataspace: str, type_name: str = None,
         sample_size=0,
         limit=limit,
     )
-    # Result is a DeepSearchResult strawberry type — extract objects
+    # Result is a DeepSearchResult strawberry type - extract objects
     objects = []
     for obj in (result.objects or []):
         o = {"uuid": obj.uuid, "title": obj.title, "typeName": obj.type_name}
@@ -357,7 +357,7 @@ def _find_faults_between_wells(
                 fault_name=fo.get("title", "Unknown Fault"),
                 transmissibility=None,
                 seal_quality="unknown",
-                description="Fault in RDDMS — transmissibility not yet quantified. "
+                description="Fault in RDDMS - transmissibility not yet quantified. "
                             "Ingest fault property records for seal assessment.",
             ))
 
@@ -495,7 +495,7 @@ def _infer_segment(well_objects: List[Dict], well_name: str) -> str:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Main query engine — orchestrates live data fetches
+# Main query engine - orchestrates live data fetches
 # ──────────────────────────────────────────────────────────────────────────────
 
 async def run_connectivity_query(req: ConnectivityRequest, token: str) -> ConnectivityResult:
@@ -533,7 +533,7 @@ async def run_connectivity_query(req: ConnectivityRequest, token: str) -> Connec
     if isinstance(bd_records, Exception):
         log.warning("BD fetch failed: %s", bd_records); bd_records = []
 
-    # Production (sequential — depends on well names)
+    # Production (sequential - depends on well names)
     prod_records = []
     if req.include_production:
         try:
@@ -554,7 +554,7 @@ async def run_connectivity_query(req: ConnectivityRequest, token: str) -> Connec
         result.same_zone = True
         result.zone_detail = f"Wells share zone(s): {', '.join(common)}"
     elif not zones_a and not zones_b:
-        result.zone_detail = "No marker data found — cannot assess stratigraphy"
+        result.zone_detail = "No marker data found - cannot assess stratigraphy"
     else:
         result.same_zone = False
         result.zone_detail = f"No common zone: {req.well_a}={zones_a or '?'}, {req.well_b}={zones_b or '?'}"
@@ -565,12 +565,12 @@ async def run_connectivity_query(req: ConnectivityRequest, token: str) -> Connec
 
     if req.include_faults:
         if seg_a == seg_b and seg_a != "unknown":
-            result.structural_summary = f"Same segment ({seg_a}) — no bounding faults"
+            result.structural_summary = f"Same segment ({seg_a}) - no bounding faults"
         elif seg_a == "unknown" or seg_b == "unknown":
             if faults:
                 result.structural_summary = (
                     f"Segment assignment uncertain. "
-                    f"{len(faults)} fault(s) in {dataspace} — listed for reference."
+                    f"{len(faults)} fault(s) in {dataspace} - listed for reference."
                 )
                 for fo in faults[:5]:
                     result.faults_between.append(FaultAssessment(
@@ -626,7 +626,7 @@ async def run_connectivity_query(req: ConnectivityRequest, token: str) -> Connec
     else:
         result.property_corridor = PropertyCorridor(
             zone=target_zone or "all",
-            quality_assessment="no data — grid properties not found in RDDMS",
+            quality_assessment="no data - grid properties not found in RDDMS",
         )
 
     # ── 4. Production response ───────────────────────────────────────────
@@ -662,7 +662,7 @@ async def run_connectivity_query(req: ConnectivityRequest, token: str) -> Connec
         result.confidence = "high"
         result.summary = (
             f"Wells {req.well_a} and {req.well_b} are in the same segment ({seg_a}) "
-            f"— high confidence connectivity."
+            f"- high confidence connectivity."
         )
     elif result.faults_between:
         with_trans = [f for f in result.faults_between if f.transmissibility is not None]
@@ -707,9 +707,9 @@ async def run_connectivity_query(req: ConnectivityRequest, token: str) -> Connec
     if any(f.seal_quality == "baffle" for f in result.faults_between):
         result.recommendations.append("Evaluate infill well in isolated segment")
     if result.property_corridor and "poor" in result.property_corridor.quality_assessment:
-        result.recommendations.append("Review depositional model — low NTG may indicate pinch-out")
+        result.recommendations.append("Review depositional model - low NTG may indicate pinch-out")
     if any(p.performance_rating == "poor" for p in result.production):
-        result.recommendations.append("Investigate poor producer — possible connectivity/sweep issue")
+        result.recommendations.append("Investigate poor producer - possible connectivity/sweep issue")
 
     return result
 

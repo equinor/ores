@@ -935,7 +935,7 @@
               <div id="fmu-popup-{{ rec_index }}" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.4);align-items:center;justify-content:center;">
                 <div style="background:#fff;border-radius:8px;padding:1.5rem;max-width:56rem;width:95%;max-height:85vh;overflow-y:auto;box-shadow:0 4px 20px rgba(0,0,0,.2);">
                   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;">
-                    <span style="font-weight:700;font-size:1rem;">{{ bd_act.get('Name') }} — I/O Detail</span>
+                    <span style="font-weight:700;font-size:1rem;">{{ bd_act.get('Name') }} - I/O Detail</span>
                     <button type="button" onclick="this.closest('[id^=fmu-popup]').style.display='none'" style="border:none;background:none;font-size:1.2rem;cursor:pointer;color:#718096;">✕</button>
                   </div>
                   {% if bd_act.get('Description') %}

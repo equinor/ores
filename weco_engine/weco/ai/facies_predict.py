@@ -1,5 +1,5 @@
 """
-weco.ai.facies_predict — Automated facies prediction from well logs
+weco.ai.facies_predict - Automated facies prediction from well logs
 ====================================================================
 
 Predict sedimentary facies from raw well-log data using gradient-boosted
@@ -23,7 +23,7 @@ Typical usage::
 
 Reference
 ---------
-Baville (2022) §3 — the distality cost function requires per-marker
+Baville (2022) §3 - the distality cost function requires per-marker
 facies.  Automated prediction removes the manual interpretation
 bottleneck.
 """
@@ -252,7 +252,7 @@ class FaciesPredictor:
         y_train = y_train[valid]
 
         if len(X_train) == 0:
-            raise ValueError("All training samples contain NaN — check log data.")
+            raise ValueError("All training samples contain NaN - check log data.")
 
         self._model = GradientBoostingClassifier(
             n_estimators=self.n_estimators,
@@ -294,7 +294,7 @@ class FaciesPredictor:
             Per-marker predicted facies labels.
         """
         if not self.is_trained:
-            raise RuntimeError("Model not trained — call .train() first.")
+            raise RuntimeError("Model not trained - call .train() first.")
 
         names = log_names or self._log_names
         missing = [n for n in names if n not in well.data]
@@ -341,7 +341,7 @@ class FaciesPredictor:
         ndarray of shape (n_markers, n_classes)
         """
         if not self.is_trained:
-            raise RuntimeError("Model not trained — call .train() first.")
+            raise RuntimeError("Model not trained - call .train() first.")
 
         names = log_names or self._log_names
         X = _featurise_single(well, names, self.window)

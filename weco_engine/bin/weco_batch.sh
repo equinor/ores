@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# weco_batch.sh — Shell wrapper for WeCo batch correlation workflow
+# weco_batch.sh - Shell wrapper for WeCo batch correlation workflow
 #
 # Usage:
 #   bin/weco_batch.sh config.json

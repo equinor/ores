@@ -46,7 +46,7 @@ def main():
     ap.add_argument("--upload-segy", action="store_true",
                     help="Also upload SEG-Y dataset records")
     ap.add_argument("--dry-run", action="store_true",
-                    help="Print records — no remote calls")
+                    help="Print records - no remote calls")
     args = ap.parse_args()
 
     survey = load_survey_config(args.config)

@@ -660,7 +660,7 @@
         | replace('{','⦃')
         | replace('}','⦄')
         | replace('–','-')
-        | replace('—','-')
+        | replace('-','-')
       }}
     {%- endmacro %}
 
@@ -837,7 +837,7 @@
       const blocks = Array.from(document.querySelectorAll('.rec-block'));
 
       // Cache original diagram source for every <pre.mermaid> (for clean re-parsing)
-      // Do NOT auto-render — only render when a block becomes visible
+      // Do NOT auto-render - only render when a block becomes visible
       const allPres = Array.from(document.querySelectorAll('pre.mermaid'));
       allPres.forEach(el => { if (!el.dataset.src) el.dataset.src = el.textContent; });
 

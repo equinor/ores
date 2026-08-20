@@ -1,4 +1,4 @@
-# Placeholder — keeps org-level CodeQL Actions scan from failing.
+# Placeholder - keeps org-level CodeQL Actions scan from failing.
 name: noop
 on: workflow_dispatch
 jobs:

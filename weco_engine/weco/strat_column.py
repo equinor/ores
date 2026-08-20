@@ -1,5 +1,5 @@
 """
-weco.strat_column — Stratigraphic Column model and OSDU integration
+weco.strat_column - Stratigraphic Column model and OSDU integration
 ====================================================================
 
 Adapted from ``~/ores/demo/strat/stratcolumnhandler.py``.

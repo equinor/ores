@@ -1,5 +1,5 @@
 """
-weco.flow_interface — Flow simulation interface via FloPy (§11.10.5)
+weco.flow_interface - Flow simulation interface via FloPy (§11.10.5)
 =====================================================================
 
 Convert WeCo correlation results to a FloPy-compatible MODFLOW grid

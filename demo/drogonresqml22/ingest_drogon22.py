@@ -142,7 +142,7 @@ def purge_dataspace(token: str, cfg: InstanceConfig) -> bool:
     if "not found" in combined.lower():
         print(f"  ✓ Dataspace {cfg.dataspace} did not exist (nothing to purge)")
         return True
-    print(f"  ⚠ Purge failed (rc={result.returncode}) — likely no ETP delete "
+    print(f"  ⚠ Purge failed (rc={result.returncode}) - likely no ETP delete "
           f"rights on this instance; continuing additive")
     print(f"    {combined[-200:]}")
     return False

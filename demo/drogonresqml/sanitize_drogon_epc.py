@@ -20,7 +20,7 @@ RDDMS import.  Each is fixed here:
            pdgm extension data; the real links exist elsewhere).
 
   xsd_schema (DiscreteProperty whose Values is an IntegerConstantArray with
-        Count=0 — the RMS exporter wrote the 'cellForFaultFace' connection
+        Count=0 - the RMS exporter wrote the 'cellForFaultFace' connection
         properties with an empty constant array even though the supporting
         GridConnectionSet has thousands of cell-index pairs)
         -> set the constant-array Count to the supporting representation's
@@ -34,11 +34,11 @@ RDDMS import.  Each is fixed here:
            every <eml:VersionString> in the package (DORs and the ext-ref).
 
   rddms_compat (the OPC docProps/core.xml + extendedCore.xml have no xsi:type;
-        the validator scans them as if they were RESQML objects — a false
+        the validator scans them as if they were RESQML objects - a false
         positive, and the previously-imported EPC carried no docProps)
         -> drop docProps and their references (Core Properties are optional).
 
-  fesapi_compat ([Content_Types] catch-all <Default Extension="xml"> — FESAPI
+  fesapi_compat ([Content_Types] catch-all <Default Extension="xml"> - FESAPI
         ignores it and every object xml is already an explicit Override)
         -> drop the xml Default (keep the .rels Default required by OPC).
 

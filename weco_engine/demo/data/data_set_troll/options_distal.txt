@@ -1,4 +1,4 @@
-# Config: TROLL — Distal CCF for Sognefjord Fm. deltaic sequences
+# Config: TROLL - Distal CCF for Sognefjord Fm. deltaic sequences
 # Primary: facies-based distality comparison (Walther's Law)
 # No-crossing: BIOZONE (chronostratigraphic constraint)
 # Wells represent proximal (distributary) to distal (prodelta/shelf) transect

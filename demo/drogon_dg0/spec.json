@@ -2,7 +2,7 @@
   "generator": "ontology",
   "project": "Drogon",
   "gate": "DG0",
-  "description": "Drogon DG0 Business Case Maturity — pre-drill screening with analogue-based volumes and strategic fit assessment",
+  "description": "Drogon DG0 Business Case Maturity - pre-drill screening with analogue-based volumes and strategic fit assessment",
 
   "business_decision": {
     "id": "dev:master-data--BusinessDecision:Drogon-DG0-EvaluateOpportunity:1",

@@ -17,7 +17,7 @@ chat.txt
 /wells.txt
 /options.txt
 
-# RDDMS / OSDU connection config (local secrets — never commit)
+# RDDMS / OSDU connection config (local secrets - never commit)
 .weco.env
 *.weco.env
 

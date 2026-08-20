@@ -146,8 +146,8 @@ class CorResView(BaseResView):
             return ret
 
     cor_pen = Qt.GlobalColor.lightGray
-    cor_stable_pen = QPen(QColor("#1a9641"), 1.5)   # green — persists across all realisations
-    cor_variable_pen = QPen(QColor("#d7191c"), 0.8)  # red — varies between realisations
+    cor_stable_pen = QPen(QColor("#1a9641"), 1.5)   # green - persists across all realisations
+    cor_variable_pen = QPen(QColor("#d7191c"), 0.8)  # red - varies between realisations
     tw_path_pen = QPen(Qt.GlobalColor.black, 3.0)
 
     region_palettes = (
@@ -949,7 +949,7 @@ class CorResView(BaseResView):
                                   self.cur_res.well_size[result_index],
                                   result_index=result_index))
             return
-        # wells and res — use well_id to look up the correct well,
+        # wells and res - use well_id to look up the correct well,
         # handling reordered wells (§10.4 fix)
         for well_id in range(len(self.cur_res.well_id)):
             result_index = self.cur_res.wellid2index(well_id)

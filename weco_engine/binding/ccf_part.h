@@ -47,7 +47,7 @@ public :
 
 	virtual void init() {};
 
-	// §10.5 Batched cost evaluation — override in Python to process arrays
+	// §10.5 Batched cost evaluation - override in Python to process arrays
 	// Default implementation falls back to per-element full_cost()
 	virtual std::vector<RetValue> batch_full_cost(const std::vector<CostValue>& costs) {
 		std::vector<RetValue> results;

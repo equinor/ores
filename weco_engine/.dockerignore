@@ -1,4 +1,4 @@
-# Docker ignore — exclude build artifacts, docs, IDE config
+# Docker ignore - exclude build artifacts, docs, IDE config
 __pycache__/
 *.pyc
 *.pyo

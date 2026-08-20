@@ -125,7 +125,7 @@ void CostHelperData::init(const WellList&well_list,const std::string & data_name
 		data_[n+cost_helper_.size1()] = &(well_list.well(cost_helper_.cor_graph2().well_id(n))->get_data(data_name));
 }
 
-// §6.6: Variance computation — kept simple for typical 2-10 well counts.
+// §6.6: Variance computation - kept simple for typical 2-10 well counts.
 // Compiler auto-vectorizes this loop with -O2/-O3.
 // For large node counts, consider AVX2 intrinsics.
 DataValue CostHelperData::dest_var() const {

@@ -4,7 +4,7 @@
 name_surfaces.py – Title = feature name, domain (DS/TS) + category in metadata.
 
 Follow-up to rename_surfaces.py.  Earlier we *prefixed* the feature onto the
-generic title ('TopVolantis — Depth Surface - Interpreted').  Per request the
+generic title ('TopVolantis - Depth Surface - Interpreted').  Per request the
 object's display name should simply be the feature it represents
 ('TopVolantis'), with the depth/time domain recorded as metadata instead of in
 the name.

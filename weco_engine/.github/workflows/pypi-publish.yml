@@ -1,4 +1,4 @@
-# §5.3 — PyPI package publication workflow
+# §5.3 - PyPI package publication workflow
 name: Publish to PyPI
 
 on:

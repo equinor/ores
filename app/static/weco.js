@@ -109,7 +109,7 @@
     if (body) opts.body = JSON.stringify(body);
     const resp = await fetch('/weco' + path, opts);
     if (resp.status === 401) {
-      // Token expired — reload page to trigger seamless Entra ID SSO redirect
+      // Token expired - reload page to trigger seamless Entra ID SSO redirect
       window.location.reload();
       return new Promise(() => {}); // never resolves (page is reloading)
     }
@@ -125,7 +125,7 @@
     if (selectedDemo) parts.push(`Demo: ${selectedDemo}`);
     const ds = dsSel.value;
     if (ds) parts.push(`[${ds}]`);
-    return parts.length ? parts.join(' ') + ' —' : '';
+    return parts.length ? parts.join(' ') + ' -' : '';
   }
 
   function setStatus(el, cls, msg) {
@@ -456,7 +456,7 @@
     });
   }
 
-  // Apply Preprocessing button — runs conditioning immediately on loaded wells
+  // Apply Preprocessing button - runs conditioning immediately on loaded wells
   const btnApplyPreprocess = $('#btn-apply-preprocess');
   if (btnApplyPreprocess) {
     btnApplyPreprocess.addEventListener('click', async () => {
@@ -483,7 +483,7 @@
           electrofacies_k: parseInt($('#pp-efacies-k')?.value || '4'),
         });
         if (statusEl) statusEl.textContent = `\u2713 Applied ${ppSteps.length} step(s)` +
-          (data.new_logs ? ` — new logs: ${data.new_logs.join(', ')}` : '');
+          (data.new_logs ? ` - new logs: ${data.new_logs.join(', ')}` : '');
         // Refresh log preview if available
         if (typeof refreshLogPreview === 'function') refreshLogPreview();
       } catch(e) {
@@ -540,7 +540,7 @@
       btnRddms.onclick = () => importDemoFromRddms(selectedDemo);
     }
 
-    // Load wells for this demo — show data summary, apply options, but DON'T auto-run
+    // Load wells for this demo - show data summary, apply options, but DON'T auto-run
     setStatus(importStat, 'info', `Loading wells for "${selectedDemo}"...`);
     try {
       const data = await api('GET', `/demos/${encodeURIComponent(selectedDemo)}/wells`);
@@ -645,7 +645,7 @@
 
       ctx.fillStyle = '#333';
       ctx.font = 'bold 13px sans-serif';
-      ctx.fillText(`${well.name} — ${channel} (${values.length} samples)`, 10, 20);
+      ctx.fillText(`${well.name} - ${channel} (${values.length} samples)`, 10, 20);
 
       if (!values.length) return;
 
@@ -736,7 +736,7 @@
     } catch(e) {
       ctx.fillStyle = '#605e5c';
       ctx.font = '13px sans-serif';
-      ctx.fillText(`${well.name} — ${channel}`, 10, 20);
+      ctx.fillText(`${well.name} - ${channel}`, 10, 20);
       ctx.fillText(`(preview not available: ${e.message})`, 10, 38);
     }
   }
@@ -2656,8 +2656,8 @@
       ctx.font = 'bold 13px sans-serif';
       ctx.textAlign = 'center';
       const title = hasStrat
-        ? `Wheeler Diagram — Solution #${idx + 1} vs ${strat.name}`
-        : `Wheeler Diagram — Solution #${idx + 1} (${nIntervals} intervals)`;
+        ? `Wheeler Diagram - Solution #${idx + 1} vs ${strat.name}`
+        : `Wheeler Diagram - Solution #${idx + 1} (${nIntervals} intervals)`;
       ctx.fillText(title, cw / 2, 16);
 
       // Subtitle hint
@@ -2850,7 +2850,7 @@
       try {
         const options = gatherOptions();
         const resp = await api('POST', '/sensitivity', { base_options: options });
-        let html = `<strong>Robustness: ${resp.robustness.toFixed(2)}</strong> — ${resp.recommendation}<br>`;
+        let html = `<strong>Robustness: ${resp.robustness.toFixed(2)}</strong> - ${resp.recommendation}<br>`;
         for (const [order, cost] of Object.entries(resp.costs)) {
           const marker = order === resp.best_order ? ' ★' : '';
           html += `${order}: ${cost === Infinity ? '∞' : cost.toFixed(4)}${marker}<br>`;
@@ -2874,7 +2874,7 @@
         const options = gatherOptions();
         const resp = await api('POST', '/auto-tune', { base_options: options, max_iter: 20, method: 'de' });
         if (resp.status === 'ok') {
-          let html = `<strong>🔧 Optimal parameters found</strong> (${resp.iterations} iterations, misfit=${resp.best_misfit?.toFixed(4) || '—'})<br>`;
+          let html = `<strong>🔧 Optimal parameters found</strong> (${resp.iterations} iterations, misfit=${resp.best_misfit?.toFixed(4) || '-'})<br>`;
           for (const [k, v] of Object.entries(resp.best_params || {})) {
             html += `&nbsp;&nbsp;${k} = <strong>${v.toFixed(3)}</strong><br>`;
           }
@@ -3189,7 +3189,7 @@
           }
         }
       }
-    } catch(e) { /* non-critical — labels already have basic tooltips */ }
+    } catch(e) { /* non-critical - labels already have basic tooltips */ }
   }
   loadOptionsHelp();
 

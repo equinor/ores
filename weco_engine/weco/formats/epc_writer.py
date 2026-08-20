@@ -1,5 +1,5 @@
 """
-§4.6 — Pure Python RESQML EPC writer (offline fallback).
+§4.6 - Pure Python RESQML EPC writer (offline fallback).
 
 Writes a minimal RESQML v2.0.1 EPC package (.epc = ZIP containing .xml + .h5)
 without requiring the GOCAD RESQML library.  Covers:

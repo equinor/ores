@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-demo_rddms.py — OSDU / RDDMS Live Demo (§16)
+demo_rddms.py - OSDU / RDDMS Live Demo (§16)
 ===============================================
 
 Standalone demo that reads and writes well data (logs, markers) purely
-via the OSDU Reservoir DDMS REST API — no local files.
+via the OSDU Reservoir DDMS REST API - no local files.
 
 Steps:
   1. Authenticate (Azure AD token flow from ORES)
@@ -28,7 +28,7 @@ Usage::
 
 Architecture note:
   This is temporary standalone code.  WeCo will later integrate into
-  ORES as a Radix client — at that point RDDMS/auth/read-write routes
+  ORES as a Radix client - at that point RDDMS/auth/read-write routes
   will come from ORES.  Keep this minimal and demo-focused.
 """
 
@@ -106,7 +106,7 @@ def step_list_dataspaces(url: str, token: str) -> list:
     # The list_wells call implicitly verifies connectivity
     try:
         wells = rddms_list_wells(url, token, "*")
-        print(f"  Connected to RDDMS — found data")
+        print(f"  Connected to RDDMS - found data")
         return wells
     except Exception as e:
         print(f"  WARN: Could not list dataspaces: {e}")
@@ -187,7 +187,7 @@ def step_correlate(wl, options_file: str = None):
     res = proj.get_res_file()
     n_results = res.get_nbr_results()
     best_cost = res.get_result_cost(0) if n_results > 0 else float("inf")
-    print(f"  Done in {elapsed:.2f}s — {n_results} results, "
+    print(f"  Done in {elapsed:.2f}s - {n_results} results, "
           f"best cost: {best_cost:.6f}")
     return res, wl
 
@@ -209,7 +209,7 @@ def step_write_results(url: str, token: str, dataspace: str,
 def step_cleanup(url: str, token: str, dataspace: str):
     """Delete demo objects from dataspace (idempotent)."""
     print(f"\n[step 6] Cleanup: would delete demo objects from '{dataspace}'")
-    print("  (Not implemented — manual cleanup via RDDMS admin UI)")
+    print("  (Not implemented - manual cleanup via RDDMS admin UI)")
 
 
 def main():

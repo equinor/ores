@@ -37,7 +37,7 @@ cd "$REPO_ROOT"
 # ── Pre-check: verify DG1 shared manifests exist ────────────────
 echo -e "\n═══ Pre-check: DG1 shared manifests ═══"
 if [[ ! -f demo/drogon_dg1/manifest_masterwp_drogon.json ]]; then
-  echo "ERROR: DG1 manifest missing — run DG1 pipeline first" >&2
+  echo "ERROR: DG1 manifest missing - run DG1 pipeline first" >&2
   exit 1
 fi
 echo "  OK manifest_masterwp_drogon.json"

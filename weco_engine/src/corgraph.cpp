@@ -237,7 +237,7 @@ void CorGraphBuilder::add_trans(CorGraph::NodeId dest,CostValue cost){
 }
 
 
-// §6.2 Graph compaction — remove unreachable nodes
+// §6.2 Graph compaction - remove unreachable nodes
 void CorGraph::compact() {
 	if(size_ <= 2) return;
 

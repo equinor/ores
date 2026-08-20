@@ -290,7 +290,7 @@ def main() -> int:
         # docProps + root rels
         for n in keep_aux:
             zo.writestr(n, z.read(n))
-        # [Content_Types].xml — rebuild from original, keep only kept parts
+        # [Content_Types].xml - rebuild from original, keep only kept parts
         ct_name = next(n for n in names if "Content_Types" in n)
         ct = z.read(ct_name).decode("utf-8", "replace")
         kept_basenames = {nm.split("/")[-1] for nm in kept_names}

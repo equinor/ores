@@ -1,5 +1,5 @@
 """
-weco.ai.anomaly — Anomaly detection for correlation results
+weco.ai.anomaly - Anomaly detection for correlation results
 =============================================================
 
 Automatically flag **suspicious correlation lines** that may need
@@ -17,11 +17,11 @@ Typical usage::
     report = detector.flag_anomalies(res_file, well_list)
     for entry in report:
         if entry["anomaly"]:
-            print(f"Correlation {entry['index']} flagged — review needed")
+            print(f"Correlation {entry['index']} flagged - review needed")
 
 Reference
 ---------
-§12.8 of the WeCo todo — Isolation Forest on per-correlation features.
+§12.8 of the WeCo todo - Isolation Forest on per-correlation features.
 """
 
 from __future__ import annotations
@@ -43,12 +43,12 @@ def _extract_correlation_features(
     """Build a feature matrix with one row per correlation line.
 
     Features per correlation:
-        0. cost               — total dynamic-programming cost
-        1. gap_fraction        — fraction of markers that are gaps
-        2. mean_depth_offset   — mean |Δdepth| between tied markers
-        3. max_depth_offset    — max |Δdepth| across tied markers
-        4. log_similarity      — mean absolute log difference at ties
-        5. n_tied_markers      — number of non-gap tied markers
+        0. cost               - total dynamic-programming cost
+        1. gap_fraction        - fraction of markers that are gaps
+        2. mean_depth_offset   - mean |Δdepth| between tied markers
+        3. max_depth_offset    - max |Δdepth| across tied markers
+        4. log_similarity      - mean absolute log difference at ties
+        5. n_tied_markers      - number of non-gap tied markers
     """
     n_cor = res_file.nbr_cor()
     features = np.full((n_cor, 6), np.nan, dtype=np.float64)

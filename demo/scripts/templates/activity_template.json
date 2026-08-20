@@ -5,7 +5,7 @@
     "ParameterTemplates": []
   },
   "_meta": {
-    "description": "ActivityTemplate — defines expected inputs/outputs for a workflow type (FMU, seismic interpretation, well planning, etc.).",
+    "description": "ActivityTemplate - defines expected inputs/outputs for a workflow type (FMU, seismic interpretation, well planning, etc.).",
     "required_fields": ["Name", "ParameterTemplates"],
     "parameter_template_entry": {
       "Title": "Parameter slot name",

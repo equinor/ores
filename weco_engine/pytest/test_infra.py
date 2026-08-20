@@ -77,7 +77,7 @@ def well_list_with_coords():
 
 
 # ===================================================================
-# §13.9 — Distality computation
+# §13.9 - Distality computation
 # ===================================================================
 
 class TestDistality:
@@ -161,7 +161,7 @@ class TestDistality:
 
 
 # ===================================================================
-# §11.8, §13.2 — Cost functions (import & class attributes)
+# §11.8, §13.2 - Cost functions (import & class attributes)
 # ===================================================================
 
 class TestCostFunctions:
@@ -214,7 +214,7 @@ class TestCostFunctions:
 
 
 # ===================================================================
-# §8.3 — REST API (schema validation without running server)
+# §8.3 - REST API (schema validation without running server)
 # ===================================================================
 
 class TestAPI:
@@ -271,7 +271,7 @@ class TestAPI:
 
 
 # ===================================================================
-# §13.12.3 — Automated regression test against known-good outcomes
+# §13.12.3 - Automated regression test against known-good outcomes
 # ===================================================================
 
 class TestRegression:
@@ -469,7 +469,7 @@ class TestRegression:
 
 
 # ---------------------------------------------------------------------------
-#  ResFile.write() / .cor() / .copy() — round-trip and AI adapter
+#  ResFile.write() / .cor() / .copy() - round-trip and AI adapter
 # ---------------------------------------------------------------------------
 
 class TestResFileWrite:

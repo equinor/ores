@@ -1,5 +1,5 @@
 """
-weco.formats — Unified file format registry
+weco.formats - Unified file format registry
 ============================================
 
 Provides a single ``read_wells()`` entry point that auto-detects
@@ -228,7 +228,7 @@ def _read_las_with_discrete(path, *, curves=None, discrete=None,
     curves : list or dict, optional
         Continuous curve mapping (as for las2well).
     discrete : dict[str, str], optional
-        ``{region_name: las_curve_name}`` — curves to import and
+        ``{region_name: las_curve_name}`` - curves to import and
         convert to WeCo regions automatically.
     filter_expr : str, optional
         Row filter expression.
@@ -276,7 +276,7 @@ def _read_gocad_well(path, **kw):
 
 
 def _read_rddms(path, **kw):
-    """Read from RDDMS — path is treated as config file with url/token/dataspace."""
+    """Read from RDDMS - path is treated as config file with url/token/dataspace."""
     import json as _json
     with open(path) as f:
         cfg = _json.load(f)
@@ -439,7 +439,7 @@ def _write_epc(well_list, path, **kw):
         from weco.rddms import epc_export_wells
         epc_export_wells(str(path), well_list, **kw)
     except ImportError:
-        # §4.6 — fallback pure-Python EPC writer
+        # §4.6 - fallback pure-Python EPC writer
         from weco.formats.epc_writer import write_epc_wells
         write_epc_wells(str(path), well_list, **kw)
 

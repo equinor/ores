@@ -1,5 +1,5 @@
 """
-Tests for weco.seistiles_constraint — Seismic Tiles correlation constraint.
+Tests for weco.seistiles_constraint - Seismic Tiles correlation constraint.
 ==========================================================================
 
 End-to-end tests for tile loading, spatial lookup, dip/azimuth/amplitude
@@ -134,7 +134,7 @@ class TestSeismicTile:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# SeismicTileSet — I/O
+# SeismicTileSet - I/O
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestTileSetIO:
@@ -178,7 +178,7 @@ class TestTileSetIO:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# SeismicTileSet — Spatial lookup
+# SeismicTileSet - Spatial lookup
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestTileSetLookup:
@@ -264,7 +264,7 @@ class TestGeometryHelpers:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# SeisTilesConstraint — Penalty computation
+# SeisTilesConstraint - Penalty computation
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestSeisTilesConstraint:
@@ -435,7 +435,7 @@ class TestComputePenaltySingle:
             460000, 6780000, 1000,
             460200, 6780000, 1100,  # large depth shift
         )
-        # May or may not have a tile — if found, penalty > 0
+        # May or may not have a tile - if found, penalty > 0
         assert p >= 0.0
 
 

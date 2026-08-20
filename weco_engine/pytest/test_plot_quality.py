@@ -122,7 +122,7 @@ class TestCorrelationPlot:
         """Plot PNG must be non-trivial size (>10KB = has real content)."""
         png, _, _ = self._get_png(run_results, dataset)
         assert len(png) > 10_000, (
-            f"{dataset}: PNG only {len(png)} bytes — likely empty/broken")
+            f"{dataset}: PNG only {len(png)} bytes - likely empty/broken")
 
     @pytest.mark.parametrize("dataset", [d[0] for d in DEMOS])
     def test_plot_dimensions(self, run_results, dataset):
@@ -155,7 +155,7 @@ class TestCorrelationPlot:
         unique_colors = len(np.unique(pixels, axis=0))
         # Should have at least 20 distinct colors (well traces, grid, bg, lines)
         assert unique_colors > 15, (
-            f"{dataset}: only {unique_colors} unique colors — plot looks empty")
+            f"{dataset}: only {unique_colors} unique colors - plot looks empty")
 
     @pytest.mark.parametrize("dataset", [d[0] for d in DEMOS])
     def test_plot_text_content(self, run_results, dataset):
@@ -235,7 +235,7 @@ class TestCorrelationPlot:
                     n_lines += 1
 
         assert n_lines > 5, (
-            f"{dataset}: only {n_lines} correlation lines drawn — expected many more")
+            f"{dataset}: only {n_lines} correlation lines drawn - expected many more")
         plt.close(fig)
 
 
@@ -285,7 +285,7 @@ class TestWheelerDiagram:
         ax.set_yticks(range(n_wells))
         ax.set_yticklabels(well_names, fontsize=8)
         ax.set_xlabel("Correlation step (relative time →)", fontsize=9)
-        ax.set_title(f"Wheeler Diagram — Correlation #{cor_idx}  "
+        ax.set_title(f"Wheeler Diagram - Correlation #{cor_idx}  "
                      f"({n_steps - 1} intervals, {n_wells} wells)", fontsize=10)
         ax.set_xlim(-0.5, n_steps - 0.5)
         ax.set_ylim(-0.5, n_wells - 0.5)
@@ -416,9 +416,9 @@ class TestWheelerDiagram:
         png_size = len(buf.read())
 
         assert png_size > 5_000, (
-            f"{dataset}: Wheeler PNG only {png_size} bytes — empty?")
+            f"{dataset}: Wheeler PNG only {png_size} bytes - empty?")
         assert png_size < 5_000_000, (
-            f"{dataset}: Wheeler PNG {png_size/1e6:.1f}MB — too large")
+            f"{dataset}: Wheeler PNG {png_size/1e6:.1f}MB - too large")
         plt.close(fig)
 
 
@@ -482,5 +482,5 @@ class TestPlotConsistency:
         cost = rf.get_result_cost(0)
         # The render function embeds: "Cor #0  |  Cost: {cost:.4f}  |  N total"
         # Just verify cost is a real number
-        assert cost > 0, f"{dataset}: cost is {cost} — should be positive"
+        assert cost > 0, f"{dataset}: cost is {cost} - should be positive"
         assert np.isfinite(cost), f"{dataset}: cost is not finite"

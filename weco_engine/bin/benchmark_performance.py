@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-benchmark_performance.py — Performance benchmark for WeCo engine (§1.1, §1.2)
+benchmark_performance.py - Performance benchmark for WeCo engine (§1.1, §1.2)
 ===============================================================================
 
 Measures wall-clock time and correlation quality for:

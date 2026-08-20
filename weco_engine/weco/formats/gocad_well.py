@@ -96,7 +96,7 @@ def read_gocad_well(path: str) -> List[Well]:
                     pass
 
         elif keyword in ("VRTX", "PVRTX", "ATOM"):
-            # Vertex data — common in point-set-like wells
+            # Vertex data - common in point-set-like wells
             values = parts[1:]
             if len(values) >= 4:
                 try:
@@ -186,10 +186,10 @@ def write_gocad_well(
     log_names : list of str, optional
         Alias for properties (§15.15 compatibility).
     strat_column : dict, optional
-        §15.11 — Stratigraphic column header.
+        §15.11 - Stratigraphic column header.
         ``{zone_index: {"name": str, "age_top": float, "age_base": float}}``
     zone_colours : dict, optional
-        §15.11 — Zone colours: ``{zone_name: (r, g, b)}``
+        §15.11 - Zone colours: ``{zone_name: (r, g, b)}``
     """
     if log_names is not None and properties is None:
         properties = log_names
@@ -210,7 +210,7 @@ def write_gocad_well(
             f.write(f"  x: {well.x}\n")
             f.write(f"  y: {well.y}\n")
 
-        # §15.11 — Strat column in header
+        # §15.11 - Strat column in header
         if strat_column:
             f.write(f"  *strat_column: {len(strat_column)} units\n")
             for zi, info in sorted(strat_column.items()):
@@ -224,7 +224,7 @@ def write_gocad_well(
                     f.write(f" {age_base}")
                 f.write("\n")
 
-        # §15.11 — Zone colours
+        # §15.11 - Zone colours
         if zone_colours:
             for zname, (r, g, b) in zone_colours.items():
                 f.write(f"  *zone_colour_{zname}: {r} {g} {b}\n")
@@ -257,7 +257,7 @@ def write_gocad_vset(wells: List[Well], path: str, property_name: str = "horizon
     """
     Write well marker / horizon picks as a GOCAD VSet (.vs) point set.
 
-    §15.12 — Each point is (X, Y, Z) with an optional integer property
+    §15.12 - Each point is (X, Y, Z) with an optional integer property
     identifying the horizon index.
 
     Parameters

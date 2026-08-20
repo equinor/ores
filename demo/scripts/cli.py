@@ -575,7 +575,7 @@ def cmd_search(args):
         results = data.get("results") or []
 
         print(f"\n{'━' * 60}")
-        print(f"  {short}  —  {total} total, showing {len(results)}")
+        print(f"  {short}  -  {total} total, showing {len(results)}")
         print(f"{'━' * 60}")
 
         if args.output == "json":
@@ -606,7 +606,7 @@ def _make_client(instance: OsduInstance, args) -> OsduClient:
     """Create an authenticated OsduClient (full auth chain)."""
     token = getattr(args, "token", None) or os.environ.get("OSDU_TOKEN", "")
     if token:
-        # Explicit token provided — use directly
+        # Explicit token provided - use directly
         client = OsduClient(instance)
         client.set_token(token)
         return client

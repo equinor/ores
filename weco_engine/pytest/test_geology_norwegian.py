@@ -10,7 +10,7 @@ alongside code correctness.
 
 Geological context
 ------------------
-* Middle Jurassic Hugin Formation — tide- and wave-influenced shallow
+* Middle Jurassic Hugin Formation - tide- and wave-influenced shallow
   marine deltaic system (Dreyer et al. 2005; Knaust & Hoth 2021).
 * Well-log signatures:
   - GR 15–130 GAPI (clean sand ~20, offshore shale ~120)
@@ -52,7 +52,7 @@ import numpy as np
 import pytest
 
 # ---------------------------------------------------------------------------
-#  Constants — geologically realistic ranges
+#  Constants - geologically realistic ranges
 # ---------------------------------------------------------------------------
 
 GR_SAND, GR_SHALE = 20.0, 120.0       # GAPI
@@ -73,7 +73,7 @@ FC_SHELF = 8       # Shelf heterolithic
 
 
 # ---------------------------------------------------------------------------
-#  Well builder helpers — Norwegian North Sea stratigraphic patterns
+#  Well builder helpers - Norwegian North Sea stratigraphic patterns
 # ---------------------------------------------------------------------------
 
 def _gr_fining_up(n: int, seed=42) -> List[float]:
@@ -97,7 +97,7 @@ def _gr_aggradational(n: int, seed=42) -> List[float]:
 
 
 def _gr_parasq_stacking(n: int, n_parasq=3, seed=42) -> List[float]:
-    """Stacked parasequences — repeated coarsening-upward cycles."""
+    """Stacked parasequences - repeated coarsening-upward cycles."""
     rng = np.random.RandomState(seed)
     seg = n // n_parasq
     gr = []
@@ -387,7 +387,7 @@ def _assert_reasonable_cost(cost: float, max_expected: float = 1e6):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  TEST CLASS 1 — Engine boundary conditions (segfault prevention)
+#  TEST CLASS 1 - Engine boundary conditions (segfault prevention)
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestEngineBoundaryConditions:
@@ -432,7 +432,7 @@ class TestEngineBoundaryConditions:
         _assert_monotonic_lines(r["lines"], [85, 20])
 
     def test_asymmetric_extreme_200_vs_10(self):
-        """Extreme asymmetry — 200 vs 10 markers."""
+        """Extreme asymmetry - 200 vs 10 markers."""
         wells = [
             _make_hugin_well("Wide", 200, _gr_parasq_stacking, 0, x=0.0),
             _make_hugin_well("Narrow", 10, _gr_coarsening_up, 1, x=5000.0),
@@ -446,7 +446,7 @@ class TestEngineBoundaryConditions:
 
     # --- Single well: should NOT hang ---
     def test_single_well_rejects(self):
-        """Engine hangs on 1 well — the API must reject before calling run()."""
+        """Engine hangs on 1 well - the API must reject before calling run()."""
         from weco.api import _validate_well_list
         from weco.data import Well, WellList as PyWL
 
@@ -464,7 +464,7 @@ class TestEngineBoundaryConditions:
 
     # --- Missing data name reference: var-data2=DT without DT ---
     def test_missing_data_name_rejected(self):
-        """var-data2=DT on GR-only wells — must be caught before engine."""
+        """var-data2=DT on GR-only wells - must be caught before engine."""
         from weco.api import _validate_options_against_wells
         from weco.data import WellList as PyWL
 
@@ -512,7 +512,7 @@ class TestEngineBoundaryConditions:
 
     # --- State leakage: sequential runs without reset ---
     def test_state_leakage_with_reset_safe(self):
-        """Two sequential runs WITH reset_options between them — must work."""
+        """Two sequential runs WITH reset_options between them - must work."""
         wells1 = [
             _make_hugin_well("A", 30, _gr_fining_up, 0, add_dt=True),
             _make_hugin_well("B", 30, _gr_fining_up, 1, x=100.0, add_dt=True),
@@ -524,7 +524,7 @@ class TestEngineBoundaryConditions:
         p1 = self._wells_path(wells1, "w1.txt")
         p2 = self._wells_path(wells2, "w2.txt")
 
-        # Run 1 with DT, then run 2 without DT — each in own subprocess
+        # Run 1 with DT, then run 2 without DT - each in own subprocess
         r1 = _run_engine_subprocess(p1, {"var-data": "GR", "var-data2": "DT"})
         assert r1["ok"], f"Run 1 failed: {r1.get('error')}"
         r2 = _run_engine_subprocess(p2, {"var-data": "GR"})
@@ -553,7 +553,7 @@ class TestEngineBoundaryConditions:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  TEST CLASS 2 — Hugin Formation 7-well transect
+#  TEST CLASS 2 - Hugin Formation 7-well transect
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestHuginTransect:
@@ -603,7 +603,7 @@ class TestHuginTransect:
         return path, sizes
 
     def test_basic_gr_correlation(self):
-        """7-well GR-only correlation — baseline validity check."""
+        """7-well GR-only correlation - baseline validity check."""
         path, sizes = self._build_transect()
         r = _run_engine_subprocess(
             path,
@@ -658,7 +658,7 @@ class TestHuginTransect:
         _assert_monotonic_lines(r["lines"], [40, 40])
 
     def test_biozone_no_crossing(self):
-        """Biozone no-crossing constraint — biozones must be honoured."""
+        """Biozone no-crossing constraint - biozones must be honoured."""
         path, sizes = self._build_transect(add_biozones=True)
         r = _run_engine_subprocess(
             path,
@@ -707,7 +707,7 @@ class TestHuginTransect:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  TEST CLASS 3 — Sigrun 2-well detailed scenario
+#  TEST CLASS 3 - Sigrun 2-well detailed scenario
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestSigrunTwoWell:
@@ -806,7 +806,7 @@ class TestSigrunTwoWell:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  TEST CLASS 4 — Parasequence stacking patterns
+#  TEST CLASS 4 - Parasequence stacking patterns
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestParasequencePatterns:
@@ -853,7 +853,7 @@ class TestParasequencePatterns:
         _assert_reasonable_cost(r["cost"], max_expected=50000)
 
     def test_opposite_patterns_higher_cost(self):
-        """Fining-up vs coarsening-up — opposite trends → higher cost."""
+        """Fining-up vs coarsening-up - opposite trends → higher cost."""
         path, sizes = self._build_pattern_wells([
             ("A_FU", _gr_fining_up, 42),
             ("B_CU", _gr_coarsening_up, 42),
@@ -893,7 +893,7 @@ class TestParasequencePatterns:
         _assert_monotonic_lines(r["lines"], sizes)
 
     def test_mixed_facies_with_gr(self):
-        """Wells with similar GR patterns + facies regions — combined cost.
+        """Wells with similar GR patterns + facies regions - combined cost.
 
         Use the same GR function (different seeds) so facies regions
         overlap, otherwise same-region finds no valid path."""
@@ -920,7 +920,7 @@ class TestParasequencePatterns:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  TEST CLASS 5 — Real dataset regression (data_set_distality and data_set_biozone_distality)
+#  TEST CLASS 5 - Real dataset regression (data_set_distality and data_set_biozone_distality)
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestRealDatasetRegression:
@@ -1063,7 +1063,7 @@ class TestRealDatasetRegression:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  TEST CLASS 6 — API validation guard unit tests
+#  TEST CLASS 6 - API validation guard unit tests
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestAPIValidationGuards:
@@ -1172,7 +1172,7 @@ class TestAPIValidationGuards:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-#  TEST CLASS 7 — N-best and cost consistency
+#  TEST CLASS 7 - N-best and cost consistency
 # ═══════════════════════════════════════════════════════════════════════════
 
 class TestNBestAndCosts:

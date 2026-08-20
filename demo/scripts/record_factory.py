@@ -7,7 +7,7 @@ Creates OSDU records from templates + input data. Supports:
   - Interactive prompting for missing fields
   - Deterministic UUID generation for stable record IDs
 
-Independent of ORES — works with any OSDU-compatible system.
+Independent of ORES - works with any OSDU-compatible system.
 """
 from __future__ import annotations
 

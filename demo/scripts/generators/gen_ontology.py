@@ -77,7 +77,7 @@ Spec format:
   "activities": [
     {
       "template_name": "Volume Update Action",
-      "name": "Volume update — porosity revision",
+      "name": "Volume update - porosity revision",
       "start": "2026-02-12T14:00:00Z",
       "end": "2026-02-12T16:00:00Z",
       "parameters": [
@@ -224,11 +224,11 @@ def _build_bd(
     if bd.get("prior_activity_ids"):
         data["PriorActivityIDs"] = bd["prior_activity_ids"]
 
-    # ── ReservoirIDs[] — always set when reservoir_id is provided ──
+    # ── ReservoirIDs[] - always set when reservoir_id is provided ──
     if bd.get("reservoir_id"):
         data["ReservoirIDs"] = [bd["reservoir_id"]]
 
-    # ── Parameters[] — passthrough (capital-P) or build from relationships ──
+    # ── Parameters[] - passthrough (capital-P) or build from relationships ──
     if bd.get("Parameters"):
         data["Parameters"] = list(bd["Parameters"])
         # Ensure reservoir parameter is present even with passthrough
@@ -264,13 +264,13 @@ def _build_bd(
         if params:
             data["Parameters"] = params
 
-    # ── ProjectSpecifications[] — passthrough or build from economics ──
+    # ── ProjectSpecifications[] - passthrough or build from economics ──
     if bd.get("ProjectSpecifications"):
         data["ProjectSpecifications"] = bd["ProjectSpecifications"]
     elif bd.get("economics"):
         data["ProjectSpecifications"] = _build_economics(bd["economics"], pfx)
 
-    # ── Remarks[] — passthrough or build from remarks ──
+    # ── Remarks[] - passthrough or build from remarks ──
     if bd.get("Remarks"):
         data["Remarks"] = bd["Remarks"]
     else:
@@ -283,7 +283,7 @@ def _build_bd(
         if remarks:
             data["Remarks"] = remarks
 
-    # ── ActivityStates[] — passthrough or build from activity_states ──
+    # ── ActivityStates[] - passthrough or build from activity_states ──
     if bd.get("ActivityStates"):
         data["ActivityStates"] = bd["ActivityStates"]
     elif bd.get("activity_states"):
@@ -441,7 +441,7 @@ def _build_cp(
     if cp.get("ProjectSpecifications"):
         data["ProjectSpecifications"] = cp["ProjectSpecifications"]
 
-    # ── LifecycleEvents[] — passthrough or build from lifecycle_events ──
+    # ── LifecycleEvents[] - passthrough or build from lifecycle_events ──
     if cp.get("LifecycleEvents"):
         data["LifecycleEvents"] = cp["LifecycleEvents"]
     else:
@@ -460,7 +460,7 @@ def _build_cp(
         if events:
             data["LifecycleEvents"] = events
 
-    # ── ActivityStates[] — passthrough or build from gate_checklist ──
+    # ── ActivityStates[] - passthrough or build from gate_checklist ──
     if cp.get("ActivityStates"):
         data["ActivityStates"] = cp["ActivityStates"]
     else:
@@ -479,7 +479,7 @@ def _build_cp(
     if cp.get("LastActivityState"):
         data["LastActivityState"] = cp["LastActivityState"]
 
-    # ── Parameters[] — passthrough or build from relationships ──
+    # ── Parameters[] - passthrough or build from relationships ──
     if cp.get("Parameters"):
         data["Parameters"] = cp["Parameters"]
     else:

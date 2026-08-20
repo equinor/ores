@@ -6,7 +6,7 @@
     "Data": {}
   },
   "_meta": {
-    "description": "ColumnBasedTable — generic tabular data (design matrix, production profiles, parameter sets). Columns define schema, Data holds arrays.",
+    "description": "ColumnBasedTable - generic tabular data (design matrix, production profiles, parameter sets). Columns define schema, Data holds arrays.",
     "required_fields": ["Name", "Columns"],
     "column_entry": {
       "Name": "ColumnName",

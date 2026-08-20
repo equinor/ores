@@ -1,5 +1,5 @@
 """
-weco.formats.dlis_reader — DLIS reader stub
+weco.formats.dlis_reader - DLIS reader stub
 =============================================
 
 Read DLIS (Digital Log Interchange Standard) files.  This is a stub
@@ -8,7 +8,7 @@ that delegates to the ``dlisio`` library if available.
 DLIS is a binary format used for well log data, more complex than LAS.
 It supports multiple frames, multiple log sets, and rich metadata.
 
-Todo §4.10 — DLIS reader (P3)
+Todo §4.10 - DLIS reader (P3)
 """
 
 from __future__ import annotations

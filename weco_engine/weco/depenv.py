@@ -1,5 +1,5 @@
 """
-weco.depenv — Depositional Environment Preset Library
+weco.depenv - Depositional Environment Preset Library
 ======================================================
 
 Maps canonical OSDU depositional environment names to WeCo correlation
@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 #: Maps OSDU DepositionalEnvironment strings to normalised keys.
 #: Handles common variants / synonyms.
 OSDU_DEPENV_ALIASES: Dict[str, str] = {
-    # — Marine —
+    # - Marine -
     "Shallow Marine": "shallow_marine",
     "shallow marine": "shallow_marine",
     "ShallowMarine": "shallow_marine",
@@ -55,7 +55,7 @@ OSDU_DEPENV_ALIASES: Dict[str, str] = {
     "Basin Floor": "deep_marine",
     "Slope": "deep_marine",
     "slope": "deep_marine",
-    # — Deltaic —
+    # - Deltaic -
     "Deltaic": "deltaic",
     "deltaic": "deltaic",
     "Delta": "deltaic",
@@ -63,7 +63,7 @@ OSDU_DEPENV_ALIASES: Dict[str, str] = {
     "Delta Front": "deltaic",
     "Delta Plain": "deltaic",
     "Prodelta": "deltaic",
-    # — Fluvial —
+    # - Fluvial -
     "Fluvial": "fluvial",
     "fluvial": "fluvial",
     "Alluvial": "fluvial",
@@ -72,34 +72,34 @@ OSDU_DEPENV_ALIASES: Dict[str, str] = {
     "continental": "fluvial",
     "Channel": "fluvial",
     "Floodplain": "fluvial",
-    # — Lacustrine —
+    # - Lacustrine -
     "Lacustrine": "lacustrine",
     "lacustrine": "lacustrine",
     "Lake": "lacustrine",
-    # — Aeolian —
+    # - Aeolian -
     "Aeolian": "aeolian",
     "aeolian": "aeolian",
     "Eolian": "aeolian",
     "Desert": "aeolian",
-    # — Tidal —
+    # - Tidal -
     "Tidal": "tidal",
     "tidal": "tidal",
     "Tidal Flat": "tidal",
     "Estuarine": "tidal",
     "estuarine": "tidal",
-    # — Carbonate —
+    # - Carbonate -
     "Carbonate": "carbonate",
     "carbonate": "carbonate",
     "Carbonate Platform": "carbonate",
     "Reef": "reef",
     "reef": "reef",
     "Reefal": "reef",
-    # — Coal —
+    # - Coal -
     "Coal": "coal",
     "coal": "coal",
     "Peat": "coal",
     "Swamp": "coal",
-    # — Glacial —
+    # - Glacial -
     "Glacial": "glacial",
     "glacial": "glacial",
     "Quaternary": "glacial",
@@ -227,7 +227,7 @@ DEPENV_PRESETS: Dict[str, Dict[str, Any]] = {
         "label": "Lacustrine (Lake)",
         "osdu_names": ["Lacustrine", "Lake"],
         "description": (
-            "Lacustrine deposits — lake-floor, shore, and deltaic sub-envs.\n\n"
+            "Lacustrine deposits - lake-floor, shore, and deltaic sub-envs.\n\n"
             "Typical logs: GR, DEN, SON, TOC\n"
             "Key features: laminated mudstones (source rocks), thin turbidites,\n"
             "highstand deltas, evaporite cycles in closed basins."
@@ -476,7 +476,7 @@ def suggest_options(
     env_key : str
         Normalised depenv key (e.g. "shallow_marine").
     data_names : list of str, optional
-        Available log names — used to substitute missing logs.
+        Available log names - used to substitute missing logs.
 
     Returns
     -------
@@ -586,7 +586,7 @@ def detect_environment_from_logs(well_list) -> Optional[str]:
     elif gr_mean < 40:
         return "carbonate"
 
-    # Fallback — check well count pattern
+    # Fallback - check well count pattern
     if len(wells) >= 10:
         return "shallow_marine"  # safe default for large projects
 

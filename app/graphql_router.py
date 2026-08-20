@@ -464,7 +464,7 @@ class Query:
         description=(
             "Array metadata without downloading data (M27+). Shows what arrays exist "
             "inside a resource (grid geometry, property values) with shape, logical type, "
-            "and last-write timestamp — without fetching the (potentially GB-sized) payload. "
+            "and last-write timestamp - without fetching the (potentially GB-sized) payload. "
             "Uses native /graphql endpoint when available; REST fallback otherwise."
         )
     )

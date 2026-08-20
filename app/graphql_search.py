@@ -664,7 +664,7 @@ class CompoundFilter:
     """AND-combine multiple property array filters on the same grid/frame.
 
     Each entry selects a property (by title or kind) and applies an array
-    threshold.  The result is the cell-level intersection — only cells that
+    threshold.  The result is the cell-level intersection - only cells that
     pass ALL criteria are counted.
 
     Memory-efficient: arrays are loaded one at a time; only a compact
@@ -1083,7 +1083,7 @@ async def _deep_search_pg(
                     """, tn)
                 actual_total = cnt_row["cnt"] if cnt_row else sql_cap
                 warnings.append(
-                    f"Dataspace has {actual_total} objects of type {tn} — "
+                    f"Dataspace has {actual_total} objects of type {tn} - "
                     f"showing first {sql_cap}. Use titleContains to narrow results "
                     f"or increase limit."
                 )
@@ -1665,7 +1665,7 @@ async def _deep_search_discovery(
             backend=backend, warnings=warnings or None,
         )
 
-    # Step 2: Batch graph search — one call for ALL candidates
+    # Step 2: Batch graph search - one call for ALL candidates
     candidate_uris = [r.get("uri", "") for r in candidates if r.get("uri")]
 
     # Property types we're interested in as sources of representations
@@ -1760,7 +1760,7 @@ async def _deep_search_discovery(
 
             p_type = pe["contentType"]
 
-            # We don't have property kind from graph metadata alone —
+            # We don't have property kind from graph metadata alone -
             # would need a follow-up GetDataObjects call. For now, use type name as proxy.
             kind = "unknown"
             if "Continuous" in p_type:
@@ -1938,14 +1938,14 @@ def validate_deep_search_inputs(
             if not property_filter.kind and not property_filter.title_contains:
                 warnings.append(
                     "arrayFilter without propertyFilter.kind or titleContains will scan "
-                    "ALL properties on each object — this may be slow. "
+                    "ALL properties on each object - this may be slow. "
                     "Consider adding kind: \"porosity\" or titleContains: \"PORO\" to narrow the search."
                 )
 
         # Empty property filter (no kind, no title, no array) is a no-op
         if not property_filter.kind and not property_filter.title_contains and not af:
             warnings.append(
-                "propertyFilter with no kind, titleContains, or arrayFilter has no effect — "
+                "propertyFilter with no kind, titleContains, or arrayFilter has no effect - "
                 "all properties will be returned unfiltered."
             )
 
@@ -2188,7 +2188,7 @@ async def deep_search_impl(
 
     # Single dataspace: use existing path
     if len(ds_list) == 1:
-        # Route 1: Discovery batch graph (MR 271) — tried first when enabled
+        # Route 1: Discovery batch graph (MR 271) - tried first when enabled
         if osdu.RDDMS_DISCOVERY_ENABLED:
             disc_result = await _deep_search_discovery(
                 token, ds_list[0], effective_type, title_contains,
@@ -2209,7 +2209,7 @@ async def deep_search_impl(
                 include_sample_values, sample_size, limit, relation_filter,
             )
             # Fall back to REST if this dataspace isn't in PG
-            # but only for remote dataspaces — local ones (maap/*) are authoritative in PG
+            # but only for remote dataspaces - local ones (maap/*) are authoritative in PG
             if result.total_scanned == 0 and "not found in PG" in result.query_description \
                     and not ds_list[0].startswith("maap/"):
                 return _merge_warnings(await _deep_search_rest(
@@ -2888,7 +2888,7 @@ async def _rest_get_object_json(token: str, ds: str, typ: str, uuid: str) -> Opt
                 ct = r.headers.get("content-type", "")
                 if "json" in ct:
                     return r.json()
-                # XML response — return as wrapped string
+                # XML response - return as wrapped string
                 return {"_format": "xml", "_raw": r.text[:8000]}
     except Exception as e:
         log.debug("_rest_get_object_json failed for %s/%s: %s", typ, uuid, e)

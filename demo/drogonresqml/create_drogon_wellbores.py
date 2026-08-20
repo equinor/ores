@@ -292,7 +292,7 @@ def main() -> None:
     # 3. Push (only when explicitly requested) ------------------------------
     if not do_push:
         print(f"\n{'─' * 60}")
-        print("  Done (save-only — nothing pushed to the catalog)")
+        print("  Done (save-only - nothing pushed to the catalog)")
         return
 
     token = authenticate(cfg)

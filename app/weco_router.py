@@ -4,7 +4,7 @@ ORES ↔ WeCo integration router  (in-process)
 
 Direct in-process calls to the WeCo correlation engine.
 WeCo is installed as a Python package (with compiled C++ engine)
-inside the ORES container — no separate microservice needed.
+inside the ORES container - no separate microservice needed.
 
 WeCo remains a separate git repository; it is pip-installed into
 the ORES Docker image at build time (via git submodule or wheel).
@@ -95,11 +95,11 @@ def _session_well_file() -> str:
     return os.path.join(WECO_SESSION_DIR, "wells.txt")
 
 
-# Cached well list and result file (server process memory — single worker)
+# Cached well list and result file (server process memory - single worker)
 _cached_well_list = None
 _cached_res_file = None
 
-# R3: Result cache — avoids re-running if same wells+options
+# R3: Result cache - avoids re-running if same wells+options
 _result_cache = {}  # key: (wells_hash, options_hash) → response dict
 _RESULT_CACHE_MAX = 5
 
@@ -127,7 +127,7 @@ WECO_DEFAULT_DATASPACE = os.environ.get(
     os.environ.get("DEFAULT_DATASPACE", "maap/weco")
 )
 
-# Deterministic UUID namespace — must match demo/ingest_weco_demos.py
+# Deterministic UUID namespace - must match demo/ingest_weco_demos.py
 _WECO_NS = uuid_mod.UUID("a3f8c1e0-7b2d-4e5f-9a1c-6d8e0f2b4a7c")
 
 
@@ -1009,12 +1009,12 @@ def _apply_memory_guards(options: dict, n_wells: int) -> dict:
     """Enforce safe parameter limits to prevent OOM on Radix (2Gi container).
 
     max-cor (path length) must be >= well depth to get full correlation.
-    nbr-cor (number of results) is the main memory driver — scale by well count.
+    nbr-cor (number of results) is the main memory driver - scale by well count.
     """
     opts = dict(options)
     # Force single-thread to limit peak memory (one correlator buffer at a time)
     opts.setdefault("thread", 1)
-    # Scale nbr-cor (result count) by dataset size — this is the memory driver
+    # Scale nbr-cor (result count) by dataset size - this is the memory driver
     if n_wells > 50:
         opts["nbr-cor"] = min(int(opts.get("nbr-cor", 3)), 5)
         # Only add band-width as perf optimization for very large datasets
@@ -1023,7 +1023,7 @@ def _apply_memory_guards(options: dict, n_wells: int) -> dict:
         opts["nbr-cor"] = min(int(opts.get("nbr-cor", 5)), 10)
     else:
         opts["nbr-cor"] = min(int(opts.get("nbr-cor", 20)), 30)
-    # max-cor (path length) — must cover the full well depth; cap at 200
+    # max-cor (path length) - must cover the full well depth; cap at 200
     opts["max-cor"] = min(int(opts.get("max-cor", 80)), 200)
     return opts
 
@@ -1041,7 +1041,7 @@ def _build_wells_plot_data(wl) -> list:
                 logs[k] = list(v)[:w.size]
         # First log for backward-compat "log_values" field
         log_values = list(logs.values())[0] if logs else None
-        # Region/zone data — expand RLE (value, start, count) to per-sample
+        # Region/zone data - expand RLE (value, start, count) to per-sample
         regions = {}
         if hasattr(w, 'region') and w.region:
             for rname, rvals in w.region.items():
@@ -1311,7 +1311,7 @@ async def weco_auto(request: Request):
         from weco.depenv import (detect_environment_from_logs,
                                  detect_environment_from_metadata, suggest_options)
 
-        # 1. Suggest defaults — use demo-specific options if available
+        # 1. Suggest defaults - use demo-specific options if available
         if demo_id:
             demo_opts = _get_demo_opts(demo_id)
             if demo_opts:
@@ -1322,7 +1322,7 @@ async def weco_auto(request: Request):
         else:
             options, reasoning = _suggest_defaults_for_wells(wl)
 
-        # 2. Detect environment (only for non-demo runs — demos have curated opts)
+        # 2. Detect environment (only for non-demo runs - demos have curated opts)
         if reasoning.get("source") != "demo":
             try:
                 env_key = detect_environment_from_metadata(wl)
@@ -1508,7 +1508,7 @@ async def weco_run_job(req: WecoRunRequest, request: Request, well_list=None):
         }
 
     except httpx.HTTPError as e:
-        # Job component not available — fall back to in-process with guards
+        # Job component not available - fall back to in-process with guards
         log.warning(f"Job scheduler unavailable ({e}), falling back to in-process")
         from weco.api import _run_engine, _extract_results
         safe_opts = _apply_memory_guards(req.options, n_wells)
@@ -1763,7 +1763,7 @@ def weco_demos():
 def weco_demo_wells(demo_id: str):
     """Load a demo dataset and return well metadata (without running correlation).
 
-    Returns wells with their available logs, regions, sizes — so the UI can
+    Returns wells with their available logs, regions, sizes - so the UI can
     present a well/log selection matrix before running.
     Also returns demo-specific recommended options for the Parameters form.
     """
@@ -2573,7 +2573,7 @@ async def weco_sensitivity(request: Request):
 
         best_order = min(costs, key=costs.get)
         if robustness > 0.9:
-            recommendation = "Very robust — result stable across merge orders."
+            recommendation = "Very robust - result stable across merge orders."
         elif robustness > 0.7:
             recommendation = f"Moderately robust. Consider using '{best_order}' order."
         else:

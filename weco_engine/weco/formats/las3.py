@@ -1,5 +1,5 @@
 """
-weco.formats.las3 — LAS 3.0 reader
+weco.formats.las3 - LAS 3.0 reader
 ====================================
 
 Read LAS 3.0 (Log ASCII Standard version 3.0) files, which use
@@ -14,7 +14,7 @@ LAS 3.0 differences from LAS 2.0:
 
 Reference: CWLS LAS 3.0 specification (2000)
 
-Todo §4.9 — LAS 3.0 reader
+Todo §4.9 - LAS 3.0 reader
 """
 
 from __future__ import annotations
@@ -120,7 +120,7 @@ def read_las3(filepath: str) -> dict:
                         "unit": unit, "value": val, "description": desc
                     }
 
-    # Data section(s) — can be ASCII or tab-delimited
+    # Data section(s) - can be ASCII or tab-delimited
     for key in sections:
         if key.upper().startswith("LOG_DATA") or key.upper() in ("A", "ASCII"):
             _parse_las3_data(sections[key], result)

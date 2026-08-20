@@ -126,7 +126,7 @@ fi
 echo "=== Step 3: Import EPC files ==="
 for epc_name in drogon_tables.epc drogon_activity.epc; do
   if [[ ! -f "$TEMP_DIR/$epc_name" ]]; then
-    echo "  ERROR: $epc_name not found — run gen_resqml.py first" >&2
+    echo "  ERROR: $epc_name not found - run gen_resqml.py first" >&2
     exit 1
   fi
 

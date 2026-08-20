@@ -1,7 +1,7 @@
 {
   "project": "Northern Lights",
   "gate": "DG3",
-  "description": "Northern Lights Phase 2 — CCS storage expansion. DG3 FEED approval.",
+  "description": "Northern Lights Phase 2 - CCS storage expansion. DG3 FEED approval.",
   "records": [
     {
       "type": "reservoir",

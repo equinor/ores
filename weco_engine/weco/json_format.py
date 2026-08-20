@@ -1,5 +1,5 @@
 """
-weco.json_format — WeCo JSON Format (OSDU-schema inspired)
+weco.json_format - WeCo JSON Format (OSDU-schema inspired)
 ============================================================
 
 Defines a portable JSON schema for WeCo projects following OSDU patterns:
@@ -9,9 +9,9 @@ Defines a portable JSON schema for WeCo projects following OSDU patterns:
 - Self-describing metadata
 
 Schema kinds:
-    weco:wbs:WellList:1.0.0          — wells + data + regions
-    weco:wbs:CorrelationProject:1.0.0 — full project (wells + options + results)
-    weco:wbs:CorrelationResult:1.0.0  — result graph only
+    weco:wbs:WellList:1.0.0          - wells + data + regions
+    weco:wbs:CorrelationProject:1.0.0 - full project (wells + options + results)
+    weco:wbs:CorrelationResult:1.0.0  - result graph only
 
 Usage::
 
@@ -222,7 +222,7 @@ def options_to_dict(opts: Dict[str, Any]) -> Dict[str, Any]:
     """Normalize option dict to JSON-safe types with OSDU-style keys."""
     result = {}
     for k, v in opts.items():
-        # Keep underscore keys (Python style) — convert on engine call
+        # Keep underscore keys (Python style) - convert on engine call
         if isinstance(v, (int, float, str, bool)):
             result[k] = v
         elif isinstance(v, np.integer):

@@ -1,4 +1,4 @@
-# Config: BRYSON — Distal CCF for coastal plain correlation
+# Config: BRYSON - Distal CCF for coastal plain correlation
 # Neslen Formation (Cretaceous): coal-bearing coastal plain to estuarine
 # FACIES encodes depositional environment; DISTALITY derived from it
 # ZONE (reservoir zonation) provides no-crossing constraint

@@ -1,5 +1,5 @@
 """
-weco.rddms — Universal well-data bridge (RDDMS / EPC / GOCAD / RMS / LAS / CSV)
+weco.rddms - Universal well-data bridge (RDDMS / EPC / GOCAD / RMS / LAS / CSV)
 ==================================================================================
 
 This module is the *format hub* for WeCo.  It converts freely among
@@ -35,7 +35,7 @@ CRS / projection                LocalEngineeringCRS             project CRS     
 Code table (facies)             lookup dict on PropertyInfo     code_table.txt  comments   name column    --
 ==============================  ==============================  ==============  =========  =============  ==========
 
-Usage — import from RDDMS::
+Usage - import from RDDMS::
 
     from weco.rddms import rddms_import_wells
     well_list = rddms_import_wells(
@@ -44,24 +44,24 @@ Usage — import from RDDMS::
         dataspace="project/wells",
     )
 
-Usage — export correlation results to RDDMS::
+Usage - export correlation results to RDDMS::
 
     from weco.rddms import rddms_export_results
     rddms_export_results(url, token, dataspace, res_file, well_list, cor_num=0)
 
-Usage — round‑trip via EPC file::
+Usage - round‑trip via EPC file::
 
     from weco.rddms import epc_import_wells, epc_export_results
     wl = epc_import_wells("input.epc")
     epc_export_results("output.epc", res_file, wl)
 
-Usage — GOCAD ASCII::
+Usage - GOCAD ASCII::
 
     from weco.rddms import gocad_import_wells, gocad_export_wells
     wl = gocad_import_wells("field.wl")
     gocad_export_wells(wl, "output.wl")
 
-Usage — universal converter::
+Usage - universal converter::
 
     from weco.rddms import convert
     convert("input.epc", "tmp/rms_package/", fmt_out="rms")
@@ -399,7 +399,7 @@ def import_ranks_as_regions(
     Returns
     -------
     dict
-        ``{region_name: bool}`` — which rank regions were successfully created.
+        ``{region_name: bool}`` - which rank regions were successfully created.
     """
     results = {}
     picks_by_name = {p["unit_name"]: p for p in well_picks}
@@ -460,7 +460,7 @@ def weco_to_resqml(
     props: dict[str, np.ndarray] = {"md": md_arr}
     property_meta: list["PropertyInfo"] = []
 
-    # Skip coordinate channels — they are in the trajectory itself
+    # Skip coordinate channels - they are in the trajectory itself
     _COORD_NAMES = {"X", "x", "Y", "y", "Z", "z", "XCOOR", "YCOOR", "Xcoor", "Ycoor"}
 
     for dname, dvals in well.data.items():
@@ -781,7 +781,7 @@ def rddms_export_wells(
     return n
 
 
-# §15.6 — RESQML REST: markers → WellboreMarkerFrameRepresentation
+# §15.6 - RESQML REST: markers → WellboreMarkerFrameRepresentation
 def rddms_export_markers(
     url: str,
     token: str,
@@ -807,7 +807,7 @@ def rddms_export_markers(
     return n
 
 
-# §15.7 — RESQML REST: zonation → DiscreteProperty on WellboreFrame
+# §15.7 - RESQML REST: zonation → DiscreteProperty on WellboreFrame
 def rddms_export_zonation(
     url: str,
     token: str,
@@ -841,7 +841,7 @@ def rddms_export_zonation(
     return n
 
 
-# §15.8 — RESQML REST: horizons → HorizonInterpretation + PolylineSet
+# §15.8 - RESQML REST: horizons → HorizonInterpretation + PolylineSet
 def rddms_export_horizons(
     url: str,
     token: str,
@@ -872,7 +872,7 @@ def rddms_export_horizons(
     return n
 
 
-# §15.9 — RESQML REST: strat column → StratigraphicColumn
+# §15.9 - RESQML REST: strat column → StratigraphicColumn
 def rddms_export_strat_column(
     url: str,
     token: str,
@@ -1140,7 +1140,7 @@ def las_import_wells(
     curves : dict
         ``{weco_name: las_mnemonic}`` for continuous curves.
     discrete : dict
-        ``{region_name: las_mnemonic}`` — imported as data then converted
+        ``{region_name: las_mnemonic}`` - imported as data then converted
         to regions automatically.
 
     Returns
@@ -1443,7 +1443,7 @@ def csv_export_picks(
 
 
 # ═══════════════════════════════════════════════════════════════════════
-# §9  RMS helpers  (thin wrappers — heavy lifting in rms_export.py)
+# §9  RMS helpers  (thin wrappers - heavy lifting in rms_export.py)
 # ═══════════════════════════════════════════════════════════════════════
 
 def rms_import_well_picks(
@@ -1478,7 +1478,7 @@ def rms_import_well_picks(
 
 
 def rms_import_wells(path: str) -> "WellList":
-    """Read an RMS ASCII well file  (stub — delegates to LAS reader).
+    """Read an RMS ASCII well file  (stub - delegates to LAS reader).
 
     RMS .rmswell is close to LAS; this wraps the appropriate reader.
     """

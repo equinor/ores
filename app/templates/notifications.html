@@ -117,7 +117,7 @@ async function loadSubs() {
       if (msg.includes('404') || msg.includes('Not Found')) {
         el.innerHTML = '<span class="muted">Notification service not available on this instance</span>';
       } else {
-        el.innerHTML = '<span class="muted">No subscriptions found' + (msg ? ' — ' + msg : '') + '</span>';
+        el.innerHTML = '<span class="muted">No subscriptions found' + (msg ? ' - ' + msg : '') + '</span>';
       }
       return;
     }
@@ -174,7 +174,7 @@ async function checkChanges() {
     });
     const d = await r.json();
     if (!d.ok || !d.records || !d.records.length) {
-      el.innerHTML = '<span class="muted">No results' + (d.error ? ' — ' + d.error : '') + '</span>';
+      el.innerHTML = '<span class="muted">No results' + (d.error ? ' - ' + d.error : '') + '</span>';
       return;
     }
     let html = '<table class="changes-table"><tr><th>Record ID</th><th>Kind</th><th>Version</th><th>Modified</th></tr>';
