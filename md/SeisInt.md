@@ -118,6 +118,14 @@ LocalBoundaryFeature          ← "There exists a geological boundary here"
        └─ StructureMap         ← "Here is the depth-converted surface"
 ```
 
+### When is this hierarchy just scaffolding?
+
+If you have one surface, one survey, no re-picks — the Feature and Interpretation layers carry no independent information. Create them with minimal fields for schema compliance, and put your real metadata on the Representation WPC.
+
+They become essential when the same geological entity has multiple representations (different surveys, time-lapse, re-interpretation). The Feature is the stable identity; the Interpretation captures one geological reading; the Representation holds one set of geometry.
+
+> **Strat columns use a different entry point.** A stratigraphic column is built from `StratigraphicUnitInterpretation` (rock body volumes via `RockVolumeFeature`), NOT from `LocalBoundaryFeature`. Horizons appear only as optional boundary markers on individual units. See [StratColumn.md](StratColumn.md) §5b for the full comparison.
+
 ---
 
 ## 4. Faults

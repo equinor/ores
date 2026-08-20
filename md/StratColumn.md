@@ -94,6 +94,57 @@ Units and Horizons represent the same stratigraphy from two viewpoints:
 
 ---
 
+## 5b. Why Feature → Interpretation → Representation (FIRP)
+
+Both RESQML and OSDU use a three-layer hierarchy. The pattern is the same for boundaries and units, but the entry point differs:
+
+```
+Boundaries (horizons, faults):
+  LocalBoundaryFeature → HorizonInterpretation → SeismicHorizon / StructureMap
+  LocalBoundaryFeature → FaultInterpretation   → SeismicFault   / GenericRepresentation
+
+Volumes (rock bodies):
+  RockVolumeFeature → StratigraphicUnitInterpretation → (column membership, not a standalone representation)
+```
+
+### What each layer does
+
+| Layer | Holds | Reuse pattern |
+|-------|-------|---------------|
+| **Feature** | "This geological thing exists" — identity only | Shared across all interpretations of the same thing |
+| **Interpretation** | Geological meaning (age, conformability, throw direction, lithology) | Shared across all representations of one interpretation |
+| **Representation** | Geometry and data (grids, picks, polylines) | One per survey, vintage, or domain |
+
+### When the Feature layer carries real value
+
+| Scenario | Feature adds value? | Why |
+|----------|-------------------|-----|
+| Same horizon picked on two seismic surveys | **Yes** | Two `SeismicHorizon` records share one `HorizonInterpretation` → one `LocalBoundaryFeature`. Change the name once, both inherit it. |
+| Re-interpretation after new well data | **Yes** | New `HorizonInterpretation` v2 replaces v1; both point to same `LocalBoundaryFeature`. Identity survives re-interpretation. |
+| Single surface, single survey, no re-picks | Minimal | Feature + Interpretation are scaffolding. Create them for schema compliance, but they carry no independent information. |
+| Strat column (units) | **Yes** | `RockVolumeFeature` is the identity anchor for a formation. Multiple interpretations (different authors, vintages) can reference the same feature. The column is built from `UnitInterpretation` records, NOT from boundary features. |
+
+### The practical answer
+
+> "Are Feature and Interpretation objects redundant when I only have one representation?"
+>
+> **For a single vintage, yes — they're scaffolding.** Create them with minimal fields (name, a UUID) to satisfy the schema, and put your real metadata on the Representation WPC.
+>
+> **They become essential when** the same geological entity is represented more than once: different surveys, different interpreters, time-lapse, or re-interpretation. The Feature is the stable identity; the Interpretation captures one team's geological reading; the Representation holds one set of geometry. Without that separation you lose the ability to compare vintages or trace re-interpretation history.
+
+### Strat columns vs. seismic interpretation — different entry points
+
+| Domain | Column is built from | Feature type | Why |
+|--------|---------------------|--------------|-----|
+| **Stratigraphy** | `StratigraphicUnitInterpretation` (rock body intervals) | `RockVolumeFeature` | A column describes **what rock is there** — volumes, not surfaces |
+| **Seismic interpretation** | `SeismicHorizon` / `StructureMap` (surface geometry) | `LocalBoundaryFeature` | An interpreter picks **where surfaces are** — boundaries, not volumes |
+
+The column never references `LocalBoundaryFeature` directly. Horizons appear only as optional boundary markers on individual units (`HorizonTopID` / `HorizonBaseID`).
+
+See also: [SeisInt.md](SeisInt.md) §3 (Horizons) and §4 (Faults) for the boundary-side FIRP chain.
+
+---
+
 ## 6. Terminology
 
 | Term | Meaning |
