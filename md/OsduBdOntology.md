@@ -313,16 +313,14 @@ quadrantChart
     title OSDU Capability Assessment
     x-axis "Low Capability" --> "High Capability"
     y-axis "Low Impact" --> "High Impact"
-    "Record storage": [0.9, 0.7]
-    "Schema flexibility": [0.85, 0.6]
-    "Keyword search": [0.7, 0.65]
-    "Versioning": [0.75, 0.5]
-    "Graph traversal": [0.05, 0.95]
-    "Reverse-link index": [0.1, 0.85]
-    "Referential integrity": [0.05, 0.6]
-    "Aggregation": [0.1, 0.5]
-    "Temporal queries": [0.05, 0.55]
-    "Notifications": [0.6, 0.35]
+    "Record storage": [0.9, 0.75]
+    "Schema flexibility": [0.88, 0.82]
+    "Keyword search": [0.6, 0.55]
+    "Versioning": [0.8, 0.4]
+    "Graph traversal": [0.08, 0.92]
+    "Reverse-link index": [0.12, 0.82]
+    "Array-level filter": [0.1, 0.72]
+    "Referential integrity": [0.08, 0.48]
 ```
 
 ### Text
