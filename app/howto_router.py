@@ -97,6 +97,12 @@ _HOWTO_SECTIONS: list[dict] = [
                 "title": "Properties",
                 "desc": "Property kinds, OSDU PropertyTypes, facets, groups & alias resolution",
             },
+            {
+                "slug": "rddms-integration",
+                "file": "RddmsIntegration.md",
+                "title": "RESQML-to-OSDU Integration",
+                "desc": "Ingestion approaches, FIRP selection, CRS mapping & catalog round-trip",
+            },
         ],
     },
     # ── Infrastructure ─────────────────────────────────────────────

@@ -317,11 +317,51 @@ sequenceDiagram
 
 ### Classification during ingestion
 
-| RESQML CRS type | Z-values represent… | → WPC type |
+The M27 manifest generator (`Grid2dToOsduKind` in open-etp-client) inspects the RESQML XML to choose the OSDU WPC kind. Evaluated in priority order - first match wins:
+
+| Priority | WPC Kind | `matchType` criteria | Notes |
+|---|---|---|---|
+| 1st | **SeismicBinGrid:1.3.0** | `InterpretedFeature.$type` = `SeismicLatticeFeature` AND constant spacing (`DoubleConstantArray` v2.0.1 / `FloatingPointConstantArray` v2.2) | Irregular spacing rejected in `matchType` and falls through. Populates P6BinGridOriginI/J, IncrementOnIaxis/Jaxis, OriginEasting/Northing, corner polygon A/B/C/D. |
+| 2nd | **SeismicHorizon:2.0.0** | `Points.$type` = `Point3dZValueArray` AND `SupportingGeometry.$type` = `Point3dFromRepresentationLatticeArray` AND interpretation = `HorizonInterpretation` | Domain NOT filtered - both depth and time CRS accepted. `DomainTypeID` set dynamically from CRS. |
+| 3rd | **StructureMap:1.0.0** | Interpretation = `HorizonInterpretation` AND NOT on seismic lattice | Both depth and time domain. `DomainTypeID` set dynamically from CRS. Lattice exclusion is defensive (step 2 already caught lattice cases). |
+| 4th | **GenericBinGrid:1.0.0** | No `RepresentedInterpretation` / `RepresentedObject` (no interpretation at all) | Grid2ds with non-Horizon, non-SeismicLattice interpretations skip this and hit fallback. Uses `getKind()` - falls through if schema not in milestone. |
+| 5th | **GenericRepresentation:1.2.0** | Fallback | Unrecognized interpretation type, or none of the above matched. |
+
+> **DomainTypeID:** All Grid2d WPCs set DomainTypeID dynamically from the linked CRS.
+> The SeismicHorizon vs StructureMap distinction is based on **seismic lattice geometry**, not depth vs time domain.
+
+**Key field inspections (v2.0.1):**
+
+| Check | XML path inspected | Values |
 |---|---|---|
-| `LocalTime3d` | TWT surface (ms) | `SeismicHorizon` |
-| `LocalDepth3d` | Depth surface (m/ft) | `StructureMap` |
-| Any | Amplitude, coherence, probability | `GenericProperty` |
+| SeismicLatticeFeature | `RepresentedInterpretation._data.InterpretedFeature._data.$type` | `resqml20.obj_SeismicLatticeFeature` |
+| HorizonInterpretation | `RepresentedInterpretation.ContentType` (parsed as EtpContentType) | `.dataType === "obj_HorizonInterpretation"` |
+| On seismic lattice | `Grid2dPatch.Geometry.Points.$type` + `.SupportingGeometry.$type` | `Point3dZValueArray` + `Point3dFromRepresentationLatticeArray` |
+| Regular spacing | `Grid2dPatch.Geometry.Points.Offset[].Spacing.$type` | Must be `DoubleConstantArray` (irregular → rejected, falls through) |
+| Axis order | CRS `ProjectedAxisOrder` | Easting/northing swap for correct corner coordinates |
+
+**SeismicBinGrid corner computation:**
+The converter computes corners A (origin), B (origin + nu*u), C (origin + nv*v), D (B + nv*v) from the grid's offset vectors and spacing, then projects to WGS84 via the local CRS. The `P6BinGridOriginI/J` and increment values come from the linked `SeismicLatticeFeature` (inline/crossline indices).
+
+| OSDU WPC field | Source |
+|---|---|
+| `P6BinGridOriginI` | `SeismicLatticeFeature.FirstInlineIndex` |
+| `P6BinNodeIncrementOnIaxis` | `SeismicLatticeFeature.InlineIndexIncrement` |
+| `P6BinGridOriginJ` | `SeismicLatticeFeature.FirstCrosslineIndex` |
+| `P6BinNodeIncrementOnJaxis` | `SeismicLatticeFeature.CrosslineIndexIncrement` |
+| `P6BinGridOriginEasting` | Grid origin Coordinate1 |
+| `P6BinGridOriginNorthing` | Grid origin Coordinate2 |
+| `ABCDBinGridSpatialLocation` | Polygon from corners A/B/D/C (projected to WGS84) |
+
+Additional WPC-level classifications:
+
+| RESQML CRS type | Lattice type | WPC type |
+|---|---|---|
+| Any | Z on seismic lattice + HorizonInterpretation | `SeismicHorizon` |
+| `LocalDepth3dCrs` | Own lattice + HorizonInterpretation | `StructureMap` (DomainType: Depth) |
+| `LocalTime3dCrs` | Own lattice + HorizonInterpretation | `StructureMap` (DomainType: Time) |
+| Any | No interpretation | `GenericBinGrid` |
+| Any | Amplitude, coherence, probability (Property) | `GenericProperty` |
 | - | Scattered XYZ picks | `HorizonControlPoints` |
 
 ---
