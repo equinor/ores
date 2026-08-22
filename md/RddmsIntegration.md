@@ -103,7 +103,7 @@ Four paths exist to get RESQML data into RDDMS + OSDU catalog. They differ in wh
 **What we have:** `build_full_manifest.py` does regex-based XML extraction from EPC to build M27 manifests without needing ETP.
 
 **Pros:** No RDDMS dependency. Works offline.
-**Cons:** Arrays are not served (no consumption API). Graph queries don't work. Values are separated from meaning (see RddmsGov principle #3).
+**Cons:** Arrays are not served (no consumption API). Graph queries don't work. Values are separated from meaning (see [RddmsGov.md](RddmsGov.md) — "Why Not Just Store Arrays?").
 
 ---
 
