@@ -85,25 +85,23 @@
 </style>
 
 <h1>Reservoir DDMS Admin
-  <a id="openapi-link" href="#" target="_blank" rel="noopener"
-     title="Open API (Swagger UI) for active server"
-     style="margin-left:.4rem;opacity:.18;font-size:.55em;vertical-align:middle;
-            color:inherit;text-decoration:none;transition:opacity .2s;"
-     onmouseenter="this.style.opacity='.6'" onmouseleave="this.style.opacity='.18'">&#x1F517;</a>
+  <a id="openapi-link" href="#" target="_blank" rel="noopener" title="Open API (Swagger UI) for active server" style="margin-left:.4rem;opacity:.18;font-size:.55em;vertical-align:middle;
+            color:inherit;text-decoration:none;transition:opacity .2s;" onmouseenter="this.style.opacity='.6'"
+    onmouseleave="this.style.opacity='.18'">&#x1F517;</a>
 </h1>
 <script>
-(function(){
-  fetch('/api/instances').then(r=>r.json()).then(d=>{
-    const inst = d.instances[d.active];
-    if(!inst) return;
-    const h = inst.hostname;
-    const local = h.includes('localhost') || h.includes('127.0.0.1');
-    const scheme = local ? 'http' : 'https';
-    const link = document.getElementById('openapi-link');
-    link.href = scheme + '://' + h + '/api/reservoir-ddms/v2/';
-    link.title = 'OpenAPI — ' + h;
-  }).catch(()=>{});
-})();
+  (function () {
+    fetch('/api/instances').then(r => r.json()).then(d => {
+      const inst = d.instances[d.active];
+      if (!inst) return;
+      const h = inst.hostname;
+      const local = h.includes('localhost') || h.includes('127.0.0.1');
+      const scheme = local ? 'http' : 'https';
+      const link = document.getElementById('openapi-link');
+      link.href = scheme + '://' + h + '/api/reservoir-ddms/v2/';
+      link.title = 'OpenAPI — ' + h;
+    }).catch(() => { });
+  })();
 </script>
 
 {% if dataspaces %}

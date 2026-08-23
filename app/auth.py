@@ -110,6 +110,29 @@ async def tokens_from_env() -> Optional[Dict[str, Any]]:
 # Mode 2 - per-user PKCE login (Authorization Code + PKCE)
 # ─────────────────────────────────────────────────────────────
 
+# Server-side PKCE store — fallback when session cookies are dropped
+# during the Azure AD cross-origin redirect (common on localhost).
+_pkce_store: Dict[str, Dict[str, Any]] = {}
+_PKCE_MAX_AGE = 600  # 10 minutes
+
+
+def _pkce_store_set(state: str, code_verifier: str, redirect_uri: str) -> None:
+    """Store PKCE params server-side, keyed by state."""
+    # Evict expired entries
+    now = time.time()
+    expired = [k for k, v in _pkce_store.items() if now - v["t"] > _PKCE_MAX_AGE]
+    for k in expired:
+        del _pkce_store[k]
+    _pkce_store[state] = {"cv": code_verifier, "ru": redirect_uri, "t": now}
+
+
+def _pkce_store_pop(state: str) -> Optional[Dict[str, str]]:
+    """Retrieve and remove PKCE params by state. Returns None if missing/expired."""
+    entry = _pkce_store.pop(state, None)
+    if entry and time.time() - entry["t"] <= _PKCE_MAX_AGE:
+        return {"code_verifier": entry["cv"], "redirect_uri": entry["ru"]}
+    return None
+
 def _get_client_secret() -> str:
     """Return the active instance's client_secret (empty string if none)."""
     try:
@@ -146,6 +169,9 @@ async def login(request: Request):
     request.session["pkce_verifier"] = code_verifier
     request.session["pkce_state"] = state
     request.session["redirect_uri"] = redirect_uri
+
+    # Server-side fallback (survives when session cookie is dropped)
+    _pkce_store_set(state, code_verifier, redirect_uri)
 
     # Ensure offline_access and openid are present.
     # offline_access → Azure AD returns a refresh token (#16)
@@ -187,10 +213,23 @@ async def auth_callback(request: Request):
 
     expected_state = request.session.get("pkce_state")
     if state != expected_state:
-        return JSONResponse({"error": "State mismatch - possible CSRF"}, status_code=400)
-
-    code_verifier = request.session.get("pkce_verifier", "")
-    redirect_uri = request.session.get("redirect_uri", _build_redirect_uri(request))
+        # Fallback: session cookie may have been dropped during the cross-
+        # origin redirect (common on http://localhost).  Try server-side store.
+        ss = _pkce_store_pop(state) if state else None
+        if ss:
+            log.info("PKCE state recovered from server-side store (session cookie lost)")
+            code_verifier = ss["code_verifier"]
+            redirect_uri = ss["redirect_uri"]
+        else:
+            log.warning("State mismatch: received=%s expected=%s session_keys=%s",
+                        (state or "")[:12], (expected_state or "")[:12],
+                        list(request.session.keys()))
+            return JSONResponse({"error": "State mismatch - possible CSRF"}, status_code=400)
+    else:
+        # Normal path — session cookie survived
+        _pkce_store_pop(state)  # clean up server-side entry
+        code_verifier = request.session.get("pkce_verifier", "")
+        redirect_uri = request.session.get("redirect_uri", _build_redirect_uri(request))
 
     # Confidential clients (those with a client_secret) require it in the
     # token exchange - otherwise Azure AD returns AADSTS7000218.
