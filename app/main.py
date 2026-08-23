@@ -504,6 +504,20 @@ async def admin_openapi(request: Request):
     except Exception as e:
         return HTMLResponse(f"<h3>Failed to fetch OpenAPI spec</h3><pre>{e}</pre>", status_code=502)
     spec_json = r.text.replace("</", "<\\/")  # escape for safe embedding
+    # Inject tags array if the live spec omits it (NestJS serves paths without
+    # the top-level tags block in some configurations).
+    tag_order = [
+        "Authentication", "Health", "Resources", "Query & Growing Objects",
+        "Write", "Transactions", "Manifest", "Wells", "Metrics",
+    ]
+    try:
+        spec_obj = json.loads(r.text)
+        if not spec_obj.get("tags"):
+            spec_obj["tags"] = [{"name": t} for t in tag_order]
+            spec_json = json.dumps(spec_obj).replace("</", "<\\/")
+    except Exception:
+        pass
+    tag_order_js = json.dumps(tag_order)
     html = f"""<!DOCTYPE html>
 <html><head><title>RDDMS OpenAPI — {base}</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
@@ -512,7 +526,7 @@ async def admin_openapi(request: Request):
 <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
 <script>
 var spec={spec_json};
-var tagOrder=(spec.tags||[]).map(function(t){{return t.name}});
+var tagOrder={tag_order_js};
 SwaggerUIBundle({{
   dom_id:'#sui',
   spec:spec,
