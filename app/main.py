@@ -485,6 +485,36 @@ async def home(request: Request):
     )
 
 
+@app.get("/admin/openapi", response_class=HTMLResponse, summary="Proxied RDDMS Swagger UI")
+async def admin_openapi(request: Request):
+    """Fetch the RDDMS swagger.json with auth and render Swagger UI."""
+    at = _access_token(request)
+    base = osdu.OSDU_BASE_URL
+    local = "localhost" in base or "127.0.0.1" in base
+    scheme = "http" if local else "https"
+    swagger_url = f"{scheme}://{base}/api/reservoir-ddms/v2-json"
+    try:
+        async with httpx.AsyncClient(verify=osdu.SSL_VERIFY, timeout=15) as c:
+            r = await c.get(swagger_url, headers=osdu.headers(at))
+            if r.status_code >= 400:
+                # Fallback: try trailing-slash variant
+                r = await c.get(f"{scheme}://{base}/api/reservoir-ddms/v2/-json",
+                                headers=osdu.headers(at))
+            r.raise_for_status()
+    except Exception as e:
+        return HTMLResponse(f"<h3>Failed to fetch OpenAPI spec</h3><pre>{e}</pre>", status_code=502)
+    spec_json = r.text.replace("</", "<\\/")  # escape for safe embedding
+    html = f"""<!DOCTYPE html>
+<html><head><title>RDDMS OpenAPI — {base}</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
+</head><body>
+<div id="sui"></div>
+<script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+<script>SwaggerUIBundle({{dom_id:'#sui',spec:{spec_json}}})</script>
+</body></html>"""
+    return HTMLResponse(html)
+
+
 @app.get("/admin/dataspaces.json", summary="Async dataspace list for admin page")
 async def admin_dataspaces_json(request: Request):
     """JSON endpoint for client-side dataspace loading (cached 120 s)."""
