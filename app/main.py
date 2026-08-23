@@ -510,7 +510,19 @@ async def admin_openapi(request: Request):
 </head><body>
 <div id="sui"></div>
 <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
-<script>SwaggerUIBundle({{dom_id:'#sui',spec:{spec_json}}})</script>
+<script>
+var spec={spec_json};
+var tagOrder=(spec.tags||[]).map(function(t){{return t.name}});
+SwaggerUIBundle({{
+  dom_id:'#sui',
+  spec:spec,
+  operationsSorter:'alpha',
+  tagsSorter:function(a,b){{
+    var ia=tagOrder.indexOf(a),ib=tagOrder.indexOf(b);
+    return(ia<0?999:ia)-(ib<0?999:ib);
+  }}
+}});
+</script>
 </body></html>"""
     return HTMLResponse(html)
 
