@@ -112,20 +112,36 @@ def ext_ref_uuid(parts: dict[str, bytes]) -> str | None:
 
 
 def move_extrametadata_last(data: bytes) -> bytes:
+    """Move ExtraMetadata to the correct XSD position.
+
+    For most RESQML types, ExtraMetadata is the last child element.
+    For StringTableLookup, the XSD sequence is: Citation, ExtraMetadata*, Value*
+    — so ExtraMetadata must come BEFORE the first <resqml2:Value>.
+    """
     metas = EXTRAMETA_RE.findall(data)
     if not metas:
         return data
     data = EXTRAMETA_RE.sub(b"", data)
-    # locate the root element name (first resqml2:* element after the xml decl)
+
+    # locate the root element name
     m = re.search(rb"<(resqml2:[A-Za-z0-9_]+)\b", data)
     if not m:
         return data
     root = m.group(1)
+
+    block = b"\n\t" + b"\n\t".join(m.strip() for m in metas) + b"\n"
+
+    # StringTableLookup: insert before first <resqml2:Value>
+    if root == b"resqml2:StringTableLookup":
+        val_idx = data.find(b"<resqml2:Value")
+        if val_idx != -1:
+            return data[:val_idx] + block.lstrip() + b"\n\t" + data[val_idx:]
+
+    # All other types: insert before closing root element (last position)
     close = b"</" + root + b">"
     idx = data.rfind(close)
     if idx == -1:
         return data
-    block = b"\n\t" + b"\n\t".join(m.strip() for m in metas) + b"\n"
     return data[:idx] + block + data[idx:]
 
 
