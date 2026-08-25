@@ -45,19 +45,6 @@ data:
   INSTANCE_EQNDEV_DEFAULT_VIEWERS: "data.office.global.viewers@dev.dataservices.energy"
   INSTANCE_EQNDEV_DEFAULT_COUNTRIES: "NO"
 
-  # ── "eqndeva" - Equinor SWE dev, shared app token (backup) ──
-  # Same OSDU backend as eqndev but uses client_credentials + refresh_token.
-  # Uncomment to re-enable shared-token auth.
-  # INSTANCE_EQNDEVA_TENANT_ID: ""
-  # INSTANCE_EQNDEVA_HOSTNAME: "equinorswedev.energy.azure.com"
-  # INSTANCE_EQNDEVA_DATA_PARTITION_ID: "dev"
-  # INSTANCE_EQNDEVA_AUTHORITY: "osdu"
-  # INSTANCE_EQNDEVA_SCHEMA_SOURCE: "wks"
-  # INSTANCE_EQNDEVA_DEFAULT_LEGAL_TAG: "dev-equinor-private-default"
-  # INSTANCE_EQNDEVA_DEFAULT_OWNERS: "data.default.owners@dev.dataservices.energy"
-  # INSTANCE_EQNDEVA_DEFAULT_VIEWERS: "data.default.viewers@dev.dataservices.energy"
-  # INSTANCE_EQNDEVA_DEFAULT_COUNTRIES: "NO"
-
   # ── "oresdev" - same OSDU backend as eqndev, uses ores-dev app (21b442a9) ──
   # INSTANCE_ORESDEV_TENANT_ID: "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
   # INSTANCE_ORESDEV_HOSTNAME: "equinorswedev.energy.azure.com"
@@ -92,14 +79,3 @@ data:
   INSTANCE_INTEROP_DEFAULT_VIEWERS: "data.default.viewers@opendes.dataservices.energy"
   INSTANCE_INTEROP_DEFAULT_COUNTRIES: "US"
 
-
-  # ── Example: "prod" instance (uncomment to enable) ──
-  # INSTANCE_PROD_TENANT_ID: ""
-  # INSTANCE_PROD_HOSTNAME: "equinor.energy.azure.com"
-  # INSTANCE_PROD_DATA_PARTITION_ID: "opendes"
-  # INSTANCE_PROD_AUTHORITY: "osdu"
-  # INSTANCE_PROD_SCHEMA_SOURCE: "wks"
-  # INSTANCE_PROD_DEFAULT_LEGAL_TAG: "opendes-equinor-private-default"
-  # INSTANCE_PROD_DEFAULT_OWNERS: "data.default.owners@opendes.dataservices.energy"
-  # INSTANCE_PROD_DEFAULT_VIEWERS: "data.default.viewers@opendes.dataservices.energy"
-  # INSTANCE_PROD_DEFAULT_COUNTRIES: "NO"
