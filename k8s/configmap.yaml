@@ -69,9 +69,9 @@ data:
   # INSTANCE_ORESDEV_DEFAULT_VIEWERS: "data.default.viewers@dev.dataservices.energy"
   # INSTANCE_ORESDEV_DEFAULT_COUNTRIES: "NO"
 
-  # ── "preship" - Microsoft pre-ship M27 (OpenShift) ──
-  INSTANCE_PRESHIP_TENANT_ID: ""
-  INSTANCE_PRESHIP_HOSTNAME: "osdu-ship.msft-osdu-test.org"
+  # ── "preship" - pre-ship M27 (OpenShift, bearer_token auth) ──
+  INSTANCE_PRESHIP_AUTH_MODE: "bearer_token"
+  INSTANCE_PRESHIP_HOSTNAME: "osdu-m27.z468.p3.openshiftapps.com"
   INSTANCE_PRESHIP_DATA_PARTITION_ID: "opendes"
   INSTANCE_PRESHIP_AUTHORITY: "osdu"
   INSTANCE_PRESHIP_SCHEMA_SOURCE: "wks"

@@ -46,7 +46,8 @@ class OsduInstance:
     default_viewers: str = ""
     default_countries: str = "NO"
     refresh_token: str = ""                 # shared refresh token (if any)
-    auth_mode: str = "refresh_token"        # refresh_token | client_credentials | per_user_pkce | az_cli
+    auth_mode: str = "refresh_token"        # refresh_token | client_credentials | per_user_pkce | az_cli | bearer_token
+    oc_token: str = ""                       # static bearer token (e.g. OpenShift service account)
     graphql_pg_conn_string: str = ""        # per-instance RDDMS PG conn (blank → REST fallback)
     ssl_verify: bool = True                 # False for test/pre-ship envs with untrusted certs
 
@@ -76,6 +77,10 @@ class OsduInstance:
         # users authenticate individually via the PKCE login flow.
         if self.auth_mode == "per_user_pkce":
             return None
+
+        # bearer_token: static token (e.g. OpenShift service account) - no refresh needed
+        if self.auth_mode == "bearer_token" and self.oc_token:
+            return self.oc_token
 
         if self._cached_token and time.time() < self._cached_exp:
             return self._cached_token
@@ -188,9 +193,12 @@ def _load_instances():
         # while still forcing individual user login.
         client_secret = _get("CLIENT_SECRET")
         refresh = _get("REFRESH_TOKEN")
+        oc_token = _get("OC_TOKEN")
         explicit_mode = _get("AUTH_MODE")
         if explicit_mode:
             mode = explicit_mode
+        elif oc_token:
+            mode = "bearer_token"
         elif refresh and client_secret:
             mode = "refresh_token+client_credentials"
         elif refresh:
@@ -215,6 +223,7 @@ def _load_instances():
             default_viewers=_get("DEFAULT_VIEWERS"),
             default_countries=_get("DEFAULT_COUNTRIES", "NO"),
             refresh_token=refresh,
+            oc_token=oc_token,
             auth_mode=mode,
             graphql_pg_conn_string=_get("GRAPHQL_PG_CONN_STRING"),
             ssl_verify=_get("SSL_VERIFY", "true").lower() not in ("false", "0", "no"),
