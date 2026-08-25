@@ -69,7 +69,7 @@ data:
   # INSTANCE_ORESDEV_DEFAULT_VIEWERS: "data.default.viewers@dev.dataservices.energy"
   # INSTANCE_ORESDEV_DEFAULT_COUNTRIES: "NO"
 
-  # ── "preship" - Microsoft pre-ship M26 test env ──
+  # ── "preship" - Microsoft pre-ship M27 (OpenShift) ──
   INSTANCE_PRESHIP_TENANT_ID: ""
   INSTANCE_PRESHIP_HOSTNAME: "osdu-ship.msft-osdu-test.org"
   INSTANCE_PRESHIP_DATA_PARTITION_ID: "opendes"
