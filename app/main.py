@@ -497,14 +497,15 @@ async def admin_openapi(request: Request):
         async with httpx.AsyncClient(verify=osdu.SSL_VERIFY if not local else False, timeout=15) as c:
             r = await c.get(swagger_url, headers=osdu.headers(at))
             if r.status_code >= 400:
-                # Fallback: try without trailing slash
-                r = await c.get(f"{base_url.rstrip('/')}-json",
-                                headers=osdu.headers(at))
+                # Fallback: try without the /-json path separator
+                fallback_url = f"{base_url.rstrip('/')}-json"
+                r = await c.get(fallback_url, headers=osdu.headers(at))
             r.raise_for_status()
     except Exception as e:
         return HTMLResponse(
             f"<h3>OpenAPI spec not available for '{inst_name}'</h3>"
             f"<p>The RDDMS at <code>{base_url}</code> does not serve an OpenAPI spec.</p>"
+            f"<p>Tried: <code>{swagger_url}</code></p>"
             f"<pre>{e}</pre>",
             status_code=502,
         )
