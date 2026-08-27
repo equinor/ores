@@ -50,6 +50,7 @@ class OsduInstance:
     oc_token: str = ""                       # static bearer token (e.g. OpenShift service account)
     token_endpoint: str = ""                # custom token URL (e.g. Keycloak); blank → Azure AD
     authorize_endpoint: str = ""            # custom authorize URL; blank → Azure AD
+    rddms_base_path: str = "/api/reservoir-ddms/v2"  # M27 uses /api/oetp-client/v2
     graphql_pg_conn_string: str = ""        # per-instance RDDMS PG conn (blank → REST fallback)
     ssl_verify: bool = True                 # False for test/pre-ship envs with untrusted certs
 
@@ -236,6 +237,7 @@ def _load_instances():
             oc_token=oc_token,
             token_endpoint=_get("TOKEN_URL"),
             authorize_endpoint=_get("AUTHORIZE_URL"),
+            rddms_base_path=_get("RDDMS_BASE_PATH", "/api/reservoir-ddms/v2"),
             auth_mode=mode,
             graphql_pg_conn_string=_get("GRAPHQL_PG_CONN_STRING"),
             ssl_verify=_get("SSL_VERIFY", "true").lower() not in ("false", "0", "no"),
@@ -323,6 +325,7 @@ def _apply_instance(inst: OsduInstance):
     osdu_mod.OSDU_BASE_URL = inst.hostname
     osdu_mod.DATA_PARTITION_ID = inst.data_partition_id
     osdu_mod.SSL_VERIFY = inst.ssl_verify
+    osdu_mod.RDDMS_BASE_PATH = inst.rddms_base_path
     # Force-close the shared httpx client: SSL verify is a client-level
     # setting, so we need a fresh client when switching instances.
     import asyncio

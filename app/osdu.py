@@ -36,6 +36,10 @@ OSDU_BASE_URL: str = os.getenv("OSDU_BASE_URL", "")
 # bundle.  Overridden per-instance by INSTANCE_<NAME>_SSL_VERIFY.
 SSL_VERIFY: bool = True
 
+# Reservoir-DDMS API base path.  Azure ADME uses /api/reservoir-ddms/v2;
+# OpenShift M27 (pre-ship) uses /api/oetp-client/v2.
+RDDMS_BASE_PATH: str = "/api/reservoir-ddms/v2"
+
 # Required header for all ADME/OSDU calls.
 DATA_PARTITION_ID: str = os.getenv("DATA_PARTITION_ID", "").strip()
 
@@ -114,8 +118,8 @@ def _rddms_url(path: str = "") -> str:
     if local_url:
         from .instances import get_active_name
         if get_active_name() == "local":
-            return f"{local_url.rstrip('/')}/api/reservoir-ddms/v2{path}"
-    return f"https://{OSDU_BASE_URL}/api/reservoir-ddms/v2{path}"
+            return f"{local_url.rstrip('/')}{RDDMS_BASE_PATH}{path}"
+    return f"https://{OSDU_BASE_URL}{RDDMS_BASE_PATH}{path}"
 
 
 def headers(access_token: str) -> dict[str, str]:
