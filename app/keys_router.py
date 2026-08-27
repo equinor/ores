@@ -251,7 +251,23 @@ async def dataspaces_manifest(
         )
     except HTTPStatusError as e:
         return http_error_response(e)
-    return JSONResponse({"status": "ok", "manifest": manifest})
+
+    # Summarise manifest contents for user feedback
+    inner = manifest.get("Data", manifest)
+    sections = ("WorkProductComponents", "Datasets", "ReferenceData", "MasterData", "WorkProducts")
+    counts: dict[str, int] = {}
+    total = 0
+    for sec in sections:
+        items = inner.get(sec)
+        if items and isinstance(items, list):
+            counts[sec] = len(items)
+            total += len(items)
+
+    return JSONResponse({
+        "status": "ok",
+        "manifest": manifest,
+        "summary": {"totalRecords": total, "sections": counts},
+    })
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────

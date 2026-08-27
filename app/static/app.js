@@ -361,13 +361,15 @@ async function buildManifest() {
         const sr = res.storageResponse || {};
         const sent = sr.recordsSent ?? '?';
         const stored = sr.recordCount ?? '?';
+        const skipped = sr.skippedCount ?? 0;
         const ids = sr.recordIds || [];
         info = `${stored} record(s) stored (${sent} sent)`;
+        if (skipped) info += `, ${skipped} skipped (already up-to-date)`;
         if (ids.length) info += '\n' + ids.join('\n');
       } else {
         info = `workflow run=${res.runId || '?'}`;
       }
-      setText(buildSummary, `Ingest OK - ${info}`);
+      setText(buildSummary, `Ingest OK — ${info}`);
     } catch (e) {
       console.warn('ingest error:', e);
       setText(buildSummary, `Ingest failed: ${e.message}`);

@@ -424,9 +424,12 @@ async def _ingest_via_storage(
 
         # Normalise: OSDU Storage returns {"recordCount": N, "recordIds": [...], ...}
         record_ids = body.get("recordIds") or body.get("recordIdVersions") or []
+        skipped_ids = body.get("skippedRecordIds") or []
         return {
             "recordCount": body.get("recordCount", len(record_ids)),
             "recordIds": record_ids,
+            "skippedCount": len(skipped_ids),
+            "skippedRecordIds": skipped_ids,
             "recordsSent": len(records),
             "raw": body,
         }

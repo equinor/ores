@@ -296,7 +296,15 @@
       const rows = document.querySelectorAll('#ds-list li[data-path]');
       rows.forEach(li => {
         const path = li.getAttribute('data-path') || '';
-        const msg = document.getElementById('create-msg');
+
+        // Per-row feedback element (inserted after the row)
+        let msg = li.querySelector('.ds-row-msg');
+        if (!msg) {
+          msg = document.createElement('div');
+          msg.className = 'ds-row-msg';
+          msg.style.cssText = 'display:none; margin:2px 0 4px 0; font-size:0.9em; color:#333;';
+          li.appendChild(msg);
+        }
 
         // Remove stray text nodes (defensive)
         li.childNodes.forEach(n => { if (n.nodeType === Node.TEXT_NODE) n.textContent = ''; });
@@ -352,29 +360,80 @@
         }, { backgroundColor: '#198754', color: '#fff', padding: '2px 8px', borderRadius: '4px' });
 
         // Manifest build
+        let _dsManifest = null; // stash built manifest for ingest
+
         const manifestBtn = mkBtn('Manifest', `Build manifest for ${path}`, async () => {
           manifestBtn.classList.add('disabled'); const old = manifestBtn.textContent; manifestBtn.textContent = 'Building…';
+          _dsManifest = null;
+          if (ingestBtn) { ingestBtn.style.display = 'none'; }
+          const t0 = performance.now();
+          const timer = setInterval(() => {
+            const s = ((performance.now() - t0) / 1000).toFixed(0);
+            manifestBtn.textContent = `Building… ${s}s`;
+          }, 1000);
           try {
             const fd = new FormData();
             fd.append('path', path);
-            // Let server use defaults for legal/acl/countries; you can add UI fields later if needed
             fd.append('create_missing', 'true');
 
             const res = await fetch('/dataspaces/manifest', { method: 'POST', body: fd, credentials: 'same-origin' });
+            clearInterval(timer);
             if (!res.ok) { let j = {}; try { j = await res.json() } catch { }; throw new Error(j.detail || (j.reason || ('HTTP ' + res.status))); }
             const js = await res.json();
+            _dsManifest = js?.manifest || null;
+            const elapsed = ((performance.now() - t0) / 1000).toFixed(1);
             if (msg) {
-              const kind = js?.manifest?.kind || 'Manifest';
+              const sum = js?.summary || {};
+              const total = sum.totalRecords || 0;
+              const secs = sum.sections || {};
+              const parts = Object.entries(secs).map(([k, v]) => `${k}: ${v}`);
+              const detail = parts.length ? ' (' + parts.join(', ') + ')' : '';
               msg.style.display = 'block';
-              msg.textContent = `${kind} built for "${path}".`;
+              msg.textContent = `Manifest built in ${elapsed}s — ${total} record(s)${detail}`;
             }
+            if (_dsManifest && ingestBtn) { ingestBtn.style.display = ''; }
           } catch (e) {
+            clearInterval(timer);
             if (msg) { msg.style.display = 'block'; msg.textContent = `Manifest failed: ${e?.message || e}`; }
             console.error('[Manifest] error', e);
           } finally {
             manifestBtn.classList.remove('disabled'); manifestBtn.textContent = old;
           }
         }, { backgroundColor: '#0d6efd', color: '#fff', padding: '2px 8px', borderRadius: '4px' });
+
+        // Ingest (appears after manifest build)
+        const ingestBtn = mkBtn('Ingest', `Ingest manifest for ${path}`, async () => {
+          if (!_dsManifest) { if (msg) { msg.style.display = 'block'; msg.textContent = 'Build a manifest first.'; } return; }
+          ingestBtn.classList.add('disabled'); const old = ingestBtn.textContent; ingestBtn.textContent = 'Ingesting…';
+          try {
+            const r = await fetch('/api/manifest/ingest', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'same-origin',
+              body: JSON.stringify({ manifest: _dsManifest, method: 'storage' })
+            });
+            if (!r.ok) {
+              let detail = '';
+              try { const j = await r.json(); detail = j.detail?.message || j.detail || ''; } catch { try { detail = (await r.text()).slice(0, 300); } catch {} }
+              throw new Error(`${r.status}` + (detail ? ': ' + detail : ''));
+            }
+            const res = await r.json();
+            const sr = res.storageResponse || {};
+            const sent = sr.recordsSent ?? '?';
+            const stored = sr.recordCount ?? '?';
+            const skipped = sr.skippedCount ?? 0;
+            let info = `Ingest OK — ${stored} record(s) stored (${sent} sent)`;
+            if (skipped) info += `, ${skipped} skipped (already up-to-date)`;
+            else if (stored < sent) info += `, ${sent - stored} skipped/existing`;
+            if (msg) { msg.style.display = 'block'; msg.textContent = info; }
+          } catch (e) {
+            if (msg) { msg.style.display = 'block'; msg.textContent = `Ingest failed: ${e?.message || e}`; }
+            console.error('[Ingest] error', e);
+          } finally {
+            ingestBtn.classList.remove('disabled'); ingestBtn.textContent = old;
+          }
+        }, { backgroundColor: '#198754', color: '#fff', padding: '2px 8px', borderRadius: '4px' });
+        ingestBtn.style.display = 'none'; // hidden until manifest built
 
         // Delete
         const delBtn = mkBtn('Delete', `Delete ${path}`, async () => {
@@ -394,10 +453,11 @@
           }
         }, { color: '#fff', backgroundColor: '#dc3545', padding: '2px 8px', borderRadius: '4px' });
 
-        // Insert in order: Lock · Unlock · Manifest · Delete · Resources · Open · <code>
+        // Insert in order: Lock · Unlock · Manifest · Ingest · Delete · Resources · Open · <code>
         li.insertBefore(lockBtn, codeNode);
         li.insertBefore(unlockBtn, codeNode);
         li.insertBefore(manifestBtn, codeNode);
+        li.insertBefore(ingestBtn, codeNode);
         li.insertBefore(delBtn, codeNode);
         li.insertBefore(keysBtn, codeNode);
         li.insertBefore(document.createTextNode(' '), codeNode);
