@@ -362,8 +362,8 @@ def main():
         print(f"    {t:45s} {c:4d}")
     print(f"\n  Output: {OUT_EPC} ({OUT_EPC.stat().st_size / 1024:.0f} KB)")
 
-    # Quick verification
-    print("\n  Verifying sample...")
+    # Full verification
+    print("\n  Verifying all objects...")
     with zipfile.ZipFile(OUT_EPC) as z:
         names = [
             n
@@ -371,23 +371,24 @@ def main():
             if n.endswith(".xml") and not n.startswith("[") and not n.startswith("_")
         ]
         has_obj = any(n.startswith("obj_") for n in names)
-        sample_issues = []
-        for n in names[:20]:
+        all_issues = []
+        for n in names:
             content = z.read(n).decode()
             if "<eml:ContentType" in content:
-                sample_issues.append(f"  {n}: still has <eml:ContentType>")
+                all_issues.append(f"  {n}: still has <eml:ContentType>")
             if "<eml:UUID" in content:
-                sample_issues.append(f"  {n}: still has <eml:UUID>")
+                all_issues.append(f"  {n}: still has <eml:UUID>")
             if 'schemaVersion="2.0"' in content:
-                sample_issues.append(f"  {n}: still has schemaVersion 2.0")
+                all_issues.append(f"  {n}: still has schemaVersion 2.0")
 
         print(f"    obj_ prefix remaining: {'YES !!' if has_obj else 'NO ok'}")
-        if sample_issues:
-            print(f"    Issues found ({len(sample_issues)}):")
-            for i in sample_issues[:5]:
+        print(f"    Files checked: {len(names)}")
+        if all_issues:
+            print(f"    Issues found ({len(all_issues)}):")
+            for i in all_issues:
                 print(f"      {i}")
         else:
-            print(f"    Sample check: OK")
+            print(f"    Verification: OK")
 
     print("\n  Done")
 
