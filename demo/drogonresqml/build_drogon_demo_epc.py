@@ -178,7 +178,9 @@ def _build_subset_h5(h5_paths: set[str]):
         print(f"  WARNING: Source H5 not found ({SRC_H5}), skipping")
         return
 
-    with h5py.File(SRC_H5, "r") as src_h5, h5py.File(OUT_H5, "w") as dst_h5:
+    # Use a temp file to avoid truncating the source when SRC == OUT
+    tmp_h5 = OUT_H5.with_suffix(".h5.tmp")
+    with h5py.File(SRC_H5, "r") as src_h5, h5py.File(tmp_h5, "w") as dst_h5:
         copied = 0
         missing = 0
         for path in sorted(h5_paths):
@@ -191,6 +193,7 @@ def _build_subset_h5(h5_paths: set[str]):
             else:
                 missing += 1
         print(f"  Copied {copied}/{len(h5_paths)} H5 datasets ({missing} missing)")
+    tmp_h5.replace(OUT_H5)
 
 
 # ── Main build ────────────────────────────────────────────────────────────── #
@@ -314,7 +317,7 @@ def build_json_records(include_xmls: dict[str, str], h5_paths: set[str]):
     dataspace = "maap/drogon"
     records = []
 
-    with zipfile.ZipFile(SRC_EPC, "r") as zf:
+    with zipfile.ZipFile(OUT_EPC, "r") as zf:
         h5_arrays = {}
         if SRC_H5.exists():
             with h5py.File(SRC_H5, "r") as h5f:

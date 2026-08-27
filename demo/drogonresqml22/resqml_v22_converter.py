@@ -138,6 +138,35 @@ _QUANTITY_CLASS_MAP = {
     "density": "mass per volume",
     "volume per volume": "volume per volume",
     "pressure": "pressure",
+    "code": "not a measure",
+    "formation volume factor": "volume per volume",
+    "relative permeability": "dimensionless",
+    "Poisson ratio": "dimensionless",
+    "mass concentration": "dimensionless",
+    "solution gas-oil ratio": "volume per volume",
+}
+
+# Abstract property kinds must not be directly assigned to properties.
+# Map them to the most common concrete descendant.
+_ABSTRACT_KIND_FIX = {
+    "volume per volume": "net to gross ratio",
+    "dimensionless": "property multiplier",
+    "categorical": "code",
+    "continuous": "property multiplier",
+    "discrete": "index",
+    "quantity": "property multiplier",
+    "unitless": "property multiplier",
+    "RESQML root property": "property multiplier",
+}
+
+# Property kinds in the continuous hierarchy — invalid for DiscreteProperty
+_CONTINUOUS_ONLY_KINDS = {
+    "length", "depth", "cell length", "thickness", "velocity",
+    "pressure", "density", "temperature", "thermodynamic temperature",
+    "porosity", "saturation", "permeability rock", "rock permeability",
+    "amplitude", "volume", "area", "angle", "time", "mass",
+    "net to gross ratio", "formation volume factor",
+    "property multiplier", "relative permeability",
 }
 
 
@@ -393,13 +422,29 @@ def _convert_all_hdf5_arrays(root: etree._Element, h5_filename: str = "drogon.h5
 # ── Property conversions ──────────────────────────────────────────────────
 
 def _convert_property_kind(root: etree._Element):
-    """Convert inline StandardPropertyKind/Kind to PropertyKind DOR."""
+    """Convert inline StandardPropertyKind/Kind to PropertyKind DOR.
+
+    Also resolves abstract property kinds to concrete descendants
+    and fixes discrete/continuous property kind compatibility.
+    """
+    bare_type = _bare_type(etree.QName(root.tag).localname)
+    is_discrete = bare_type in ("DiscreteProperty", "CategoricalProperty")
+
     for pk in _els(root, RESQML, "PropertyKind"):
         xsi_type = pk.get(f"{XSI}type", "")
         if "StandardPropertyKind" in xsi_type:
             kind_el = _el(pk, RESQML, "Kind")
             if kind_el is not None:
                 kind_name = kind_el.text or "dimensionless"
+
+                # Resolve abstract kinds to concrete descendants
+                if kind_name in _ABSTRACT_KIND_FIX:
+                    kind_name = _ABSTRACT_KIND_FIX[kind_name]
+
+                # Fix discrete/continuous mismatch
+                if is_discrete and kind_name in _CONTINUOUS_ONLY_KINDS:
+                    kind_name = "index"
+
                 _property_kind_names.add(kind_name)
                 pk_uuid = _pk_uuid(kind_name)
 

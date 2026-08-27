@@ -46,9 +46,78 @@ EXT = f"{{{NS['ext']}}}"
 
 PROPERTY_KIND_MAP = {
     "mass per volume": "density",
-    "shale volume": "volume per volume",
-    "volume fraction": "volume per volume",
+    "shale volume": "net to gross ratio",
+    "volume fraction": "net to gross ratio",
 }
+
+# Abstract property kinds must not be directly assigned to properties.
+# Map them to their most common concrete descendant.
+ABSTRACT_KIND_FIX = {
+    "volume per volume": "net to gross ratio",
+    "dimensionless": "property multiplier",
+    "categorical": "code",
+    "continuous": "property multiplier",
+    "discrete": "index",
+    "quantity": "property multiplier",
+    "unitless": "property multiplier",
+    "RESQML root property": "property multiplier",
+    "angle per length": "property multiplier",
+    "angle per time": "property multiplier",
+    "angle per volume": "property multiplier",
+    "area per area": "net to gross ratio",
+    "area per volume": "property multiplier",
+    "energy length per area": "property multiplier",
+    "energy length per time area temperature": "property multiplier",
+    "energy per length": "property multiplier",
+    "force area": "property multiplier",
+    "force length per length": "property multiplier",
+    "force per force": "property multiplier",
+    "force per volume": "property multiplier",
+    "length per length": "property multiplier",
+    "length per temperature": "property multiplier",
+    "length per volume": "property multiplier",
+    "mass length": "property multiplier",
+    "mass per length": "property multiplier",
+    "mass per time per area": "property multiplier",
+    "mass per time per length": "property multiplier",
+    "mass per volume per length": "property multiplier",
+    "per area": "property multiplier",
+    "per electric potential": "property multiplier",
+    "per force": "property multiplier",
+    "per length": "property multiplier",
+    "per mass": "property multiplier",
+    "per volume": "property multiplier",
+    "permeability rock": "rock permeability",
+    "power per volume": "property multiplier",
+    "pressure per time": "property multiplier",
+    "pressure squared": "property multiplier",
+    "pressure squared per force time per area": "property multiplier",
+    "pressure time per volume": "property multiplier",
+    "resistivity per length": "property multiplier",
+    "time per length": "property multiplier",
+    "time per volume": "property multiplier",
+    "volume length per time": "property multiplier",
+    "volume per area": "property multiplier",
+    "volume per length": "property multiplier",
+    "volume per time per area": "property multiplier",
+    "volume per time per length": "property multiplier",
+    "volume per time per time": "property multiplier",
+    "volume per time per volume": "property multiplier",
+}
+
+# Property kinds that belong to the continuous hierarchy (descend from "quantity")
+# A DiscreteProperty must NOT use these.
+CONTINUOUS_ONLY_KINDS = {
+    "length", "depth", "cell length", "thickness", "velocity",
+    "pressure", "density", "temperature", "thermodynamic temperature",
+    "porosity", "saturation", "permeability rock", "rock permeability",
+    "amplitude", "volume", "area", "angle", "time", "mass",
+    "net to gross ratio", "formation volume factor",
+    "property multiplier", "relative permeability",
+}
+
+# The only valid concrete discrete kind in the standard
+DISCRETE_FALLBACK_KIND = "index"
 
 # Types that require a Domain element (AbstractFeatureInterpretation subtypes)
 INTERPRETATION_TYPES = {
@@ -207,10 +276,29 @@ def _fix_citation_order(citation: etree._Element):
 # ── PropertyKind fix ──────────────────────────────────────────────────────
 
 def _fix_property_kinds(root: etree._Element):
-    """Replace invalid PropertyKind enum values with valid ones."""
+    """Replace invalid PropertyKind enum values with valid ones.
+
+    Also resolves abstract property kinds to concrete descendants
+    and fixes discrete/continuous property kind compatibility.
+    """
+    bare_type = _bare_type(etree.QName(root.tag).localname)
+    is_discrete = bare_type in ("DiscreteProperty", "CategoricalProperty")
+
     for kind_el in root.iter(f"{RESQML}Kind"):
-        if kind_el.text and kind_el.text in PROPERTY_KIND_MAP:
+        if not kind_el.text:
+            continue
+
+        # Step 1: Apply explicit invalid-name mappings
+        if kind_el.text in PROPERTY_KIND_MAP:
             kind_el.text = PROPERTY_KIND_MAP[kind_el.text]
+
+        # Step 2: Resolve abstract kinds to concrete descendants
+        if kind_el.text in ABSTRACT_KIND_FIX:
+            kind_el.text = ABSTRACT_KIND_FIX[kind_el.text]
+
+        # Step 3: Fix discrete/continuous mismatch
+        if is_discrete and kind_el.text in CONTINUOUS_ONLY_KINDS:
+            kind_el.text = DISCRETE_FALLBACK_KIND
 
 
 # ── UOM fix ───────────────────────────────────────────────────────────────
