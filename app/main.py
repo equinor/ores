@@ -490,18 +490,24 @@ async def admin_openapi(request: Request):
     """Fetch the RDDMS swagger.json with auth and render Swagger UI."""
     at = _access_token(request)
     base_url = osdu._rddms_url("")  # respects local instance redirect patch
-    swagger_url = f"{base_url}-json"
+    swagger_url = f"{base_url}/-json"
     local = "localhost" in swagger_url or "127.0.0.1" in swagger_url
+    inst_name = get_active_name()
     try:
         async with httpx.AsyncClient(verify=osdu.SSL_VERIFY if not local else False, timeout=15) as c:
             r = await c.get(swagger_url, headers=osdu.headers(at))
             if r.status_code >= 400:
-                # Fallback: try trailing-slash variant
-                r = await c.get(f"{base_url}/-json",
+                # Fallback: try without trailing slash
+                r = await c.get(f"{base_url.rstrip('/')}-json",
                                 headers=osdu.headers(at))
             r.raise_for_status()
     except Exception as e:
-        return HTMLResponse(f"<h3>Failed to fetch OpenAPI spec</h3><pre>{e}</pre>", status_code=502)
+        return HTMLResponse(
+            f"<h3>OpenAPI spec not available for '{inst_name}'</h3>"
+            f"<p>The RDDMS at <code>{base_url}</code> does not serve an OpenAPI spec.</p>"
+            f"<pre>{e}</pre>",
+            status_code=502,
+        )
     spec_json = r.text.replace("</", "<\\/")  # escape for safe embedding
     # Inject tags array if the live spec omits it (NestJS serves paths without
     # the top-level tags block in some configurations).
