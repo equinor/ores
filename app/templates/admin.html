@@ -414,7 +414,20 @@
             });
             if (!r.ok) {
               let detail = '';
-              try { const j = await r.json(); detail = j.detail?.message || j.detail || ''; } catch { try { detail = (await r.text()).slice(0, 300); } catch {} }
+              try {
+                const j = await r.json();
+                const d = j.detail;
+                if (typeof d === 'object' && d !== null) {
+                  const parts = [];
+                  if (d.status) parts.push(`upstream ${d.status}`);
+                  if (d.reason) parts.push(d.reason);
+                  if (d.message) parts.push(d.message);
+                  if (d.text) parts.push(d.text.slice(0, 400));
+                  detail = parts.join(' — ');
+                } else {
+                  detail = typeof d === 'string' ? d : JSON.stringify(d);
+                }
+              } catch { try { detail = (await r.text()).slice(0, 400); } catch {} }
               throw new Error(`${r.status}` + (detail ? ': ' + detail : ''));
             }
             const res = await r.json();
