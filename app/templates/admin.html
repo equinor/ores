@@ -204,6 +204,32 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+
+    // ----- Refresh Create form defaults from active instance config -----
+    function refreshDefaults(data) {
+      const fields = { legal: 'legal_tag', owners: 'owners', viewers: 'viewers', countries: 'countries' };
+      for (const [id, key] of Object.entries(fields)) {
+        const el = document.getElementById(id);
+        if (el && data[key] != null) el.value = data[key];
+      }
+    }
+    fetch('/api/defaults', { credentials: 'same-origin' })
+      .then(r => r.ok ? r.json() : null)
+      .then(d => { if (d) refreshDefaults(d); })
+      .catch(() => {});
+    // Also refresh when instances are switched (hook into switchInstance if defined)
+    const _origSwitch = window.switchInstance;
+    if (typeof _origSwitch === 'function') {
+      window.switchInstance = async function(name) {
+        const result = await _origSwitch(name);
+        try {
+          const r = await fetch('/api/defaults', { credentials: 'same-origin' });
+          if (r.ok) refreshDefaults(await r.json());
+        } catch {}
+        return result;
+      };
+    }
+
     // ----- Async dataspace loading (replaces server-side blocking fetch) -----
     const dsList = document.getElementById('ds-list');
 

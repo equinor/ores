@@ -321,6 +321,7 @@ async def api_switch_instance(name: str = Form(...)):
         templates.env.globals["auth_mode"] = _am
         # Try to mint a token immediately to validate connectivity
         token = await inst.get_access_token()
+        from . import osdu
         return {
             "ok": True,
             "active": name,
@@ -328,6 +329,12 @@ async def api_switch_instance(name: str = Form(...)):
             "partition": inst.data_partition_id,
             "auth_mode": inst.auth_mode,
             "token_ok": token is not None,
+            "defaults": {
+                "legal_tag": osdu.DEFAULT_LEGAL_TAG,
+                "owners": ",".join(osdu.DEFAULT_OWNERS),
+                "viewers": ",".join(osdu.DEFAULT_VIEWERS),
+                "countries": ",".join(osdu.DEFAULT_COUNTRIES),
+            },
         }
     except ValueError as e:
         return JSONResponse({"ok": False, "error": str(e)}, status_code=400)
@@ -465,6 +472,18 @@ async def login_page_post():
 @app.get("/", response_class=RedirectResponse, summary="Redirect to ORES landing")
 async def root_redirect():
     return RedirectResponse("/ores", status_code=302)
+
+
+@app.get("/api/defaults", summary="Active instance ACL/legal defaults")
+async def api_defaults():
+    """Return the active instance's default ACL/legal/partition values."""
+    return {
+        "partition": osdu.DATA_PARTITION_ID,
+        "legal_tag": osdu.DEFAULT_LEGAL_TAG,
+        "owners": ",".join(osdu.DEFAULT_OWNERS),
+        "viewers": ",".join(osdu.DEFAULT_VIEWERS),
+        "countries": ",".join(osdu.DEFAULT_COUNTRIES),
+    }
 
 
 @app.get("/admin", response_class=HTMLResponse, summary="Admin: list dataspaces")
