@@ -77,7 +77,6 @@ spec:
             INSTANCE_PRESHIP_DEFAULT_OWNERS: "data.default.owners@osdu.group"
             INSTANCE_PRESHIP_DEFAULT_VIEWERS: "data.default.viewers@osdu.group"
             INSTANCE_PRESHIP_DEFAULT_COUNTRIES: "US"
-            INSTANCE_PRESHIP_RDDMS_BASE_PATH: "/api/oetp-client/v2"
             # interop - ADME Interop (client_credentials)
             INSTANCE_INTEROP_AUTH_MODE: "client_credentials"
             INSTANCE_INTEROP_HOSTNAME: "admeinterop.energy.azure.com"
@@ -123,7 +122,6 @@ spec:
             INSTANCE_PRESHIP_DEFAULT_OWNERS: "data.default.owners@osdu.group"
             INSTANCE_PRESHIP_DEFAULT_VIEWERS: "data.default.viewers@osdu.group"
             INSTANCE_PRESHIP_DEFAULT_COUNTRIES: "US"
-            INSTANCE_PRESHIP_RDDMS_BASE_PATH: "/api/oetp-client/v2"
             # interop - ADME Interop (client_credentials)
             INSTANCE_INTEROP_AUTH_MODE: "client_credentials"
             INSTANCE_INTEROP_HOSTNAME: "admeinterop.energy.azure.com"
