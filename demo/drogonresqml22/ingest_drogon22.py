@@ -13,7 +13,7 @@ Key differences from RESQML 2.0.1:
   - EML Common 2.3 citation block
   - Updated EPC internal naming conventions
 
-Supports:  interop, eqndev  (any instance configured in k8s/configmap.yaml)
+Supports:  interop, interop  (any instance configured in k8s/configmap.yaml)
 
 Steps:
   1. Authenticate (reads auth mode from instance config)
@@ -26,10 +26,10 @@ Steps:
 
 Usage:
   python demo/drogonresqml22/ingest_drogon22.py interop              # full pipeline
-  python demo/drogonresqml22/ingest_drogon22.py eqndev               # full pipeline
-  python demo/drogonresqml22/ingest_drogon22.py eqndev --skip-etp    # manifest only
-  python demo/drogonresqml22/ingest_drogon22.py eqndev --save-only   # build + save, no push
-  python demo/drogonresqml22/ingest_drogon22.py eqndev --dry-run     # no remote changes
+  python demo/drogonresqml22/ingest_drogon22.py interop               # full pipeline
+  python demo/drogonresqml22/ingest_drogon22.py interop --skip-etp    # manifest only
+  python demo/drogonresqml22/ingest_drogon22.py interop --save-only   # build + save, no push
+  python demo/drogonresqml22/ingest_drogon22.py interop --dry-run     # no remote changes
 """
 from __future__ import annotations
 
@@ -118,7 +118,7 @@ def authenticate(cfg: InstanceConfig) -> str:
 
 def purge_dataspace(token: str, cfg: InstanceConfig) -> bool:
     """Delete the whole dataspace via ETP (requires ETP delete rights, e.g.
-    interop). On instances without delete rights (eqndev) this is a no-op."""
+    interop). On instances without delete rights (interop) this is a no-op."""
     print(f"\n=== 2a. Purge dataspace ({cfg.dataspace}) via ETP ===")
     tok_file = SCRIPT_DIR / ".etp_token"
     tok_file.write_text(token)
@@ -481,7 +481,7 @@ def _poll_workflow(token: str, cfg: InstanceConfig, run_id: str,
 def main():
     ap = argparse.ArgumentParser(
         description="Ingest Drogon RESQML 2.2 demo EPC into an OSDU instance")
-    ap.add_argument("instance", choices=["interop", "eqndev"],
+    ap.add_argument("instance", choices=["interop", "interop"],
                     help="Target OSDU instance name")
     ap.add_argument("--dataspace", default=None,
                     help="Override dataspace (default: maap/drogon221)")
@@ -489,7 +489,7 @@ def main():
                     help="Skip ETP import (manifest only)")
     ap.add_argument("--purge", action="store_true",
                     help="Purge the dataspace via ETP before import (interop only; "
-                         "no-op where ETP delete rights are absent, e.g. eqndev)")
+                         "no-op where ETP delete rights are absent, e.g. interop)")
     ap.add_argument("--remote-manifest", action="store_true",
                     help="Use remote RDDMS manifest builder instead of local manifest")
     ap.add_argument("--save-only", action="store_true",

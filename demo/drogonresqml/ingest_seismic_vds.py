@@ -35,7 +35,7 @@ def main():
     ap = argparse.ArgumentParser(
         description="Ingest Drogon seismic (OpenVDS) into OSDU"
     )
-    ap.add_argument("instance", choices=["interop", "eqndev"],
+    ap.add_argument("instance", choices=["interop", "interop"],
                     help="Target OSDU instance")
     ap.add_argument("--config", type=Path, default=CONFIG_FILE,
                     help="Survey config JSON (default: seismic_drogon.json)")

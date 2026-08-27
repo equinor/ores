@@ -50,7 +50,7 @@ def load_env() -> Dict[str, str]:
 
 def _resolve_instance_env(env: Dict[str, str], instance: str | None = None) -> Dict[str, str]:
     """Map INSTANCE_<NAME>_* vars to the canonical auth keys."""
-    inst = (instance or env.get("DEFAULT_INSTANCE", "eqndev")).upper()
+    inst = (instance or env.get("DEFAULT_INSTANCE", "interop")).upper()
     prefix = f"INSTANCE_{inst}_"
 
     return {
@@ -68,7 +68,7 @@ def get_access_token(env: Dict[str, str], instance: str | None = None) -> Dict[s
     Returns a dict with ``access_token``, ``expires_in``, ``token_type``
     for backward compatibility with the original interface.
     """
-    inst_name = (instance or env.get("DEFAULT_INSTANCE", "eqndev")).lower()
+    inst_name = (instance or env.get("DEFAULT_INSTANCE", "interop")).lower()
     token = _auth_get_token(inst_name, verbose=False)
     return {
         "access_token": token,
@@ -99,7 +99,7 @@ def main() -> None:
     ap.add_argument(
         "--instance", "-i",
         default=None,
-        help="Instance name to use (default: DEFAULT_INSTANCE or eqndev)",
+        help="Instance name to use (default: DEFAULT_INSTANCE or interop)",
     )
     args = ap.parse_args()
 

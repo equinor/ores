@@ -67,7 +67,7 @@ needed for the PKCE exchange itself, but no shared instance-level token is minte
 
 ### Instance-switch session guard
 
-After an instance switch (e.g. eqndev → preship), any existing per-user session
+After an instance switch (e.g. interop → preship), any existing per-user session
 was created for the **old** instance's tenant and scope. The middleware checks
 `session.instance_name == active_instance_name` and **skips** the session token
 if they don't match, falling through to the new instance's own credentials.
@@ -135,7 +135,7 @@ There are **two different scopes** for OSDU on Azure:
 | Scope | Works for | Does NOT work for |
 |-------|-----------|-------------------|
 | `https://energy.azure.com/.default` | `client_credentials`, shared `refresh_token` | **Per-user PKCE on ADME** |
-| `bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc/.default` | Per-user delegated access (PKCE) on ADME | App-level grants without admin consent |
+| `<your-client-id>/.default` | Per-user delegated access (PKCE) on ADME | App-level grants without admin consent |
 
 The old `energy.azure.com` scope is an **application-level** scope. When used with
 per-user PKCE, Azure AD returns a token that the ADME API rejects because the audience
@@ -145,7 +145,7 @@ doesn't match the ADME resource app.
 
 For `per_user_pkce` on ADME, use:
 ```
-bd0c9d90-89ad-4bb3-97bc-d787b9f69cdc/.default openid offline_access
+<your-client-id>/.default openid offline_access
 ```
 
 This targets the **ADME resource application** directly. The `access_as_user` delegated
@@ -156,7 +156,7 @@ permission must be granted (admin consent) in the Enterprise Application blade.
 - `k8s/secret.yaml` → `INSTANCE_EQNDEV_SCOPE`
 - `radixconfig.yaml` → Radix Console secret `INSTANCE_EQNDEV_SCOPE`
 
-The old scope is still valid for shared-token instances (eqndeva) that use
+The old scope is still valid for shared-token instances (interopa) that use
 `client_credentials` or `refresh_token` with app-level grants.
 
 ---
@@ -349,7 +349,7 @@ Relevant env vars:
 
 ```json
 {
-  "azure_tenant": "3aa4a235...",
+  "azure_tenant": "<your-tenant-id>",
   "client_id": "21b442a9...",
   "scopes": ["bd0c9d90-.../.default", "openid", "offline_access"],
   "mode": "per_user_pkce",
@@ -357,7 +357,7 @@ Relevant env vars:
   "smda_api_id": "",
   "session_logged_in": true,
   "session_oid": "a1b2c3d4…",
-  "session_instance": "eqndev",
+  "session_instance": "interop",
   "has_cached_at": true,
   "session_keys": ["instance_name", "oid"]
 }

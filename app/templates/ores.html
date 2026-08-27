@@ -307,7 +307,7 @@
       </div>
       <div class="field">
         <label>Default Legal Tag</label>
-        <input name="default_legal_tag" placeholder="e.g. opendes-equinor-private-default" />
+        <input name="default_legal_tag" placeholder="e.g. opendes-private-usa-default" />
       </div>
       <div class="field">
         <label>Default Owners</label>
@@ -410,7 +410,7 @@ document.querySelector('#add-form [name=data_partition_id]').addEventListener('i
   const legal = form.querySelector('[name=default_legal_tag]');
   const owners = form.querySelector('[name=default_owners]');
   const viewers = form.querySelector('[name=default_viewers]');
-  if (!legal.value)   legal.placeholder = `${p}-equinor-private-default`;
+  if (!legal.value)   legal.placeholder = `${p}-private-usa-default`;
   if (!owners.value)  owners.placeholder = `data.default.owners@${p}.dataservices.energy`;
   if (!viewers.value) viewers.placeholder = `data.default.viewers@${p}.dataservices.energy`;
 });

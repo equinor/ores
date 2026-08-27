@@ -39,13 +39,13 @@ demo/osdu_search.py
 demo/drogonresqml/src/
 demo/drogonresqml/drogon_demo_records.json
 demo/drogonresqml/demo_records/
-demo/drogonresqml/manifest_*_eqndev.json
+demo/drogonresqml/manifest_*_interop.json
 demo/drogonresqml/manifest_*_interop.json
 demo/drogonresqml/manifest_*linked*
 demo/drogonresqml/manifest_full_*
 demo/drogonresqml/manifest_seismic_*
 demo/drogonresqml22/manifest_drogon22_*.json
-demo/drogonresqml22/manifest_drogon221_eqndev.json
+demo/drogonresqml22/manifest_drogon221_interop.json
 demo/scripts/inputs/*omegas*
 demo/scripts/inputs/examples/*omegas*
 demo/scripts/inputs/records/
@@ -58,3 +58,10 @@ ores_tokens.db
 ores_tokens.db-shm
 ores_tokens.db-wal
 
+demo/drogon_dg0/
+demo/drogon_dg1/
+demo/strat/
+demo/eqn/
+demo/_archive/
+demo/_debug/
+demo/drogonresqml/drogon_records.json

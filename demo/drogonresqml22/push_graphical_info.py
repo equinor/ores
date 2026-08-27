@@ -326,7 +326,7 @@ def _direct_put(base: str, ds_enc: str, headers: dict, objects: list):
 def main():
     ap = argparse.ArgumentParser(
         description="Push GraphicalInformationSet + ColorMaps to RDDMS for drogon22")
-    ap.add_argument("instance", help="Target instance (interop, swedev, eqndev)")
+    ap.add_argument("instance", help="Target instance (interop, swedev, interop)")
     ap.add_argument("--dry-run", action="store_true",
                     help="Print what would be pushed, no remote changes")
     ap.add_argument("--save-json", action="store_true",

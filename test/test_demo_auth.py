@@ -165,8 +165,8 @@ class TestDotenvParsing:
 
 class TestInstanceResolution:
     def test_resolve_from_k8s(self, k8s_dir: Path):
-        inst = _auth.load_instance("eqndev", k8s_dir=k8s_dir)
-        assert inst["name"] == "eqndev"
+        inst = _auth.load_instance("interop", k8s_dir=k8s_dir)
+        assert inst["name"] == "interop"
         assert inst["source"] == "k8s"
         assert inst["tenant"] == "aaa-bbb-ccc"
         assert inst["client_id"] == "cli-111"
@@ -181,9 +181,9 @@ class TestInstanceResolution:
         assert inst["grant"] == "client_credentials"
         assert inst["client_secret"] == "cs-preship-456"
 
-    def test_alias_swedev_resolves_to_eqndev(self, k8s_dir: Path):
+    def test_alias_swedev_resolves_to_interop(self, k8s_dir: Path):
         inst = _auth.load_instance("swedev", k8s_dir=k8s_dir)
-        assert inst["name"] == "eqndev"
+        assert inst["name"] == "interop"
 
     def test_resolve_from_environ(self, tmp_path: Path):
         """Fall back to INSTANCE_* env vars when k8s dir is empty."""
@@ -210,7 +210,7 @@ class TestInstanceResolution:
             # patch REPO_ROOT to point at tmp dir so .env is found
             with patch.object(_auth, "REPO_ROOT", env_file.parent):
                 with patch.object(_auth, "K8S_DIR", empty_k8s):
-                    inst = _auth.load_instance("eqndev", k8s_dir=empty_k8s)
+                    inst = _auth.load_instance("interop", k8s_dir=empty_k8s)
         assert inst["source"] == "dotenv"
         assert inst["tenant"] == "tenant-from-env"
 
@@ -314,5 +314,5 @@ class TestConvenience:
         assert h["Content-Type"] == "application/json"
 
     def test_base_url(self, k8s_dir: Path):
-        url = _auth.base_url("eqndev", k8s_dir=k8s_dir)
+        url = _auth.base_url("interop", k8s_dir=k8s_dir)
         assert url == "https://swedev.energy.azure.com"

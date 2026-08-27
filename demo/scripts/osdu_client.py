@@ -44,7 +44,7 @@ class OsduClient:
         self._http = httpx.Client(timeout=120, follow_redirects=True)
 
     @classmethod
-    def from_instance_name(cls, name: str = "eqndev", *, token: Optional[str] = None) -> "OsduClient":
+    def from_instance_name(cls, name: str = "interop", *, token: Optional[str] = None) -> "OsduClient":
         """Create client by resolving instance name via auth module.
 
         This is the recommended constructor - handles full config resolution

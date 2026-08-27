@@ -10,7 +10,6 @@ data:
   LOG_LEVEL: "INFO"
   DEBUG: "False"
   DEFAULT_DATASPACE: "maap/drogon"
-  WECO_DEFAULT_DATASPACE: "maap/weco"
   APP_KEY: "test-app"
 
   # Which instance to activate at startup
@@ -31,27 +30,27 @@ data:
   # Tenant IDs are public identifiers and belong here.
   # ────────────────────────────────────────────────────────────────
 
-  # ── "eqndev" - Equinor SWE dev, per-user PKCE (default) ──
+  # ── "interop" - Equinor SWE dev, per-user PKCE (default) ──
   # Each user authenticates with their own Entra ID identity, giving
   # per-user permissions, audit trail, and token isolation.
   INSTANCE_EQNDEV_AUTH_MODE: "per_user_pkce"
   INSTANCE_EQNDEV_TENANT_ID: ""
-  INSTANCE_EQNDEV_HOSTNAME: "equinorswedev.energy.azure.com"
+  INSTANCE_EQNDEV_HOSTNAME: "admeinterop.energy.azure.com"
   INSTANCE_EQNDEV_DATA_PARTITION_ID: "dev"
   INSTANCE_EQNDEV_AUTHORITY: "osdu"
   INSTANCE_EQNDEV_SCHEMA_SOURCE: "wks"
-  INSTANCE_EQNDEV_DEFAULT_LEGAL_TAG: "dev-equinor-private-default"
-  INSTANCE_EQNDEV_DEFAULT_OWNERS: "data.ores.owners@dev.dataservices.energy"
-  INSTANCE_EQNDEV_DEFAULT_VIEWERS: "data.office.global.viewers@dev.dataservices.energy"
+  INSTANCE_EQNDEV_DEFAULT_LEGAL_TAG: "opendes-private-usa-default"
+  INSTANCE_EQNDEV_DEFAULT_OWNERS: "data.default.owners@dev.dataservices.energy"
+  INSTANCE_EQNDEV_DEFAULT_VIEWERS: "data.default.viewers@dev.dataservices.energy"
   INSTANCE_EQNDEV_DEFAULT_COUNTRIES: "NO"
 
-  # ── "oresdev" - same OSDU backend as eqndev, uses ores-dev app (21b442a9) ──
-  # INSTANCE_ORESDEV_TENANT_ID: "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
-  # INSTANCE_ORESDEV_HOSTNAME: "equinorswedev.energy.azure.com"
+  # ── "oresdev" - same OSDU backend as interop, uses ores-dev app (21b442a9) ──
+  # INSTANCE_ORESDEV_TENANT_ID: "<your-tenant-id>"
+  # INSTANCE_ORESDEV_HOSTNAME: "admeinterop.energy.azure.com"
   # INSTANCE_ORESDEV_DATA_PARTITION_ID: "dev"
   # INSTANCE_ORESDEV_AUTHORITY: "osdu"
   # INSTANCE_ORESDEV_SCHEMA_SOURCE: "wks"
-  # INSTANCE_ORESDEV_DEFAULT_LEGAL_TAG: "dev-equinor-private-default"
+  # INSTANCE_ORESDEV_DEFAULT_LEGAL_TAG: "opendes-private-usa-default"
   # INSTANCE_ORESDEV_DEFAULT_OWNERS: "data.default.owners@dev.dataservices.energy"
   # INSTANCE_ORESDEV_DEFAULT_VIEWERS: "data.default.viewers@dev.dataservices.energy"
   # INSTANCE_ORESDEV_DEFAULT_COUNTRIES: "NO"

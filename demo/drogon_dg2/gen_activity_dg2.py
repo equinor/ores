@@ -54,11 +54,11 @@ DATASPACE_NAME = "maap/drogon_dg"
 DATASPACE_ID_SUFFIX = DATASPACE_NAME.replace("/", "-")
 
 DEFAULT_ACL = {
-    "owners":  ["data.ores.owners@dev.dataservices.energy"],
-    "viewers": ["data.office.global.viewers@dev.dataservices.energy"],
+    "owners":  ["data.default.owners@dev.dataservices.energy"],
+    "viewers": ["data.default.viewers@dev.dataservices.energy"],
 }
 DEFAULT_LEGAL = {
-    "legaltags": ["dev-equinor-private-default"],
+    "legaltags": ["opendes-private-usa-default"],
     "otherRelevantDataCountries": ["NO"],
 }
 
@@ -578,7 +578,7 @@ def build_dataspace(prefix, acl, legal):
             ),
             "DatasetProperties": {
                 "URI": f"eml:///dataspace({DATASPACE_NAME})",
-                "ServerURL": "wss://equinorswedev.energy.azure.com/api/reservoir-ddms-etp/v2/",
+                "ServerURL": "wss://admeinterop.energy.azure.com/api/reservoir-ddms-etp/v2/",
             },
         },
     }

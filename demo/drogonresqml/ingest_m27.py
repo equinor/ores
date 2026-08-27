@@ -18,11 +18,11 @@ Pipeline per instance:
   7. Push manifest to catalog (Osdu_ingest workflow)
 
 Usage:
-  python demo/drogonresqml/ingest_m27.py eqndev
   python demo/drogonresqml/ingest_m27.py interop
-  python demo/drogonresqml/ingest_m27.py eqndev --no-purge
-  python demo/drogonresqml/ingest_m27.py eqndev --skip-etp   # catalog only
-  python demo/drogonresqml/ingest_m27.py eqndev --dry-run    # patch + save, no remote writes
+  python demo/drogonresqml/ingest_m27.py interop
+  python demo/drogonresqml/ingest_m27.py interop --no-purge
+  python demo/drogonresqml/ingest_m27.py interop --skip-etp   # catalog only
+  python demo/drogonresqml/ingest_m27.py interop --dry-run    # patch + save, no remote writes
 """
 from __future__ import annotations
 
@@ -169,7 +169,7 @@ def counts(manifest: dict) -> str:
 
 def main():
     ap = argparse.ArgumentParser(description="Ingest Drogon EPC + M27 manifest")
-    ap.add_argument("instance", choices=["interop", "eqndev"])
+    ap.add_argument("instance", choices=["interop", "interop"])
     ap.add_argument("--no-purge", action="store_true", help="Skip dataspace purge")
     ap.add_argument("--skip-etp", action="store_true", help="Skip EPC import (catalog only)")
     ap.add_argument("--dry-run", action="store_true", help="Patch + save, no remote writes")

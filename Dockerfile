@@ -1,11 +1,6 @@
 # ── Build stage: install Python deps into a virtual-env ──────────────
 FROM python:3.12-slim AS builder
 
-# Build tools needed for WeCo C++ extension
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        build-essential g++ cmake ninja-build \
-    && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /build
 COPY requirements.txt .
 
@@ -13,22 +8,14 @@ RUN python -m venv /opt/venv \
     && /opt/venv/bin/pip install --no-cache-dir --upgrade pip \
     && /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-# Build WeCo C++ engine from subtree (v0.9.31)
-COPY weco_engine/pyproject.toml /build/weco_engine/pyproject.toml
-COPY weco_engine/ /build/weco_engine/
-RUN /opt/venv/bin/pip install --no-cache-dir scikit-build-core pybind11 \
-    && /opt/venv/bin/pip install --no-cache-dir "/build/weco_engine/[ai]"
-
 # ── Runtime stage ────────────────────────────────────────────────────
 FROM python:3.12-slim
 
 # Security: non-root user (numeric UID required by Radix runAsNonRoot policy)
 RUN groupadd -g 1001 ores && useradd -u 1001 -g 1001 -r -d /app -s /sbin/nologin ores
 
-# Runtime: libgomp needed by WeCo C++ engine (OpenMP)
-# Also upgrade ncurses to patch CVE-2025-69720 (buffer overflow in infocmp)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        libgomp1 \
+# Runtime: upgrade ncurses to patch CVE-2025-69720 (buffer overflow in infocmp)
+RUN apt-get update \
     && apt-get upgrade -y libncursesw6 ncurses-base ncurses-bin \
     && rm -rf /var/lib/apt/lists/*
 
@@ -48,12 +35,6 @@ ENV PATH="/opt/venv/bin:$PATH" \
 COPY app/          ./app/
 COPY demo/         ./demo/
 COPY md/           ./md/
-
-# Copy WeCo demo datasets (for /demos API endpoint)
-COPY weco_engine/demo/data/ ./demo/data/
-
-# Copy WeCo documentation (for /weco/docs pages)
-COPY weco_engine/doc/ ./weco_engine/doc/
 
 # Own everything by the non-root user
 RUN mkdir -p /data && chown -R ores:ores /app /data

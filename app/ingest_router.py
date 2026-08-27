@@ -301,7 +301,7 @@ async def _build_rddms_manifest(
 
     # Defaults matching osdu.py conventions
     partition_suffix = f"{partition}.dataservices.energy"
-    legal_tag = legal_tag or f"{partition}-equinor-private-default"
+    legal_tag = legal_tag or f"{partition}-private-usa-default"
     owners = owners or [f"data.default.owners@{partition_suffix}"]
     viewers = viewers or [f"data.default.viewers@{partition_suffix}"]
     countries = countries or ["NO"]

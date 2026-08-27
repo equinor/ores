@@ -65,8 +65,8 @@ Four paths exist to get RESQML data into RDDMS + OSDU catalog. They differ in wh
 - M27 generator requires NestJS build (`npx tsc` -> dist), Docker restart for changes
 
 **Operational experience (Drogon):**
-- 2.0.1: interop clean import 278 objs + catalog 142 records. eqndev additive 2005 objs (shared multi-user).
-- 2.2 subset: interop 207 objs + catalog 100 records. eqndev additive 446 objs + catalog 100 records.
+- 2.0.1: interop clean import 278 objs + catalog 142 records. interop additive 2005 objs (shared multi-user).
+- 2.2 subset: interop 207 objs + catalog 100 records. interop additive 446 objs + catalog 100 records.
 - Both instances: `Osdu_ingest` workflow FINISHED, all records indexed.
 
 ### Path B - REST transactional import

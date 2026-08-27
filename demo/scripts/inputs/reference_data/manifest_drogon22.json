@@ -5,16 +5,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:dataset--ETPDataspace:1.0.1",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -40,16 +40,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--Activity:1.4.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -87,16 +87,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalBoundaryFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -123,16 +123,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalBoundaryFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -159,16 +159,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalBoundaryFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -195,16 +195,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalBoundaryFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -231,16 +231,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalBoundaryFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -267,16 +267,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalBoundaryFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -303,16 +303,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalBoundaryFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -339,16 +339,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalBoundaryFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -375,16 +375,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalBoundaryFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -411,16 +411,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalBoundaryFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -447,16 +447,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalBoundaryFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -483,16 +483,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalBoundaryFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -519,16 +519,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--FaultInterpretation:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -558,16 +558,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--FaultInterpretation:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -597,16 +597,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--FaultInterpretation:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -636,16 +636,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--FaultInterpretation:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -675,16 +675,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--FaultInterpretation:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -714,16 +714,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--FaultInterpretation:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -753,16 +753,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--StructureMap:1.0.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -807,16 +807,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--StructureMap:1.0.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -861,16 +861,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -901,16 +901,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -941,16 +941,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -981,16 +981,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1021,16 +1021,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1061,16 +1061,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--HorizonInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1101,16 +1101,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalRockVolumeFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1137,16 +1137,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalRockVolumeFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1173,16 +1173,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalRockVolumeFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1209,16 +1209,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalRockVolumeFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1245,16 +1245,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--LocalRockVolumeFeature:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1281,16 +1281,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--StratigraphicColumn:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1320,16 +1320,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1360,16 +1360,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1400,16 +1400,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1440,16 +1440,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1480,16 +1480,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--StratigraphicUnitInterpretation:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1520,16 +1520,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--StructuralOrganizationInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1557,16 +1557,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1737,16 +1737,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1776,16 +1776,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1815,16 +1815,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -1995,16 +1995,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -2170,16 +2170,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -2350,16 +2350,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -2389,16 +2389,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -2428,16 +2428,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -2467,16 +2467,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -2506,16 +2506,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -2681,16 +2681,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -2856,16 +2856,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3036,16 +3036,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3075,16 +3075,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3255,16 +3255,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3294,16 +3294,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3474,16 +3474,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellLog:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3513,16 +3513,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3552,16 +3552,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3591,16 +3591,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3630,16 +3630,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3669,16 +3669,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3708,16 +3708,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3747,16 +3747,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3786,16 +3786,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3825,16 +3825,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3864,16 +3864,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3903,16 +3903,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3942,16 +3942,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreInterpretation:1.2.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -3981,16 +3981,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4021,16 +4021,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4061,16 +4061,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4101,16 +4101,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4141,16 +4141,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4181,16 +4181,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4221,16 +4221,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4261,16 +4261,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4301,16 +4301,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4341,16 +4341,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4381,16 +4381,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4421,16 +4421,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--WellboreTrajectory:1.3.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4461,16 +4461,16 @@
       {
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "kind": "osdu:wks:work-product-component--Activity:1.4.0",
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4510,15 +4510,15 @@
         "kind": "osdu:wks:work-product-component--Activity:1.2.0",
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [],
           "status": "compliant"
@@ -4955,16 +4955,16 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "kind": "osdu:wks:master-data--CollaborationProject:1.0.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"
@@ -4983,18 +4983,18 @@
         "CreationDateTime": "2026-06-01T08:45:08.508Z",
         "DefaultWIPACL": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "ProjectContributorACL": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "ExtensionProperties": {
@@ -5005,16 +5005,16 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "kind": "osdu:wks:master-data--ActivityTemplate:1.1.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"
@@ -5356,10 +5356,10 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T21:34:01.055Z",
@@ -5367,7 +5367,7 @@
       "kind": "osdu:wks:reference-data--ExistenceKind:1.0.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"
@@ -5383,10 +5383,10 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T21:34:01.055Z",
@@ -5394,7 +5394,7 @@
       "kind": "osdu:wks:reference-data--ExistenceKind:1.0.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"
@@ -5410,10 +5410,10 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T21:34:01.055Z",
@@ -5421,7 +5421,7 @@
       "kind": "osdu:wks:reference-data--ParameterKind:1.0.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"
@@ -5437,10 +5437,10 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T21:34:01.055Z",
@@ -5448,7 +5448,7 @@
       "kind": "osdu:wks:reference-data--DomainType:1.0.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"
@@ -5464,10 +5464,10 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T21:34:01.055Z",
@@ -5475,7 +5475,7 @@
       "kind": "osdu:wks:reference-data--IndexableElement:1.0.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"
@@ -5491,10 +5491,10 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T21:34:01.055Z",
@@ -5502,7 +5502,7 @@
       "kind": "osdu:wks:reference-data--StratigraphicRoleType:1.0.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"
@@ -5518,10 +5518,10 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T21:34:01.055Z",
@@ -5529,7 +5529,7 @@
       "kind": "osdu:wks:reference-data--IndexableElement:1.0.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"
@@ -5545,10 +5545,10 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T21:34:01.055Z",
@@ -5556,7 +5556,7 @@
       "kind": "osdu:wks:reference-data--KDirectionType:1.0.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"
@@ -5572,10 +5572,10 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T21:34:01.055Z",
@@ -5583,7 +5583,7 @@
       "kind": "osdu:wks:reference-data--PillarShapeType:1.0.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"
@@ -5599,10 +5599,10 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T21:34:01.055Z",
@@ -5610,7 +5610,7 @@
       "kind": "osdu:wks:reference-data--IndexableElement:1.0.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"
@@ -5626,10 +5626,10 @@
     {
       "acl": {
         "owners": [
-          "data.ores.owners@dev.dataservices.energy"
+          "data.default.owners@dev.dataservices.energy"
         ],
         "viewers": [
-          "data.office.global.viewers@dev.dataservices.energy"
+          "data.default.viewers@dev.dataservices.energy"
         ]
       },
       "createTime": "2026-07-09T21:34:01.055Z",
@@ -5637,7 +5637,7 @@
       "kind": "osdu:wks:reference-data--RepresentationType:1.0.0",
       "legal": {
         "legaltags": [
-          "dev-equinor-private-default"
+          "opendes-private-usa-default"
         ],
         "otherRelevantDataCountries": [],
         "status": "compliant"

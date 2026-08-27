@@ -18,10 +18,10 @@ Relationships (outgoing):
   SeismicFault → LocalBoundaryFeature      via ancestry.parents[]
 
 Usage:
-  python demo/drogonresqml/gen_seismicfault.py --target eqndev
   python demo/drogonresqml/gen_seismicfault.py --target interop
-  python demo/drogonresqml/gen_seismicfault.py --target eqndev --ingest
-  python demo/drogonresqml/gen_seismicfault.py --target eqndev --dry-run
+  python demo/drogonresqml/gen_seismicfault.py --target interop
+  python demo/drogonresqml/gen_seismicfault.py --target interop --ingest
+  python demo/drogonresqml/gen_seismicfault.py --target interop --dry-run
 """
 from __future__ import annotations
 
@@ -233,8 +233,8 @@ def ingest_records(manifest: dict, target: str) -> None:
 
 def main():
     ap = argparse.ArgumentParser(description="Generate SeismicFault:2.0.0 WPC records for Drogon")
-    ap.add_argument("--target", default="eqndev",
-                    help="Target instance name from k8s config (default: eqndev)")
+    ap.add_argument("--target", default="interop",
+                    help="Target instance name from k8s config (default: interop)")
     ap.add_argument("--config", type=Path, default=CONFIG_FILE,
                     help="Config JSON path")
     ap.add_argument("--output", type=Path, default=None,

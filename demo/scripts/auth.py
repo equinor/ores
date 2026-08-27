@@ -17,14 +17,14 @@ Usage:
     from demo.scripts.auth import get_token, get_headers, list_instances
 
     # One-call token
-    token = get_token("eqndev")
+    token = get_token("interop")
 
     # Ready-to-use headers
-    headers = get_headers("eqndev")
+    headers = get_headers("interop")
 
     # Full instance config (for OsduClient)
     from demo.scripts.auth import resolve_instance
-    instance = resolve_instance("eqndev")
+    instance = resolve_instance("interop")
 """
 from __future__ import annotations
 
@@ -50,8 +50,8 @@ DEFAULT_CONFIG = Path.home() / ".osdu" / "config.json"
 
 # ── Instance aliases (match existing ores conventions) ───────────────────
 ALIASES: Dict[str, str] = {
-    "eqndev": "eqndev",
-    "swedev": "eqndev",
+    "interop": "interop",
+    "swedev": "interop",
     "preship": "preship",
     "oresdev": "oresdev",
 }
@@ -66,7 +66,7 @@ TOKEN_CACHE_BUFFER = 300  # renew 5 min before expiry
 # ═══════════════════════════════════════════════════════════════════════════
 
 def get_token(
-    instance_name: str = "eqndev",
+    instance_name: str = "interop",
     *,
     token: Optional[str] = None,
     verbose: bool = True,
@@ -102,7 +102,7 @@ def get_token(
 
 
 def get_headers(
-    instance_name: str = "eqndev",
+    instance_name: str = "interop",
     *,
     token: Optional[str] = None,
 ) -> Dict[str, str]:
@@ -119,7 +119,7 @@ def get_headers(
 
 
 def resolve_instance(
-    instance_name: str = "eqndev",
+    instance_name: str = "interop",
     *,
     token: Optional[str] = None,
 ) -> OsduInstance:
@@ -160,7 +160,7 @@ def list_instances() -> List[str]:
                 env.update(_parse_k8s_yaml(p))
         for key in env:
             if key.startswith("INSTANCE_") and key.count("_") >= 2:
-                # INSTANCE_EQNDEV_HOSTNAME → eqndev
+                # INSTANCE_EQNDEV_HOSTNAME → interop
                 parts = key.split("_")
                 instances.add(parts[1].lower())
 
@@ -435,7 +435,7 @@ def _mint_full(inst_cfg: Dict[str, Any], *, verbose: bool = True) -> Dict[str, A
 # ═══════════════════════════════════════════════════════════════════════════
 
 def rotate_token(
-    instance_name: str = "eqndev",
+    instance_name: str = "interop",
     *,
     verbose: bool = True,
 ) -> Dict[str, str]:

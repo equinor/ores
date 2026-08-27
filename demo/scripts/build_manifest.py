@@ -20,7 +20,7 @@ Quick start – complete command sequence
 ═══════════════════════════════════════════════════════════════════════════
 
   # 1. Configure ~/rddms/config.user.env (one-time setup):
-  #    RDMS_ETP_HOST=equinorswedev.energy.azure.com
+  #    RDMS_ETP_HOST=admeinterop.energy.azure.com
   #    RDMS_ETP_PORT=443
   #    RDMS_ETP_PROTOCOL=wss
   #    RDMS_ETP_PATH=/api/reservoir-ddms-etp/v2
@@ -28,7 +28,7 @@ Quick start – complete command sequence
   #    RDMS_REST_ROOT_PATH=/api/reservoir-ddms/v2/
   #    RDMS_DATA_PARTITION_MODE=single
   #    RDMS_DATA_PARTITION_ID=dev
-  #    RDMS_OSDU_URL=https://equinorswedev.energy.azure.com
+  #    RDMS_OSDU_URL=https://admeinterop.energy.azure.com
   #    RDMS_SSL_VERIFY=false
 
   # 2. Build the RDDMS client (one-time, after git clone):
@@ -140,7 +140,7 @@ def make_headers(token: str, partition: str) -> dict:
 # Token resolution
 # ═══════════════════════════════════════════════════════════════════════════
 
-def resolve_token(cli_token: Optional[str] = None, instance: str = "eqndev") -> str:
+def resolve_token(cli_token: Optional[str] = None, instance: str = "interop") -> str:
     """Get a Bearer token from the first available source.
 
     Order: --token arg → OSDU_TOKEN env var → ores k8s/secret.yaml fallback.
@@ -363,8 +363,8 @@ Prerequisites:
     ap.add_argument("dataspace", help="RDDMS dataspace path (e.g. maap/omegas, user/project)")
     ap.add_argument("--token", metavar="TOKEN",
                     help="Bearer token (or set OSDU_TOKEN env var)")
-    ap.add_argument("--instance", default="eqndev",
-                    help="OSDU instance name for k8s fallback auth (default: eqndev)")
+    ap.add_argument("--instance", default="interop",
+                    help="OSDU instance name for k8s fallback auth (default: interop)")
     ap.add_argument("--target", metavar="INSTANCE",
                     help="Push to a different OSDU instance (e.g. interop). "
                          "Uses ACL/legal/storage from that instance's config. "

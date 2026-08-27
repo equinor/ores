@@ -3,10 +3,10 @@
   "id": "dev:reference-data--ReservoirEstimatedVolumePropertyType:AssociatedLiquid:",
   "acl": {
     "owners": [
-      "data.ores.owners@dev.dataservices.energy"
+      "data.default.owners@dev.dataservices.energy"
     ],
     "viewers": [
-      "data.office.global.viewers@dev.dataservices.energy"
+      "data.default.viewers@dev.dataservices.energy"
     ]
   },
   "legal": {

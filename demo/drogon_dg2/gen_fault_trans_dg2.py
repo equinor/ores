@@ -55,11 +55,11 @@ _NS = uuid.UUID("a0000000-d509-4e00-8000-000000000003")
 DATASPACE_NAME = "maap/drogon"
 
 DEFAULT_ACL = {
-    "owners": ["data.ores.owners@dev.dataservices.energy"],
-    "viewers": ["data.office.global.viewers@dev.dataservices.energy"],
+    "owners": ["data.default.owners@dev.dataservices.energy"],
+    "viewers": ["data.default.viewers@dev.dataservices.energy"],
 }
 DEFAULT_LEGAL = {
-    "legaltags": ["dev-equinor-private-default"],
+    "legaltags": ["opendes-private-usa-default"],
     "otherRelevantDataCountries": ["NO"],
 }
 

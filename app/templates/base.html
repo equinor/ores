@@ -1,164 +1,398 @@
-
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <title>{% block title %}ORES{% endblock %}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-  /* ── Equinor-branded design tokens ── */
-  :root {
-    --eq-red:       #FF1243;
-    --eq-red-dark:  #D6002B;
-    --eq-charcoal:  #333333;
-    --eq-slate:     #565656;
-    --eq-grey:      #6F6F6F;
-    --eq-light:     #F7F7F7;
-    --eq-border:    #E6E6E6;
-    --eq-white:     #FFFFFF;
-    --eq-bg:        #FAFAFA;
-    --eq-link:      #007079;
-    --eq-link-hover:#004F55;
-    --eq-success:   #4BB748;
-    --eq-warn-bg:   #FFF8E1;
-    --eq-warn-border: #FFB300;
-    --radius:       6px;
-    --shadow-sm:    0 1px 3px rgba(0,0,0,.08);
-    --shadow-md:    0 2px 8px rgba(0,0,0,.10);
-    --font:         'Equinor', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
-  }
+    /* ── Equinor-branded design tokens ── */
+    :root {
+      --eq-red: #FF1243;
+      --eq-red-dark: #D6002B;
+      --eq-charcoal: #333333;
+      --eq-slate: #565656;
+      --eq-grey: #6F6F6F;
+      --eq-light: #F7F7F7;
+      --eq-border: #E6E6E6;
+      --eq-white: #FFFFFF;
+      --eq-bg: #FAFAFA;
+      --eq-link: #007079;
+      --eq-link-hover: #004F55;
+      --eq-success: #4BB748;
+      --eq-warn-bg: #FFF8E1;
+      --eq-warn-border: #FFB300;
+      --radius: 6px;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, .08);
+      --shadow-md: 0 2px 8px rgba(0, 0, 0, .10);
+      --font: 'Equinor', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    }
 
-  /* ── Reset & base ── */
-  *, *::before, *::after { box-sizing: border-box; }
-  body { font-family: var(--font); margin: 0; padding: 0; background: var(--eq-bg); color: var(--eq-charcoal); font-size: 14px; line-height: 1.55; }
-  a { color: var(--eq-link); text-decoration: none; }
-  a:hover { color: var(--eq-link-hover); text-decoration: underline; }
+    /* ── Reset & base ── */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
 
-  /* ── Header / Nav ── */
-  header {
-    background: var(--eq-white);
-    border-bottom: 3px solid var(--eq-red);
-    padding: 0 1.25rem;
-    display: flex;
-    align-items: center;
-    height: 52px;
-    box-shadow: var(--shadow-sm);
-    position: sticky; top: 0; z-index: 100;
-  }
-  #nav-root { display: flex; align-items: center; width: 100%; gap: 0; }
-  .nav-brand {
-    font-weight: 700; font-size: 15px; color: var(--eq-red);
-    letter-spacing: .02em; margin-right: 1.5rem;
-    cursor: pointer; white-space: nowrap;
-  }
-  .nav-brand:hover { color: var(--eq-red-dark); }
-  .navlink {
-    color: var(--eq-slate); cursor: pointer; padding: .45rem .75rem;
-    border-radius: var(--radius); font-size: 13.5px; font-weight: 500;
-    transition: background .15s, color .15s; white-space: nowrap;
-  }
-  .navlink:hover { background: var(--eq-light); color: var(--eq-charcoal); }
-  .navlink.active { color: var(--eq-red); background: rgba(255,18,67,.06); }
-  .nav-spacer { flex: 1; }
-  /* ── Auth toggle switch ── */
-  .auth-toggle {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 11.5px; color: var(--eq-grey); cursor: pointer;
-    padding: .25rem .5rem; border-radius: var(--radius);
-    user-select: none; white-space: nowrap;
-  }
-  .auth-toggle:hover { background: var(--eq-light); color: var(--eq-charcoal); }
-  .auth-toggle .auth-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #bbb; display: inline-block; flex-shrink: 0;
-  }
-  .auth-toggle.signed-in .auth-dot { background: var(--eq-success); }
+    body {
+      font-family: var(--font);
+      margin: 0;
+      padding: 0;
+      background: var(--eq-bg);
+      color: var(--eq-charcoal);
+      font-size: 14px;
+      line-height: 1.55;
+    }
 
-  /* ── Main content ── */
-  main { padding: 1.25rem 1.5rem; max-width: 1440px; margin: 0 auto; }
+    a {
+      color: var(--eq-link);
+      text-decoration: none;
+    }
 
-  /* ── Footer ── */
-  .site-footer {
-    margin-top: 3rem; padding: 1rem 1.5rem; text-align: center;
-    font-size: 12px; color: var(--eq-grey); border-top: 1px solid var(--eq-border);
-  }
-  .site-footer a { color: var(--eq-grey); text-decoration: underline; }
-  .site-footer a:hover { color: var(--eq-link); }
+    a:hover {
+      color: var(--eq-link-hover);
+      text-decoration: underline;
+    }
 
-  /* ── Shared components ── */
-  .muted { color: var(--eq-grey); }
-  .banner { background: var(--eq-warn-bg); color: var(--eq-charcoal); border-left: 4px solid var(--eq-warn-border); padding: 10px 14px; margin: 0 0 1rem; border-radius: 0 var(--radius) var(--radius) 0; font-size: 13.5px; }
-  .btn {
-    display: inline-flex; align-items: center; gap: .35rem;
-    padding: 7px 14px; border: 1px solid #0d6efd; border-radius: var(--radius);
-    background: #0d6efd; color: var(--eq-white);
-    font-size: 13px; font-weight: 500; cursor: pointer; user-select: none;
-    transition: background .15s, border-color .15s, box-shadow .15s;
-  }
-  .btn:hover { background: #0b5ed7; border-color: #0b5ed7; box-shadow: var(--shadow-sm); }
-  .btn:active { background: #0a53be; }
-  .btn-primary {
-    background: #0d6efd; color: var(--eq-white); border-color: #0d6efd;
-  }
-  .btn-primary:hover { background: #0b5ed7; border-color: #0b5ed7; }
+    /* ── Header / Nav ── */
+    header {
+      background: var(--eq-white);
+      border-bottom: 3px solid var(--eq-red);
+      padding: 0 1.25rem;
+      display: flex;
+      align-items: center;
+      height: 52px;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-  /* ── Tables ── */
-  table { border-collapse: collapse; width: 100%; }
-  th, td { padding: 8px 10px; border-bottom: 1px solid var(--eq-border); text-align: left; font-size: 13.5px; }
-  th { font-weight: 600; color: var(--eq-slate); background: var(--eq-light); }
-  tr:hover { background: rgba(0,112,121,.03); }
+    #nav-root {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 0;
+    }
 
-  /* ── Forms ── */
-  input[type=text], input[type=number], select, textarea {
-    padding: 7px 10px; width: 100%; box-sizing: border-box;
-    border: 1px solid var(--eq-border); border-radius: var(--radius);
-    font-size: 13.5px; font-family: inherit; color: var(--eq-charcoal);
-    transition: border-color .15s;
-  }
-  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--eq-link); box-shadow: 0 0 0 2px rgba(0,112,121,.12); }
-  label { font-weight: 500; font-size: 13.5px; color: var(--eq-slate); }
+    .nav-brand {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--eq-red);
+      letter-spacing: .02em;
+      margin-right: 1.5rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
 
-  /* ── Layout helpers ── */
-  .row { display: grid; grid-template-columns: 220px 1fr; gap: 8px 14px; align-items: center; margin-bottom: 10px; }
-  details { margin: 8px 0 16px; }
-  summary { cursor: pointer; font-weight: 500; color: var(--eq-slate); }
-  summary:hover { color: var(--eq-charcoal); }
-  pre { white-space: pre-wrap; background: var(--eq-light); padding: 10px 12px; border-radius: var(--radius); border: 1px solid var(--eq-border); font-size: 12.5px; }
-  code { background: var(--eq-light); padding: 2px 5px; border-radius: 3px; font-size: 12.5px; }
-  h2 { color: var(--eq-charcoal); font-size: 20px; font-weight: 600; margin: 0 0 1rem; letter-spacing: -.01em; }
-  h3 { color: var(--eq-charcoal); font-size: 16px; font-weight: 600; margin: 0 0 .75rem; }
+    .nav-brand:hover {
+      color: var(--eq-red-dark);
+    }
 
-  /* ── Scrollbar (webkit) ── */
-  ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #CCC; border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: #AAA; }
+    .navlink {
+      color: var(--eq-slate);
+      cursor: pointer;
+      padding: .45rem .75rem;
+      border-radius: var(--radius);
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: background .15s, color .15s;
+      white-space: nowrap;
+    }
 
-  /* ── Loading overlay ── */
-  .loading-overlay {
-    display: none;
-    position: fixed; inset: 0;
-    background: rgba(250, 250, 250, .65);
-    z-index: 9999;
-    align-items: center; justify-content: center;
-    flex-direction: column; gap: .75rem;
-  }
-  .loading-overlay.active { display: flex; }
-  .loading-spinner {
-    width: 38px; height: 38px;
-    border: 3.5px solid var(--eq-border, #e6e6e6);
-    border-top-color: var(--eq-red, #FF1243);
-    border-radius: 50%;
-    animation: spin .75s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-label {
-    font-size: 13.5px; font-weight: 500;
-    color: var(--eq-slate, #565656);
-  }
+    .navlink:hover {
+      background: var(--eq-light);
+      color: var(--eq-charcoal);
+    }
+
+    .navlink.active {
+      color: var(--eq-red);
+      background: rgba(255, 18, 67, .06);
+    }
+
+    .nav-spacer {
+      flex: 1;
+    }
+
+    /* ── Auth toggle switch ── */
+    .auth-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: var(--eq-grey);
+      cursor: pointer;
+      padding: .25rem .5rem;
+      border-radius: var(--radius);
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .auth-toggle:hover {
+      background: var(--eq-light);
+      color: var(--eq-charcoal);
+    }
+
+    .auth-toggle .auth-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #bbb;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .auth-toggle.signed-in .auth-dot {
+      background: var(--eq-success);
+    }
+
+    /* ── Main content ── */
+    main {
+      padding: 1.25rem 1.5rem;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* ── Footer ── */
+    .site-footer {
+      margin-top: 3rem;
+      padding: 1rem 1.5rem;
+      text-align: center;
+      font-size: 12px;
+      color: var(--eq-grey);
+      border-top: 1px solid var(--eq-border);
+    }
+
+    .site-footer a {
+      color: var(--eq-grey);
+      text-decoration: underline;
+    }
+
+    .site-footer a:hover {
+      color: var(--eq-link);
+    }
+
+    /* ── Shared components ── */
+    .muted {
+      color: var(--eq-grey);
+    }
+
+    .banner {
+      background: var(--eq-warn-bg);
+      color: var(--eq-charcoal);
+      border-left: 4px solid var(--eq-warn-border);
+      padding: 10px 14px;
+      margin: 0 0 1rem;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 13.5px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: 7px 14px;
+      border: 1px solid #0d6efd;
+      border-radius: var(--radius);
+      background: #0d6efd;
+      color: var(--eq-white);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+      transition: background .15s, border-color .15s, box-shadow .15s;
+    }
+
+    .btn:hover {
+      background: #0b5ed7;
+      border-color: #0b5ed7;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn:active {
+      background: #0a53be;
+    }
+
+    .btn-primary {
+      background: #0d6efd;
+      color: var(--eq-white);
+      border-color: #0d6efd;
+    }
+
+    .btn-primary:hover {
+      background: #0b5ed7;
+      border-color: #0b5ed7;
+    }
+
+    /* ── Tables ── */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th,
+    td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--eq-border);
+      text-align: left;
+      font-size: 13.5px;
+    }
+
+    th {
+      font-weight: 600;
+      color: var(--eq-slate);
+      background: var(--eq-light);
+    }
+
+    tr:hover {
+      background: rgba(0, 112, 121, .03);
+    }
+
+    /* ── Forms ── */
+    input[type=text],
+    input[type=number],
+    select,
+    textarea {
+      padding: 7px 10px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid var(--eq-border);
+      border-radius: var(--radius);
+      font-size: 13.5px;
+      font-family: inherit;
+      color: var(--eq-charcoal);
+      transition: border-color .15s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--eq-link);
+      box-shadow: 0 0 0 2px rgba(0, 112, 121, .12);
+    }
+
+    label {
+      font-weight: 500;
+      font-size: 13.5px;
+      color: var(--eq-slate);
+    }
+
+    /* ── Layout helpers ── */
+    .row {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 8px 14px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    details {
+      margin: 8px 0 16px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--eq-slate);
+    }
+
+    summary:hover {
+      color: var(--eq-charcoal);
+    }
+
+    pre {
+      white-space: pre-wrap;
+      background: var(--eq-light);
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      border: 1px solid var(--eq-border);
+      font-size: 12.5px;
+    }
+
+    code {
+      background: var(--eq-light);
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 12.5px;
+    }
+
+    h2 {
+      color: var(--eq-charcoal);
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0 0 1rem;
+      letter-spacing: -.01em;
+    }
+
+    h3 {
+      color: var(--eq-charcoal);
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 .75rem;
+    }
+
+    /* ── Scrollbar (webkit) ── */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #CCC;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #AAA;
+    }
+
+    /* ── Loading overlay ── */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(250, 250, 250, .65);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: .75rem;
+    }
+
+    .loading-overlay.active {
+      display: flex;
+    }
+
+    .loading-spinner {
+      width: 38px;
+      height: 38px;
+      border: 3.5px solid var(--eq-border, #e6e6e6);
+      border-top-color: var(--eq-red, #FF1243);
+      border-radius: 50%;
+      animation: spin .75s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-label {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--eq-slate, #565656);
+    }
   </style>
   {% block head %}{% endblock %}
 </head>
+
 <body data-auth-mode="{{ auth_mode|default('env_token') }}">
   <header>
     <nav id="nav-root" data-current-path="{{ request.url.path }}">
@@ -171,143 +405,144 @@
     <div class="loading-label" id="loadingLabel">Loading…</div>
   </div>
   <script>
-  (function(){
-    var ov = document.getElementById('loadingOverlay');
-    var lb = document.getElementById('loadingLabel');
-    var _count = 0;
-    window.showLoading = function(text) {
-      _count++;
-      if (text) lb.textContent = text;
-      ov.classList.add('active');
-    };
-    window.hideLoading = function() {
-      _count = Math.max(0, _count - 1);
-      if (_count === 0) ov.classList.remove('active');
-    };
-  })();
+    (function () {
+      var ov = document.getElementById('loadingOverlay');
+      var lb = document.getElementById('loadingLabel');
+      var _count = 0;
+      window.showLoading = function (text) {
+        _count++;
+        if (text) lb.textContent = text;
+        ov.classList.add('active');
+      };
+      window.hideLoading = function () {
+        _count = Math.max(0, _count - 1);
+        if (_count === 0) ov.classList.remove('active');
+      };
+    })();
   </script>
   <main>
     {% block content %}{% endblock %}
   </main>
   <footer class="site-footer">
-    © Equinor ASA · Licensed under the <a href="https://github.com/equinor/ores/blob/main/LICENSE" target="_blank">Apache License 2.0</a>
+    © Equinor ASA · Licensed under the <a href="https://github.com/equinor/ores/blob/main/LICENSE"
+      target="_blank">Apache License 2.0</a>
   </footer>
   <!-- INLINE: Build navigation immediately -->
-<script>
-(function () {
-  function el(tag, attrs, text) {
-    var e = document.createElement(tag);
-    if (attrs) for (var k in attrs) {
-      if (k === 'class') e.className = attrs[k];
-      else if (k === 'style' && typeof attrs[k] === 'object') { for (var s in attrs[k]) e.style[s] = attrs[k][s]; }
-      else e.setAttribute(k, attrs[k]);
-    }
-    if (text) e.textContent = text;
-    return e;
-  }
-  function linkSpan(href, text, cls) {
-    var s = el('span', { 'data-href': href, 'class': cls || 'navlink' }, text);
-    s.addEventListener('click', function () { window.location.assign(href); });
-    return s;
-  }
-  function buildHeader() {
-    var root = document.getElementById('nav-root');
-    if (!root) return;
-    var current = root.getAttribute('data-current-path') || '/';
-    root.textContent = '';
-
-    // RDDMS logo (inline SVG, far left)
-    var rddmsWrap = el('span', { style: { display: 'inline-flex', alignItems: 'center', marginRight: '10px', cursor: 'pointer', flexShrink: '0' } });
-    rddmsWrap.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="36" height="36"><defs><linearGradient id="hl1" x1="0" y1="0" x2="1" y2=".4"><stop offset="0%" stop-color="#1b5e20"/><stop offset="25%" stop-color="#43a047"/><stop offset="50%" stop-color="#fdd835"/><stop offset="75%" stop-color="#f57c00"/><stop offset="100%" stop-color="#c62828"/></linearGradient><linearGradient id="hr1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e65100"/><stop offset="100%" stop-color="#8b3a0a"/></linearGradient><linearGradient id="hw1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#29b6f6"/><stop offset="100%" stop-color="#0277bd"/></linearGradient></defs><rect width="512" height="512" rx="56" fill="#f0f4f8" stroke="#b0bec5" stroke-width="4"/><polygon points="100,120,310,20,310,200,100,300" fill="#8d6e63" opacity=".25"/><polygon points="310,20,490,120,490,300,310,200" fill="#6d4c41" opacity=".25"/><polygon points="100,140,310,40,310,300,100,400" fill="url(#hl1)" opacity=".95"/><polygon points="310,40,490,140,490,320,310,300" fill="url(#hr1)" opacity=".7"/><polygon points="340,32,220,385,260,405,380,52" fill="#d32f2f" opacity=".25"/><line x1="340" y1="32" x2="220" y2="385" stroke="#d32f2f" stroke-width="4" opacity=".7"/><path d="M160 16L160 80Q160 140 178 195Q196 250 206 310L212 390" fill="none" stroke="url(#hw1)" stroke-width="8" stroke-linecap="round"/><g fill="#fff" stroke="#0277bd" stroke-width="3"><circle cx="160" cy="80" r="7"/><circle cx="173" cy="170" r="7"/><circle cx="195" cy="255" r="7"/><circle cx="208" cy="340" r="7"/></g><text x="60" y="490" font-family="sans-serif" font-size="86" font-weight="900" fill="#1a3a5c">R</text><text x="148" y="490" font-family="sans-serif" font-size="50" font-weight="800" letter-spacing="6" fill="#1a3a5c">DDMS</text></svg>';
-    rddmsWrap.title = 'Reservoir DDMS';
-    rddmsWrap.addEventListener('click', function () { window.location.assign('/howto'); });
-    root.appendChild(rddmsWrap);
-
-    // Brand
-    var brand = el('span', { 'class': 'nav-brand', 'data-href': '/howto' });
-    brand.innerHTML = '<span style="font-size:1.15em;">OR</span>ES';
-    brand.addEventListener('click', function () { window.location.assign('/howto'); });
-    root.appendChild(brand);
-
-    // Nav links
-    var links = [
-      { href: '/search',   label: 'GlobalSearch' },
-      { href: '/analyse',  label: 'AnalyseDG' },
-      { href: '/add-dg',   label: 'CreateRecord' },
-      { href: '/admin',    label: 'ResDDMSadmin' },
-      { href: '/keys',     label: 'ResDDMSquery' },
-      { href: '/strat',    label: 'Stratigraphy' },
-      { href: '/weco',     label: 'WellCorrelation' },
-      { href: '/notifications', label: 'Notifications' },
-    ];
-    links.forEach(function (lk) {
-      var sp = linkSpan(lk.href, lk.label);
-      if (current === lk.href || (lk.href !== '/' && current.indexOf(lk.href) === 0)) {
-        sp.classList.add('active');
-      }
-      root.appendChild(sp);
-    });
-
-    // Spacer
-    root.appendChild(el('span', { 'class': 'nav-spacer' }));
-
-    // Auth toggle - single compact switch
-    var hasUser = document.cookie.indexOf('ores_user=') !== -1;
-    var toggle = el('span', { 'class': 'auth-toggle' + (hasUser ? ' signed-in' : '') });
-    var dot = el('span', { 'class': 'auth-dot' });
-    toggle.appendChild(dot);
-    toggle.appendChild(document.createTextNode(hasUser ? 'Sign out' : 'Sign in'));
-    toggle.addEventListener('click', function () {
-      window.location.assign(hasUser ? '/logout' : '/login-page');
-    });
-    root.appendChild(toggle);
-
-    // OSDU logo (right side)
-    var logo = document.createElement('img');
-    logo.src = '/static/osdu.png';
-    logo.alt = 'OSDU';
-    logo.style.cssText = 'height:28px;margin-left:8px;cursor:pointer;';
-    logo.addEventListener('click', function () { window.open('https://community.opengroup.org/osdu', '_blank'); });
-    root.appendChild(logo);
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', buildHeader);
-  } else {
-    buildHeader();
-  }
-  document.addEventListener('click', function (e) {
-    var elx = e.target.closest && e.target.closest('[data-href]');
-    if (elx) {
-      var url = elx.getAttribute('data-href');
-      if (url) {
-        // Show loading spinner for page navigations (e.g. /admin which fetches dataspaces server-side)
-        if (window.showLoading && url.indexOf('://') === -1) {
-          window.showLoading('Loading…');
+  <script>
+    (function () {
+      function el(tag, attrs, text) {
+        var e = document.createElement(tag);
+        if (attrs) for (var k in attrs) {
+          if (k === 'class') e.className = attrs[k];
+          else if (k === 'style' && typeof attrs[k] === 'object') { for (var s in attrs[k]) e.style[s] = attrs[k][s]; }
+          else e.setAttribute(k, attrs[k]);
         }
-        window.location.assign(url);
+        if (text) e.textContent = text;
+        return e;
       }
-    }
-  });
-})();
-</script>
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({
-    startOnLoad: false,
-    theme: 'default',
-    securityLevel: 'loose',
-    themeVariables: { fontSize: '13px' },
-    flowchart: { curve: 'basis', nodeSpacing: 30, rankSpacing: 40 }
-  });
-  // Auto-render on pages that don't manage Mermaid themselves (e.g. howto articles)
-  window.__mermaidAutoRender = async function() {
-    const nodes = document.querySelectorAll('pre.mermaid:not([data-processed])');
-    if (nodes.length) await mermaid.run({ nodes: Array.from(nodes) });
-  };
-  // Search page sets window.__mermaidManual = true to suppress auto-render
-  if (!window.__mermaidManual) window.__mermaidAutoRender();
-</script>
-<script src=/static/app.js></script>
-{% block scripts %}{% endblock %}
+      function linkSpan(href, text, cls) {
+        var s = el('span', { 'data-href': href, 'class': cls || 'navlink' }, text);
+        s.addEventListener('click', function () { window.location.assign(href); });
+        return s;
+      }
+      function buildHeader() {
+        var root = document.getElementById('nav-root');
+        if (!root) return;
+        var current = root.getAttribute('data-current-path') || '/';
+        root.textContent = '';
+
+        // RDDMS logo (inline SVG, far left)
+        var rddmsWrap = el('span', { style: { display: 'inline-flex', alignItems: 'center', marginRight: '10px', cursor: 'pointer', flexShrink: '0' } });
+        rddmsWrap.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="36" height="36"><defs><linearGradient id="hl1" x1="0" y1="0" x2="1" y2=".4"><stop offset="0%" stop-color="#1b5e20"/><stop offset="25%" stop-color="#43a047"/><stop offset="50%" stop-color="#fdd835"/><stop offset="75%" stop-color="#f57c00"/><stop offset="100%" stop-color="#c62828"/></linearGradient><linearGradient id="hr1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e65100"/><stop offset="100%" stop-color="#8b3a0a"/></linearGradient><linearGradient id="hw1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#29b6f6"/><stop offset="100%" stop-color="#0277bd"/></linearGradient></defs><rect width="512" height="512" rx="56" fill="#f0f4f8" stroke="#b0bec5" stroke-width="4"/><polygon points="100,120,310,20,310,200,100,300" fill="#8d6e63" opacity=".25"/><polygon points="310,20,490,120,490,300,310,200" fill="#6d4c41" opacity=".25"/><polygon points="100,140,310,40,310,300,100,400" fill="url(#hl1)" opacity=".95"/><polygon points="310,40,490,140,490,320,310,300" fill="url(#hr1)" opacity=".7"/><polygon points="340,32,220,385,260,405,380,52" fill="#d32f2f" opacity=".25"/><line x1="340" y1="32" x2="220" y2="385" stroke="#d32f2f" stroke-width="4" opacity=".7"/><path d="M160 16L160 80Q160 140 178 195Q196 250 206 310L212 390" fill="none" stroke="url(#hw1)" stroke-width="8" stroke-linecap="round"/><g fill="#fff" stroke="#0277bd" stroke-width="3"><circle cx="160" cy="80" r="7"/><circle cx="173" cy="170" r="7"/><circle cx="195" cy="255" r="7"/><circle cx="208" cy="340" r="7"/></g><text x="60" y="490" font-family="sans-serif" font-size="86" font-weight="900" fill="#1a3a5c">R</text><text x="148" y="490" font-family="sans-serif" font-size="50" font-weight="800" letter-spacing="6" fill="#1a3a5c">DDMS</text></svg>';
+        rddmsWrap.title = 'Reservoir DDMS';
+        rddmsWrap.addEventListener('click', function () { window.location.assign('/howto'); });
+        root.appendChild(rddmsWrap);
+
+        // Brand
+        var brand = el('span', { 'class': 'nav-brand', 'data-href': '/howto' });
+        brand.innerHTML = '<span style="font-size:1.15em;">OR</span>ES';
+        brand.addEventListener('click', function () { window.location.assign('/howto'); });
+        root.appendChild(brand);
+
+        // Nav links
+        var links = [
+          { href: '/search', label: 'GlobalSearch' },
+          { href: '/analyse', label: 'AnalyseDG' },
+          { href: '/add-dg', label: 'CreateRecord' },
+          { href: '/admin', label: 'ResDDMSadmin' },
+          { href: '/keys', label: 'ResDDMSquery' },
+          { href: '/strat', label: 'Stratigraphy' },
+          { href: '/notifications', label: 'Notifications' },
+        ];
+        links.forEach(function (lk) {
+          var sp = linkSpan(lk.href, lk.label);
+          if (current === lk.href || (lk.href !== '/' && current.indexOf(lk.href) === 0)) {
+            sp.classList.add('active');
+          }
+          root.appendChild(sp);
+        });
+
+        // Spacer
+        root.appendChild(el('span', { 'class': 'nav-spacer' }));
+
+        // Auth toggle - single compact switch
+        var hasUser = document.cookie.indexOf('ores_user=') !== -1;
+        var toggle = el('span', { 'class': 'auth-toggle' + (hasUser ? ' signed-in' : '') });
+        var dot = el('span', { 'class': 'auth-dot' });
+        toggle.appendChild(dot);
+        toggle.appendChild(document.createTextNode(hasUser ? 'Sign out' : 'Sign in'));
+        toggle.addEventListener('click', function () {
+          window.location.assign(hasUser ? '/logout' : '/login-page');
+        });
+        root.appendChild(toggle);
+
+        // OSDU logo (right side)
+        var logo = document.createElement('img');
+        logo.src = '/static/osdu.png';
+        logo.alt = 'OSDU';
+        logo.style.cssText = 'height:28px;margin-left:8px;cursor:pointer;';
+        logo.addEventListener('click', function () { window.open('https://community.opengroup.org/osdu', '_blank'); });
+        root.appendChild(logo);
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', buildHeader);
+      } else {
+        buildHeader();
+      }
+      document.addEventListener('click', function (e) {
+        var elx = e.target.closest && e.target.closest('[data-href]');
+        if (elx) {
+          var url = elx.getAttribute('data-href');
+          if (url) {
+            // Show loading spinner for page navigations (e.g. /admin which fetches dataspaces server-side)
+            if (window.showLoading && url.indexOf('://') === -1) {
+              window.showLoading('Loading…');
+            }
+            window.location.assign(url);
+          }
+        }
+      });
+    })();
+  </script>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'default',
+      securityLevel: 'loose',
+      themeVariables: { fontSize: '13px' },
+      flowchart: { curve: 'basis', nodeSpacing: 30, rankSpacing: 40 }
+    });
+    // Auto-render on pages that don't manage Mermaid themselves (e.g. howto articles)
+    window.__mermaidAutoRender = async function () {
+      const nodes = document.querySelectorAll('pre.mermaid:not([data-processed])');
+      if (nodes.length) await mermaid.run({ nodes: Array.from(nodes) });
+    };
+    // Search page sets window.__mermaidManual = true to suppress auto-render
+    if (!window.__mermaidManual) window.__mermaidAutoRender();
+  </script>
+  <script src=/static/app.js></script>
+  {% block scripts %}{% endblock %}
 </body>
+
 </html>

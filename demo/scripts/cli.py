@@ -5,10 +5,10 @@ cli.py - Main CLI for the OSDU record generation and ingestion suite.
 
 Usage:
   python -m demo.scripts.cli generate --input drogon_DG2.json --output records/
-  python -m demo.scripts.cli ingest --dir records/ --target eqndev
+  python -m demo.scripts.cli ingest --dir records/ --target interop
   python -m demo.scripts.cli template --type business_decision
   python -m demo.scripts.cli validate --dir records/
-  python -m demo.scripts.cli pipeline --config drogon_DG2.json --target eqndev
+  python -m demo.scripts.cli pipeline --config drogon_DG2.json --target interop
   python -m demo.scripts.cli list-types
 
 Or via the shortcut:
@@ -53,13 +53,13 @@ def main():
         epilog="""
 Examples:
   # Full pipeline: generate + ingest from a dataset config
-  %(prog)s pipeline --config inputs/examples/drogon_DG2.json --target eqndev
+  %(prog)s pipeline --config inputs/examples/drogon_DG2.json --target interop
 
   # Generate records from JSON input
   %(prog)s generate --input my_project.json --output ./records
 
   # Ingest pre-generated records
-  %(prog)s ingest --dir ./records --target eqndev
+  %(prog)s ingest --dir ./records --target interop
 
   # Get a blank template to fill in
   %(prog)s template --type business_decision > my_bd.json
@@ -153,7 +153,7 @@ Examples:
 
     # ── auth ─────────────────────────────────────────────────────────────
     p_auth = sub.add_parser("auth", help="Test auth / mint token for an instance")
-    p_auth.add_argument("--target", "-t", default="eqndev",
+    p_auth.add_argument("--target", "-t", default="interop",
                         help="Instance name to authenticate against")
     p_auth.add_argument("--rotate", action="store_true",
                         help="Rotate refresh token (print new token pair)")
@@ -169,7 +169,7 @@ Examples:
     p_search.add_argument("kinds", nargs="*", help="OSDU kind pattern(s)")
     p_search.add_argument("-q", "--query", default="*", help="Search query")
     p_search.add_argument("-l", "--limit", type=int, default=50, help="Max results")
-    p_search.add_argument("--target", "-t", default="eqndev", help="Instance")
+    p_search.add_argument("--target", "-t", default="interop", help="Instance")
     p_search.add_argument("--id", dest="record_id", help="Fetch record by ID")
     p_search.add_argument("--list-kinds", dest="kind_pattern", help="List kinds matching pattern")
     p_search.add_argument("-o", "--output", choices=["table", "json"], default="table")

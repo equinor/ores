@@ -405,7 +405,7 @@ Payload sent (known-good format):
 **Severity:** High  
 **Observed:** 2026-05-10  
 
-`wss://equinorswedev.energy.azure.com/api/reservoir-ddms-etp/v2/`  
+`wss://admeinterop.energy.azure.com/api/reservoir-ddms-etp/v2/`  
 ETP `Core(0).Authorize(6)` times out. The WebSocket connection opens but the
 Authorize handshake never completes. App registration `ebd2bfee` had working
 access before M26.

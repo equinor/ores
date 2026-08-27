@@ -3,7 +3,7 @@
 ingest_drogon.py – Ingest the curated Drogon demo EPC into any OSDU instance
 and push the comprehensive OSDU manifest.
 
-Supports:  interop, eqndev  (any instance configured in k8s/configmap.yaml)
+Supports:  interop, interop  (any instance configured in k8s/configmap.yaml)
 
 Steps:
   1. Authenticate (reads auth mode from instance config)
@@ -16,10 +16,10 @@ Steps:
 
 Usage:
   python demo/drogonresqml/ingest_drogon.py interop              # full pipeline
-  python demo/drogonresqml/ingest_drogon.py eqndev               # full pipeline
-  python demo/drogonresqml/ingest_drogon.py eqndev --skip-etp    # manifest only
-  python demo/drogonresqml/ingest_drogon.py eqndev --save-only   # build + save, no push
-  python demo/drogonresqml/ingest_drogon.py eqndev --dry-run     # no remote changes
+  python demo/drogonresqml/ingest_drogon.py interop               # full pipeline
+  python demo/drogonresqml/ingest_drogon.py interop --skip-etp    # manifest only
+  python demo/drogonresqml/ingest_drogon.py interop --save-only   # build + save, no push
+  python demo/drogonresqml/ingest_drogon.py interop --dry-run     # no remote changes
 """
 from __future__ import annotations
 
@@ -541,7 +541,7 @@ def _poll_workflow(token: str, cfg: InstanceConfig, run_id: str,
 def main():
     ap = argparse.ArgumentParser(
         description="Ingest Drogon demo EPC into an OSDU instance")
-    ap.add_argument("instance", choices=["interop", "eqndev"],
+    ap.add_argument("instance", choices=["interop", "interop"],
                     help="Target OSDU instance name")
     ap.add_argument("--skip-etp", action="store_true",
                     help="Skip ETP import (manifest only)")

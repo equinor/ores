@@ -15,7 +15,7 @@ Secret sources (checked in order):
 
 Usage:
   python demo/gettoken.py swedev              # env vars (legacy)
-  python demo/gettoken.py eqndev --from-k8s   # read from k8s YAMLs
+  python demo/gettoken.py interop --from-k8s   # read from k8s YAMLs
   python demo/gettoken.py --list               # show available instances
 
   # bash one-liners
@@ -56,20 +56,20 @@ K8S_DIR = REPO_ROOT / "k8s"
 INSTANCES: Dict[str, Dict[str, Any]] = {
     "swedev": {
         "label":     "Equinor SWE dev",
-        "tenant_id": "3aa4a235-b6e2-48d5-9195-7fcf05b459b0",
-        "client_id": "ebd2bfee-ecba-47b7-a33c-017d0131879d",
-        "scope":     "7daee810-3f78-40c4-84c2-7a199428de18/.default openid offline_access",
+        "tenant_id": "<your-tenant-id>",
+        "client_id": "<your-client-id>",
+        "scope":     "<your-client-id>/.default openid offline_access",
         "grant":     "refresh_token",
-        "hostname":  "equinorswedev.energy.azure.com",
+        "hostname":  "admeinterop.energy.azure.com",
         "partition": "dev",
-        "legal_tag": "dev-equinor-private-default",
-        "owners":    "data.ores.owners@dev.dataservices.energy",
-        "viewers":   "data.office.global.viewers@dev.dataservices.energy",
+        "legal_tag": "opendes-private-usa-default",
+        "owners":    "data.default.owners@dev.dataservices.energy",
+        "viewers":   "data.default.viewers@dev.dataservices.energy",
         "countries": "NO",
     },
     "preship": {
         "label":     "MS pre-ship M26",
-        "tenant_id": "58975fd3-4977-44d0-bea8-37af0baac100",
+        "tenant_id": "<your-tenant-id>",
         "client_id": None,   # from env: PRESHIP_CLIENT_ID
         "scope":     None,   # derived from client_id
         "grant":     "client_credentials",
@@ -83,7 +83,7 @@ INSTANCES: Dict[str, Dict[str, Any]] = {
 }
 
 # Aliases so existing INSTANCE_ names work too
-ALIASES = {"eqndev": "swedev"}
+ALIASES = {"interop": "swedev"}
 
 
 def discover_k8s_instances(k8s_env: Dict[str, str]) -> Dict[str, Dict[str, str]]:
@@ -255,7 +255,7 @@ def mint_token(name: str, *, verbose: bool = False, from_k8s: bool = False,
         if not refresh:
             sys.exit("ERROR: SWEDEV_REFRESH_TOKEN not set.\n"
                      "  Add to ~/.bashrc:  export SWEDEV_REFRESH_TOKEN='...'\n"
-                     "  Or use:  python demo/gettoken.py eqndev --from-k8s")
+                     "  Or use:  python demo/gettoken.py interop --from-k8s")
         inst["refresh_token"] = refresh
 
     elif inst["grant"] == "client_credentials":
@@ -339,14 +339,14 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples:
   python demo/gettoken.py swedev                  # using env vars
-  python demo/gettoken.py eqndev --from-k8s      # using k8s/secret.yaml
+  python demo/gettoken.py interop --from-k8s      # using k8s/secret.yaml
   python demo/gettoken.py --list                  # show all instances
   export TOKEN=$(python demo/gettoken.py swedev)
   eval "$(python demo/gettoken.py --export)"
 """,
     )
     ap.add_argument("instance", nargs="?", default=None,
-                    help="Instance name: swedev | preship | eqndev | ... (default: swedev)")
+                    help="Instance name: swedev | preship | interop | ... (default: swedev)")
     ap.add_argument("-v", "--verbose", action="store_true",
                     help="Print metadata to stderr")
     ap.add_argument("--from-k8s", action="store_true",

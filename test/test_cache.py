@@ -120,8 +120,8 @@ async def test_instance_switch_uses_separate_cache_keys():
         call_count += 1
         return [f"ds_from_call_{call_count}"]
 
-    # Simulate eqndev
-    r1 = await cached_call("list_dataspaces:eqndev.energy.azure.com", 600, _fetch, "tok1")
+    # Simulate interop
+    r1 = await cached_call("list_dataspaces:interop.energy.azure.com", 600, _fetch, "tok1")
     assert r1 == ["ds_from_call_1"]
 
     # Simulate preship - different cache key → new backend call
@@ -129,13 +129,13 @@ async def test_instance_switch_uses_separate_cache_keys():
     assert r2 == ["ds_from_call_2"]
     assert call_count == 2  # two separate calls, not cached across instances
 
-    # Re-read eqndev - should still be cached
-    r3 = await cached_call("list_dataspaces:eqndev.energy.azure.com", 600, _fetch, "tok3")
+    # Re-read interop - should still be cached
+    r3 = await cached_call("list_dataspaces:interop.energy.azure.com", 600, _fetch, "tok3")
     assert r3 == ["ds_from_call_1"]
     assert call_count == 2  # no new call
 
     # cache_clear should flush both
     cache_clear()
-    r4 = await cached_call("list_dataspaces:eqndev.energy.azure.com", 600, _fetch, "tok4")
+    r4 = await cached_call("list_dataspaces:interop.energy.azure.com", 600, _fetch, "tok4")
     assert r4 == ["ds_from_call_3"]
     assert call_count == 3

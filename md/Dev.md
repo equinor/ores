@@ -222,7 +222,7 @@ k8s YAML loading, instance resolution, and OAuth2 token exchange.
 | `app/get_token.py` | Minimal CLI: `--shell bash\|pwsh`, `--instance` |
 
 ```bash
-python demo/gettoken.py eqndev --from-k8s      # mint a token
+python demo/gettoken.py interop --from-k8s      # mint a token
 python demo/gettoken.py --list                  # list instances
 ```
 
@@ -327,7 +327,6 @@ All demo scripts live in the [equinor/ores](https://github.com/equinor/ores) rep
 |--------|---------|
 | `demo/ingest_demo.py` | Full demo ingest (DG1+DG2+Strat) to any instance |
 | `demo/ingest_preship.py` | Ingest to external instances |
-| `demo/ingest_weco_demos.py` | Ingest WeCo demo data to RDDMS |
 | `demo/drogon_dg2/ingest_records_batch.py` | Batch PUT to Storage API |
 | `demo/drogonresqml/ingest.sh` | Import EPC files to local RDDMS |
 

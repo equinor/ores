@@ -11,10 +11,10 @@ Specs live alongside their project data:
   demo/eqn/omegas/spec_document.json
 
 Usage:
-  python demo/ontology/ingest.py --target eqndev
   python demo/ontology/ingest.py --target interop
-  python demo/ontology/ingest.py --target eqndev --dry-run
-  python demo/ontology/ingest.py --target eqndev --verify-only
+  python demo/ontology/ingest.py --target interop
+  python demo/ontology/ingest.py --target interop --dry-run
+  python demo/ontology/ingest.py --target interop --verify-only
 """
 from __future__ import annotations
 
@@ -266,7 +266,7 @@ def build_stubs(
 def main():
     import argparse
     ap = argparse.ArgumentParser(description="Generate + ingest ontology records")
-    ap.add_argument("--target", choices=["interop", "eqndev"], required=True)
+    ap.add_argument("--target", choices=["interop", "interop"], required=True)
     ap.add_argument("--dry-run", action="store_true", help="Generate but don't push")
     ap.add_argument("--verify-only", action="store_true", help="Only check references")
     ap.add_argument("--stubs", action="store_true", help="Create placeholder records for missing refs")
@@ -276,7 +276,7 @@ def main():
     token = get_token(args.target)
     partition = inst["partition"]
 
-    specs = EQNDEV_SPECS if args.target == "eqndev" else INTEROP_SPECS
+    specs = EQNDEV_SPECS if args.target == "interop" else INTEROP_SPECS
     label = args.target
 
     print(f"\n══ Ontology ingest: {args.target} ══")

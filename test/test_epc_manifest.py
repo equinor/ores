@@ -263,7 +263,7 @@ class TestRepartition:
         """Repartition from opendes to dev changes IDs and dataspace."""
         sys.path.insert(0, str(SCRIPT_DIR.parent))
 
-        # Simulate InstanceConfig for eqndev
+        # Simulate InstanceConfig for interop
         class FakeCfg:
             partition = "dev"
             dataspace = "maap/drogon"

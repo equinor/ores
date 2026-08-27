@@ -63,7 +63,7 @@ The standout feature: a **unified GraphQL layer** that searches across three sou
 
 ### 🔌 Multi-instance & zero-click auth
 
-- Switch between OSDU instances (eqndev, interop, preship, …) with one click.
+- Switch between OSDU instances (interop, interop, preship, …) with one click.
 - **Zero-click access** via shared service-principal or refresh token.
 - **Per-user PKCE** - "Sign in with Microsoft" for individual Equinor accounts.
 - Session persists across pod restarts (SQLite-backed token store, 30-day cookies).
@@ -116,8 +116,8 @@ Different instances can use different credentials. The middleware doesn't care -
 
 | Instance | Secrets configured | `auth_mode` | Behaviour |
 |----------|-------------------|-------------|----------|
-| `eqndev` | `_CLIENT_SECRET` only | `per_user_pkce` | Every user signs in individually; `CLIENT_SECRET` is needed for the confidential-client PKCE exchange |
-| `eqndeva` | `_REFRESH_TOKEN` + `_CLIENT_SECRET` | `refresh_token+client_credentials` | Zero-click via shared RT; client_credentials fallback; PKCE fallback |
+| `interop` | `_CLIENT_SECRET` only | `per_user_pkce` | Every user signs in individually; `CLIENT_SECRET` is needed for the confidential-client PKCE exchange |
+| `interopa` | `_REFRESH_TOKEN` + `_CLIENT_SECRET` | `refresh_token+client_credentials` | Zero-click via shared RT; client_credentials fallback; PKCE fallback |
 | `preship` | `_CLIENT_SECRET` | `client_credentials` | Service principal only; PKCE fallback if secret expires |
 
 > **Key point:** PKCE login is **always available** regardless of the instance's primary auth mode.

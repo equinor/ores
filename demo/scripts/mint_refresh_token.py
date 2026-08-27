@@ -17,8 +17,8 @@ Usage:
 
   # Or override defaults:
   python demo/mint_refresh_token.py \\
-      --client-id 21b442a9-6c1c-4551-b234-afdf010dd3be \\
-      --tenant 3aa4a235-b6e2-48d5-9195-7fcf05b459b0 \\
+      --client-id <your-client-id> \\
+      --tenant <your-tenant-id> \\
       --scope "https://energy.azure.com/.default openid offline_access"
 
 After sign-in, paste the printed REFRESH_TOKEN into:
@@ -38,8 +38,8 @@ except ImportError:
     sys.exit("pip install httpx")
 
 # ── Defaults (ores-dev app) ──────────────────────────────────────────────
-DEFAULT_CLIENT_ID = "21b442a9-6c1c-4551-b234-afdf010dd3be"
-DEFAULT_TENANT    = "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
+DEFAULT_CLIENT_ID = "<your-client-id>"
+DEFAULT_TENANT    = "<your-tenant-id>"
 DEFAULT_SCOPE     = "https://energy.azure.com/.default openid offline_access"
 REDIRECT_PORT     = 8400
 REDIRECT_URI      = f"http://localhost:{REDIRECT_PORT}/callback"

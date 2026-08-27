@@ -42,8 +42,6 @@ from .graphql_refdata import router as graphql_refdata_router
 from .search_router import router as search_router
 from .common import pretty_val as _jinja_pretty_val, access_token as _access_token
 from .howto_router import router as howto_router
-from .weco_router import router as weco_router
-from .weco_docs_router import router as weco_docs_router
 from .connectivity import router as connectivity_router
 from .notification_router import router as notification_router
 
@@ -142,7 +140,7 @@ async def inject_access_token(request: Request, call_next):
 
     # 3. No token at all - redirect to login page (for browser) or 401 (for API)
     if not access_token:
-        if path.startswith("/api") or path.startswith("/search/api/") or (path.startswith("/weco/") and not path.endswith(".html")):
+        if path.startswith("/api") or path.startswith("/search/api/"):
             return JSONResponse({"error": "Authentication required. No env token and no session."}, status_code=401)
         return RedirectResponse("/login-page")
 
@@ -178,8 +176,6 @@ app.include_router(graphql_router)
 app.include_router(graphql_refdata_router)
 app.include_router(search_router)
 app.include_router(howto_router)
-app.include_router(weco_router, prefix="/weco", tags=["weco"])
-app.include_router(weco_docs_router, prefix="/weco", tags=["weco-docs"])
 app.include_router(connectivity_router, tags=["connectivity"])
 app.include_router(notification_router, tags=["notifications"])
 

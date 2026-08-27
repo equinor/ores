@@ -660,7 +660,7 @@ This is where the relationship graph is built.
 | Bulk ingestion (100+ records, RDDMS manifests) | **Scripts** (`demo/ontology/ingest.py`) | Repeatable, version-controlled, handles partition rewriting |
 | Reproducible CI/CD pipeline | **Scripts** (git-tracked specs) | Deterministic, testable, auditable |
 | Exploring schema structure | **Web UI** (payload preview) | See the exact JSON before submitting |
-| Cross-instance deployment (eqndev → interop) | **Scripts** with partition rewriting | `_rewrite_partition()` handles SRN/legal/ACL differences |
+| Cross-instance deployment (interop → interop) | **Scripts** with partition rewriting | `_rewrite_partition()` handles SRN/legal/ACL differences |
 
 ### 13.3 Activity Tab
 

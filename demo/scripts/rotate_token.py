@@ -9,8 +9,8 @@ then persists the new refresh_token to all configured storage locations:
   - /home/maap/gocad/lib/app-defaults/.env  (REFRESH_TOKEN)
 
 Usage:
-  python demo/rotate_token.py                     # rotate default (eqndev)
-  python demo/rotate_token.py --instance eqndev   # explicit instance
+  python demo/rotate_token.py                     # rotate default (interop)
+  python demo/rotate_token.py --instance interop   # explicit instance
   python demo/rotate_token.py --dry-run            # show what would change
 
 Run this periodically (e.g. monthly) to keep the refresh token alive.
@@ -35,7 +35,7 @@ ORES_K8S_SECRET = Path("/home/maap/ores/k8s/secret.yaml")
 GOCAD_ENV       = Path("/home/maap/gocad/lib/app-defaults/.env")
 
 
-def _update_k8s_secret(new_rt: str, instance: str = "eqndev", dry_run: bool = False) -> bool:
+def _update_k8s_secret(new_rt: str, instance: str = "interop", dry_run: bool = False) -> bool:
     """Update INSTANCE_<NAME>_REFRESH_TOKEN in k8s/secret.yaml."""
     if not ORES_K8S_SECRET.exists():
         print(f"  SKIP {ORES_K8S_SECRET} (not found)", file=sys.stderr)
@@ -104,8 +104,8 @@ def main() -> None:
     )
     ap.add_argument(
         "--instance", "-i",
-        default="eqndev",
-        help="Instance name (default: eqndev)",
+        default="interop",
+        help="Instance name (default: interop)",
     )
     ap.add_argument(
         "--dry-run", "-n",

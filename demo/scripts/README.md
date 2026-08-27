@@ -7,7 +7,7 @@ Config-driven pipeline: define your dataset in a single JSON file, generate all 
 
 ```bash
 # Full pipeline: generate + ingest
-python demo/scripts/cli.py pipeline --config demo/scripts/inputs/examples/drogon_DG2.json --target eqndev
+python demo/scripts/cli.py pipeline --config demo/scripts/inputs/examples/drogon_DG2.json --target interop
 
 # Generate only (no ingest)
 python demo/scripts/cli.py pipeline --config demo/scripts/inputs/examples/drogon_DG2.json --skip-ingest
@@ -16,7 +16,7 @@ python demo/scripts/cli.py pipeline --config demo/scripts/inputs/examples/drogon
 python demo/scripts/cli.py pipeline --config demo/scripts/inputs/examples/omegas_WPC.json --dry-run
 
 # Ingest pre-generated records
-python demo/scripts/cli.py ingest --dir ./records --target eqndev --token eyJ...
+python demo/scripts/cli.py ingest --dir ./records --target interop --token eyJ...
 ```
 
 ## CLI Commands
@@ -88,7 +88,7 @@ export OSDU_TOKEN=eyJ...
 python demo/scripts/cli.py pipeline --config ...
 
 # Option C: config file (~/.osdu/config.json)
-python demo/scripts/cli.py pipeline --config ... --target eqndev
+python demo/scripts/cli.py pipeline --config ... --target interop
 ```
 
 ## Instance Configuration
@@ -97,10 +97,10 @@ Create `~/.osdu/config.json`:
 ```json
 {
   "instances": {
-    "eqndev": {
-      "host": "https://equinorswedev.energy.azure.com",
+    "interop": {
+      "host": "https://admeinterop.energy.azure.com",
       "partition": "dev",
-      "legal_tag": "dev-equinor-private-default",
+      "legal_tag": "opendes-private-usa-default",
       "owners": ["data.default.owners@dev.dataservices.energy"],
       "viewers": ["data.default.viewers@dev.dataservices.energy"],
       "countries": ["NO"],
@@ -113,9 +113,9 @@ Create `~/.osdu/config.json`:
 
 Or use environment variables:
 ```bash
-export OSDU_HOST=https://equinorswedev.energy.azure.com
+export OSDU_HOST=https://admeinterop.energy.azure.com
 export OSDU_PARTITION=dev
-export OSDU_LEGAL_TAG=dev-equinor-private-default
+export OSDU_LEGAL_TAG=opendes-private-usa-default
 export OSDU_OWNERS=data.default.owners@dev.dataservices.energy
 export OSDU_VIEWERS=data.default.viewers@dev.dataservices.energy
 ```

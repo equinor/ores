@@ -50,11 +50,11 @@ DATASPACE_NAME = "maap/drogon_dg"
 RDDMS_BASE     = f"eml:///dataspace('{DATASPACE_NAME}')"
 
 DEFAULT_ACL = {
-    "owners":  ["data.ores.owners@dev.dataservices.energy"],
-    "viewers": ["data.office.global.viewers@dev.dataservices.energy"],
+    "owners":  ["data.default.owners@dev.dataservices.energy"],
+    "viewers": ["data.default.viewers@dev.dataservices.energy"],
 }
 DEFAULT_LEGAL = {
-    "legaltags": ["dev-equinor-private-default"],
+    "legaltags": ["opendes-private-usa-default"],
     "otherRelevantDataCountries": ["NO"],
 }
 

@@ -38,10 +38,10 @@ metadata:
   name: ores-config
   namespace: ores
 data:
-  DEFAULT_INSTANCE: "eqndev"
-  INSTANCE_EQNDEV_HOSTNAME: "equinorswedev.energy.azure.com"
+  DEFAULT_INSTANCE: "interop"
+  INSTANCE_EQNDEV_HOSTNAME: "admeinterop.energy.azure.com"
   INSTANCE_EQNDEV_DATA_PARTITION_ID: "dev"
-  INSTANCE_EQNDEV_DEFAULT_LEGAL_TAG: "dev-equinor-private-default"
+  INSTANCE_EQNDEV_DEFAULT_LEGAL_TAG: "opendes-private-usa-default"
   INSTANCE_PRESHIP_HOSTNAME: "osdu-ship.msft-osdu-test.org"
   INSTANCE_PRESHIP_DATA_PARTITION_ID: "opendes"
 """
@@ -58,7 +58,7 @@ stringData:
   INSTANCE_EQNDEV_TENANT_ID: "fake-tenant-aaaa"
   INSTANCE_EQNDEV_CLIENT_ID: "fake-client-bbbb"
   INSTANCE_EQNDEV_SCOPE: "fake-scope/.default openid offline_access"
-  INSTANCE_EQNDEV_REFRESH_TOKEN: "fake-rt-eqndev-12345"
+  INSTANCE_EQNDEV_REFRESH_TOKEN: "fake-rt-interop-12345"
   INSTANCE_PRESHIP_TENANT_ID: "fake-tenant-cccc"
   INSTANCE_PRESHIP_CLIENT_ID: "fake-client-dddd"
   INSTANCE_PRESHIP_CLIENT_SECRET: "fake-secret-eeee"
@@ -86,13 +86,13 @@ class TestLoadK8sYaml:
 
     def test_load_configmap(self, k8s_dir):
         config = gettoken._load_k8s_yaml(k8s_dir / "configmap.yaml")
-        assert config["DEFAULT_INSTANCE"] == "eqndev"
-        assert config["INSTANCE_EQNDEV_HOSTNAME"] == "equinorswedev.energy.azure.com"
+        assert config["DEFAULT_INSTANCE"] == "interop"
+        assert config["INSTANCE_EQNDEV_HOSTNAME"] == "admeinterop.energy.azure.com"
 
     def test_load_secret(self, k8s_dir):
         secrets = gettoken._load_k8s_yaml(k8s_dir / "secret.yaml")
         assert secrets["SECRET_KEY"] == "test-secret-key"
-        assert secrets["INSTANCE_EQNDEV_REFRESH_TOKEN"] == "fake-rt-eqndev-12345"
+        assert secrets["INSTANCE_EQNDEV_REFRESH_TOKEN"] == "fake-rt-interop-12345"
         assert secrets["INSTANCE_PRESHIP_CLIENT_SECRET"] == "fake-secret-eeee"
 
     def test_load_missing_file(self, tmp_path):
@@ -110,10 +110,10 @@ class TestLoadK8sEnv:
     def test_merges_config_and_secret(self, k8s_dir):
         env = gettoken.load_k8s_env(k8s_dir)
         # From configmap
-        assert env["INSTANCE_EQNDEV_HOSTNAME"] == "equinorswedev.energy.azure.com"
+        assert env["INSTANCE_EQNDEV_HOSTNAME"] == "admeinterop.energy.azure.com"
         # From secret
         assert env["INSTANCE_EQNDEV_TENANT_ID"] == "fake-tenant-aaaa"
-        assert env["INSTANCE_EQNDEV_REFRESH_TOKEN"] == "fake-rt-eqndev-12345"
+        assert env["INSTANCE_EQNDEV_REFRESH_TOKEN"] == "fake-rt-interop-12345"
 
     def test_secret_overrides_config(self, tmp_path):
         """When same key in both files, secret wins."""
@@ -131,16 +131,16 @@ class TestDiscoverInstances:
 
     def test_finds_two_instances(self, k8s_env):
         instances = gettoken.discover_k8s_instances(k8s_env)
-        assert "eqndev" in instances
+        assert "interop" in instances
         assert "preship" in instances
 
-    def test_eqndev_fields(self, k8s_env):
+    def test_interop_fields(self, k8s_env):
         instances = gettoken.discover_k8s_instances(k8s_env)
-        eqndev = instances["eqndev"]
-        assert eqndev["tenant_id"] == "fake-tenant-aaaa"
-        assert eqndev["client_id"] == "fake-client-bbbb"
-        assert eqndev["refresh_token"] == "fake-rt-eqndev-12345"
-        assert eqndev["hostname"] == "equinorswedev.energy.azure.com"
+        interop = instances["interop"]
+        assert interop["tenant_id"] == "fake-tenant-aaaa"
+        assert interop["client_id"] == "fake-client-bbbb"
+        assert interop["refresh_token"] == "fake-rt-interop-12345"
+        assert interop["hostname"] == "admeinterop.energy.azure.com"
 
     def test_preship_fields(self, k8s_env):
         instances = gettoken.discover_k8s_instances(k8s_env)
@@ -154,13 +154,13 @@ class TestDiscoverInstances:
 
 class TestResolveK8sInstance:
 
-    def test_resolve_eqndev(self, k8s_env):
-        resolved = gettoken._resolve_k8s_instance("eqndev", k8s_env)
+    def test_resolve_interop(self, k8s_env):
+        resolved = gettoken._resolve_k8s_instance("interop", k8s_env)
         assert resolved is not None
         assert resolved["grant"] == "refresh_token"
         assert resolved["tenant_id"] == "fake-tenant-aaaa"
-        assert resolved["refresh_token"] == "fake-rt-eqndev-12345"
-        assert resolved["label"] == "k8s/eqndev"
+        assert resolved["refresh_token"] == "fake-rt-interop-12345"
+        assert resolved["label"] == "k8s/interop"
 
     def test_resolve_preship(self, k8s_env):
         resolved = gettoken._resolve_k8s_instance("preship", k8s_env)
@@ -191,40 +191,40 @@ def _mock_httpx_post(status=200, access_token="fake-at-minted", expires_in=3600)
 class TestMintFromK8s:
     """Test minting with --from-k8s using fake YAML files."""
 
-    def test_mint_eqndev_from_k8s(self, k8s_dir):
-        with _mock_httpx_post(access_token="at-eqndev-k8s"):
-            token = gettoken.mint_token("eqndev", from_k8s=True, k8s_dir=k8s_dir)
-        assert token == "at-eqndev-k8s"
+    def test_mint_interop_from_k8s(self, k8s_dir):
+        with _mock_httpx_post(access_token="at-interop-k8s"):
+            token = gettoken.mint_token("interop", from_k8s=True, k8s_dir=k8s_dir)
+        assert token == "at-interop-k8s"
 
     def test_mint_preship_from_k8s(self, k8s_dir):
         with _mock_httpx_post(access_token="at-preship-k8s"):
             token = gettoken.mint_token("preship", from_k8s=True, k8s_dir=k8s_dir)
         assert token == "at-preship-k8s"
 
-    def test_mint_alias_eqndev_as_swedev(self, k8s_dir):
-        """'eqndev' is aliased to 'swedev' in legacy, but k8s uses 'eqndev' directly."""
+    def test_mint_alias_interop_as_swedev(self, k8s_dir):
+        """'interop' is aliased to 'swedev' in legacy, but k8s uses 'interop' directly."""
         with _mock_httpx_post(access_token="at-alias"):
-            token = gettoken.mint_token("eqndev", from_k8s=True, k8s_dir=k8s_dir)
+            token = gettoken.mint_token("interop", from_k8s=True, k8s_dir=k8s_dir)
         assert token == "at-alias"
 
     def test_mint_verbose(self, k8s_dir, capsys):
         with _mock_httpx_post(access_token="at-verbose"):
-            gettoken.mint_token("eqndev", from_k8s=True, k8s_dir=k8s_dir, verbose=True)
+            gettoken.mint_token("interop", from_k8s=True, k8s_dir=k8s_dir, verbose=True)
         captured = capsys.readouterr()
-        assert "k8s/eqndev" in captured.err
+        assert "k8s/interop" in captured.err
         assert "expires_in" in captured.err
 
     def test_mint_k8s_posts_correct_form(self, k8s_dir):
         """Verify the httpx.post is called with the right form data."""
         with _mock_httpx_post() as mock_post:
-            gettoken.mint_token("eqndev", from_k8s=True, k8s_dir=k8s_dir)
+            gettoken.mint_token("interop", from_k8s=True, k8s_dir=k8s_dir)
         call_args = mock_post.call_args
         url = call_args[0][0]
         form = call_args[1]["data"]
         assert "fake-tenant-aaaa" in url
         assert form["grant_type"] == "refresh_token"
         assert form["client_id"] == "fake-client-bbbb"
-        assert form["refresh_token"] == "fake-rt-eqndev-12345"
+        assert form["refresh_token"] == "fake-rt-interop-12345"
 
     def test_mint_preship_posts_client_credentials(self, k8s_dir):
         with _mock_httpx_post() as mock_post:
@@ -325,13 +325,13 @@ class TestListInstances:
         instances = gettoken.list_instances(k8s_dir)
         sources = {i["name"]: i["source"] for i in instances}
         # k8s should override builtin for overlapping names
-        assert "eqndev" in sources
-        assert sources["eqndev"] == "k8s"
+        assert "interop" in sources
+        assert sources["interop"] == "k8s"
 
     def test_k8s_grant_types(self, k8s_dir):
         instances = gettoken.list_instances(k8s_dir)
         grants = {i["name"]: i["grant"] for i in instances}
-        assert grants.get("eqndev") == "refresh_token"
+        assert grants.get("interop") == "refresh_token"
         assert grants.get("preship") == "client_credentials"
 
 
@@ -342,11 +342,11 @@ class TestHelpers:
     def test_etp_url(self):
         url = gettoken.etp_url("swedev")
         assert url.startswith("wss://")
-        assert "equinorswedev" in url
+        assert "admeinterop" in url
 
     def test_partition(self):
         assert gettoken.partition("swedev") == "dev"
 
     def test_etp_url_alias(self):
-        url = gettoken.etp_url("eqndev")
-        assert "equinorswedev" in url
+        url = gettoken.etp_url("interop")
+        assert "admeinterop" in url

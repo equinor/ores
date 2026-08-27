@@ -2,7 +2,7 @@
 app/instances.py - Multi-instance OSDU configuration.
 
 Every instance is defined by env vars with the pattern INSTANCE_<NAME>_<KEY>.
-There is no special "default" instance - eqndev (or whatever DEFAULT_INSTANCE
+There is no special "default" instance - interop (or whatever DEFAULT_INSTANCE
 points to) is loaded with the same INSTANCE_<NAME>_* scanner as every other.
 
 Token strategies (tried in order of preference):
@@ -176,8 +176,8 @@ def _load_instances():
 
     Convention:
       INSTANCE_<NAME>_HOSTNAME, INSTANCE_<NAME>_DATA_PARTITION_ID, etc.
-    All instances (including eqndev) follow the same pattern.
-    The active instance defaults to DEFAULT_INSTANCE env var, or 'eqndev',
+    All instances (including interop) follow the same pattern.
+    The active instance defaults to DEFAULT_INSTANCE env var, or 'interop',
     or the first instance found alphabetically.
     """
     global _active_instance_name
@@ -272,7 +272,7 @@ def _load_instances():
             _instances["legacy"] = legacy
 
     # ── Choose active instance ──
-    preferred = os.getenv("DEFAULT_INSTANCE", "eqndev").lower()
+    preferred = os.getenv("DEFAULT_INSTANCE", "interop").lower()
     if preferred in _instances:
         _active_instance_name = preferred
     elif _instances:
@@ -338,7 +338,7 @@ def _apply_instance(inst: OsduInstance):
     except Exception:
         pass  # Best-effort; next request will create a new client anyway
     osdu_mod.DEFAULT_LEGAL_TAG = inst.default_legal_tag or (
-        f"{inst.data_partition_id}-equinor-private-default" if inst.data_partition_id else ""
+        f"{inst.data_partition_id}-private-usa-default" if inst.data_partition_id else ""
     )
     pfx = inst._partition_suffix()
     osdu_mod.DEFAULT_OWNERS = [x.strip() for x in (inst.default_owners or f"data.default.owners@{pfx}").split(",") if x.strip()]
@@ -360,7 +360,7 @@ def _apply_instance(inst: OsduInstance):
     # ── auth.py ──
     import app.auth as auth_mod
     # Clear stale cached env token from previous instance so it isn't
-    # reused after a round-trip switch (eqndev → preship → eqndev).
+    # reused after a round-trip switch (interop → preship → interop).
     auth_mod._cached_env_token = {}
     auth_mod._cached_env_token_exp = 0.0
     auth_mod.TENANT = inst.tenant_id

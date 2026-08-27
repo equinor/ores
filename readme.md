@@ -55,7 +55,7 @@ PKCE login is **always available as a fallback**, even when the instance is conf
 
 | Instance | Secret vars | `auth_mode` | Behaviour |
 |----------|-------------|-------------|----------|
-| `eqndev` | `_CLIENT_SECRET` (no RT) | `per_user_pkce` | Each user signs in individually; `CLIENT_SECRET` needed for confidential PKCE exchange |
+| `interop` | `_CLIENT_SECRET` (no RT) | `per_user_pkce` | Each user signs in individually; `CLIENT_SECRET` needed for confidential PKCE exchange |
 | `preship` | `_CLIENT_SECRET` | `client_credentials` | Auto-authenticated via service principal; PKCE fallback if secret expires |
 
 > **Confidential client:** When `CLIENT_SECRET` is set, it must be included in every OAuth2 request.

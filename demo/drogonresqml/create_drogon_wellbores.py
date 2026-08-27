@@ -235,7 +235,7 @@ def push_records(token: str, cfg: InstanceConfig, records: List[dict]) -> bool:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("instance", choices=["interop", "eqndev"],
+    ap.add_argument("instance", choices=["interop", "interop"],
                     help="Target OSDU instance (provides partition/ACL/legal)")
     ap.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST,
                     help=f"WPC manifest to link (default: {DEFAULT_MANIFEST})")

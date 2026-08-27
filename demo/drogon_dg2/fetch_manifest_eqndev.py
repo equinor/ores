@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-fetch_manifest_eqndev.py – Call the RDDMS manifest builder on eqndev
+fetch_manifest_interop.py – Call the RDDMS manifest builder on interop
 for the maap/drogon_dg dataspace and save the result for review.
 
 Usage:
-  python demo/drogon_dg2/fetch_manifest_eqndev.py
-  python demo/drogon_dg2/fetch_manifest_eqndev.py --types "resqml20.*"
+  python demo/drogon_dg2/fetch_manifest_interop.py
+  python demo/drogon_dg2/fetch_manifest_interop.py --types "resqml20.*"
 """
 from __future__ import annotations
 
@@ -35,14 +35,14 @@ def main():
     ap.add_argument("-o", "--output", default=str(SCRIPT_DIR / "manifest_rddms_dg2.json"))
     args = ap.parse_args()
 
-    inst = load_instance("eqndev")
+    inst = load_instance("interop")
     host = inst["host"]
     partition = inst.get("partition", "dev")
 
-    print(f"Instance: eqndev ({host})")
+    print(f"Instance: interop ({host})")
     print(f"Dataspace: {args.dataspace}")
 
-    token = get_token("eqndev", verbose=True)
+    token = get_token("interop", verbose=True)
     headers = {
         "Authorization": f"Bearer {token}",
         "data-partition-id": partition,

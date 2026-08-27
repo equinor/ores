@@ -8,7 +8,7 @@ the drogon_dg2/records/ directory by default.
 
 Usage:
   py demo/drogon_dg2/ingest_records_batch.py
-  py demo/drogon_dg2/ingest_records_batch.py --instance eqndev --dry-run
+  py demo/drogon_dg2/ingest_records_batch.py --instance interop --dry-run
 """
 
 import argparse
@@ -69,8 +69,8 @@ def put_records_batch(env: Dict[str, str], records: List[Dict[str, Any]],
 
 def main():
     ap = argparse.ArgumentParser(description="Ingest DG2 records via Storage API")
-    ap.add_argument("--instance", default="eqndev",
-                    help="Instance name from k8s config (default: eqndev)")
+    ap.add_argument("--instance", default="interop",
+                    help="Instance name from k8s config (default: interop)")
     ap.add_argument("--records-dir", default=str(RECORDS_DIR))
     ap.add_argument("--delay", type=float, default=3,
                     help="Seconds to wait between records (default 3)")

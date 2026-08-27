@@ -171,7 +171,7 @@ For **well logs**, use `typeName: "resqml20.obj_WellboreFrameRepresentation"` wi
 # Search wells across two dataspaces
 {
   deepSearch(
-    dataspaces: ["demo/drogon", "maap/weco"]
+    dataspaces: ["demo/drogon"]
     category: "well"
     includeStatistics: true
     limit: 10

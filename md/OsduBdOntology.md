@@ -231,7 +231,7 @@ DG2 approved May 2026  full 7-segment subsea tieback.
 
 ### Text
 
-Live demo on eqndev instance (or screenshots if connectivity issues).
+Live demo on interop instance (or screenshots if connectivity issues).
 
 Four panels shown:
 1. **Gate readiness**  progress bar + checklist (8/9 complete)
@@ -240,7 +240,7 @@ Four panels shown:
 4. **Volume comparison**  P10/P50/P90 delta DG1→DG2
 
 > **Comment**
-> - This is running live against OSDU (equinorswedev.energy.azure.com).
+> - This is running live against OSDU (admeinterop.energy.azure.com).
 > - All data ingested via generic generators  no manual record construction.
 > - The graph is built at runtime: bd_enrichment.py follows edges, fetches targets in parallel, renders Mermaid.
 > - Same data is queryable on interop (admeinterop)  portable across instances.
@@ -294,7 +294,7 @@ graph TB
 - **Application layer**: ORES (Python FastAPI)  follows edges, builds graph, computes analytics
 - **Frontend**: Mermaid graphs, Chart.js, gate readiness panels
 
-Verified on 2 OSDU instances (eqndev + interop). Deployed on Radix.
+Verified on 2 OSDU instances (interop + interop). Deployed on Radix.
 
 > **Comment**
 > - Key point: the platform stores data and answers queries. The application builds the knowledge graph.
@@ -454,7 +454,7 @@ timeline
     section Done
         Schema patterns identified : Parameters[], Keys[], LifecycleEvents[]
         ORES enrichment + rendering : bd_enrichment.py, Mermaid, Chart.js
-        Drogon DG1→DG2 demo : Verified on eqndev + interop
+        Drogon DG1→DG2 demo : Verified on interop + interop
         Generic generators : gen_ontology.py
     section Next · A-tier
         Visual provenance DAG : D3 interactive graph
@@ -470,7 +470,7 @@ timeline
 
 **What exists today:**
 - ORES with enrichment, graph rendering, and ingestion (deployed on Radix)
-- Verified on 2 OSDU instances (eqndev + interop)
+- Verified on 2 OSDU instances (interop + interop)
 - 6 relationship patterns demonstrated with Drogon DG1→DG2 data
 - Generic generators for repeatable record creation
 

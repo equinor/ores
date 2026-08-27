@@ -15,7 +15,7 @@ HEADERS = {
     "Content-Type": "application/json",
     "data-partition-id": "opendes",
 }
-DS_ENC = "maap%2Fweco"
+DS_ENC = "maap%2Fdrogon"
 
 # ── Build a mock column model ────────────────────────────────────────────────
 CHRONO_UNITS = [
@@ -67,10 +67,10 @@ phases = [
     ["resqml20.obj_StratigraphicColumn"],
 ]
 
-print(f"\n→ Pushing to local RDDMS dataspace: maap/weco (multi-transaction)")
+print(f"\n→ Pushing to local RDDMS dataspace: maap/drogon (multi-transaction)")
 
 # Create dataspace via ETP (already exists from earlier, but try anyway)
-os.system('docker exec drogonresqml-etp-server-1 openETPServer space -S ws://localhost:9002 --auth none -P opendes -s "maap/weco" --new 2>/dev/null')
+os.system('docker exec drogonresqml-etp-server-1 openETPServer space -S ws://localhost:9002 --auth none -P opendes -s "maap/drogon" --new 2>/dev/null')
 
 for pi, phase_types in enumerate(phases):
     phase_objects = []

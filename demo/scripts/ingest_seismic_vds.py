@@ -13,9 +13,9 @@ Supports two modes:
 Usage (CLI)
 -----------
   # Auto-scan (zero-config):
-  python -m demo.scripts.ingest_seismic_vds --scan cube.sgy eqndev --dry-run
-  python -m demo.scripts.ingest_seismic_vds --scan cube.sgy --scan-vds vds/ eqndev
-  python -m demo.scripts.ingest_seismic_vds --scan cube.sgy eqndev --save-config out.json
+  python -m demo.scripts.ingest_seismic_vds --scan cube.sgy interop --dry-run
+  python -m demo.scripts.ingest_seismic_vds --scan cube.sgy --scan-vds vds/ interop
+  python -m demo.scripts.ingest_seismic_vds --scan cube.sgy interop --save-config out.json
 
   # JSON config (full control):
   python -m demo.scripts.ingest_seismic_vds config.json interop
@@ -26,7 +26,7 @@ Usage (library)
   from demo.scripts.ingest_seismic_vds import SeismicVdsIngestor, survey_from_scan
 
   survey = survey_from_scan(segy_path="cube.sgy", vds_path="vds/cube")
-  ingestor = SeismicVdsIngestor.from_instance_name("eqndev", survey)
+  ingestor = SeismicVdsIngestor.from_instance_name("interop", survey)
   ingestor.run(dry_run=False)
 """
 from __future__ import annotations
@@ -923,7 +923,7 @@ def main():
     )
     ap.add_argument("config", nargs="?", default=None,
                     help="Path to survey JSON config file (omit if using --scan)")
-    ap.add_argument("instance", help="Target OSDU instance name (e.g. interop, eqndev)")
+    ap.add_argument("instance", help="Target OSDU instance name (e.g. interop, interop)")
     ap.add_argument("--scan", type=Path, default=None, metavar="FILE",
                     help="Auto-scan metadata from a .sgy or VDS directory (no config needed)")
     ap.add_argument("--scan-vds", type=Path, default=None, metavar="DIR",

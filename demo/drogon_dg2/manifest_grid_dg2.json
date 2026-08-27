@@ -10,15 +10,15 @@
         "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [
             "NO"
@@ -71,15 +71,15 @@
         "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [
             "NO"
@@ -114,15 +114,15 @@
         "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [
             "NO"
@@ -157,15 +157,15 @@
         "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [
             "NO"
@@ -200,15 +200,15 @@
         "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [
             "NO"
@@ -243,15 +243,15 @@
         "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [
             "NO"
@@ -286,15 +286,15 @@
         "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [
             "NO"
@@ -329,15 +329,15 @@
         "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [
             "NO"
@@ -372,15 +372,15 @@
         "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [
             "NO"
@@ -415,15 +415,15 @@
         "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [
             "NO"
@@ -458,15 +458,15 @@
         "kind": "osdu:wks:work-product-component--IjkGridRepresentation:1.0.0",
         "acl": {
           "owners": [
-            "data.ores.owners@dev.dataservices.energy"
+            "data.default.owners@dev.dataservices.energy"
           ],
           "viewers": [
-            "data.office.global.viewers@dev.dataservices.energy"
+            "data.default.viewers@dev.dataservices.energy"
           ]
         },
         "legal": {
           "legaltags": [
-            "dev-equinor-private-default"
+            "opendes-private-usa-default"
           ],
           "otherRelevantDataCountries": [
             "NO"

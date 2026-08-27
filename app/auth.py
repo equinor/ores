@@ -582,7 +582,7 @@ async def _smda_token_from_dedicated_rt() -> Optional[Dict[str, Any]]:
         return None
 
     # Azure CLI uses the organization's tenant for token exchange
-    tenant = TENANT or "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"  # Equinor
+    tenant = TENANT or "<your-tenant-id>"  # set AZURE_TENANT_ID
     token_url = f"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token"
     smda_scope = f"{SMDA_CLIENT_ID}/.default offline_access openid"
 

@@ -90,9 +90,9 @@ def find_all_ids(manifest: Dict, kind_fragment: str) -> List[str]:
 
 
 def default_acl(partition: str = "dev") -> Dict[str, List[str]]:
-    # Interop instance uses default viewers, eqndev uses office.global.viewers
+    # Interop instance uses default viewers, interop uses office.global.viewers
     if partition == "dev":
-        viewers = f"data.office.global.viewers@{partition}.dataservices.energy"
+        viewers = f"data.default.viewers@{partition}.dataservices.energy"
     else:
         viewers = f"data.default.viewers@{partition}.dataservices.energy"
     return {
@@ -106,7 +106,7 @@ def default_legal(partition: str = "dev") -> Dict[str, Any]:
     tag_overrides = {
         "opendes": "opendes-public-norway",
     }
-    tag = tag_overrides.get(partition, f"{partition}-equinor-private-default")
+    tag = tag_overrides.get(partition, f"{partition}-private-usa-default")
     return {
         "legaltags": [tag],
         "otherRelevantDataCountries": ["NO"],
