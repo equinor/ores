@@ -232,13 +232,18 @@ async def dataspaces_import(request: Request, src: str = Form(...), dst: str = F
 async def dataspaces_manifest(
     request: Request,
     path: str = Form(...),
-    legal: str = Form(osdu.DEFAULT_LEGAL_TAG),
-    owners: str = Form(",".join(osdu.DEFAULT_OWNERS)),
-    viewers: str = Form(",".join(osdu.DEFAULT_VIEWERS)),
-    countries: str = Form(",".join(osdu.DEFAULT_COUNTRIES)),
+    legal: str = Form(""),
+    owners: str = Form(""),
+    viewers: str = Form(""),
+    countries: str = Form(""),
     create_missing: bool = Form(True),
 ):
     at = _access_token(request)
+    # Resolve empty form values to current instance defaults
+    legal = legal or osdu.DEFAULT_LEGAL_TAG
+    owners = owners or ",".join(osdu.DEFAULT_OWNERS)
+    viewers = viewers or ",".join(osdu.DEFAULT_VIEWERS)
+    countries = countries or ",".join(osdu.DEFAULT_COUNTRIES)
     try:
         manifest = await osdu.build_manifest(
             at,
@@ -808,13 +813,18 @@ async def dataspaces_manifest_build_uris(
     typ: str = Form(...),
     uuid: str = Form(...),
     include_refs: bool = Form(True),
-    legal: str = Form(osdu.DEFAULT_LEGAL_TAG),
-    owners: str = Form(",".join(osdu.DEFAULT_OWNERS)),
-    viewers: str = Form(",".join(osdu.DEFAULT_VIEWERS)),
-    countries: str = Form(",".join(osdu.DEFAULT_COUNTRIES)),
+    legal: str = Form(""),
+    owners: str = Form(""),
+    viewers: str = Form(""),
+    countries: str = Form(""),
     create_missing: bool = Form(True),
 ):
     at = _access_token(request)
+    # Resolve empty form values to current instance defaults (not stale import-time values)
+    legal = legal or osdu.DEFAULT_LEGAL_TAG
+    owners = owners or ",".join(osdu.DEFAULT_OWNERS)
+    viewers = viewers or ",".join(osdu.DEFAULT_VIEWERS)
+    countries = countries or ",".join(osdu.DEFAULT_COUNTRIES)
     typ_s = _sanitize_type(typ)
     uuid_s = _sanitize_uuid(uuid)
     enc = urllib.parse.quote(ds, safe="")
@@ -972,40 +982,76 @@ async def dataspaces_manifest_build_from_selection(
             uris.add(f"eml:///dataspace('{p}')")
 
     # 3) Add canonical object URIs for all selections and optionally expand refs
-    ref_tasks = []
+    primary_uris: list[str] = []
     for it in items:
         ds = str(it.get("ds") or "")
         typ = _sanitize_type(str(it.get("typ") or ""))
         uid = _sanitize_uuid(str(it.get("uuid") or ""))
         if not ds or not typ or not uid:
             continue
-        enc = urllib.parse.quote(ds, safe="")
 
         # Primary
-        uris.add(osdu._eml_uri_from_parts(ds, typ, uid))
+        uri = osdu._eml_uri_from_parts(ds, typ, uid)
+        uris.add(uri)
+        primary_uris.append(uri)
 
-        if include_refs:
-            async def _expand(ds_=ds, enc_=enc, typ_=typ, uid_=uid):
-                nodes = []
-                try:
-                    nodes += await osdu.list_sources(at, enc_, typ_, uid_) or []
-                except Exception as e:
-                    log.warning("build-from-selection: list_sources failed: %s", e)
-                try:
-                    nodes += await osdu.list_targets(at, enc_, typ_, uid_) or []
-                except Exception as e:
-                    log.warning("build-from-selection: list_targets failed: %s", e)
-                return ds_, nodes
-            ref_tasks.append(_expand())
+    if include_refs and primary_uris:
+        refs_done = False
+        # Prefer batch graph_search (M27+) — one call per direction
+        if await osdu.rddms_supports_discovery(at):
+            try:
+                graph_t = await osdu.graph_search(
+                    at, primary_uris, scope="targetsOrSelf", depth=2,
+                )
+                graph_s = await osdu.graph_search(
+                    at, primary_uris, scope="sources", depth=1,
+                )
+                for g in (graph_t, graph_s):
+                    for res in g.get("resources", []):
+                        uri = res.get("uri", "")
+                        if uri:
+                            uris.add(uri)
+                    for link in g.get("links", []):
+                        for k in ("source", "target"):
+                            if link.get(k):
+                                uris.add(link[k])
+                refs_done = True
+                log.info("build-from-selection: graph_search refs resolved (uris=%d)", len(uris))
+            except Exception as e:
+                log.debug("build-from-selection: graph_search failed, falling back to N+1: %s", e)
 
-    if ref_tasks:
-        t_ref = time.monotonic()
-        ref_results = await asyncio.gather(*ref_tasks)
-        for ds_r, nodes in ref_results:
-            for node in nodes:
-                if isinstance(node, dict): _add_node_uri(node, uris, ds_r)
-        log.info("build-from-selection: refs resolved in %.1fs (%d items)",
-                 time.monotonic() - t_ref, len(ref_tasks))
+        if not refs_done:
+            # Legacy N+1 fallback
+            ref_tasks = []
+            for it in items:
+                ds = str(it.get("ds") or "")
+                typ = _sanitize_type(str(it.get("typ") or ""))
+                uid = _sanitize_uuid(str(it.get("uuid") or ""))
+                if not ds or not typ or not uid:
+                    continue
+                enc = urllib.parse.quote(ds, safe="")
+
+                async def _expand(ds_=ds, enc_=enc, typ_=typ, uid_=uid):
+                    nodes = []
+                    try:
+                        nodes += await osdu.list_sources(at, enc_, typ_, uid_) or []
+                    except Exception as e:
+                        log.warning("build-from-selection: list_sources failed: %s", e)
+                    try:
+                        nodes += await osdu.list_targets(at, enc_, typ_, uid_) or []
+                    except Exception as e:
+                        log.warning("build-from-selection: list_targets failed: %s", e)
+                    return ds_, nodes
+                ref_tasks.append(_expand())
+
+            if ref_tasks:
+                t_ref = time.monotonic()
+                ref_results = await asyncio.gather(*ref_tasks)
+                for ds_r, nodes in ref_results:
+                    for node in nodes:
+                        if isinstance(node, dict): _add_node_uri(node, uris, ds_r)
+                log.info("build-from-selection: N+1 refs resolved in %.1fs (%d items)",
+                         time.monotonic() - t_ref, len(ref_tasks))
 
     # 4) Filter out types that crash manifests/build
     safe_uris, skipped = _filter_manifest_uris(uris)

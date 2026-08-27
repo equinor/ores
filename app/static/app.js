@@ -19,6 +19,8 @@
   const manifestBox = $('#manifest-json');
 
   function setText(node, msg) { if (node) node.textContent = msg || ''; }
+  let _loadObjectsSeq = 0;  // race-condition guard
+  let _filterTimer = null;  // debounce timer
   async function fetchJSON(url) {
     const r = await fetch(url, { headers: { 'Cache-Control': 'no-store' } });
     if (!r.ok) {
@@ -150,6 +152,7 @@
     setText(objErr, '');
     const ds = dsSel.value;
     const selectedTypes = _getSelectedTypes();
+    const seq = ++_loadObjectsSeq;  // cancel stale responses
     if (!ds) {
       objSel.innerHTML = '<option value="">- select dataspace/type -</option>';
       return;
@@ -181,6 +184,7 @@
         for (const items of results) allItems.push(...items);
       }
       const items = allItems.map(x => ({ ...x, typePath: x.typePath || x.type || '' }));
+      if (seq !== _loadObjectsSeq) return;  // stale response, discard
       objSel.innerHTML = '';
       if (!items.length) {
         objSel.innerHTML = '<option value="">No objects match</option>';
@@ -352,8 +356,22 @@ async function buildManifest() {
         body: JSON.stringify({ manifest, method: 'storage' })
       });
       if (!r.ok) {
-        const errText = await r.text().catch(() => '');
-        throw new Error(`${r.status} ${r.statusText}: ${errText.slice(0, 200)}`);
+        let detail = '';
+        try {
+          const j = await r.json();
+          const d = j.detail;
+          if (typeof d === 'object' && d !== null) {
+            const parts = [];
+            if (d.status) parts.push(`upstream ${d.status}`);
+            if (d.reason) parts.push(d.reason);
+            if (d.message) parts.push(d.message);
+            if (d.text) parts.push(d.text.slice(0, 400));
+            detail = parts.join(' — ');
+          } else {
+            detail = typeof d === 'string' ? d : JSON.stringify(d);
+          }
+        } catch { try { detail = (await r.text()).slice(0, 400); } catch {} }
+        throw new Error(`${r.status}` + (detail ? ': ' + detail : ''));
       }
       const res = await r.json();
       let info;
@@ -379,7 +397,10 @@ async function buildManifest() {
   // Wire events
   if (dsSel) dsSel.addEventListener('change', async () => { await loadTypes(); await loadObjects(); });
   if (typeSel) typeSel.addEventListener('change', loadObjects);
-  if (nameFilter) nameFilter.addEventListener('input', loadObjects);
+  if (nameFilter) nameFilter.addEventListener('input', () => {
+    clearTimeout(_filterTimer);
+    _filterTimer = setTimeout(loadObjects, 300);
+  });
   if (btnLoadRefs) btnLoadRefs.addEventListener('click', loadRefs);
   if (btnBuild) btnBuild.addEventListener('click', buildManifest);
   if (btnIngest) btnIngest.addEventListener('click', ingestManifest);
