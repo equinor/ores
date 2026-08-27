@@ -56,17 +56,18 @@ data:
   # INSTANCE_ORESDEV_DEFAULT_VIEWERS: "data.default.viewers@dev.dataservices.energy"
   # INSTANCE_ORESDEV_DEFAULT_COUNTRIES: "NO"
 
-  # ── "preship" - pre-ship M27 (OpenShift, bearer_token auth) ──
-  INSTANCE_PRESHIP_AUTH_MODE: "bearer_token"
-  INSTANCE_PRESHIP_HOSTNAME: "osdu-m27.z468.p3.openshiftapps.com"
-  INSTANCE_PRESHIP_DATA_PARTITION_ID: "opendes"
+  # ── "preship" - pre-ship M27 QA (Keycloak, refresh_token auth) ──
+  INSTANCE_PRESHIP_AUTH_MODE: "refresh_token"
+  INSTANCE_PRESHIP_HOSTNAME: "qa.osdu-m27.osdu-cimpl.opengroup.org"
+  INSTANCE_PRESHIP_DATA_PARTITION_ID: "osdu"
   INSTANCE_PRESHIP_AUTHORITY: "osdu"
   INSTANCE_PRESHIP_SCHEMA_SOURCE: "wks"
-  INSTANCE_PRESHIP_DEFAULT_LEGAL_TAG: "opendes-RDDMS-LegalTag"
-  INSTANCE_PRESHIP_DEFAULT_OWNERS: "data.default.owners@opendes.contoso.com"
-  INSTANCE_PRESHIP_DEFAULT_VIEWERS: "data.default.viewers@opendes.contoso.com"
+  INSTANCE_PRESHIP_TOKEN_URL: "https://keycloak-qa.osdu-m27.osdu-cimpl.opengroup.org/realms/osdu/protocol/openid-connect/token"
+  INSTANCE_PRESHIP_AUTHORIZE_URL: "https://keycloak-qa.osdu-m27.osdu-cimpl.opengroup.org/realms/osdu/protocol/openid-connect/auth"
+  INSTANCE_PRESHIP_DEFAULT_LEGAL_TAG: "osdu-RDDMS-LegalTag"
+  INSTANCE_PRESHIP_DEFAULT_OWNERS: "data.default.owners@osdu.group"
+  INSTANCE_PRESHIP_DEFAULT_VIEWERS: "data.default.viewers@osdu.group"
   INSTANCE_PRESHIP_DEFAULT_COUNTRIES: "US"
-  INSTANCE_PRESHIP_SSL_VERIFY: "false"
 
   # ── "interop" - ADME Interop (client_credentials) ──
   INSTANCE_INTEROP_AUTH_MODE: "client_credentials"

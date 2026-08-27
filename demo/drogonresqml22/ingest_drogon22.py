@@ -53,7 +53,7 @@ sys.path.insert(0, str(DEMO_DIR))
 from _auth import get_token, load_instance  # noqa: E402
 
 # ── Constants ─────────────────────────────────────────────────────────────
-DATASPACE_DEFAULT = "maap/drogon221"
+DATASPACE_DEFAULT = "maap/drogon22"
 DATASPACE_OVERRIDE = {}
 EPC_FILE = SCRIPT_DIR / "drogon22.epc"
 MANIFEST_FILE = SCRIPT_DIR / "manifest_drogon22_subset.json"
@@ -240,8 +240,7 @@ def import_epc(token: str, cfg: InstanceConfig) -> bool:
         f"--data-partition-id {cfg.partition} "
         f"--auth bearer --jwt-token $JWT "
         f"-s {cfg.dataspace} "
-        f"--import-epc /data/{EPC_FILE.name} -j -M 50MB "
-        f"--timeout 60s,120s --transaction-retries 5 --reconnect-retries 5"
+        f"--import-epc /data/{EPC_FILE.name} -j -M 50MB"
     )
     cmd = [
         "docker", "run", "--rm",

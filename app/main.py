@@ -489,16 +489,15 @@ async def home(request: Request):
 async def admin_openapi(request: Request):
     """Fetch the RDDMS swagger.json with auth and render Swagger UI."""
     at = _access_token(request)
-    base = osdu.OSDU_BASE_URL
-    local = "localhost" in base or "127.0.0.1" in base
-    scheme = "http" if local else "https"
-    swagger_url = f"{scheme}://{base}/api/reservoir-ddms/v2-json"
+    base_url = osdu._rddms_url("")  # respects local instance redirect patch
+    swagger_url = f"{base_url}-json"
+    local = "localhost" in swagger_url or "127.0.0.1" in swagger_url
     try:
-        async with httpx.AsyncClient(verify=osdu.SSL_VERIFY, timeout=15) as c:
+        async with httpx.AsyncClient(verify=osdu.SSL_VERIFY if not local else False, timeout=15) as c:
             r = await c.get(swagger_url, headers=osdu.headers(at))
             if r.status_code >= 400:
                 # Fallback: try trailing-slash variant
-                r = await c.get(f"{scheme}://{base}/api/reservoir-ddms/v2/-json",
+                r = await c.get(f"{base_url}/-json",
                                 headers=osdu.headers(at))
             r.raise_for_status()
     except Exception as e:
@@ -519,7 +518,7 @@ async def admin_openapi(request: Request):
         pass
     tag_order_js = json.dumps(tag_order)
     html = f"""<!DOCTYPE html>
-<html><head><title>RDDMS OpenAPI — {base}</title>
+<html><head><title>RDDMS OpenAPI — {swagger_url}</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
 </head><body>
 <div id="sui"></div>

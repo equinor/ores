@@ -104,7 +104,17 @@ def http_client(timeout: float = 60, **kwargs) -> httpx.AsyncClient:
 
 
 def _rddms_url(path: str = "") -> str:
-    """Build a Reservoir-DDMS v2 URL.  *path* is appended after the base."""
+    """Build a Reservoir-DDMS v2 URL.  *path* is appended after the base.
+
+    When the active instance is 'local' and RDDMS_LOCAL_URL is set,
+    routes RDDMS calls to the local etp-client (e.g. http://localhost:8080)
+    while other OSDU calls still go to the real hostname.
+    """
+    local_url = os.getenv("RDDMS_LOCAL_URL", "")
+    if local_url:
+        from .instances import get_active_name
+        if get_active_name() == "local":
+            return f"{local_url.rstrip('/')}/api/reservoir-ddms/v2{path}"
     return f"https://{OSDU_BASE_URL}/api/reservoir-ddms/v2{path}"
 
 

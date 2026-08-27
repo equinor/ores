@@ -48,6 +48,8 @@ class OsduInstance:
     refresh_token: str = ""                 # shared refresh token (if any)
     auth_mode: str = "refresh_token"        # refresh_token | client_credentials | per_user_pkce | az_cli | bearer_token
     oc_token: str = ""                       # static bearer token (e.g. OpenShift service account)
+    token_endpoint: str = ""                # custom token URL (e.g. Keycloak); blank → Azure AD
+    authorize_endpoint: str = ""            # custom authorize URL; blank → Azure AD
     graphql_pg_conn_string: str = ""        # per-instance RDDMS PG conn (blank → REST fallback)
     ssl_verify: bool = True                 # False for test/pre-ship envs with untrusted certs
 
@@ -61,7 +63,15 @@ class OsduInstance:
 
     @property
     def token_url(self) -> str:
+        if self.token_endpoint:
+            return self.token_endpoint
         return f"https://login.microsoftonline.com/{self.tenant_id}/oauth2/v2.0/token"
+
+    @property
+    def authorize_url(self) -> str:
+        if self.authorize_endpoint:
+            return self.authorize_endpoint
+        return f"https://login.microsoftonline.com/{self.tenant_id}/oauth2/v2.0/authorize"
 
     def _partition_suffix(self) -> str:
         return f"{self.data_partition_id}.dataservices.energy" if self.data_partition_id else ""
@@ -224,6 +234,8 @@ def _load_instances():
             default_countries=_get("DEFAULT_COUNTRIES", "NO"),
             refresh_token=refresh,
             oc_token=oc_token,
+            token_endpoint=_get("TOKEN_URL"),
+            authorize_endpoint=_get("AUTHORIZE_URL"),
             auth_mode=mode,
             graphql_pg_conn_string=_get("GRAPHQL_PG_CONN_STRING"),
             ssl_verify=_get("SSL_VERIFY", "true").lower() not in ("false", "0", "no"),
@@ -352,9 +364,14 @@ def _apply_instance(inst: OsduInstance):
     auth_mod.CLIENT_ID = inst.client_id
     scopes_str = inst.scope or "openid offline_access"
     auth_mod.SCOPES = scopes_str.split()
-    auth_mod.AUTH_BASE = f"https://login.microsoftonline.com/{inst.tenant_id}/oauth2/v2.0"
-    auth_mod.AUTHORIZE_URL = f"{auth_mod.AUTH_BASE}/authorize"
-    auth_mod.TOKEN_URL = f"{auth_mod.AUTH_BASE}/token"
+    if inst.token_endpoint:
+        auth_mod.TOKEN_URL = inst.token_endpoint
+        auth_mod.AUTHORIZE_URL = inst.authorize_endpoint or inst.token_endpoint.replace("/token", "/auth")
+        auth_mod.AUTH_BASE = auth_mod.TOKEN_URL.rsplit("/", 1)[0]
+    else:
+        auth_mod.AUTH_BASE = f"https://login.microsoftonline.com/{inst.tenant_id}/oauth2/v2.0"
+        auth_mod.AUTHORIZE_URL = f"{auth_mod.AUTH_BASE}/authorize"
+        auth_mod.TOKEN_URL = f"{auth_mod.AUTH_BASE}/token"
     auth_mod.ENV_REFRESH_TOKEN = inst.refresh_token or None
     # Respect explicit per_user_pkce mode even when client_secret is
     # present (needed for confidential-client PKCE exchange).
