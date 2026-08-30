@@ -358,14 +358,33 @@ async def _ingest_via_storage(
         "Content-Type": "application/json",
     }
 
-    # RDDMS manifests/build returns: {kind: "osdu:wks:Manifest:1.0.0", Data: {Datasets: [...], WorkProductComponents: [...]}}
+    # RDDMS manifests/build returns: {kind: "osdu:wks:Manifest:1.0.0", Data: {Datasets: [...], WorkProductComponents: [...]}, MasterData: [...], ReferenceData: [...]}
     # Unwrap the Data envelope if present, then extract records from all sections.
+    # Note: Datasets/WPCs live inside "Data", while MasterData/ReferenceData are top-level.
     inner = manifest.get("Data", manifest)  # unwrap if envelope present
-    records = []
-    for section in ("WorkProductComponents", "Datasets", "ReferenceData", "MasterData", "WorkProducts"):
+    records: list[Dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    for section in ("WorkProductComponents", "Datasets", "WorkProducts"):
         items = inner.get(section) or []
         if isinstance(items, list):
-            records.extend(items)
+            for rec in items:
+                rid = rec.get("id")
+                if rid and rid in seen_ids:
+                    continue
+                if rid:
+                    seen_ids.add(rid)
+                records.append(rec)
+    # MasterData and ReferenceData are at the manifest top level, not inside Data
+    for section in ("ReferenceData", "MasterData"):
+        items = manifest.get(section) or inner.get(section) or []
+        if isinstance(items, list):
+            for rec in items:
+                rid = rec.get("id")
+                if rid and rid in seen_ids:
+                    continue
+                if rid:
+                    seen_ids.add(rid)
+                records.append(rec)
 
     if not records:
         raise HTTPException(
