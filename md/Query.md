@@ -902,7 +902,6 @@ The `backend` field in `DeepSearchResult` tells you which path was used:
 | `GET .../resources/{type}/{uuid}/arrays` | List arrays | any |
 | `GET .../resources/{type}/{uuid}/arrays/{path}` | Read array data | any |
 | `POST /query/graph/search` | **Batch graph traversal** (multi-URI, configurable depth) | 1.3.0 (M27) |
-| `POST /query/resources/find` | Flat resource enumeration (DiscoveryQuery) | 1.3.0 (M27) |
 | `POST /query/objects/find` | Search + fetch full XML content | 1.3.0 (M27) |
 | `GET /dataspaces/{ds}/deleted` | List deleted resources since timestamp | 1.3.0 (M27) |
 | `POST /manifests/build` | Build OSDU manifest from ETP dataspace/URIs | any |

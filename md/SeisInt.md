@@ -644,7 +644,7 @@ Each RDDMS object should have **both** a universal and a specialised catalog ent
 | `GET /resources/:ds/:type/:uuid` | Fetch single object |
 | `GET /.../arrays/:path` | Fetch array data (Z-values, XY coords) |
 | `POST /query/graph/search` | Traverse interpretation chains |
-| `POST /query/resources/find` | Filter by type/property |
+| `POST /query/objects/find` | Filter by type/property |
 | `POST /dataspaces/:id/clone` | Fork dataspace for project |
 | `POST /dataspaces/:id/lock` | Freeze as Source of Record |
 
