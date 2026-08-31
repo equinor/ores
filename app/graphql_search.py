@@ -1511,6 +1511,11 @@ async def _deep_search_rest(
                     _no_array_msg = "REST backend: array values not available (statistics/threshold need PG or ETP)"
                     if _no_array_msg not in warnings:
                         warnings.append(_no_array_msg)
+                    # On REST, treat array filter as non-blocking: include the
+                    # object with its property inventory even though we can't
+                    # evaluate the threshold.  This lets REST act as a usable
+                    # fallback instead of silently dropping every object.
+                    passes_filter = True
 
             property_results.append(prop_info)
 
@@ -2112,8 +2117,11 @@ async def deep_search_impl(
             return result
         # compound filter only works on PG backend (needs array access)
         if result.backend != "PostgreSQL":
+            n_filters = len(compound_filter.filters)
+            labels = [f.title_contains or f.kind or "?" for f in compound_filter.filters]
             result.warnings = list(result.warnings or []) + [
-                "compoundFilter requires PostgreSQL backend (not available via REST)"
+                f"compoundFilter ({' AND '.join(labels)}, {n_filters} criteria) requires PostgreSQL backend — "
+                f"showing full property inventory instead. Connect PG for cell-level intersection."
             ]
             return result
 
@@ -2212,19 +2220,21 @@ async def deep_search_impl(
             # but only for remote dataspaces - local ones (maap/*) are authoritative in PG
             if result.total_scanned == 0 and "not found in PG" in result.query_description \
                     and not ds_list[0].startswith("maap/"):
-                return _merge_warnings(await _deep_search_rest(
+                rest_fb = await _deep_search_rest(
                     token, ds_list[0], effective_type, title_contains,
                     property_filter, include_relations, include_statistics,
                     include_sample_values, sample_size, limit, relation_filter,
-                ))
+                )
+                return _merge_warnings(await _apply_compound(rest_fb))
             return _merge_warnings(await _apply_compound(result))
 
         # Route 3: REST N+1 fallback (always available)
-        return _merge_warnings(await _deep_search_rest(
+        rest_result = await _deep_search_rest(
             token, ds_list[0], effective_type, title_contains,
             property_filter, include_relations, include_statistics,
             include_sample_values, sample_size, limit, relation_filter,
-        ))
+        )
+        return _merge_warnings(await _apply_compound(rest_result))
 
     # Multiple dataspaces: try Discovery → PG → REST per-ds
     pool = await _get_pool()

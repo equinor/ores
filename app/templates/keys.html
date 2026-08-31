@@ -333,6 +333,10 @@
                   title="Completion optimization: best porosity + perm + low Sw intervals per well">📐 Completion pay</span>
             <span class="btn" id="ez-ex-poro" style="font-size:11px;padding:2px 9px;"
                   title="Segment overview: faults, structural org, grid connections, wells - for infill targeting">📊 Segment overview</span>
+            <span class="btn" id="ez-ex-injection" style="font-size:11px;padding:2px 9px;"
+                  title="Injection support: fault geometry + well trajectories + structural org (works on REST)">💉 Injection support</span>
+            <span class="btn" id="ez-ex-grid-inv" style="font-size:11px;padding:2px 9px;"
+                  title="Grid property inventory: all properties on the geocellular model (works on REST)">📋 Grid inventory</span>
           </div>
 
           <!-- Easy Mode Results (colored cards) -->
@@ -379,6 +383,7 @@
               <option value="native_array_metadata">Array dimensions &amp; types</option>
             </optgroup>
             <optgroup label="Field Development">
+              <option value="field_grid_inventory">Grid property inventory (REST-compatible)</option>
               <option value="field_bypassed_oil">Bypassed oil (high Sw + good perm)</option>
               <option value="field_water_breakthrough">Water breakthrough (high-perm streaks)</option>
               <option value="field_injection_support">Injection support across faults</option>

@@ -130,11 +130,44 @@
       <label><input type="checkbox" id="inc-bd" checked> BD evidence</label>
     </div>
 
-    <div style="display: flex; gap: 12px; align-items: center; margin-top: 12px;">
+    <div style="display: flex; gap: 12px; align-items: center; margin-top: 12px; flex-wrap: wrap;">
       <button class="conn-btn" id="run-query" onclick="runConnectivityQuery()">Run Connectivity Query</button>
       <button class="conn-btn" style="background: var(--eq-link, #0078d4);" onclick="loadPreset('drogon_f3')" title="Pre-fill Drogon A-2 vs A-3 across F3 baffle">⚡ Drogon F3 Demo</button>
       <button class="conn-btn" style="background: var(--eq-link, #0078d4);" onclick="loadPreset('drogon_f2')" title="Pre-fill Drogon A-1 vs A-4 across F2 baffle">⚡ Drogon F2 Demo</button>
     </div>
+    <div id="preset-desc" style="margin-top: 8px; font-size: 13px; color: var(--eq-grey); display: none;">
+      <strong>Preset:</strong> <span id="preset-desc-text"></span>
+    </div>
+    <details style="margin-top: 12px; font-size: 13px; color: var(--eq-slate);">
+      <summary style="cursor: pointer; font-weight: 600;">Demo narrative &amp; architecture (click to expand)</summary>
+      <div style="margin-top: 8px; line-height: 1.6;">
+        <p><strong>Motivation</strong> — Decision knowledge today lives in slide decks and people's heads: not queryable, not traceable, not auditable.
+        We use OSDU as system of record for subsurface decision gates, storing Business Decisions with typed edges (Parameters[].Keys[ParameterKey="relationship"])
+        to reservoir models, risks, volumes, and activities. This lets us <em>query</em> why a decision was made, not just what was decided.</p>
+
+        <p><strong>F3 Demo</strong> — Wells A-2 (CentralNorth) and A-3 (EastLowland) are separated by fault F3 with transmissibility multiplier 0.10 (baffle).
+        The query shows: shared Valysar zone ✓, but F3 blocks flow. A-3 underperforms (high water cut) while A-2 produces normally.
+        DG1 risk "fault compartmentalisation" (S4/P3, Open) → DG2 mitigated to S2/P2 after production testing confirmed partial communication.
+        Recommendation: evaluate infill well in isolated EastLowland segment.</p>
+
+        <p><strong>F2 Demo</strong> — Wells A-1 (CentralHorst) and A-4 (EastLowland) across fault F2 (trans=0.15, baffle) in Therys zone.
+        Similar pattern: good reservoir quality on both sides, but poor cross-fault communication explains A-4 underperformance.</p>
+
+        <p><strong>Compound federated query</strong> — A single connectivity query fires 6 parallel data fetches, combining 3 backends:</p>
+        <ol style="margin: 4px 0 8px 20px;">
+          <li><strong>RDDMS deep search</strong> → wells, markers (stratigraphy), faults (FaultInterpretation), grid properties (IjkGrid → PORO, NTG, SW, perm statistics)</li>
+          <li><strong>OSDU catalog search</strong> → fault transmissibility WPCs (GenericRepresentation with per-fault multipliers), Risk + DevelopmentConcept + Activity records</li>
+          <li><strong>OSDU catalog ColumnBasedTable</strong> → per-well production (WOPR, WWCT, WOPT) for performance comparison</li>
+        </ol>
+        <p>The deep search uses <code>compoundFilter</code>: cell-level AND of property thresholds (NTG≥0.5 ∧ Sw≤0.6 ∧ kH≥100mD) evaluated against RESQML arrays.
+        Fault connectivity comes from catalog WPCs that reference the RDDMS GridConnectionSetRepresentation.
+        BD evidence is keyword-filtered (compartment/connectivity/seal/fault names) from Risk and DevelopmentConcept records.
+        All 6 fetches run in parallel via <code>asyncio.gather</code>, then synthesised into a connected/uncertain/disconnected verdict with confidence level.</p>
+
+        <p><strong>Feedback loop</strong>: BD risk → diagnose connectivity (this query) → cross-gate delta (/analyse shows connected HCPV −21%) → branch dataspace (alt fault-seal or infill well) → simulate → revised BD supersedes prior.
+        All linked through Parameters[] + Activity provenance — every step traceable back to source data.</p>
+      </div>
+    </details>
   </div>
 
   <!-- Results -->
@@ -418,6 +451,8 @@ async function loadPreset(name) {
   $('inc-bd').checked = true;
 
   // Auto-run
+  $('preset-desc').style.display = 'block';
+  $('preset-desc-text').textContent = p.description;
   runConnectivityQuery();
 }
 

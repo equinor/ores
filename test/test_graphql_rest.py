@@ -306,7 +306,7 @@ class TestDeepSearchRest:
     # ── Array filter warning ──
 
     def test_array_filter_warns_when_no_data(self):
-        """arrayFilter with no array data should produce a warning."""
+        """arrayFilter with no array data should include object with warning (REST fallback)."""
         grid_uuid = "11111111-1111-1111-1111-111111111111"
         prop_uuid = "22222222-2222-2222-2222-222222222222"
 
@@ -324,9 +324,10 @@ class TestDeepSearchRest:
             array_filter=ArrayFilter(threshold=0.25, operator=ComparisonOperator.GT),
         )
         result = self._run(property_filter=pf, include_statistics=True)
-        assert result.total_matched == 0
+        # REST fallback: object is included (not filtered out) with a warning
+        assert result.total_matched == 1
         assert result.warnings is not None
-        assert any("arrayFilter" in w or "array" in w.lower() for w in result.warnings)
+        assert any("array" in w.lower() for w in result.warnings)
 
     # ── Property kind cache ──
 

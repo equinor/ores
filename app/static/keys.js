@@ -922,6 +922,8 @@ const _ezFieldDevExamples = [
   { id: 'ez-ex-highperm', preset: 'field_water_breakthrough' },
   { id: 'ez-ex-ntg', preset: 'field_completion_ntg' },
   { id: 'ez-ex-poro', preset: 'field_segment_ranking' },
+  { id: 'ez-ex-injection', preset: 'field_injection_support' },
+  { id: 'ez-ex-grid-inv', preset: 'field_grid_inventory' },
 ];
 _ezFieldDevExamples.forEach(ex => {
   const btn = $(ex.id);
@@ -3557,6 +3559,54 @@ const GQL_PRESETS = {
   }
 }`
 };
+
+// ── REST-friendly presets (no arrayFilter / compoundFilter) ──────────
+// These work on any backend including REST-only instances.
+GQL_PRESETS.field_grid_inventory = `# FIELD DEV: Grid property inventory (REST-compatible)
+# Lists ALL properties on the IjkGrid geocellular model with their
+# kind, unit of measure, and statistics (when available).
+#
+# Works on both REST and PostgreSQL backends.
+# On REST: shows property names, kinds, and UOMs (statistics null).
+# On PG: also includes min/max/mean/stdDev for each property.
+#
+# HOW TO READ: Each property listed under the grid is a 3D cell array.
+# The "kind" tells you what physical quantity it represents (porosity,
+# permeability, saturation, etc.). Use this inventory to plan which
+# properties to filter on in compound queries.
+{
+  grids: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_IjkGridRepresentation"
+    includeStatistics: true
+    includeRelations: true
+    limit: 5
+  ) {
+    backend totalScanned totalMatched warnings
+    objects {
+      uuid title typeName
+      relations { uuid name typeName direction }
+      properties {
+        title kind uom
+        statistics { count minValue maxValue mean stdDev }
+      }
+    }
+  }
+  wellLogs: deepSearch(
+    $DS_ARG
+    typeName: "resqml20.obj_WellboreFrameRepresentation"
+    includeStatistics: true
+    includeRelations: true
+    limit: 10
+  ) {
+    totalScanned totalMatched
+    objects {
+      uuid title
+      relations { name typeName direction }
+      properties { title kind uom }
+    }
+  }
+}`;
 
 function gqlSelectedDataspaces() {
   return Array.from(dsSel.selectedOptions).map(o => o.value);
