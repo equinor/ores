@@ -1655,14 +1655,138 @@ async def _deep_search_rest(
 
 
 # ── Validation helpers ──────────────────────────────────────────────────
-_VALID_DIRECTIONS = {"sources", "targets", "both"}
+_MAX_LIMIT = 2000
+_MAX_SAMPLE_SIZE = 10_000
+_VALID_DIRECTIONS = {"both", "targets", "sources"}
 
 
 def validate_object_relations_direction(direction: str) -> Optional[str]:
-    """Return an error message if *direction* is invalid, else None."""
-    if direction.lower() not in _VALID_DIRECTIONS:
-        return f"Invalid direction '{direction}'. Must be one of: {', '.join(sorted(_VALID_DIRECTIONS))}"
+    """Validate direction parameter. Returns error message or None."""
+    if direction not in _VALID_DIRECTIONS:
+        return (
+            f"Invalid direction '{direction}'. "
+            f"Must be one of: {', '.join(sorted(_VALID_DIRECTIONS))}"
+        )
     return None
+
+
+def validate_deep_search_inputs(
+    type_name: str,
+    category: Optional[str],
+    property_filter: Optional[PropertyFilter],
+    limit: int,
+    sample_size: int,
+    include_sample_values: bool,
+    dataspace: Optional[str],
+    dataspaces: Optional[List[str]],
+) -> List[str]:
+    """Validate deep_search inputs. Returns a list of warning/error strings."""
+    warnings: List[str] = []
+
+    if limit < 1:
+        warnings.append("ERROR: limit must be >= 1")
+    elif limit > _MAX_LIMIT:
+        warnings.append(f"limit capped to {_MAX_LIMIT} (requested {limit})")
+
+    if include_sample_values and sample_size > _MAX_SAMPLE_SIZE:
+        warnings.append(f"sample_size capped to {_MAX_SAMPLE_SIZE} (requested {sample_size})")
+
+    if category and category.lower() not in RESQML_TYPE_CATEGORIES:
+        valid = ", ".join(sorted(RESQML_TYPE_CATEGORIES.keys()))
+        warnings.append(
+            f"ERROR: unknown category '{category}'. Valid categories: {valid}"
+        )
+
+    if not category and type_name:
+        resolved = resolve_type_names(type_name)
+        if not resolved:
+            warnings.append(
+                f"type_name '{type_name}' did not resolve to any known types. "
+                "Use resqml_categories query to list valid categories, "
+                "or use a full type like 'resqml20.obj_IjkGridRepresentation'."
+            )
+
+    if property_filter:
+        af = property_filter.array_filter
+        if af:
+            if af.operator == ComparisonOperator.BETWEEN:
+                if af.threshold_high is None:
+                    warnings.append(
+                        "ERROR: BETWEEN operator requires thresholdHigh. "
+                        "Provide arrayFilter: { threshold: <low>, operator: BETWEEN, thresholdHigh: <high> }"
+                    )
+                elif af.threshold_high < af.threshold:
+                    warnings.append(
+                        f"ERROR: thresholdHigh ({af.threshold_high}) must be >= threshold ({af.threshold}) "
+                        "for BETWEEN operator"
+                    )
+            if not property_filter.kind and not property_filter.title_contains:
+                warnings.append(
+                    "arrayFilter without propertyFilter.kind or titleContains will scan "
+                    "ALL properties on each object - this may be slow. "
+                    "Consider adding kind: \"porosity\" or titleContains: \"PORO\" to narrow the search."
+                )
+        if not property_filter.kind and not property_filter.title_contains and not af:
+            warnings.append(
+                "propertyFilter with no kind, titleContains, or arrayFilter has no effect - "
+                "all properties will be returned unfiltered."
+            )
+
+    if include_sample_values and type_name and "IjkGrid" in type_name:
+        warnings.append(
+            "includeSampleValues on IjkGrid may return large arrays. "
+            "Consider using includeStatistics instead, or set a small sampleSize."
+        )
+
+    return warnings
+
+
+def validate_federated_search_inputs(
+    text: str,
+    type_name: Optional[str],
+    dataspaces: Optional[List[str]],
+    search_catalog: bool,
+    search_rddms: bool,
+    search_remote_rddms: bool,
+    property_filter: Optional[PropertyFilter],
+    limit: int,
+) -> List[str]:
+    """Validate federated_search inputs. Returns a list of warning/error strings."""
+    warnings: List[str] = []
+
+    if limit < 1:
+        warnings.append("ERROR: limit must be >= 1")
+    elif limit > _MAX_LIMIT:
+        warnings.append(f"limit capped to {_MAX_LIMIT} (requested {limit})")
+
+    if not search_catalog and not search_rddms and not search_remote_rddms:
+        warnings.append(
+            "ERROR: all search sources disabled. Enable at least one of: "
+            "searchCatalog, searchRddms, searchRemoteRddms"
+        )
+
+    if type_name:
+        resolved = resolve_type_names(type_name)
+        if not resolved:
+            valid_cats = ", ".join(sorted(RESQML_TYPE_CATEGORIES.keys()))
+            warnings.append(
+                f"type_name '{type_name}' did not resolve to known types. "
+                f"Try a category ({valid_cats}) or a full type like "
+                "'resqml20.obj_IjkGridRepresentation'."
+            )
+
+    if property_filter and property_filter.array_filter:
+        af = property_filter.array_filter
+        if af.operator == ComparisonOperator.BETWEEN:
+            if af.threshold_high is None:
+                warnings.append("ERROR: BETWEEN operator requires thresholdHigh")
+            elif af.threshold_high < af.threshold:
+                warnings.append(
+                    f"ERROR: thresholdHigh ({af.threshold_high}) must be >= "
+                    f"threshold ({af.threshold})"
+                )
+
+    return warnings
 
 
 # ──────────────────────────────────────────────────────────────────────────────
