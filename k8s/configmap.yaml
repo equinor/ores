@@ -45,6 +45,19 @@ data:
   INSTANCE_EQNDEV_DEFAULT_VIEWERS: "data.office.global.viewers@dev.dataservices.energy"
   INSTANCE_EQNDEV_DEFAULT_COUNTRIES: "NO"
 
+  # ── "eqndeva" - Equinor SWE dev, shared app token (backup) ──
+  # Same OSDU backend as eqndev but uses client_credentials + refresh_token.
+  # Uncomment to re-enable shared-token auth.
+  # INSTANCE_EQNDEVA_TENANT_ID: ""
+  # INSTANCE_EQNDEVA_HOSTNAME: "equinorswedev.energy.azure.com"
+  # INSTANCE_EQNDEVA_DATA_PARTITION_ID: "dev"
+  # INSTANCE_EQNDEVA_AUTHORITY: "osdu"
+  # INSTANCE_EQNDEVA_SCHEMA_SOURCE: "wks"
+  # INSTANCE_EQNDEVA_DEFAULT_LEGAL_TAG: "dev-equinor-private-default"
+  # INSTANCE_EQNDEVA_DEFAULT_OWNERS: "data.default.owners@dev.dataservices.energy"
+  # INSTANCE_EQNDEVA_DEFAULT_VIEWERS: "data.default.viewers@dev.dataservices.energy"
+  # INSTANCE_EQNDEVA_DEFAULT_COUNTRIES: "NO"
+
   # ── "oresdev" - same OSDU backend as eqndev, uses ores-dev app (21b442a9) ──
   # INSTANCE_ORESDEV_TENANT_ID: "3aa4a235-b6e2-48d5-9195-7fcf05b459b0"
   # INSTANCE_ORESDEV_HOSTNAME: "equinorswedev.energy.azure.com"
@@ -56,18 +69,17 @@ data:
   # INSTANCE_ORESDEV_DEFAULT_VIEWERS: "data.default.viewers@dev.dataservices.energy"
   # INSTANCE_ORESDEV_DEFAULT_COUNTRIES: "NO"
 
-  # ── "preship" - pre-ship M27 QA (Keycloak, refresh_token auth) ──
-  INSTANCE_PRESHIP_AUTH_MODE: "refresh_token"
-  INSTANCE_PRESHIP_HOSTNAME: "qa.osdu-m27.osdu-cimpl.opengroup.org"
-  INSTANCE_PRESHIP_DATA_PARTITION_ID: "osdu"
+  # ── "preship" - pre-ship M27 (OpenShift, bearer_token auth) ──
+  INSTANCE_PRESHIP_AUTH_MODE: "bearer_token"
+  INSTANCE_PRESHIP_HOSTNAME: "osdu-m27.z468.p3.openshiftapps.com"
+  INSTANCE_PRESHIP_DATA_PARTITION_ID: "opendes"
   INSTANCE_PRESHIP_AUTHORITY: "osdu"
   INSTANCE_PRESHIP_SCHEMA_SOURCE: "wks"
-  INSTANCE_PRESHIP_TOKEN_URL: "https://keycloak-qa.osdu-m27.osdu-cimpl.opengroup.org/realms/osdu/protocol/openid-connect/token"
-  INSTANCE_PRESHIP_AUTHORIZE_URL: "https://keycloak-qa.osdu-m27.osdu-cimpl.opengroup.org/realms/osdu/protocol/openid-connect/auth"
-  INSTANCE_PRESHIP_DEFAULT_LEGAL_TAG: "osdu-demo-legaltag"
-  INSTANCE_PRESHIP_DEFAULT_OWNERS: "data.default.owners@osdu.group"
-  INSTANCE_PRESHIP_DEFAULT_VIEWERS: "data.default.viewers@osdu.group"
+  INSTANCE_PRESHIP_DEFAULT_LEGAL_TAG: "opendes-RDDMS-LegalTag"
+  INSTANCE_PRESHIP_DEFAULT_OWNERS: "data.default.owners@opendes.contoso.com"
+  INSTANCE_PRESHIP_DEFAULT_VIEWERS: "data.default.viewers@opendes.contoso.com"
   INSTANCE_PRESHIP_DEFAULT_COUNTRIES: "US"
+  INSTANCE_PRESHIP_SSL_VERIFY: "false"
 
   # ── "interop" - ADME Interop (client_credentials) ──
   INSTANCE_INTEROP_AUTH_MODE: "client_credentials"
@@ -80,3 +92,14 @@ data:
   INSTANCE_INTEROP_DEFAULT_VIEWERS: "data.default.viewers@opendes.dataservices.energy"
   INSTANCE_INTEROP_DEFAULT_COUNTRIES: "US"
 
+
+  # ── Example: "prod" instance (uncomment to enable) ──
+  # INSTANCE_PROD_TENANT_ID: ""
+  # INSTANCE_PROD_HOSTNAME: "equinor.energy.azure.com"
+  # INSTANCE_PROD_DATA_PARTITION_ID: "opendes"
+  # INSTANCE_PROD_AUTHORITY: "osdu"
+  # INSTANCE_PROD_SCHEMA_SOURCE: "wks"
+  # INSTANCE_PROD_DEFAULT_LEGAL_TAG: "opendes-equinor-private-default"
+  # INSTANCE_PROD_DEFAULT_OWNERS: "data.default.owners@opendes.dataservices.energy"
+  # INSTANCE_PROD_DEFAULT_VIEWERS: "data.default.viewers@opendes.dataservices.energy"
+  # INSTANCE_PROD_DEFAULT_COUNTRIES: "NO"

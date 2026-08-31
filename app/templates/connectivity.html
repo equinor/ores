@@ -130,7 +130,11 @@
       <label><input type="checkbox" id="inc-bd" checked> BD evidence</label>
     </div>
 
-    <button class="conn-btn" id="run-query" onclick="runConnectivityQuery()">Run Connectivity Query</button>
+    <div style="display: flex; gap: 12px; align-items: center; margin-top: 12px;">
+      <button class="conn-btn" id="run-query" onclick="runConnectivityQuery()">Run Connectivity Query</button>
+      <button class="conn-btn" style="background: var(--eq-link, #0078d4);" onclick="loadPreset('drogon_f3')" title="Pre-fill Drogon A-2 vs A-3 across F3 baffle">⚡ Drogon F3 Demo</button>
+      <button class="conn-btn" style="background: var(--eq-link, #0078d4);" onclick="loadPreset('drogon_f2')" title="Pre-fill Drogon A-1 vs A-4 across F2 baffle">⚡ Drogon F2 Demo</button>
+    </div>
   </div>
 
   <!-- Results -->
@@ -362,6 +366,69 @@ function renderResults(r) {
   // Recommendations
   const recoHtml = r.recommendations.map(rec => `<li>${rec}</li>`).join('');
   $('reco-list').innerHTML = recoHtml || '<li>No specific recommendations</li>';
+}
+
+// Presets for ECIM demo — pre-fill form and auto-run
+const PRESETS = {
+  drogon_f3: {
+    dataspace: 'maap/drogon',
+    well_a: 'A-2', well_b: 'A-3',
+    zone: 'Valysar',
+    ntg_min: 0.5, kh_min: 100, sw_max: 0.6,
+    description: 'F3 baffle (trans=0.10) between CentralNorth ↔ EastLowland — isolates A-3 segment'
+  },
+  drogon_f2: {
+    dataspace: 'maap/drogon',
+    well_a: 'A-1', well_b: 'A-4',
+    zone: 'Therys',
+    ntg_min: 0.5, kh_min: 100, sw_max: 0.7,
+    description: 'F2 baffle (trans=0.15) between CentralHorst ↔ EastLowland — poor A-4 performance'
+  }
+};
+
+async function loadPreset(name) {
+  const p = PRESETS[name];
+  if (!p) return;
+
+  // Set dataspace
+  const dsSel = $('dataspace');
+  for (let i = 0; i < dsSel.options.length; i++) {
+    if (dsSel.options[i].value.includes(p.dataspace.split('/').pop())) {
+      dsSel.selectedIndex = i;
+      break;
+    }
+  }
+
+  // Reload wells for this dataspace, then select the right wells
+  await loadWells();
+
+  // Select wells by partial match
+  _selectByPartialMatch($('well-a'), p.well_a);
+  _selectByPartialMatch($('well-b'), p.well_b);
+
+  // Fill zone & filters
+  $('zone').value = p.zone || '';
+  $('ntg-min').value = p.ntg_min;
+  $('kh-min').value = p.kh_min;
+  $('sw-max').value = p.sw_max;
+
+  // Ensure all checkboxes on
+  $('inc-faults').checked = true;
+  $('inc-production').checked = true;
+  $('inc-bd').checked = true;
+
+  // Auto-run
+  runConnectivityQuery();
+}
+
+function _selectByPartialMatch(sel, name) {
+  const lower = name.toLowerCase();
+  for (let i = 0; i < sel.options.length; i++) {
+    if (sel.options[i].value.toLowerCase().includes(lower)) {
+      sel.selectedIndex = i;
+      return;
+    }
+  }
 }
 
 // Init
