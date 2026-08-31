@@ -1553,29 +1553,32 @@ async def _deep_search_rest(
 
     if prop_uri_map:
         try:
-            uris = list(prop_uri_map.values())[:150]
-            batch_objs = await osdu.batch_get_content(token, uris)
-            for obj in batch_objs:
-                # Extract UUID from the object
-                obj_uuid = str(obj.get("uuid", obj.get("Uuid", "")))
-                if not obj_uuid:
-                    obj_uri = obj.get("uri", "")
-                    m = _re.search(r'\(([0-9a-f-]{36})\)', obj_uri)
-                    if m:
-                        obj_uuid = m.group(1)
-                if obj_uuid:
-                    kind = _extract_property_kind(obj)
-                    uom = obj.get("UOM") or obj.get("Uom") or None
-                    title = (obj.get("Citation") or {}).get("Title", "") or ""
-                    _kind_cache[obj_uuid] = (kind, uom, title)
+            all_uris = list(prop_uri_map.values())
+            # Batch in chunks of 50 to avoid overwhelming the backend
+            for chunk_start in range(0, len(all_uris), 50):
+                chunk = all_uris[chunk_start:chunk_start + 50]
+                batch_objs = await osdu.batch_get_content(token, chunk)
+                for obj in batch_objs:
+                    # Extract UUID from the object
+                    obj_uuid = str(obj.get("uuid", obj.get("Uuid", "")))
+                    if not obj_uuid:
+                        obj_uri = obj.get("uri", "")
+                        m = _re.search(r'\(([0-9a-f-]{36})\)', obj_uri)
+                        if m:
+                            obj_uuid = m.group(1)
+                    if obj_uuid:
+                        kind = _extract_property_kind(obj)
+                        uom = obj.get("UOM") or obj.get("Uom") or None
+                        title = (obj.get("Citation") or {}).get("Title", "") or ""
+                        _kind_cache[obj_uuid] = (kind, uom, title)
 
-                    # Map unresolved properties to candidates via SupportingRepresentation
-                    if obj_uuid in _unresolved_by_uuid:
-                        sup_ref = obj.get("SupportingRepresentation") or {}
-                        sup_uuid = str(sup_ref.get("UUID") or sup_ref.get("Uuid") or sup_ref.get("uuid") or "")
-                        if sup_uuid and sup_uuid in _cand_uuid_to_uri:
-                            c_uri = _cand_uuid_to_uri[sup_uuid]
-                            sources_by_uri.setdefault(c_uri, []).append(_unresolved_by_uuid[obj_uuid])
+                        # Map unresolved properties to candidates via SupportingRepresentation
+                        if obj_uuid in _unresolved_by_uuid:
+                            sup_ref = obj.get("SupportingRepresentation") or {}
+                            sup_uuid = str(sup_ref.get("UUID") or sup_ref.get("Uuid") or sup_ref.get("uuid") or "")
+                            if sup_uuid and sup_uuid in _cand_uuid_to_uri:
+                                c_uri = _cand_uuid_to_uri[sup_uuid]
+                                sources_by_uri.setdefault(c_uri, []).append(_unresolved_by_uuid[obj_uuid])
         except Exception as e:
             log.debug("batch_get_content failed (%s), will fetch individually", e)
 
