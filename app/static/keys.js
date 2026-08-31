@@ -3243,8 +3243,8 @@ const GQL_PRESETS = {
 
   field_bypassed_oil: `# FIELD DEV: Bypassed oil screening - compound cell intersection
 # Finds grid cells where BOTH conditions are true simultaneously:
-#   Sw < 0.4  (oil still in place - not swept)
-#   KLOGH > 100 mD  (permeable enough to produce)
+#   Water Saturation < 0.4  (oil still in place - not swept)
+#   Horizontal Permeability > 100 mD  (permeable enough to produce)
 #
 # The compoundFilter ANDs the criteria at cell level and returns
 # the intersection count - the actual bypassed oil cell set.
@@ -3262,8 +3262,8 @@ const GQL_PRESETS = {
     includeStatistics: true
     compoundFilter: {
       filters: [
-        { titleContains: "Sw", arrayFilter: { operator: LT, threshold: 0.4 } }
-        { titleContains: "KLOGH", arrayFilter: { operator: GT, threshold: 100.0 } }
+        { titleContains: "Water Saturation", arrayFilter: { operator: LT, threshold: 0.4 } }
+        { titleContains: "Horizontal Permeability", arrayFilter: { operator: GT, threshold: 100.0 } }
       ]
     }
     limit: 5
@@ -3283,9 +3283,9 @@ const GQL_PRESETS = {
 
   field_water_breakthrough: `# FIELD DEV: Water breakthrough diagnosis - per-well log overview
 # Shows ALL log properties on each wellbore frame so you can see
-# KLOGH, Sw, PHIT, VSH together for each well.
+# Horizontal Permeability, Water Saturation, Total Porosity, Shale Volume together.
 #
-# High-perm streaks (KLOGH > 500 mD) can act as water conduits.
+# High-perm streaks (Horizontal Permeability > 500 mD) can act as water conduits.
 # Wells where high-perm cells overlap with high Sw = water breakthrough.
 # Relations identify which wellbore each log frame belongs to.
 #
@@ -3294,7 +3294,7 @@ const GQL_PRESETS = {
 #
 # HOW TO READ: allWellLogs lists every well's log frame with all its
 # properties - compare mean Sw across wells to spot which are watering out.
-# highPermStreaks shows only frames where KLOGH > 500 mD; matchingCells
+# highPermStreaks shows only frames where Horizontal Permeability > 500 mD; matchingCells
 # tells you what fraction of each well's log is high-perm streak.
 # faultConnections lists inter-segment links; their transmissibility
 # properties tell you if water can cross from injector to producer segments.
@@ -3322,7 +3322,7 @@ const GQL_PRESETS = {
     includeStatistics: true
     includeRelations: true
     propertyFilter: {
-      titleContains: "KLOGH"
+      titleContains: "Horizontal Permeability"
       arrayFilter: { operator: GT, threshold: 500.0 }
     }
     limit: 14
@@ -3409,15 +3409,15 @@ const GQL_PRESETS = {
 # Finds well log intervals with good porosity and permeability
 # (the "pay zone") for completion/perforation design.
 #
-# Properties: PHIT (porosity), KLOGH (perm), VSH (shale volume), Sw
-# Filter: PHIT > 0.15 and KLOGH > 100 identify net pay intervals.
-# Low Sw (< 0.3) confirms the interval is above the oil-water contact.
+# Properties: Total Porosity, Horizontal Permeability, Shale Volume, Water Saturation
+# Filter: Total Porosity > 0.15 and Horizontal Permeability > 100 identify net pay.
+# Low Water Saturation (< 0.3) confirms the interval is above the OWC.
 # Relations show which wellbore each log belongs to.
 #
 # HOW TO READ: Each sub-query returns the same well log frames filtered
 # differently. matchingCells.fraction is the key metric - it tells you
 # what share of each well's log passes the threshold. A well that scores
-# high on all three (good PHIT, good KLOGH, low Sw) is the best
+# high on all three (good porosity, good perm, low Sw) is the best
 # completion candidate. Compare fractions across wells to rank them.
 {
   payPorosity: deepSearch(
@@ -3426,7 +3426,7 @@ const GQL_PRESETS = {
     includeStatistics: true
     includeRelations: true
     propertyFilter: {
-      titleContains: "PHIT"
+      titleContains: "Total Porosity"
       arrayFilter: { operator: GT, threshold: 0.15 }
     }
     limit: 14
@@ -3448,7 +3448,7 @@ const GQL_PRESETS = {
     includeStatistics: true
     includeRelations: true
     propertyFilter: {
-      titleContains: "KLOGH"
+      titleContains: "Horizontal Permeability"
       arrayFilter: { operator: GT, threshold: 100.0 }
     }
     limit: 14
@@ -3469,7 +3469,7 @@ const GQL_PRESETS = {
     includeStatistics: true
     includeRelations: true
     propertyFilter: {
-      titleContains: "Sw"
+      titleContains: "Water Saturation"
       arrayFilter: { operator: LT, threshold: 0.3 }
     }
     limit: 14
