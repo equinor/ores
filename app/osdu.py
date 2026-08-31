@@ -248,6 +248,49 @@ async def list_arrays(access_token: str, ds_enc: str, typ: str, uuid: str) -> li
         r.raise_for_status()
         return r.json() or []
 
+async def discovery_find(
+    access_token: str,
+    uri: str,
+    scope: str = "sourcesOrSelf",
+    depth: int = 1,
+    data_object_types: list[str] | None = None,
+    fmt: str = "json",
+) -> list[dict[str, Any]]:
+    """POST query/objects/find — discovery + content in one call.
+
+    Returns a list of objects with {uri, name, format, data, lastChanged}.
+    The ``data`` field contains the full object content (XML or JSON).
+    """
+    body: dict[str, Any] = {"uri": uri, "scope": scope, "depth": depth, "format": fmt}
+    if data_object_types:
+        body["dataObjectTypes"] = data_object_types
+    async with _http(timeout=30) as client:
+        r = await client.post(
+            _rddms_url("/query/objects/find"),
+            headers=headers(access_token),
+            json=body,
+        )
+        r.raise_for_status()
+        return r.json() or []
+
+
+async def batch_get_content(
+    access_token: str,
+    uris: list[str],
+    fmt: str = "json",
+) -> list[dict[str, Any]]:
+    """POST dataspaces/multi-resources/get-content — batch fetch objects."""
+    async with _http(timeout=30) as client:
+        r = await client.post(
+            _rddms_url("/dataspaces/multi-resources/get-content"),
+            headers=headers(access_token),
+            json={"uris": uris},
+            params={"$format": fmt},
+        )
+        r.raise_for_status()
+        return r.json() or []
+
+
 async def read_array(
     access_token: str,
     ds_enc: str,

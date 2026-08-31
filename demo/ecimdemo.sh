@@ -119,6 +119,9 @@ export RDDMS_LOCAL_URL="http://localhost:${RDDMS_PORT}"
 # GraphQL endpoint on local etp-client
 export RDDMS_GRAPHQL_URL="http://localhost:${RDDMS_PORT}/graphql"
 
+# Enable discovery batch endpoints (etp-client >= 1.3.0)
+export RDDMS_DISCOVERY="1"
+
 # Default instance
 export DEFAULT_INSTANCE="interop"
 export DEFAULT_DATASPACE="maap/drogon201"
