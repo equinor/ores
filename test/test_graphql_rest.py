@@ -219,6 +219,7 @@ class TestDeepSearchRest:
         """Patch all REST helper functions used by _deep_search_rest."""
         self.list_resources = AsyncMock(return_value=[])
         self.list_sources = AsyncMock(return_value=[])
+        self.list_targets = AsyncMock(return_value=[])
         self.get_resource = AsyncMock(return_value={})
         self.list_arrays = AsyncMock(return_value=[])
         self.read_array = AsyncMock(return_value=[])
@@ -226,6 +227,7 @@ class TestDeepSearchRest:
         patches = [
             patch("app.graphql_search._rest_list_resources", self.list_resources),
             patch("app.graphql_search._rest_list_sources", self.list_sources),
+            patch("app.graphql_search._rest_list_targets", self.list_targets),
             patch("app.graphql_search._rest_get_resource", self.get_resource),
             patch("app.graphql_search._rest_list_arrays", self.list_arrays),
             patch("app.graphql_search._rest_read_array", self.read_array),

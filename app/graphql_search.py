@@ -1415,6 +1415,8 @@ async def _deep_search_rest(
 
     # Map: candidate_uri → [parsed source entries]
     sources_by_uri: Dict[str, List[Dict[str, Any]]] = {}
+    _unresolved_props: List[Dict[str, str]] = []
+    _cand_uuid_to_uri: Dict[str, str] = {}
 
     if use_batch:
         candidate_uris = [r.get("uri", "") for r in candidates if r.get("uri")]
@@ -1425,14 +1427,20 @@ async def _deep_search_rest(
             )
             # graph_search merges all source subgraphs into one flat result.
             # The links are internal edges between discovered resources,
-            # NOT candidate→source mappings.  Build the source map by:
-            #  1) Checking if any links reference candidate URIs (ideal case)
-            #  2) If not, assign all discovered property resources to each
-            #     candidate (broadcast mode — correct for single-type queries).
+            # NOT candidate→source mappings.  Build the source map by
+            # checking if any links reference candidate URIs.  If none do,
+            # fall back to N+1 per-candidate REST calls (sources + targets)
+            # which correctly map each property to its owning representation.
             _res_by_uri: Dict[str, Dict[str, Any]] = {
                 gr.get("uri", ""): gr for gr in graph.get("resources", [])
             }
             cand_set = set(candidate_uris)
+            # Also build a uuid→uri map for candidates so we can map
+            # SupportingRepresentation UUIDs back to candidate URIs later.
+            for cu in candidate_uris:
+                m = _EML_URI_RE.search(cu)
+                if m:
+                    _cand_uuid_to_uri[m.group("uuid")] = cu
 
             # Try link-based mapping first
             for link in graph.get("links", []):
@@ -1448,20 +1456,25 @@ async def _deep_search_rest(
                         parsed = _parse_eml_entry(_res_by_uri.get(tgt_uri, {"uri": tgt_uri}))
                         sources_by_uri.setdefault(src_uri, []).append(parsed)
 
-            # If no links involve candidates, fall back to N+1 per-candidate
-            # source fetches (broadcast would incorrectly assign all properties
-            # to all candidates).
+            # If no links involve candidates, collect all property resources
+            # into a pool. We'll map them to candidates in Step 3 using
+            # SupportingRepresentation from batch_get_content.
             if not sources_by_uri and graph.get("resources"):
-                log.info("graph_search: %d resources but no links reference candidates, falling back to N+1",
-                         len(graph.get("resources", [])))
-                use_batch = False
+                for gr in graph.get("resources", []):
+                    gr_uri = gr.get("uri", "")
+                    if gr_uri not in cand_set:
+                        parsed = _parse_eml_entry(gr)
+                        if any(k in parsed["contentType"] for k in PROP_KEYWORDS):
+                            _unresolved_props.append(parsed)
+                log.info("graph_search: %d resources, %d unresolved properties → will map via SupportingRepresentation",
+                         len(graph.get("resources", [])), len(_unresolved_props))
 
             log.info("graph_search: %d resources, %d links, %d candidates with sources",
                      len(graph.get("resources", [])), len(graph.get("links", [])), len(sources_by_uri))
             backend = "REST+Discovery"
-            # If graph_search returned no source links, fall back to N+1
-            # (some etp-client versions don't support scope=sources)
-            if not sources_by_uri:
+            # If graph_search returned no source links AND no unresolved props,
+            # fall back to N+1.
+            if not sources_by_uri and not _unresolved_props:
                 log.debug("graph_search returned no source links, falling back to N+1")
                 use_batch = False
         except Exception as e:
@@ -1469,15 +1482,31 @@ async def _deep_search_rest(
             use_batch = False
 
     if not use_batch:
-        # N+1 fallback: fetch sources concurrently in batches
+        # N+1 fallback: fetch sources AND targets concurrently.
+        # In RESQML, properties reference representations (as targets),
+        # so we need both directions to find property associations
+        # regardless of the candidate type.
         _CONCURRENCY = 10
 
         async def _fetch_sources(r: Dict[str, Any]) -> None:
             tn = r["_resolved_type"]
             uri = r.get("uri", "") or f"_fake_/{r['uuid']}"
             try:
-                raw = await _gql_or_rest_list_sources(token, dataspace, tn, r["uuid"])
-                sources_by_uri[uri] = [_parse_eml_entry(s) for s in raw]
+                raw_src = await _gql_or_rest_list_sources(token, dataspace, tn, r["uuid"])
+                raw_tgt = await _gql_or_rest_list_targets(token, dataspace, tn, r["uuid"])
+                # Start with sources (all directions preserved for relations)
+                merged = [_parse_eml_entry(s) for s in raw_src]
+                seen = {p["uuid"] for p in merged if p["uuid"]}
+                # Add only property-type targets (to discover properties that
+                # reference this representation); non-property targets are
+                # fetched separately in the relations step.
+                for entry in raw_tgt:
+                    parsed = _parse_eml_entry(entry)
+                    ct = parsed.get("contentType", "")
+                    if parsed["uuid"] not in seen and any(k in ct for k in PROP_KEYWORDS):
+                        seen.add(parsed["uuid"])
+                        merged.append(parsed)
+                sources_by_uri[uri] = merged
             except Exception as e:
                 warnings.append(f"{r['title']}: sources failed: {e}")
                 sources_by_uri[uri] = []
@@ -1492,6 +1521,8 @@ async def _deep_search_rest(
 
     # ── Step 3: Batch-fetch property content for kind/UOM enrichment ─────
     # Collect property URIs, then fetch all at once via batch_get_content.
+    # Also include unresolved properties from graph_search (if any) so we
+    # can map them to candidates via SupportingRepresentation.
     prop_uri_map: Dict[str, str] = {}  # uuid → uri
     for r in candidates:
         r_uri = r.get("uri", "") or f"_fake_/{r['uuid']}"
@@ -1501,6 +1532,14 @@ async def _deep_search_rest(
                 p_uri = ps.get("uri", "")
                 if p_uuid and p_uri:
                     prop_uri_map[p_uuid] = p_uri
+
+    # Add unresolved properties (from graph_search with no candidate links)
+    _unresolved_by_uuid: Dict[str, Dict[str, str]] = {}
+    if _unresolved_props:
+        for up in _unresolved_props:
+            if up["uuid"] and up.get("uri"):
+                prop_uri_map[up["uuid"]] = up["uri"]
+                _unresolved_by_uuid[up["uuid"]] = up
 
     if prop_uri_map and use_batch:
         try:
@@ -1519,6 +1558,14 @@ async def _deep_search_rest(
                     uom = obj.get("UOM") or obj.get("Uom") or None
                     title = (obj.get("Citation") or {}).get("Title", "") or ""
                     _kind_cache[obj_uuid] = (kind, uom, title)
+
+                    # Map unresolved properties to candidates via SupportingRepresentation
+                    if obj_uuid in _unresolved_by_uuid:
+                        sup_ref = obj.get("SupportingRepresentation") or {}
+                        sup_uuid = str(sup_ref.get("UUID") or sup_ref.get("Uuid") or sup_ref.get("uuid") or "")
+                        if sup_uuid and sup_uuid in _cand_uuid_to_uri:
+                            c_uri = _cand_uuid_to_uri[sup_uuid]
+                            sources_by_uri.setdefault(c_uri, []).append(_unresolved_by_uuid[obj_uuid])
         except Exception as e:
             log.debug("batch_get_content failed (%s), will fetch individually", e)
 
