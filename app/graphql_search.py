@@ -1654,6 +1654,17 @@ async def _deep_search_rest(
 # _deep_search_rest, activated when RDDMS_DISCOVERY_ENABLED is True.
 
 
+# ── Validation helpers ──────────────────────────────────────────────────
+_VALID_DIRECTIONS = {"sources", "targets", "both"}
+
+
+def validate_object_relations_direction(direction: str) -> Optional[str]:
+    """Return an error message if *direction* is invalid, else None."""
+    if direction.lower() not in _VALID_DIRECTIONS:
+        return f"Invalid direction '{direction}'. Must be one of: {', '.join(sorted(_VALID_DIRECTIONS))}"
+    return None
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Deep search - resolver implementation (called from Query.deep_search)
 # ──────────────────────────────────────────────────────────────────────────────
