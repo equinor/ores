@@ -1493,19 +1493,29 @@ async def _deep_search_rest(
             uri = r.get("uri", "") or f"_fake_/{r['uuid']}"
             try:
                 raw_src = await _gql_or_rest_list_sources(token, dataspace, tn, r["uuid"])
-                raw_tgt = await _gql_or_rest_list_targets(token, dataspace, tn, r["uuid"])
-                # Start with sources (all directions preserved for relations)
                 merged = [_parse_eml_entry(s) for s in raw_src]
-                seen = {p["uuid"] for p in merged if p["uuid"]}
-                # Add only property-type targets (to discover properties that
-                # reference this representation); non-property targets are
-                # fetched separately in the relations step.
-                for entry in raw_tgt:
-                    parsed = _parse_eml_entry(entry)
-                    ct = parsed.get("contentType", "")
-                    if parsed["uuid"] not in seen and any(k in ct for k in PROP_KEYWORDS):
-                        seen.add(parsed["uuid"])
-                        merged.append(parsed)
+
+                # Also fetch /targets to discover properties that reference
+                # this representation (e.g. ContinuousProperty → Grid).
+                # Only needed when properties are requested or filtered.
+                _need_props = (property_filter is not None
+                               or include_statistics or include_sample_values)
+                if _need_props:
+                    # Check if /sources already returned property types
+                    has_prop_sources = any(
+                        any(k in p.get("contentType", "") for k in PROP_KEYWORDS)
+                        for p in merged
+                    )
+                    if not has_prop_sources:
+                        raw_tgt = await _gql_or_rest_list_targets(token, dataspace, tn, r["uuid"])
+                        seen = {p["uuid"] for p in merged if p["uuid"]}
+                        for entry in raw_tgt:
+                            parsed = _parse_eml_entry(entry)
+                            ct = parsed.get("contentType", "")
+                            if parsed["uuid"] not in seen and any(k in ct for k in PROP_KEYWORDS):
+                                seen.add(parsed["uuid"])
+                                merged.append(parsed)
+
                 sources_by_uri[uri] = merged
             except Exception as e:
                 warnings.append(f"{r['title']}: sources failed: {e}")
@@ -1541,7 +1551,7 @@ async def _deep_search_rest(
                 prop_uri_map[up["uuid"]] = up["uri"]
                 _unresolved_by_uuid[up["uuid"]] = up
 
-    if prop_uri_map and use_batch:
+    if prop_uri_map:
         try:
             uris = list(prop_uri_map.values())[:150]
             batch_objs = await osdu.batch_get_content(token, uris)
