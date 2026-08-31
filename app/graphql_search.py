@@ -1423,17 +1423,45 @@ async def _deep_search_rest(
                 token, candidate_uris, scope="sources", depth=1,
                 data_object_types=[], count_objects=include_relations,
             )
-            # Index resources by URI
+            # graph_search merges all source subgraphs into one flat result.
+            # The links are internal edges between discovered resources,
+            # NOT candidate→source mappings.  Build the source map by:
+            #  1) Checking if any links reference candidate URIs (ideal case)
+            #  2) If not, assign all discovered property resources to each
+            #     candidate (broadcast mode — correct for single-type queries).
             _res_by_uri: Dict[str, Dict[str, Any]] = {
                 gr.get("uri", ""): gr for gr in graph.get("resources", [])
             }
-            # Build source map from graph links
+            cand_set = set(candidate_uris)
+
+            # Try link-based mapping first
             for link in graph.get("links", []):
                 src_uri = link.get("source", "")
                 tgt_uri = link.get("target", "")
                 if src_uri and tgt_uri:
-                    parsed = _parse_eml_entry(_res_by_uri.get(src_uri, {"uri": src_uri}))
-                    sources_by_uri.setdefault(tgt_uri, []).append(parsed)
+                    # src→tgt edge:  if tgt is a candidate, src is a source of it
+                    if tgt_uri in cand_set:
+                        parsed = _parse_eml_entry(_res_by_uri.get(src_uri, {"uri": src_uri}))
+                        sources_by_uri.setdefault(tgt_uri, []).append(parsed)
+                    # src→tgt edge:  if src is a candidate, tgt is a source of it (reverse)
+                    elif src_uri in cand_set:
+                        parsed = _parse_eml_entry(_res_by_uri.get(tgt_uri, {"uri": tgt_uri}))
+                        sources_by_uri.setdefault(src_uri, []).append(parsed)
+
+            # If no links involve candidates, broadcast all non-candidate
+            # resources as potential sources for every candidate.
+            if not sources_by_uri and graph.get("resources"):
+                all_sources_parsed = []
+                for gr in graph.get("resources", []):
+                    gr_uri = gr.get("uri", "")
+                    if gr_uri not in cand_set:
+                        all_sources_parsed.append(_parse_eml_entry(gr))
+                if all_sources_parsed:
+                    for c_uri in candidate_uris:
+                        sources_by_uri[c_uri] = list(all_sources_parsed)
+                    log.info("graph_search broadcast: %d source objects → %d candidates",
+                             len(all_sources_parsed), len(candidate_uris))
+
             log.info("graph_search: %d resources, %d links, %d candidates with sources",
                      len(graph.get("resources", [])), len(graph.get("links", [])), len(sources_by_uri))
             backend = "REST+Discovery"
@@ -1502,6 +1530,7 @@ async def _deep_search_rest(
 
     # ── Step 4: Build result objects ─────────────────────────────────────
     matched: List[ResqmlObject] = []
+    _array_cache: Dict[str, tuple] = {}  # uuid → (arr_result, arr_passes)
 
     for r in candidates:
         if len(matched) >= limit:
@@ -1573,10 +1602,14 @@ async def _deep_search_rest(
 
             # Array statistics / filtering
             if include_statistics or include_sample_values or (property_filter and property_filter.array_filter):
-                arr_result, arr_passes = await _enrich_property_via_rest(
-                    token, dataspace, p_type, p_uuid, prop_info,
-                    property_filter, include_statistics, include_sample_values, sample_size,
-                )
+                if p_uuid in _array_cache:
+                    arr_result, arr_passes = _array_cache[p_uuid]
+                else:
+                    arr_result, arr_passes = await _enrich_property_via_rest(
+                        token, dataspace, p_type, p_uuid, prop_info,
+                        property_filter, include_statistics, include_sample_values, sample_size,
+                    )
+                    _array_cache[p_uuid] = (arr_result, arr_passes)
                 prop_info.arrays = arr_result
                 if arr_passes:
                     passes_filter = True
