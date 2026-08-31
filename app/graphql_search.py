@@ -1448,19 +1448,13 @@ async def _deep_search_rest(
                         parsed = _parse_eml_entry(_res_by_uri.get(tgt_uri, {"uri": tgt_uri}))
                         sources_by_uri.setdefault(src_uri, []).append(parsed)
 
-            # If no links involve candidates, broadcast all non-candidate
-            # resources as potential sources for every candidate.
+            # If no links involve candidates, fall back to N+1 per-candidate
+            # source fetches (broadcast would incorrectly assign all properties
+            # to all candidates).
             if not sources_by_uri and graph.get("resources"):
-                all_sources_parsed = []
-                for gr in graph.get("resources", []):
-                    gr_uri = gr.get("uri", "")
-                    if gr_uri not in cand_set:
-                        all_sources_parsed.append(_parse_eml_entry(gr))
-                if all_sources_parsed:
-                    for c_uri in candidate_uris:
-                        sources_by_uri[c_uri] = list(all_sources_parsed)
-                    log.info("graph_search broadcast: %d source objects → %d candidates",
-                             len(all_sources_parsed), len(candidate_uris))
+                log.info("graph_search: %d resources but no links reference candidates, falling back to N+1",
+                         len(graph.get("resources", [])))
+                use_batch = False
 
             log.info("graph_search: %d resources, %d links, %d candidates with sources",
                      len(graph.get("resources", [])), len(graph.get("links", [])), len(sources_by_uri))
