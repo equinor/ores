@@ -232,7 +232,9 @@ async def _rest_list_resources(token: str, ds: str, typ: str, limit: int = 100) 
         title = parsed["name"] or (r.get("Citation") or {}).get("Title", "")
         if not uid:
             continue  # skip entries we can't identify
-        items.append({"uuid": str(uid), "title": title, "type_name": typ, "raw": r})
+        # Build EML URI for graph_search batch operations
+        uri = parsed.get("uri") or r.get("uri") or f"eml:///dataspace('{ds}')/{typ}({uid})"
+        items.append({"uuid": str(uid), "title": title, "type_name": typ, "uri": uri, "raw": r})
     return items
 
 
@@ -1432,7 +1434,14 @@ async def _deep_search_rest(
                 if src_uri and tgt_uri:
                     parsed = _parse_eml_entry(_res_by_uri.get(src_uri, {"uri": src_uri}))
                     sources_by_uri.setdefault(tgt_uri, []).append(parsed)
+            log.info("graph_search: %d resources, %d links, %d candidates with sources",
+                     len(graph.get("resources", [])), len(graph.get("links", [])), len(sources_by_uri))
             backend = "REST+Discovery"
+            # If graph_search returned no source links, fall back to N+1
+            # (some etp-client versions don't support scope=sources)
+            if not sources_by_uri:
+                log.debug("graph_search returned no source links, falling back to N+1")
+                use_batch = False
         except Exception as e:
             log.debug("graph_search unavailable (%s), using N+1 fallback", e)
             use_batch = False

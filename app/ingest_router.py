@@ -299,12 +299,12 @@ async def _build_rddms_manifest(
         "Content-Type": "application/json",
     }
 
-    # Defaults matching osdu.py conventions
+    # Defaults from active instance (set by instances._apply_instance())
     partition_suffix = f"{partition}.dataservices.energy"
-    legal_tag = legal_tag or f"{partition}-equinor-private-default"
-    owners = owners or [f"data.default.owners@{partition_suffix}"]
-    viewers = viewers or [f"data.default.viewers@{partition_suffix}"]
-    countries = countries or ["NO"]
+    legal_tag = legal_tag or _osdu_mod.DEFAULT_LEGAL_TAG or f"{partition}-private-default"
+    owners = owners or _osdu_mod.DEFAULT_OWNERS or [f"data.default.owners@{partition_suffix}"]
+    viewers = viewers or _osdu_mod.DEFAULT_VIEWERS or [f"data.default.viewers@{partition_suffix}"]
+    countries = countries or _osdu_mod.DEFAULT_COUNTRIES or ["US"]
 
     if uris:
         body_uris = list(uris)

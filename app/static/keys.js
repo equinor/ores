@@ -647,6 +647,9 @@ function renderObjectCard(obj) {
           <strong style="color:${colors.fg};font-size:14px;">${esc(obj.title)}</strong>
           <span class="tag" style="background:${colors.bg};color:${colors.fg};border:1px solid ${colors.border};">${tShort}</span>
           <span style="font-size:10px;font-family:monospace;color:#9e9e9e;" title="${esc(obj.uuid)}">${esc(obj.uuid.substring(0,8))}…</span>
+          <a href="#" onclick="inspectObject('${esc(obj.typeName)}','${esc(obj.uuid)}');return false;"
+             style="font-size:11px;color:#0078d4;text-decoration:none;margin-left:auto;cursor:pointer;"
+             title="Load in Object browser above">🔍 Inspect</a>
         </div>`;
 
   // Relations (rendered as compact pills)
@@ -657,7 +660,8 @@ function renderObjectCard(obj) {
       const arrow = r.direction === 'target' ? '→' : '←';
       const rCat = (_refData.resqmlTypes.find(t => t.name === r.typeName) || {}).category || '';
       const rc = TYPE_COLORS[rCat] || DEFAULT_COLOR;
-      html += `<span style="font-size:11px;padding:2px 6px;background:${rc.bg};color:${rc.fg};border:1px solid ${rc.border};border-radius:3px;" title="${esc(r.typeName)}">${arrow} ${esc(r.name || r.uuid?.substring(0,8) || '?')} <span style='color:#9e9e9e;font-size:10px;'>${rType}</span></span>`;
+      const inspectLink = r.uuid ? ` onclick="inspectObject('${esc(r.typeName)}','${esc(r.uuid)}');return false;" style="cursor:pointer;font-size:11px;padding:2px 6px;background:${rc.bg};color:${rc.fg};border:1px solid ${rc.border};border-radius:3px;text-decoration:none;"` : ` style="font-size:11px;padding:2px 6px;background:${rc.bg};color:${rc.fg};border:1px solid ${rc.border};border-radius:3px;"`;
+      html += `<a href="#"${inspectLink} title="${esc(r.typeName)}${r.uuid ? ' — click to inspect' : ''}">${arrow} ${esc(r.name || r.uuid?.substring(0,8) || '?')} <span style='color:#9e9e9e;font-size:10px;'>${rType}</span></a>`;
     });
     html += '</div>';
   }
@@ -768,6 +772,9 @@ $('mode-advanced').addEventListener('click', () => {
   $('advanced-panel').style.display = '';
   $('mode-advanced').style.background = 'transparent'; $('mode-advanced').style.color = 'var(--eq-red, #FF1243)'; $('mode-advanced').style.fontWeight = '600'; $('mode-advanced').style.borderBottom = '2px solid var(--eq-red, #FF1243)';
   $('mode-easy').style.background = 'transparent'; $('mode-easy').style.color = '#605e5c'; $('mode-easy').style.fontWeight = '500'; $('mode-easy').style.borderBottom = '2px solid transparent';
+  // Sync the GraphQL editor with the current preset (may have been set by Easy Mode button)
+  gqlLoadPreset();
+  setTimeout(autoSizeEditor, 0);
 });
 
 // ── Easy Mode event handlers ──────────────────────────────────────────────
@@ -1824,6 +1831,61 @@ document.addEventListener('keydown', (e) => {
     $('array-popup-overlay').classList.remove('open');
   }
 });
+
+/**
+ * inspectObject - called from result card "Inspect" links.
+ * Sets the type/object selectors and loads details in the Object browser.
+ */
+async function inspectObject(typeName, uuid) {
+  // Ensure a dataspace is selected
+  if (!dsSel.value) return;
+  // Set type selector (add option if missing)
+  let found = false;
+  for (const o of typSel.options) {
+    if (o.value === typeName) { typSel.value = typeName; found = true; break; }
+  }
+  if (!found) {
+    const o = document.createElement('option');
+    o.value = typeName;
+    o.textContent = typeName;
+    typSel.appendChild(o);
+    typSel.value = typeName;
+  }
+  // Load objects for this type, then select the UUID
+  try {
+    const qp = `ds=${encodeURIComponent(dsSel.value)}&typ=${encodeURIComponent(typeName)}`;
+    const r = await fetch(`/keys/objects.json?${qp}`, { credentials: 'same-origin' });
+    const objs = await r.json();
+    objSel.innerHTML = '';
+    (objs || []).forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item.uuid || item.id || '';
+      opt.textContent = `${item.title || item.uuid || '?'}`;
+      if (item.uri) opt.setAttribute('data-uri', item.uri);
+      objSel.appendChild(opt);
+    });
+    // Select the target UUID
+    for (const o of objSel.options) {
+      if (o.value === uuid) { objSel.value = uuid; break; }
+    }
+    if (!objSel.value && uuid) {
+      // UUID not in list — add it manually
+      const opt = document.createElement('option');
+      opt.value = uuid;
+      opt.textContent = uuid;
+      objSel.appendChild(opt);
+      objSel.value = uuid;
+    }
+  } catch (e) {
+    // If object list fails, just set UUID directly
+    objSel.innerHTML = `<option value="${esc(uuid)}">${esc(uuid)}</option>`;
+    objSel.value = uuid;
+  }
+  // Scroll to the object browser section and load details
+  document.getElementById('object-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  loadDetails();
+}
+window.inspectObject = inspectObject;  // expose for onclick in rendered HTML
 
 async function loadDetails() {
   const ds = dsSel.value, typ = typSel.value, uuid = objSel.value;
@@ -2899,8 +2961,7 @@ const GQL_PRESETS = {
     typeName: "resqml20.obj_Grid2dRepresentation"
     includeRelations: true
     includeStatistics: true
-    includeSampleValues: true
-    limit: 10
+    limit: 6
   ) {
     backend totalScanned totalMatched queryDescription
     objects {
@@ -2909,7 +2970,6 @@ const GQL_PRESETS = {
       properties {
         title kind uom
         statistics { count minValue maxValue mean stdDev }
-        arrays { path totalElements statistics { count minValue maxValue mean stdDev } sampleValues }
       }
     }
   }
@@ -2963,7 +3023,7 @@ const GQL_PRESETS = {
     searchRddms: true
     includeRelations: true
     relationFilter: ["Grid2d", "PointSet", "Boundary", "Stratigraphic", "TriangulatedSet"]
-    limit: 10
+    limit: 6
   ) {
     totalCatalog totalLocalRddms totalMerged sources
     hits {
@@ -2987,7 +3047,7 @@ const GQL_PRESETS = {
     searchCatalog: true
     searchRddms: true
     includeRelations: true
-    limit: 10
+    limit: 6
   ) {
     totalCatalog totalLocalRddms totalMerged sources
     hits {
@@ -3071,7 +3131,7 @@ const GQL_PRESETS = {
     $DS_ARG
     typeName: "resqml20.obj_WellboreTrajectoryRepresentation"
     includeRelations: true
-    limit: 10
+    limit: 6
   ) {
     backend totalScanned totalMatched queryDescription
     objects {
@@ -3085,7 +3145,7 @@ const GQL_PRESETS = {
     includeRelations: true
     includeStatistics: true
     propertyFilter: { kind: "porosity" }
-    limit: 5
+    limit: 2
   ) {
     totalMatched
     objects {
@@ -3145,7 +3205,7 @@ const GQL_PRESETS = {
     $DS_ARG
     typeName: "resqml20.obj_WellboreMarkerFrameRepresentation"
     includeRelations: true
-    limit: 20
+    limit: 10
   ) {
     backend totalScanned totalMatched queryDescription
     objects {
@@ -3331,7 +3391,7 @@ const GQL_PRESETS = {
     typeName: "resqml20.obj_WellboreFrameRepresentation"
     includeStatistics: true
     includeRelations: true
-    limit: 14
+    limit: 9
   ) {
     backend totalScanned totalMatched
     objects {
@@ -3352,7 +3412,7 @@ const GQL_PRESETS = {
       titleContains: "Horizontal Permeability"
       arrayFilter: { operator: GT, threshold: 500.0 }
     }
-    limit: 14
+    limit: 9
   ) {
     totalMatched
     objects {
@@ -3369,7 +3429,7 @@ const GQL_PRESETS = {
     typeName: "resqml20.obj_GridConnectionSetRepresentation"
     includeRelations: true
     includeStatistics: true
-    limit: 5
+    limit: 3
   ) {
     totalMatched
     objects {
@@ -3561,7 +3621,7 @@ const GQL_PRESETS = {
     typeName: "resqml20.obj_GridConnectionSetRepresentation"
     includeRelations: true
     includeStatistics: true
-    limit: 5
+    limit: 3
   ) {
     totalMatched
     objects {
@@ -3578,7 +3638,7 @@ const GQL_PRESETS = {
     typeName: "resqml20.obj_WellboreTrajectoryRepresentation"
     titleContains: "Drilled"
     includeRelations: true
-    limit: 18
+    limit: 9
   ) {
     totalMatched
     objects {

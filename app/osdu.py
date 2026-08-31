@@ -50,7 +50,7 @@ def _partition_suffix() -> str:
 # Sensible defaults for the "Create Dataspace" form (can be overridden in env)
 DEFAULT_LEGAL_TAG: str = os.getenv(
     "DEFAULT_LEGAL_TAG",
-    f"{DATA_PARTITION_ID}-equinor-private-default" if DATA_PARTITION_ID else "dev-equinor-private-default",
+    f"{DATA_PARTITION_ID}-private-default" if DATA_PARTITION_ID else "dev-private-default",
 )
 
 _default_owners = os.getenv("DEFAULT_OWNERS", f"data.default.owners@{_partition_suffix()}" if _partition_suffix() else "")

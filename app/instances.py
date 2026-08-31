@@ -338,7 +338,7 @@ def _apply_instance(inst: OsduInstance):
     except Exception:
         pass  # Best-effort; next request will create a new client anyway
     osdu_mod.DEFAULT_LEGAL_TAG = inst.default_legal_tag or (
-        f"{inst.data_partition_id}-equinor-private-default" if inst.data_partition_id else ""
+        f"{inst.data_partition_id}-private-default" if inst.data_partition_id else ""
     )
     pfx = inst._partition_suffix()
     osdu_mod.DEFAULT_OWNERS = [x.strip() for x in (inst.default_owners or f"data.default.owners@{pfx}").split(",") if x.strip()]
