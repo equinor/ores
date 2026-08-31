@@ -581,6 +581,17 @@ async function runFieldDevPreset(presetKey) {
   const tpl = GQL_PRESETS[presetKey];
   if (!tpl) return;
 
+  // Ensure a dataspace is selected — if not, try to restore last used or show error
+  if (!dsSel.value && dsSel.options.length > 0) {
+    // Auto-select first available dataspace
+    dsSel.selectedIndex = 0;
+  }
+  if (!dsSel.value || dsSel.value === 'default') {
+    $('ez-status').textContent = 'Select a dataspace first';
+    $('ez-status').style.color = '#a80000';
+    return;
+  }
+
   // Extract explanation from comment lines
   const lines = tpl.split('\n');
   const explanation = lines
@@ -596,7 +607,8 @@ async function runFieldDevPreset(presetKey) {
   query = query.replace(/\$DS/g, gqlCurrentDs());
 
   $('ez-status').textContent = 'Running field dev query…';
-  $('ez-results').innerHTML = '';
+  $('ez-status').style.color = '#605e5c';
+  $('ez-results').innerHTML = '<div style="padding:12px;color:#605e5c;">Loading…</div>';
 
   try {
     const resp = await fetch('/api/graphql/query', {
@@ -620,6 +632,8 @@ async function runFieldDevPreset(presetKey) {
     gqlPreset.value = presetKey;
   } catch (e) {
     $('ez-status').textContent = 'Request failed: ' + e.message;
+    $('ez-status').style.color = '#a80000';
+    $('ez-results').innerHTML = `<pre style="color:#a80000;font-size:12px;padding:8px;background:#fde7e9;border-radius:4px;">${esc(e.message)}</pre>`;
   }
 }
 
@@ -629,11 +643,24 @@ function renderObjectCard(obj) {
   const colors = TYPE_COLORS[cat] || DEFAULT_COLOR;
 
   let html = `<div style="margin-bottom:10px;border:1px solid ${colors.border};border-radius:6px;overflow:hidden;">
-        <div style="padding:8px 12px;background:${colors.bg};display:flex;align-items:center;gap:10px;border-bottom:1px solid ${colors.border};">
-          <span style="font-size:11px;font-family:monospace;color:#605e5c;user-select:all;">${esc(obj.uuid)}</span>
+        <div style="padding:8px 12px;background:${colors.bg};display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid ${colors.border};">
           <strong style="color:${colors.fg};font-size:14px;">${esc(obj.title)}</strong>
           <span class="tag" style="background:${colors.bg};color:${colors.fg};border:1px solid ${colors.border};">${tShort}</span>
+          <span style="font-size:10px;font-family:monospace;color:#9e9e9e;" title="${esc(obj.uuid)}">${esc(obj.uuid.substring(0,8))}…</span>
         </div>`;
+
+  // Relations (rendered as compact pills)
+  if (obj.relations && obj.relations.length) {
+    html += '<div style="padding:6px 12px;display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid #f0f0f0;">';
+    obj.relations.forEach(r => {
+      const rType = (r.typeName || '').replace(/^resqml\d+\.obj_/, '');
+      const arrow = r.direction === 'target' ? '→' : '←';
+      const rCat = (_refData.resqmlTypes.find(t => t.name === r.typeName) || {}).category || '';
+      const rc = TYPE_COLORS[rCat] || DEFAULT_COLOR;
+      html += `<span style="font-size:11px;padding:2px 6px;background:${rc.bg};color:${rc.fg};border:1px solid ${rc.border};border-radius:3px;" title="${esc(r.typeName)}">${arrow} ${esc(r.name || r.uuid?.substring(0,8) || '?')} <span style='color:#9e9e9e;font-size:10px;'>${rType}</span></span>`;
+    });
+    html += '</div>';
+  }
 
   if (obj.properties && obj.properties.length) {
     html += '<div style="padding:8px 12px;">';
@@ -3394,6 +3421,7 @@ const GQL_PRESETS = {
   wells: deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_WellboreTrajectoryRepresentation"
+    titleContains: "Drilled"
     includeRelations: true
     limit: 12
   ) {
@@ -3548,6 +3576,7 @@ const GQL_PRESETS = {
   wells: deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_WellboreTrajectoryRepresentation"
+    titleContains: "Drilled"
     includeRelations: true
     limit: 18
   ) {
@@ -3580,7 +3609,7 @@ GQL_PRESETS.field_grid_inventory = `# FIELD DEV: Grid property inventory (REST-c
     typeName: "resqml20.obj_IjkGridRepresentation"
     includeStatistics: true
     includeRelations: true
-    limit: 5
+    limit: 2
   ) {
     backend totalScanned totalMatched warnings
     objects {
@@ -3597,7 +3626,7 @@ GQL_PRESETS.field_grid_inventory = `# FIELD DEV: Grid property inventory (REST-c
     typeName: "resqml20.obj_WellboreFrameRepresentation"
     includeStatistics: true
     includeRelations: true
-    limit: 10
+    limit: 3
   ) {
     totalScanned totalMatched
     objects {
@@ -3612,10 +3641,17 @@ function gqlSelectedDataspaces() {
   return Array.from(dsSel.selectedOptions).map(o => o.value);
 }
 
+let _lastUsedDs = '';
+
 function gqlCurrentDs() {
   // Returns first selected for single-dataspace presets
   const sel = gqlSelectedDataspaces();
-  return sel.length > 0 ? sel[0] : 'default';
+  if (sel.length > 0) {
+    _lastUsedDs = sel[0];
+    return sel[0];
+  }
+  // Fall back to last used dataspace (avoids "default" after deselection)
+  return _lastUsedDs || 'default';
 }
 
 function gqlDataspacesArg() {
