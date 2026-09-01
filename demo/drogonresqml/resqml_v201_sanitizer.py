@@ -322,6 +322,22 @@ def _ensure_domain_element(root: etree._Element, obj_type: str):
     root.insert(idx, domain_el)
 
 
+# ── xsi:type on Hdf5Dataset elements ─────────────────────────────────────
+
+def _ensure_hdf5dataset_xsi_type(root: etree._Element):
+    """Add xsi:type="eml20:Hdf5Dataset" on elements containing PathInHdfFile.
+
+    Without this, the ETP server returns JSON without $type on the Values
+    object, and findDataArrays() cannot discover array references.
+    """
+    for elem in root.iter():
+        local = etree.QName(elem.tag).localname
+        if local == "PathInHdfFile":
+            parent = elem.getparent()
+            if parent is not None and f"{XSI}type" not in parent.attrib:
+                parent.set(f"{XSI}type", "eml20:Hdf5Dataset")
+
+
 # ── xsi:type on root element ─────────────────────────────────────────────
 
 def _ensure_root_xsi_type(root: etree._Element, obj_type: str):
@@ -416,6 +432,9 @@ def sanitize_object_xml(xml_bytes: bytes, obj_type: str) -> bytes:
 
     # 11. Ensure AbstractObject elements are in XSD order
     _reorder_abstract_object_elements(root)
+
+    # 12. Add xsi:type on Hdf5Dataset elements (needed for array discovery)
+    _ensure_hdf5dataset_xsi_type(root)
 
     # Serialize with declaration
     return etree.tostring(root, xml_declaration=True, encoding="UTF-8",

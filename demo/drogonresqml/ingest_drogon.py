@@ -8,17 +8,18 @@ Supports:  interop, eqndev  (any instance configured in k8s/configmap.yaml)
 Steps:
   1. Authenticate (reads auth mode from instance config)
   2. Create dataspace demo/drogon on target RDDMS
-  3. Import drogon.epc via ETP (osdu-etp-sslclient Docker image)
+  3. Upload EPC (+H5 arrays) via REST or import EPC via Docker ETP CLI
   4. Verify import via REST
   5. Build/load OSDU manifest (comprehensive, from EPC)
   6. Patch manifest with target instance ACLs/partition
   7. Push to OSDU catalog (Workflow or Storage API)
 
 Usage:
-  python demo/drogonresqml/ingest_drogon.py interop              # full pipeline
-  python demo/drogonresqml/ingest_drogon.py eqndev               # full pipeline
+  python demo/drogonresqml/ingest_drogon.py interop              # legacy Docker CLI (no arrays)
+  python demo/drogonresqml/ingest_drogon.py interop --rest-upload # REST EPC+H5 (with arrays!)
+  python demo/drogonresqml/ingest_drogon.py interop --rest-upload --local  # via localhost:8080
+  python demo/drogonresqml/ingest_drogon.py interop --rest-upload --validate --auto-ingest records
   python demo/drogonresqml/ingest_drogon.py eqndev --skip-etp    # manifest only
-  python demo/drogonresqml/ingest_drogon.py eqndev --save-only   # build + save, no push
   python demo/drogonresqml/ingest_drogon.py eqndev --dry-run     # no remote changes
 """
 from __future__ import annotations
@@ -46,6 +47,7 @@ from _auth import get_token, load_instance  # noqa: E402
 DATASPACE_DEFAULT = "maap/drogon"
 DATASPACE_OVERRIDE = {}
 EPC_FILE = SCRIPT_DIR / "drogon.epc"
+H5_FILE = SCRIPT_DIR / "drogon.h5"
 IMAGE_SSL = "osdu-etp-sslclient"
 
 # Drogon project CRS: WGS84 / UTM zone 37N (EPSG:32637) – synthetic model
@@ -210,8 +212,8 @@ def create_dataspace_etp(token: str, cfg: InstanceConfig) -> bool:
 # ═══════════════════════════════════════════════════════════════════════════
 
 def import_epc(token: str, cfg: InstanceConfig) -> bool:
-    """Import drogon.epc into the target RDDMS via ETP."""
-    print(f"\n=== 3. Import EPC via ETP ===")
+    """Import drogon.epc into the target RDDMS via ETP (Docker CLI, no H5)."""
+    print(f"\n=== 3. Import EPC via ETP (legacy, no arrays) ===")
 
     tok_file = SCRIPT_DIR / ".etp_token"
     tok_file.write_text(token)
@@ -240,6 +242,105 @@ def import_epc(token: str, cfg: InstanceConfig) -> bool:
         return True
     print(f"  ✗ EPC import failed (rc={result.returncode})")
     return False
+
+
+def upload_epc_rest(
+    token: str,
+    cfg: InstanceConfig,
+    *,
+    validate: str = "false",
+    auto_ingest: str | None = None,
+    local: bool = False,
+) -> bool:
+    """Upload EPC+H5 via the REST multipart upload route.
+
+    This uploads both drogon.epc and drogon.h5 so that array data
+    (statistics, property values) is stored in the ETP server.
+
+    Args:
+        validate: "false", "true", or "strict"
+        auto_ingest: None, "records", or "workflow"
+        local: use localhost:8080 instead of remote RDDMS
+    """
+    print(f"\n=== 3. Upload EPC+H5 via REST ===")
+
+    if not EPC_FILE.exists():
+        print(f"  ✗ EPC file not found: {EPC_FILE}")
+        return False
+
+    ds_enc = cfg.dataspace.replace("/", "%2F")
+    base = "http://localhost:8080/api/reservoir-ddms/v2" if local else cfg.base_rddms
+    url = f"{base}/dataspaces/{ds_enc}/epc/upload"
+
+    params: dict[str, str] = {}
+    if validate != "false":
+        params["validate"] = validate
+    if auto_ingest:
+        params["autoIngest"] = auto_ingest
+
+    files: list[tuple[str, tuple[str, ...]]] = [
+        ("epc", (EPC_FILE.name, open(EPC_FILE, "rb"),
+                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")),
+    ]
+    if H5_FILE.exists():
+        h5_size_mb = H5_FILE.stat().st_size / 1024 / 1024
+        print(f"  H5 file: {H5_FILE.name} ({h5_size_mb:.1f} MB)")
+        files.append(
+            ("h5", (H5_FILE.name, open(H5_FILE, "rb"), "application/x-hdf5"))
+        )
+    else:
+        print(f"  ⚠ No H5 file found at {H5_FILE} — uploading EPC only (no arrays)")
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "data-partition-id": cfg.partition,
+    }
+
+    print(f"  Uploading {EPC_FILE.name}" + (f" + {H5_FILE.name}" if H5_FILE.exists() else ""))
+    print(f"  → {url}")
+    if params:
+        print(f"  Params: {params}")
+
+    try:
+        r = httpx.post(
+            url, headers=headers, files=files, params=params,
+            timeout=httpx.Timeout(600.0, connect=30.0),
+        )
+    finally:
+        for _, (_, fobj, _) in files:
+            fobj.close()
+
+    if r.is_success:
+        body = r.json()
+        obj_count = body.get("objectsStored", "?")
+        arr_count = body.get("arraysStored", "?")
+        h5_size = body.get("h5DataSize", 0)
+        print(f"  ✓ Upload succeeded: {obj_count} objects, {arr_count} arrays")
+        if h5_size:
+            print(f"    H5 data transferred: {h5_size / 1024 / 1024:.1f} MB")
+        warnings = body.get("warnings", [])
+        if warnings:
+            print(f"    ⚠ {len(warnings)} warning(s):")
+            for w in warnings[:10]:
+                print(f"      [{w.get('phase','')}] {w.get('message','')}")
+        validation = body.get("validation")
+        if validation:
+            errs = validation.get("errors", [])
+            warns = validation.get("warnings", [])
+            print(f"    Validation: {len(errs)} error(s), {len(warns)} warning(s)")
+            for e in errs[:5]:
+                print(f"      ✗ {e}")
+        auto = body.get("autoIngest")
+        if auto:
+            print(f"    Auto-ingest: {auto}")
+        return True
+    else:
+        print(f"  ✗ Upload failed: {r.status_code}")
+        try:
+            print(f"    {r.json()}")
+        except Exception:
+            print(f"    {r.text[:500]}")
+        return False
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -545,6 +646,15 @@ def main():
                     help="Target OSDU instance name")
     ap.add_argument("--skip-etp", action="store_true",
                     help="Skip ETP import (manifest only)")
+    ap.add_argument("--rest-upload", action="store_true",
+                    help="Use REST multipart upload (EPC+H5) instead of Docker ETP CLI")
+    ap.add_argument("--local", action="store_true",
+                    help="Use localhost:8080 etp-client instead of remote RDDMS")
+    ap.add_argument("--validate", nargs="?", const="true", default="false",
+                    choices=["false", "true", "strict"],
+                    help="Run RESQML validation on upload (true=warn, strict=reject)")
+    ap.add_argument("--auto-ingest", choices=["records", "workflow"],
+                    help="Auto-ingest manifest after EPC upload (REST upload only)")
     ap.add_argument("--remote-manifest", action="store_true",
                     help="Use remote RDDMS manifest builder instead of local comprehensive manifest")
     ap.add_argument("--save-only", action="store_true",
@@ -565,6 +675,9 @@ def main():
     print(f"  Partition:  {cfg.partition}")
     print(f"  Legal:      {cfg.legal_tag}")
     print(f"  EPC:        {EPC_FILE.name} (404 objects)")
+    h5_info = f"{H5_FILE.stat().st_size / 1024 / 1024:.0f} MB" if H5_FILE.exists() else "not found"
+    print(f"  H5:         {H5_FILE.name} ({h5_info})")
+    print(f"  Upload:     {'REST (EPC+H5)' if args.rest_upload else 'Docker ETP CLI (EPC only)'}")
     print(f"{'═' * 60}\n")
 
     # ── Auth ──
@@ -578,7 +691,15 @@ def main():
         if not token:
             token = authenticate(cfg)
         create_dataspace(token, cfg)
-        ok = import_epc(token, cfg)
+        if args.rest_upload:
+            ok = upload_epc_rest(
+                token, cfg,
+                validate=args.validate,
+                auto_ingest=args.auto_ingest,
+                local=args.local,
+            )
+        else:
+            ok = import_epc(token, cfg)
         if not ok:
             print("  ⚠ ETP import failed - continuing with manifest")
         verify_import(token, cfg)
