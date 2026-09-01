@@ -665,9 +665,13 @@ def main():
                     help="Use Storage API instead of Workflow API")
     ap.add_argument("-o", "--output", type=Path,
                     help="Output path for manifest JSON")
+    ap.add_argument("--dataspace", type=str,
+                    help="Override target dataspace (default: maap/drogon)")
     args = ap.parse_args()
 
     cfg = InstanceConfig(args.instance)
+    if args.dataspace:
+        cfg.dataspace = args.dataspace
 
     print(f"{'═' * 60}")
     print(f"  Drogon Demo → {cfg.name} ({cfg.host})")
