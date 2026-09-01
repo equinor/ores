@@ -642,7 +642,7 @@ def _poll_workflow(token: str, cfg: InstanceConfig, run_id: str,
 def main():
     ap = argparse.ArgumentParser(
         description="Ingest Drogon demo EPC into an OSDU instance")
-    ap.add_argument("instance", choices=["interop", "eqndev"],
+    ap.add_argument("instance", choices=["interop", "eqndev", "preship"],
                     help="Target OSDU instance name")
     ap.add_argument("--skip-etp", action="store_true",
                     help="Skip ETP import (manifest only)")
