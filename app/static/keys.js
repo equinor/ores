@@ -2954,7 +2954,7 @@ const GQL_PRESETS = {
   deep_all_props: `# All properties attached to IjkGrid (porosity, perm, Sw, NTG, facies…)
 # Shows the full property inventory for each grid representation.
 # Graph traversal: IjkGrid ← ContinuousProperty/DiscreteProperty sources
-# NOTE: limit 1 to avoid slow array reads on REST backend
+# NOTE: limit 1 to avoid slow array reads on large dataspaces
 {
   deepSearch(
     $DS_ARG
@@ -3355,10 +3355,9 @@ const GQL_PRESETS = {
 # Shows grid properties relevant to bypassed-oil assessment:
 #   Water Saturation, Horizontal Permeability, Porosity, NTG
 #
-# On PG backend: compoundFilter ANDs criteria at cell level and
+# Version M28+: compoundFilter ANDs criteria at cell level and
 # compoundMatch shows how many cells pass ALL filters simultaneously.
-# On REST backend: shows full property inventory with statistics
-# (compound cell intersection requires PG).
+# Statistics (min/max/mean/stdDev) are computed from array data.
 {
   deepSearch(
     $DS_ARG
@@ -3673,7 +3672,7 @@ GQL_PRESETS.field_grid_inventory = `# FIELD DEV: Grid property inventory (REST-c
 #
 # Works on both REST and PostgreSQL backends.
 # On REST: shows property names, kinds, and UOMs (statistics null).
-# On PG: also includes min/max/mean/stdDev for each property.
+# Version M28+: also includes min/max/mean/stdDev for each property.
 #
 # HOW TO READ: Each property listed under the grid is a 3D cell array.
 # The "kind" tells you what physical quantity it represents (porosity,
