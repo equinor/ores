@@ -937,10 +937,14 @@ async def _enrich_property_via_rest(
 
     array_infos: List[ArrayInfo] = []
     passes = False
+    log.info("_enrich_property_via_rest: %s/%s got %d array entries", p_type, p_uuid[:8], len(p_arrays))
+    if p_arrays:
+        log.info("  first array entry: %s", {k: str(v)[:80] for k, v in p_arrays[0].items()} if isinstance(p_arrays[0], dict) else p_arrays[0])
     for pa in p_arrays:
         pa_uid = pa.get("uid") or {}
         pa_path = pa_uid.get("pathInResource", "") if isinstance(pa_uid, dict) else ""
         if not pa_path:
+            log.info("  skipping array — no pathInResource (keys=%s, uid=%s)", list(pa.keys()) if isinstance(pa, dict) else "?", pa_uid)
             continue
         ai = ArrayInfo(path=pa_path)
         try:
@@ -1609,6 +1613,8 @@ async def _deep_search_rest(
     # ── Step 4: Build result objects ─────────────────────────────────────
     matched: List[ResqmlObject] = []
     _array_cache: Dict[str, tuple] = {}  # uuid → (arr_result, arr_passes)
+    log.info("_deep_search_rest step4: %d candidates, include_statistics=%s, include_sample_values=%s",
+             len(candidates), include_statistics, include_sample_values)
 
     for r in candidates:
         if len(matched) >= limit:
@@ -1623,6 +1629,8 @@ async def _deep_search_rest(
         all_sources = sources_by_uri.get(r_uri, [])
         prop_sources = [ps for ps in all_sources
                         if any(k in ps["contentType"] for k in PROP_KEYWORDS)]
+        log.info("step4 %s: all_sources=%d, prop_sources=%d, r_uri=%s",
+                 title, len(all_sources), len(prop_sources), r_uri[:80])
 
         if property_filter and property_filter.kind and not prop_sources:
             continue
@@ -1679,6 +1687,9 @@ async def _deep_search_rest(
             )
 
             # Array statistics / filtering
+            log.info("  prop %s: include_statistics=%s, include_sample_values=%s, array_filter=%s",
+                     p_name[:30], include_statistics, include_sample_values,
+                     bool(property_filter and property_filter.array_filter))
             if include_statistics or include_sample_values or (property_filter and property_filter.array_filter):
                 if p_uuid in _array_cache:
                     arr_result, arr_passes = _array_cache[p_uuid]

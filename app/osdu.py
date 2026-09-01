@@ -246,7 +246,11 @@ async def list_arrays(access_token: str, ds_enc: str, typ: str, uuid: str) -> li
                         r.status_code, typ, uuid)
             return []
         r.raise_for_status()
-        return r.json() or []
+        data = r.json()
+        if not data:
+            log.info("list_arrays: empty response for %s/%s (status=%d, body=%s)",
+                     typ, uuid[:8], r.status_code, r.text[:200])
+        return data or []
 
 async def discovery_find(
     access_token: str,

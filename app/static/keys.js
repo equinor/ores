@@ -3329,25 +3329,20 @@ const GQL_PRESETS = {
   // These presets combine spatial topology, properties, and production
   // to answer real subsurface questions for field development workflows.
 
-  field_bypassed_oil: `# FIELD DEV: Bypassed oil screening - compound cell intersection
-# Finds grid cells where BOTH conditions are true simultaneously:
-#   Water Saturation < 0.4  (oil still in place - not swept)
-#   Horizontal Permeability > 100 mD  (permeable enough to produce)
+  field_bypassed_oil: `# FIELD DEV: Bypassed oil screening
+# Shows grid properties relevant to bypassed-oil assessment:
+#   Water Saturation, Horizontal Permeability, Porosity, NTG
 #
-# The compoundFilter ANDs the criteria at cell level and returns
-# the intersection count - the actual bypassed oil cell set.
-# Individual property stats are also shown for context.
-#
-# HOW TO READ: Each object is an IjkGrid (the 3D geocellular model).
-# compoundMatch shows how many cells pass ALL filters simultaneously -
-# these are the bypassed-oil sweet spots. The fraction tells you what
-# share of the reservoir is prospective. Each property under the grid
-# shows its full statistics so you can gauge the overall distribution.
+# On PG backend: compoundFilter ANDs criteria at cell level and
+# compoundMatch shows how many cells pass ALL filters simultaneously.
+# On REST backend: shows full property inventory with statistics
+# (compound cell intersection requires PG).
 {
   deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_IjkGridRepresentation"
     includeStatistics: true
+    includeRelations: true
     compoundFilter: {
       filters: [
         { titleContains: "Water Saturation", arrayFilter: { operator: LT, threshold: 0.4 } }

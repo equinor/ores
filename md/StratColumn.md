@@ -1,8 +1,10 @@
 # Stratigraphy - Data Model & Workflow
 
 > How stratigraphic columns are represented in OSDU and RDDMS - from field lithostratigraphy to global chronostratigraphy.
+>
+> **Source of truth:** [StratigraphicColumn.md (RDDMS Home)](https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/home/-/blob/main/docs/StratigraphicColumn.md) — this page adds ORES-specific tooling and Equinor workflows.
 
-**Related**: [SeisInt](/howto/seismic-interp) · [BusinessDecision](/howto/business-decision) · [Maps](/howto/maps) · [Query](/howto/query-guide)
+**Related**: [Seismic Interpretation](https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/home/-/blob/main/docs/SeismicInterpretation.md) · [BusinessDecision](/howto/business-decision) · [Maps](/howto/maps) · [Query](/howto/query-guide)
 
 ---
 

@@ -3,6 +3,8 @@
 > Reference for the **WellboreMarkerFrame** data model in **RESQML 2.0 / RDDMS**, its
 > relationship to **wells** and **horizons/geological features**, how individual
 > markers are grouped, and the mapping to the **OSDU `WellboreMarkerSet`** work-product
+>
+> **Source of truth:** [WellMarkers.md (RDDMS Home)](https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/home/-/blob/main/docs/WellMarkers.md) — this page adds ORES-specific workflows.
 > component.
 >
 > Closes with guidance on improving the OSDU mapping for realistic ingest, query, and

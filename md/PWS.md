@@ -1,6 +1,8 @@
 # Project & Workflow Service (P&WS)
 
 > How to organize multi-discipline collaboration in OSDU - from creating a project namespace through WIP/SOR lifecycle to decision-gate closure.
+>
+> **Source of truth:** [CollaborationPrj.md (RDDMS Home)](https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/home/-/blob/main/docs/CollaborationPrj.md) — this page adds P&WS API specifics and Equinor workflows.
 
 **Related**: [Activity](/howto/activity) · [BusinessDecision](/howto/business-decision) · [Volumes](/howto/volumes) · [Risk](/howto/risk) · [Query](/howto/query-guide)
 

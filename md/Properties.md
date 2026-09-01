@@ -2,6 +2,8 @@
 
 > Properties describe physical or categorical quantities attached to geological objects - grids, surfaces, wellbores. This guide covers how RESQML models properties, how OSDU references them, and how ORES resolves and displays them.
 >
+> **Source of truth:** [Properties.md (RDDMS Home)](https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/home/-/blob/main/docs/Properties.md) — this page adds ORES resolution logic and Equinor property conventions.
+>
 > **See also**: [RESQML Technical Reference (Energistics)](https://www.energistics.org/resqml-data-standards/) · [OSDU Property & Facet Schemas](https://community.opengroup.org/osdu/data/data-definitions/) · [Reservoir DDMS Home](https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/home/-/blob/main/README.md)
 
 ---
