@@ -1,4 +1,4 @@
-"""
+https://community.opengroup.org/osdu/platform/domain-data-mgmt-services/reservoir/open-etp-client/-/jobs/4555184"""
 §4.6 - Pure Python RESQML EPC writer (offline fallback).
 
 Writes a minimal RESQML v2.0.1 EPC package (.epc = ZIP containing .xml + .h5)

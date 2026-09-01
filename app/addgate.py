@@ -285,7 +285,7 @@ async def create_bd(request: Request):
         raise HTTPException(400, "name is required")
 
     # ID prefix from the reservoir_id (e.g. "dev")
-    id_prefix = reservoir_id.split(":")[0] if ":" in reservoir_id else "dev"
+    id_prefix = reservoir_id.split(":")[0] if ":" in reservoir_id else (osdu.DATA_PARTITION_ID or "dev")
 
     # Generate a deterministic-ish BD ID from the name
     bd_slug = name.replace(" ", "-").replace("-", "-")[:80]
@@ -695,7 +695,7 @@ async def create_cp(request: Request):
     custom_records: List[Dict[str, str]] = body.get("custom_records", [])
 
     # Derive ID prefix
-    id_prefix = "dev"
+    id_prefix = osdu.DATA_PARTITION_ID or "dev"
     for ref in [parent_bd_id, reservoir_id, dataspace_id, collection_id]:
         if ref and ":" in ref:
             id_prefix = ref.split(":")[0]
@@ -1123,7 +1123,7 @@ async def create_schedule_template(request: Request):
         raise HTTPException(400, "At least one milestone is required")
 
     # Derive ID prefix
-    id_prefix = "dev"
+    id_prefix = osdu.DATA_PARTITION_ID or "dev"
     if project_type_id and ":" in project_type_id:
         id_prefix = project_type_id.split(":")[0]
 
@@ -1644,7 +1644,7 @@ async def create_package(request: Request):
     if not name:
         raise HTTPException(400, "name is required")
 
-    id_prefix = reservoir_id.split(":")[0] if ":" in reservoir_id else "dev"
+    id_prefix = reservoir_id.split(":")[0] if ":" in reservoir_id else (osdu.DATA_PARTITION_ID or "dev")
     bd_slug = name.replace(" ", "-").replace("/", "-")[:80]
 
     storage_url = f"https://{osdu.OSDU_BASE_URL}/api/storage/v2/records"
@@ -2299,7 +2299,7 @@ async def bd_update_volume(request: Request, bd_id: str):
 
     data = rec.get("data") or {}
     params = data.setdefault("Parameters", [])
-    id_prefix = bd_id.split(":")[0] if ":" in bd_id else "dev"
+    id_prefix = bd_id.split(":")[0] if ":" in bd_id else (osdu.DATA_PARTITION_ID or "dev")
 
     # Remove existing param with same artifact tag
     params[:] = [
@@ -2375,7 +2375,7 @@ async def bd_flag_risk(request: Request, bd_id: str):
 
     data = rec.get("data") or {}
     params = data.setdefault("Parameters", [])
-    id_prefix = bd_id.split(":")[0] if ":" in bd_id else "dev"
+    id_prefix = bd_id.split(":")[0] if ":" in bd_id else (osdu.DATA_PARTITION_ID or "dev")
 
     # Check if this risk is already linked
     already = any(

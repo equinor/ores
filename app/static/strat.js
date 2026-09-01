@@ -1,6 +1,30 @@
 (function(){
   'use strict';
 
+  const STRAT_DEFAULTS = {
+    partition: (window.__STRAT_PARTITION || 'opendes').trim() || 'opendes',
+  };
+
+  const partitionDefault = () => (STRAT_DEFAULTS.partition || 'opendes').trim() || 'opendes';
+
+  (async () => {
+    try {
+      const r = await fetch('/api/defaults', { credentials: 'same-origin' });
+      if (!r.ok) return;
+      const d = await r.json();
+      if (d && d.partition) {
+        STRAT_DEFAULTS.partition = String(d.partition).trim() || STRAT_DEFAULTS.partition;
+      }
+      const p = partitionDefault();
+      ['ow-partition', 'smda-partition', 'bundle-partition'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el && !el.value.trim()) el.value = p;
+      });
+    } catch (_) {
+      // keep template-injected default
+    }
+  })();
+
   const $ = (sel, root=document) => root.querySelector(sel);
   const qInput     = $('#strat-q');
   const typeSelect  = $('#strat-type');
@@ -759,7 +783,7 @@
     const fileInput = document.getElementById('ow-file');
     const file = fileInput?.files?.[0];
     if (!file) { impStatus('ow-status', 'Select a JSON file first', 'err'); return; }
-    const partition = document.getElementById('ow-partition')?.value || 'data';
+    const partition = document.getElementById('ow-partition')?.value || partitionDefault();
     impStatus('ow-status', 'Converting…', 'info');
     const fd = new FormData();
     fd.append('file', file);
@@ -863,7 +887,7 @@
     const col = document.getElementById('smda-col')?.value?.trim();
     if (!col) { impStatus('smda-status', 'Enter a column identifier', 'err'); return; }
     const smdaUrl = document.getElementById('smda-url')?.value || '';
-    const partition = document.getElementById('smda-partition')?.value || 'data';
+    const partition = document.getElementById('smda-partition')?.value || partitionDefault();
     impStatus('smda-status', `Fetching "${col}" from SMDA…`, 'info');
     const fd = new FormData();
     fd.append('column', col);
@@ -902,7 +926,7 @@
     if (_batchRunning) { impStatus('smda-status', 'Batch already running…', 'err'); return; }
     _batchRunning = true;
     const smdaUrl = document.getElementById('smda-url')?.value || '';
-    const partition = document.getElementById('smda-partition')?.value || 'data';
+    const partition = document.getElementById('smda-partition')?.value || partitionDefault();
     const batchBtn = document.getElementById('btn-smda-batch');
     batchBtn.disabled = true;
     let ok = 0, fail = 0;
@@ -1191,7 +1215,7 @@
     if (!currentColumnId) return;
     const statusEl = document.getElementById('horizon-status');
     const resultEl = document.getElementById('horizon-result');
-    const partition = window.__STRAT_PARTITION || 'data';
+    const partition = window.__STRAT_PARTITION || partitionDefault();
 
     if (statusEl) statusEl.textContent = ingest ? 'Generating & ingesting\u2026' : 'Generating preview\u2026';
     if (resultEl) resultEl.style.display = 'none';
@@ -1266,7 +1290,7 @@
     if (!currentColumnId) return;
     const statusEl = document.getElementById('unitgen-status');
     const resultEl = document.getElementById('unitgen-result');
-    const partition = window.__STRAT_PARTITION || 'data';
+    const partition = window.__STRAT_PARTITION || partitionDefault();
 
     if (statusEl) statusEl.textContent = ingest ? 'Generating & ingesting\u2026' : 'Generating preview\u2026';
     if (resultEl) resultEl.style.display = 'none';

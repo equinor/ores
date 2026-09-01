@@ -207,7 +207,7 @@
 
     // ----- Refresh Create form defaults from active instance config -----
     function refreshDefaults(data) {
-      const fields = { legal: 'legal_tag', owners: 'owners', viewers: 'viewers', countries: 'countries' };
+      const fields = { path: 'ds_default', legal: 'legal_tag', owners: 'owners', viewers: 'viewers', countries: 'countries' };
       for (const [id, key] of Object.entries(fields)) {
         const el = document.getElementById(id);
         if (el && data[key] != null) el.value = data[key];

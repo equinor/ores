@@ -1,4 +1,28 @@
 (function() {
+  var ACTIVE_DEFAULTS = {
+    partition: 'dev',
+    legal_tag: '',
+    owners: '',
+    viewers: '',
+    countries: ''
+  };
+
+  function getPartitionDefault() {
+    return (ACTIVE_DEFAULTS.partition || 'dev').trim() || 'dev';
+  }
+
+  fetch('/api/defaults', { credentials: 'same-origin' })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(d) {
+      if (!d) return;
+      ACTIVE_DEFAULTS = Object.assign(ACTIVE_DEFAULTS, d);
+      var co = document.getElementById('cp-contributor-owners');
+      var cv = document.getElementById('cp-contributor-viewers');
+      if (co && !co.value && ACTIVE_DEFAULTS.owners) co.value = ACTIVE_DEFAULTS.owners;
+      if (cv && !cv.value && ACTIVE_DEFAULTS.viewers) cv.value = ACTIVE_DEFAULTS.viewers;
+    })
+    .catch(function() {});
+
   // ── Decision level toggle ──
   window.toggleCustomLevel = function() {
     var sel = document.getElementById('bd-level');
@@ -243,7 +267,7 @@
   function buildActivityStates() {
     if (!selectedTemplate) return [];
     var states = [];
-    var idPrefix = (document.getElementById('reservoir-select').value || 'dev').split(':')[0] || 'dev';
+    var idPrefix = (document.getElementById('reservoir-select').value || getPartitionDefault()).split(':')[0] || getPartitionDefault();
     selectedTemplate.milestones.forEach(function(m, i) {
       var dateVal = document.getElementById('ms-date-' + i).value;
       var statusVal = document.getElementById('ms-status-' + i).value;

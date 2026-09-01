@@ -41,6 +41,7 @@ from .graphql_router import router as graphql_router
 from .graphql_refdata import router as graphql_refdata_router
 from .search_router import router as search_router
 from .common import pretty_val as _jinja_pretty_val, access_token as _access_token
+from .common import safe_error_detail
 from .howto_router import router as howto_router
 from .weco_router import router as weco_router
 from .weco_docs_router import router as weco_docs_router
@@ -474,32 +475,50 @@ async def root_redirect():
     return RedirectResponse("/ores", status_code=302)
 
 
+def _active_defaults() -> Dict[str, str]:
+    """Resolve ACL/legal/default dataspace from the active instance config."""
+    inst = get_active()
+    pfx = f"INSTANCE_{inst.name.upper()}_"
+    partition = inst.data_partition_id or osdu.DATA_PARTITION_ID
+
+    legal_tag = inst.default_legal_tag or osdu.DEFAULT_LEGAL_TAG
+    owners = inst.default_owners or ",".join(osdu.DEFAULT_OWNERS)
+    viewers = inst.default_viewers or ",".join(osdu.DEFAULT_VIEWERS)
+    countries = inst.default_countries or ",".join(osdu.DEFAULT_COUNTRIES)
+    ds_default = os.getenv(f"{pfx}DEFAULT_DATASPACE", os.getenv("DEFAULT_DATASPACE", ""))
+
+    return {
+        "instance": inst.name,
+        "partition": partition,
+        "legal_tag": legal_tag,
+        "owners": owners,
+        "viewers": viewers,
+        "countries": countries,
+        "ds_default": ds_default,
+    }
+
+
 @app.get("/api/defaults", summary="Active instance ACL/legal defaults")
 async def api_defaults():
     """Return the active instance's default ACL/legal/partition values."""
-    return {
-        "partition": osdu.DATA_PARTITION_ID,
-        "legal_tag": osdu.DEFAULT_LEGAL_TAG,
-        "owners": ",".join(osdu.DEFAULT_OWNERS),
-        "viewers": ",".join(osdu.DEFAULT_VIEWERS),
-        "countries": ",".join(osdu.DEFAULT_COUNTRIES),
-    }
+    return _active_defaults()
 
 
 @app.get("/admin", response_class=HTMLResponse, summary="Admin: list dataspaces")
 async def home(request: Request):
     # Render the shell immediately - dataspaces loaded async via JS
+    d = _active_defaults()
     return templates.TemplateResponse(
         request, "admin.html",
         {
             "view": "home",
             "dataspaces": [],
             # Defaults for the "Create Dataspace" form (prefilled values)
-            "ds_default": os.getenv("DEFAULT_DATASPACE", ""),
-            "default_legal_tag": osdu.DEFAULT_LEGAL_TAG,
-            "default_owners": ",".join(osdu.DEFAULT_OWNERS),
-            "default_viewers": ",".join(osdu.DEFAULT_VIEWERS),
-            "default_countries": ",".join(osdu.DEFAULT_COUNTRIES),
+            "ds_default": d["ds_default"],
+            "default_legal_tag": d["legal_tag"],
+            "default_owners": d["owners"],
+            "default_viewers": d["viewers"],
+            "default_countries": d["countries"],
         },
     )
 
@@ -589,13 +608,18 @@ async def admin_dataspaces_json(request: Request):
 async def dataspaces_create(
     request: Request,
     path: str = Form(...),
-    legal: str = Form(osdu.DEFAULT_LEGAL_TAG),
-    owners: str = Form(",".join(osdu.DEFAULT_OWNERS)),
-    viewers: str = Form(",".join(osdu.DEFAULT_VIEWERS)),
-    countries: str = Form(",".join(osdu.DEFAULT_COUNTRIES)),
+    legal: str = Form(""),
+    owners: str = Form(""),
+    viewers: str = Form(""),
+    countries: str = Form(""),
     custom_json: str = Form("", description="Optional JSON to merge into CustomData"),
 ):
     at = _access_token(request)
+    defaults = _active_defaults()
+    legal = legal.strip() or defaults["legal_tag"]
+    owners = owners.strip() or defaults["owners"]
+    viewers = viewers.strip() or defaults["viewers"]
+    countries = countries.strip() or defaults["countries"]
 
     # Parse optional JSON block
     extra_custom: Dict[str, Any] = {}
@@ -610,11 +634,11 @@ async def dataspaces_create(
                 {
                     "view": "home",
                     "dataspaces": [],
-                    "ds_default": os.getenv("DEFAULT_DATASPACE", ""),
-                    "default_legal_tag": osdu.DEFAULT_LEGAL_TAG,
-                    "default_owners": ",".join(osdu.DEFAULT_OWNERS),
-                    "default_viewers": ",".join(osdu.DEFAULT_VIEWERS),
-                    "default_countries": ",".join(osdu.DEFAULT_COUNTRIES),
+                    "ds_default": defaults["ds_default"],
+                    "default_legal_tag": defaults["legal_tag"],
+                    "default_owners": defaults["owners"],
+                    "default_viewers": defaults["viewers"],
+                    "default_countries": defaults["countries"],
                     "error": "Invalid custom JSON",
                     "error_detail": str(ex),
                 },
@@ -651,5 +675,11 @@ async def dataspaces_create(
         return JSONResponse(
             {"detail": f"Create failed: {detail}"},
             status_code=r.status_code or 400,
+        )
+    except Exception as e:
+        log.exception("Unhandled dataspaces_create failure")
+        return JSONResponse(
+            {"detail": f"Create failed: {safe_error_detail(e)}"},
+            status_code=502,
         )
     return RedirectResponse(url=f"/keys?ds={urllib.parse.quote(path, safe='')}", status_code=302)

@@ -210,7 +210,7 @@ def _fmt_ma(v) -> str:
 @router.get("/strat", response_class=HTMLResponse)
 async def strat_page(request: Request):
     return templates.TemplateResponse(request, "strat.html", {
-        "partition": osdu.DATA_PARTITION_ID or "data",
+        "partition": osdu.DATA_PARTITION_ID or "opendes",
     })
 
 
@@ -942,7 +942,7 @@ async def _build_chrono_index(request: Request) -> Dict[str, str]:
 async def import_ow_json(
     request: Request,
     file: UploadFile = File(...),
-    partition: str = Form("data"),
+    partition: str = Form(""),
 ):
     """Upload an OpenWorks JSON file; convert it to an OSDU WPC bundle.
 
@@ -970,6 +970,8 @@ async def import_ow_json(
             chrono_idx = await _build_chrono_index(request)
         except Exception as exc:
             log.warning("Could not build chrono index from OSDU: %s", exc)
+
+    partition = (partition or osdu.DATA_PARTITION_ID or "opendes").strip()
 
     try:
         bundle = col.to_osdu_bundle(partition=partition, chrono_rd_index=chrono_idx)
@@ -1024,7 +1026,7 @@ async def import_smda_api(
     request: Request,
     column: str = Form(...),
     smda_url: str = Form("https://api.gateway.equinor.com"),
-    partition: str = Form("data"),
+    partition: str = Form(""),
 ):
     """Fetch a strat column from SMDA API and convert to OSDU WPC bundle."""
     if _StratColumn is None:
@@ -1050,6 +1052,8 @@ async def import_smda_api(
             chrono_idx = await _build_chrono_index(request)
         except Exception as exc:
             log.warning("Could not build chrono index from OSDU: %s", exc)
+
+    partition = (partition or osdu.DATA_PARTITION_ID or "opendes").strip()
 
     try:
         bundle = col.to_osdu_bundle(
@@ -1470,7 +1474,7 @@ async def generate_horizons(request: Request):
         raise HTTPException(400, "Invalid JSON body")
 
     column_id = (body.get("columnId") or "").strip()
-    partition = (body.get("partition") or osdu.DATA_PARTITION_ID or "data").strip()
+    partition = (body.get("partition") or osdu.DATA_PARTITION_ID or "opendes").strip()
     do_ingest = body.get("ingest", False)
 
     if not column_id:
@@ -1697,7 +1701,7 @@ async def generate_units(request: Request):
         raise HTTPException(400, "Invalid JSON body")
 
     column_id = (body.get("columnId") or "").strip()
-    partition = (body.get("partition") or osdu.DATA_PARTITION_ID or "data").strip()
+    partition = (body.get("partition") or osdu.DATA_PARTITION_ID or "opendes").strip()
     do_ingest = body.get("ingest", False)
 
     if not column_id:
