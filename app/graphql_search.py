@@ -249,9 +249,12 @@ async def _rest_get_resource(token: str, ds: str, typ: str, uuid: str) -> Dict[s
     return result if isinstance(result, dict) else {}
 
 
-async def _rest_list_targets(token: str, ds: str, typ: str, uuid: str) -> List[Dict[str, Any]]:
+async def _rest_list_targets(
+    token: str, ds: str, typ: str, uuid: str,
+    *, data_object_types: Optional[List[str]] = None,
+) -> List[Dict[str, Any]]:
     enc = urllib.parse.quote(ds, safe="")
-    return await osdu.list_targets(token, enc, typ, uuid)
+    return await osdu.list_targets(token, enc, typ, uuid, data_object_types=data_object_types)
 
 
 async def _rest_list_sources(token: str, ds: str, typ: str, uuid: str) -> List[Dict[str, Any]]:
@@ -321,7 +324,10 @@ async def _gql_or_rest_list_resources(token: str, ds: str, typ: str, limit: int 
     return await _rest_list_resources(token, ds, typ, limit)
 
 
-async def _gql_or_rest_list_targets(token: str, ds: str, typ: str, uuid: str) -> List[Dict[str, Any]]:
+async def _gql_or_rest_list_targets(
+    token: str, ds: str, typ: str, uuid: str,
+    *, data_object_types: Optional[List[str]] = None,
+) -> List[Dict[str, Any]]:
     """List targets via native GQL graph → REST fallback."""
     if await gql_available(token):
         uri = _build_etp_uri(ds, typ, uuid)
@@ -336,7 +342,7 @@ async def _gql_or_rest_list_targets(token: str, ds: str, typ: str, uuid: str) ->
                 ]
         except Exception as e:
             log.debug("gql targets failed, falling back to REST: %s", e)
-    return await _rest_list_targets(token, ds, typ, uuid)
+    return await _rest_list_targets(token, ds, typ, uuid, data_object_types=data_object_types)
 
 
 async def _gql_or_rest_list_sources(token: str, ds: str, typ: str, uuid: str) -> List[Dict[str, Any]]:
@@ -1492,22 +1498,40 @@ async def _deep_search_rest(
             tn = r["_resolved_type"]
             uri = r.get("uri", "") or f"_fake_/{r['uuid']}"
             try:
-                raw_src = await _gql_or_rest_list_sources(token, dataspace, tn, r["uuid"])
-                merged = [_parse_eml_entry(s) for s in raw_src]
-
-                # Also fetch /targets to discover properties that reference
-                # this representation (e.g. ContinuousProperty → Grid).
-                # Only needed when properties are requested or filtered.
+                # Determine if we need property-type targets
                 _need_props = (property_filter is not None
                                or include_statistics or include_sample_values)
+
                 if _need_props:
-                    # Check if /sources already returned property types
+                    # Fetch sources and targets concurrently.
+                    # Filter /targets to property types server-side to reduce
+                    # ETP server work and response size.
+                    _PROP_TYPES = [
+                        "resqml20.obj_ContinuousProperty",
+                        "resqml20.obj_DiscreteProperty",
+                        "resqml20.obj_CategoricalProperty",
+                        "resqml20.obj_PointsProperty",
+                    ]
+                    raw_src, raw_tgt = await asyncio.gather(
+                        _gql_or_rest_list_sources(token, dataspace, tn, r["uuid"]),
+                        _gql_or_rest_list_targets(
+                            token, dataspace, tn, r["uuid"],
+                            data_object_types=_PROP_TYPES,
+                        ),
+                    )
+                else:
+                    raw_src = await _gql_or_rest_list_sources(token, dataspace, tn, r["uuid"])
+                    raw_tgt = []
+
+                merged = [_parse_eml_entry(s) for s in raw_src]
+
+                # Add property-type targets only if /sources didn't return any
+                if raw_tgt:
                     has_prop_sources = any(
                         any(k in p.get("contentType", "") for k in PROP_KEYWORDS)
                         for p in merged
                     )
                     if not has_prop_sources:
-                        raw_tgt = await _gql_or_rest_list_targets(token, dataspace, tn, r["uuid"])
                         seen = {p["uuid"] for p in merged if p["uuid"]}
                         for entry in raw_tgt:
                             parsed = _parse_eml_entry(entry)

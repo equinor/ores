@@ -1067,6 +1067,42 @@ _Measured on `maap/drogon` data (swedev). ETP values are reasoned estimates._
 10. **Federated search** runs sources in parallel - enable only the ones you need to cut latency.
 11. **Connection pooling** is automatic: `httpx.AsyncClient` for REST/Discovery, `asyncpg` pool (min=2, max=10) for PG.
 
+### REST Deep Search — Source/Target Mapping
+
+When PG is unavailable and Discovery `graph_search` is used, ORES must map properties to their parent representations (candidates). This is non-trivial because:
+
+1. **graph_search links are internal edges** — links returned by `POST /query/graph/search(scope=sources)` are edges like Activity→Property, NOT candidate→property mappings. Candidate URIs often appear in zero links.
+2. **Properties reference representations, not vice versa** — a ContinuousProperty has a `SupportingRepresentation` DOR pointing to its parent IjkGrid/WellboreFrame. The property is a *target* of the grid, not a source.
+
+#### Resolution strategy (3-tier)
+
+| Step | Method | When used |
+|------|--------|-----------|
+| 1 | **Link-based mapping** | graph_search returns links that reference candidate URIs |
+| 2 | **SupportingRepresentation extraction** | `batch_get_content` reads property XML, extracts `SupportingRepresentation` UUID to map property→candidate via `_cand_uuid_to_uri` |
+| 3 | **N+1 fallback** | graph_search returns no resources; per-candidate `/sources` + `/targets` calls (concurrent, max 10) |
+
+#### `dataObjectTypes` filter
+
+The N+1 `/targets` calls pass `dataObjectTypes` to filter server-side:
+- `resqml20.obj_ContinuousProperty`
+- `resqml20.obj_DiscreteProperty`
+- `resqml20.obj_CategoricalProperty`
+- `resqml20.obj_PointsProperty`
+
+This reduces ETP server work and response size (the server only returns matching types instead of all targets).
+
+#### Known REST performance bounds
+
+| Preset pattern | Typical time | Bottleneck |
+|----------------|-------------|------------|
+| Simple listing (objects, types) | 1–3s | Single REST call |
+| Deep search (no arrays) | 5–15s | N+1 sources/targets |
+| Deep search + arrays | 30–90s | Per-array `get-content` call, each creating ETP session (~1.2s) |
+| Large grid inventory + arrays | 60–120s | O(grids × properties) array reads |
+
+**Root cause**: each etp-client REST call creates a new ETP WebSocket session (TLS + RequestSession ≈ 1.2s). This is not fixable without ETP session pooling (tracked in [etpclient TODO](../../etpclient/TODO.md)).
+
 ---
 
 ## G. Setup – Local PostgreSQL

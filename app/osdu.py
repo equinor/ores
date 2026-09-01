@@ -513,12 +513,19 @@ async def list_sources(access_token: str, ds_enc: str, typ: str, uuid: str) -> l
         r.raise_for_status()
         return r.json() or []
 
-async def list_targets(access_token: str, ds_enc: str, typ: str, uuid: str) -> list[dict]:
+async def list_targets(
+    access_token: str, ds_enc: str, typ: str, uuid: str,
+    *, data_object_types: list[str] | None = None,
+) -> list[dict]:
     """GET /dataspaces/{dataspaceId}/resources/{type}/{uuid}/targets"""
+    params: dict = {}
+    if data_object_types:
+        params["dataObjectTypes"] = ",".join(data_object_types)
     async with _http(timeout=90) as client:
         r = await client.get(
             _rddms_url(f"/dataspaces/{ds_enc}/resources/{typ}/{uuid}/targets"),
             headers=headers(access_token),
+            params=params or None,
         )
         r.raise_for_status()
         return r.json() or []
