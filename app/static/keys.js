@@ -2932,13 +2932,14 @@ const GQL_PRESETS = {
   deep_all_props: `# All properties attached to IjkGrid (porosity, perm, Sw, NTG, facies…)
 # Shows the full property inventory for each grid representation.
 # Graph traversal: IjkGrid ← ContinuousProperty/DiscreteProperty sources
+# NOTE: limit 1 to avoid slow array reads on REST backend
 {
   deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_IjkGridRepresentation"
     includeRelations: true
     includeStatistics: true
-    limit: 5
+    limit: 1
   ) {
     backend totalScanned totalMatched queryDescription
     objects {
@@ -3353,7 +3354,7 @@ const GQL_PRESETS = {
         { titleContains: "Horizontal Permeability", arrayFilter: { operator: GT, threshold: 100.0 } }
       ]
     }
-    limit: 5
+    limit: 2
   ) {
     backend totalScanned totalMatched
     compoundMatch { count total fraction }
@@ -3389,9 +3390,8 @@ const GQL_PRESETS = {
   allWellLogs: deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_WellboreFrameRepresentation"
-    includeStatistics: true
     includeRelations: true
-    limit: 9
+    limit: 3
   ) {
     backend totalScanned totalMatched
     objects {
@@ -3399,7 +3399,6 @@ const GQL_PRESETS = {
       relations { name typeName direction }
       properties {
         title kind uom
-        statistics { count minValue maxValue mean }
       }
     }
   }
@@ -3412,7 +3411,7 @@ const GQL_PRESETS = {
       titleContains: "Horizontal Permeability"
       arrayFilter: { operator: GT, threshold: 500.0 }
     }
-    limit: 9
+    limit: 3
   ) {
     totalMatched
     objects {
@@ -3669,7 +3668,7 @@ GQL_PRESETS.field_grid_inventory = `# FIELD DEV: Grid property inventory (REST-c
     typeName: "resqml20.obj_IjkGridRepresentation"
     includeStatistics: true
     includeRelations: true
-    limit: 2
+    limit: 1
   ) {
     backend totalScanned totalMatched warnings
     objects {
@@ -3684,9 +3683,8 @@ GQL_PRESETS.field_grid_inventory = `# FIELD DEV: Grid property inventory (REST-c
   wellLogs: deepSearch(
     $DS_ARG
     typeName: "resqml20.obj_WellboreFrameRepresentation"
-    includeStatistics: true
     includeRelations: true
-    limit: 3
+    limit: 2
   ) {
     totalScanned totalMatched
     objects {

@@ -326,9 +326,9 @@
             <span class="btn" id="ez-ex-markers" style="font-size:11px;padding:2px 9px;"
                   title="Wellbore markers grouped by the horizon/feature they pick - renders bedding-disk markers in 3D">🪨 Markers by horizon (3D)</span>
             <span class="btn" id="ez-ex-bypassed" style="font-size:11px;padding:2px 9px;"
-                  title="Find bypassed oil: high Sw zones with good permeability (compound query)">🛢️ Bypassed oil</span>
+                  title="Find bypassed oil: high Sw zones with good permeability (compound query). Slow on REST — array reads.">🛢️ Bypassed oil <sup style="color:#c44;font-size:9px;">slow</sup></span>
             <span class="btn" id="ez-ex-highperm" style="font-size:11px;padding:2px 9px;"
-                  title="Water breakthrough diagnosis: high-perm streaks + fault connections">💧 Water breakthrough</span>
+                  title="Water breakthrough diagnosis: high-perm streaks + fault connections. Slow on REST — array reads.">💧 Water breakthrough <sup style="color:#c44;font-size:9px;">slow</sup></span>
             <span class="btn" id="ez-ex-ntg" style="font-size:11px;padding:2px 9px;"
                   title="Completion optimization: best porosity + perm + low Sw intervals per well">📐 Completion pay</span>
             <span class="btn" id="ez-ex-poro" style="font-size:11px;padding:2px 9px;"
@@ -336,7 +336,8 @@
             <span class="btn" id="ez-ex-injection" style="font-size:11px;padding:2px 9px;"
                   title="Injection support: fault geometry + well trajectories + structural org (works on REST)">💉 Injection support</span>
             <span class="btn" id="ez-ex-grid-inv" style="font-size:11px;padding:2px 9px;"
-                  title="Grid property inventory: all properties on the geocellular model (works on REST)">📋 Grid inventory</span>
+                  title="Grid property inventory: all properties on the geocellular model. Slow on REST — array reads.">📋 Grid inventory <sup style="color:#c44;font-size:9px;">slow</sup></span>
+          <span style="font-size:10px;color:#888;margin-left:4px;"><sup style="color:#c44;">slow</sup> = array-heavy queries (30-90s on REST) — instant with PG backend or from cache</span>
           </div>
 
           <!-- Easy Mode Results (colored cards) -->
@@ -359,7 +360,7 @@
             </optgroup>
             <optgroup label="Deep Search (numerical arrays)">
               <option value="deep_poro">Grid: porosity &gt; 0.20 (arrayFilter)</option>
-              <option value="deep_all_props">Grid: all properties inventory</option>
+              <option value="deep_all_props">Grid: all properties inventory (slow)</option>
               <option value="deep_grid2d_arrays">Surfaces: statistics + sample values</option>
             </optgroup>
             <optgroup label="Stratigraphy &amp; FIRP">
@@ -383,9 +384,9 @@
               <option value="native_array_metadata">Array dimensions &amp; types</option>
             </optgroup>
             <optgroup label="Field Development">
-              <option value="field_grid_inventory">Grid property inventory (REST-compatible)</option>
-              <option value="field_bypassed_oil">Bypassed oil (high Sw + good perm)</option>
-              <option value="field_water_breakthrough">Water breakthrough (high-perm streaks)</option>
+              <option value="field_grid_inventory">Grid property inventory (slow)</option>
+              <option value="field_bypassed_oil">Bypassed oil (slow)</option>
+              <option value="field_water_breakthrough">Water breakthrough (slow)</option>
               <option value="field_injection_support">Injection support across faults</option>
               <option value="field_completion_ntg">Completion pay (PHIT + KLOGH + Sw per well)</option>
               <option value="field_segment_ranking">Segment overview (faults + wells + connections)</option>

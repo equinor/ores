@@ -10,6 +10,8 @@ Search implementations (deep_search, federated_search) live in graphql_search.py
 from __future__ import annotations
 
 import asyncio
+import hashlib
+import json
 import logging
 from typing import Any, Dict, List, Optional
 
@@ -21,6 +23,7 @@ from fastapi.responses import JSONResponse
 
 from . import osdu
 from .common import access_token as _access_token
+from .cache import cache_get, cache_set
 from .pg_backend import (
     get_pool as _get_pool,
     get_rddms_pool as _get_rddms_pool,
@@ -498,7 +501,17 @@ router.include_router(graphql_app, prefix="/graphql")
 
 @router.post("/api/graphql/query")
 async def graphql_query_api(request: Request):
-    """Execute a GraphQL query. Body: {"query": "...", "variables": {...}}"""
+    """Execute a GraphQL query. Body: {"query": "...", "variables": {...}}
+
+    Cache strategy: results are cached for 30 days.  If a cached
+    result exists, the live query races against a 7-second deadline.  If the
+    live query finishes in time the cache is refreshed; otherwise the stale
+    cached result is returned immediately and the live query continues in the
+    background to refresh the cache for next time.
+
+    To force a fresh result, send ``Cache-Control: no-cache`` header.
+    To clear all cached results: ``DELETE /api/graphql/cache``.
+    """
     body = await request.json()
     query = body.get("query", "")
     variables = body.get("variables") or {}
@@ -506,20 +519,74 @@ async def graphql_query_api(request: Request):
     if not query:
         return JSONResponse({"errors": [{"message": "No query provided"}]}, status_code=400)
 
-    result = await schema.execute(
-        query,
-        variable_values=variables,
-        context_value={"request": request},
-    )
+    # ── Cache key from query + variables ──────────────────────────────────
+    raw_key = json.dumps({"q": query, "v": variables}, sort_keys=True)
+    cache_key = "gql:" + hashlib.sha256(raw_key.encode()).hexdigest()[:16]
 
-    response: dict[str, Any] = {}
-    if result.data is not None:
-        response["data"] = result.data
-    if result.errors:
-        response["errors"] = [
-            {"message": str(e), "path": e.path} for e in result.errors
-        ]
-    return JSONResponse(response)
+    _CACHE_TTL = 2592000  # 30 days
+    _FAST_DEADLINE = 7.0  # seconds before we prefer cache
+
+    # Allow cache bypass via header: Cache-Control: no-cache
+    force_refresh = "no-cache" in (request.headers.get("cache-control") or "")
+    cached = None if force_refresh else cache_get(cache_key)
+
+    async def _execute():
+        return await schema.execute(
+            query, variable_values=variables,
+            context_value={"request": request},
+        )
+
+    def _build_response(result, *, from_cache=False):
+        resp: dict[str, Any] = {}
+        if result.data is not None:
+            resp["data"] = result.data
+        if result.errors:
+            resp["errors"] = [
+                {"message": str(e), "path": e.path} for e in result.errors
+            ]
+        if from_cache:
+            resp.setdefault("extensions", {})["cached"] = True
+        return resp
+
+    if cached is None:
+        # No cache — run live, no deadline
+        result = await _execute()
+        resp = _build_response(result)
+        if result.data and not result.errors:
+            cache_set(cache_key, resp, _CACHE_TTL)
+        return JSONResponse(resp)
+
+    # Cache exists — race live query against deadline
+    task = asyncio.ensure_future(_execute())
+    try:
+        result = await asyncio.wait_for(asyncio.shield(task), timeout=_FAST_DEADLINE)
+        resp = _build_response(result)
+        if result.data and not result.errors:
+            cache_set(cache_key, resp, _CACHE_TTL)
+        return JSONResponse(resp)
+    except asyncio.TimeoutError:
+        log.info("gql query exceeded %ss deadline, returning cached result [%s]",
+                 _FAST_DEADLINE, cache_key)
+        # Let the live query finish in background to refresh cache
+        async def _background_refresh():
+            try:
+                result = await task
+                if result.data and not result.errors:
+                    resp = _build_response(result)
+                    cache_set(cache_key, resp, _CACHE_TTL)
+                    log.info("gql cache refreshed in background [%s]", cache_key)
+            except Exception:
+                log.debug("background gql refresh failed [%s]", cache_key, exc_info=True)
+        asyncio.ensure_future(_background_refresh())
+        return JSONResponse(cached)
+
+
+@router.delete("/api/graphql/cache")
+async def graphql_cache_clear():
+    """Clear all cached GraphQL results. Returns count of entries removed."""
+    from .cache import cache_invalidate
+    n = cache_invalidate("gql:")
+    return JSONResponse({"cleared": n})
 
 
 @router.get("/api/graphql/info")
