@@ -1004,7 +1004,8 @@ function populateDataspaces(items) {
 function _applyDsFilter() {
   const q1 = (dsF1.value || '').trim().toLowerCase();
   const q2 = (dsF2.value || '').trim().toLowerCase();
-  const prev = dsSel.value;
+  // Save ALL selected values (multi-select)
+  const prevSel = new Set(Array.from(dsSel.selectedOptions).map(o => o.value));
   dsSel.innerHTML = '';
   let matched = 0;
   _allDsItems.forEach(x => {
@@ -1031,13 +1032,34 @@ function _applyDsFilter() {
     dsSel.appendChild(o);
     matched++;
   });
-  // Restore previous selection if still present
-  if (prev) { for (const o of dsSel.options) { if (o.value === prev) { dsSel.value = prev; break; } } }
+  // Restore ALL previously selected options (sticky selection)
+  let restored = false;
+  if (prevSel.size > 0) {
+    for (const o of dsSel.options) { if (prevSel.has(o.value)) { o.selected = true; restored = true; } }
+  }
+  // If nothing was restored (first load or all previous selections filtered out), try sessionStorage
+  if (!restored) {
+    try {
+      const sticky = JSON.parse(sessionStorage.getItem('_ds_sticky_sel') || '[]');
+      const stickySet = new Set(sticky);
+      for (const o of dsSel.options) { if (stickySet.has(o.value)) { o.selected = true; } }
+    } catch (_) {}
+  }
   dsCountEl.textContent = (q1 || q2) ? `${matched}/${_allDsItems.length}` : `${_allDsItems.length}`;
 }
 
 dsF1.addEventListener('input', _applyDsFilter);
 dsF2.addEventListener('input', _applyDsFilter);
+
+// Persist dataspace selection so it survives dropdown rebuilds and background refreshes
+dsSel.addEventListener('change', () => {
+  const sel = Array.from(dsSel.selectedOptions).map(o => o.value);
+  if (sel.length > 0) {
+    sessionStorage.setItem('_ds_sticky_sel', JSON.stringify(sel));
+    _lastUsedDs = sel[0];
+    sessionStorage.setItem('_ds_sticky', sel[0]);
+  }
+});
 
 // Render key-value pairs as a table
 function renderPairsTable(pairs) {
@@ -3694,13 +3716,14 @@ function gqlSelectedDataspaces() {
   return Array.from(dsSel.selectedOptions).map(o => o.value);
 }
 
-let _lastUsedDs = '';
+let _lastUsedDs = sessionStorage.getItem('_ds_sticky') || '';
 
 function gqlCurrentDs() {
   // Returns first selected for single-dataspace presets
   const sel = gqlSelectedDataspaces();
   if (sel.length > 0) {
     _lastUsedDs = sel[0];
+    sessionStorage.setItem('_ds_sticky', sel[0]);
     return sel[0];
   }
   // Fall back to last used dataspace (avoids "default" after deselection)
