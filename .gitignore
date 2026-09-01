@@ -59,3 +59,4 @@ ores_tokens.db-shm
 ores_tokens.db-wal
 
 demo/drogonresqml/drogon_records.json
+demo/drogonresqml/.etp_token

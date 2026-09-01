@@ -314,9 +314,9 @@ def upload_epc_rest(
         body = r.json()
         obj_count = body.get("objectsStored", "?")
         arr_count = body.get("arraysStored", "?")
-        h5_size = body.get("h5DataSize", 0)
         print(f"  ✓ Upload succeeded: {obj_count} objects, {arr_count} arrays")
-        if h5_size:
+        h5_size = body.get("h5DataSize", 0)
+        if isinstance(h5_size, (int, float)) and h5_size:
             print(f"    H5 data transferred: {h5_size / 1024 / 1024:.1f} MB")
         warnings = body.get("warnings", [])
         if warnings:
@@ -665,9 +665,13 @@ def main():
                     help="Use Storage API instead of Workflow API")
     ap.add_argument("-o", "--output", type=Path,
                     help="Output path for manifest JSON")
+    ap.add_argument("--dataspace", type=str,
+                    help="Override target dataspace (default: maap/drogon)")
     args = ap.parse_args()
 
     cfg = InstanceConfig(args.instance)
+    if args.dataspace:
+        cfg.dataspace = args.dataspace
 
     print(f"{'═' * 60}")
     print(f"  Drogon Demo → {cfg.name} ({cfg.host})")
