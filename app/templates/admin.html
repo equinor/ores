@@ -86,10 +86,9 @@
 
 <h1>Reservoir DDMS Admin
   <a id="openapi-link" href="/admin/openapi" target="_blank" rel="noopener"
-    title="Open API (Swagger UI) for active server"
-    style="margin-left:.5rem;opacity:.35;font-size:.5em;vertical-align:middle;
-           color:#666;text-decoration:none;transition:opacity .2s;"
-    onmouseenter="this.style.opacity='.8'" onmouseleave="this.style.opacity='.35'">API &#x2197;</a>
+    title="Open API (Swagger UI) for active server" style="margin-left:.5rem;opacity:.35;font-size:.5em;vertical-align:middle;
+           color:#666;text-decoration:none;transition:opacity .2s;" onmouseenter="this.style.opacity='.8'"
+    onmouseleave="this.style.opacity='.35'">API &#x2197;</a>
 </h1>
 
 {% if dataspaces %}
@@ -216,16 +215,16 @@
     fetch('/api/defaults', { credentials: 'same-origin' })
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (d) refreshDefaults(d); })
-      .catch(() => {});
+      .catch(() => { });
     // Also refresh when instances are switched (hook into switchInstance if defined)
     const _origSwitch = window.switchInstance;
     if (typeof _origSwitch === 'function') {
-      window.switchInstance = async function(name) {
+      window.switchInstance = async function (name) {
         const result = await _origSwitch(name);
         try {
           const r = await fetch('/api/defaults', { credentials: 'same-origin' });
           if (r.ok) refreshDefaults(await r.json());
-        } catch {}
+        } catch { }
         return result;
       };
     }
@@ -453,7 +452,7 @@
                 } else {
                   detail = typeof d === 'string' ? d : JSON.stringify(d);
                 }
-              } catch { try { detail = (await r.text()).slice(0, 400); } catch {} }
+              } catch { try { detail = (await r.text()).slice(0, 400); } catch { } }
               throw new Error(`${r.status}` + (detail ? ': ' + detail : ''));
             }
             const res = await r.json();

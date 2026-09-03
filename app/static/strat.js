@@ -1,4 +1,4 @@
-(function(){
+(function () {
   'use strict';
 
   const STRAT_DEFAULTS = {
@@ -25,39 +25,39 @@
     }
   })();
 
-  const $ = (sel, root=document) => root.querySelector(sel);
-  const qInput     = $('#strat-q');
-  const typeSelect  = $('#strat-type');
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const qInput = $('#strat-q');
+  const typeSelect = $('#strat-type');
   const limitInput = $('#strat-limit');
-  const btnSearch  = $('#btn-search');
-  const resSelect  = $('#strat-results');
+  const btnSearch = $('#btn-search');
+  const resSelect = $('#strat-results');
   const searchStat = $('#search-status');
-  const statusBox  = $('#load-status');
-  const legendBox  = $('#legend');
+  const statusBox = $('#load-status');
+  const legendBox = $('#legend');
   const matrixRoot = $('#matrix-root');
-  const metaBody   = $('#meta-body');
+  const metaBody = $('#meta-body');
 
   const setStatus = (msg) => { if (statusBox) statusBox.textContent = msg || ''; };
-  const clear = (el) => { if (el) el.innerHTML=''; };
+  const clear = (el) => { if (el) el.innerHTML = ''; };
 
   /* ------------------------------------------------------------------ */
   /*  METADATA helper                                                   */
   /* ------------------------------------------------------------------ */
-  function renderMetaPairs(obj){
+  function renderMetaPairs(obj) {
     if (!metaBody) return;
-    function flt(val, path='', out=[]){
+    function flt(val, path = '', out = []) {
       if (val && typeof val === 'object' && !Array.isArray(val))
-        for (const [k,v] of Object.entries(val)) flt(v, path ? `${path}.${k}` : k, out);
-      else if (Array.isArray(val)) val.forEach((v,i)=>flt(v, path?`${path}.${i}`:`${i}`, out));
-      else out.push({name:path, value:(val===null||val===undefined)?'-':String(val)});
+        for (const [k, v] of Object.entries(val)) flt(v, path ? `${path}.${k}` : k, out);
+      else if (Array.isArray(val)) val.forEach((v, i) => flt(v, path ? `${path}.${i}` : `${i}`, out));
+      else out.push({ name: path, value: (val === null || val === undefined) ? '-' : String(val) });
       return out;
     }
     const pairs = flt(obj);
     clear(metaBody);
-    if (!pairs.length){ metaBody.innerHTML='<tr><td class="muted">No metadata</td><td></td></tr>'; return; }
-    for (const p of pairs){
-      const tr=document.createElement('tr');
-      tr.innerHTML=`<td class="meta-name">${p.name}</td><td>${p.value}</td>`;
+    if (!pairs.length) { metaBody.innerHTML = '<tr><td class="muted">No metadata</td><td></td></tr>'; return; }
+    for (const p of pairs) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="meta-name">${p.name}</td><td>${p.value}</td>`;
       metaBody.appendChild(tr);
     }
   }
@@ -113,16 +113,16 @@
           (u.topMa != null) ? u.topMa : (u.olderMa ?? null),
           (u.baseMa != null) ? u.baseMa : (u.youngerMa ?? null));
         return {
-          name:   u.name   || '(unit)',
-          topMa:  (u.topMa  != null) ? u.topMa  : null,
+          name: u.name || '(unit)',
+          topMa: (u.topMa != null) ? u.topMa : null,
           baseMa: (u.baseMa != null) ? u.baseMa : null,
           olderMa, youngerMa,
-          color:  u.color  || null,
-          code:   u.code   || '',
+          color: u.color || null,
+          code: u.code || '',
           parentName: u.parentName || '',
           _synthetic: !!u._synthetic,
           _origIdx: (u._origIdx != null) ? u._origIdx : ui,
-          horizonTop:  u.horizonTop  || null,
+          horizonTop: u.horizonTop || null,
           horizonBase: u.horizonBase || null,
         };
       })
@@ -135,22 +135,22 @@
     const levels = ranks.map((rk, ri) =>
       rk.units.map(u => ({
         ...u,
-        rankIdx:   ri,
-        rankName:  rk.rankName,
-        children:  [],
-        parent:    null,
+        rankIdx: ri,
+        rankName: rk.rankName,
+        children: [],
+        parent: null,
         leafCount: 0,
-        rowStart:  0,
-        isLeaf:    false,
-        colSpan:   1,
+        rowStart: 0,
+        isLeaf: false,
+        colSpan: 1,
       }))
     );
 
     // ── Helper: make a synthetic stub node at a given rank ──
     function _makeSynth(name, rankIdx, children) {
-      const olders   = children.map(c => c.olderMa).filter(v => v != null);
+      const olders = children.map(c => c.olderMa).filter(v => v != null);
       const youngers = children.map(c => c.youngerMa).filter(v => v != null);
-      const older  = olders.length  ? Math.max(...olders)  : null;
+      const older = olders.length ? Math.max(...olders) : null;
       const younger = youngers.length ? Math.min(...youngers) : null;
       const node = {
         name, topMa: older, baseMa: younger,
@@ -217,12 +217,12 @@
           // 1. Reuse existing synthetic stub with same name
           let stub = cur.children.find(
             c => c.rankIdx === mid && c._synthetic &&
-                 _normName(c.name) === _normName(label));
+              _normName(c.name) === _normName(label));
           // 2. Prefer a real node that age-contains the child
           if (!stub) {
             stub = cur.children.find(
               c => c.rankIdx === mid && !c._synthetic &&
-                   ageContained(child, c));
+                ageContained(child, c));
           }
           // 3. Fallback: create a synthetic stub
           if (!stub) {
@@ -357,7 +357,7 @@
     // Column metadata: rank-level gradient dark → light
     const columns = ranks.map((rk, ri) => {
       const t = nRanks === 1 ? 0.5 : ri / (nRanks - 1);
-      const lightness  = Math.round(36 + t * 50);    // 36% → 86%
+      const lightness = Math.round(36 + t * 50);    // 36% → 86%
       const saturation = Math.round(46 - t * 16);    // 46% → 30%
       const bg = `hsl(210, ${saturation}%, ${lightness}%)`;
       const fg = lightness < 55 ? '#fff' : '#222';
@@ -425,10 +425,10 @@
   }
   function isLightColor(hex) {
     if (!hex || hex[0] !== '#') return true;
-    const r = parseInt(hex.substr(1,2),16),
-          g = parseInt(hex.substr(3,2),16),
-          b = parseInt(hex.substr(5,2),16);
-    return (0.299*r + 0.587*g + 0.114*b) > 155;
+    const r = parseInt(hex.substr(1, 2), 16),
+      g = parseInt(hex.substr(3, 2), 16),
+      b = parseInt(hex.substr(5, 2), 16);
+    return (0.299 * r + 0.587 * g + 0.114 * b) > 155;
   }
 
   function renderHierarchy(hierarchy) {
@@ -477,8 +477,8 @@
         if (node) {
           const td = document.createElement('td');
           td.className = node._synthetic ? 'sc-cell sc-synthetic' : 'sc-cell';
-          if (node.leafCount > 1)  td.rowSpan = node.leafCount;
-          if (node.colSpan  > 1)   td.colSpan = node.colSpan;
+          if (node.leafCount > 1) td.rowSpan = node.leafCount;
+          if (node.colSpan > 1) td.colSpan = node.colSpan;
 
           // Background: prefer ICS chrono colour; else rank gradient
           const bgColor = node.color || columns[c].bg;
@@ -516,7 +516,7 @@
 
           td.title = node.name
             + (node.olderMa != null ? `\n${node.youngerMa}\u2013${node.olderMa} Ma` : '')
-            + (node.code  ? `\n${node.code}` : '');
+            + (node.code ? `\n${node.code}` : '');
 
           tr.appendChild(td);
 
@@ -545,8 +545,8 @@
   let _cachedModel = null;       // Full model for legend-toggle re-renders
   const _hiddenRanks = new Set(); // rankName strings currently toggled off
 
-  async function loadColumnById(id){
-    const rid = (id||'').trim();
+  async function loadColumnById(id) {
+    const rid = (id || '').trim();
     if (!rid) { setStatus('Select a Column or Rank.'); return; }
     setStatus('Loading\u2026');
     currentColumnId = null;
@@ -556,7 +556,7 @@
     if (btnRddmsPushEl) btnRddmsPushEl.disabled = true;
     try {
       const url = `/api/strat/column.json?id=${encodeURIComponent(rid)}&enrich=true`;
-      const res = await fetch(url, { headers:{'Cache-Control':'no-store'} });
+      const res = await fetch(url, { headers: { 'Cache-Control': 'no-store' } });
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
       const model = await res.json();
       _cachedModel = model;
@@ -569,7 +569,7 @@
         column: model.column || {},
         ranks: (model.ranks || []).map(r => ({
           rankName: r.rankName,
-          unitCount: r.unitCount || (r.units||[]).length
+          unitCount: r.unitCount || (r.units || []).length
         }))
       });
       const info = hierarchy
@@ -610,21 +610,21 @@
           ugInfo.textContent = `${hc} horizon(s) available \u2192 can generate up to ${Math.max(0, hc - 1)} unit interval(s). Column currently has ${totalUnits} unit(s).`;
         }
       }
-    } catch(e) {
+    } catch (e) {
       console.warn(e);
       setStatus('Load failed: ' + e.message);
     }
   }
 
-  async function doSearch(){
-    const q = (qInput.value||'*').trim();
-    const lim = Math.max(1, Math.min(1000, parseInt(limitInput.value||'50', 10)));
+  async function doSearch() {
+    const q = (qInput.value || '*').trim();
+    const lim = Math.max(1, Math.min(1000, parseInt(limitInput.value || '50', 10)));
     const stype = (typeSelect ? typeSelect.value : 'all') || 'all';
     searchStat.textContent = 'Searching\u2026';
     resSelect.innerHTML = '<option value="">- searching -</option>';
     try {
       const url = `/api/strat/search.json?q=${encodeURIComponent(q)}&limit=${lim}&type=${stype}`;
-      const r = await fetch(url, { headers:{'Cache-Control':'no-store'} });
+      const r = await fetch(url, { headers: { 'Cache-Control': 'no-store' } });
       if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
       const data = await r.json();
       const items = data.items || [];
@@ -636,7 +636,7 @@
         return;
       }
       // Sort: Columns first, then Ranks, then Units
-      const cols  = items.filter(i => i.type === 'column');
+      const cols = items.filter(i => i.type === 'column');
       const ranks = items.filter(i => i.type === 'rank');
       const units = items.filter(i => i.type === 'unit');
       for (const it of [...cols, ...ranks, ...units]) {
@@ -644,9 +644,9 @@
         opt.value = it.id;
         const badge = it.type === 'rank' ? 'Rank'
           : it.type === 'unit' ? 'Unit'
-          : 'Column';
+            : 'Column';
         const extra = it.source === 'storage' ? ' \u23f3 (indexing)' : '';
-        opt.textContent = `[${badge}] ${it.name||it.id} - ${it.id}${extra}`;
+        opt.textContent = `[${badge}] ${it.name || it.id} - ${it.id}${extra}`;
         // Highlight chrono vs litho
         const hint = ((it.name || '') + ' ' + (it.id || '')).toLowerCase();
         if (hint.includes('chrono')) {
@@ -664,7 +664,7 @@
       if (nUnits) parts.push(`${nUnits} unit(s)`);
       searchStat.textContent = `Found ${parts.join(', ') || '0 results'}`;
       if (stype !== 'unit') loadColumnById(resSelect.value);
-    } catch(e) {
+    } catch (e) {
       console.warn(e);
       resSelect.innerHTML = '<option value="">- error -</option>';
       searchStat.textContent = 'Search failed: ' + e.message;
@@ -736,16 +736,16 @@
     if (!el) return;
     const recs = (bundle && bundle.records) || [];
     const kinds = {};
-    recs.forEach(r => { const k = (r.kind||'').split('--').pop().split(':')[0]; kinds[k] = (kinds[k]||0)+1; });
+    recs.forEach(r => { const k = (r.kind || '').split('--').pop().split(':')[0]; kinds[k] = (kinds[k] || 0) + 1; });
     let html = `<strong>${recs.length} records</strong><br>`;
-    for (const [k,v] of Object.entries(kinds)) html += `&bull; ${k}: ${v}<br>`;
+    for (const [k, v] of Object.entries(kinds)) html += `&bull; ${k}: ${v}<br>`;
     html += `<details style="margin-top:.4rem;"><summary class="muted">Raw JSON (first 3 records)</summary>`;
-    html += `<pre style="max-height:200px;overflow:auto;font-size:11.5px;">${JSON.stringify(recs.slice(0,3), null, 2)}</pre></details>`;
+    html += `<pre style="max-height:200px;overflow:auto;font-size:11.5px;">${JSON.stringify(recs.slice(0, 3), null, 2)}</pre></details>`;
     el.innerHTML = html;
   }
 
   function downloadJSON(obj, filename) {
-    const blob = new Blob([JSON.stringify(obj, null, 2)], {type:'application/json'});
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = filename;
@@ -759,8 +759,8 @@
     try {
       const r = await fetch('/api/strat/storage/put', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({bundle, partition}),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bundle, partition }),
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data.detail || r.statusText);
@@ -768,15 +768,15 @@
 
       // Auto-refresh search - backend discovers un-indexed columns via Rank records
       setTimeout(() => doSearch(), 500);
-    } catch(e) {
+    } catch (e) {
       impStatus(statusId, 'Send failed: ' + e.message, 'err');
     }
   }
 
   /* ---- OpenWorks tab ---- */
   let owBundle = null;
-  const btnOwConvert  = document.getElementById('btn-ow-convert');
-  const btnOwStorage  = document.getElementById('btn-ow-storage');
+  const btnOwConvert = document.getElementById('btn-ow-convert');
+  const btnOwStorage = document.getElementById('btn-ow-storage');
   const btnOwDownload = document.getElementById('btn-ow-download');
 
   btnOwConvert?.addEventListener('click', async () => {
@@ -789,7 +789,7 @@
     fd.append('file', file);
     fd.append('partition', partition);
     try {
-      const r = await fetch('/api/strat/import/ow', {method:'POST', body:fd});
+      const r = await fetch('/api/strat/import/ow', { method: 'POST', body: fd });
       const data = await r.json();
       if (!r.ok) throw new Error(data.detail || r.statusText);
       owBundle = data.bundle;
@@ -797,7 +797,7 @@
       impPreview('ow-preview', owBundle);
       btnOwStorage.disabled = false;
       btnOwDownload.disabled = false;
-    } catch(e) {
+    } catch (e) {
       owBundle = null;
       impStatus('ow-status', 'Conversion failed: ' + e.message, 'err');
     }
@@ -811,10 +811,10 @@
 
   /* ---- SMDA tab ---- */
   let smdaBundle = null;
-  const btnSmdaList    = document.getElementById('btn-smda-list');
-  const btnSmdaFetch   = document.getElementById('btn-smda-fetch');
+  const btnSmdaList = document.getElementById('btn-smda-list');
+  const btnSmdaFetch = document.getElementById('btn-smda-fetch');
   const btnSmdaStorage = document.getElementById('btn-smda-storage');
-  const btnSmdaDownload= document.getElementById('btn-smda-download');
+  const btnSmdaDownload = document.getElementById('btn-smda-download');
 
   // Check SMDA auth status and update hint
   (async () => {
@@ -828,7 +828,7 @@
       } else {
         hint.innerHTML = '<span style="color:#e65100;">&#x26A0; SMDA_CLIENT_ID not set</span>';
       }
-    } catch(e) {}
+    } catch (e) { }
   })();
 
   let smdaColumnsDetails = [];   // enriched column metadata from SMDA
@@ -840,11 +840,11 @@
       const r = await fetch(`/api/strat/smda/columns.json?smda_url=${encodeURIComponent(smdaUrl)}`);
       const data = await r.json();
       if (!r.ok) throw new Error(data.detail || r.statusText);
-      smdaColumnsDetails = data.details || (data.columns || []).map(c => ({name:c}));
+      smdaColumnsDetails = data.details || (data.columns || []).map(c => ({ name: c }));
       _renderSmdaColumns(smdaColumnsDetails);
       document.getElementById('smda-columns-list').style.display = 'block';
       impStatus('smda-status', `Found ${data.total} column identifiers`, 'ok');
-    } catch(e) {
+    } catch (e) {
       impStatus('smda-status', 'List failed: ' + e.message, 'err');
     }
   });
@@ -870,11 +870,11 @@
     if (countEl) countEl.textContent = filt ? `${shown} / ${items.length}` : `${items.length} columns`;
   }
 
-  document.getElementById('smda-columns-filter')?.addEventListener('input', function() {
+  document.getElementById('smda-columns-filter')?.addEventListener('input', function () {
     _renderSmdaColumns(smdaColumnsDetails, this.value);
   });
 
-  document.getElementById('smda-columns-sel')?.addEventListener('change', function() {
+  document.getElementById('smda-columns-sel')?.addEventListener('change', function () {
     const opts = Array.from(this.selectedOptions).map(o => o.value);
     document.getElementById('smda-col').value = opts[0] || '';
     const batchBtn = document.getElementById('btn-smda-batch');
@@ -894,7 +894,7 @@
     fd.append('smda_url', smdaUrl);
     fd.append('partition', partition);
     try {
-      const r = await fetch('/api/strat/import/smda', {method:'POST', body:fd});
+      const r = await fetch('/api/strat/import/smda', { method: 'POST', body: fd });
       const data = await r.json();
       if (!r.ok) throw new Error(data.detail || r.statusText);
       smdaBundle = data.bundle;
@@ -905,7 +905,7 @@
       // Show RDDMS push panel
       const rddmsPanel = document.getElementById('smda-rddms-panel');
       if (rddmsPanel) rddmsPanel.style.display = 'block';
-    } catch(e) {
+    } catch (e) {
       smdaBundle = null;
       impStatus('smda-status', 'Fetch failed: ' + e.message, 'err');
     }
@@ -933,27 +933,27 @@
     const errors = [];
     for (let i = 0; i < cols.length; i++) {
       const col = cols[i];
-      impStatus('smda-status', `[${i+1}/${cols.length}] Fetching "${col}" from SMDA…`, 'info');
+      impStatus('smda-status', `[${i + 1}/${cols.length}] Fetching "${col}" from SMDA…`, 'info');
       try {
         // 1. Fetch & convert
         const fd = new FormData();
         fd.append('column', col);
         fd.append('smda_url', smdaUrl);
         fd.append('partition', partition);
-        const r1 = await fetch('/api/strat/import/smda', {method:'POST', body:fd});
+        const r1 = await fetch('/api/strat/import/smda', { method: 'POST', body: fd });
         const d1 = await r1.json();
         if (!r1.ok) throw new Error(d1.detail || r1.statusText);
         // 2. Ingest to OSDU Storage
-        impStatus('smda-status', `[${i+1}/${cols.length}] Ingesting "${d1.columnName}" to OSDU…`, 'info');
+        impStatus('smda-status', `[${i + 1}/${cols.length}] Ingesting "${d1.columnName}" to OSDU…`, 'info');
         const r2 = await fetch('/api/strat/storage/put', {
           method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({bundle: d1.bundle, partition}),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ bundle: d1.bundle, partition }),
         });
         const d2 = await r2.json();
         if (!r2.ok) throw new Error(d2.detail || r2.statusText);
         ok++;
-      } catch(e) {
+      } catch (e) {
         fail++;
         errors.push(`${col}: ${e.message}`);
       }
@@ -971,13 +971,13 @@
   });
 
   /* ---- SMDA → RDDMS push ---- */
-  const smdaRddmsDs       = document.getElementById('smda-rddms-ds');
-  const smdaRddmsDsSel    = document.getElementById('smda-rddms-ds-sel');
+  const smdaRddmsDs = document.getElementById('smda-rddms-ds');
+  const smdaRddmsDsSel = document.getElementById('smda-rddms-ds-sel');
   const smdaRddmsDsPicker = document.getElementById('smda-rddms-ds-picker');
-  const btnSmdaRddmsList  = document.getElementById('btn-smda-rddms-list');
-  const btnSmdaRddmsPush  = document.getElementById('btn-smda-rddms-push');
-  const smdaRddmsStatus   = document.getElementById('smda-rddms-status');
-  const smdaRddmsResult   = document.getElementById('smda-rddms-result');
+  const btnSmdaRddmsList = document.getElementById('btn-smda-rddms-list');
+  const btnSmdaRddmsPush = document.getElementById('btn-smda-rddms-push');
+  const smdaRddmsStatus = document.getElementById('smda-rddms-status');
+  const smdaRddmsResult = document.getElementById('smda-rddms-result');
 
   function smdaRddmsSetStatus(msg, cls) {
     if (smdaRddmsStatus) { smdaRddmsStatus.textContent = msg; smdaRddmsStatus.className = cls || 'muted'; }
@@ -994,7 +994,7 @@
   btnSmdaRddmsList?.addEventListener('click', async () => {
     smdaRddmsSetStatus('Loading dataspaces\u2026');
     try {
-      const r = await fetch('/api/strat/dataspaces.json', { headers:{'Cache-Control':'no-store'} });
+      const r = await fetch('/api/strat/dataspaces.json', { headers: { 'Cache-Control': 'no-store' } });
       const data = await r.json();
       if (data.error) throw new Error(data.error);
       const items = data.dataspaces || [];
@@ -1007,12 +1007,12 @@
       }
       smdaRddmsDsPicker.style.display = 'block';
       smdaRddmsSetStatus(`Found ${items.length} dataspaces`);
-    } catch(e) {
+    } catch (e) {
       smdaRddmsSetStatus('List failed: ' + e.message, 'muted');
     }
   });
 
-  smdaRddmsDsSel?.addEventListener('change', function() {
+  smdaRddmsDsSel?.addEventListener('change', function () {
     if (smdaRddmsDs) smdaRddmsDs.value = this.value;
   });
 
@@ -1032,7 +1032,7 @@
     try {
       const r = await fetch('/api/strat/smda/push-rddms', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           column: col,
           smdaUrl: smdaUrl,
@@ -1044,8 +1044,8 @@
       if (!r.ok) throw new Error(data.detail || r.statusText);
 
       const types = data.types || {};
-      const typeList = Object.entries(types).map(([k,v]) => {
-        const short = k.replace('resqml20.obj_','');
+      const typeList = Object.entries(types).map(([k, v]) => {
+        const short = k.replace('resqml20.obj_', '');
         return `<tr><td style="font-family:monospace;font-size:12px;">${short}</td><td style="text-align:right;">${v}</td></tr>`;
       }).join('');
 
@@ -1068,7 +1068,7 @@
       }
       smdaRddmsSetStatus(data.status === 'ok' ? 'Done' : (data.status === 'error' ? 'All pushes failed' : 'Completed with errors'));
       smdaRddmsShowResult(html, data.status === 'ok' ? 'ok' : 'err');
-    } catch(e) {
+    } catch (e) {
       smdaRddmsSetStatus('Push failed: ' + e.message, 'muted');
       smdaRddmsShowResult(`<strong>\u274c Push failed</strong><br>${e.message}`, 'err');
     } finally {
@@ -1080,7 +1080,7 @@
   let fileBundle = null;
   const btnBundleStorage = document.getElementById('btn-bundle-storage');
 
-  document.getElementById('bundle-file')?.addEventListener('change', async function() {
+  document.getElementById('bundle-file')?.addEventListener('change', async function () {
     const file = this.files?.[0];
     if (!file) return;
     try {
@@ -1090,7 +1090,7 @@
       const recs = doc.records || [];
       impStatus('bundle-status', `Loaded ${recs.length} records from ${file.name}`, 'ok');
       impPreview('bundle-preview', doc);
-    } catch(e) {
+    } catch (e) {
       fileBundle = null;
       impStatus('bundle-status', 'Invalid JSON: ' + e.message, 'err');
     }
@@ -1103,13 +1103,13 @@
   /*  RDDMS PUSH (RESQML ingest to Reservoir DDMS dataspace)          */
   /* ================================================================ */
 
-  const rddmsDs       = document.getElementById('rddms-ds');
-  const rddmsDsSel    = document.getElementById('rddms-ds-sel');
+  const rddmsDs = document.getElementById('rddms-ds');
+  const rddmsDsSel = document.getElementById('rddms-ds-sel');
   const rddmsDsPicker = document.getElementById('rddms-ds-picker');
   const btnRddmsListDs = document.getElementById('btn-rddms-list-ds');
-  const btnRddmsPush  = document.getElementById('btn-rddms-push');
-  const rddmsStatus   = document.getElementById('rddms-status');
-  const rddmsResult   = document.getElementById('rddms-result');
+  const btnRddmsPush = document.getElementById('btn-rddms-push');
+  const rddmsStatus = document.getElementById('rddms-status');
+  const rddmsResult = document.getElementById('rddms-result');
 
   function rddmsSetStatus(msg, cls) {
     if (rddmsStatus) { rddmsStatus.textContent = msg; rddmsStatus.className = cls || 'muted'; }
@@ -1126,7 +1126,7 @@
   btnRddmsListDs?.addEventListener('click', async () => {
     rddmsSetStatus('Loading dataspaces\u2026');
     try {
-      const r = await fetch('/api/strat/dataspaces.json', { headers:{'Cache-Control':'no-store'} });
+      const r = await fetch('/api/strat/dataspaces.json', { headers: { 'Cache-Control': 'no-store' } });
       const data = await r.json();
       if (data.error) throw new Error(data.error);
       const items = data.dataspaces || [];
@@ -1140,13 +1140,13 @@
       }
       rddmsDsPicker.style.display = 'block';
       rddmsSetStatus(`Found ${items.length} dataspaces`);
-    } catch(e) {
+    } catch (e) {
       rddmsSetStatus('List failed: ' + e.message, 'muted');
     }
   });
 
   // Select dataspace from picker
-  rddmsDsSel?.addEventListener('change', function() {
+  rddmsDsSel?.addEventListener('change', function () {
     if (rddmsDs) rddmsDs.value = this.value;
   });
 
@@ -1164,7 +1164,7 @@
     try {
       const r = await fetch('/api/strat/ingest/rddms', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           columnId: currentColumnId,
           dataspace: ds,
@@ -1175,8 +1175,8 @@
       if (!r.ok) throw new Error(data.detail || r.statusText);
 
       const types = data.types || {};
-      const typeList = Object.entries(types).map(([k,v]) => {
-        const short = k.replace('resqml20.obj_','');
+      const typeList = Object.entries(types).map(([k, v]) => {
+        const short = k.replace('resqml20.obj_', '');
         return `<tr><td style="font-family:monospace;font-size:12px;">${short}</td><td style="text-align:right;">${v}</td></tr>`;
       }).join('');
 
@@ -1200,7 +1200,7 @@
 
       rddmsSetStatus(data.status === 'ok' ? 'Done' : (data.status === 'error' ? 'All pushes failed' : 'Completed with errors'));
       rddmsShowResult(html, data.status === 'ok' ? 'ok' : 'err');
-    } catch(e) {
+    } catch (e) {
       rddmsSetStatus('Push failed: ' + e.message, 'muted');
       rddmsShowResult(`<strong>\u274c Push failed</strong><br>${e.message}`, 'err');
     } finally {
@@ -1223,7 +1223,7 @@
     try {
       const r = await fetch('/api/strat/generate-horizons', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           columnId: currentColumnId,
           partition: partition,
@@ -1269,7 +1269,7 @@
 
       // Auto-refresh column to show horizon data
       if (ingest) setTimeout(() => loadColumnById(currentColumnId), 2000);
-    } catch(e) {
+    } catch (e) {
       if (statusEl) statusEl.textContent = 'Failed: ' + e.message;
       if (resultEl) {
         resultEl.innerHTML = `<strong>\u274c Error</strong>: ${e.message}`;
@@ -1298,7 +1298,7 @@
     try {
       const r = await fetch('/api/strat/generate-units', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           columnId: currentColumnId,
           partition: partition,
@@ -1343,7 +1343,7 @@
 
       // Auto-refresh column after ingest
       if (ingest) setTimeout(() => loadColumnById(currentColumnId), 2000);
-    } catch(e) {
+    } catch (e) {
       if (statusEl) statusEl.textContent = 'Failed: ' + e.message;
       if (resultEl) {
         resultEl.innerHTML = `<strong>\u274c Error</strong>: ${e.message}`;
