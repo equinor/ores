@@ -1,0 +1,197 @@
+[
+    {
+        "$type": "resqml20.obj_StratigraphicColumnRankInterpretation",
+        "SchemaVersion": "2.0",
+        "Uuid": "4e25e2aa-2d91-4ba8-99f5-99e87a166865",
+        "Citation": {
+            "$type": "eml20.Citation",
+            "Title": "|UNNAMED|",
+            "Originator": "Soumik.Dutta",
+            "Creation": "2024-09-17T06:06:21.000Z",
+            "Format": "PDGM-DX ETP Client 2.0.1"
+        },
+        "CustomData": {
+            "$type": "eml20.CustomData"
+        },
+        "ExtraMetadata": [
+            {
+                "$type": "resqml20.NameValuePair",
+                "Name": "pdgm/dx/resqml/project",
+                "Value": "54540eec-3438-4489-b2bc-084cc588e04c"
+            }
+        ],
+        "Domain": "depth",
+        "InterpretedFeature": {
+            "$type": "eml20.DataObjectReference",
+            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_OrganizationFeature",
+            "Title": "Model feature",
+            "UUID": "9d2ff412-24b9-41e3-96b1-4e618281c5d0",
+            "UuidAuthority": "pdgm",
+            "_data": {
+                "$type": "resqml20.obj_OrganizationFeature",
+                "SchemaVersion": "2.0",
+                "Uuid": "9d2ff412-24b9-41e3-96b1-4e618281c5d0",
+                "Citation": {
+                    "$type": "eml20.Citation",
+                    "Title": "Model feature",
+                    "Originator": "soumik.dutta",
+                    "Creation": "2023-05-15T04:41:42.000Z",
+                    "Format": "PDGM-DX ETP Client 2.0.1"
+                },
+                "OrganizationKind": "earth model"
+            }
+        },
+        "OrderingCriteria": "age",
+        "Index": 0,
+        "StratigraphicUnits": [
+            {
+                "$type": "resqml20.StratigraphicUnitInterpretationIndex",
+                "Index": 0,
+                "Unit": {
+                    "$type": "eml20.DataObjectReference",
+                    "ContentType": "application/x-resqml+xml;version=2.0;type=obj_StratigraphicUnitInterpretation",
+                    "Title": "|UNNAMED|",
+                    "UUID": "b9d1cc58-9ef5-40a6-9e49-391b091105fb",
+                    "UuidAuthority": "pdgm",
+                    "_data": {
+                        "$type": "resqml20.obj_StratigraphicUnitInterpretation",
+                        "SchemaVersion": "2.0",
+                        "Uuid": "b9d1cc58-9ef5-40a6-9e49-391b091105fb",
+                        "Citation": {
+                            "$type": "eml20.Citation",
+                            "Title": "|UNNAMED|",
+                            "Originator": "Soumik.Dutta",
+                            "Creation": "2024-09-17T06:11:40.000Z",
+                            "Format": "PDGM-DX ETP Client 2.0.1"
+                        },
+                        "Domain": "depth",
+                        "InterpretedFeature": {
+                            "$type": "eml20.DataObjectReference",
+                            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_StratigraphicUnitFeature",
+                            "Title": "above_draupne_fm_1_js_top",
+                            "UUID": "4c8b31f5-67d4-4b6d-9607-e4f2b6b5492e",
+                            "UuidAuthority": "pdgm",
+                            "_data": {
+                                "$type": "resqml20.obj_StratigraphicUnitFeature",
+                                "SchemaVersion": "2.0",
+                                "Uuid": "4c8b31f5-67d4-4b6d-9607-e4f2b6b5492e",
+                                "Citation": {
+                                    "$type": "eml20.Citation",
+                                    "Title": "above_draupne_fm_1_js_top",
+                                    "Originator": "Soumik.Dutta",
+                                    "Creation": "2024-09-17T06:07:25.000Z",
+                                    "Format": "PDGM-DX ETP Client 2.0.1"
+                                },
+                                "ChronostratigraphicBottom": {
+                                    "$type": "eml20.DataObjectReference",
+                                    "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+                                    "Title": "draupne_fm_1_js_top",
+                                    "UUID": "e67b3273-840c-4d3c-bae8-c07aa3b74d03",
+                                    "UuidAuthority": "pdgm",
+                                    "_data": {
+                                        "$type": "resqml20.obj_GeneticBoundaryFeature",
+                                        "SchemaVersion": "2.0",
+                                        "Uuid": "e67b3273-840c-4d3c-bae8-c07aa3b74d03",
+                                        "Citation": {
+                                            "$type": "eml20.Citation",
+                                            "Title": "draupne_fm_1_js_top",
+                                            "Originator": "Soumik.Dutta",
+                                            "Creation": "2024-09-17T08:02:00.000Z",
+                                            "Format": "PDGM-DX ETP Client 2.0.1"
+                                        },
+                                        "GeneticBoundaryKind": "horizon"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "$type": "resqml20.StratigraphicUnitInterpretationIndex",
+                "Index": 1,
+                "Unit": {
+                    "$type": "eml20.DataObjectReference",
+                    "ContentType": "application/x-resqml+xml;version=2.0;type=obj_StratigraphicUnitInterpretation",
+                    "Title": "|UNNAMED|",
+                    "UUID": "c74a37b7-8f1d-4d30-a9f9-d1f704818f32",
+                    "UuidAuthority": "pdgm",
+                    "_data": {
+                        "$type": "resqml20.obj_StratigraphicUnitInterpretation",
+                        "SchemaVersion": "2.0",
+                        "Uuid": "c74a37b7-8f1d-4d30-a9f9-d1f704818f32",
+                        "Citation": {
+                            "$type": "eml20.Citation",
+                            "Title": "|UNNAMED|",
+                            "Originator": "Soumik.Dutta",
+                            "Creation": "2024-09-17T06:08:12.000Z",
+                            "Format": "PDGM-DX ETP Client 2.0.1",
+                            "Editor": "Soumik.Dutta",
+                            "LastUpdate": "2024-09-17T06:09:22.000Z"
+                        },
+                        "Domain": "depth",
+                        "InterpretedFeature": {
+                            "$type": "eml20.DataObjectReference",
+                            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_StratigraphicUnitFeature",
+                            "Title": "draupne_fm_1_js_top",
+                            "UUID": "0a3827fc-a438-4480-97d8-07421fa7929f",
+                            "UuidAuthority": "pdgm",
+                            "_data": {
+                                "$type": "resqml20.obj_StratigraphicUnitFeature",
+                                "SchemaVersion": "2.0",
+                                "Uuid": "0a3827fc-a438-4480-97d8-07421fa7929f",
+                                "Citation": {
+                                    "$type": "eml20.Citation",
+                                    "Title": "draupne_fm_1_js_top",
+                                    "Originator": "Soumik.Dutta",
+                                    "Creation": "2024-09-17T06:07:25.000Z",
+                                    "Format": "PDGM-DX ETP Client 2.0.1"
+                                },
+                                "ChronostratigraphicBottom": {
+                                    "$type": "eml20.DataObjectReference",
+                                    "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+                                    "Title": "intra-upper_triassic_unconformity",
+                                    "UUID": "90c54826-ab59-4df2-bfe9-239ce8793713",
+                                    "UuidAuthority": "pdgm",
+                                    "_data": {
+                                        "$type": "resqml20.obj_GeneticBoundaryFeature",
+                                        "SchemaVersion": "2.0",
+                                        "Uuid": "90c54826-ab59-4df2-bfe9-239ce8793713",
+                                        "Citation": {
+                                            "$type": "eml20.Citation",
+                                            "Title": "intra-upper_triassic_unconformity",
+                                            "Originator": "Soumik.Dutta",
+                                            "Creation": "2024-09-17T06:06:57.000Z",
+                                            "Format": "PDGM-DX ETP Client 2.0.1"
+                                        },
+                                        "GeneticBoundaryKind": "horizon"
+                                    }
+                                },
+                                "ChronostratigraphicTop": {
+                                    "$type": "eml20.DataObjectReference",
+                                    "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+                                    "Title": "draupne_fm_1_js_top",
+                                    "UUID": "e67b3273-840c-4d3c-bae8-c07aa3b74d03",
+                                    "UuidAuthority": "pdgm",
+                                    "_data": {
+                                        "$type": "resqml20.obj_GeneticBoundaryFeature",
+                                        "SchemaVersion": "2.0",
+                                        "Uuid": "e67b3273-840c-4d3c-bae8-c07aa3b74d03",
+                                        "Citation": {
+                                            "$type": "eml20.Citation",
+                                            "Title": "draupne_fm_1_js_top",
+                                            "Originator": "Soumik.Dutta",
+                                            "Creation": "2024-09-17T08:02:00.000Z",
+                                            "Format": "PDGM-DX ETP Client 2.0.1"
+                                        },
+                                        "GeneticBoundaryKind": "horizon"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+]

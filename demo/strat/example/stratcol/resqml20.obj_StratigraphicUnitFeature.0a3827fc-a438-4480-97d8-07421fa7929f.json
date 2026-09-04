@@ -1,0 +1,33 @@
+[
+    {
+        "$type": "resqml20.obj_StratigraphicUnitFeature",
+        "SchemaVersion": "2.0",
+        "Uuid": "0a3827fc-a438-4480-97d8-07421fa7929f",
+        "ChronostratigraphicBottom": {
+            "$type": "eml20.DataObjectReference",
+            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+            "Title": "intra-upper_triassic_unconformity",
+            "UUID": "90c54826-ab59-4df2-bfe9-239ce8793713",
+            "UuidAuthority": "pdgm",
+            "_data": {
+                "$type": "resqml20.obj_GeneticBoundaryFeature",
+                "SchemaVersion": "2.0",
+                "Uuid": "90c54826-ab59-4df2-bfe9-239ce8793713",
+                "GeneticBoundaryKind": "horizon"
+            }
+        },
+        "ChronostratigraphicTop": {
+            "$type": "eml20.DataObjectReference",
+            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+            "Title": "draupne_fm_1_js_top",
+            "UUID": "e67b3273-840c-4d3c-bae8-c07aa3b74d03",
+            "UuidAuthority": "pdgm",
+            "_data": {
+                "$type": "resqml20.obj_GeneticBoundaryFeature",
+                "SchemaVersion": "2.0",
+                "Uuid": "e67b3273-840c-4d3c-bae8-c07aa3b74d03",
+                "GeneticBoundaryKind": "horizon"
+            }
+        }
+    }
+]

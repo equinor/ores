@@ -1,0 +1,115 @@
+{
+    "records": [
+        {
+            "id": "namespace:work-product-component--StratigraphicColumnRankInterpretation:a86f0c8d-45e9-5128-a383-c1a002ee22be",
+            "kind": "osdu:wks:work-product-component--StratigraphicColumnRankInterpretation:1.3.0",
+            "acl": {
+                "viewers": [
+                    "data.default.viewers@npequinor-dev.dataservices.energy"
+                ],
+                "owners": [
+                    "data.horizon-test.owners@npequinor-dev.dataservices.energy"
+                ]
+            },
+            "legal": {
+                "legaltags": [
+                    "npequinor-dev-equinor-private-default"
+                ],
+                "otherRelevantDataCountries": [
+                    "US"
+                ],
+                "status": "compliant"
+            },
+            "data": {
+                "ExistenceKind": "npequinor-dev:reference-data--ExistenceKind:Prototype:",
+                "Datasets": [
+                    "osdu:dataset--ETPDataspace:demo%2Fjos:",
+                    "npequinor-dev:dataset--File.Generic:a2fb1973-8bc6-4389-8008-57798cc80901:"
+                ],
+                "IsDiscoverable": true,
+                "IsExtendedLoad": false,
+                "CreationDateTime": "2023-11-08T10:13:00.000Z",
+                "Name": "FulRes_23sp-20au_TS_0535_IUTU-10ms_Surface",
+                "SpatialArea": {
+                    "AsIngestedCoordinates": {
+                        "bbox": [
+                            462553.8224098982,
+                            6503990.5,
+                            491404.99413822894,
+                            6536033.210340572
+                        ],
+                        "features": [
+                            {
+                                "type": "AnyCrsFeature",
+                                "geometry": {
+                                    "type": "AnyCrsPolygon",
+                                    "coordinates": [
+                                        [
+                                            [
+                                                462553.8224098982,
+                                                6503990.5
+                                            ],
+                                            [
+                                                462553.8224098982,
+                                                6536033.210340572
+                                            ],
+                                            [
+                                                491404.99413822894,
+                                                6536033.210340572
+                                            ],
+                                            [
+                                                491404.99413822894,
+                                                6503990.5
+                                            ]
+                                        ]
+                                    ]
+                                },
+                                "properties": {}
+                            }
+                        ],
+                        "persistableReferenceCrs": "",
+                        "type": "AnyCrsFeatureCollection"
+                    }
+                },
+                "SpatialPoint": {
+                    "AsIngestedCoordinates": {
+                        "features": [
+                            {
+                                "type": "AnyCrsFeature",
+                                "geometry": {
+                                    "type": "AnyCrsPoint",
+                                    "coordinates": [
+                                        462553.8224098982,
+                                        6503990.5
+                                    ]
+                                },
+                                "properties": {}
+                            }
+                        ],
+                        "persistableReferenceCrs": "",
+                        "type": "AnyCrsFeatureCollection"
+                    }
+                },
+                "Tags": [],
+                "OlderPossibleAge": 145.0,
+                "YoungerPossibleAge": 163.5,
+                "DomainTypeID": "namespace:reference-data--DomainType:Time:",
+                "StratigraphicColumnRankUnitType": "namespace:reference-data--StratigraphicColumnRankUnitType:Lithostratigraphic.Formation:",
+                "Rank": 2,
+                "StratigraphicUnitInterpretationSet": [
+                    "namespace:work-product-component--StratigraphicUnitInterpretation:90008741-3433-406B-9189-22B298C3E2D2:",
+                    "namespace:work-product-component--StratigraphicUnitInterpretation:11008888-3433-406B-9189-33B298F3E2D3:",
+                    "namespace:work-product-component--StratigraphicUnitInterpretation:11008888-3433-406B-9189-33B298F3E2D4:"
+                    "namespace:work-product-component--StratigraphicUnitInterpretation:11008888-3433-406B-9189-33B298F3E2D5:"
+                ],
+                "LithoStratigraphySet": [
+                    "Aasgard",
+                    "Draupne",
+                    "Heather",
+                    "Hugin"
+                ],
+                "ExtensionProperties": {}
+            }
+        }
+    ]
+}

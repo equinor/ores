@@ -1,0 +1,107 @@
+{
+  "records": [
+    {
+      "id": "namespace:work-product-component--StratigraphicColumn:",
+      "kind": "osdu:wks:work-product-component--StratigraphicColumn:1.2.0",
+      "acl": {
+        "viewers": [
+          "data.default.viewers@npequinor-dev.dataservices.energy"
+        ],
+        "owners": [
+          "data.horizon-test.owners@npequinor-dev.dataservices.energy"
+        ]
+      },
+      "legal": {
+        "legaltags": [
+          "npequinor-dev-equinor-private-default"
+        ],
+        "otherRelevantDataCountries": [
+          "US"
+        ],
+        "status": "compliant"
+      },
+      "data": {
+        "ExistenceKind": "npequinor-dev:reference-data--ExistenceKind:Prototype:",
+        "Datasets": [
+          "osdu:dataset--ETPDataspace:demo%2Fjos:",
+          "npequinor-dev:dataset--File.Generic:a2fb1973-8bc6-4389-8008-57798cc80901:"
+        ],
+        "IsDiscoverable": true,
+        "IsExtendedLoad": false,
+        "CreationDateTime": "2023-11-08T10:13:00.000Z",
+        "Name": "FulRes_23sp-20au_TS_0535_IUTU-10ms_Surface",
+        "SpatialArea": {
+          "AsIngestedCoordinates": {
+            "bbox": [
+              462553.8224098982,
+              6503990.5,
+              491404.99413822894,
+              6536033.210340572
+            ],
+            "features": [
+              {
+                "type": "AnyCrsFeature",
+                "geometry": {
+                  "type": "AnyCrsPolygon",
+                  "coordinates": [
+                    [
+                      [
+                        462553.8224098982,
+                        6503990.5
+                      ],
+                      [
+                        462553.8224098982,
+                        6536033.210340572
+                      ],
+                      [
+                        491404.99413822894,
+                        6536033.210340572
+                      ],
+                      [
+                        491404.99413822894,
+                        6503990.5
+                      ]
+                    ]
+                  ]
+                },
+                "properties": {}
+              }
+            ],
+            "persistableReferenceCrs": "",
+            "type": "AnyCrsFeatureCollection"
+          }
+        },
+        "SpatialPoint": {
+          "AsIngestedCoordinates": {
+            "features": [
+              {
+                "type": "AnyCrsFeature",
+                "geometry": {
+                  "type": "AnyCrsPoint",
+                  "coordinates": [
+                    462553.8224098982,
+                    6503990.5
+                  ]
+                },
+                "properties": {}
+              }
+            ],
+            "persistableReferenceCrs": "",
+            "type": "AnyCrsFeatureCollection"
+          }
+        },
+        "Tags": [],
+        "StratigraphicColumnRankInterpretationSet": [
+          "namespace:work-product-component--StratigraphicColumnRankInterpretation:StratigraphicColumnRankInterpretation-911bb71f-06ab-4deb-8e68-b8c9229dc76b:",
+          "namespace:work-product-component--StratigraphicColumnRankInterpretation:StratigraphicColumnRankInterpretation-911bb71f-06ab-4deb-8e68-b8c9229dc76a:",
+        ],
+        "ValidationDate": "2011-03-01T11:46:20.163Z",
+        "ValueChainStatusType": "namespace:reference-data--ValueChainStatusType:Exploration:",
+        "StratigraphicColumnValidityAreaType": "namespace:reference-data--StratigraphicColumnValidityAreaType:global:",
+        "ExtensionProperties": {}
+      }
+    }
+  ],
+  "invalidRecords": [],
+  "retryRecords": []
+}

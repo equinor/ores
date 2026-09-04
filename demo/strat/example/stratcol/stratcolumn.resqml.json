@@ -1,0 +1,436 @@
+[
+    {
+        "$type": "resqml20.obj_GeneticBoundaryFeature",
+        "SchemaVersion": "2.0",
+        "Uuid": "912bc625-2a48-401c-aa58-7b511e6831c0",
+        "Citation": {
+            "$type": "eml20.Citation",
+            "Title": "draupne_fm_1_js_top--depth_structural_model--p50",
+            "Originator": "maap",
+            "Creation": "2024-09-30T04:30:44.000Z",
+            "Format": "resqml201"
+        },
+        "GeneticBoundaryKind": "horizon"
+    },
+    {
+        "$type": "resqml20.obj_GeneticBoundaryFeature",
+        "SchemaVersion": "2.0",
+        "Uuid": "ca9f8f03-0975-4789-954f-4b184d08ffe2",
+        "Citation": {
+            "$type": "eml20.Citation",
+            "Title": "intra-upper_triassic_unconformity--depth_structural_model--p50",
+            "Originator": "maap",
+            "Creation": "2024-09-30T04:31:03.000Z",
+            "Format": "resqml201"
+        },
+        "GeneticBoundaryKind": "horizon"
+    },
+    {
+        "$type": "resqml20.obj_OrganizationFeature",
+        "SchemaVersion": "2.0",
+        "Uuid": "9d2ff412-24b9-41e3-96b1-4e618281c5d0",
+        "Citation": {
+            "$type": "eml20.Citation",
+            "Title": "Model feature",
+            "Originator": "maap",
+            "Creation": "2023-05-15T04:41:42.000Z",
+            "Format": "resqml201"
+        },
+        "OrganizationKind": "earth model"
+    },
+    {
+        "$type": "resqml20.obj_StratigraphicColumn",
+        "SchemaVersion": "2.0",
+        "Uuid": "8e73f1f0-af5c-4304-bc40-3347d1f8a3da",
+        "Citation": {
+            "$type": "eml20.Citation",
+            "Title": "strati_context",
+            "Originator": "maap",
+            "Creation": "2024-09-30T04:30:44.000Z",
+            "Format": "resqml201"
+        },
+        "Ranks": [
+            {
+                "$type": "eml20.DataObjectReference",
+                "ContentType": "application/x-resqml+xml;version=2.0;type=obj_StratigraphicColumnRankInterpretation",
+                "Title": "|UNNAMED|",
+                "UUID": "1e7dba67-c056-4a84-ac27-3bd34cec2c8b",
+                "UuidAuthority": "eqn"
+            }
+        ]
+    },
+    {
+        "$type": "resqml20.obj_StratigraphicColumnRankInterpretation",
+        "SchemaVersion": "2.0",
+        "Uuid": "1e7dba67-c056-4a84-ac27-3bd34cec2c8b",
+        "Citation": {
+            "$type": "eml20.Citation",
+            "Title": "|UNNAMED|",
+            "Originator": "maap",
+            "Creation": "2024-09-30T04:30:44.000Z",
+            "Format": "resqml201"
+        },
+        "CustomData": {
+            "$type": "eml20.CustomData"
+        },
+        "ExtraMetadata": [
+            {
+                "$type": "resqml20.NameValuePair",
+                "Name": "eqn/dx/resqml/project",
+                "Value": "0abd9e5f-076e-417d-b112-bee3408edab1"
+            }
+        ],
+        "Domain": "depth",
+        "InterpretedFeature": {
+            "$type": "eml20.DataObjectReference",
+            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_OrganizationFeature",
+            "Title": "Model feature",
+            "UUID": "9d2ff412-24b9-41e3-96b1-4e618281c5d0",
+            "UuidAuthority": "eqn",
+            "_data": {
+                "$type": "resqml20.obj_OrganizationFeature",
+                "SchemaVersion": "2.0",
+                "Uuid": "9d2ff412-24b9-41e3-96b1-4e618281c5d0",
+                "Citation": {
+                    "$type": "eml20.Citation",
+                    "Title": "Model feature",
+                    "Originator": "maap",
+                    "Creation": "2023-05-15T04:41:42.000Z",
+                    "Format": "resqml201"
+                },
+                "OrganizationKind": "earth model"
+            }
+        },
+        "OrderingCriteria": "age",
+        "Index": 0,
+        "StratigraphicUnits": [
+            {
+                "$type": "resqml20.StratigraphicUnitInterpretationIndex",
+                "Index": 0,
+                "Unit": {
+                    "$type": "eml20.DataObjectReference",
+                    "ContentType": "application/x-resqml+xml;version=2.0;type=obj_StratigraphicUnitInterpretation",
+                    "Title": "|UNNAMED|",
+                    "UUID": "e327b36b-3411-4925-adeb-75ec5796cc9b",
+                    "UuidAuthority": "eqn",
+                    "_data": {
+                        "$type": "resqml20.obj_StratigraphicUnitInterpretation",
+                        "SchemaVersion": "2.0",
+                        "Uuid": "e327b36b-3411-4925-adeb-75ec5796cc9b",
+                        "Citation": {
+                            "$type": "eml20.Citation",
+                            "Title": "|UNNAMED|",
+                            "Originator": "maap",
+                            "Creation": "2024-09-30T04:36:02.000Z",
+                            "Format": "resqml201"
+                        },
+                        "Domain": "depth",
+                        "InterpretedFeature": {
+                            "$type": "eml20.DataObjectReference",
+                            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_StratigraphicUnitFeature",
+                            "Title": "above_draupne_fm_1_js_top--depth_structural_model--p50",
+                            "UUID": "8bc80d2e-d6fb-4d76-8993-a56f307aa4ca",
+                            "UuidAuthority": "eqn",
+                            "_data": {
+                                "$type": "resqml20.obj_StratigraphicUnitFeature",
+                                "SchemaVersion": "2.0",
+                                "Uuid": "8bc80d2e-d6fb-4d76-8993-a56f307aa4ca",
+                                "Citation": {
+                                    "$type": "eml20.Citation",
+                                    "Title": "above_draupne_fm_1_js_top--depth_structural_model--p50",
+                                    "Originator": "maap",
+                                    "Creation": "2024-09-30T04:31:28.000Z",
+                                    "Format": "resqml201"
+                                },
+                                "ChronostratigraphicBottom": {
+                                    "$type": "eml20.DataObjectReference",
+                                    "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+                                    "Title": "draupne_fm_1_js_top--depth_structural_model--p50",
+                                    "UUID": "912bc625-2a48-401c-aa58-7b511e6831c0",
+                                    "UuidAuthority": "eqn",
+                                    "_data": {
+                                        "$type": "resqml20.obj_GeneticBoundaryFeature",
+                                        "SchemaVersion": "2.0",
+                                        "Uuid": "912bc625-2a48-401c-aa58-7b511e6831c0",
+                                        "Citation": {
+                                            "$type": "eml20.Citation",
+                                            "Title": "draupne_fm_1_js_top--depth_structural_model--p50",
+                                            "Originator": "maap",
+                                            "Creation": "2024-09-30T04:30:44.000Z",
+                                            "Format": "resqml201"
+                                        },
+                                        "GeneticBoundaryKind": "horizon"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "$type": "resqml20.StratigraphicUnitInterpretationIndex",
+                "Index": 1,
+                "Unit": {
+                    "$type": "eml20.DataObjectReference",
+                    "ContentType": "application/x-resqml+xml;version=2.0;type=obj_StratigraphicUnitInterpretation",
+                    "Title": "|UNNAMED|",
+                    "UUID": "b707ee12-f5be-44a1-b52c-32968dd8ec76",
+                    "UuidAuthority": "eqn",
+                    "_data": {
+                        "$type": "resqml20.obj_StratigraphicUnitInterpretation",
+                        "SchemaVersion": "2.0",
+                        "Uuid": "b707ee12-f5be-44a1-b52c-32968dd8ec76",
+                        "Citation": {
+                            "$type": "eml20.Citation",
+                            "Title": "|UNNAMED|",
+                            "Originator": "maap",
+                            "Creation": "2024-09-30T04:31:55.000Z",
+                            "Format": "resqml201",
+                            "Editor": "maap",
+                            "LastUpdate": "2024-09-30T04:32:12.000Z"
+                        },
+                        "Domain": "depth",
+                        "InterpretedFeature": {
+                            "$type": "eml20.DataObjectReference",
+                            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_StratigraphicUnitFeature",
+                            "Title": "draupne_fm_1",
+                            "UUID": "6aa9a67b-55bc-4543-bebf-82fd4d9b3c50",
+                            "UuidAuthority": "eqn",
+                            "_data": {
+                                "$type": "resqml20.obj_StratigraphicUnitFeature",
+                                "SchemaVersion": "2.0",
+                                "Uuid": "6aa9a67b-55bc-4543-bebf-82fd4d9b3c50",
+                                "Citation": {
+                                    "$type": "eml20.Citation",
+                                    "Title": "draupne_fm_1",
+                                    "Originator": "maap",
+                                    "Creation": "2024-09-30T04:31:28.000Z",
+                                    "Format": "resqml201"
+                                },
+                                "ChronostratigraphicBottom": {
+                                    "$type": "eml20.DataObjectReference",
+                                    "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+                                    "Title": "intra-upper_triassic_unconformity--depth_structural_model--p50",
+                                    "UUID": "ca9f8f03-0975-4789-954f-4b184d08ffe2",
+                                    "UuidAuthority": "eqn",
+                                    "_data": {
+                                        "$type": "resqml20.obj_GeneticBoundaryFeature",
+                                        "SchemaVersion": "2.0",
+                                        "Uuid": "ca9f8f03-0975-4789-954f-4b184d08ffe2",
+                                        "Citation": {
+                                            "$type": "eml20.Citation",
+                                            "Title": "intra-upper_triassic_unconformity--depth_structural_model--p50",
+                                            "Originator": "maap",
+                                            "Creation": "2024-09-30T04:31:03.000Z",
+                                            "Format": "resqml201"
+                                        },
+                                        "GeneticBoundaryKind": "horizon"
+                                    }
+                                },
+                                "ChronostratigraphicTop": {
+                                    "$type": "eml20.DataObjectReference",
+                                    "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+                                    "Title": "draupne_fm_1_js_top--depth_structural_model--p50",
+                                    "UUID": "912bc625-2a48-401c-aa58-7b511e6831c0",
+                                    "UuidAuthority": "eqn",
+                                    "_data": {
+                                        "$type": "resqml20.obj_GeneticBoundaryFeature",
+                                        "SchemaVersion": "2.0",
+                                        "Uuid": "912bc625-2a48-401c-aa58-7b511e6831c0",
+                                        "Citation": {
+                                            "$type": "eml20.Citation",
+                                            "Title": "draupne_fm_1_js_top--depth_structural_model--p50",
+                                            "Originator": "maap",
+                                            "Creation": "2024-09-30T04:30:44.000Z",
+                                            "Format": "resqml201"
+                                        },
+                                        "GeneticBoundaryKind": "horizon"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "$type": "resqml20.StratigraphicUnitInterpretationIndex",
+                "Index": 2,
+                "Unit": {
+                    "$type": "eml20.DataObjectReference",
+                    "ContentType": "application/x-resqml+xml;version=2.0;type=obj_StratigraphicUnitInterpretation",
+                    "Title": "|UNNAMED|",
+                    "UUID": "d617ba4e-db98-4f30-95dc-871da9e1642a",
+                    "UuidAuthority": "eqn",
+                    "_data": {
+                        "$type": "resqml20.obj_StratigraphicUnitInterpretation",
+                        "SchemaVersion": "2.0",
+                        "Uuid": "d617ba4e-db98-4f30-95dc-871da9e1642a",
+                        "Citation": {
+                            "$type": "eml20.Citation",
+                            "Title": "|UNNAMED|",
+                            "Originator": "maap",
+                            "Creation": "2024-09-30T04:36:02.000Z",
+                            "Format": "resqml201"
+                        },
+                        "Domain": "depth",
+                        "InterpretedFeature": {
+                            "$type": "eml20.DataObjectReference",
+                            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_StratigraphicUnitFeature",
+                            "Title": "intra-upper_triassic_unconformity--depth_structural_model--p50",
+                            "UUID": "75baba63-0ea0-43a2-9590-a3094fae556b",
+                            "UuidAuthority": "eqn",
+                            "_data": {
+                                "$type": "resqml20.obj_StratigraphicUnitFeature",
+                                "SchemaVersion": "2.0",
+                                "Uuid": "75baba63-0ea0-43a2-9590-a3094fae556b",
+                                "Citation": {
+                                    "$type": "eml20.Citation",
+                                    "Title": "intra-upper_triassic_unconformity--depth_structural_model--p50",
+                                    "Originator": "maap",
+                                    "Creation": "2024-09-30T04:31:28.000Z",
+                                    "Format": "resqml201"
+                                },
+                                "ChronostratigraphicTop": {
+                                    "$type": "eml20.DataObjectReference",
+                                    "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+                                    "Title": "intra-upper_triassic_unconformity--depth_structural_model--p50",
+                                    "UUID": "ca9f8f03-0975-4789-954f-4b184d08ffe2",
+                                    "UuidAuthority": "eqn",
+                                    "_data": {
+                                        "$type": "resqml20.obj_GeneticBoundaryFeature",
+                                        "SchemaVersion": "2.0",
+                                        "Uuid": "ca9f8f03-0975-4789-954f-4b184d08ffe2",
+                                        "Citation": {
+                                            "$type": "eml20.Citation",
+                                            "Title": "intra-upper_triassic_unconformity--depth_structural_model--p50",
+                                            "Originator": "maap",
+                                            "Creation": "2024-09-30T04:31:03.000Z",
+                                            "Format": "resqml201"
+                                        },
+                                        "GeneticBoundaryKind": "horizon"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "$type": "resqml20.obj_StratigraphicUnitFeature",
+        "SchemaVersion": "2.0",
+        "Uuid": "6aa9a67b-55bc-4543-bebf-82fd4d9b3c50",
+        "Citation": {
+            "$type": "eml20.Citation",
+            "Title": "draupne_fm_1",
+            "Originator": "maap",
+            "Creation": "2024-09-30T04:31:28.000Z",
+            "Format": "resqml201"
+        },
+        "ChronostratigraphicBottom": {
+            "$type": "eml20.DataObjectReference",
+            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+            "Title": "intra-upper_triassic_unconformity--depth_structural_model--p50",
+            "UUID": "ca9f8f03-0975-4789-954f-4b184d08ffe2",
+            "UuidAuthority": "eqn",
+            "_data": {
+                "$type": "resqml20.obj_GeneticBoundaryFeature",
+                "SchemaVersion": "2.0",
+                "Uuid": "ca9f8f03-0975-4789-954f-4b184d08ffe2",
+                "Citation": {
+                    "$type": "eml20.Citation",
+                    "Title": "intra-upper_triassic_unconformity--depth_structural_model--p50",
+                    "Originator": "maap",
+                    "Creation": "2024-09-30T04:31:03.000Z",
+                    "Format": "resqml201"
+                },
+                "GeneticBoundaryKind": "horizon"
+            }
+        },
+        "ChronostratigraphicTop": {
+            "$type": "eml20.DataObjectReference",
+            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+            "Title": "draupne_fm_1_js_top--depth_structural_model--p50",
+            "UUID": "912bc625-2a48-401c-aa58-7b511e6831c0",
+            "UuidAuthority": "eqn",
+            "_data": {
+                "$type": "resqml20.obj_GeneticBoundaryFeature",
+                "SchemaVersion": "2.0",
+                "Uuid": "912bc625-2a48-401c-aa58-7b511e6831c0",
+                "Citation": {
+                    "$type": "eml20.Citation",
+                    "Title": "draupne_fm_1_js_top--depth_structural_model--p50",
+                    "Originator": "maap",
+                    "Creation": "2024-09-30T04:30:44.000Z",
+                    "Format": "resqml201"
+                },
+                "GeneticBoundaryKind": "horizon"
+            }
+        }
+    },
+    {
+        "$type": "resqml20.obj_StratigraphicUnitFeature",
+        "SchemaVersion": "2.0",
+        "Uuid": "75baba63-0ea0-43a2-9590-a3094fae556b",
+        "Citation": {
+            "$type": "eml20.Citation",
+            "Title": "intra-upper_triassic_unconformity--depth_structural_model--p50",
+            "Originator": "maap",
+            "Creation": "2024-09-30T04:31:28.000Z",
+            "Format": "resqml201"
+        },
+        "ChronostratigraphicTop": {
+            "$type": "eml20.DataObjectReference",
+            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+            "Title": "intra-upper_triassic_unconformity--depth_structural_model--p50",
+            "UUID": "ca9f8f03-0975-4789-954f-4b184d08ffe2",
+            "UuidAuthority": "eqn",
+            "_data": {
+                "$type": "resqml20.obj_GeneticBoundaryFeature",
+                "SchemaVersion": "2.0",
+                "Uuid": "ca9f8f03-0975-4789-954f-4b184d08ffe2",
+                "Citation": {
+                    "$type": "eml20.Citation",
+                    "Title": "intra-upper_triassic_unconformity--depth_structural_model--p50",
+                    "Originator": "maap",
+                    "Creation": "2024-09-30T04:31:03.000Z",
+                    "Format": "resqml201"
+                },
+                "GeneticBoundaryKind": "horizon"
+            }
+        }
+    },
+    {
+        "$type": "resqml20.obj_StratigraphicUnitFeature",
+        "SchemaVersion": "2.0",
+        "Uuid": "8bc80d2e-d6fb-4d76-8993-a56f307aa4ca",
+        "Citation": {
+            "$type": "eml20.Citation",
+            "Title": "above_draupne_fm_1_js_top--depth_structural_model--p50",
+            "Originator": "maap",
+            "Creation": "2024-09-30T04:31:28.000Z",
+            "Format": "resqml201"
+        },
+        "ChronostratigraphicBottom": {
+            "$type": "eml20.DataObjectReference",
+            "ContentType": "application/x-resqml+xml;version=2.0;type=obj_GeneticBoundaryFeature",
+            "Title": "draupne_fm_1_js_top--depth_structural_model--p50",
+            "UUID": "912bc625-2a48-401c-aa58-7b511e6831c0",
+            "UuidAuthority": "eqn",
+            "_data": {
+                "$type": "resqml20.obj_GeneticBoundaryFeature",
+                "SchemaVersion": "2.0",
+                "Uuid": "912bc625-2a48-401c-aa58-7b511e6831c0",
+                "Citation": {
+                    "$type": "eml20.Citation",
+                    "Title": "draupne_fm_1_js_top--depth_structural_model--p50",
+                    "Originator": "maap",
+                    "Creation": "2024-09-30T04:30:44.000Z",
+                    "Format": "resqml201"
+                },
+                "GeneticBoundaryKind": "horizon"
+            }
+        }
+    }
+]

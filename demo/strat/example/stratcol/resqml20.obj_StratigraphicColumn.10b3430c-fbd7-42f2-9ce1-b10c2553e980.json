@@ -1,0 +1,16 @@
+[
+    {
+        "$type": "resqml20.obj_StratigraphicColumn",
+        "SchemaVersion": "2.0",
+        "Uuid": "10b3430c-fbd7-42f2-9ce1-b10c2553e980",
+        "Ranks": [
+            {
+                "$type": "eml20.DataObjectReference",
+                "ContentType": "application/x-resqml+xml;version=2.0;type=obj_StratigraphicColumnRankInterpretation",
+                "Title": "|UNNAMED|",
+                "UUID": "4e25e2aa-2d91-4ba8-99f5-99e87a166865",
+                "UuidAuthority": "pdgm"
+            }
+        ]
+    }
+]

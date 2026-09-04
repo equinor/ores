@@ -185,6 +185,15 @@ def _rewrite_record(
     """
     rec = json.loads(json.dumps(record))  # deep copy
 
+    # Normalise: strip non-standard top-level keys the RDDMS gateway injects
+    # (e.g. `authoringSoftware`) plus server-managed fields. OSDU record schemas
+    # are additionalProperties:false at the root, so leaving these in makes the
+    # Osdu_ingest DAG's strict schema validation silently DROP the record (while
+    # Storage's soft validation would keep it). Stripping keeps both paths whole.
+    for _k in ("authoringSoftware", "createTime", "createUser", "modifyTime",
+               "modifyUser", "version", "ancestry"):
+        rec.pop(_k, None)
+
     # Detect source partition from record ID (or use explicit override)
     id_partition = rec["id"].split(":")[0] if ":" in rec.get("id", "") else ""
     src_partition = src_override or id_partition
